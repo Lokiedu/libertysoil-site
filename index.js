@@ -5,7 +5,9 @@ import MemoryHistory from 'react-router/lib/MemoryHistory';
 import React from 'react';
 
 import routes from './src/routing';
+import ApiController from './src/api/controller'
 
+let wrap = fn => (...args) => fn(...args).catch(args[2])
 let app = express();
 
 //app.engine('html', require('ejs').renderFile);
@@ -13,12 +15,10 @@ let app = express();
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
+let controller = new ApiController();
+app.get('/api/v1/test', wrap(controller.test));
+
 app.use(express.static('public', { index: false}));
-
-app.use('/api/', (req, res, next) => {
-  
-});
-
 app.use((req, res, next) => {
   let history = new MemoryHistory([req.url]);
 
