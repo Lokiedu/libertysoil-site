@@ -14,7 +14,7 @@ let my_knex = knex({
   connection: {
     host     : '127.0.0.1',
     user     : 'libertysoil',
-    password : '',
+    password : 'libertysoil',
     database : 'libertysoil',
     charset  : 'utf8'
   }
