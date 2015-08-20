@@ -15,6 +15,10 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public', { index: false}));
 
+app.use('/api/', (req, res, next) => {
+  
+});
+
 app.use((req, res, next) => {
   let history = new MemoryHistory([req.url]);
 
