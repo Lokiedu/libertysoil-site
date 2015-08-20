@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -12,6 +13,7 @@ export default class Index extends React.Component {
     return (
       <div>
         <Header/>
+        <Link to="/auth">go to auth</Link>
         <User/>
         <hr/>
         <p>This is a List-page</p>
