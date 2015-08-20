@@ -2,7 +2,15 @@
   display: flex;
 }
 
-.layout-vertical {
+.layout-rows {
+  flex-flow: column;
+}
+
+.layout-columns {
+  flex-flow: row;
+}
+
+.layout-align_vertical {
   align-items: center;
 }
 
@@ -38,7 +46,11 @@
 }
 
 .layout__grid_item {
+  margin-right: @space;
 
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .layout__grid_item-identical {

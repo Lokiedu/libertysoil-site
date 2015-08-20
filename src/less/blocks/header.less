@@ -1,0 +1,19 @@
+.header {
+  padding: @space;
+  background: @color__block_background;
+}
+
+.header__body {
+  &:extend(.layout);
+  &:extend(.layout__grid all);
+}
+
+.header__toolbar {
+  &:extend(.layout);
+  &:extend(.layout-align_right);
+  &:extend(.layout__grid_item-wide);
+}
+
+.header__toolbar_item {
+  &:extend(.layout__grid_item all);
+}

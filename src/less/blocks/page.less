@@ -7,13 +7,22 @@
 }
 
 .page__sidebar {
-
+  padding: @space;
 }
 
 .page__body {
+  &:extend(.layout);
+  &:extend(.layout-rows);
 
+  @media @after-small {
+    .layout-columns;
+  }
 }
 
 .page__footer {
 
+}
+
+.page__content {
+  padding: @space;
 }
