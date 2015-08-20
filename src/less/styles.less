@@ -2,21 +2,31 @@
 
 @radius: 4px;
 @space: 15px;
-@transitionTime: 0.2s;
+@transitionTime: 0.3s;
 @transitionFunction: ease;
 
-@mobile: ~"(max-width: 480px)";
-@tablet: ~"(max-width: 768px)";
+@after-small: ~"(min-width: 480px)";
+@after-normal: ~"(min-width: 768px)";
+@after-wide: ~"(min-width: 1280px)";
 
 html {
-    color: @color__text;
-    font: @fontSize sans-serif;
-    background: @color__background;
+  color: @color__text;
+  font: @fontSize sans-serif;
+  background: @color__background;
 }
 
 a {
-    color: @color__text;
-    text-decoration: none;
+  color: @color__text;
+  text-decoration: underline;
 }
 
+// 42
+
+@import (inline) '../../node_modules/font-awesome/css/font-awesome.css';
+
+@import 'blocks/normalize';
 @import 'blocks/color';
+@import 'blocks/layout';
+
+@import 'blocks/page';
+@import 'blocks/header';
