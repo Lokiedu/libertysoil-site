@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
+import { connect } from 'react-redux';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -8,15 +9,9 @@ import River from '../components/river_of_posts';
 import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags';
 
-export default class Index extends React.Component {
+class Index extends React.Component {
   render() {
-    let currentUser = {
-      username: 'johndoe',
-      userpic: 'http://api.randomuser.me/portraits/thumb/women/39.jpg',
-      firstName: 'John',
-      lastName: 'Doe',
-      profileURI: 'http://example.com/'
-    };
+    let currentUser = this.props.users[0];
 
     return (
       <div>
@@ -34,3 +29,9 @@ export default class Index extends React.Component {
     )
   }
 }
+
+function select(state) {
+  return state;
+}
+
+export default connect(select)(Index);

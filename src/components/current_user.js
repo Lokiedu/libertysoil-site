@@ -5,7 +5,7 @@ export default class CurrentUserComponent extends React.Component {
     return (
       <div>
         <p>I am {this.props.currentUser.username}</p>
-        <img src={this.props.currentUser.userpic} alt=""/>
+        <img src={this.props.currentUser.userPic} alt=""/>
       </div>
     )
   }
