@@ -2,6 +2,7 @@ import { createStore } from 'redux';
 
 const ADD_USER = 'ADD_USER';
 const ADD_POST = 'ADD_POST';
+const SET_POSTS = 'SET_POSTS';
 
 function addUser(username, email, firstName, lastName, userPic) {
   return {
@@ -23,6 +24,13 @@ function addPost(userId, text) {
       userId,
       text
     }
+  }
+}
+
+export function setPosts(posts) {
+  return {
+    type: SET_POSTS,
+    posts: posts
   }
 }
 
@@ -48,6 +56,13 @@ function theReducer(state = initialState, action) {
         posts: [...state.posts, post]
       });
       break;
+    case SET_POSTS:
+      let posts = action.posts;
+
+      return Object.assign({}, state, {
+        posts: posts
+      });
+      break;
   }
 
   return state
@@ -62,6 +77,6 @@ let initialState = {
 let store = createStore(theReducer, initialState);
 
 store.dispatch(addUser('johndoe', 'johndoe@example.com', 'John', 'Doe', 'http://api.randomuser.me/portraits/thumb/women/39.jpg'));
-store.dispatch(addPost(1, 'Hello, world! This is my first post'));
+//store.dispatch(addPost(1, 'Hello, world! This is my first post'));
 
 export default store;

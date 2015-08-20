@@ -8,7 +8,7 @@ export class TextPostComponent extends React.Component {
           Psychology today
         </header>
         <div className="card__content">
-          <p>{this.props.text}</p>
+          <p>{this.props.post.text}</p>
         </div>
         <div className="card__owner">
           <section className="user_box">

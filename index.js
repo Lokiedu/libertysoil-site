@@ -7,10 +7,16 @@ import React from 'react';
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 
-let wrap = fn => (...args) => fn(...args).catch(args[2])
+let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
 
 //app.engine('html', require('ejs').renderFile);
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
