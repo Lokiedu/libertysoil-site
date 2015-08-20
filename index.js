@@ -4,18 +4,18 @@ import {Router} from 'react-router';
 import MemoryHistory from 'react-router/lib/MemoryHistory';
 import React from 'react';
 
-import routes from './routing';
+import routes from './src/routing';
 
 let app = express();
 
 //app.engine('html', require('ejs').renderFile);
 
-app.set('views', __dirname + '/views');
+app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-app.use(express.static('../public'));
+app.use(express.static('public'));
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   let history = new MemoryHistory([req.url]);
 
   let html = ReactDOMServer.renderToString(
@@ -29,9 +29,4 @@ app.use(function (req, res, next) {
 });
 
 
-let server = app.listen(8000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Example app listening at http://%s:%s', host, port);
-});
+let server = app.listen(8000);
