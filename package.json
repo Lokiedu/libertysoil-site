@@ -1,0 +1,24 @@
+{
+  "name": "libertysoil",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "babel-core": "^5.8.22",
+    "bluebird": "^2.9.34",
+    "bookshelf": "^0.8.1",
+    "express": "^4.13.3",
+    "immutable": "^3.7.4",
+    "knex": "^0.8.6",
+    "pg": "^4.4.1",
+    "react": "0.14.0-beta3",
+    "react-dom": "0.14.0-beta3",
+    "react-redux": "^0.9.0",
+    "react-router": "1.0.0-beta3",
+    "redux": "^1.0.1"
+  }
+}
