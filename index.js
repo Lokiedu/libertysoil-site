@@ -13,7 +13,7 @@ let app = express();
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-app.use(express.static('public'));
+app.use(express.static('public', { index: false}));
 
 app.use((req, res, next) => {
   let history = new MemoryHistory([req.url]);
