@@ -9,7 +9,11 @@ import routes from './routing';
 let app = express();
 
 //app.engine('html', require('ejs').renderFile);
-//app.set('view engine', 'html');
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+
+app.use(express.static('../public'));
 
 app.use(function (req, res, next) {
   let history = new MemoryHistory([req.url]);
@@ -20,13 +24,8 @@ app.use(function (req, res, next) {
     </Router>
   );
 
-  return res.send(html);
+  return res.render('index', {html: html});
 
-  /*var router = Router.create({location: req.url, routes: routes})
-   router.run(function(Handler, state) {
-   var html = ReactDOMServer.renderToString(<Handler/>)
-   return res.render('react_page', {html: html})
-   })*/
 });
 
 
