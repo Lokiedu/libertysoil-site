@@ -24,8 +24,9 @@ app.use((req, res, next) => {
     </Router>
   );
 
-  return res.render('index', {html: html});
-
+  return res.render('index', {
+    html: html
+  });
 });
 
 

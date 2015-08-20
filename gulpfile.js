@@ -49,7 +49,8 @@ function buildScript(file, watch) {
     entries: [path.src.scriptsDir + file],
     debug: true,
     transform: [babelify.configure({
-      stage: 1
+      stage: 1,
+      optional: ['runtime']
     }), reactify]
   };
 

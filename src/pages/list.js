@@ -16,14 +16,26 @@ class Index extends React.Component {
     return (
       <div>
         <Header currentUser={currentUser} />
-        <Link to="/auth">go to auth</Link>
-        <User currentUser={currentUser} />
-        <hr/>
-        <p>This is a List-page</p>
-        <hr/>
-        <River/>
-        <Followed/>
-        <Tags/>
+        <div className="page__body">
+          <div className="page__sidebar">
+            <User currentUser={currentUser} />
+            <div className="layout__row">
+              <h3 className="head head-sub">Popular tags</h3>
+            </div>
+            <div className="layout__row">
+              <div className="tags">
+                <span className="tag">Psychology</span>
+                <span className="tag">Gaming</span>
+              </div>
+            </div>
+          </div>
+          <div className="page__content">
+            <p>This is a List-page!!!!!!!!</p>
+            <River/>
+            <Followed/>
+            <Tags/>
+          </div>
+        </div>
         <Footer/>
       </div>
     )

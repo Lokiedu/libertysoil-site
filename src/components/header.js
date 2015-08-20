@@ -1,12 +1,19 @@
-import React from 'react'
+import React from 'react';
+import {Link} from 'react-router';
 
 export default class HeaderComponent extends React.Component {
   render() {
     return (
-      <div>
-        <h1>Hi, I am the header</h1>
-        <p>My name is: {this.props.currentUser.username}</p>
-        <button>Logout</button>
+      <div className="header page__header">
+        <div className="header__body">
+          <div className="header__logo">
+            <a href="/" className="logo">Liberty Soil</a>
+          </div>
+          <div className="header__toolbar">
+            <div className="header__toolbar_item user">{this.props.currentUser.username}</div>
+            <Link to="/auth" className="header__toolbar_item">auth</Link>
+          </div>
+        </div>
       </div>
     )
   }
