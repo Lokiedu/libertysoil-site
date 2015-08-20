@@ -17,6 +17,7 @@ app.set('view engine', 'ejs');
 
 let controller = new ApiController();
 app.get('/api/v1/test', wrap(controller.test));
+app.get('/api/v1/posts', wrap(controller.posts));
 
 app.use(express.static('public', { index: false}));
 app.use((req, res, next) => {
