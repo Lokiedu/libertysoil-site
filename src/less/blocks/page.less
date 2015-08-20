@@ -8,13 +8,20 @@
 
 .page__sidebar {
   padding: @space;
+  flex: 0 0 240px;
+  box-sizing: border-box;
+  background: @color__background;
+
+  @media @after-normal {
+    margin-right: 1px;
+  }
 }
 
 .page__body {
-  &:extend(.layout);
   &:extend(.layout-rows);
 
-  @media @after-small {
+  @media @after-normal {
+    .layout;
     .layout-columns;
   }
 }
@@ -25,4 +32,5 @@
 
 .page__content {
   padding: @space;
+  background: @color__background;
 }

@@ -1,0 +1,33 @@
+.card {
+  background: @color__block_background;
+
+  & + & {
+    margin-top: @space;
+  }
+}
+
+.card__header {
+  padding: @space;
+  font-weight: bold;
+}
+
+.card__content {
+  padding: 0 @space;
+}
+
+.card__owner {
+  padding: @space;
+}
+
+.card__footer {
+  padding: @space;
+  background: #eee;
+}
+
+.card__toolbar {
+  margin-top: @space;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}

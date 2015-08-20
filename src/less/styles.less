@@ -1,9 +1,10 @@
-@fontSize: 15px;
+@font__size: 15px;
+@font__size-small: 11px;
 
 @radius: 4px;
 @space: 15px;
-@transitionTime: 0.3s;
-@transitionFunction: ease;
+@transition__time: 0.3s;
+@transition__function: ease;
 
 @after-small: ~"(min-width: 480px)";
 @after-normal: ~"(min-width: 768px)";
@@ -11,8 +12,8 @@
 
 html {
   color: @color__text;
-  font: @fontSize sans-serif;
-  background: @color__background;
+  font: @font__size sans-serif;
+  background: #e8e7e5;
 }
 
 a {
@@ -29,3 +30,10 @@ a {
 @import 'blocks/page';
 @import 'blocks/header';
 @import 'blocks/logo';
+@import 'blocks/footer';
+@import 'blocks/footer_nav';
+@import 'blocks/card';
+@import 'blocks/tags';
+@import 'blocks/tag';
+@import 'blocks/user_box';
+@import 'blocks/head';
