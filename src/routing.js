@@ -2,12 +2,14 @@ import {Route} from 'react-router';
 import React from 'react';
 
 
-import App from './components/app'
-import Index from './components/index'
+import App from './pages/app'
+import Index from './pages/index'
+import List from './pages/list'
 
 let routes = (
     <Route component={App}>
-      <Route component={Index} name="index" path="/" />
+      <Route component={Index} path="/" />
+      <Route component={List} path="/list" />
     </Route>
 );
 
