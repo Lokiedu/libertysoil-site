@@ -1,8 +1,12 @@
 import ReactDOM from 'react-dom'
+import {history} from 'react-router/lib/BrowserHistory';
+import {Router} from 'react-router';
 
-import routing from './routing.js'
+import routing from '../routing'
 
 ReactDOM.render(
-  routing(),
+  <Router history={history}>
+    {routing()}
+  </Router>,
   document.getElementById('content')
 );
