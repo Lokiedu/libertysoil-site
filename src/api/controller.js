@@ -63,5 +63,21 @@ export default class ApiController {
   }
 
   async login(req, res) {
+    let requiredFields = ['username', 'password'];
+
+    for (let fieldName of requiredFields) {
+      if (!(fieldName in req.body)) {
+        res.sendStatus(400);
+        res.send({error: 'Bad Request'});
+        return
+      }
+    }
+
+    let User = this.bookshelf.model('User');
+    let user = await new User({username: req.body.username}).fetch({require: true});
+
+    let passwordIsValid = await bcryptAsync.compareAsync(user.get('hashed_password'), password);
+
+    res.send({success: passwordIsValid})
   }
 }
