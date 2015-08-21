@@ -40,7 +40,7 @@ export default class ApiController {
     let User = this.bookshelf.model('User');
 
     let obj = new User({
-      id: uuid.v4()
+      id: uuid.v4(),
       username: req.body.username,
       hashed_password: hashedPassword,
       email: req.body.email
