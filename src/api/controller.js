@@ -111,7 +111,7 @@ export default class ApiController {
 
     req.session.user = user;
 
-    res.send({success: true})
+    res.send({ success: true, user })
   }
 
   async createPost(req, res) {
