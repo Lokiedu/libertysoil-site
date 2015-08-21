@@ -8,12 +8,14 @@ export default class Index extends React.Component {
     console.log('render index...');
 
     return (
-      <div>
-        <p>This is an index</p>
-        <Login/>
-        <hr/>
-        <Register/>
-        <hr/>
+      <div className="page__body">
+        <div className="area">
+          <div className="area__body layout-align_start">
+            <p>This is an index</p>
+            <Login/>
+            <Register/>
+          </div>
+        </div>
       </div>
     )
   }
