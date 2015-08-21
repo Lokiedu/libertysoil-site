@@ -6,6 +6,9 @@ import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 
+import session from 'express-session';
+import initRedisStore from 'connect-redis';
+
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
@@ -26,6 +29,18 @@ let controller = new ApiController(bookshelf);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
+
+let RedisStore = initRedisStore(session);
+
+app.use(session({
+  store: new RedisStore({
+    host: 'localhost',
+    port: 6379
+  }),
+  secret: 'libertysoil',
+  resave: false,
+  saveUninitialized: false
+}));
 
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
 //app.use(multer());  // for parsing multipart/form-data
