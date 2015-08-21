@@ -19,15 +19,15 @@ class Index extends React.Component {
     getStore().dispatch(setPosts(result.body));
   }
   render() {
-    let currentUser = this.props.users[0];
+    let current_user = this.props.current_user;
 
     return (
       <div>
-        <Header currentUser={currentUser} />
+        <Header current_user={current_user} />
         <div className="page__container">
           <div className="page__body">
             <div className="page__sidebar">
-              <User currentUser={currentUser} />
+              <User current_user={current_user} />
               <div className="layout__row">
                 <h3 className="head head-sub">Popular tags</h3>
               </div>
