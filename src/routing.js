@@ -8,8 +8,8 @@ import List from './pages/list'
 
 let routes = (
   <Route component={App}>
-    <Route component={List} path="/" />
-    <Route component={Auth} path="/auth" />
+    <Route component={List} name="post_list" path="/" />
+    <Route component={Auth} name="auth" path="/auth" />
   </Route>
 );
 

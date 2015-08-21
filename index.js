@@ -6,6 +6,7 @@ import Location from 'react-router/lib/Location';
 import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
+import request from 'superagent';
 
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
@@ -13,7 +14,7 @@ import initRedisStore from 'connect-redis';
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
-import {initState, setCurrentUser} from './src/store';
+import {initState, setCurrentUser, getStore, setPosts} from './src/store';
 
 const knexConfig = {
   client: 'pg',
@@ -73,16 +74,25 @@ app.use((req, res, next) => {
   let location = new Location(req.path, req.query)
 
   Router.run(routes, location, (error, initialState, transition) => {
-    let html = ReactDOMServer.renderToString(
-      <Router {...initialState}/>
-    );
+    let render = () => {
+      let html = ReactDOMServer.renderToString(
+        <Router {...initialState}/>
+      );
 
-    let state = JSON.stringify(store.getState().toJS());
+      let state = JSON.stringify(store.getState().toJS());
 
-    res.render('index', {
-      state,
-      html
-    });
+      res.render('index', { state, html });
+    };
+
+    if (initialState.branch[1].name == 'post_list') {
+      const host = 'http://localhost:8000';
+      request.get(`${host}/api/v1/posts`).end((err, result) => {
+        getStore().dispatch(setPosts(result.body));
+        render();
+      });
+    } else {
+      render();
+    }
   });
 });
 
