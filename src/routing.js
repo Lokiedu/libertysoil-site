@@ -3,7 +3,7 @@ import React from 'react';
 
 
 import App from './pages/app'
-import Auth from './pages/index'
+import Auth from './pages/auth'
 import List from './pages/list'
 
 let routes = (
