@@ -51,7 +51,7 @@ class Index extends React.Component {
 }
 
 function select(state) {
-  return state;
+  return state.toJS();
 }
 
 export default connect(select)(Index);

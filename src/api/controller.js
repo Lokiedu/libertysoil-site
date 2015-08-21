@@ -18,7 +18,7 @@ export default class ApiController {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
 
-    let response = await posts.fetch({require: false});
+    let response = await posts.fetch({require: false, withRelated: ['user']});
 
     res.send(response.toJSON());
   }
@@ -112,5 +112,11 @@ export default class ApiController {
     req.session.user = user;
 
     res.send({success: true})
+  }
+
+  async createPost(req, res) {
+  }
+
+  async followUser(req, res) {
   }
 }
