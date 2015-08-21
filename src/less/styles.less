@@ -3,12 +3,16 @@
 @font__size-small: 11px;
 
 @radius: 6px;
+
 @space: 15px;
+@halfSpace: @space/2;
+
 @transition__time: 0.3s;
 @transition__function: ease;
 
 @after-small: ~"(min-width: 480px)";
 @after-normal: ~"(min-width: 768px)";
+@after-base: ~"(min-width: 960px)";
 @after-wide: ~"(min-width: 1280px)";
 
 html {
@@ -44,3 +48,5 @@ a {
 @import 'blocks/input';
 @import 'blocks/button';
 @import 'blocks/link';
+@import 'blocks/checkbox';
+@import 'blocks/action';
