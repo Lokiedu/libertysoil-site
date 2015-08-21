@@ -54,7 +54,7 @@ export default class ApiController {
     }
 
     if (!_.isEmpty(moreData)) {
-      obj.more = moreData;
+      obj.set('more', moreData);
     }
 
     await obj.save();
