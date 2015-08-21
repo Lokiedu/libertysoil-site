@@ -1,6 +1,6 @@
 export default class ApiController {
   constructor (bookshelf) {
-    this.knex = bookshelf.knex;
+    this.bookshelf = bookshelf;
   }
 
   async test(req, res) {
@@ -8,8 +8,12 @@ export default class ApiController {
   }
 
   async posts(req, res) {
-    let response = await this.knex.select().table('posts');
-    res.send(response)
+    let Posts = this.bookshelf.collection('Posts');
+    let posts = new Posts();
+
+    let response = await posts.fetch({require: false});
+
+    res.send(response.toJSON())
   }
 
   async registerUser(req, res) {

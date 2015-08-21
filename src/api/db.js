@@ -8,5 +8,33 @@ export default function initBookshelf(config) {
   bookshelf.plugin('registry');
   bookshelf.plugin('visibility');
 
+  let User, Post
+
+  User = bookshelf.Model.extend({
+    tableName: 'users',
+    posts: function() {
+      return this.hasMany(Post, 'user_id');
+    },
+    hidden: ['hashed_password', 'email']  // exclude from json-exports
+  });
+
+  Post = bookshelf.Model.extend({
+    tableName: 'posts',
+    user: function() {
+      return this.belongsTo(User, 'user_id');
+    }
+  });
+
+  let Posts
+
+  Posts = bookshelf.Collection.extend({
+    model: Post
+  });
+
+  // adding to registry
+  bookshelf.model('User', User);
+  bookshelf.model('Post', Post);
+  bookshelf.collection('Posts', Posts);
+
   return bookshelf;
 }
