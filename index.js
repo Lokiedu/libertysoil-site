@@ -2,6 +2,7 @@ import express from 'express';
 import ReactDOMServer from 'react-dom/server'
 import {Router} from 'react-router';
 import MemoryHistory from 'react-router/lib/MemoryHistory';
+import Location from 'react-router/lib/Location';
 import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
@@ -69,18 +70,19 @@ app.use((req, res, next) => {
     store.dispatch(setCurrentUser(req.session.user));
   }
 
-  let history = new MemoryHistory([req.url]);
-  let html = ReactDOMServer.renderToString(
-    <Router history={history}>
-      {routes}
-    </Router>
-  );
+  let location = new Location(req.path, req.query)
 
-  let state = JSON.stringify(store.getState().toJS());
+  Router.run(routes, location, (error, initialState, transition) => {
+    let html = ReactDOMServer.renderToString(
+      <Router {...initialState}/>
+    );
 
-  return res.render('index', {
-    state,
-    html
+    let state = JSON.stringify(store.getState().toJS());
+
+    res.render('index', {
+      state,
+      html
+    });
   });
 });
 
