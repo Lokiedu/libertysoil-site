@@ -88,10 +88,27 @@ export default class ApiController {
     }
 
     let User = this.bookshelf.model('User');
-    let user = await new User({username: req.body.username}).fetch({require: true});
 
-    let passwordIsValid = await bcryptAsync.compareAsync(user.get('hashed_password'), password);
+    let user
 
-    res.send({success: passwordIsValid})
+    try {
+      user = await new User({username: req.body.username}).fetch({require: true});
+    } catch (e) {
+      console.log(`user '${req.body.username}' is not found`)
+      res.status(401)
+      res.send({success: false})
+      return
+    }
+
+    let passwordIsValid = await bcryptAsync.compareAsync(req.body.password, user.get('hashed_password'));
+
+    if (!passwordIsValid) {
+      console.log(`password for user '${req.body.username}' is not found`)
+      res.status(401)
+      res.send({success: false})
+      return
+    }
+
+    res.send({success: true})
   }
 }
