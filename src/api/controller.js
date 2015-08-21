@@ -109,6 +109,8 @@ export default class ApiController {
       return
     }
 
+    req.session.user = user;
+
     res.send({success: true})
   }
 }
