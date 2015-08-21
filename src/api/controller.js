@@ -60,15 +60,18 @@ export default class ApiController {
     try {
       await obj.save(null, {method: 'insert'});
       res.send(obj.toJSON());
+      return
     } catch (e) {
       if (e.code == 23505) {
         res.status(401)
         res.send({error: 'User already exists'})
+        return
       } else {
         console.dir(e)
 
         res.status(500);
         res.send({error: e.message})
+        return
       }
     }
   }
