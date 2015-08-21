@@ -3,6 +3,7 @@ import { createStore } from 'redux';
 const ADD_USER = 'ADD_USER';
 const ADD_POST = 'ADD_POST';
 const SET_POSTS = 'SET_POSTS';
+const ADD_ERROR = 'ADD_ERROR';
 
 function addUser(username, email, firstName, lastName, userPic) {
   return {
@@ -31,6 +32,13 @@ export function setPosts(posts) {
   return {
     type: SET_POSTS,
     posts: posts
+  }
+}
+
+export function addError(message) {
+  return {
+    type: ADD_ERROR,
+    message
   }
 }
 
@@ -63,6 +71,11 @@ function theReducer(state = initialState, action) {
         posts: posts
       });
       break;
+    case ADD_ERROR:
+      return Object.assign({}, state, {
+        messages: [...state.messages, action.message]
+      });
+      break;
   }
 
   return state
@@ -70,7 +83,8 @@ function theReducer(state = initialState, action) {
 
 let initialState = {
   users: [],
-  posts: []
+  posts: [],
+  messages: []
 };
 
 
