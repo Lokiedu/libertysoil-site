@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import { connect } from 'react-redux';
-import fetch from 'isomorphic-fetch';
+import request from 'superagent';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -15,9 +15,8 @@ import store, {setPosts} from '../store';
 class Index extends React.Component {
   async componentWillMount() {
     const host = 'http://localhost:8000';
-    let result = await fetch(`${host}/api/v1/posts`);
-    let body = await result.json();
-    store.dispatch(setPosts(body));
+    let result = await request.get(`${host}/api/v1/posts`);
+    store.dispatch(setPosts(result.body));
   }
   render() {
     let currentUser = this.props.users[0];

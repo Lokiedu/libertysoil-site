@@ -1,5 +1,5 @@
 import React from 'react'
-
+import request from 'superagent';
 export default class RegisterComponent extends React.Component {
 
   async submitHandler(event) {
@@ -8,31 +8,20 @@ export default class RegisterComponent extends React.Component {
 
     let form = event.target;
 
-    if(true || form.password.value != '' && form.password.value === form.password_repeat.value) {
+    if(form.password.value != '' && form.password.value === form.password_repeat.value) {
       const host = 'http://localhost:8000';
 
-      let data = new FormData(form);
-      data.append('user', 'hubot');
+      let user_data = {
+        username: form.username.value,
+        password: form.password.value,
+        email: form.email.value,
+      };
 
-      //console.log(data.getAll());
-
-      let result = await fetch(`${host}/api/v1/users`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: 'Hubot',
-          login: 'hubot',
-        })
-
-      });
-
+      let result = await request.post(`${host}/api/v1/users`).type('form').send(user_data);
 
 
     } else {
       //Error
-      console.log('error');
     }
 
 
