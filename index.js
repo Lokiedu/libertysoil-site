@@ -65,7 +65,7 @@ app.use(express.static('public', { index: false}));
 app.use((req, res, next) => {
   let store = initState();
 
-  if (req.session) {
+  if (req.session && req.session.user) {
     store.dispatch(setCurrentUser(req.session.user));
   }
 
