@@ -1,7 +1,6 @@
 export default class ApiController {
-  constructor (knex) {
-    console.log('ApiController', this);
-    this.knex = knex;
+  constructor (bookshelf) {
+    this.knex = bookshelf.knex;
   }
 
   async test(req, res) {

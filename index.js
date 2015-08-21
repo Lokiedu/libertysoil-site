@@ -22,7 +22,7 @@ const knexConfig = {
 
 let knex = Knex(knexConfig);
 let bookshelf = Bookshelf(knex);
-let controller = new ApiController(knex);
+let controller = new ApiController(bookshelf);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
