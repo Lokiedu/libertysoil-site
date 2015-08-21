@@ -34,17 +34,18 @@ export default class LoginComponent extends React.Component {
           <div className="box__body">
             <div className="layout__row">
               <div className="form__row">
-                <label className="label label-block">Username</label>
-                <input className="input" type="text" name="username"/>
+                <label className="label label-block label-space">Username</label>
+                <input className="input input-block" required="required" type="text" name="username"/>
               </div>
               <div className="form__row">
-                <label className="label label-block">Password</label>
-                <input className="input" type="password" name="password"/>
+                <label className="label label-block label-space">Password</label>
+                <input className="input input-block" required="required" type="password" name="password"/>
               </div>
             </div>
             <div className="layout__row layout layout-align_vertical layout-align_justify">
               <a href="#" className="link">Password reminder</a>
               <button type="submit" className="button button-green">Login</button>
+              <button type="submit" className="button button-wide button-green">Login</button>
             </div>
           </div>
         </form>

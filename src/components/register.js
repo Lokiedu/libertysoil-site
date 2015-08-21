@@ -18,7 +18,7 @@ export default class RegisterComponent extends React.Component {
       let user_data = {
         username: form.username.value,
         password: form.password.value,
-        email: form.email.value,
+        email: form.email.value
       };
 
       let result = await request.post(`${host}/api/v1/users`).type('form').send(user_data);
@@ -39,27 +39,28 @@ export default class RegisterComponent extends React.Component {
         <div className="box__body">
           <div className="layout__row">
             <div className="form__row">
-              <label className="label label-block">First name</label>
-              <input className="input" type="text" name="username"/>
+              <label className="label label-block label-space">First name</label>
+              <input className="input input-block" type="text" name="username"/>
             </div>
             <div className="form__row">
-              <label className="label label-block">Last name</label>
-              <input className="input" type="text"/>
+              <label className="label label-block label-space">Last name</label>
+              <input className="input input-block" type="text"/>
             </div>
             <div className="form__row">
-              <label className="label label-block">Email</label>
-              <input className="input" type="email" name="email"/>
+              <label className="label label-block label-space">Email</label>
+              <input className="input input-block" type="email" name="email"/>
             </div>
             <div className="form__row">
-              <label className="label label-block">Password</label>
-              <input className="input" type="password" name="password"/>
+              <label className="label label-block label-space">Password</label>
+              <input className="input input-block" type="password" name="password"/>
             </div>
             <div className="form__row">
-              <label className="label label-block">Repeat password</label>
-              <input className="input" type="password" name="password_repeat"/>
+              <label className="label label-block label-space">Repeat password</label>
+              <input className="input input-block" type="password" name="password_repeat"/>
             </div>
           </div>
           <div className="layout__row layout layout-align_vertical layout-align_justify">
+            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" /><span>I agree to <a href="#" className="link">T&C</a></span></label>
             <button className="button button-yellow">Send</button>
           </div>
         </div>
