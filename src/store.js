@@ -109,18 +109,18 @@ function theReducer(state, action) {
   return state
 }
 
-let initialState = Immutable.fromJS({
+let initialState = {
   users: {},
   posts: [],
   messages: [],
   is_logged_in: false,
   current_user: {}
-});
+};
 
 let store;
 
 export function initState(state=initialState) {
-  store = createStore(theReducer, initialState);
+  store = createStore(theReducer, Immutable.fromJS(state));
   return store;
 }
 
