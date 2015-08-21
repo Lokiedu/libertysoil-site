@@ -3,13 +3,13 @@ import ReactDOMServer from 'react-dom/server'
 import {Router} from 'react-router';
 import MemoryHistory from 'react-router/lib/MemoryHistory';
 import React from 'react';
-import knex from 'knex';
-import bookshelf from 'bookshelf';
+import Knex from 'knex';
+import Bookshelf from 'bookshelf';
 
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 
-let my_knex = knex({
+const knexConfig = {
   client: 'pg',
   connection: {
     host     : '127.0.0.1',
@@ -18,9 +18,11 @@ let my_knex = knex({
     database : 'libertysoil',
     charset  : 'utf8'
   }
-});
+};
 
-let my_bookshelf = bookshelf(my_knex);
+let knex = Knex(knexConfig);
+let bookshelf = Bookshelf(knex);
+let controller = new ApiController(knex);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
@@ -36,7 +38,6 @@ app.use(function(req, res, next) {
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-let controller = new ApiController(my_knex);
 app.get('/api/v1/test', wrap(controller.test));
 app.get('/api/v1/posts', wrap(controller.posts.bind(controller)));
 
