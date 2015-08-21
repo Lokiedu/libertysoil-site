@@ -1,12 +1,18 @@
 .area {
   flex: 0 0 100%;
+  padding: 40px;
+  box-sizing: border-box;
+
+  @media @after-base {
+
+  }
 }
 
 .area__body {
+  .layout__grid;
+
   @media @after-base {
-    padding: 40px;
     .layout;
-    .layout__grid;
     .layout-align_center;
   }
 }
