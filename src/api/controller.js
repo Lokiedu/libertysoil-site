@@ -115,6 +115,9 @@ export default class ApiController {
     res.send({ success: true, user })
   }
 
+  async whoAmI(req, res) {
+  }
+
   async createPost(req, res) {
   }
 

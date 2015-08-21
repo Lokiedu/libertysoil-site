@@ -2,7 +2,7 @@ import React from 'react'
 import request from 'superagent';
 import { connect } from 'react-redux';
 
-import store, {addError} from '../store';
+import {getStore, addError} from '../store';
 
 export default class RegisterComponent extends React.Component {
 
@@ -26,7 +26,7 @@ export default class RegisterComponent extends React.Component {
 
     } else {
       //Error
-      store.dispatch(addError({message: 'Passwords do not match'}));
+      getStore().dispatch(addError({message: 'Passwords do not match'}));
     }
 
   };

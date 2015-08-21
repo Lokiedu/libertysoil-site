@@ -58,7 +58,7 @@ export function setCurrentUser(user) {
   }
 }
 
-function theReducer(state = initialState, action) {
+function theReducer(state, action) {
   switch (action.type) {
     case ADD_USER: {
       let user = action.user;
@@ -97,7 +97,6 @@ function theReducer(state = initialState, action) {
     case ADD_ERROR: {
       state = state.updateIn(['messages'], messages => messages.push(message))
       break;
-
     }
 
     case SET_CURRENT_USER: {
@@ -118,7 +117,13 @@ let initialState = Immutable.fromJS({
   current_user: {}
 });
 
+let store;
 
-let store = createStore(theReducer, initialState);
+export function initState(state=initialState) {
+  store = createStore(theReducer, initialState);
+  return store;
+}
 
-export default store;
+export function getStore() {
+  return store;
+}

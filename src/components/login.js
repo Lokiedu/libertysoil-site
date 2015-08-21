@@ -2,7 +2,7 @@ import React from 'react';
 import request from 'superagent';
 import { connect } from 'react-redux';
 
-import store, {addError, setCurrentUser} from '../store';
+import {getStore, addError, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
   async submitHandler(event) {
@@ -20,9 +20,9 @@ export default class LoginComponent extends React.Component {
     let result = await request.post(`${host}/api/v1/session`).type('form').send(login_data);
 
     if (result.body.success) {
-      store.dispatch(setCurrentUser(result.body.user));
+      getStore().dispatch(setCurrentUser(result.body.user));
     } else {
-      store.dispatch(addError('Invalid username or password'));
+      getStore().dispatch(addError('Invalid username or password'));
     }
   };
 
