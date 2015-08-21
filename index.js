@@ -28,7 +28,7 @@ let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
-app.use(multer());  // for parsing multipart/form-data
+//app.use(multer());  // for parsing multipart/form-data
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

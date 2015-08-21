@@ -29,7 +29,7 @@ export default class ApiController {
 
     for (let fieldName of requiredFields) {
       if (!(fieldName in req.body)) {
-        res.sendStatus(400);
+        res.status(400);
         res.send({error: 'Bad Request'});
         return
       }
@@ -57,9 +57,20 @@ export default class ApiController {
       obj.set('more', moreData);
     }
 
-    await obj.save();
+    try {
+      await obj.save(null, {method: 'insert'});
+      res.send(obj.toJSON());
+    } catch (e) {
+      if (e.code == 23505) {
+        res.status(401)
+        res.send({error: 'User already exists'})
+      } else {
+        console.dir(e)
 
-    res.send(obj.toJson());
+        res.status(500);
+        res.send({error: e.message})
+      }
+    }
   }
 
   async login(req, res) {
@@ -67,7 +78,7 @@ export default class ApiController {
 
     for (let fieldName of requiredFields) {
       if (!(fieldName in req.body)) {
-        res.sendStatus(400);
+        res.status(400);
         res.send({error: 'Bad Request'});
         return
       }
