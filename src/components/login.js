@@ -44,7 +44,6 @@ export default class LoginComponent extends React.Component {
             </div>
             <div className="layout__row layout layout-align_vertical layout-align_justify">
               <a href="#" className="link">Password reminder</a>
-              <button type="submit" className="button button-green">Login</button>
               <button type="submit" className="button button-wide button-green">Login</button>
             </div>
           </div>
