@@ -12,6 +12,7 @@ import initRedisStore from 'connect-redis';
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
+import store, {setCurrentUser} from './src/store';
 
 const knexConfig = {
   client: 'pg',
@@ -60,17 +61,23 @@ app.post('/api/v1/session', wrap(controller.login.bind(controller)))
 app.get('/api/v1/posts', wrap(controller.posts.bind(controller)));
 
 app.use(express.static('public', { index: false}));
+
 app.use((req, res, next) => {
   let history = new MemoryHistory([req.url]);
-
+  if (req.session) {
+    store.dispatch(setCurrentUser(req.session.user));
+  }
   let html = ReactDOMServer.renderToString(
     <Router history={history}>
       {routes}
     </Router>
   );
 
+  let state = JSON.stringify(store.getState().toJS());
+
   return res.render('index', {
-    html: html
+    state,
+    html
   });
 });
 

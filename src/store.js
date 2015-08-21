@@ -5,6 +5,8 @@ const ADD_USER = 'ADD_USER';
 const ADD_POST = 'ADD_POST';
 const SET_POSTS = 'SET_POSTS';
 const ADD_ERROR = 'ADD_ERROR';
+const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
 function addUser(username, email, firstName, lastName, userPic) {
   return {
@@ -40,6 +42,19 @@ export function addError(message) {
   return {
     type: ADD_ERROR,
     message
+  }
+}
+
+export function loginSuccess() {
+  return {
+    type: LOGIN_SUCCESS
+  }
+}
+
+export function setCurrentUser(user) {
+  return {
+    type: SET_CURRENT_USER,
+    user
   }
 }
 
@@ -82,6 +97,13 @@ function theReducer(state = initialState, action) {
     case ADD_ERROR: {
       state = state.updateIn(['messages'], messages => messages.push(message))
       break;
+
+    }
+
+    case SET_CURRENT_USER: {
+      state = state.set('is_logged_in', true);
+      state = state.set('current_user', action.user);
+      break;
     }
   }
 
@@ -91,7 +113,9 @@ function theReducer(state = initialState, action) {
 let initialState = Immutable.fromJS({
   users: {},
   posts: [],
-  messages: []
+  messages: [],
+  is_logged_in: false,
+  current_user: {}
 });
 
 

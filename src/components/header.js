@@ -10,7 +10,7 @@ export default class HeaderComponent extends React.Component {
             <a href="/" className="logo">Liberty Soil</a>
           </div>
           <div className="header__toolbar">
-            <div className="header__toolbar_item user">{this.props.currentUser.username}</div>
+            <div className="header__toolbar_item user">{this.props.current_user.username}</div>
             <Link to="/auth" className="header__toolbar_item">auth</Link>
           </div>
         </div>

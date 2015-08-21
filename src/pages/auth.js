@@ -7,17 +7,19 @@ import Header from '../components/header';
 
 class Auth extends React.Component {
   render() {
-    let currentUser = this.props.users[0];
+    let currentUser = this.props.current_user;
+
     console.log('render index...');
+    console.log('is_logged_in', this.props.is_logged_in);
 
     return (
       <div>
-        <Header currentUser={currentUser} />
+        <Header current_user={currentUser} />
         <div className="page__body">
           <div className="area">
             <div className="area__body layout-align_start">
               <p>This is an index</p>
-              <Login/>
+              {!this.props.is_logged_in && <Login />}
               <Register/>
             </div>
           </div>

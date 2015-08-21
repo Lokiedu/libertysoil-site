@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import store, {addError} from '../store';
 
-class RegisterComponent extends React.Component {
+export default class RegisterComponent extends React.Component {
 
   async submitHandler(event) {
 
@@ -68,10 +68,3 @@ class RegisterComponent extends React.Component {
     )
   }
 }
-
-
-function select(state) {
-  return state;
-}
-
-export default connect(select)(RegisterComponent);

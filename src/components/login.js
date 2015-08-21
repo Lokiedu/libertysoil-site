@@ -2,9 +2,9 @@ import React from 'react';
 import request from 'superagent';
 import { connect } from 'react-redux';
 
-import store, {addError} from '../store';
+import store, {addError, setCurrentUser} from '../store';
 
-class LoginComponent extends React.Component {
+export default class LoginComponent extends React.Component {
   async submitHandler(event) {
     event.preventDefault();
 
@@ -16,10 +16,11 @@ class LoginComponent extends React.Component {
     };
 
     const host = 'http://localhost:8000';
+
     let result = await request.post(`${host}/api/v1/session`).type('form').send(login_data);
 
-    if(result.success) {
-
+    if (result.body.success) {
+      store.dispatch(setCurrentUser(result.body.user));
     } else {
       store.dispatch(addError('Invalid username or password'));
     }
@@ -29,7 +30,7 @@ class LoginComponent extends React.Component {
     return (
       <div className="box box-middle">
         <header className="box__title">Login</header>
-        <form onSubmit={this.submitHandler}>
+        <form onSubmit={this.submitHandler} action="" method="post">
           <div className="box__body">
             <div className="layout__row">
               <div className="form__row">
@@ -43,7 +44,7 @@ class LoginComponent extends React.Component {
             </div>
             <div className="layout__row layout layout-align_vertical layout-align_justify">
               <a href="#" className="link">Password reminder</a>
-              <button className="button button-green">Login</button>
+              <button type="submit" className="button button-green">Login</button>
             </div>
           </div>
         </form>
@@ -52,8 +53,3 @@ class LoginComponent extends React.Component {
   }
 }
 
-function select(state) {
-  return state;
-}
-
-export default connect(select)(LoginComponent);
