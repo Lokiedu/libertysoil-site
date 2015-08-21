@@ -3,11 +3,10 @@ import ReactDOMServer from 'react-dom/server'
 import {Router} from 'react-router';
 import MemoryHistory from 'react-router/lib/MemoryHistory';
 import React from 'react';
-import Knex from 'knex';
-import Bookshelf from 'bookshelf';
 
 import routes from './src/routing';
 import ApiController from './src/api/controller'
+import initBookshelf from './src/api/db'
 
 const knexConfig = {
   client: 'pg',
@@ -20,8 +19,7 @@ const knexConfig = {
   }
 };
 
-let knex = Knex(knexConfig);
-let bookshelf = Bookshelf(knex);
+let bookshelf = initBookshelf(knexConfig)
 let controller = new ApiController(bookshelf);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
