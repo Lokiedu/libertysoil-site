@@ -10,15 +10,16 @@
   padding: @space;
   flex: 0 0 240px;
   box-sizing: border-box;
-  background: @color__background;
+}
 
-  @media @after-normal {
-    margin-right: 1px;
-  }
+.page__container {
+  background: #f3f2f1;
 }
 
 .page__body {
   &:extend(.layout-rows);
+  max-width: 1280px;
+  margin: auto;
 
   @media @after-normal {
     .layout;

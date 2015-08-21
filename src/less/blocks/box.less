@@ -1,5 +1,7 @@
+@box__padding: @doubleSpace;
+
 .box {
-  padding: @space * 2;
+  padding: @box__padding;
   background: @color__block_background;
   border-radius: @radius;
 }
@@ -11,4 +13,13 @@
 
 .box-middle {
   min-width: 320px;
+}
+
+.box-space_bottom {
+  margin-bottom: @doubleSpace;
+}
+
+.box-post {
+  padding: @box__padding - 3;
+  border: 3px solid @color__green;
 }

@@ -3,6 +3,16 @@
   border: 1px solid @color__border;
   padding: 7px 10px;
   box-sizing: border-box;
+  resize: vertical;
+
+  &:focus {
+    border-color: @color__blue;
+    outline: none;
+  }
+}
+
+.input-textarea {
+  min-height: 130px;
 }
 
 .input-block {

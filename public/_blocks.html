@@ -17,127 +17,160 @@
       </div>
     </div>
   </header>
-  <div class="page__body">
-    <div class="area">
-      <div class="area__body layout-align_start">
-        <div class="box box-middle">
-          <header class="box__title">Login</header>
-          <div class="box__body">
-            <div class="layout__row">
-              <div class="form__row">
-                <label for="email" class="label label-block label-space">Email</label>
-                <input id="email" class="input input-block" type="text" />
+  <div class="page__container">
+    <div class="page__body">
+      <aside class="page__sidebar">
+        <section class="layout__row user_box">
+          <img class="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+          <div class="user_box__body">
+            <p class="user_box__name">User Name</p>
+            <p class="user_box__text">Math teacher</p>
+          </div>
+        </section>
+      </aside>
+    </div>
+    <div class="page__body">
+      <div class="area">
+        <div class="area__body layout-align_start">
+          <div class="box box-middle">
+            <header class="box__title">Login</header>
+            <div class="box__body">
+              <div class="layout__row">
+                <div class="form__row">
+                  <label for="email" class="label label-block label-space">Email</label>
+                  <input id="email" class="input input-block" type="text" />
+                </div>
+                <div class="form__row">
+                  <label class="label label-block label-space">Password</label>
+                  <input class="input input-block" type="password" />
+                </div>
               </div>
-              <div class="form__row">
-                <label class="label label-block label-space">Password</label>
-                <input class="input input-block" type="password" />
+              <div class="layout__row layout layout-align_vertical layout-align_justify">
+                <a href="#" class="link">Password reminder</a>
+                <button class="button button-wide button-green">Login</button>
               </div>
-            </div>
-            <div class="layout__row layout layout-align_vertical layout-align_justify">
-              <a href="#" class="link">Password reminder</a>
-              <button class="button button-wide button-green">Login</button>
             </div>
           </div>
-        </div>
-        <div class="box box-middle">
-          <header class="box__title">Register</header>
-          <div class="box__body">
-            <div class="layout__row">
-              <div class="form__row">
-                <label class="label label-block label-space">First name</label>
-                <input class="input input-block" type="text">
+          <div class="box box-middle">
+            <header class="box__title">Register</header>
+            <div class="box__body">
+              <div class="layout__row">
+                <div class="form__row">
+                  <label class="label label-block label-space">First name</label>
+                  <input class="input input-block" type="text">
+                </div>
+                <div class="form__row">
+                  <label class="label label-block label-space">Last name</label>
+                  <input class="input input-block" type="text">
+                </div>
+                <div class="form__row">
+                  <label class="label label-block label-space">Email</label>
+                  <input class="input input-block" type="email">
+                </div>
+                <div class="form__row">
+                  <label class="label label-block label-space">Password</label>
+                  <input class="input input-block" type="password">
+                </div>
+                <div class="form__row">
+                  <label class="label label-block label-space">Repeat password</label>
+                  <input class="input input-block" type="password">
+                </div>
               </div>
-              <div class="form__row">
-                <label class="label label-block label-space">Last name</label>
-                <input class="input input-block" type="text">
+              <div class="layout__row layout layout-align_vertical layout-align_justify">
+                <label class="action layout layout-align_vertical"><input type="checkbox" class="checkbox"><span>I agree to <a href="#" class="link">T&C</a></span></label>
+                <button class="button button-wide button-yellow">Register</button>
               </div>
-              <div class="form__row">
-                <label class="label label-block label-space">Email</label>
-                <input class="input input-block" type="email">
-              </div>
-              <div class="form__row">
-                <label class="label label-block label-space">Password</label>
-                <input class="input input-block" type="password">
-              </div>
-              <div class="form__row">
-                <label class="label label-block label-space">Repeat password</label>
-                <input class="input input-block" type="password">
-              </div>
-            </div>
-            <div class="layout__row layout layout-align_vertical layout-align_justify">
-              <label class="action layout layout-align_vertical"><input type="checkbox" class="checkbox"><span>I agree to <a href="#" class="link">T&C</a></span></label>
-              <button class="button button-wide button-yellow">Register</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="page__body">
-    <aside class="page__sidebar">
-      <section class="layout__row user_box">
-        <a href="#" class="user_box__name">User Name</a>
-      </section>
-      <div class="layout__row">
-        <h3 class="head head-sub">Popular tags</h3>
-      </div>
-      <div class="layout__row">
-        <div class="tags">
-          <span class="tag">Psychology</span>
-          <span class="tag">Gaming</span>
+    <div class="page__body">
+      <aside class="page__sidebar">
+        <section class="layout__row user_box">
+          <img class="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+          <div class="user_box__body">
+            <p class="user_box__name">User Name</p>
+            <p class="user_box__text">Math teacher</p>
+          </div>
+        </section>
+        <div class="layout__row">
+          <h3 class="head head-sub">Popular tags</h3>
         </div>
-      </div>
-    </aside>
-    <article class="page__content">
-      <section class="card">
-        <header class="card__header">
-          Psychology today
-        </header>
-        <div class="card__content">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab architecto dolore dolorum eius excepturi, incidunt, ipsum itaque odio provident recusandae repudiandae sint tempore. Excepturi ipsam pariatur quaerat reprehenderit, vitae voluptate?</p>
-        </div>
-        <div class="card__owner">
-          <section class="user_box">
-            <a href="#" class="user_box__name">User Name</a>
-            <div class="user_box__text">yesterday at 8:01</div>
-          </section>
-        </div>
-        <footer class="card__footer">
+        <div class="layout__row">
           <div class="tags">
             <span class="tag">Psychology</span>
             <span class="tag">Gaming</span>
           </div>
-          <div class="card__toolbar">
-            <span class="icon fa fa-heart-o"></span>
-            <span class="icon fa fa-star-o"></span>
-          </div>
-        </footer>
-      </section>
-      <section class="card">
-        <header class="card__header">
-          Psychology today
-        </header>
-        <div class="card__content">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab architecto dolore dolorum eius excepturi, incidunt, ipsum itaque odio provident recusandae repudiandae sint tempore. Excepturi ipsam pariatur quaerat reprehenderit, vitae voluptate?</p>
         </div>
-        <div class="card__owner">
-          <section class="user_box">
-            <a href="#" class="user_box__name">User Name</a>
-            <div class="user_box__text">yesterday at 8:01</div>
-          </section>
+      </aside>
+      <article class="page__content">
+        <div class="box box-post box-space_bottom">
+          <div class="box__body">
+            <div class="layout__row">
+              <textarea class="input input-textarea input-block" placeholder="Share some knowledge"></textarea>
+            </div>
+            <div class="layout__row layout layout-align_right">
+              <button class="button button-wide button-green" disabled="disabled">Post</button>
+            </div>
+          </div>
         </div>
-        <footer class="card__footer">
-          <div class="tags">
-            <span class="tag">Psychology</span>
-            <span class="tag">Gaming</span>
+        <section class="card">
+          <header class="card__header">
+            Psychology today
+          </header>
+          <div class="card__content">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab architecto dolore dolorum eius excepturi, incidunt, ipsum itaque odio provident recusandae repudiandae sint tempore. Excepturi ipsam pariatur quaerat reprehenderit, vitae voluptate?</p>
           </div>
-          <div class="card__toolbar">
-            <span class="icon fa fa-heart-o"></span>
-            <span class="icon fa fa-star-o"></span>
+          <div class="card__owner">
+            <section class="user_box">
+              <img class="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+              <div class="user_box__body">
+                <p class="user_box__name">User Name</p>
+                <p class="user_box__text">yesterday at 8:01</p>
+              </div>
+            </section>
           </div>
-        </footer>
-      </section>
-    </article>
+          <footer class="card__footer">
+            <div class="tags">
+              <span class="tag">Psychology</span>
+              <span class="tag">Gaming</span>
+            </div>
+            <div class="card__toolbar">
+              <span class="icon fa fa-heart-o"></span>
+              <span class="icon fa fa-star-o"></span>
+            </div>
+          </footer>
+        </section>
+        <section class="card">
+          <header class="card__header">
+            Psychology today
+          </header>
+          <div class="card__content">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab architecto dolore dolorum eius excepturi, incidunt, ipsum itaque odio provident recusandae repudiandae sint tempore. Excepturi ipsam pariatur quaerat reprehenderit, vitae voluptate?</p>
+          </div>
+          <div class="card__owner">
+            <section class="user_box">
+              <img class="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+              <div class="user_box__body">
+                <p class="user_box__name">User Name</p>
+                <p class="user_box__text">yesterday at 8:01</p>
+              </div>
+            </section>
+          </div>
+          <footer class="card__footer">
+            <div class="tags">
+              <span class="tag">Psychology</span>
+              <span class="tag">Gaming</span>
+            </div>
+            <div class="card__toolbar">
+              <span class="icon fa fa-heart-o"></span>
+              <span class="icon fa fa-star-o"></span>
+            </div>
+          </footer>
+        </section>
+      </article>
+    </div>
   </div>
   <footer class="page__footer footer">
     <nav class="footer_nav">

@@ -6,6 +6,7 @@
 
 @space: 15px;
 @halfSpace: @space/2;
+@doubleSpace: @space*2;
 
 @transition__time: 0.3s;
 @transition__function: ease;
@@ -13,6 +14,7 @@
 @after-small: ~"(min-width: 480px)";
 @after-normal: ~"(min-width: 768px)";
 @after-base: ~"(min-width: 960px)";
+
 @after-wide: ~"(min-width: 1280px)";
 
 html {
@@ -50,3 +52,4 @@ a {
 @import 'blocks/link';
 @import 'blocks/checkbox';
 @import 'blocks/action';
+@import 'blocks/disabled';
