@@ -1,5 +1,6 @@
 import { createStore } from 'redux'
 import Immutable, { Map } from 'immutable'
+import _ from 'lodash'
 
 const ADD_USER = 'ADD_USER';
 const ADD_POST = 'ADD_POST';
@@ -80,7 +81,12 @@ function theReducer(state, action) {
     case SET_POSTS: {
       let posts = action.posts;
 
-      let postsWithoutUsers = action.posts.map(post => delete post.user);
+      let postsWithoutUsers = action.posts.map(post => {
+        let postCopy = _.cloneDeep(post);
+        delete postCopy.user;
+        return postCopy;
+      });
+
       let users = _.unique(posts.map(post => post.user), 'id')
 
       state = state.set('posts', postsWithoutUsers);
