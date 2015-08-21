@@ -74,6 +74,11 @@ app.use((req, res, next) => {
   let location = new Location(req.path, req.query)
 
   Router.run(routes, location, (error, initialState, transition) => {
+    if (null === initialState) {
+      next();
+      return;
+    }
+
     let render = () => {
       let html = ReactDOMServer.renderToString(
         <Router {...initialState}/>
