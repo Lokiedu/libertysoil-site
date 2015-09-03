@@ -11,4 +11,4 @@ RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp
 
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["babel-node", "index.js"]
