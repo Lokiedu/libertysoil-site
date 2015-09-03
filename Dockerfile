@@ -10,5 +10,5 @@ RUN npm install -g babel gulp && \
 RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp
 
-EXPOSE 3000
+EXPOSE 8000
 CMD ["babel-node", "index.js"]
