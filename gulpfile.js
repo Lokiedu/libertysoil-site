@@ -127,7 +127,7 @@ gulp.task('default', function (cb) {
 });
 
 // public task
-gulp.task('build', ['styles', 'html', 'scripts:once']);
+gulp.task('build', ['styles', 'html', 'scripts:once', 'fonts']);
 
 // Watch
 gulp.task('watch', function () {
