@@ -14,6 +14,7 @@ import initRedisStore from 'connect-redis';
 import routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
+import {API_HOST} from './src/config'
 import {initState, setCurrentUser, getStore, setPosts} from './src/store';
 
 const knexConfig = {
@@ -90,8 +91,7 @@ app.use((req, res, next) => {
     };
 
     if (initialState.branch[1].name == 'post_list') {
-      const host = 'http://localhost:8000';
-      request.get(`${host}/api/v1/posts`).end((err, result) => {
+      request.get(`${API_HOST}/api/v1/posts`).end((err, result) => {
         getStore().dispatch(setPosts(result.body));
         render();
       });

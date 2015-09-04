@@ -2,6 +2,7 @@ import React from 'react';
 import request from 'superagent';
 import { connect } from 'react-redux';
 
+import {API_HOST} from '../config'
 import {getStore, addError, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
@@ -15,9 +16,7 @@ export default class LoginComponent extends React.Component {
       password: form.password.value
     };
 
-    const host = 'http://localhost:8000';
-
-    let result = await request.post(`${host}/api/v1/session`).type('form').send(login_data);
+    let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
 
     if (result.body.success) {
       getStore().dispatch(setCurrentUser(result.body.user));

@@ -9,13 +9,13 @@ import User from '../components/current_user';
 import River from '../components/river_of_posts';
 import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags';
+import {API_HOST} from '../config';
 import {getStore, setPosts} from '../store';
 
 
 class Index extends React.Component {
   async componentWillMount() {
-    const host = 'http://localhost:8000';
-    let result = await request.get(`${host}/api/v1/posts`);
+    let result = await request.get(`${API_HOST}/api/v1/posts`);
     getStore().dispatch(setPosts(result.body));
   }
   render() {

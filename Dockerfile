@@ -13,6 +13,8 @@ RUN /bin/sed -i "s*user     : 'libertysoil'*user     : 'postgres'*" index.js && 
 RUN /bin/sed -i "s*host: 'localhost'*host: process.env.REDIS_PORT_6379_TCP_ADDR*" index.js && \
   /bin/sed -i "s*port: 6379*port: process.env.REDIS_PORT_6379_TCP_PORT*" index.js
 
+RUN /bin/sed -i "s*http://localhost:8000*http://alpha.libertysoil.org*" src/config.js
+
 RUN npm install -g babel gulp && \
   npm install --only=prod && \
   gulp --gulpfile gulpfile-build.js build

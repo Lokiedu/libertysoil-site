@@ -2,6 +2,7 @@ import React from 'react'
 import request from 'superagent';
 import { connect } from 'react-redux';
 
+import {API_HOST} from '../config';
 import {getStore, addError} from '../store';
 
 export default class RegisterComponent extends React.Component {
@@ -13,15 +14,13 @@ export default class RegisterComponent extends React.Component {
     let form = event.target;
 
     if(form.password.value != '' && form.password.value === form.password_repeat.value) {
-      const host = 'http://localhost:8000';
-
       let user_data = {
         username: form.username.value,
         password: form.password.value,
         email: form.email.value
       };
 
-      let result = await request.post(`${host}/api/v1/users`).type('form').send(user_data);
+      let result = await request.post(`${API_HOST}/api/v1/users`).type('form').send(user_data);
 
 
     } else {
