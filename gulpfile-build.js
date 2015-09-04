@@ -1,0 +1,107 @@
+var source = require('vinyl-source-stream');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var browserify = require('browserify');
+var reactify = require('reactify');
+var babelify = require('babelify');
+var notify = require('gulp-notify');
+var plumber = require('gulp-plumber');
+var autoprefixer = require('gulp-autoprefixer');
+var less = require('gulp-less');
+var del = require('del');
+var runSequence = require('run-sequence');
+var concat = require('gulp-concat');
+var gulpif = require('gulp-if');
+
+var path = {
+  src: {
+    styles: 'src/less/styles.less',
+    less: 'src/less/**/*.less',
+    scripts: 'src/scripts/**/.js',
+    scriptsDir: 'src/scripts/',
+    html: 'src/*.html',
+    parts: 'src/parts/**/*.html'
+  },
+  dist: {
+    dir: 'public/',
+    html: 'public/*.html',
+    scripts: 'public/scripts/',
+    styles: 'public/styles/',
+    fonts: 'public/fonts/'
+  }
+};
+
+function handleErrors() {
+  var args = Array.prototype.slice.call(arguments);
+  notify.onError({
+    title: 'Compile Error',
+    message: '<%= error.message %>'
+  }).apply(this, args);
+  this.emit('end'); // Keep gulp from hanging on this task
+}
+
+function buildScript(file) {
+  var props = {
+    entries: [path.src.scriptsDir + file],
+    debug: true,
+    transform: [babelify.configure({
+      stage: 1,
+      optional: ['runtime']
+    }), reactify]
+  };
+
+  var bundler = browserify(props);
+
+  function rebundle() {
+    var stream = bundler.bundle();
+    return stream
+      .on('error', handleErrors)
+      .pipe(source(file))
+      .pipe(gulp.dest(path.dist.scripts));
+  }
+
+  // listen for an update and run rebundle
+  bundler.on('update', function () {
+    rebundle();
+    gutil.log('Rebundle...');
+  });
+
+  // run it once the first time buildScript is called
+  return rebundle();
+}
+
+// Scripts one build
+gulp.task('scripts:once', function () {
+  return buildScript('app.js', false);
+});
+
+// Scripts - watch
+gulp.task('scripts', function () {
+  return buildScript('app.js', true);
+});
+
+// Fonts
+gulp.task('fonts', function () {
+  return gulp.src([
+    'node_modules/font-awesome/fonts/*.*'
+  ])
+    .pipe(gulp.dest(path.dist.fonts));
+});
+
+// Pages
+gulp.task('html', function () {
+  return gulp.src(path.dist.html);
+});
+
+// Styles
+gulp.task('styles', function () {
+  return gulp.src(path.src.styles)
+    .pipe(plumber())
+    .pipe(less())
+    .pipe(autoprefixer())
+    .pipe(concat('styles.css'))
+    .pipe(gulp.dest(path.dist.styles));
+});
+
+// public task
+gulp.task('build', ['styles', 'html', 'scripts:once', 'fonts']);

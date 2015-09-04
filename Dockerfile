@@ -10,8 +10,8 @@ RUN /bin/sed -i "s*user     : 'libertysoil'*user     : 'postgres'*" index.js && 
   /bin/sed -i "s*database     : 'libertysoil'*database     : 'postgres'*" index.js
 
 RUN npm install -g babel gulp && \
-  npm install && \
-  gulp build
+  npm install --only=prod && \
+  gulp --gulpfile gulpfile-build.js build
 
 RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp

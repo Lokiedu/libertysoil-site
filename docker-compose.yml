@@ -1,0 +1,30 @@
+db:
+  image: "postgres:9.4"
+  ports:
+    - "127.0.0.1:5432:5432"
+  volumes:
+    - "/mnt/data/postgres:/var/lib/postgresql/data"
+  environment:
+    - "POSTGRES_PASSWORD=Laik7akoh2ai"
+redis:
+  image: "redis:3.0"
+app:
+  image: "quay.io/dipstudio/libertysoil:master"
+  ports:
+    - "127.0.0.1:8000:8000"
+  links:
+    - db
+    - redis
+# web:
+#   image: "quay.io/indeyets/nginx17-fpm:latest"
+#   links:
+#     - fpm
+#   volumes_from:
+#     - symfony
+#   environment:
+#     - "NGINX_HOST=showroom-stg.adform.com"
+#     - "NGINX_DATA_ROOT=/app/adform/web"
+#   ports:
+#     - "80:80"
+#   volumes:
+#     - "/mnt/data/media:/app/adform/web/media"
