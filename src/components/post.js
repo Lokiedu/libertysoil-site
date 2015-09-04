@@ -11,10 +11,12 @@ export class TextPostComponent extends React.Component {
           <p>{this.props.post.text}</p>
         </div>
         <div className="card__owner">
-          <section className="user_box">
-            <a href="#" className="user_box__name">User Name</a>
-
-            <div className="user_box__text">yesterday at 8:01</div>
+          <section className="layout__row user_box">
+            <img className="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+            <div className="user_box__body">
+              <p className="user_box__name">User Name</p>
+              <p className="user_box__text">-</p>
+            </div>
           </section>
         </div>
         <footer className="card__footer">
