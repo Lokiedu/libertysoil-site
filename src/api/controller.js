@@ -23,6 +23,29 @@ export default class ApiController {
     res.send(response.toJSON());
   }
 
+  async subscriptions(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+      return
+    }
+
+    let user = req.session.user
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .join('followers', 'followers.following_user_id', 'posts.user_id')
+          .where('followers.user_id', '=', user.id)
+          .orderBy('posts.created_at', 'desc')
+      })
+
+    let posts = await q.fetchAll({require: false, withRelated: ['user']})
+
+    res.send(posts.toJSON());
+  }
+
   async registerUser(req, res) {
     let requiredFields = ['username', 'password', 'email'];
     let optionalFields = ['firstName', 'lastName'];

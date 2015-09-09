@@ -7,6 +7,7 @@ import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import request from 'superagent';
+import _ from 'lodash'
 
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
@@ -61,7 +62,7 @@ app.set('view engine', 'ejs');
 app.get('/api/v1/test', wrap(controller.test));
 app.post('/api/v1/users', wrap(controller.registerUser.bind(controller)))
 app.post('/api/v1/session', wrap(controller.login.bind(controller)))
-app.get('/api/v1/posts', wrap(controller.posts.bind(controller)));
+app.get('/api/v1/posts', wrap(controller.subscriptions.bind(controller)));
 app.post('/api/v1/posts', wrap(controller.createPost.bind(controller)));
 
 app.use(express.static('public', { index: false}));
@@ -93,11 +94,18 @@ app.use((req, res, next) => {
       res.render('index', { state, html });
     }
 
-    if (initialState.routes[1].name == 'post_list') {
-      request.get(`${API_HOST}/api/v1/posts`).end((err, result) => {
-        getStore().dispatch(setPosts(result.body));
-        render()
-      });
+    if (initialState.routes[1].name == 'post_list' && 'cookie' in req.headers) {
+      request
+        .get(`${API_HOST}/api/v1/posts`)
+        .set('Cookie', req.headers['cookie'])
+        .end((err, result) => {
+          if (!err) {
+            getStore().dispatch(setPosts(result.body));
+          } else {
+            console.dir(err)
+          }
+          render()
+        });
     } else {
       render()
     }
