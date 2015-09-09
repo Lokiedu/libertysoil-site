@@ -17,3 +17,10 @@ CREATE TABLE posts (
     updated_at timestamp not null default now(),
     more jsonb
 );
+
+CREATE TABLE followers (
+    id uuid not null unique PRIMARY KEY,
+    user_id uuid not null REFERENCES users (id) ON DELETE CASCADE,
+    following_user_id uuid not null REFERENCES users (id) ON DELETE CASCADE
+);
+
