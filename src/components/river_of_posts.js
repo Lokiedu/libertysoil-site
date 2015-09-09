@@ -9,7 +9,7 @@ export default class RiverOfPostsComponent extends React.Component {
         <p>Hi, I am a river of posts</p>
         <br />
         <CreatePost />
-        {this.props.posts.map((post) => <TextPostComponent post={post} key={post.id}/> )}
+        {this.props.posts.map((post) => <TextPostComponent post={post} author={this.props.users[post.user_id]} key={post.id}/> )}
       </div>
     )
   }

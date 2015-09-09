@@ -39,7 +39,7 @@ class Index extends React.Component {
             </div>
             <div className="page__content">
               <p>This is a List-page!!!!!!!!</p>
-              <River posts={this.props.posts}/>
+              <River posts={this.props.posts} users={this.props.users}/>
               <Followed/>
               <Tags/>
             </div>
