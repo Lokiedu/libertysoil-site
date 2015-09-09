@@ -1,8 +1,8 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server'
-import {Router} from 'react-router';
-import MemoryHistory from 'react-router/lib/MemoryHistory';
-import Location from 'react-router/lib/Location';
+import {Router, createRoutesFromReactChildren, useRoutes} from 'react-router';
+import RoutingContext from 'react-router/lib/RoutingContext'
+import { createLocation, createMemoryHistory } from 'history'
 import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
@@ -11,7 +11,7 @@ import request from 'superagent';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 
-import routes from './src/routing';
+import Routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
@@ -72,33 +72,35 @@ app.use((req, res, next) => {
     store.dispatch(setCurrentUser(req.session.user));
   }
 
-  let location = new Location(req.path, req.query)
+  let location = createLocation(req.path, req.query)
+  let routes = createRoutesFromReactChildren(Routes)
+  let history = useRoutes(createMemoryHistory)({ routes })
 
-  Router.run(routes, location, (error, initialState, transition) => {
+  history.match(location, (error, initialState)=> {
     if (null === initialState) {
       next();
       return;
     }
 
-    let render = () => {
+    function render() {
       let html = ReactDOMServer.renderToString(
-        <Router {...initialState}/>
+        <RoutingContext history={history} {...initialState}/>
       );
 
       let state = JSON.stringify(store.getState().toJS());
 
       res.render('index', { state, html });
-    };
+    }
 
-    if (initialState.branch[1].name == 'post_list') {
+    if (initialState.routes[1].name == 'post_list') {
       request.get(`${API_HOST}/api/v1/posts`).end((err, result) => {
         getStore().dispatch(setPosts(result.body));
-        render();
+        render()
       });
     } else {
-      render();
+      render()
     }
-  });
+  })
 });
 
 

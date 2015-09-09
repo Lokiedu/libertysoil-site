@@ -8,7 +8,7 @@ export default class App extends React.Component {
     return (
       <div className="page">
         <Provider store={getStore()}>
-          {() => this.props.children}
+          {this.props.children}
         </Provider>
       </div>
     )
