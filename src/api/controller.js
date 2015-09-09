@@ -131,18 +131,18 @@ export default class ApiController {
 
     let Post = this.bookshelf.model('Post')
 
-    let obj = new User({
+    let obj = new Post({
       id: uuid.v4(),
-      text: req.body.test,
+      text: req.body.text,
       user_id: req.session.user.id
     });
 
     try {
       await obj.save(null, {method: 'insert'});
+      await obj.fetch({require: true, withRelated: ['user']})
+
       res.send(obj.toJSON());
     } catch (e) {
-      console.dir(e)
-
       res.status(500);
       res.send({error: e.message})
     }

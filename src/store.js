@@ -22,20 +22,17 @@ function addUser(username, email, firstName, lastName, userPic) {
   }
 }
 
-function addPost(userId, text) {
+export function addPost(post) {
   return {
     type: ADD_POST,
-    post: {
-      userId,
-      text
-    }
+    post
   }
 }
 
 export function setPosts(posts) {
   return {
     type: SET_POSTS,
-    posts: posts
+    posts
   }
 }
 
@@ -67,14 +64,21 @@ function theReducer(state, action) {
       let cut = {users: {}};
       cut.users[user.id] = user;
 
-      state = state.mergeDeep(cut);
+      state = state.mergeDeep(Immutable.fromJS(cut));
       break;
     }
 
     case ADD_POST: {
-      let post = action.post;
+      let user = action.post.user
 
-      state = state.updateIn(['posts'], posts => posts.push(post))
+      let cut = {users: {}};
+      cut.users[user.id] = user;
+      state = state.mergeDeep(Immutable.fromJS(cut));
+
+      let postCopy = _.cloneDeep(action.post);
+      delete postCopy.user;
+
+      state = state.updateIn(['posts'], posts => posts.unshift(Immutable.fromJS(postCopy)))
       break;
     }
 
@@ -89,14 +93,14 @@ function theReducer(state, action) {
 
       let users = _.unique(posts.map(post => post.user), 'id')
 
-      state = state.set('posts', postsWithoutUsers);
+      state = state.set('posts', Immutable.fromJS(postsWithoutUsers));
 
       let cut = {users: {}};
       for (let user of users) {
         cut.users[user.id] = user;
       }
 
-      state = state.mergeDeep(cut);
+      state = state.mergeDeep(Immutable.fromJS(cut));
       break;
     }
 
@@ -107,7 +111,7 @@ function theReducer(state, action) {
 
     case SET_CURRENT_USER: {
       state = state.set('is_logged_in', true);
-      state = state.set('current_user', action.user);
+      state = state.set('current_user', Immutable.fromJS(action.user));
       break;
     }
   }
