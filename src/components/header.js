@@ -3,6 +3,14 @@ import {Link} from 'react-router';
 
 export default class HeaderComponent extends React.Component {
   render() {
+    let AuthBlock;
+
+    if (this.props.is_logged_in) {
+      AuthBlock = <div className="header__toolbar_item user">{this.props.current_user.username}</div>
+    } else {
+      AuthBlock = <Link to="/auth" className="header__toolbar_item">auth</Link>
+    }
+
     return (
       <div className="header page__header">
         <div className="header__body">
@@ -10,8 +18,7 @@ export default class HeaderComponent extends React.Component {
             <a href="/" className="logo">Liberty Soil</a>
           </div>
           <div className="header__toolbar">
-            <div className="header__toolbar_item user">{this.props.current_user.username}</div>
-            <Link to="/auth" className="header__toolbar_item">auth</Link>
+            {AuthBlock}
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router';
 import { connect } from 'react-redux';
 import request from 'superagent';
 
@@ -23,7 +22,7 @@ class Index extends React.Component {
 
     return (
       <div>
-        <Header current_user={current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
         <div className="page__container">
           <div className="page__body">
             <div className="page__sidebar">

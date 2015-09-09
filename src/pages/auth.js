@@ -9,12 +9,9 @@ class Auth extends React.Component {
   render() {
     let currentUser = this.props.current_user;
 
-    console.log('render index...');
-    console.log('is_logged_in', this.props.is_logged_in);
-
     return (
       <div>
-        <Header current_user={currentUser} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={currentUser} />
         <div className="page__body">
           <div className="area">
             <div className="area__body layout-align_start">
