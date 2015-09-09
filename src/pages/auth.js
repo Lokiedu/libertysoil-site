@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
+import Errors from '../components/errors';
 
 class Auth extends React.Component {
   render() {
@@ -15,7 +16,7 @@ class Auth extends React.Component {
         <div className="page__body">
           <div className="area">
             <div className="area__body layout-align_start">
-              <p>This is an index</p>
+              <Errors messages={this.props.messages}/>
               {!this.props.is_logged_in && <Login />}
               <Register/>
             </div>

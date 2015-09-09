@@ -101,7 +101,7 @@ function theReducer(state, action) {
     }
 
     case ADD_ERROR: {
-      state = state.updateIn(['messages'], messages => messages.push(message))
+      state = state.updateIn(['messages'], messages => messages.push(action.message))
       break;
     }
 
