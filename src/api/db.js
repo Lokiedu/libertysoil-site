@@ -16,10 +16,10 @@ export default function initBookshelf(config) {
       return this.hasMany(Post, 'user_id');
     },
     following: function() {
-      return this.belongsToMany(User, 'user_id', 'followers', 'user_id');
+      return this.belongsToMany(User, 'followers', 'id', 'user_id');
     },
     followers: function() {
-      return this.belongsToMany(User, 'user_id', 'followers', 'following_user_id');
+      return this.belongsToMany(User, 'followers', 'id', 'following_user_id');
     },
     hidden: ['hashed_password', 'email']  // exclude from json-exports
   });
