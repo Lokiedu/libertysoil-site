@@ -62,6 +62,7 @@ app.get('/api/v1/test', wrap(controller.test));
 app.post('/api/v1/users', wrap(controller.registerUser.bind(controller)))
 app.post('/api/v1/session', wrap(controller.login.bind(controller)))
 app.get('/api/v1/posts', wrap(controller.posts.bind(controller)));
+app.post('/api/v1/posts', wrap(controller.createPost.bind(controller)));
 
 app.use(express.static('public', { index: false}));
 

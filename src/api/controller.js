@@ -119,6 +119,33 @@ export default class ApiController {
   }
 
   async createPost(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    if (!('text' in req.body)) {
+      res.status(400)
+      res.send({error: '"text" parameter is not given'})
+    }
+
+    let Post = this.bookshelf.model('Post')
+
+    let obj = new User({
+      id: uuid.v4(),
+      text: req.body.test,
+      user_id: req.session.user.id
+    });
+
+    try {
+      await obj.save(null, {method: 'insert'});
+      res.send(obj.toJSON());
+    } catch (e) {
+      console.dir(e)
+
+      res.status(500);
+      res.send({error: e.message})
+    }
   }
 
   async followUser(req, res) {
