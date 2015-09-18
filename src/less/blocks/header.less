@@ -1,17 +1,28 @@
 .header {
   padding: @space;
   background: @color__block_background;
+
+  &-transparent {
+    background: none;
+  }
 }
 
 .header__body {
   &:extend(.layout);
   &:extend(.layout__grid all);
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .header__toolbar {
   &:extend(.layout);
   &:extend(.layout-align_right);
   &:extend(.layout__grid_item-wide);
+  margin-top: 0;
+}
+
+.header__logo {
+  margin-top: 0;
 }
 
 .header__toolbar_item {

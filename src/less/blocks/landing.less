@@ -1,0 +1,29 @@
+.landing {
+  &-bg {
+    background: #62b7e2;
+    color: #fff;
+  }
+
+  &-big {
+    .landing__header {
+      @media @after-normal {
+        padding: 170px @space;
+      }
+    }
+  }
+
+  &__header {
+    text-align: center;
+    font-size: 22px;
+    padding: @doubleSpace;
+  }
+
+  &__title {
+    font-size: 50px;
+    margin: 0 0 @space;
+  }
+
+  &__details {
+    margin: 0 0 @doubleSpace;
+  }
+}
