@@ -34,6 +34,10 @@
   flex-wrap: wrap;
 }
 
+.layout__grid_wrapper {
+  overflow: hidden;
+}
+
 .layout__grid {
   margin-top: -@space;
   margin-right: -@space;
@@ -55,9 +59,15 @@
 
 .layout__grid_item {
   margin-right: @space;
+}
 
-  &:last-child {
-    margin-right: 0;
+@media @before-normal {
+  .layout__grid-responsive {
+    display: block;
+
+    > .layout__grid_item {
+      margin-right: 0;
+    }
   }
 }
 
@@ -108,6 +118,10 @@
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.layout__space {
+  margin: @space 0;
 }
 
 .layout__space_left {
