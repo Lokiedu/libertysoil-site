@@ -17,7 +17,7 @@ export default class Welcome extends React.Component {
           </header>
         </section>
         <WhatIsLibertySoil />
-        <div className="void content content-center skin skin-red">
+        <div className="void void-space content content-center skin skin-red">
           <h2><a href="#">What is free freedom focused education?</a></h2>
           <p>We are seeking an approach to education that is adapted more to children's needs and want to apply a humanistic perspective.</p>
         </div>
