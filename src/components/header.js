@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 export default class HeaderComponent extends React.Component {
   render() {
     let AuthBlock;
+    var classNames = 'header page__header ' + this.props.className;
 
     if (this.props.is_logged_in) {
       AuthBlock = <div className="header__toolbar_item user">{this.props.current_user.username}</div>
@@ -12,7 +13,7 @@ export default class HeaderComponent extends React.Component {
     }
 
     return (
-      <div className="header page__header">
+      <div {...this.props} className={classNames}>
         <div className="header__body">
           <div className="header__logo">
             <a href="/" className="logo">Liberty Soil</a>
