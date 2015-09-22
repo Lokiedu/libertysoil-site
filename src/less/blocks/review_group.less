@@ -1,0 +1,27 @@
+.review_group {
+  &__reviews {
+    .review {
+      display: none;
+    }
+
+    .review_group__review-active {
+      display: block;
+    }
+  }
+
+  &__navigation {
+    padding: @doubleSpace;
+    &:extend(.layout);
+    &:extend(.layout-align_center);
+    justify-content: space-around;
+
+    &_item {
+      opacity: 0.75;
+      cursor: pointer;
+
+      &-active {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.review {
+  margin: auto;
+  max-width: 640px;
+  padding: @doubleSpace;
+
+  &__body {
+    font-size: 25px;
+    font-style: italic;
+
+    &:before {
+      content: '“';
+      display: inline-block;
+      margin-right: -0.1em;
+    }
+    
+    &:after {
+      content: '”';
+      display: inline-block;
+      margin-left: -0.1em;
+    }
+  }
+
+  &__author {
+    margin-top: 5px;
+  }
+}

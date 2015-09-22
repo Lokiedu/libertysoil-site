@@ -1,12 +1,19 @@
 .user_box {
   &:extend(.layout);
+
+  &__name {
+    margin: 0 0 4px;
+  }
+
+  &__body {
+    .user_box__avatar + & {
+      margin-left: 10px;
+    }
+  }
 }
 
 .user_box__avatar {
-  width: 32px;
-  height: 32px;
   border-radius: 50%;
-  margin-right: 10px;
 }
 
 .user_box__text {
