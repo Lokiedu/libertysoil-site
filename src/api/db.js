@@ -21,7 +21,7 @@ export default function initBookshelf(config) {
     followers: function() {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
-    hidden: ['hashed_password', 'email']  // exclude from json-exports
+    hidden: ['hashed_password']  // exclude from json-exports
   });
 
   Post = bookshelf.Model.extend({

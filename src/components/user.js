@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
+import Gravatar from 'react-gravatar';
 
 export default class User extends Component {
   render () {
     var { user, hideAvatar, avatarSize } = this.props;
     var render = {};
 
-    console.info(user);
-
     if (!hideAvatar) {
-      render.avatar = <img width={avatarSize} height={avatarSize} className="user_box__avatar" src={user.avatar || 'https://randomuser.me/api/portraits/lego/5.jpg'} />;
+      render.avatar = <Gravatar email={user.email} size={avatarSize} default="retro" className="user_box__avatar" />;
     }
 
     return (

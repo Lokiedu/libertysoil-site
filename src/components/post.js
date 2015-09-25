@@ -1,5 +1,6 @@
 import React from 'react';
 import request from 'superagent';
+import Gravatar from 'react-gravatar';
 
 import {API_HOST} from '../config'
 import {getStore, addError, updateFollowStatus} from '../store';
@@ -26,9 +27,6 @@ export class TextPostComponent extends React.Component {
     event.preventDefault();
 
     let author = this.author;
-
-    //console.log(author.username);
-    //console.log(this.current_user);
 
     try {
       let result = await request.post(`${API_HOST}/api/v1/follow`).type('form').send({username: author.username});
@@ -59,7 +57,7 @@ export class TextPostComponent extends React.Component {
 
         <div className="card__owner">
           <section className="layout__row user_box">
-            <img className="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
+            <Gravatar email={this.props.author.email} size={32} default="retro" className="user_box__avatar" />
             <div className="user_box__body">
               <p className="user_box__name">{name}</p>
               <p className="user_box__text">-</p>
