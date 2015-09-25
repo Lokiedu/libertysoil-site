@@ -61,12 +61,21 @@ app.use(function(req, res, next) {
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-app.get('/api/v1/test', wrap(controller.test));
-app.post('/api/v1/users', wrap(controller.registerUser.bind(controller)));
-app.post('/api/v1/session', wrap(controller.login.bind(controller)));
-app.get('/api/v1/posts', wrap(controller.subscriptions.bind(controller)));
-app.post('/api/v1/posts', wrap(controller.createPost.bind(controller)));
-app.post('/api/v1/follow', wrap(controller.followUser.bind(controller)));
+let api = express.Router();
+
+api.get('/test', wrap(controller.test));
+api.post('/users', wrap(controller.registerUser.bind(controller)));
+api.post('/session', wrap(controller.login.bind(controller)));
+api.get('/posts', wrap(controller.subscriptions.bind(controller)));
+
+api.get('/posts/all', wrap(controller.posts.bind(controller)));
+
+api.post('/posts', wrap(controller.createPost.bind(controller)));
+api.post('/follow', wrap(controller.followUser.bind(controller)));
+api.get('/user', wrap(controller.getUser.bind(controller)));
+
+app.use('/api/v1', api);
+
 
 app.use(express.static('public', { index: false}));
 
