@@ -2,20 +2,23 @@
   &:extend(.layout);
 
   &__name {
-    margin: 0 0 4px;
+
   }
 
   &__body {
+    &:extend(.layout);
+    &:extend(.layout-align_vertical);
+
     .user_box__avatar + & {
       margin-left: 10px;
     }
   }
-}
 
-.user_box__avatar {
-  border-radius: 50%;
-}
+  &__avatar {
+    border-radius: 4px;
+  }
 
-.user_box__text {
-  font-size: @font__size-small;
+  &__text {
+    font-size: @font__size-small;
+  }
 }

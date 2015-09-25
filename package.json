@@ -45,6 +45,7 @@
     "redux": "^2.0.0",
     "run-sequence": "",
     "superagent": "^1.3.0",
+    "url-assembler": "^1.2.4",
     "uuid": "^2.0.1",
     "vinyl-source-stream": ""
   },

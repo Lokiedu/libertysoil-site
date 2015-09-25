@@ -18,6 +18,8 @@ import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
 import {initState, setCurrentUser, getStore, setPosts} from './src/store';
 
+import { getApiUrl, URLS } from './src/utils/urlGenerator';
+
 const knexConfig = {
   client: 'pg',
   connection: {
@@ -60,12 +62,11 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 app.get('/api/v1/test', wrap(controller.test));
-app.post('/api/v1/users', wrap(controller.registerUser.bind(controller)))
-app.post('/api/v1/session', wrap(controller.login.bind(controller)))
+app.post('/api/v1/users', wrap(controller.registerUser.bind(controller)));
+app.post('/api/v1/session', wrap(controller.login.bind(controller)));
 app.get('/api/v1/posts', wrap(controller.subscriptions.bind(controller)));
 app.post('/api/v1/posts', wrap(controller.createPost.bind(controller)));
 app.post('/api/v1/follow', wrap(controller.followUser.bind(controller)));
-
 
 app.use(express.static('public', { index: false}));
 

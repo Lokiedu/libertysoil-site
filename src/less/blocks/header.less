@@ -1,6 +1,7 @@
 .header {
   padding: @space;
   background: @color__block_background;
+  border-bottom: 1px solid #d1d0cf;
 
   &-transparent {
     background: none;
@@ -17,6 +18,7 @@
 .header__toolbar {
   &:extend(.layout);
   &:extend(.layout-align_right);
+  &:extend(.layout-align_vertical);
   &:extend(.layout__grid_item-wide);
   margin-top: 0;
 }
