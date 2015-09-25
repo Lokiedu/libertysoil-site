@@ -3,36 +3,42 @@ import { connect } from 'react-redux';
 import request from 'superagent';
 import _ from 'lodash';
 
+import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags'
 import Sidebar from '../components/sidebar'
+import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
-import {getStore, setPosts} from '../store';
+import {getStore, addPost} from '../store';
 import ReactDisqusThread from '../scripts/disqus-thread';
 
 
 class PostPage extends React.Component {
   async componentWillMount() {
-    let result = await request.get(`${API_HOST}/api/v1/posts`);
-    getStore().dispatch(setPosts(result.body));
+    try {
+      let result = await request.get(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
+      getStore().dispatch(addPost(result.body));
+    } catch (e) {
+    }
   }
 
   render() {
     // FIXME: add check for post existence
     const current_user = this.props.current_user;
+    const post_uuid = this.props.params.uuid;
 
-    if (this.props.posts.length == 0) {
-      return <script/>  // still loading
+    if (!(post_uuid in this.props.posts)) {
+      // not loaded yet
+      return <script/>
     }
 
-    const post_uuid = this.props.params.uuid;
-    const current_post = _.find(this.props.posts, {id: post_uuid});
+    const current_post = this.props.posts[post_uuid];
 
-    if (!current_post) {
-      return <script/>  // 404
+    if (current_post === false) {
+      return <NotFound/>
     }
 
     return (
@@ -43,8 +49,8 @@ class PostPage extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__content">
-              <p>FIXME</p>
-              <p>text: "{current_post.text}"</p>
+              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id}/>
+
               <ReactDisqusThread
                   shortname="lstest"
                   identifier={current_post.id}
