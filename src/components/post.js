@@ -4,6 +4,22 @@ import request from 'superagent';
 import {API_HOST} from '../config'
 import {getStore, addError, updateFollowStatus} from '../store';
 
+class TagLine extends React.Component {
+  render() {
+    if (this.props.tags.length == 0) {
+      return <script/>
+    }
+
+    let tagBlocks = this.props.tags.map(name => <span className="tag">{name}</span>)
+
+    return (
+      <div className="tags">
+        {tagBlocks}
+      </div>
+    )
+  }
+}
+
 export class TextPostComponent extends React.Component {
 
   async followUser(event) {
@@ -35,12 +51,12 @@ export class TextPostComponent extends React.Component {
 
     return (
       <section className="card">
-        <header className="card__header">
-          Psychology today
-        </header>
+        <header className="card__header">&nbsp;</header>
+
         <div className="card__content">
           <p>{this.props.post.text}</p>
         </div>
+
         <div className="card__owner">
           <section className="layout__row user_box">
             <img className="user_box__avatar" src="http://placehold.it/32x32" alt=""/>
@@ -50,11 +66,10 @@ export class TextPostComponent extends React.Component {
             </div>
           </section>
         </div>
+
         <footer className="card__footer">
-          <div className="tags">
-            <span className="tag">Psychology</span>
-            <span className="tag">Gaming</span>
-          </div>
+          <TagLine tags={[]}/>
+
           <div className="card__toolbar">
             <span onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
             <span className="icon fa fa-star-o"></span>
