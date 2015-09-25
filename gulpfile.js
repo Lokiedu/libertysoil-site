@@ -2,7 +2,6 @@ var source = require('vinyl-source-stream');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var browserify = require('browserify');
-var reactify = require('reactify');
 var babelify = require('babelify');
 var watchify = require('watchify');
 var notify = require('gulp-notify');
@@ -49,9 +48,9 @@ function buildScript(file, watch) {
     entries: [path.src.scriptsDir + file],
     debug: true,
     transform: [babelify.configure({
-      stage: 1,
+      stage: 0,
       optional: ['runtime']
-    }), reactify]
+    })]
   };
 
   // watchify() if watch requested, otherwise run browserify() once
