@@ -58,6 +58,7 @@ export class TextPostComponent extends React.Component {
           <div className="card__toolbar">
             <span onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
             <span className="icon fa fa-star-o"></span>
+            <span className="disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
           </div>
         </footer>
       </section>
