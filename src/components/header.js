@@ -9,7 +9,7 @@ export default class HeaderComponent extends React.Component {
     if (this.props.is_logged_in) {
       AuthBlock = <div className="header__toolbar_item user">{this.props.current_user.username}</div>
     } else {
-      AuthBlock = <Link to="/auth" className="header__toolbar_item">auth</Link>
+      AuthBlock = <Link to="/auth" className="header__toolbar_item">Login</Link>
     }
 
     return (
