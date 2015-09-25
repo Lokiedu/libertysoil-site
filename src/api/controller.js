@@ -36,7 +36,7 @@ export default class ApiController {
     let q = Post.forge()
       .query(qb => {
         qb
-          .join('followers', 'followers.following_user_id', 'posts.user_id')
+          .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .where('followers.user_id', '=', user.id)  // followed posts
           .orWhere('posts.user_id', '=', user.id)    // own posts
           .orderBy('posts.created_at', 'desc')
@@ -173,5 +173,24 @@ export default class ApiController {
   }
 
   async followUser(req, res) {
+
+    let User = this.bookshelf.model('User');
+    let follow_status = { success: false };
+
+    try {
+      let user = await new User({id: req.session.user.id}).fetch({require: true});
+      let follow = await new User({username: req.body.username}).fetch({require: true});
+
+      if(user.id != follow.id) {
+        user.following().attach(follow);
+        user.save();
+        follow_status.success = true;
+      }
+    } catch(ex) {
+      res.status(500);
+      follow_status.error = e.message;
+    }
+
+    res.send(follow_status)
   }
 }

@@ -1,9 +1,30 @@
-import React from 'react'
+import React from 'react';
+import request from 'superagent';
+
+import {API_HOST} from '../config'
+import {getStore, addError, updateFollowStatus} from '../store';
 
 export class TextPostComponent extends React.Component {
-  render() {
-    let name = this.props.author.username
 
+  async followUser(event) {
+    event.preventDefault();
+
+    let author = this.author;
+
+    //console.log(author.username);
+    //console.log(this.current_user);
+
+    try {
+      let result = await request.post(`${API_HOST}/api/v1/follow`).type('form').send({username: author.username});
+
+      getStore().dispatch(updateFollowStatus(result.body.status));
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  };
+
+  render() {
+    let name = this.props.author.username;
     if (
       this.props.author.more &&
       this.props.author.more.firstName &&
@@ -35,7 +56,7 @@ export class TextPostComponent extends React.Component {
             <span className="tag">Gaming</span>
           </div>
           <div className="card__toolbar">
-            <span className="icon fa fa-heart-o"></span>
+            <span onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
             <span className="icon fa fa-star-o"></span>
           </div>
         </footer>

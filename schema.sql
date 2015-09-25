@@ -1,3 +1,5 @@
+CREATE EXTENSION pgcrypto;
+
 CREATE TABLE users (
     id uuid not null unique PRIMARY KEY,
     username text not null unique,
@@ -19,7 +21,7 @@ CREATE TABLE posts (
 );
 
 CREATE TABLE followers (
-    id uuid not null unique PRIMARY KEY,
+    id uuid not null unique PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid not null REFERENCES users (id) ON DELETE CASCADE,
     following_user_id uuid not null REFERENCES users (id) ON DELETE CASCADE
 );

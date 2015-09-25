@@ -8,6 +8,7 @@ const SET_POSTS = 'SET_POSTS';
 const ADD_ERROR = 'ADD_ERROR';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
+const UPDATE_FOLLOW_STATUS = 'UPDATE_FOLLOW_STATUS';
 
 function addUser(username, email, firstName, lastName, userPic) {
   return {
@@ -53,6 +54,13 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
+  }
+}
+
+export function updateFollowStatus(status) {
+  return {
+    type: UPDATE_FOLLOW_STATUS,
+    status
   }
 }
 
@@ -112,6 +120,11 @@ function theReducer(state, action) {
     case SET_CURRENT_USER: {
       state = state.set('is_logged_in', true);
       state = state.set('current_user', Immutable.fromJS(action.user));
+      break;
+    }
+
+    case UPDATE_FOLLOW_STATUS: {
+      console.log('changes');
       break;
     }
   }
