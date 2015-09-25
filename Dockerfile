@@ -16,11 +16,11 @@ RUN /bin/sed -i "s*host: 'localhost'*host: process.env.REDIS_PORT_6379_TCP_ADDR*
 RUN /bin/sed -i "s*http://localhost:8000*http://alpha.libertysoil.org*" src/config.js
 
 RUN npm install -g babel gulp && \
-  npm install --only=prod && \
-  gulp --gulpfile gulpfile-build.js build
+  npm install && \
+  gulp build
 
 RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp
 
 EXPOSE 8000
-CMD ["babel-node", "index.js"]
+CMD ["npm", "run", "server"]
