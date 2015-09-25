@@ -2,6 +2,7 @@ import React from 'react';
 
 import Header from '../components/header';
 import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
+import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
 export default class Welcome extends React.Component {
@@ -111,67 +112,7 @@ export default class Welcome extends React.Component {
           </aside>
         </div>
       </div>
-      <div className="page__container-bg">
-        <div className="page__body page__body-rows">
-          <h2 className="page__title content-center layout__space">What people say</h2>
-        </div>
-      </div>
-      <div className="review_group">
-        <div className="page__body page__body-rows">
-          <div className="review_group__reviews">
-            <blockquote className="review review_group__review-active">
-              <p className="review__body content">
-                I use LibertySoil to collect <a href="#">video lectures on math</a> to use in my class.
-              </p>
-              <footer className="review__author">
-                <section className="user_box">
-                  <div className="user_box__body">
-                    <p className="user_box__name">User Name</p>
-                    <p className="user_box__text">Math teacher</p>
-                  </div>
-                </section>
-              </footer>
-            </blockquote>
-            <blockquote className="review">
-              <p className="review__body content">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab beatae eum excepturi facilis fugiat in, perferendis quae quis quo quos rem, sapiente sequi vel! Eligendi itaque non quae quisquam tempora?
-              </p>
-              <footer className="review__author">
-                <section className="user_box">
-                  <div className="user_box__body">
-                    <p className="user_box__name">User Name</p>
-                    <p className="user_box__text">Math teacher</p>
-                  </div>
-                </section>
-              </footer>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-      <div className="page__container-bg">
-        <div className="review_group__navigation page__body">
-          <div className="review_group__navigation_item review_group__navigation_item-active">
-            <div className="user_box">
-              <img className="user_box__avatar" src="http://placehold.it/64x64" alt=""/>
-            </div>
-          </div>
-          <div className="review_group__navigation_item">
-            <div className="user_box">
-              <img className="user_box__avatar" src="http://placehold.it/64x64" alt=""/>
-            </div>
-          </div>
-          <div className="review_group__navigation_item">
-            <div className="user_box">
-              <img className="user_box__avatar" src="http://placehold.it/64x64" alt=""/>
-            </div>
-          </div>
-          <div className="review_group__navigation_item">
-            <div className="user_box">
-              <img className="user_box__avatar" src="http://placehold.it/64x64" alt=""/>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Reviews/>
       <Footer/>
     </div>
   }
