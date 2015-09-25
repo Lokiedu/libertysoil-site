@@ -42,7 +42,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers']})
 
     res.send(posts.toJSON());
   }
@@ -178,17 +178,17 @@ export default class ApiController {
     let follow_status = { success: false };
 
     try {
-      let user = await new User({id: req.session.user.id}).fetch({require: true});
-      let follow = await new User({username: req.body.username}).fetch({require: true});
+      let user = await User.where({id: req.session.user.id}).fetch({require: true, withRelated: ['following']});
+      let follow = await User.where({username: req.body.username}).fetch({require: true});
 
-      if(user.id != follow.id) {
+      if(user.id != follow.id && user.related('following').find('id', follow.id).count() === 0) {
         user.following().attach(follow);
         user.save();
         follow_status.success = true;
       }
     } catch(ex) {
       res.status(500);
-      follow_status.error = e.message;
+      follow_status.error = ex.message;
     }
 
     res.send(follow_status)
