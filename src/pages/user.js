@@ -15,7 +15,7 @@ import {getStore, setUser} from '../store';
 
 class UserPage extends React.Component {
     async componentWillMount() {
-        let result = await request.get(`${API_HOST}/api/v1/user`).query({username: this.props.params.username});
+        let result = await request.get(`${API_HOST}/api/v1/user/${this.props.params.username}`);
         getStore().dispatch(setUser(result.body));
     }
 

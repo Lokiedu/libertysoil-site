@@ -67,12 +67,13 @@ api.get('/test', wrap(controller.test));
 api.post('/users', wrap(controller.registerUser.bind(controller)));
 api.post('/session', wrap(controller.login.bind(controller)));
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
+api.get('/post/:id', wrap(controller.getPost.bind(controller)));
 
 api.get('/posts/all', wrap(controller.posts.bind(controller)));
 
 api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.post('/follow', wrap(controller.followUser.bind(controller)));
-api.get('/user', wrap(controller.getUser.bind(controller)));
+api.get('/user/:username', wrap(controller.getUser.bind(controller)));
 
 app.use('/api/v1', api);
 

@@ -23,6 +23,17 @@ export default class ApiController {
     res.send(response.toJSON());
   }
 
+  async getPost(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user']});
+      res.send(post.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
   async subscriptions(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)
@@ -174,8 +185,8 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    console.log(req.query);
-    let u = await User.where({username: req.query.username}).fetch({require: true, withRelated: ['following']});
+    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following']});
+
     res.send(u.toJSON());
   }
 
