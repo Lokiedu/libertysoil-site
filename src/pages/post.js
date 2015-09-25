@@ -11,6 +11,7 @@ import Tags from '../components/popular_tags'
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
 import {getStore, setPosts} from '../store';
+import ReactDisqusThread from '../scripts/disqus-thread';
 
 
 class PostPage extends React.Component {
@@ -44,6 +45,12 @@ class PostPage extends React.Component {
             <div className="page__content">
               <p>FIXME</p>
               <p>text: "{current_post.text}"</p>
+              <ReactDisqusThread
+                  shortname="lstest"
+                  identifier={current_post.id}
+                  title="Post"
+                  url={`http://alpha.libertysoil.org/post/${current_post.id}`}
+                  categoryId={current_post.type}/>
             </div>
           </div>
         </div>
