@@ -7,13 +7,13 @@ export default class Reviews extends Component {
     this.state = {
       activeSlideId: 0
     };
-  };
+  }
 
-  changeSlide = (slideId) => {
+  changeSlide = slideId => {
     this.setState({
       activeSlideId: slideId
     });
-  };
+  }
 
   render () {
     var activeSlideId = this.state.activeSlideId;

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "babel-node --optional es7.functionBind,es7.classProperties index.js",
+    "watch": "nodemon --watch src --exec babel-node --optional es7.functionBind,es7.classProperties -- index.js"
   },
   "author": "",
   "dependencies": {
