@@ -172,6 +172,13 @@ export default class ApiController {
     }
   }
 
+  async getUser(req, res) {
+    let User = this.bookshelf.model('User');
+    console.log(req.query);
+    let u = await User.where({username: req.query.username}).fetch({require: true, withRelated: ['following']});
+    res.send(u.toJSON());
+  }
+
   async followUser(req, res) {
 
     let User = this.bookshelf.model('User');
