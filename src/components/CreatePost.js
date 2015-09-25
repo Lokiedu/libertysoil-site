@@ -2,7 +2,7 @@ import React from 'react'
 import request from 'superagent';
 
 import {API_HOST} from '../config'
-import {getStore, addError, addPost} from '../store';
+import {getStore, addError, addPostToRiver} from '../store';
 
 export class CreatePost extends React.Component {
   async submitHandler(event) {
@@ -13,7 +13,7 @@ export class CreatePost extends React.Component {
       let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value});
       form.text.value = '';
 
-      getStore().dispatch(addPost(result.body));
+      getStore().dispatch(addPostToRiver(result.body));
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }

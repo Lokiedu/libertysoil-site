@@ -16,7 +16,7 @@ import Routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
-import {initState, setCurrentUser, getStore, setPosts} from './src/store';
+import {initState, setCurrentUser, getStore, setPostsToRiver} from './src/store';
 
 import { getApiUrl, URLS } from './src/utils/urlGenerator';
 
@@ -112,7 +112,7 @@ app.use((req, res, next) => {
         .set('Cookie', req.headers['cookie'])
         .end((err, result) => {
           if (!err) {
-            getStore().dispatch(setPosts(result.body));
+            getStore().dispatch(setPostsToRiver(result.body));
           } else {
             console.dir(err)
           }

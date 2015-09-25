@@ -4,8 +4,11 @@ import _ from 'lodash'
 
 const ADD_USER = 'ADD_USER';
 const SET_USER = 'SET_USER';
+
 const ADD_POST = 'ADD_POST';
-const SET_POSTS = 'SET_POSTS';
+const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
+const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
+
 const ADD_ERROR = 'ADD_ERROR';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
@@ -31,9 +34,16 @@ export function addPost(post) {
   }
 }
 
-export function setPosts(posts) {
+export function addPostToRiver(post) {
   return {
-    type: SET_POSTS,
+    type: ADD_POST_TO_RIVER,
+    post
+  }
+}
+
+export function setPostsToRiver(posts) {
+  return {
+    type: SET_POSTS_TO_RIVER,
     posts
   }
 }
@@ -87,18 +97,33 @@ function theReducer(state, action) {
     case ADD_POST: {
       let user = action.post.user
 
-      let cut = {users: {}};
+      let postCopy = _.cloneDeep(action.post);
+      delete postCopy.user;
+
+      let cut = {posts: {}, users: {}};
       cut.users[user.id] = user;
+      cut.posts[postCopy.id] = postCopy;
+
       state = state.mergeDeep(Immutable.fromJS(cut));
+      break;
+    }
+
+    case ADD_POST_TO_RIVER: {
+      let user = action.post.user
 
       let postCopy = _.cloneDeep(action.post);
       delete postCopy.user;
 
-      state = state.updateIn(['posts'], posts => posts.unshift(Immutable.fromJS(postCopy)))
+      let cut = {users: {}, posts: {}};
+      cut.users[user.id] = user;
+      cut.posts[postCopy.id] = postCopy
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+      state = state.updateIn(['river'], posts => posts.unshift(postCopy.id))
       break;
     }
 
-    case SET_POSTS: {
+    case SET_POSTS_TO_RIVER: {
       let posts = action.posts;
 
       let postsWithoutUsers = action.posts.map(post => {
@@ -109,14 +134,19 @@ function theReducer(state, action) {
 
       let users = _.unique(posts.map(post => post.user), 'id')
 
-      state = state.set('posts', Immutable.fromJS(postsWithoutUsers));
-
-      let cut = {users: {}};
+      let cut = {users: {}, posts: {}};
       for (let user of users) {
         cut.users[user.id] = user;
       }
 
+      let river = []
+      for (let post of postsWithoutUsers) {
+        cut.posts[post.id] = post;
+        river.push(post.id);
+      }
+
       state = state.mergeDeep(Immutable.fromJS(cut));
+      state = state.set('river', Immutable.fromJS(river));
       break;
     }
 
@@ -147,7 +177,8 @@ function theReducer(state, action) {
 
 let initialState = {
   users: {},
-  posts: [],
+  posts: {},
+  river: [],
   messages: [],
   is_logged_in: false,
   current_user: {}

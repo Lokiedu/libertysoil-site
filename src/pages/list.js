@@ -9,13 +9,13 @@ import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags';
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
-import {getStore, setPosts} from '../store';
+import {getStore, setPostsToRiver} from '../store';
 
 
 class Index extends React.Component {
   async componentWillMount() {
     let result = await request.get(`${API_HOST}/api/v1/posts`);
-    getStore().dispatch(setPosts(result.body));
+    getStore().dispatch(setPostsToRiver(result.body));
   }
   render() {
     let current_user = this.props.current_user;
@@ -29,7 +29,7 @@ class Index extends React.Component {
 
             <div className="page__content">
               <p>This is a List-page!!!!!!!!</p>
-              <River posts={this.props.posts} users={this.props.users}/>
+              <River river={this.props.river} posts={this.props.posts} users={this.props.users}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>
