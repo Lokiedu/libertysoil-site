@@ -3,6 +3,7 @@ import Immutable, { Map } from 'immutable'
 import _ from 'lodash'
 
 const ADD_USER = 'ADD_USER';
+const SET_USER = 'SET_USER';
 const ADD_POST = 'ADD_POST';
 const SET_POSTS = 'SET_POSTS';
 const ADD_ERROR = 'ADD_ERROR';
@@ -34,6 +35,13 @@ export function setPosts(posts) {
   return {
     type: SET_POSTS,
     posts
+  }
+}
+
+export function setUser(user) {
+  return {
+    type: SET_USER,
+    user
   }
 }
 
@@ -120,6 +128,11 @@ function theReducer(state, action) {
     case SET_CURRENT_USER: {
       state = state.set('is_logged_in', true);
       state = state.set('current_user', Immutable.fromJS(action.user));
+      break;
+    }
+
+    case SET_USER: {
+      state = state.set('user', Immutable.fromJS(action.user));
       break;
     }
 
