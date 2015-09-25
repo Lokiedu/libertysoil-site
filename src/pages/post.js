@@ -4,10 +4,10 @@ import request from 'superagent';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
-import User from '../components/current_user';
 import River from '../components/river_of_posts';
 import Followed from '../components/most_followed_people';
-import Tags from '../components/popular_tags';
+import Tags from '../components/popular_tags'
+import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
 import {getStore, setPosts} from '../store';
 
@@ -26,18 +26,7 @@ class Index extends React.Component {
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
         <div className="page__container">
           <div className="page__body">
-            <div className="page__sidebar">
-              <User current_user={current_user} />
-              <div className="layout__row">
-                <h3 className="head head-sub">Popular tags</h3>
-              </div>
-              <div className="layout__row">
-                <div className="tags">
-                  <span className="tag">Psychology</span>
-                  <span className="tag">Gaming</span>
-                </div>
-              </div>
-            </div>
+            <Sidebar current_user={current_user} />
 
             <div className="page__content">
               <p>FIXME</p>
