@@ -7,7 +7,7 @@ export default class User extends Component {
     var render = {};
 
     if (!hideAvatar) {
-      render.avatar = <Gravatar email={user.email} size={avatarSize} default="retro" className="user_box__avatar" />;
+      render.avatar = <Gravatar md5={user.gravatarHash} size={avatarSize} default="retro" className="user_box__avatar" />;
     }
 
     return (

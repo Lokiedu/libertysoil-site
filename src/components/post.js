@@ -57,7 +57,7 @@ export class TextPostComponent extends React.Component {
 
         <div className="card__owner">
           <section className="layout__row user_box">
-            <Gravatar email={this.props.author.email} size={32} default="retro" className="user_box__avatar" />
+            <Gravatar md5={this.props.author.gravatarHash} size={32} default="retro" className="user_box__avatar" />
             <div className="user_box__body">
               <p className="user_box__name">{name}</p>
               <p className="user_box__text">-</p>

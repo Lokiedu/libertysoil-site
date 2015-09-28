@@ -1,3 +1,4 @@
+import md5 from 'md5';
 import Knex from 'knex';
 import Bookshelf from 'bookshelf';
 
@@ -7,6 +8,7 @@ export default function initBookshelf(config) {
 
   bookshelf.plugin('registry');
   bookshelf.plugin('visibility');
+  bookshelf.plugin('virtuals');
 
   let User, Post;
 
@@ -21,7 +23,12 @@ export default function initBookshelf(config) {
     followers: function() {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
-    hidden: ['hashed_password']  // exclude from json-exports
+    virtuals: {
+      gravatarHash: function() {
+        return md5(this.get('email'));
+      }
+    },
+    hidden: ['hashed_password', 'email']  // exclude from json-exports
   });
 
   Post = bookshelf.Model.extend({
