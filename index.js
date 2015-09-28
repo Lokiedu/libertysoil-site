@@ -66,6 +66,7 @@ let api = express.Router();
 api.get('/test', wrap(controller.test));
 api.post('/users', wrap(controller.registerUser.bind(controller)));
 api.post('/session', wrap(controller.login.bind(controller)));
+
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
 
@@ -77,6 +78,7 @@ api.get('/user/:username', wrap(controller.getUser.bind(controller)));
 
 app.use('/api/v1', api);
 
+app.post('/logout', wrap(controller.logout.bind(controller)));
 
 app.use(express.static('public', { index: false}));
 

@@ -150,6 +150,13 @@ export default class ApiController {
     res.send({ success: true, user })
   }
 
+  async logout(req, res) {
+    if (req.session && req.session.user) {
+      req.session.destroy();
+    }
+    res.redirect('/');
+  }
+
   async whoAmI(req, res) {
   }
 
