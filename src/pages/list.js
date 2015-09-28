@@ -14,7 +14,7 @@ import {getStore, setPostsToRiver} from '../store';
 
 class Index extends React.Component {
   async componentWillMount() {
-    let result = await request.get(`${API_HOST}/api/v1/posts/all`);
+    let result = await request.get(`${API_HOST}/api/v1/posts`);
     getStore().dispatch(setPostsToRiver(result.body));
   }
   render() {

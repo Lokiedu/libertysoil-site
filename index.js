@@ -70,7 +70,8 @@ api.post('/session', wrap(controller.login.bind(controller)));
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
 
-api.get('/posts/all', wrap(controller.posts.bind(controller)));
+api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
+api.get('/posts/own', wrap(controller.ownPosts.bind(controller)));
 
 api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.post('/follow', wrap(controller.followUser.bind(controller)));
