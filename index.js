@@ -24,7 +24,6 @@ const knexConfig = {
   client: 'pg',
   connection: {
     host     : '127.0.0.1',
-    host     : '192.168.3.105',
     user     : 'libertysoil',
     password : 'libertysoil',
     database : 'libertysoil',
@@ -42,7 +41,7 @@ let RedisStore = initRedisStore(session);
 
 app.use(session({
   store: new RedisStore({
-    host: '192.168.3.105',
+    host: 'localhost',
     port: 6379
   }),
   secret: 'libertysoil',
