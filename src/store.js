@@ -10,6 +10,7 @@ const SET_USER = 'SET_USER';
 const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
+const SET_USER_POSTS = 'SET_USER_POSTS';
 
 const ADD_ERROR = 'ADD_ERROR';
 const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
@@ -18,16 +19,10 @@ const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
 const UPDATE_FOLLOW_STATUS = 'UPDATE_FOLLOW_STATUS';
 
-function addUser(username, email, firstName, lastName, userPic) {
+export function addUser(user) {
   return {
     type: ADD_USER,
-    user: {
-      username,
-      email,
-      firstName,
-      lastName,
-      userPic
-    }
+    user
   }
 }
 
@@ -52,10 +47,10 @@ export function setPostsToRiver(posts) {
   }
 }
 
-export function setUser(user) {
+export function setUserPosts(posts) {
   return {
-    type: SET_USER,
-    user
+    type: SET_USER_POSTS,
+    posts
   }
 }
 
@@ -161,6 +156,19 @@ function theReducer(state, action) {
       break;
     }
 
+    case SET_USER_POSTS: {
+      let cut = {posts: {}, user_posts: {}};
+
+      for (let post of action.posts) {
+        cut.posts[post.id] = post;
+      }
+
+      cut.user_posts[action.posts[0].user_id] = action.posts.map(post => post.id);
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+      break;
+    }
+
     case ADD_ERROR: {
       state = state.updateIn(['messages'], messages => messages.push({
         type: messageType.ERROR,
@@ -200,6 +208,7 @@ function theReducer(state, action) {
 
 let initialState = {
   users: {},
+  user_posts: {},
   posts: {},
   river: [],
   messages: [],

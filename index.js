@@ -71,6 +71,7 @@ api.get('/posts', wrap(controller.subscriptions.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
 
 api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
+api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
 
 api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.post('/follow', wrap(controller.followUser.bind(controller)));

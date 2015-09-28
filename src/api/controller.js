@@ -17,14 +17,25 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-
-    if('user' in req.query) {
-      posts.query('where', {user_id: req.query.user});
-    }
-
     let response = await posts.fetch({require: false, withRelated: ['user']});
 
     res.send(response.toJSON());
+  }
+
+  async userPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .join('users', 'users.id', 'posts.user_id')
+          .where('users.username', '=', req.params.user)  // followed posts
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let posts = await q.fetchAll({require: false})
+
+    res.send(posts.toJSON());
   }
 
   async getPost(req, res) {
