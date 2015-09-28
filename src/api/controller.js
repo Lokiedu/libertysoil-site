@@ -49,7 +49,7 @@ export default class ApiController {
         qb
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .where('followers.user_id', '=', user.id)  // followed posts
-          .orWhere('posts.user_id', '=', user.id)    // own posts
+          //.orWhere('posts.user_id', '=', user.id)    // own posts
           .orderBy('posts.created_at', 'desc')
       })
 

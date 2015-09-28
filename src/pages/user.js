@@ -10,13 +10,16 @@ import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags'
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
-import {getStore, setUser} from '../store';
+import {getStore, setUser, setPostsToRiver} from '../store';
 
 
 class UserPage extends React.Component {
     async componentWillMount() {
         let result = await request.get(`${API_HOST}/api/v1/user/${this.props.params.username}`);
         getStore().dispatch(setUser(result.body));
+
+        result = await request.get(`${API_HOST}/api/v1/posts`);
+        getStore().dispatch(setPostsToRiver(result.body));
     }
 
     render() {
@@ -35,6 +38,7 @@ class UserPage extends React.Component {
                         <div>
                             {user.username}
                         </div>
+                        <River river={this.props.river} posts={this.props.posts} users={this.props.users}/>
 
                     </div>
                 </div>
