@@ -15,10 +15,14 @@ class AuthContents extends React.Component {
       </div>;
     }
 
-    return <div className="area__body layout-align_start">
-      <Errors messages={this.props.messages}/>
-      <Login/>
-      <Register/>
+    return <div>
+      <div className="void">
+        <Errors messages={this.props.messages}/>
+      </div>
+      <div className="area__body layout-align_start">
+        <Login/>
+        <Register/>
+      </div>
     </div>
   }
 }

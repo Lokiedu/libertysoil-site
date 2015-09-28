@@ -6,7 +6,7 @@ import {API_HOST} from '../config'
 import {getStore, addError, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
-  async submitHandler(event) {
+  submitHandler(event) {
     event.preventDefault();
 
     let form = event.target;
@@ -16,19 +16,19 @@ export default class LoginComponent extends React.Component {
       password: form.password.value
     };
 
-    let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
-
-    if (result.body.success) {
-      getStore().dispatch(setCurrentUser(result.body.user));
-    } else {
-      getStore().dispatch(addError('Invalid username or password'));
-    }
+    request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data).end((err, result) => {
+      if (result.body.success) {
+        getStore().dispatch(setCurrentUser(result.body.user));
+      } else {
+        getStore().dispatch(addError('Invalid username or password'));
+      }
+    });
   };
 
   render() {
     return (
       <div className="box box-middle">
-        <header className="box__title">Login</header>
+        <header className="box__title">Login?</header>
         <form onSubmit={this.submitHandler} action="" method="post">
           <div className="box__body">
             <div className="layout__row">
