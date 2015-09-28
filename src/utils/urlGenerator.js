@@ -1,13 +1,9 @@
 import urlAssembler from 'url-assembler';
-import { API_URL, SITE_URL, API_URL_NAMES } from '../config.js';
+import { API_URL, URL, API_URL_NAMES, URL_NAMES } from '../config.js';
 
-const URLS = {
-  API_URL_NAMES
-};
-
-function getSiteUrl (id, params) {
+function getUrl (id, params) {
   return urlAssembler()
-      .template(SITE_URL[id])
+      .template(URL[id])
       .param(params)
       .toString();
 }
@@ -20,7 +16,8 @@ function getApiUrl (id, params = {}) {
 }
 
 export {
-    URLS,
-    getSiteUrl,
+    API_URL_NAMES,
+    URL_NAMES,
+    getUrl,
     getApiUrl
 };

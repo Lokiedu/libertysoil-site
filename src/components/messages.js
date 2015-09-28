@@ -20,10 +20,10 @@ export default class Messages extends React.Component {
       });
 
       return <div key={i} className={cn}>
+        <span onClick={this.close.bind(this, i)} className="message__close action fa fa-times"></span>
         <div className="message__body">
           {msg.message}
         </div>
-        <span onClick={this.close.bind(this, i)} className="message__close action fa fa-times"></span>
       </div>;
     })
 

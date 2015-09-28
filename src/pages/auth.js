@@ -10,8 +10,12 @@ import Messages from '../components/messages';
 class AuthContents extends React.Component {
   render() {
     if (this.props.is_logged_in) {
-      return <div className="area__body layout-align_start">
-        <p>You're logged in already. You can proceed to <Link to="/" className="header__toolbar_item">your feed</Link></p>
+      return <div className="area__body">
+        <div className="message">
+          <div className="message__body">
+            You're logged in already. You can proceed to <Link to="/" className="header__toolbar_item">your feed</Link>
+          </div>
+        </div>
       </div>;
     }
 

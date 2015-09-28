@@ -6,7 +6,10 @@
 
   &__body {
     padding: @space;
-    margin-right: @doubleSpace;
+
+    .message__close + & {
+      margin-right: @doubleSpace;
+    }
   }
 
   &__close {

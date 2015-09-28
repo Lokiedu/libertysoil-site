@@ -15,8 +15,16 @@ export const API_URL = {
   [API_URL_NAMES.FOLLOW]: `${API_URL_PREFIX}/follow`
 };
 
-export const SITE_URL = {
-  HOME: '/',
-  AUTH: '/auth',
-  POST: '/post/:uuid'
+export const URL_NAMES = {
+  HOME: `HOME`,
+  AUTH: `AUTH`,
+  POST: `POST`,
+  USER: `USER`
+};
+
+export const URL = {
+  [URL_NAMES.HOME]: '/',
+  [URL_NAMES.AUTH]: '/auth',
+  [URL_NAMES.POST]: '/post/:uuid',
+  [URL_NAMES.USER]: '/user/:username'
 };

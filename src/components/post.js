@@ -1,6 +1,7 @@
 import React from 'react';
 import request from 'superagent';
-import Gravatar from 'react-gravatar';
+
+import User from './user';
 
 import {API_HOST} from '../config'
 import {getStore, addError, updateFollowStatus} from '../store';
@@ -56,13 +57,7 @@ export class TextPostComponent extends React.Component {
         </div>
 
         <div className="card__owner">
-          <section className="layout__row user_box">
-            <Gravatar md5={this.props.author.gravatarHash} size={32} default="retro" className="user_box__avatar" />
-            <div className="user_box__body">
-              <p className="user_box__name">{name}</p>
-              <p className="user_box__text">-</p>
-            </div>
-          </section>
+          <User user={this.props.author} avatarSize="32" />
         </div>
 
         <footer className="card__footer">
