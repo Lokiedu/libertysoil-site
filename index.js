@@ -77,9 +77,9 @@ api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.post('/follow', wrap(controller.followUser.bind(controller)));
 api.get('/user/:username', wrap(controller.getUser.bind(controller)));
 
-app.use('/api/v1', api);
+api.post('/logout', wrap(controller.logout.bind(controller)));
 
-app.post('/logout', wrap(controller.logout.bind(controller)));
+app.use('/api/v1', api);
 
 app.use(express.static('public', { index: false}));
 
