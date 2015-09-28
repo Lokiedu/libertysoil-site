@@ -18,6 +18,10 @@ export default class ApiController {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
 
+    if('user' in req.query) {
+      posts.query('where', {user_id: req.query.user});
+    }
+
     let response = await posts.fetch({require: false, withRelated: ['user']});
 
     res.send(response.toJSON());
@@ -54,20 +58,6 @@ export default class ApiController {
       })
 
     let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers']})
-
-    res.send(posts.toJSON());
-  }
-
-  async ownPosts(req, res) {
-    if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
-      return
-    }
-
-    let user = req.session.user;
-    let Post = this.bookshelf.model('Post');
-    let posts = await Post.where({user_id: user.id}).fetchAll({require: true, withRelated: ['user']});
 
     res.send(posts.toJSON());
   }

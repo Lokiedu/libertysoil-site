@@ -18,7 +18,7 @@ class UserPage extends React.Component {
         let result = await request.get(`${API_HOST}/api/v1/user/${this.props.params.username}`);
         getStore().dispatch(setUser(result.body));
 
-        result = await request.get(`${API_HOST}/api/v1/posts/own`);
+        result = await request.get(`${API_HOST}/api/v1/posts/all`).query({user: this.props.user.id});
         getStore().dispatch(setPostsToRiver(result.body));
     }
 
