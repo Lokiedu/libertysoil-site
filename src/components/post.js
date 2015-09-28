@@ -66,8 +66,8 @@ export class TextPostComponent extends React.Component {
         </div>
 
         <footer className="card__footer">
+          <a href={`/post/${this.props.post.id}`}>Link</a><br/>
           <TagLine tags={[]}/>
-
           <div className="card__toolbar">
             <span onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
             <span className="icon fa fa-star-o"></span>
