@@ -15,7 +15,9 @@ RUN /bin/sed -i "s*host: 'localhost'*host: process.env.REDIS_PORT_6379_TCP_ADDR*
 
 RUN /bin/sed -i "s*http://localhost:8000*http://alpha.libertysoil.org*" src/config.js
 
-RUN npm install -g babel gulp && \
+RUN /bin/sed -i "s*knex migrate:latest*knex --env staging migrate:latest*" package.json
+
+RUN npm install -g babel gulp knex && \
   npm install && \
   gulp build
 

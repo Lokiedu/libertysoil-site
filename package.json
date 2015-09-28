@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "babel-node --optional es7.functionBind,es7.classProperties index.js",
+    "server": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties index.js",
     "watch": "nodemon --watch src --exec babel-node --optional es7.functionBind,es7.classProperties -- index.js"
   },
   "author": "",
   "dependencies": {
-    "babel-core": "^5.8.23",
+    "babel": "^5.8.23",
     "babel-runtime": "^5.8.20",
     "babelify": "",
     "bcrypt": "^0.8.5",
