@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
-import Errors from '../components/errors';
+import Messages from '../components/messages';
 
 class AuthContents extends React.Component {
   render() {
@@ -16,9 +16,6 @@ class AuthContents extends React.Component {
     }
 
     return <div>
-      <div className="void">
-        <Errors messages={this.props.messages}/>
-      </div>
       <div className="area__body layout-align_start">
         <Login/>
         <Register/>
@@ -30,11 +27,19 @@ class AuthContents extends React.Component {
 class Auth extends React.Component {
   render() {
     let currentUser = this.props.current_user;
+    let messages;
+
+    if (this.props.messages.length) {
+      messages = <div className="layout layout__space layout-align_center">
+        <Messages messages={this.props.messages}/>
+      </div>;
+    }
 
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={currentUser} />
-        <div className="page__body">
+        <div className="page__body page__body-rows">
+          {messages}
           <div className="area">
             <AuthContents is_logged_in={this.props.is_logged_in} messages={this.props.messages}/>
           </div>

@@ -6,7 +6,7 @@ import {API_HOST} from '../config'
 import {getStore, addError, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
-  submitHandler(event) {
+  async submitHandler(event) {
     event.preventDefault();
 
     let form = event.target;
@@ -16,13 +16,17 @@ export default class LoginComponent extends React.Component {
       password: form.password.value
     };
 
-    request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data).end((err, result) => {
+    try {
+      let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
+
       if (result.body.success) {
         getStore().dispatch(setCurrentUser(result.body.user));
       } else {
         getStore().dispatch(addError('Invalid username or password'));
       }
-    });
+    } catch (e) {
+      getStore().dispatch(addError('Invalid username or password'));
+    }
   };
 
   render() {

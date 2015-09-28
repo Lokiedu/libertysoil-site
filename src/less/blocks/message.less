@@ -1,0 +1,29 @@
+.message {
+  background: #fff;
+  border: 1px solid @color__gray;
+  border-radius: @radius;
+  position: relative;
+
+  &__body {
+    padding: @space;
+    margin-right: @doubleSpace;
+  }
+
+  &__close {
+    position: absolute;
+    top: 16px;
+    right: 10px;
+  }
+
+  &__group {
+    .message + .message {
+      margin-top: @space;
+    }
+  }
+
+  &-error {
+    .message__body {
+      color: red;
+    }
+  }
+}

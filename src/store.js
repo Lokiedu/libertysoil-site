@@ -2,6 +2,8 @@ import { createStore } from 'redux'
 import Immutable, { Map } from 'immutable'
 import _ from 'lodash'
 
+import messageType from './consts/messageTypeConstants';
+
 const ADD_USER = 'ADD_USER';
 const SET_USER = 'SET_USER';
 
@@ -10,6 +12,8 @@ const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 
 const ADD_ERROR = 'ADD_ERROR';
+const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
+
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
 const UPDATE_FOLLOW_STATUS = 'UPDATE_FOLLOW_STATUS';
@@ -59,6 +63,13 @@ export function addError(message) {
   return {
     type: ADD_ERROR,
     message
+  }
+}
+
+export function removeMessage(index) {
+  return {
+    type: REMOVE_MESSAGE,
+    index
   }
 }
 
@@ -151,7 +162,19 @@ function theReducer(state, action) {
     }
 
     case ADD_ERROR: {
-      state = state.updateIn(['messages'], messages => messages.push(action.message))
+      state = state.updateIn(['messages'], messages => messages.push({
+        type: messageType.ERROR,
+        message: action.message
+      }))
+      break;
+    }
+
+    case REMOVE_MESSAGE: {
+      var messages = state.get('messages').toJS();
+
+      messages.splice(action.index, 1);
+
+      state = state.set('messages', Immutable.fromJS(messages));
       break;
     }
 
