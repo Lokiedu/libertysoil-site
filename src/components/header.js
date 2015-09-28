@@ -13,10 +13,12 @@ export default class HeaderComponent extends React.Component {
 
     if (this.props.is_logged_in) {
       AuthBlock =
-          <div className="header__toolbar_item">
-            <User user={this.props.current_user} />
-            <form action={`${API_HOST}/api/v1/logout`} method="post">
-              <button type="submit">Log out</button>
+          <div className="header__toolbar">
+            <div className="header__toolbar_item">
+              <User user={this.props.current_user} />
+            </div>
+            <form className="header__toolbar_item" action={`${API_HOST}/api/v1/logout`} method="post">
+              <button type="submit" className="link">Log out</button>
             </form>
           </div>
     } else {
@@ -29,9 +31,7 @@ export default class HeaderComponent extends React.Component {
           <div className="header__logo">
             <a href="/" className="logo" title="Liberty Soil"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__toolbar">
-            {AuthBlock}
-          </div>
+          {AuthBlock}
         </div>
       </div>
     )

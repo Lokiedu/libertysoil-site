@@ -8,8 +8,8 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Followed from '../components/most_followed_people';
-import Tags from '../components/popular_tags'
-import Sidebar from '../components/sidebar'
+import Tags from '../components/popular_tags';
+import CurrentUser from '../components/current-user';
 import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
 import {getStore, addPost} from '../store';
@@ -46,11 +46,17 @@ class PostPage extends React.Component {
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
         <div className="page__container">
           <div className="page__body">
-            <Sidebar current_user={current_user} />
+            <div className="page__sidebar">
+              <div className="layout__row">
+                <CurrentUser user={current_user} />
+              </div>
+              <div className="layout__row">
+                <a href="/">News feed</a>
+              </div>
+            </div>
 
             <div className="page__content">
-              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id}/>
-
+              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id} full_post={true} />
               <ReactDisqusThread
                   shortname="lstest"
                   identifier={current_post.id}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Gravatar from 'react-gravatar';
 
-import { URL_NAMES, getUrl } from '../utils/urlGenerator'
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export default class User extends Component {
   render () {

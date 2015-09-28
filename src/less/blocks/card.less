@@ -12,11 +12,15 @@
 }
 
 .card__content {
-  padding: 0 @space;
+  padding: @space @space 0 @space;
 }
 
 .card__owner {
   padding: @space;
+}
+
+.card__read_link {
+  margin-top: @space;
 }
 
 .card__footer {
@@ -26,8 +30,13 @@
 
 .card__toolbar {
   margin-top: @space;
+  &:extend(.layout);
 
   &:first-child {
     margin-top: 0;
+  }
+
+  &_item {
+    &:extend(.layout__grid_item all);
   }
 }
