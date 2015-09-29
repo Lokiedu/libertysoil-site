@@ -1,6 +1,8 @@
 import React from 'react';
 import request from 'superagent';
 import { Link } from 'react-router';
+import ReactDisqusThread from '../scripts/disqus-thread';
+
 import bem from '../utils/bemClassNames';
 
 import User from './user';

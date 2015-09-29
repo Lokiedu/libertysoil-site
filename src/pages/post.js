@@ -13,7 +13,6 @@ import CurrentUser from '../components/current-user';
 import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
 import {getStore, addPost} from '../store';
-import ReactDisqusThread from '../scripts/disqus-thread';
 
 
 class PostPage extends React.Component {
