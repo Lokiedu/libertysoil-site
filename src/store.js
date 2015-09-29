@@ -14,6 +14,7 @@ const SET_USER_POSTS = 'SET_USER_POSTS';
 
 const ADD_ERROR = 'ADD_ERROR';
 const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
+const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
@@ -65,6 +66,12 @@ export function removeMessage(index) {
   return {
     type: REMOVE_MESSAGE,
     index
+  }
+}
+
+export function removeAllMessages() {
+  return {
+    type: REMOVE_ALL_MESSAGES
   }
 }
 
@@ -183,6 +190,11 @@ function theReducer(state, action) {
       messages.splice(action.index, 1);
 
       state = state.set('messages', Immutable.fromJS(messages));
+      break;
+    }
+
+    case REMOVE_ALL_MESSAGES: {
+      state = state.set('messages', Immutable.fromJS([]));
       break;
     }
 

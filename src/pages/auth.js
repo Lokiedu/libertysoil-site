@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
+import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
@@ -48,6 +49,7 @@ class Auth extends React.Component {
             <AuthContents is_logged_in={this.props.is_logged_in} messages={this.props.messages}/>
           </div>
         </div>
+        <Footer/>
       </div>
     )
   }

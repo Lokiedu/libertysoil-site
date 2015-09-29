@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import {API_HOST} from '../config';
-import {getStore, addError} from '../store';
+import {getStore, addError, removeAllMessages} from '../store';
 
 export default class RegisterComponent extends React.Component {
   async submitHandler(event) {
@@ -12,18 +12,15 @@ export default class RegisterComponent extends React.Component {
 
     let form = event.target;
 
+    if (form.password.value != form.password_repeat.value) {
+      form.password_repeat.setCustomValidity("Passwords don't match");
+      return;
+    } else {
+      form.password_repeat.setCustomValidity('');
+    }
+
     if (!form.agree.checked) {
-      getStore().dispatch(addError('You have to agree to Terms before registering'));
-      return;
-    }
-
-    if (form.password.value === '') {
-      getStore().dispatch(addError('Passwords is not given'));
-      return;
-    }
-
-    if (form.password.value !== form.password_repeat.value) {
-      getStore().dispatch(addError('Passwords do not match'));
+      form.agree.setCustomValidity('You have to agree to Terms before registering');
       return;
     }
 
@@ -34,6 +31,8 @@ export default class RegisterComponent extends React.Component {
       password: form.password.value,
       email: form.email.value
     };
+
+    getStore().dispatch(removeAllMessages());
 
     // FIXME: disable form
     try {
@@ -69,7 +68,7 @@ export default class RegisterComponent extends React.Component {
           <div className="layout__row">
             <div className="form__row">
               <label className="label label-block label-space">Username</label>
-              <input className="input input-block" type="text" name="username"/>
+              <input className="input input-block" type="text" name="username" required="required"/>
             </div>
             <div className="form__row">
               <label className="label label-block label-space">First name</label>
@@ -81,19 +80,19 @@ export default class RegisterComponent extends React.Component {
             </div>
             <div className="form__row">
               <label className="label label-block label-space">Email</label>
-              <input className="input input-block" type="email" name="email"/>
+              <input className="input input-block" type="email" name="email" required="required"/>
             </div>
             <div className="form__row">
               <label className="label label-block label-space">Password</label>
-              <input className="input input-block" type="password" name="password"/>
+              <input className="input input-block" type="password" name="password" required="required"/>
             </div>
             <div className="form__row">
               <label className="label label-block label-space">Repeat password</label>
-              <input className="input input-block" type="password" name="password_repeat"/>
+              <input className="input input-block" type="password" name="password_repeat" required="required"/>
             </div>
           </div>
           <div className="layout__row layout layout-align_vertical layout-align_justify">
-            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" /><span>I agree to <a href="#" className="link">T&C</a></span></label>
+            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" required="required" /><span>I agree to <a href="#" className="link">T&amp;C</a></span></label>
             <button className="button button-yellow">Send</button>
           </div>
         </div>
