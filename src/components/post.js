@@ -27,22 +27,32 @@ class TagLine extends React.Component {
   }
 }
 
+class Toolbar extends React.Component {
+  likePost(event) {
+
+  }
+
+  addPostToFavourites(event) {
+
+  }
+
+  render()
+  {
+    return (
+      <div className="card__toolbar">
+        <span className="card__toolbar_item action" onClick={this.likePost.bind(this.props)}>
+          <span className="icon fa fa-heart-o"></span>
+        </span>
+        <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
+          <span className="card__toolbar_item icon fa fa-star-o"></span>
+        </span>
+        <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+      </div>
+    )
+  }
+};
+
 export class TextPostComponent extends React.Component {
-
-  async followUser(event) {
-    event.preventDefault();
-
-    let author = this.author;
-
-    try {
-      let result = await request.post(`${API_HOST}/api/v1/follow`).type('form').send({username: author.username});
-
-      getStore().dispatch(updateFollowStatus(result.body.status));
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
-  };
-
   render() {
     var props = this.props;
     var post = props.post;
@@ -53,25 +63,22 @@ export class TextPostComponent extends React.Component {
       }
     });
 
+    let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
+
     return (
       <section className={cardClassName}>
         {false && <header className="card__header"></header>}
         <div className="card__content">
           <p>{post.text}</p>
-          {!this.props.fullPost && <p className="card__read_link"><Link to={getUrl(URL_NAMES.POST, { uuid: post.id })}>Read full post</Link></p>}
         </div>
         <div className="card__owner">
-          <User user={this.props.author} avatarSize="32" />
+          <User user={this.props.author} avatarSize="32" timestamp={post.created_at} timestampLink={post_url} />
         </div>
         <footer className="card__footer">
           <TagLine tags={[]}/>
-          <div className="card__toolbar">
-            <span className="card__toolbar_item action" onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
-            <span className="card__toolbar_item icon fa fa-star-o"></span>
-            <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={post.id}></span>
-          </div>
+          <Toolbar post={post}/>
         </footer>
-        {!this.props.fullPost && <div className="card__comments">
+        {this.props.fullPost && <div className="card__comments">
           <ReactDisqusThread
               shortname="lstest"
               identifier={post.id}
