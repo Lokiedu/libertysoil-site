@@ -8,6 +8,7 @@ import bodyParser from 'body-parser';
 import multer from 'multer';
 import request from 'superagent';
 import _ from 'lodash'
+import bb from 'bluebird'
 
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
@@ -83,50 +84,62 @@ app.use('/api/v1', api);
 
 app.use(express.static('public', { index: false}));
 
-app.use((req, res, next) => {
+let reactHandler = async (req, res, next) => {
   let store = initState();
 
-  if (req.session && req.session.user) {
-    store.dispatch(setCurrentUser(req.session.user));
+  if (req.session && req.session.user && _.isString(req.session.user)) {
+    try {
+      let user = await bookshelf
+        .model('User')
+        .where({id: req.session.user})
+        .fetch({require: true, withRelated: ['following']});
+
+      store.dispatch(setCurrentUser(user.toJSON()));
+    } catch (e) {
+      console.log(`dispatch failed: ${e.stack}`)
+    }
   }
 
   let location = createLocation(req.path, req.query)
   let routes = createRoutesFromReactChildren(Routes)
   let history = useRoutes(createMemoryHistory)({ routes })
 
-  history.match(location, (error, initialState)=> {
-    if (null === initialState) {
-      next();
-      return;
+  let history_match = bb.promisify(history.match);
+
+  let initialState = await history_match(location)
+
+  if (null === initialState) {
+    next();
+    return;
+  }
+
+  function render() {
+    let html = ReactDOMServer.renderToString(
+      <RoutingContext history={history} {...initialState}/>
+    );
+
+    let state = JSON.stringify(store.getState().toJS());
+
+    res.render('index', { state, html });
+  }
+
+  if (initialState.routes[1].name == 'post_list' && 'cookie' in req.headers) {
+    let promise = Promise.resolve(request
+      .get(`${API_HOST}/api/v1/posts`)
+      .set('Cookie', req.headers['cookie']));
+
+    try {
+      let result = await promise;
+      getStore().dispatch(setPostsToRiver(result.body));
+    } catch (e) {
+      console.dir(e)
     }
+  }
 
-    function render() {
-      let html = ReactDOMServer.renderToString(
-        <RoutingContext history={history} {...initialState}/>
-      );
+  render();
+};
 
-      let state = JSON.stringify(store.getState().toJS());
-
-      res.render('index', { state, html });
-    }
-
-    if (initialState.routes[1].name == 'post_list' && 'cookie' in req.headers) {
-      request
-        .get(`${API_HOST}/api/v1/posts`)
-        .set('Cookie', req.headers['cookie'])
-        .end((err, result) => {
-          if (!err) {
-            getStore().dispatch(setPostsToRiver(result.body));
-          } else {
-            console.dir(err)
-          }
-          render()
-        });
-    } else {
-      render()
-    }
-  })
-});
+app.use(wrap(reactHandler));
 
 
 let server = app.listen(8000);

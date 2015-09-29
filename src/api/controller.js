@@ -56,15 +56,15 @@ export default class ApiController {
       return
     }
 
-    let user = req.session.user
+    let uid = req.session.user
     let Post = this.bookshelf.model('Post');
 
     let q = Post.forge()
       .query(qb => {
         qb
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
-          .where('followers.user_id', '=', user.id)  // followed posts
-          .orWhere('posts.user_id', '=', user.id)    // own posts
+          .where('followers.user_id', '=', uid)  // followed posts
+          .orWhere('posts.user_id', '=', uid)    // own posts
           .orderBy('posts.created_at', 'desc')
       })
 
@@ -159,7 +159,7 @@ export default class ApiController {
       return
     }
     if (req.session) {
-      req.session.user = user;
+      req.session.user = user.id;
     }
 
     res.send({ success: true, user })
@@ -191,7 +191,7 @@ export default class ApiController {
     let obj = new Post({
       id: uuid.v4(),
       text: req.body.text,
-      user_id: req.session.user.id
+      user_id: req.session.user
     });
 
     try {
@@ -218,7 +218,7 @@ export default class ApiController {
     let follow_status = { success: false };
 
     try {
-      let user = await User.where({id: req.session.user.id}).fetch({require: true, withRelated: ['following']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
       let follow = await User.where({username: req.body.username}).fetch({require: true});
 
       if(user.id != follow.id && user.related('following').find('id', follow.id).count() === 0) {
