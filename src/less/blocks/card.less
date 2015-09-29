@@ -1,8 +1,10 @@
 .card {
-  background: @color__block_background;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 
   & + & {
-    margin-top: @space;
+    margin-top: @doubleSpace;
   }
 }
 
@@ -12,11 +14,11 @@
 }
 
 .card__content {
-  padding: @space @space 0 @space;
+  padding: @doubleSpace @doubleSpace 0 @doubleSpace;
 }
 
 .card__owner {
-  padding: @space;
+  padding: 20px @doubleSpace;
 }
 
 .card__read_link {
@@ -24,12 +26,11 @@
 }
 
 .card__footer {
-  padding: @space;
-  background: #eee;
+  padding: 20px @doubleSpace;
+  background: #f9f8f8;
 }
 
 .card__toolbar {
-  margin-top: @space;
   &:extend(.layout);
 
   &:first-child {

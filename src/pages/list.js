@@ -28,7 +28,6 @@ class Index extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__content">
-              <p>This is a List-page!!!!!!!!</p>
               <River river={this.props.river} posts={this.props.posts} users={this.props.users}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
