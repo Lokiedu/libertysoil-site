@@ -6,7 +6,7 @@ export default class Sidebar extends React.Component {
   render() {
     return (
       <div className="page__sidebar">
-        <div className="layout__row">
+        <div className="layout__row page__sidebar_user">
           <CurrentUser user={this.props.current_user} />
         </div>
 

@@ -21,7 +21,7 @@ export default class User extends Component {
     }
 
     if (user.more) {
-      render.name = `${user.more.firstName || ''} ${user.more.lastName || ''}`;
+      render.name = user.more.firstName + '' + user.more.lastName;
     } else {
       render.name = user.username;
     }
