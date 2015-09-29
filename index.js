@@ -19,8 +19,6 @@ import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
 import {initState, setCurrentUser, getStore, setPostsToRiver} from './src/store';
 
-import { getApiUrl, URLS } from './src/utils/urlGenerator';
-
 const knexConfig = {
   client: 'pg',
   connection: {
@@ -75,8 +73,9 @@ api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
 api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
 
 api.post('/posts', wrap(controller.createPost.bind(controller)));
-api.post('/follow', wrap(controller.followUser.bind(controller)));
 api.get('/user/:username', wrap(controller.getUser.bind(controller)));
+api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
+api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
 
 api.post('/logout', wrap(controller.logout.bind(controller)));
 

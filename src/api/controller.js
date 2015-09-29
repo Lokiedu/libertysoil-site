@@ -213,19 +213,45 @@ export default class ApiController {
   }
 
   async followUser(req, res) {
-
     let User = this.bookshelf.model('User');
     let follow_status = { success: false };
 
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
-      let follow = await User.where({username: req.body.username}).fetch({require: true});
+      let follow = await User.where({username: req.params.username}).fetch({require: true});
 
-      if(user.id != follow.id && user.related('following').find('id', follow.id).count() === 0) {
-        user.following().attach(follow);
-        user.save();
+      if (user.id != follow.id && _.isUndefined(user.related('following').find({id: follow.id}))) {
+        await user.following().attach(follow);
+
         follow_status.success = true;
+        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
       }
+
+      follow_status.user = user.toJSON();
+    } catch(ex) {
+      res.status(500);
+      follow_status.error = ex.message;
+    }
+
+    res.send(follow_status)
+  }
+
+  async unfollowUser(req, res) {
+    let User = this.bookshelf.model('User');
+    let follow_status = { success: false };
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+      let follow = await User.where({username: req.params.username}).fetch({require: true});
+
+      if (user.id != follow.id && !_.isUndefined(user.related('following').find({id: follow.id}))) {
+        await user.following().detach(follow);
+
+        follow_status.success = true;
+        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+      }
+
+      follow_status.user = user.toJSON();
     } catch(ex) {
       res.status(500);
       follow_status.error = ex.message;

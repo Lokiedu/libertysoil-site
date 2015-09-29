@@ -10,10 +10,42 @@ import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags'
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
-import {getStore, addUser, setUserPosts} from '../store';
+import {getStore, addUser, setUserPosts, addError} from '../store';
 
 
 class FollowButton extends React.Component {
+  async followUser(event) {
+    event.preventDefault();
+
+    let user = this.props.page_user;
+
+    try {
+      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/follow`);
+
+      if ('user' in res.body) {
+        getStore().dispatch(addUser(res.body.user));
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  };
+
+  async unfollowUser(event) {
+    event.preventDefault();
+
+    let user = this.props.page_user;
+
+    try {
+      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/unfollow`);
+
+      if ('user' in res.body) {
+        getStore().dispatch(addUser(res.body.user));
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  };
+
   render() {
     if (_.isUndefined(this.props.current_user)) {
       return <script/>;  // anonymous
@@ -33,9 +65,9 @@ class FollowButton extends React.Component {
     let is_followed = (current_user.following.indexOf(page_user.id) != -1);
 
     if (is_followed) {
-      return <div>User is followed</div>;
+      return <button onClick={this.unfollowUser.bind(this)}>Un-Follow</button>;
     } else {
-      return <div>User is not followed</div>;
+      return <button onClick={this.followUser.bind(this)}>Follow</button>;
     }
   }
 }
