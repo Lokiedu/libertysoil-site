@@ -27,7 +27,7 @@ class PostPage extends React.Component {
 
   render() {
     // FIXME: add check for post existence
-    const current_user = this.props.current_user;
+    let current_user = this.props.users[this.props.current_user];
     const post_uuid = this.props.params.uuid;
 
     if (!(post_uuid in this.props.posts)) {

@@ -31,7 +31,7 @@ class AuthContents extends React.Component {
 
 class Auth extends React.Component {
   render() {
-    let currentUser = this.props.current_user;
+    let current_user = this.props.users[this.props.current_user];
     let messages;
 
     if (this.props.messages.length) {
@@ -42,7 +42,7 @@ class Auth extends React.Component {
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={currentUser} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
         <div className="page__body page__body-rows">
           {messages}
           <div className="area">

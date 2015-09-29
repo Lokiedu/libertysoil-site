@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 class NotFound extends React.Component {
   render() {
+    let current_user = this.props.users[this.props.current_user];
+
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />

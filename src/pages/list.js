@@ -18,7 +18,7 @@ class Index extends React.Component {
     getStore().dispatch(setPostsToRiver(result.body));
   }
   render() {
-    let current_user = this.props.current_user;
+    let current_user = this.props.users[this.props.current_user];
 
     return (
       <div>

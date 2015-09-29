@@ -26,7 +26,7 @@ class UserPage extends React.Component {
   }
 
   render() {
-    const current_user = this.props.current_user;
+    let current_user = this.props.users[this.props.current_user];
 
     let page_user = _.find(this.props.users, {username: this.props.params.username});
 

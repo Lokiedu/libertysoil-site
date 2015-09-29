@@ -96,14 +96,25 @@ export function updateFollowStatus(status) {
 }
 
 function theReducer(state, action) {
+  let userToStateCut = user => {
+    let users = {};
+
+    if ('following' in user) {
+      for (let followed_user of user.following) {
+        users[followed_user.id] = followed_user;
+      }
+
+      user.following = user.following.map(user => user.id);
+    }
+
+    users[user.id] = user;
+
+    return {users: users};
+  };
+
   switch (action.type) {
     case ADD_USER: {
-      let user = action.user;
-
-      let cut = {users: {}};
-      cut.users[user.id] = user;
-
-      state = state.mergeDeep(Immutable.fromJS(cut));
+      state = state.mergeDeep(Immutable.fromJS(userToStateCut(action.user)));
       break;
     }
 
@@ -199,8 +210,11 @@ function theReducer(state, action) {
     }
 
     case SET_CURRENT_USER: {
-      state = state.set('is_logged_in', true);
-      state = state.set('current_user', Immutable.fromJS(action.user));
+      let cut = userToStateCut(action.user)
+      cut.is_logged_in = true
+      cut.current_user = action.user.id
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
       break;
     }
 
@@ -225,7 +239,7 @@ let initialState = {
   river: [],
   messages: [],
   is_logged_in: false,
-  current_user: {}
+  current_user: null
 };
 
 let store;
