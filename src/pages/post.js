@@ -54,15 +54,8 @@ class PostPage extends React.Component {
                 <a href="/">News feed</a>
               </div>
             </div>
-
             <div className="page__content">
-              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id} full_post={true} />
-              <ReactDisqusThread
-                  shortname="lstest"
-                  identifier={current_post.id}
-                  title="Post"
-                  url={`http://alpha.libertysoil.org/post/${current_post.id}`}
-                  categoryId={current_post.type}/>
+              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id} fullPost={true} />
             </div>
           </div>
         </div>

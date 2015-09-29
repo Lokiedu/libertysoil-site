@@ -1,6 +1,7 @@
 import React from 'react';
 import request from 'superagent';
 import { Link } from 'react-router';
+import bem from '../utils/bemClassNames';
 
 import User from './user';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
@@ -41,12 +42,21 @@ export class TextPostComponent extends React.Component {
   };
 
   render() {
+    var props = this.props;
+    var post = props.post;
+    var cardClassName = bem.makeClassName({
+      block: 'card',
+      modifiers: {
+        full: props.fullPost
+      }
+    });
+
     return (
-      <section className="card">
+      <section className={cardClassName}>
         {false && <header className="card__header"></header>}
         <div className="card__content">
-          <p>{this.props.post.text}</p>
-          {!this.props.full_post && <p className="card__read_link"><Link to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })}>Read full post</Link></p>}
+          <p>{post.text}</p>
+          {!this.props.fullPost && <p className="card__read_link"><Link to={getUrl(URL_NAMES.POST, { uuid: post.id })}>Read full post</Link></p>}
         </div>
         <div className="card__owner">
           <User user={this.props.author} avatarSize="32" />
@@ -56,9 +66,17 @@ export class TextPostComponent extends React.Component {
           <div className="card__toolbar">
             <span className="card__toolbar_item action" onClick={this.followUser.bind(this.props)}><span className="icon fa fa-heart-o"></span></span>
             <span className="card__toolbar_item icon fa fa-star-o"></span>
-            <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+            <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={post.id}></span>
           </div>
         </footer>
+        {!this.props.fullPost && <div className="card__comments">
+          <ReactDisqusThread
+              shortname="lstest"
+              identifier={post.id}
+              title="Post"
+              url={`http://alpha.libertysoil.org/post/${post.id}`}
+              categoryId={post.type}/>
+        </div>}
       </section>
     )
   }
