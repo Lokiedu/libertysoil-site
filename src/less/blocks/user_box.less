@@ -1,5 +1,6 @@
 .user_box {
   &:extend(.layout);
+  &:extend(.layout-align_vertical);
   border: none;
   font-size: 14px;
 
@@ -9,7 +10,7 @@
 
   &__body {
     &:extend(.layout);
-    &:extend(.layout-align_vertical);
+    &:extend(.layout-rows);
 
     .user_box__avatar + & {
       margin-left: 10px;
