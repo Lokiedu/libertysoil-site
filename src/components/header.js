@@ -15,14 +15,19 @@ export default class HeaderComponent extends React.Component {
       AuthBlock =
           <div className="header__toolbar">
             <div className="header__toolbar_item">
-              <User user={this.props.current_user} />
+              <User user={this.props.current_user} hideText={true} />
             </div>
             <form className="header__toolbar_item" action={`${API_HOST}/api/v1/logout`} method="post">
               <button type="submit" className="link">Log out</button>
             </form>
-          </div>
+          </div>;
     } else {
-      AuthBlock = <Link to="/auth" className="header__toolbar_item">Login</Link>
+      AuthBlock =
+          <div className="header__toolbar">
+            <div className="header__toolbar_item">
+              <Link to="/auth" className="header__toolbar_item">Login</Link>
+            </div>
+          </div>;
     }
 
     return (
