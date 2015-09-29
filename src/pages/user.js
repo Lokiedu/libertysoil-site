@@ -13,6 +13,34 @@ import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts} from '../store';
 
 
+class FollowButton extends React.Component {
+  render() {
+    if (_.isUndefined(this.props.current_user)) {
+      return <script/>;  // anonymous
+    }
+
+    const current_user = this.props.current_user;
+    const page_user = this.props.page_user;
+
+    if (current_user.id === page_user.id) {
+      return <script/>;  // do not allow to follow one's self
+    }
+
+    if (!('following' in current_user)) {
+      return <script/>;
+    }
+
+    let is_followed = (current_user.following.indexOf(page_user.id) != -1);
+
+    if (is_followed) {
+      return <div>User is followed</div>;
+    } else {
+      return <div>User is not followed</div>;
+    }
+  }
+}
+
+
 class UserPage extends React.Component {
   async componentWillMount() {
     let promises = [
@@ -26,7 +54,10 @@ class UserPage extends React.Component {
   }
 
   render() {
-    let current_user = this.props.users[this.props.current_user];
+    let current_user;
+    if (this.props.is_logged_in) {
+      current_user = this.props.users[this.props.current_user];
+    }
 
     let page_user = _.find(this.props.users, {username: this.props.params.username});
 
@@ -38,7 +69,7 @@ class UserPage extends React.Component {
       return <NotFound/>
     }
 
-    let user_posts = this.props.user_posts[current_user.id];
+    let user_posts = this.props.user_posts[page_user.id];
 
     return (
       <div>
@@ -50,6 +81,7 @@ class UserPage extends React.Component {
             <div className="page__content">
               <div>
                 {page_user.username}
+                <FollowButton current_user={current_user} page_user={page_user}/>
               </div>
 
               <River river={user_posts} posts={this.props.posts} users={this.props.users}/>
