@@ -63,11 +63,29 @@ export class TextPostComponent extends React.Component {
       }
     });
 
+    let Comments;
+
+    if (this.props.fullPost) {
+      let post = this.props.post;
+
+      Comments = (props) => {
+        return <div className="card__comments">
+          <ReactDisqusThread
+            shortname="lstest"
+            identifier={post.id}
+            title="Post"
+            url={`http://alpha.libertysoil.org/post/${post.id}`}
+            categoryId={post.type}/>
+        </div>
+      }
+    } else {
+      Comments = () => { return <script/> };
+    }
+
     let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
 
     return (
       <section className={cardClassName}>
-        {false && <header className="card__header"></header>}
         <div className="card__content">
           <p>{post.text}</p>
         </div>
@@ -78,14 +96,7 @@ export class TextPostComponent extends React.Component {
           <TagLine tags={[]}/>
           <Toolbar post={post}/>
         </footer>
-        {this.props.fullPost && <div className="card__comments">
-          <ReactDisqusThread
-              shortname="lstest"
-              identifier={post.id}
-              title="Post"
-              url={`http://alpha.libertysoil.org/post/${post.id}`}
-              categoryId={post.type}/>
-        </div>}
+        <Comments post={post}/>
       </section>
     )
   }

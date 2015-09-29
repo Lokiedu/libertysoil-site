@@ -41,7 +41,7 @@
     "moment": "^2.10.6",
     "multer": "^1.0.3",
     "pg": "^4.4.1",
-    "react": "0.14.0-beta3",
+    "react": "0.14.0-rc1",
     "react-dom": "0.14.0-beta3",
     "react-gravatar": "^2.1.0",
     "react-redux": "^2.1.1",
