@@ -166,10 +166,27 @@ export default class ApiController {
       }
     }
 
-    let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
-
     let User = this.bookshelf.model('User');
 
+    {
+      let check = await User.where({username: req.body.username}).fetch({require: false})
+      if (check) {
+        res.status(409);
+        res.send({error: 'User with this username is already registered'})
+        return;
+      }
+    }
+
+    {
+      let check = await User.where({email: req.body.email}).fetch({require: false})
+      if (check) {
+        res.status(409);
+        res.send({error: 'User with this email is already registered'})
+        return;
+      }
+    }
+
+    let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
     let obj = new User({
       id: uuid.v4(),
       username: req.body.username,
