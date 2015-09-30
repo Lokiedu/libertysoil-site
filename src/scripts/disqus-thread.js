@@ -1,3 +1,8 @@
+/*
+Copyright by Matt Zabriskie
+MIT licensed
+taken from https://github.com/mzabriskie/react-disqus-thread
+ */
 var React = require('react');
 var DOM = React.DOM;
 var DISQUS_CONFIG = [

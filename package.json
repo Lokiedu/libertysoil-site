@@ -1,14 +1,22 @@
 {
   "name": "libertysoil",
   "version": "1.0.0",
-  "description": "",
+  "description": "Libertysoil.org website",
+  "license": "AGPL-3.0+",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lokiedu/libertysoil-site.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties index.js",
+    "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties index.js",
     "watch": "nodemon --watch src --watch index.js --exec babel-node --optional es7.functionBind,es7.classProperties -- index.js"
   },
-  "author": "",
+  "author": {
+    "name": "Loki Education (Social Enterprise)",
+    "email": "info@lokieducation.org"
+  },
   "dependencies": {
     "babel": "^5.8.23",
     "babel-runtime": "^5.8.20",

@@ -25,4 +25,4 @@ RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp
 
 EXPOSE 8000
-CMD ["npm", "run", "server"]
+CMD ["npm", "run", "start"]
