@@ -10,6 +10,7 @@ const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 const SET_USER_POSTS = 'SET_USER_POSTS';
+const SET_LIKES = 'SET_LIKES';
 
 const ADD_ERROR = 'ADD_ERROR';
 const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
@@ -51,6 +52,14 @@ export function setUserPosts(posts) {
   return {
     type: SET_USER_POSTS,
     posts
+  }
+}
+
+export function setLikes(user_id, likes) {
+  return {
+    type: SET_LIKES,
+    user_id,
+    likes
   }
 }
 
@@ -226,6 +235,10 @@ function theReducer(state, action) {
       );
       break;
     }
+    case SET_LIKES: {
+      state = state.setIn(['likes', action.user_id], action.likes);
+      break;
+    }
 
     case UPDATE_FOLLOW_STATUS: {
       console.log('changes');
@@ -240,6 +253,7 @@ let initialState = {
   users: {},
   user_posts: {},
   follows:{},
+  likes: {},
   posts: {},
   river: [],
   messages: [],

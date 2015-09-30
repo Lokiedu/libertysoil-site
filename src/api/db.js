@@ -23,6 +23,9 @@ export default function initBookshelf(config) {
     followers: function() {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
+    liked_posts: function() {
+      return this.belongsToMany(User, 'likes', 'user_id', 'post_id');
+    },
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
@@ -35,6 +38,9 @@ export default function initBookshelf(config) {
     tableName: 'posts',
     user: function() {
       return this.belongsTo(User, 'user_id');
+    },
+    likers: function() {
+      return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
     }
   });
 

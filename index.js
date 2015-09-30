@@ -17,7 +17,7 @@ import Routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
-import {initState, setCurrentUser, getStore, setPostsToRiver} from './src/store';
+import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
 const knexConfig = {
   client: 'pg',
@@ -93,7 +93,15 @@ let reactHandler = async (req, res, next) => {
         .where({id: req.session.user})
         .fetch({require: true, withRelated: ['following']});
 
-      store.dispatch(setCurrentUser(user.toJSON()));
+      let data = user.toJSON();
+
+      let likes = await bookshelf.knex
+        .select('post_id')
+        .from('likes')
+        .where({user_id: req.session.user});
+
+      store.dispatch(setCurrentUser(data));
+      store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
     } catch (e) {
       console.log(`dispatch failed: ${e.stack}`)
     }
