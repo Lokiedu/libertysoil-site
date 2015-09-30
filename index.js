@@ -68,6 +68,8 @@ api.post('/session', wrap(controller.login.bind(controller)));
 
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
+api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
+api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
 
 api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
 api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));

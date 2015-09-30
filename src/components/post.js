@@ -9,7 +9,7 @@ import User from './user';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 import {API_HOST} from '../config'
-import {getStore, addError, updateFollowStatus} from '../store';
+import {getStore, addError, setLikes} from '../store';
 
 class TagLine extends React.Component {
   render() {
@@ -28,9 +28,51 @@ class TagLine extends React.Component {
 }
 
 class Toolbar extends React.Component {
-  likePost(event) {
+  async likePost(event) {
+    event.preventDefault();
 
-  }
+    if (!this.props.current_user) {
+      alert('Please log in!');
+      return;
+    }
+
+    let post_id = this.props.post.id;
+
+    try {
+      let res = await request.post(`${API_HOST}/api/v1/post/${post_id}/like`);
+
+      if (res.body.success) {
+        getStore().dispatch(setLikes(this.props.current_user.id, res.body.likes));
+      } else {
+        getStore().dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  };
+
+  async unlikePost(event) {
+    event.preventDefault();
+
+    if (!this.props.current_user) {
+      alert('Please log in!');
+      return;
+    }
+
+    let post_id = this.props.post.id;
+
+    try {
+      let res = await request.post(`${API_HOST}/api/v1/post/${post_id}/unlike`);
+
+      if (res.body.success) {
+        getStore().dispatch(setLikes(this.props.current_user.id, res.body.likes));
+      } else {
+        getStore().dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  };
 
   addPostToFavourites(event) {
 
@@ -38,14 +80,23 @@ class Toolbar extends React.Component {
 
   render()
   {
+    let heart_class = 'fa-heart-o';
+    let like_action = this.likePost.bind(this);
+    if (this.props.current_user && this.props.current_user.likes.indexOf(this.props.post.id) > -1) {
+      heart_class = 'fa-heart';
+      like_action = this.unlikePost.bind(this);
+    }
+
     return (
       <div className="card__toolbar">
-        <span className="card__toolbar_item action" onClick={this.likePost.bind(this.props)}>
-          <span className="icon fa fa-heart-o"></span>
+        <span className="card__toolbar_item action" onClick={like_action}>
+          <span className={`icon fa ${heart_class}`}></span>
         </span>
+
         <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
           <span className="card__toolbar_item icon fa fa-star-o"></span>
         </span>
+
         <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
       </div>
     )
@@ -89,13 +140,16 @@ export class TextPostComponent extends React.Component {
         <div className="card__content">
           <p>{post.text}</p>
         </div>
+
         <div className="card__owner">
           <User user={this.props.author} avatarSize="32" timestamp={post.created_at} timestampLink={post_url} />
         </div>
+
         <footer className="card__footer">
           <TagLine tags={[]}/>
-          <Toolbar post={post}/>
+          <Toolbar post={post} current_user={this.props.current_user} />
         </footer>
+
         <Comments post={post}/>
       </section>
     )

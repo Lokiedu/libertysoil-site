@@ -25,8 +25,6 @@ class PostPage extends React.Component {
   }
 
   render() {
-    // FIXME: add check for post existence
-    let current_user = this.props.users[this.props.current_user];
     const post_uuid = this.props.params.uuid;
 
     if (!(post_uuid in this.props.posts)) {
@@ -39,6 +37,11 @@ class PostPage extends React.Component {
     if (current_post === false) {
       return <NotFound/>
     }
+
+    const author = this.props.users[current_post.user_id]
+
+    let current_user = _.cloneDeep(this.props.users[this.props.current_user]);
+    current_user.likes = this.props.likes[this.props.current_user];
 
     return (
       <div>
@@ -54,7 +57,7 @@ class PostPage extends React.Component {
               </div>
             </div>
             <div className="page__content">
-              <TextPostComponent post={current_post} author={this.props.users[current_post.user_id]} key={current_post.id} fullPost={true} />
+              <TextPostComponent post={current_post} author={author} current_user={current_user} key={current_post.id} fullPost={true} />
             </div>
           </div>
         </div>

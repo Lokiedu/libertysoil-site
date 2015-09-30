@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import request from 'superagent';
+import _ from 'lodash';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -18,7 +19,8 @@ class Index extends React.Component {
     getStore().dispatch(setPostsToRiver(result.body));
   }
   render() {
-    let current_user = this.props.users[this.props.current_user];
+    let current_user = _.cloneDeep(this.props.users[this.props.current_user]);
+    current_user.likes = this.props.likes[this.props.current_user];
 
     return (
       <div>
@@ -28,7 +30,7 @@ class Index extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__content">
-              <River river={this.props.river} posts={this.props.posts} users={this.props.users}/>
+              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={current_user}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>

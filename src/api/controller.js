@@ -49,6 +49,70 @@ export default class ApiController {
     }
   }
 
+  async likePost(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    let result = { success: false };
+
+    let User = this.bookshelf.model('User');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let post = await Post.where({id: req.params.id}).fetch({require: true});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
+
+      await user.liked_posts().attach(post);
+
+      let likes = await this.bookshelf.knex
+        .select('post_id')
+        .from('likes')
+        .where({user_id: req.session.user});
+
+      result.success = true;
+      result.likes = likes.map(row => row.post_id)
+    } catch (ex) {
+      res.status(500);
+      result.error = ex.message;
+    }
+
+    res.send(result)
+  }
+
+  async unlikePost(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    let result = { success: false };
+
+    let User = this.bookshelf.model('User');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let post = await Post.where({id: req.params.id}).fetch({require: true});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
+
+      await user.liked_posts().detach(post);
+
+      let likes = await this.bookshelf.knex
+        .select('post_id')
+        .from('likes')
+        .where({user_id: req.session.user});
+
+      result.success = true;
+      result.likes = likes.map(row => row.post_id)
+    } catch (ex) {
+      res.status(500);
+      result.error = ex.message;
+    }
+
+    res.send(result)
+  }
+
   async subscriptions(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)
