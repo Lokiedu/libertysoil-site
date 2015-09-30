@@ -213,6 +213,11 @@ export default class ApiController {
   }
 
   async followUser(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
     let User = this.bookshelf.model('User');
     let follow_status = { success: false };
 
@@ -237,6 +242,11 @@ export default class ApiController {
   }
 
   async unfollowUser(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
     let User = this.bookshelf.model('User');
     let follow_status = { success: false };
 
