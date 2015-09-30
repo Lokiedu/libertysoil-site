@@ -21,6 +21,10 @@ import CurrentUser from './current-user';
 
 export default class Sidebar extends React.Component {
   render() {
+    if (!this.props.current_user) {
+      return <script/>
+    }
+
     return (
       <div className="page__sidebar">
         <div className="layout__row page__sidebar_user">

@@ -57,8 +57,11 @@ class PostPage extends React.Component {
 
     const author = this.props.users[current_post.user_id]
 
-    let current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-    current_user.likes = this.props.likes[this.props.current_user];
+    let current_user
+    if (this.props.is_logged_in) {
+      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
+      current_user.likes = this.props.likes[this.props.current_user];
+    }
 
     return (
       <div>

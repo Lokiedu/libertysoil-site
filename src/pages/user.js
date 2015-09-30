@@ -99,11 +99,6 @@ class UserPage extends React.Component {
   }
 
   render() {
-    let current_user;
-    if (this.props.is_logged_in) {
-      current_user = this.props.users[this.props.current_user];
-    }
-
     let page_user = _.find(this.props.users, {username: this.props.params.username});
 
     if (_.isUndefined(page_user)) {
@@ -115,7 +110,12 @@ class UserPage extends React.Component {
     }
 
     let user_posts = this.props.user_posts[page_user.id];
-    let i_am_following = this.props.following[current_user.id];
+
+    let current_user, i_am_following;
+    if (this.props.is_logged_in) {
+      current_user = this.props.users[this.props.current_user];
+      i_am_following = this.props.following[current_user.id];
+    }
 
     return (
       <div>
