@@ -78,9 +78,9 @@ class FollowButton extends React.Component {
     let is_followed = (this.props.following.indexOf(page_user.id) != -1);
 
     if (is_followed) {
-      return <button onClick={this.unfollowUser.bind(this)}>Un-Follow</button>;
+      return <button className="button button-wide button-yellow" onClick={this.unfollowUser.bind(this)}>Following</button>;
     } else {
-      return <button onClick={this.followUser.bind(this)}>Follow</button>;
+      return <button className="button button-wide button-green" onClick={this.followUser.bind(this)}>Follow</button>;
     }
   }
 }
