@@ -51,7 +51,7 @@ export default class HeaderComponent extends React.Component {
       <div {...this.props} className={classNames}>
         <div className="header__body">
           <div className="header__logo">
-            <a href="/" className="logo" title="Liberty Soil"><span className="logo__title">Liberty Soil</span></a>
+            <Link to="/" className="logo" title="Liberty Soil"><span className="logo__title">Liberty Soil</span></Link>
           </div>
           {AuthBlock}
         </div>
