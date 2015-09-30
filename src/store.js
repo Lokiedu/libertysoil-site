@@ -103,7 +103,8 @@ function theReducer(state, action) {
         users[followed_user.id] = followed_user;
       }
 
-      user.following = user.following.map(user => user.id);
+      user = _.cloneDeep(user)
+      delete user.following
     }
 
     users[user.id] = user;
@@ -114,6 +115,10 @@ function theReducer(state, action) {
   switch (action.type) {
     case ADD_USER: {
       state = state.mergeDeep(Immutable.fromJS(userToStateCut(action.user)));
+      state = state.setIn(
+        ['following', action.user.id],
+        action.user.following.map(user => user.id)
+      );
       break;
     }
 
@@ -214,9 +219,13 @@ function theReducer(state, action) {
       cut.current_user = action.user.id
 
       state = state.mergeDeep(Immutable.fromJS(cut));
+
+      state = state.setIn(
+        ['following', action.user.id],
+        action.user.following.map(user => user.id)
+      );
       break;
     }
-
 
     case UPDATE_FOLLOW_STATUS: {
       console.log('changes');
@@ -230,6 +239,7 @@ function theReducer(state, action) {
 let initialState = {
   users: {},
   user_posts: {},
+  follows:{},
   posts: {},
   river: [],
   messages: [],

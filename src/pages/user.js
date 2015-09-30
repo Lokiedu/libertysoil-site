@@ -58,11 +58,7 @@ class FollowButton extends React.Component {
       return <script/>;  // do not allow to follow one's self
     }
 
-    if (!('following' in current_user)) {
-      return <script/>;
-    }
-
-    let is_followed = (current_user.following.indexOf(page_user.id) != -1);
+    let is_followed = (this.props.following.indexOf(page_user.id) != -1);
 
     if (is_followed) {
       return <button onClick={this.unfollowUser.bind(this)}>Un-Follow</button>;
@@ -102,6 +98,7 @@ class UserPage extends React.Component {
     }
 
     let user_posts = this.props.user_posts[page_user.id];
+    let i_am_following = this.props.following[current_user.id];
 
     return (
       <div>
@@ -113,7 +110,7 @@ class UserPage extends React.Component {
             <div className="page__content">
               <div>
                 {page_user.username}
-                <FollowButton current_user={current_user} page_user={page_user}/>
+                <FollowButton current_user={current_user} page_user={page_user} following={i_am_following}/>
               </div>
 
               <River river={user_posts} posts={this.props.posts} users={this.props.users}/>
