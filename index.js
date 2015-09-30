@@ -36,16 +36,10 @@ import initBookshelf from './src/api/db'
 import {API_HOST} from './src/config'
 import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
-const knexConfig = {
-  client: 'pg',
-  connection: {
-    host     : '127.0.0.1',
-    user     : 'libertysoil',
-    password : 'libertysoil',
-    database : 'libertysoil',
-    charset  : 'utf8'
-  }
-};
+import db_config from './knexfile';
+
+let exec_env = process.env.DB_ENV || 'development';
+const knexConfig = db_config[exec_env];
 
 let bookshelf = initBookshelf(knexConfig)
 let controller = new ApiController(bookshelf);

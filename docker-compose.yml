@@ -17,6 +17,7 @@ app:
     - redis
   environment:
     - "VIRTUAL_HOST=alpha.libertysoil.org"
+    - "DB_ENV=staging"
 web:
   image: "jwilder/nginx-proxy"
   ports:
