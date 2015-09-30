@@ -5,7 +5,6 @@ import _ from 'lodash'
 import messageType from './consts/messageTypeConstants';
 
 const ADD_USER = 'ADD_USER';
-const SET_USER = 'SET_USER';
 
 const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
@@ -218,10 +217,6 @@ function theReducer(state, action) {
       break;
     }
 
-    case SET_USER: {
-      state = state.set('user', Immutable.fromJS(action.user));
-      break;
-    }
 
     case UPDATE_FOLLOW_STATUS: {
       console.log('changes');
