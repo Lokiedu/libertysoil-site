@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties index.js",
-    "watch": "nodemon --watch src --exec babel-node --optional es7.functionBind,es7.classProperties -- index.js"
+    "watch": "nodemon --watch src --watch index.js --exec babel-node --optional es7.functionBind,es7.classProperties -- index.js"
   },
   "author": "",
   "dependencies": {
