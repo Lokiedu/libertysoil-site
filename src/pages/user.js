@@ -117,6 +117,14 @@ class UserPage extends React.Component {
       i_am_following = this.props.following[current_user.id];
     }
 
+    let name = page_user.username;
+
+    if (page_user.more && page_user.more.firstName && page_user.more.lastName) {
+      name = `${page_user.more.firstName} ${page_user.more.lastName}`;
+    }
+
+    name = name.trim();
+
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user}/>
@@ -126,7 +134,7 @@ class UserPage extends React.Component {
 
             <div className="page__content">
               <div>
-                {page_user.username}
+                {name}
                 <FollowButton current_user={current_user} page_user={page_user} following={i_am_following}/>
               </div>
 
