@@ -72,10 +72,10 @@ export class TextPostComponent extends React.Component {
         return <div className="card__comments">
           <ReactDisqusThread
             shortname="lstest"
-            identifier={post.id}
+            identifier={props.post.id}
             title="Post"
-            url={`http://alpha.libertysoil.org/post/${post.id}`}
-            categoryId={post.type}/>
+            url={`http://alpha.libertysoil.org/post/${props.post.id}`}
+            categoryId={props.post.type}/>
         </div>
       }
     } else {
