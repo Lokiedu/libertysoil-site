@@ -21,7 +21,6 @@ import { Link } from 'react-router';
 import ReactDisqusThread from '../scripts/disqus-thread';
 
 import bem from '../utils/bemClassNames';
-
 import User from './user';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
@@ -133,13 +132,15 @@ export class TextPostComponent extends React.Component {
       }
     });
 
+    let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
+
     let Comments;
 
     if (this.props.fullPost) {
       let post = this.props.post;
 
-      Comments = (props) => {
-        return <div className="card__comments">
+      Comments = (props) => (
+        <div className="card__comments">
           <ReactDisqusThread
             shortname="lstest"
             identifier={props.post.id}
@@ -147,12 +148,10 @@ export class TextPostComponent extends React.Component {
             url={`http://alpha.libertysoil.org/post/${props.post.id}`}
             categoryId={props.post.type}/>
         </div>
-      }
+      )
     } else {
       Comments = () => { return <script/> };
     }
-
-    let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
 
     return (
       <section className={cardClassName}>
@@ -165,6 +164,7 @@ export class TextPostComponent extends React.Component {
         </div>
 
         <footer className="card__footer">
+          <Link to={post_url} className="card__link"><span class="fa fa-link"></span></Link>
           <TagLine tags={[]}/>
           <Toolbar post={post} current_user={this.props.current_user} />
         </footer>

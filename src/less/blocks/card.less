@@ -31,6 +31,18 @@
   &-full {
     margin-bottom: 35px;
   }
+
+  &__link {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    border: none;
+    color: #aeaeae;
+
+    &:hover {
+      color: #000;
+    }
+  }
 }
 
 .card__header {
@@ -53,6 +65,7 @@
 .card__footer {
   padding: 20px @doubleSpace;
   background: #f9f8f8;
+  position: relative;
 
   .tags {
     margin-bottom: 15px;
@@ -68,10 +81,20 @@
 
   &_item {
     color: #aeaeae;
+
     &:extend(.layout__grid_item all);
+    &:extend(.layout);
+    &:extend(.layout-align_vertical);
+
+    &:hover {
+      .icon {
+        color: #000;
+      }
+    }
   }
 
   &_item_value {
-    font-size: 14px;
+    font-size: 13px;
+    margin-left: 3px;
   }
 }
