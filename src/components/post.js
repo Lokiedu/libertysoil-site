@@ -107,11 +107,13 @@ class Toolbar extends React.Component {
     return (
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
-          <span className={`icon fa ${heart_class}`}></span>
+          <span className="icon fa fa-heart-o"></span>
+          {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
         <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
-          <span className="card__toolbar_item icon fa fa-star-o"></span>
+          <span className="icon fa fa-star-o"></span>
+          {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
         <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>

@@ -53,6 +53,10 @@
 .card__footer {
   padding: 20px @doubleSpace;
   background: #f9f8f8;
+
+  .tags {
+    margin-bottom: 15px;
+  }
 }
 
 .card__toolbar {
@@ -63,6 +67,11 @@
   }
 
   &_item {
+    color: #aeaeae;
     &:extend(.layout__grid_item all);
+  }
+
+  &_item_value {
+    font-size: 14px;
   }
 }
