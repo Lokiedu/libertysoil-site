@@ -23,29 +23,15 @@ import {API_HOST} from '../config'
 import {getStore, addError, removeAllMessages, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
-  async submitHandler(event) {
+  submitHandler = (event) => {
     event.preventDefault();
 
     let form = event.target;
 
-    let login_data = {
+    this.props.onLoginUser({
       username: form.username.value,
       password: form.password.value
-    };
-
-    getStore().dispatch(removeAllMessages());
-
-    try {
-      let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
-
-      if (result.body.success) {
-        getStore().dispatch(setCurrentUser(result.body.user));
-      } else {
-        getStore().dispatch(addError('Invalid username or password'));
-      }
-    } catch (e) {
-      getStore().dispatch(addError('Invalid username or password'));
-    }
+    });
   };
 
   render() {
@@ -56,12 +42,12 @@ export default class LoginComponent extends React.Component {
           <div className="box__body">
             <div className="layout__row">
               <div className="form__row">
-                <label className="label label-block label-space">Username</label>
-                <input className="input input-block" required="required" type="text" name="username"/>
+                <label className="label label-block label-space" htmlFor="loginUsername">Username</label>
+                <input className="input input-block" id="loginUsername" required="required" type="text" name="username"/>
               </div>
               <div className="form__row">
-                <label className="label label-block label-space">Password</label>
-                <input className="input input-block" required="required" type="password" name="password"/>
+                <label className="label label-block label-space" htmlFor="loginPassword">Password</label>
+                <input className="input input-block" id="loginPassword" required="required" type="password" name="password"/>
               </div>
             </div>
             <div className="layout__row layout layout-align_vertical layout-align_justify">

@@ -16,15 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import request from 'superagent';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-
-import {API_HOST} from '../config';
-import {getStore, addError, removeAllMessages} from '../store';
 
 export default class RegisterComponent extends React.Component {
-  async submitHandler(event) {
+  submitHandler = (event) => {
     event.preventDefault();
 
     let form = event.target;
@@ -41,39 +35,13 @@ export default class RegisterComponent extends React.Component {
       return;
     }
 
-    let user_data = {
+    this.props.onRegisterUser({
       username: form.username.value,
       firstName: form.firstName.value,
       lastName: form.lastName.value,
       password: form.password.value,
       email: form.email.value
-    };
-
-    getStore().dispatch(removeAllMessages());
-
-    // FIXME: disable form
-    try {
-      let result = await request.post(`${API_HOST}/api/v1/users`).type('form').send(user_data);
-
-      if ('error' in result.body) {
-        // FIXME: enable form again
-        getStore().dispatch(addError(result.body.error));
-        return;
-      }
-
-      alert('User is registered successfully');  // FIXME: send redux message instead
-    } catch (e) {
-      // FIXME: enable form again
-
-      if ('error' in e.response.body) {
-        // FIXME: enable form again
-        getStore().dispatch(addError(e.response.body.error));
-        return;
-      } else {
-        getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
-        return;
-      }
-    }
+    });
   };
 
   render() {
@@ -84,33 +52,33 @@ export default class RegisterComponent extends React.Component {
         <div className="box__body">
           <div className="layout__row">
             <div className="form__row">
-              <label className="label label-block label-space">Username</label>
-              <input className="input input-block" type="text" name="username" required="required"/>
+              <label className="label label-block label-space" htmlFor="registerUsername">Username</label>
+              <input className="input input-block" type="text" id="registerUsername" name="username" required="required"/>
             </div>
             <div className="form__row">
-              <label className="label label-block label-space">First name</label>
-              <input className="input input-block" type="text" name="firstName"/>
+              <label className="label label-block label-space" htmlFor="registerFirstName">First name</label>
+              <input className="input input-block" type="text" id="registerFirstName" name="firstName"/>
             </div>
             <div className="form__row">
-              <label className="label label-block label-space">Last name</label>
-              <input className="input input-block" type="text" name="lastName"/>
+              <label className="label label-block label-space" htmlFor="registerLastName">Last name</label>
+              <input className="input input-block" type="text" id="registerLastName"name="lastName"/>
             </div>
             <div className="form__row">
-              <label className="label label-block label-space">Email</label>
-              <input className="input input-block" type="email" name="email" required="required"/>
+              <label className="label label-block label-space" htmlFor="registerEmail">Email</label>
+              <input className="input input-block" type="email" id="registerEmail"name="email" required="required"/>
             </div>
             <div className="form__row">
-              <label className="label label-block label-space">Password</label>
-              <input className="input input-block" type="password" name="password" required="required"/>
+              <label className="label label-block label-space" htmlFor="registerPassword">Password</label>
+              <input className="input input-block" type="password" id="registerPassword"name="password" required="required"/>
             </div>
             <div className="form__row">
-              <label className="label label-block label-space">Repeat password</label>
-              <input className="input input-block" type="password" name="password_repeat" required="required"/>
+              <label className="label label-block label-space" htmlFor="registerPasswordRepeat">Repeat password</label>
+              <input className="input input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required"/>
             </div>
           </div>
           <div className="layout__row layout layout-align_vertical layout-align_justify">
             <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" required="required" /><span>I agree to <a href="#" className="link">T&amp;C</a></span></label>
-            <button className="button button-wide button-yellow">Send</button>
+            <button className="button button-wide button-yellow">Create account</button>
           </div>
         </div>
       </form>

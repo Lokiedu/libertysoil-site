@@ -18,6 +18,10 @@ import { connect } from 'react-redux';
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Link } from 'react-router';
+import request from 'superagent';
+
+import {API_HOST} from '../config';
+import {addError, removeAllMessages, addMessage} from '../store';
 
 import Footer from '../components/footer';
 import Login from '../components/login';
@@ -26,8 +30,64 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 class AuthContents extends React.Component {
-  render() {
-    if (this.props.is_logged_in) {
+  registerUser = (user) => {
+    let {dispatch} = this.props;
+
+    dispatch(removeAllMessages());
+
+    (async () => {
+      // FIXME: disable form
+      try {
+        let result = await request.post(`${API_HOST}/api/v1/users`).type('form').send(user);
+
+        if ('error' in result.body) {
+          // FIXME: enable form again
+          dispatch(addError(result.body.error));
+          return;
+        }
+
+        dispatch(addMessage('User is registered successfully'));
+      } catch (e) {
+        // FIXME: enable form again
+
+        if (e.response && 'error' in e.response.body) {
+          // FIXME: enable form again
+          dispatch(addError(e.response.body.error));
+          return;
+        } else {
+          dispatch(addError('Server seems to have problems. Retry later, please'));
+          return;
+        }
+      }
+    })();
+  }
+
+  loginUser = (login_data) => {
+    let {dispatch} = this.props;
+
+    dispatch(removeAllMessages());
+
+    (async () => {
+      dispatch(removeAllMessages());
+
+      try {
+        let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
+
+        if (result.body.success) {
+          dispatch(setCurrentUser(result.body.user));
+        } else {
+          dispatch(addError('Invalid username or password'));
+        }
+      } catch (e) {
+        dispatch(addError('Invalid username or password'));
+      }
+    })();
+  }
+
+  render () {
+    let {is_logged_in} = this.props;
+
+    if (is_logged_in) {
       return <div className="area__body">
         <div className="message">
           <div className="message__body">
@@ -39,8 +99,8 @@ class AuthContents extends React.Component {
 
     return <div>
       <div className="area__body layout-align_start">
-        <Login/>
-        <Register/>
+        <Login onLoginUser={this.loginUser} />
+        <Register onRegisterUser={this.registerUser} />
       </div>
     </div>
   }
@@ -48,8 +108,8 @@ class AuthContents extends React.Component {
 
 class Auth extends React.Component {
   render() {
-    let current_user = this.props.users[this.props.current_user];
     let messages;
+    let { dispatch, current_user, is_logged_in } = this.props;
 
     if (this.props.messages.length) {
       messages = <div className="layout layout__space layout-align_center">
@@ -59,11 +119,11 @@ class Auth extends React.Component {
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
+        <Header is_logged_in={is_logged_in} current_user={current_user} />
         <div className="page__body page__body-rows">
           {messages}
           <div className="area">
-            <AuthContents is_logged_in={this.props.is_logged_in} messages={this.props.messages}/>
+            <AuthContents is_logged_in={is_logged_in} messages={this.props.messages} dispatch={dispatch} />
           </div>
         </div>
         <Footer/>

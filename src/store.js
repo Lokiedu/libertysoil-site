@@ -30,6 +30,7 @@ const SET_USER_POSTS = 'SET_USER_POSTS';
 const SET_LIKES = 'SET_LIKES';
 
 const ADD_ERROR = 'ADD_ERROR';
+const ADD_MESSAGE = 'ADD_MESSAGE';
 const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
 const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
@@ -83,6 +84,13 @@ export function setLikes(user_id, likes) {
 export function addError(message) {
   return {
     type: ADD_ERROR,
+    message
+  }
+}
+
+export function addMessage(message) {
+  return {
+    type: ADD_MESSAGE,
     message
   }
 }
@@ -220,6 +228,14 @@ function theReducer(state, action) {
     case ADD_ERROR: {
       state = state.updateIn(['messages'], messages => messages.push({
         type: messageType.ERROR,
+        message: action.message
+      }))
+      break;
+    }
+
+    case ADD_MESSAGE: {
+      state = state.updateIn(['messages'], messages => messages.push({
+        type: messageType.MESSAGE,
         message: action.message
       }))
       break;
