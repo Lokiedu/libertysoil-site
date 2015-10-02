@@ -50,7 +50,7 @@ class AuthContents extends React.Component {
       } catch (e) {
         // FIXME: enable form again
 
-        if (e.response && 'error' in e.response.body) {
+        if (e.response && ('error' in e.response.body)) {
           // FIXME: enable form again
           dispatch(addError(e.response.body.error));
           return;
