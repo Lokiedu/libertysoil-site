@@ -98,8 +98,10 @@ class Toolbar extends React.Component {
   {
     let heart_class = 'fa-heart-o';
     let like_action = this.likePost.bind(this);
+
     if (this.props.current_user && this.props.current_user.likes.indexOf(this.props.post.id) > -1) {
-      heart_class = 'fa-heart';
+      // current user liked this post
+      heart_class = 'fa-heart color-red';
       like_action = this.unlikePost.bind(this);
     }
 
