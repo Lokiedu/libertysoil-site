@@ -15,7 +15,10 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
+      ping: function (conn, cb) {
+        conn.query('SELECT 1', cb);
+      }
     },
     migrations: {
       tableName: 'knex_migrations'
@@ -33,7 +36,10 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
+      ping: function (conn, cb) {
+        conn.query('SELECT 1', cb);
+      }
     },
     migrations: {
       tableName: 'knex_migrations'
