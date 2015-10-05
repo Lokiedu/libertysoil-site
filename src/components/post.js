@@ -117,11 +117,14 @@ class Toolbar extends React.Component {
           {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
-        <span className="card__toolbar_item disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+        <span className="card__toolbar_item action">
+          <span className="icon fa fa-comment-o"></span>
+          <span className="card__toolbar_item_value disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+        </span>
       </div>
     )
   }
-};
+}
 
 export class TextPostComponent extends React.Component {
   render() {

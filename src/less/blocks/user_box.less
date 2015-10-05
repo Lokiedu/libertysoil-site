@@ -21,12 +21,12 @@
   border: none;
   font-size: 14px;
 
-  a {
-    border: none;
-  }
+
 
   &__name {
-    border-bottom: 1px solid @color__gray;
+    a {
+      display: inline-block;
+    }
   }
 
   &__body {
@@ -49,5 +49,9 @@
 
   &__text {
     font-size: @font__size-small;
+
+    a {
+      border: none;
+    }
   }
 }
