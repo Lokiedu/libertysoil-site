@@ -29,20 +29,15 @@ import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { Router, RoutingContext, match } from 'react-router'
 
 import Routes from './src/routing';
-import ApiController from './src/api/controller';
-import initBookshelf from './src/api/db';
+import {initApi} from './src/api/routing'
 import ApiClient from './src/api/client';
+import initBookshelf from './src/api/db';
+
 import {API_HOST} from './src/config';
 import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
 import db_config from './knexfile';
 
-
-let exec_env = process.env.DB_ENV || 'development';
-const knexConfig = db_config[exec_env];
-
-let bookshelf = initBookshelf(knexConfig);
-let controller = new ApiController(bookshelf);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 let app = express();
@@ -71,32 +66,10 @@ app.use(function(req, res, next) {
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-let api = express.Router();
-
-api.get('/test', wrap(controller.test));
-api.post('/users', wrap(controller.registerUser.bind(controller)));
-api.post('/session', wrap(controller.login.bind(controller)));
-
-api.get('/posts', wrap(controller.subscriptions.bind(controller)));
-api.post('/posts', wrap(controller.createPost.bind(controller)));
-api.get('/post/:id', wrap(controller.getPost.bind(controller)));
-api.post('/post/:id', wrap(controller.updatePost.bind(controller)));
-api.delete('/post/:id', wrap(controller.removePost.bind(controller)));
-api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
-api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
-
-api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
-api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
-
-api.get('/user/:username', wrap(controller.getUser.bind(controller)));
-api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
-api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
-
-api.post('/logout', wrap(controller.logout.bind(controller)));
-
-app.use('/api/v1', api);
-
-app.use(express.static('public', { index: false}));
+let exec_env = process.env.DB_ENV || 'development';
+const knexConfig = db_config[exec_env];
+let bookshelf = initBookshelf(knexConfig);
+let api = initApi(bookshelf)
 
 let reactHandler = async (req, res) => {
   let store = initState();
@@ -159,6 +132,8 @@ let reactHandler = async (req, res) => {
   });
 };
 
+app.use('/api/v1', api);
+app.use(express.static('public', { index: false}));
 app.use(wrap(reactHandler));
 
 app.listen(8000);
