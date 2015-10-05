@@ -19,6 +19,7 @@ import React from 'react';
 import request from 'superagent';
 import { Link } from 'react-router';
 import ReactDisqusThread from '../scripts/disqus-thread';
+import Linkify from 'react-linkify';
 
 import bem from '../utils/bemClassNames';
 import User from './user';
@@ -161,7 +162,9 @@ export class TextPostComponent extends React.Component {
     return (
       <section className={cardClassName}>
         <div className="card__content">
-          <p>{post.text}</p>
+          <Linkify>
+            <p>{post.text}</p>
+          </Linkify>
         </div>
 
         <div className="card__owner">
