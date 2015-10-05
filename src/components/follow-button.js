@@ -42,7 +42,7 @@ class FollowButton extends React.Component {
   };
 
   render() {
-    if (_.isUndefined(this.props.user)) {
+    if (_.isUndefined(this.props.active_user)) {
       return <script/>;  // anonymous
     }
 
