@@ -66,7 +66,8 @@ function buildScript(file, watch) {
     debug: true,
     transform: [babelify.configure({
       stage: 0,
-      optional: ['runtime']
+      optional: ['runtime'],
+      sourceMaps: true
     })]
   };
 
