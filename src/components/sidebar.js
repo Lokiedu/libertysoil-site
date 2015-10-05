@@ -31,16 +31,15 @@ export default class Sidebar extends React.Component {
           <CurrentUser user={this.props.current_user} />
         </div>
 
-        <div className="layout__row">
+        {false &&<div className="layout__row">
           <h3 className="head head-sub">Popular tags</h3>
-        </div>
-
-        <div className="layout__row">
+        </div>}
+        {false &&<div className="layout__row">
           <div className="tags">
             <span className="tag">Psychology</span>
             <span className="tag">Gaming</span>
           </div>
-        </div>
+        </div>}
       </div>
     )
   }
