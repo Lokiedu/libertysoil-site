@@ -15,9 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import {Route} from 'react-router';
+import {Route, Redirect} from 'react-router';
 import React from 'react';
-
 
 import App from './pages/app'
 import Auth from './pages/auth'
@@ -26,6 +25,8 @@ import PostPage from './pages/post'
 import PostEditPage from './pages/post_edit'
 import UserPage from './pages/user'
 
+// <Redirect from="/user/:username" to="/user/:username/posts" />
+
 let routes = (
   <Route component={App}>
     <Route component={MaybeList} name="post_list" path="/" />
@@ -33,6 +34,7 @@ let routes = (
     <Route component={PostPage} name="post" path="/post/:uuid" />
     <Route component={PostEditPage} name="post" path="/post/edit/:uuid" />
     <Route component={UserPage} name="user" path="/user/:username" />
+    <Route component={UserPage} name="user" path="/user/:username/:tab" />
   </Route>
 );
 

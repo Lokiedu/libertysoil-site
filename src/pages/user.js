@@ -16,10 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import request from 'superagent';
 import _ from 'lodash';
 
+import ProfileComponent from '../components/profile';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
@@ -28,63 +30,6 @@ import Tags from '../components/popular_tags'
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
-
-
-class FollowButton extends React.Component {
-  async followUser(event) {
-    event.preventDefault();
-
-    let user = this.props.page_user;
-
-    try {
-      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/follow`);
-
-      if ('user' in res.body) {
-        getStore().dispatch(addUser(res.body.user));
-      }
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
-  };
-
-  async unfollowUser(event) {
-    event.preventDefault();
-
-    let user = this.props.page_user;
-
-    try {
-      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/unfollow`);
-
-      if ('user' in res.body) {
-        getStore().dispatch(addUser(res.body.user));
-      }
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
-  };
-
-  render() {
-    if (_.isUndefined(this.props.current_user)) {
-      return <script/>;  // anonymous
-    }
-
-    const current_user = this.props.current_user;
-    const page_user = this.props.page_user;
-
-    if (current_user.id === page_user.id) {
-      return <script/>;  // do not allow to follow one's self
-    }
-
-    let is_followed = (this.props.following.indexOf(page_user.id) != -1);
-
-    if (is_followed) {
-      return <button className="button button-wide button-yellow" onClick={this.unfollowUser.bind(this)}>Following</button>;
-    } else {
-      return <button className="button button-wide button-green" onClick={this.followUser.bind(this)}>Follow</button>;
-    }
-  }
-}
-
 
 class UserPage extends React.Component {
   async componentWillMount() {
@@ -100,6 +45,7 @@ class UserPage extends React.Component {
 
   render() {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
+    let render = {};
 
     if (_.isUndefined(page_user)) {
       return <script/>;  // not loaded yet
@@ -117,13 +63,21 @@ class UserPage extends React.Component {
       i_am_following = this.props.following[current_user.id];
     }
 
-    let name = page_user.username;
+    switch (this.props.params.tab || 'posts') {
+      case 'posts':
+        render.conten = <River river={user_posts} posts={this.props.posts} users={this.props.users} hide_post_form={true}/>;
+        break;
+      case 'likes':
+        render.conten = <p>Likes</p>;
+        break;
+      case 'favorites':
+        render.conten = <p>Favorites</p>;
+        break;
+      case 'about':
+        render.conten = <p>About</p>;
+        break;
 
-    if (page_user.more && page_user.more.firstName && page_user.more.lastName) {
-      name = `${page_user.more.firstName} ${page_user.more.lastName}`;
     }
-
-    name = name.trim();
 
     return (
       <div>
@@ -131,14 +85,21 @@ class UserPage extends React.Component {
         <div className="page__container">
           <div className="page__body">
             <Sidebar current_user={current_user}/>
-
-            <div className="page__content">
-              <div>
-                {name}
-                <FollowButton current_user={current_user} page_user={page_user} following={i_am_following}/>
+            <div className="page__body_content">
+              <ProfileComponent user={page_user} current_user={current_user} i_am_following={i_am_following} />
+              <div className="page__content">
+                <div className="layout__space">
+                  <div className="layout__grid tabs">
+                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/posts`}>Posts</Link></div>
+                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</Link></div>
+                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</Link></div>
+                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/about`}>About</Link></div>
+                  </div>
+                </div>
+                <div className="layout__row">
+                  {render.conten}
+                </div>
               </div>
-
-              <River river={user_posts} posts={this.props.posts} users={this.props.users} hide_post_form={true}/>
             </div>
           </div>
         </div>

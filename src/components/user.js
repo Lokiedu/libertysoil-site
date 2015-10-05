@@ -23,14 +23,20 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export default class User extends Component {
   render () {
-    var { user, hideAvatar, hideText, avatarSize, timestamp, timestampLink } = this.props;
+    var { user, hideAvatar, hideText, isRound, avatarSize, timestamp, timestampLink } = this.props;
     var render = {};
 
     let user_url = getUrl(URL_NAMES.USER, { username: user.username })
 
     if (!hideAvatar) {
+      let avatarClassName = 'user_box__avatar';
+
+      if (isRound) {
+        avatarClassName += ' user_box__avatar-round';
+      }
+
       render.avatar =
-        <a href={user_url} className="user_box__avatar">
+        <a href={user_url} className={avatarClassName}>
           <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
         </a>;
     }
@@ -45,7 +51,8 @@ export default class User extends Component {
       name = name.trim();
 
       if (timestamp.length > 0 && timestampLink.length > 0) {
-        let timestamp_string = moment(timestamp).format('MMMM D, HH:MM')
+        let timestamp_string = moment(timestamp).format('MMMM D, HH:MM');
+
         render.timestamp =
           <p className="user_box__text">
             <a href={timestampLink}>
@@ -78,6 +85,7 @@ export default class User extends Component {
     gravatarHash: React.PropTypes.string,
     avatarSize: React.PropTypes.any.isRequired,
     hideAvatar: React.PropTypes.bool,
+    isRound: React.PropTypes.bool,
     hideText: React.PropTypes.bool,
     timestamp: React.PropTypes.string,
     timestampLink: React.PropTypes.string
@@ -86,6 +94,7 @@ export default class User extends Component {
   static defaultProps = {
     hideAvatar: false,
     hideText: false,
+    isRound: false,
     avatarSize: 24,
     timestamp: '',
     timestampLink: ''
