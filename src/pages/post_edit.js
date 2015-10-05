@@ -30,6 +30,7 @@ import CurrentUser from '../components/current-user';
 import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
 import {getStore, addPost} from '../store';
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 
 class PostEditPage extends React.Component {
@@ -38,6 +39,20 @@ class PostEditPage extends React.Component {
       let result = await request.get(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
       getStore().dispatch(addPost(result.body));
     } catch (e) {
+    }
+  }
+
+  async submitHandler(event) {
+    event.preventDefault();
+
+    let form = event.target;
+    try {
+      let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value, uuid: form.uuid.value});
+
+      //getStore().dispatch(addPostToRiver(result.body));
+      //history.pushState(null, getUrl(URL_NAMES.POST, { uuid: form.uuid.value }));
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
     }
   }
 
@@ -57,9 +72,9 @@ class PostEditPage extends React.Component {
 
     const author = this.props.users[current_post.user_id]
 
-    console.log(current_post);
 
-    let current_user
+    let current_user;
+
     if (this.props.is_logged_in) {
       current_user = _.cloneDeep(this.props.users[this.props.current_user]);
       current_user.likes = this.props.likes[this.props.current_user];
@@ -77,7 +92,8 @@ class PostEditPage extends React.Component {
             </div>
             <div className="page__content">
               <div className="box box-post box-space_bottom">
-                <form action="" method="post">
+                <form onSubmit={this.submitHandler} action="" method="post">
+                  <input type="hidden" name="uuid" value={current_post.id} />
                   <div className="box__body">
                     <div className="layout__row">
                       <textarea className="input input-textarea input-block" defaultValue={current_post.text} name="text"/>

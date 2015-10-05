@@ -286,16 +286,30 @@ export default class ApiController {
       res.send({error: '"text" parameter is not given'})
     }
 
-    let Post = this.bookshelf.model('Post')
+    let Post = this.bookshelf.model('Post');
 
-    let obj = new Post({
-      id: uuid.v4(),
-      text: req.body.text,
-      user_id: req.session.user
-    });
+    let obj;
+    let store_method = 'insert';
+
+    if('uuid' in req.body) {
+      obj = await Post.where({ id: req.body.uuid, user_id: req.session.user }).fetch({require: false});
+    }
+
+    if(_.isEmpty(obj)) {
+      obj = new Post({
+        id: uuid.v4(),
+        text: req.body.text,
+        user_id: req.session.user
+      });
+    } else {
+      obj.set('text', req.body.text);
+      store_method = 'update';
+    }
+
 
     try {
-      await obj.save(null, {method: 'insert'});
+      console.log(store_method);
+      await obj.save(null, {method: store_method});
       await obj.fetch({require: true, withRelated: ['user']})
 
       res.send(obj.toJSON());
