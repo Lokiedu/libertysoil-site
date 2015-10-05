@@ -19,9 +19,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash'
 import { Link } from 'react-router';
-import request from 'superagent';
 
 import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import {addError, removeAllMessages, addMessage, setCurrentUser} from '../store';
 
 import Footer from '../components/footer';
@@ -33,18 +33,18 @@ import Messages from '../components/messages';
 class AuthContents extends React.Component {
   registerUser = (user) => {
     let {dispatch} = this.props;
+    let client = new ApiClient(API_HOST)
 
     dispatch(removeAllMessages());
 
     (async () => {
       // FIXME: disable form
       try {
-        let relativeUrl = '/api/v1/users';
-        let result = await request.post(`${API_HOST}${relativeUrl}`).type('form').send(user);
+        let result = await client.registerUser(user)
 
-        if ('error' in result.body) {
+        if ('error' in result) {
           // FIXME: enable form again
-          dispatch(addError(result.body.error));
+          dispatch(addError(result.error));
           return;
         }
       } catch (e) {
@@ -62,10 +62,11 @@ class AuthContents extends React.Component {
 
       dispatch(addMessage('User is registered successfully'));
     })();
-  }
+  };
 
   loginUser = (login_data) => {
     let {dispatch} = this.props;
+    let client = new ApiClient(API_HOST)
 
     dispatch(removeAllMessages());
 
@@ -75,11 +76,10 @@ class AuthContents extends React.Component {
       let user;
 
       try {
-        let relativeUrl = '/api/v1/session';
-        let result = await request.post(`${API_HOST}${relativeUrl}`).type('form').send(login_data);
+        let result = await client.login(login_data)
 
-        if (result.body.success) {
-          user = result.body.user
+        if (result.success) {
+          user = result.user
         } else {
           dispatch(addError('Invalid username or password'));
         }
@@ -89,7 +89,7 @@ class AuthContents extends React.Component {
 
       dispatch(setCurrentUser(user));
     })();
-  }
+  };
 
   render () {
     let {is_logged_in} = this.props;

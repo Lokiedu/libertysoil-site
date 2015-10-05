@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import request from 'superagent';
 
 import {API_HOST} from '../config'
+import ApiClient from '../api/client'
 import {getStore, addError, addPostToRiver} from '../store';
 
 export class CreatePost extends React.Component {
@@ -26,12 +26,16 @@ export class CreatePost extends React.Component {
     event.preventDefault();
 
     let form = event.target;
+    let client = new ApiClient(API_HOST)
+
     try {
-      let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value});
+      let result = await client.createPost(form.text.value)
       form.text.value = '';
 
-      getStore().dispatch(addPostToRiver(result.body));
+      getStore().dispatch(addPostToRiver(result));
     } catch (e) {
+      console.log(e)
+      console.log(e.stack)
       getStore().dispatch(addError(e.message));
     }
   }

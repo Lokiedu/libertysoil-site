@@ -288,27 +288,55 @@ export default class ApiController {
 
     let Post = this.bookshelf.model('Post');
 
-    let obj;
-    let store_method = 'insert';
-
-    if('id' in req.body) {
-      obj = await Post.where({ id: req.body.id, user_id: req.session.user }).fetch({require: true});
-    }
-
-    if(_.isEmpty(obj)) {
-      obj = new Post({
-        id: uuid.v4(),
-        text: req.body.text,
-        user_id: req.session.user
-      });
-    } else {
-      obj.set('text', req.body.text);
-      store_method = 'update';
-    }
-
+    let obj = new Post({
+      id: uuid.v4(),
+      text: req.body.text,
+      user_id: req.session.user
+    });
 
     try {
-      await obj.save(null, {method: store_method});
+      await obj.save(null, {method: 'insert'});
+      await obj.fetch({require: true, withRelated: ['user']})
+
+      res.send(obj.toJSON());
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message})
+    }
+  }
+
+  async updatePost(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400)
+      res.send({error: '"id" parameter is not given'});
+    }
+
+    if (!('text' in req.body)) {
+      res.status(400)
+      res.send({error: '"text" parameter is not given'})
+    }
+
+    let Post = this.bookshelf.model('Post');
+
+    let post_object;
+
+    try {
+      post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true});
+    } catch(e) {
+      res.status(500);
+      res.send({error: e.message})
+      return
+    }
+
+    obj.set('text', req.body.text);
+
+    try {
+      await obj.save(null, {method: 'update'});
       await obj.fetch({require: true, withRelated: ['user']})
 
       res.send(obj.toJSON());
@@ -333,7 +361,7 @@ export default class ApiController {
 
     try {
       let post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true});
-      //post_object.destroy();
+      post_object.destroy();
     } catch(e) {
       res.status(500);
       res.send({error: e.message})

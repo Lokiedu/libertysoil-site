@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import request from 'superagent';
 import _ from 'lodash';
 
 import NotFound from './not-found'
@@ -29,6 +28,7 @@ import Tags from '../components/popular_tags';
 import CurrentUser from '../components/current-user';
 import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import {getStore, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
@@ -42,21 +42,23 @@ class PostEditPage extends React.Component {
   }
 
   async componentWillMount() {
+    let client = new ApiClient(API_HOST)
     try {
-      let result = await request.get(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
-      getStore().dispatch(addPost(result.body));
+      let result = await client.postInfo(this.props.params.uuid);
+      getStore().dispatch(addPost(result));
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }
   }
 
   async removeHandler(event) {
-    if(confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
+    if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
+      let client = new ApiClient(API_HOST)
       try {
-        let result = await request.del(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
+        let result = await client.deletePost(this.props.params.uuid)
         this.props.history.pushState(null, '/');
+        // FIXME: remove from store
       } catch (e) {
-
       }
     }
   }
@@ -65,12 +67,11 @@ class PostEditPage extends React.Component {
     event.preventDefault();
 
     let form = event.target;
+    let client = new ApiClient(API_HOST)
 
     try {
-      let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value, id: form.id.value});
-
-      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.body.uuid }));
-
+      let result = await client.updatePost(this.props.params.uuid, form.text.value);
+      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.uuid }));
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }

@@ -78,7 +78,9 @@ api.post('/users', wrap(controller.registerUser.bind(controller)));
 api.post('/session', wrap(controller.login.bind(controller)));
 
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
+api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
+api.post('/post/:id', wrap(controller.updatePost.bind(controller)));
 api.delete('/post/:id', wrap(controller.removePost.bind(controller)));
 api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
 api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
@@ -86,7 +88,6 @@ api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
 api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
 api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
 
-api.post('/posts', wrap(controller.createPost.bind(controller)));
 api.get('/user/:username', wrap(controller.getUser.bind(controller)));
 api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
 api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));

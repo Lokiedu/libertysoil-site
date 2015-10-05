@@ -41,11 +41,25 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
-  async post(relativeUrl) {
+  async del(relativeUrl) {
+    let req = request.del(this.apiUrl(relativeUrl));
+
+    if (this.serverReq !== null) {
+      req = req.set('Cookie', this.serverReq.headers['cookie']);
+    }
+
+    return Promise.resolve(req);
+  }
+
+  async post(relativeUrl, data=null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
     if (this.serverReq !== null) {
       req = req.set('Cookie', this.serverReq.headers['cookie']);
+    }
+
+    if (data !== null) {
+      req = req.type('form').send(user)
     }
 
     return Promise.resolve(req);
@@ -83,6 +97,36 @@ export default class ApiClient
 
   async unfollow(userName) {
     let response = await this.post(`/api/v1/user/${user.username}/unfollow`)
+    return response.body;
+  }
+
+  async registerUser(userData) {
+    let response = await this.post(`/api/v1/users`, userData)
+    return response.body;
+  }
+
+  async login(loginData) {
+    let response = await this.post(`/api/v1/session`, loginData)
+    return response.body;
+  }
+
+  async postInfo(uuid) {
+    let response = await this.get(`/api/v1/post/${uuid}`)
+    return response.body;
+  }
+
+  async createPost(text) {
+    let response = await this.post(`/api/v1/posts`, {text})
+    return response.body;
+  }
+
+  async updatePost(uuid, text) {
+    let response = await this.post(`/api/v1/post/${uuid}`, {text})
+    return response.body;
+  }
+
+  async deletePost(uuid) {
+    let response = await this.del(`/api/v1/post/${uuid}`)
     return response.body;
   }
 }
