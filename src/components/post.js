@@ -166,7 +166,7 @@ export class TextPostComponent extends React.Component {
         </div>
 
         <footer className="card__footer">
-          <Link to={post_url} className="card__link"><span class="fa fa-link"></span></Link>
+          <Link to={post_url} className="card__link"><span className="fa fa-link"></span></Link>
           <TagLine tags={[]}/>
           <Toolbar post={post} current_user={this.props.current_user} />
         </footer>
