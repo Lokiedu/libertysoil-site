@@ -21,7 +21,7 @@ import { Link } from 'react-router';
 import request from 'superagent';
 
 import {API_HOST} from '../config';
-import {addError, removeAllMessages, addMessage} from '../store';
+import {addError, removeAllMessages, addMessage, setCurrentUser} from '../store';
 
 import Footer from '../components/footer';
 import Login from '../components/login';
@@ -38,15 +38,14 @@ class AuthContents extends React.Component {
     (async () => {
       // FIXME: disable form
       try {
-        let result = await request.post(`${API_HOST}/api/v1/users`).type('form').send(user);
+        let relativeUrl = '/api/v1/users';
+        let result = await request.post(`${API_HOST}${relativeUrl}`).type('form').send(user);
 
         if ('error' in result.body) {
           // FIXME: enable form again
           dispatch(addError(result.body.error));
           return;
         }
-
-        dispatch(addMessage('User is registered successfully'));
       } catch (e) {
         // FIXME: enable form again
 
@@ -59,6 +58,8 @@ class AuthContents extends React.Component {
           return;
         }
       }
+
+      dispatch(addMessage('User is registered successfully'));
     })();
   }
 
@@ -70,17 +71,22 @@ class AuthContents extends React.Component {
     (async () => {
       dispatch(removeAllMessages());
 
+      let user;
+
       try {
-        let result = await request.post(`${API_HOST}/api/v1/session`).type('form').send(login_data);
+        let relativeUrl = '/api/v1/session';
+        let result = await request.post(`${API_HOST}${relativeUrl}`).type('form').send(login_data);
 
         if (result.body.success) {
-          dispatch(setCurrentUser(result.body.user));
+          user = result.body.user
         } else {
           dispatch(addError('Invalid username or password'));
         }
       } catch (e) {
         dispatch(addError('Invalid username or password'));
       }
+
+      dispatch(setCurrentUser(user));
     })();
   }
 
