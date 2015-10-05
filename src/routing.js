@@ -34,7 +34,9 @@ let routes = (
     <Route component={PostPage} name="post" path="/post/:uuid" />
     <Route component={PostEditPage} name="post" path="/post/edit/:uuid" />
     <Route component={UserPage} name="user" path="/user/:username" />
-    <Route component={UserPage} name="user" path="/user/:username/:tab" />
+    <Route component={UserPage} name="user:likes" path="/user/:username/likes" />
+    <Route component={UserPage} name="user:favorites" path="/user/:username/favorites" />
+    <Route component={UserPage} name="user:about" path="/user/:username/about" />
   </Route>
 );
 

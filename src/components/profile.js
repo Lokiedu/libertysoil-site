@@ -3,7 +3,7 @@ import React from 'react';
 import User from './user';
 import FollowButton from '../components/follow-button'
 
-export default class ProfileComponent extends React.Component {
+export default class ProfileHeader extends React.Component {
   render () {
     const { user, current_user, i_am_following } = this.props;
     let name = user.username;
