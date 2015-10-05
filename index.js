@@ -40,11 +40,10 @@ import db_config from './knexfile';
 
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
-let app = express();
 
 let RedisStore = initRedisStore(session);
 
-app.use(session({
+let sessionMiddleware = session({
   store: new RedisStore({
     host: 'localhost',
     port: 6379
@@ -52,19 +51,14 @@ app.use(session({
   secret: 'libertysoil',
   resave: false,
   saveUninitialized: false
-}));
+});
 
-app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
-//app.use(multer());  // for parsing multipart/form-data
-
-app.use(function(req, res, next) {
+let corsMiddleware = (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-});
+};
 
-app.set('views', './src/views');
-app.set('view engine', 'ejs');
 
 let exec_env = process.env.DB_ENV || 'development';
 const knexConfig = db_config[exec_env];
@@ -131,6 +125,17 @@ let reactHandler = async (req, res) => {
     }
   });
 };
+
+
+let app = express();
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
+
+app.use(sessionMiddleware);
+app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
+//app.use(multer());  // for parsing multipart/form-data
+app.use(corsMiddleware);
 
 app.use('/api/v1', api);
 app.use(express.static('public', { index: false}));
