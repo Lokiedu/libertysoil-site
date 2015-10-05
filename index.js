@@ -16,18 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import express from 'express';
-import ReactDOMServer from 'react-dom/server';
-import {createRoutesFromReactChildren, useRoutes} from 'react-router';
-import RoutingContext from 'react-router/lib/RoutingContext';
-import { createLocation, createMemoryHistory } from 'history';
-import React from 'react';
 import bodyParser from 'body-parser';
 //import multer from 'multer';
 import _ from 'lodash';
 import bb from 'bluebird';
-
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
+
+import React from 'react';
+import { renderToString } from 'react-dom/server'
+import createMemoryHistory from 'history/lib/createMemoryHistory'
+import { Router, RoutingContext, match } from 'react-router'
 
 import Routes from './src/routing';
 import ApiController from './src/api/controller';
@@ -37,6 +36,7 @@ import {API_HOST} from './src/config';
 import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
 import db_config from './knexfile';
+
 
 let exec_env = process.env.DB_ENV || 'development';
 const knexConfig = db_config[exec_env];
@@ -98,7 +98,7 @@ app.use('/api/v1', api);
 
 app.use(express.static('public', { index: false}));
 
-let reactHandler = async (req, res, next) => {
+let reactHandler = async (req, res) => {
   let store = initState();
 
   if (req.session && req.session.user && _.isString(req.session.user)) {
@@ -122,41 +122,41 @@ let reactHandler = async (req, res, next) => {
     }
   }
 
-  let location = createLocation(req.path, req.query);
-  let routes = createRoutesFromReactChildren(Routes);
-  let history = useRoutes(createMemoryHistory)({ routes });
+  const makeRoutes = (history) => (
+    <Router history={history}>
+      {Routes}
+    </Router>
+  )
 
-  let history_match = bb.promisify(history.match);
+  let history = createMemoryHistory();
+  let location = history.createLocation(req.url);
+  let routes = makeRoutes(history);
 
-  let initialState = await history_match(location);
+  match({ routes, location }, async (error, redirectLocation, renderProps) => {
+    if (redirectLocation) {
+      res.redirect(301, redirectLocation.pathname + redirectLocation.search)
+    } else if (error) {
+      res.status(500).send(error.message)
+    } else if (renderProps == null) {
+      res.status(404).send('Not found')
+    } else {
+      if (renderProps.routes[1].name == 'post_list' && 'cookie' in req.headers) {
+        let client = new ApiClient(API_HOST, req);
 
-  if (null === initialState) {
-    next();
-    return;
-  }
+        try {
+          let posts = await client.subscriptions();
+          getStore().dispatch(setPostsToRiver(posts));
+        } catch (e) {
+          console.dir(e);
+        }
+      }
 
-  function render() {
-    let html = ReactDOMServer.renderToString(
-      <RoutingContext history={history} {...initialState}/>
-    );
+      let html = renderToString(<RoutingContext {...renderProps}/>)
+      let state = JSON.stringify(store.getState().toJS());
 
-    let state = JSON.stringify(store.getState().toJS());
-
-    res.render('index', { state, html });
-  }
-
-  if (initialState.routes[1].name == 'post_list' && 'cookie' in req.headers) {
-    let client = new ApiClient(API_HOST, req);
-
-    try {
-      let posts = await client.subscriptions();
-      getStore().dispatch(setPostsToRiver(posts));
-    } catch (e) {
-      console.dir(e);
+      res.render('index', { state, html });
     }
-  }
-
-  render();
+  });
 };
 
 app.use(wrap(reactHandler));

@@ -26,7 +26,7 @@ import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
 
-class UserPage extends React.Component {
+class UserLikesPage extends React.Component {
   async componentWillMount() {
     let client = new ApiClient(API_HOST);
 
@@ -71,4 +71,4 @@ function select(state) {
   return state.toJS();
 }
 
-export default connect(select)(UserPage);
+export default connect(select)(UserLikesPage);

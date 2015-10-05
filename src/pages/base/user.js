@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
+import IndexLink from 'react-router/lib/IndexLink'
 
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -41,7 +42,7 @@ export default class BaseUserPage extends React.Component {
               <div className="page__content">
                 <div className="layout__space">
                   <div className="layout__grid tabs">
-                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</Link></div>
+                    <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
                     <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</Link></div>
                     <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</Link></div>
                     <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/about`}>About</Link></div>
