@@ -21,7 +21,7 @@ import {API_HOST} from '../config'
 import ApiClient from '../api/client'
 import {getStore, addError, addPostToRiver} from '../store';
 
-export class CreatePost extends React.Component {
+export default class CreatePost extends React.Component {
   async submitHandler(event) {
     event.preventDefault();
 

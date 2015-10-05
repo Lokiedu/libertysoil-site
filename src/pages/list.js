@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import request from 'superagent';
 import _ from 'lodash';
 
+import CreatePost from '../components/CreatePost'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
@@ -53,6 +54,7 @@ class Index extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__content">
+              <CreatePost />
               <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={current_user}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}

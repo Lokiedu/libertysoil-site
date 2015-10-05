@@ -70,7 +70,7 @@ class UserPage extends React.Component {
 
     switch (this.props.params.tab || 'posts') {
       case 'posts':
-        render.conten = <River river={user_posts} posts={this.props.posts} users={this.props.users} current_user={current_user} hide_post_form={true}/>;
+        render.conten = <River river={user_posts} posts={this.props.posts} users={this.props.users} current_user={current_user} />;
         break;
       case 'likes':
         render.conten = <p>Likes</p>;

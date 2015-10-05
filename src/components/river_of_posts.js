@@ -19,7 +19,6 @@ import React from 'react'
 import _ from 'lodash'
 
 import {TextPostComponent} from './post'
-import {CreatePost} from './CreatePost'
 
 export default class RiverOfPostsComponent extends React.Component {
   render() {
@@ -31,7 +30,6 @@ export default class RiverOfPostsComponent extends React.Component {
 
     return (
       <div>
-          { this.props.hide_post_form ? '' : <CreatePost /> }
           {posts.map((post) => <TextPostComponent post={post} author={this.props.users[post.user_id]} key={post.id} current_user={this.props.current_user}/> )}
       </div>
     )
