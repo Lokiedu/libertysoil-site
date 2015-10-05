@@ -3,19 +3,21 @@ import request from 'superagent';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import ApiClient from '../api/client'
 import {getStore, addUser, addError} from '../store';
 
 class FollowButton extends React.Component {
   async followUser(event) {
     event.preventDefault();
 
+    let client = new ApiClient(API_HOST);
     let user = this.props.page_user;
 
     try {
-      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/follow`);
+      let res = await client.follow(user.username);
 
-      if ('user' in res.body) {
-        getStore().dispatch(addUser(res.body.user));
+      if ('user' in res) {
+        getStore().dispatch(addUser(res.user));
       }
     } catch (e) {
       getStore().dispatch(addError(e.message));
@@ -25,13 +27,14 @@ class FollowButton extends React.Component {
   async unfollowUser(event) {
     event.preventDefault();
 
+    let client = new ApiClient(API_HOST);
     let user = this.props.page_user;
 
     try {
-      let res = await request.post(`${API_HOST}/api/v1/user/${user.username}/unfollow`);
+      let res = await client.unfollow(user.username);
 
-      if ('user' in res.body) {
-        getStore().dispatch(addUser(res.body.user));
+      if ('user' in res) {
+        getStore().dispatch(addUser(res.user));
       }
     } catch (e) {
       getStore().dispatch(addError(e.message));
