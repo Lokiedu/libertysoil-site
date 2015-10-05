@@ -19,12 +19,14 @@ export const URL_NAMES = {
   HOME: `HOME`,
   AUTH: `AUTH`,
   POST: `POST`,
-  USER: `USER`
+  USER: `USER`,
+  EDIT_POST: `EDIT_POST`
 };
 
 export const URL = {
   [URL_NAMES.HOME]: '/',
   [URL_NAMES.AUTH]: '/auth',
   [URL_NAMES.POST]: '/post/:uuid',
+  [URL_NAMES.EDIT_POST]: '/post/edit/:uuid',
   [URL_NAMES.USER]: '/user/:username'
 };

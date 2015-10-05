@@ -23,6 +23,7 @@ import App from './pages/app'
 import Auth from './pages/auth'
 import MaybeList from './pages/maybe_list'
 import PostPage from './pages/post'
+import PostEditPage from './pages/post_edit'
 import UserPage from './pages/user'
 
 let routes = (
@@ -30,6 +31,7 @@ let routes = (
     <Route component={MaybeList} name="post_list" path="/" />
     <Route component={Auth} name="auth" path="/auth" />
     <Route component={PostPage} name="post" path="/post/:uuid" />
+    <Route component={PostEditPage} name="post" path="/post/edit/:uuid" />
     <Route component={UserPage} name="user" path="/user/:username" />
   </Route>
 );
