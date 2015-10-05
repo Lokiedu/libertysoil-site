@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import request from 'superagent';
 import { Link } from 'react-router';
 import ReactDisqusThread from '../scripts/disqus-thread';
 import Linkify from 'react-linkify';
@@ -26,6 +25,7 @@ import User from './user';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 import {API_HOST} from '../config'
+import ApiClient from '../api/client'
 import {getStore, addError, setLikes} from '../store';
 
 class TagLine extends React.Component {
@@ -56,10 +56,11 @@ class Toolbar extends React.Component {
     let post_id = this.props.post.id;
 
     try {
-      let res = await request.post(`${API_HOST}/api/v1/post/${post_id}/like`);
+      let client = new ApiClient(API_HOST);
+      let responseBody = await client.like(post_id);
 
-      if (res.body.success) {
-        getStore().dispatch(setLikes(this.props.current_user.id, res.body.likes));
+      if (responseBody.success) {
+        getStore().dispatch(setLikes(this.props.current_user.id, responseBody.likes));
       } else {
         getStore().dispatch(addError('internal server error. please try later'));
       }
@@ -79,10 +80,11 @@ class Toolbar extends React.Component {
     let post_id = this.props.post.id;
 
     try {
-      let res = await request.post(`${API_HOST}/api/v1/post/${post_id}/unlike`);
+      let client = new ApiClient(API_HOST);
+      let responseBody = await client.unlike(post_id);
 
-      if (res.body.success) {
-        getStore().dispatch(setLikes(this.props.current_user.id, res.body.likes));
+      if (responseBody.success) {
+        getStore().dispatch(setLikes(this.props.current_user.id, responseBody.likes));
       } else {
         getStore().dispatch(addError('internal server error. please try later'));
       }

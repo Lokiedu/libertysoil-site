@@ -23,7 +23,6 @@ import { createLocation, createMemoryHistory } from 'history'
 import React from 'react';
 import bodyParser from 'body-parser';
 import multer from 'multer';
-import request from 'superagent';
 import _ from 'lodash'
 import bb from 'bluebird'
 
@@ -33,6 +32,7 @@ import initRedisStore from 'connect-redis';
 import Routes from './src/routing';
 import ApiController from './src/api/controller'
 import initBookshelf from './src/api/db'
+import ApiClient from './src/api/client'
 import {API_HOST} from './src/config'
 import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
@@ -145,13 +145,11 @@ let reactHandler = async (req, res, next) => {
   }
 
   if (initialState.routes[1].name == 'post_list' && 'cookie' in req.headers) {
-    let promise = Promise.resolve(request
-      .get(`${API_HOST}/api/v1/posts`)
-      .set('Cookie', req.headers['cookie']));
+    let client = new ApiClient(API_HOST, req);
 
     try {
-      let result = await promise;
-      getStore().dispatch(setPostsToRiver(result.body));
+      let posts = await client.subscriptions();
+      getStore().dispatch(setPostsToRiver(posts));
     } catch (e) {
       console.dir(e)
     }

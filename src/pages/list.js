@@ -27,17 +27,23 @@ import Followed from '../components/most_followed_people';
 import Tags from '../components/popular_tags';
 import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import {getStore, setPostsToRiver} from '../store';
 
 
 class Index extends React.Component {
   async componentWillMount() {
-    let result = await request.get(`${API_HOST}/api/v1/posts`);
-    getStore().dispatch(setPostsToRiver(result.body));
+    let client = new ApiClient(API_HOST);
+    let posts = await client.subscriptions();
+    getStore().dispatch(setPostsToRiver(posts));
   }
+
   render() {
-    let current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-    current_user.likes = this.props.likes[this.props.current_user];
+    let current_user;
+    if (this.props.is_logged_in) {
+      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
+      current_user.likes = this.props.likes[this.props.current_user];
+    }
 
     return (
       <div>
