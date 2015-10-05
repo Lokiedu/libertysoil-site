@@ -19,33 +19,37 @@ import React from 'react';
 import {Link} from 'react-router';
 
 import User from './user';
-
 import {API_HOST} from '../config'
+
+let AuthBlock = (props) => {
+  if (props.is_logged_in) {
+    const logoutUrl = '/api/v1/logout';
+
+    return (
+      <div className="header__toolbar">
+        <div className="header__toolbar_item">
+          <User user={props.current_user} hideText={true} />
+        </div>
+        <form className="header__toolbar_item" action={`${API_HOST}${logoutUrl}`} method="post">
+          <button type="submit" className="link">Log out</button>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="header__toolbar">
+      <div className="header__toolbar_item">
+        <Link to="/auth" className="header__toolbar_item">Login</Link>
+      </div>
+    </div>
+  );
+};
 
 export default class HeaderComponent extends React.Component {
 
   render() {
-    let AuthBlock;
-    var classNames = 'header page__header ' + this.props.className;
-
-    if (this.props.is_logged_in) {
-      AuthBlock =
-          <div className="header__toolbar">
-            <div className="header__toolbar_item">
-              <User user={this.props.current_user} hideText={true} />
-            </div>
-            <form className="header__toolbar_item" action={`${API_HOST}/api/v1/logout`} method="post">
-              <button type="submit" className="link">Log out</button>
-            </form>
-          </div>;
-    } else {
-      AuthBlock =
-          <div className="header__toolbar">
-            <div className="header__toolbar_item">
-              <Link to="/auth" className="header__toolbar_item">Login</Link>
-            </div>
-          </div>;
-    }
+    let classNames = 'header page__header ' + this.props.className;
 
     return (
       <div {...this.props} className={classNames}>
@@ -53,7 +57,7 @@ export default class HeaderComponent extends React.Component {
           <div className="header__logo">
             <Link to="/" className="logo" title="Liberty Soil"><span className="logo__title">Liberty Soil</span></Link>
           </div>
-          {AuthBlock}
+          <AuthBlock is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}/>
         </div>
       </div>
     )
