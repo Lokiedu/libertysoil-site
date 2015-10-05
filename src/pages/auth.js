@@ -55,6 +55,8 @@ class AuthContents extends React.Component {
           dispatch(addError(e.response.body.error));
           return;
         } else {
+          console.log(e)
+          console.log(e.stack)
           dispatch(addError('Server seems to have problems. Retry later, please'));
           return;
         }

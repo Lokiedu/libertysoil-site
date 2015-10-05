@@ -3,15 +3,16 @@ import request from 'superagent';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import {API_HOST} from '../config'
 import ApiClient from '../api/client'
 import {getStore, addUser, addError} from '../store';
 
-class FollowButton extends React.Component {
+export default class FollowButton extends React.Component {
   async followUser(event) {
     event.preventDefault();
 
     let client = new ApiClient(API_HOST);
-    let user = this.props.page_user;
+    let user = this.props.user;
 
     try {
       let res = await client.follow(user.username);
@@ -20,15 +21,16 @@ class FollowButton extends React.Component {
         getStore().dispatch(addUser(res.user));
       }
     } catch (e) {
+      console.log(e)
       getStore().dispatch(addError(e.message));
     }
-  };
+  }
 
   async unfollowUser(event) {
     event.preventDefault();
 
     let client = new ApiClient(API_HOST);
-    let user = this.props.page_user;
+    let user = this.props.user;
 
     try {
       let res = await client.unfollow(user.username);
@@ -37,9 +39,10 @@ class FollowButton extends React.Component {
         getStore().dispatch(addUser(res.user));
       }
     } catch (e) {
+      console.log(e)
       getStore().dispatch(addError(e.message));
     }
-  };
+  }
 
   render() {
     if (_.isUndefined(this.props.active_user)) {
@@ -53,7 +56,9 @@ class FollowButton extends React.Component {
       return <script/>;  // do not allow to follow one's self
     }
 
-    let is_followed = (this.props.following.indexOf(active_user.id) != -1);
+    console.dir(this.props.following)
+
+    let is_followed = (this.props.following.indexOf(user.id) != -1);
 
     if (is_followed) {
       return <button className="button button-wide button-yellow" onClick={this.unfollowUser.bind(this)}>Following</button>;
@@ -62,9 +67,3 @@ class FollowButton extends React.Component {
     }
   }
 }
-
-function select(state) {
-  return state.toJS();
-}
-
-export default  connect(select)(FollowButton);

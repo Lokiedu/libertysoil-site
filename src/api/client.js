@@ -59,7 +59,7 @@ export default class ApiClient
     }
 
     if (data !== null) {
-      req = req.type('form').send(user)
+      req = req.type('form').send(data)
     }
 
     return Promise.resolve(req);
@@ -91,12 +91,12 @@ export default class ApiClient
   }
 
   async follow(userName) {
-    let response = await this.post(`/api/v1/user/${user.username}/follow`)
+    let response = await this.post(`/api/v1/user/${userName}/follow`)
     return response.body;
   }
 
   async unfollow(userName) {
-    let response = await this.post(`/api/v1/user/${user.username}/unfollow`)
+    let response = await this.post(`/api/v1/user/${userName}/unfollow`)
     return response.body;
   }
 

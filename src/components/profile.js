@@ -36,7 +36,7 @@ export default class ProfileComponent extends React.Component {
                 Followers
               </div>
               <div className="layout__grid_item">
-                <FollowButton active_user={this.props.current_user} user={user} following={i_am_following}/>
+                <FollowButton active_user={current_user} user={user} following={i_am_following}/>
               </div>
             </div>
           </div>
