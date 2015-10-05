@@ -291,8 +291,8 @@ export default class ApiController {
     let obj;
     let store_method = 'insert';
 
-    if('uuid' in req.body) {
-      obj = await Post.where({ id: req.body.uuid, user_id: req.session.user }).fetch({require: false});
+    if('id' in req.body) {
+      obj = await Post.where({ id: req.body.id, user_id: req.session.user }).fetch({require: true});
     }
 
     if(_.isEmpty(obj)) {
@@ -308,7 +308,6 @@ export default class ApiController {
 
 
     try {
-      console.log(store_method);
       await obj.save(null, {method: store_method});
       await obj.fetch({require: true, withRelated: ['user']})
 
@@ -317,6 +316,30 @@ export default class ApiController {
       res.status(500);
       res.send({error: e.message})
     }
+  }
+
+  async removePost(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400)
+      res.send({error: '"id" parameter is not given'});
+    }
+
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true});
+      //post_object.destroy();
+    } catch(e) {
+      res.status(500);
+      res.send({error: e.message})
+    }
+    res.status(200);
+    res.send({success: true});
   }
 
   async getUser(req, res) {

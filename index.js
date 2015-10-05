@@ -79,6 +79,7 @@ api.post('/session', wrap(controller.login.bind(controller)));
 
 api.get('/posts', wrap(controller.subscriptions.bind(controller)));
 api.get('/post/:id', wrap(controller.getPost.bind(controller)));
+api.delete('/post/:id', wrap(controller.removePost.bind(controller)));
 api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
 api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
 

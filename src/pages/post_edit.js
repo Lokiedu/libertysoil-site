@@ -29,16 +29,35 @@ import Tags from '../components/popular_tags';
 import CurrentUser from '../components/current-user';
 import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
-import {getStore, addPost} from '../store';
+import {getStore, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 
 class PostEditPage extends React.Component {
+  constructor (props) {
+    super(props);
+
+    this.submitHandler = this.submitHandler.bind(this);
+    this.removeHandler = this.removeHandler.bind(this);
+  }
+
   async componentWillMount() {
     try {
       let result = await request.get(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
       getStore().dispatch(addPost(result.body));
     } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+  }
+
+  async removeHandler(event) {
+    if(confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
+      try {
+        let result = await request.del(`${API_HOST}/api/v1/post/${this.props.params.uuid}`);
+        this.props.history.pushState(null, '/');
+      } catch (e) {
+
+      }
     }
   }
 
@@ -46,11 +65,12 @@ class PostEditPage extends React.Component {
     event.preventDefault();
 
     let form = event.target;
-    try {
-      let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value, uuid: form.uuid.value});
 
-      //getStore().dispatch(addPostToRiver(result.body));
-      //history.pushState(null, getUrl(URL_NAMES.POST, { uuid: form.uuid.value }));
+    try {
+      let result = await request.post(`${API_HOST}/api/v1/posts`).type('form').send({text: form.text.value, id: form.id.value});
+
+      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.body.uuid }));
+
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }
@@ -93,12 +113,13 @@ class PostEditPage extends React.Component {
             <div className="page__content">
               <div className="box box-post box-space_bottom">
                 <form onSubmit={this.submitHandler} action="" method="post">
-                  <input type="hidden" name="uuid" value={current_post.id} />
+                  <input type="hidden" name="id" value={current_post.id} />
                   <div className="box__body">
                     <div className="layout__row">
                       <textarea className="input input-textarea input-block" defaultValue={current_post.text} name="text"/>
                     </div>
                     <div className="layout__row layout layout-align_right">
+                      <button className="button button-wide button-red" type="button" onClick={this.removeHandler}><span className="fa fa-trash-o"></span></button>
                       <button className="button button-wide button-green" type="submit">Save</button>
                     </div>
                   </div>
