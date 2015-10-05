@@ -179,7 +179,7 @@ export class TextPostComponent extends React.Component {
 
           <TagLine tags={[]}/>
           <Toolbar post={post} current_user={this.props.current_user} />
-          {this.props.current_user.id === this.props.author.id ? <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link> : ''}
+          {this.props.current_user && this.props.current_user.id === this.props.author.id ? <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link> : ''}
         </footer>
 
         <Comments post={post}/>
