@@ -138,7 +138,7 @@ class UserPage extends React.Component {
                 <FollowButton current_user={current_user} page_user={page_user} following={i_am_following}/>
               </div>
 
-              <River river={user_posts} posts={this.props.posts} users={this.props.users}/>
+              <River river={user_posts} posts={this.props.posts} users={this.props.users} hide_post_form={true}/>
             </div>
           </div>
         </div>

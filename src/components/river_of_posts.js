@@ -27,12 +27,12 @@ export default class RiverOfPostsComponent extends React.Component {
       return <script/>;
     }
 
-    let posts = this.props.river.map(id => this.props.posts[id])
+    let posts = this.props.river.map(id => this.props.posts[id]);
 
     return (
       <div>
-        <CreatePost />
-        {posts.map((post) => <TextPostComponent post={post} author={this.props.users[post.user_id]} key={post.id} current_user={this.props.current_user}/> )}
+          { this.props.hide_post_form ? '' : <CreatePost /> }
+          {posts.map((post) => <TextPostComponent post={post} author={this.props.users[post.user_id]} key={post.id} current_user={this.props.current_user}/> )}
       </div>
     )
   }
