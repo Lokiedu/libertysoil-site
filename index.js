@@ -16,24 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import express from 'express';
-import ReactDOMServer from 'react-dom/server'
-import {Router, createRoutesFromReactChildren, useRoutes} from 'react-router';
-import RoutingContext from 'react-router/lib/RoutingContext'
-import { createLocation, createMemoryHistory } from 'history'
+import ReactDOMServer from 'react-dom/server';
+import {createRoutesFromReactChildren, useRoutes} from 'react-router';
+import RoutingContext from 'react-router/lib/RoutingContext';
+import { createLocation, createMemoryHistory } from 'history';
 import React from 'react';
 import bodyParser from 'body-parser';
-import multer from 'multer';
-import _ from 'lodash'
-import bb from 'bluebird'
+//import multer from 'multer';
+import _ from 'lodash';
+import bb from 'bluebird';
 
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 
 import Routes from './src/routing';
-import ApiController from './src/api/controller'
-import initBookshelf from './src/api/db'
-import ApiClient from './src/api/client'
-import {API_HOST} from './src/config'
+import ApiController from './src/api/controller';
+import initBookshelf from './src/api/db';
+import ApiClient from './src/api/client';
+import {API_HOST} from './src/config';
 import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
 
 import db_config from './knexfile';
@@ -41,7 +41,7 @@ import db_config from './knexfile';
 let exec_env = process.env.DB_ENV || 'development';
 const knexConfig = db_config[exec_env];
 
-let bookshelf = initBookshelf(knexConfig)
+let bookshelf = initBookshelf(knexConfig);
 let controller = new ApiController(bookshelf);
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
@@ -118,17 +118,17 @@ let reactHandler = async (req, res, next) => {
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
     } catch (e) {
-      console.log(`dispatch failed: ${e.stack}`)
+      console.log(`dispatch failed: ${e.stack}`);
     }
   }
 
-  let location = createLocation(req.path, req.query)
-  let routes = createRoutesFromReactChildren(Routes)
-  let history = useRoutes(createMemoryHistory)({ routes })
+  let location = createLocation(req.path, req.query);
+  let routes = createRoutesFromReactChildren(Routes);
+  let history = useRoutes(createMemoryHistory)({ routes });
 
   let history_match = bb.promisify(history.match);
 
-  let initialState = await history_match(location)
+  let initialState = await history_match(location);
 
   if (null === initialState) {
     next();
@@ -152,7 +152,7 @@ let reactHandler = async (req, res, next) => {
       let posts = await client.subscriptions();
       getStore().dispatch(setPostsToRiver(posts));
     } catch (e) {
-      console.dir(e)
+      console.dir(e);
     }
   }
 
@@ -161,5 +161,4 @@ let reactHandler = async (req, res, next) => {
 
 app.use(wrap(reactHandler));
 
-
-let server = app.listen(8000);
+app.listen(8000);
