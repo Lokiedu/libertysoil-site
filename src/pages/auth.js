@@ -1,5 +1,3 @@
-import React from 'react';
-import { connect } from 'react-redux';
 /*
  This file is a part of libertysoil.org website
  Copyright (C) 2015  Loki Education (Social Enterprise)
@@ -17,6 +15,9 @@ import { connect } from 'react-redux';
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import React from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash'
 import { Link } from 'react-router';
 import request from 'superagent';
 
@@ -115,7 +116,13 @@ class AuthContents extends React.Component {
 class Auth extends React.Component {
   render() {
     let messages;
-    let { dispatch, current_user, is_logged_in } = this.props;
+    let { dispatch, is_logged_in } = this.props;
+
+    let current_user;
+    if (is_logged_in) {
+      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
+      current_user.likes = this.props.likes[this.props.current_user];
+    }
 
     if (this.props.messages.length) {
       messages = <div className="layout layout__space layout-align_center">
