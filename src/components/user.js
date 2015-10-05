@@ -30,8 +30,8 @@ export default class User extends Component {
 
     if (!hideAvatar) {
       render.avatar =
-        <a href={user_url}>
-          <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" className="user_box__avatar" />
+        <a href={user_url} className="user_box__avatar">
+          <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
         </a>;
     }
 
