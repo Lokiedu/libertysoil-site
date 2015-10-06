@@ -35,10 +35,11 @@ export default class User extends Component {
         avatarClassName += ' user_box__avatar-round';
       }
 
-      render.avatar =
+      render.avatar = (
         <a href={user_url} className={avatarClassName}>
           <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
-        </a>;
+        </a>
+      );
     }
 
     if (!hideText) {
@@ -63,7 +64,7 @@ export default class User extends Component {
 
       render.text =
         <div className="user_box__body">
-          <p className="user_box__name"><a href={user_url}>{name}</a></p>
+          <p className="user_box__name"><a className="user_box__name link" href={user_url}>{name}</a></p>
           {render.timestamp}
         </div>;
     }

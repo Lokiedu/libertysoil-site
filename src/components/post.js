@@ -120,10 +120,10 @@ class Toolbar extends React.Component {
           {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
-        <span className="card__toolbar_item action">
+        <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
           <span className="icon fa fa-comment-o"></span>
           <span className="card__toolbar_item_value disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
-        </span>
+        </Link>
       </div>
     )
   }
@@ -155,7 +155,8 @@ export class TextPostComponent extends React.Component {
             identifier={props.post.id}
             title="Post"
             url={`http://alpha.libertysoil.org/post/${props.post.id}`}
-            categoryId={props.post.type}/>
+            categoryId={props.post.type}
+          />
         </div>
       )
     } else {
@@ -175,12 +176,12 @@ export class TextPostComponent extends React.Component {
         </div>
 
         <footer className="card__footer">
-          <Link to={post_url} className="card__link"><span className="fa fa-link"></span></Link>
           <TagLine tags={[]}/>
           <div className="card__toolbars">
             <Toolbar post={post} current_user={this.props.current_user} />
             <div className="card__toolbar card__toolbar-right">
               {this.props.current_user && this.props.current_user.id === this.props.author.id ? <div className="card__toolbar_item"><Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link></div> : ''}
+              <div className="card__toolbar_item"><Link to={post_url}><span className="fa fa-link"></span></Link></div>
             </div>
           </div>
         </footer>

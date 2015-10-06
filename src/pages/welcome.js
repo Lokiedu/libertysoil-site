@@ -24,14 +24,14 @@ import Footer from '../components/footer';
 
 export default class Welcome extends React.Component {
   render() {
-    return <div> 
+    return <div>
       <div className="page__container-bg">
         <section className="landing landing-big landing-bg">
           <Header is_logged_in={false} className="header-transparent" />
           <header className="landing__header">
             <h1 className="landing__title">Education in 21st century</h1>
             <p className="landing__details">LibertySoil is a place for education professionals to collect, share, and<br /> discuss information about freedom focused education</p>
-            <p className="landing__details"><a href="#" className="button button-big button-yellow">Join</a></p>
+            <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
           </header>
         </section>
         <WhatIsLibertySoil />

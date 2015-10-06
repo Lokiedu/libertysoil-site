@@ -22,11 +22,7 @@ import _ from 'lodash';
 import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
-import River from '../components/river_of_posts';
-import Followed from '../components/most_followed_people';
-import Tags from '../components/popular_tags';
 import CurrentUser from '../components/current-user';
-import { TextPostComponent } from '../components/post'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addError} from '../store';
@@ -119,9 +115,11 @@ class PostEditPage extends React.Component {
                     <div className="layout__row">
                       <textarea className="input input-textarea input-block" defaultValue={current_post.text} name="text"/>
                     </div>
-                    <div className="layout__row layout layout-align_right">
-                      <button className="button button-wide button-red" type="button" onClick={this.removeHandler}><span className="fa fa-trash-o"></span></button>
-                      <button className="button button-wide button-green" type="submit">Save</button>
+                    <div className="layout__row">
+                      <div className="layout layout__grid layout-align_right">
+                        <button className="button button-red" type="button" onClick={this.removeHandler}><span className="fa fa-trash-o"></span></button>
+                        <button className="button button-wide button-green" type="submit">Save</button>
+                      </div>
                     </div>
                   </div>
                 </form>
