@@ -24,9 +24,9 @@ import bem from '../utils/bemClassNames';
 import User from './user';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
-import {API_HOST} from '../config'
+import { API_HOST } from '../config'
 import ApiClient from '../api/client'
-import {getStore, addError, setLikes} from '../store';
+import { getStore, addError, setLikes } from '../store';
 
 class TagLine extends React.Component {
   render() {
@@ -176,10 +176,13 @@ export class TextPostComponent extends React.Component {
 
         <footer className="card__footer">
           <Link to={post_url} className="card__link"><span className="fa fa-link"></span></Link>
-
           <TagLine tags={[]}/>
-          <Toolbar post={post} current_user={this.props.current_user} />
-          {this.props.current_user && this.props.current_user.id === this.props.author.id ? <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link> : ''}
+          <div className="card__toolbars">
+            <Toolbar post={post} current_user={this.props.current_user} />
+            <div className="card__toolbar card__toolbar-right">
+              {this.props.current_user && this.props.current_user.id === this.props.author.id ? <div className="card__toolbar_item"><Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link></div> : ''}
+            </div>
+          </div>
         </footer>
 
         <Comments post={post}/>

@@ -43,6 +43,10 @@
       color: #000;
     }
   }
+
+  &__toolbars {
+    &:extend(.layout);
+  }
 }
 
 .card__header {
@@ -74,9 +78,14 @@
 
 .card__toolbar {
   &:extend(.layout);
+  &:extend(.layout__grid_item-wide);
 
   &:first-child {
     margin-top: 0;
+  }
+
+  &-right {
+    flex: none!important;
   }
 
   &_item {
