@@ -38,7 +38,7 @@ export default class WhatIsLibertySoil extends Component {
 
     switch (activeSlide) {
       case 0:
-        navigation = <p><span className="highlight">Knowledge base</span> and <span className="link" onClick={this.changeSlide.bind(this, 1)}>professional social network</span></p>;
+        navigation = <p><span className="highlight">Collect and organise resources</span> and <span className="link" onClick={this.changeSlide.bind(this, 1)}>professional social network</span></p>;
         break;
 
       case 1:
@@ -49,7 +49,7 @@ export default class WhatIsLibertySoil extends Component {
     return (<div>
         <section className="landing">
           <header className="landing__header">
-            <h1 className="landing__title">What is LibertySoil?</h1>
+            <h2 className="landing__title">You can help more children reach better education</h2>
             {navigation}
           </header>
         </section>
