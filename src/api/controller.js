@@ -333,13 +333,13 @@ export default class ApiController {
       return
     }
 
-    obj.set('text', req.body.text);
+    post_object.set('text', req.body.text);
 
     try {
-      await obj.save(null, {method: 'update'});
-      await obj.fetch({require: true, withRelated: ['user']})
+      await post_object.save(null, {method: 'update'});
+      await post_object.fetch({require: true, withRelated: ['user']})
 
-      res.send(obj.toJSON());
+      res.send(post_object.toJSON());
     } catch (e) {
       res.status(500);
       res.send({error: e.message})
