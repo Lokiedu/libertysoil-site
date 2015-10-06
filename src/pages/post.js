@@ -67,21 +67,25 @@ class PostPage extends React.Component {
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
+
         <div className="page__container">
           <div className="page__body">
             <div className="page__sidebar">
               <div className="layout__row">
                 <CurrentUser user={current_user} />
               </div>
+
               <div className="layout__row">
                 <a href="/">News feed</a>
               </div>
             </div>
+
             <div className="page__content">
               <TextPostComponent post={current_post} author={author} current_user={current_user} key={current_post.id} fullPost={true} />
             </div>
           </div>
         </div>
+
         <Footer/>
       </div>
     )
