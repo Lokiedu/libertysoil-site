@@ -24,20 +24,20 @@ import Footer from '../components/footer';
 
 export default class Welcome extends React.Component {
   render() {
-    return <div> 
+    return <div>
       <div className="page__container-bg">
         <section className="landing landing-big landing-bg">
           <Header is_logged_in={false} className="header-transparent" />
           <header className="landing__header">
-            <h1 className="landing__title">Education in 21st century</h1>
-            <p className="landing__details">LibertySoil is a place for education professionals to collect, share, and<br /> discuss information about freedom focused education</p>
-            <p className="landing__details"><a href="#" className="button button-big button-yellow">Join</a></p>
+            <h1 className="landing__title">Education change network</h1>
+            <p className="landing__details"><b>Connect</b> with people from different cultures to make education more humane and child-friendly.</p>
+            <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
           </header>
         </section>
         <WhatIsLibertySoil />
         <div className="void void-space content content-center skin skin-red">
           <h2><a href="#">What is free freedom focused education?</a></h2>
-          <p>We are seeking an approach to education that is adapted more to children's needs and want to apply a humanistic perspective.</p>
+          <p>We are seeking an approach to education that is adapted more to child needs and want to apply a humanistic perspective.</p>
         </div>
         <div className="page__body">
           <div className="page__content">
