@@ -25,7 +25,7 @@ import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 
 export default class BaseUserPage extends React.Component {
-  render() {
+  render () {
     let {is_logged_in, current_user, i_am_following, page_user} = this.props;
 
     return (
@@ -39,8 +39,8 @@ export default class BaseUserPage extends React.Component {
             <div className="page__body_content">
               <ProfileHeader user={page_user} current_user={current_user} i_am_following={i_am_following} />
 
-              <div className="page__content">
-                <div className="layout__space">
+              <div className="page__content page__content-horizontal_space">
+                <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
                     <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</Link></div>
@@ -48,8 +48,7 @@ export default class BaseUserPage extends React.Component {
                     <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/about`}>About</Link></div>
                   </div>
                 </div>
-
-                <div className="layout__row">
+                <div className="layout__row layout__row-double">
                   {this.props.children}
                 </div>
               </div>

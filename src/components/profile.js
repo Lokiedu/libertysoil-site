@@ -28,11 +28,11 @@ export default class ProfileHeader extends React.Component {
                 <div className="profile__title">{name}</div>
               </div>
               <div className="layout__grid_item">
-                42<br />
+                <br />
                 Following
               </div>
               <div className="layout__grid_item">
-                42<br />
+                <br />
                 Followers
               </div>
               <div className="layout__grid_item">

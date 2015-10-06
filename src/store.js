@@ -215,11 +215,13 @@ function theReducer(state, action) {
     case SET_USER_POSTS: {
       let cut = {posts: {}, user_posts: {}};
 
-      for (let post of action.posts) {
-        cut.posts[post.id] = post;
-      }
+      if (action.posts.length) {
+        for (let post of action.posts) {
+          cut.posts[post.id] = post;
+        }
 
-      cut.user_posts[action.posts[0].user_id] = action.posts.map(post => post.id);
+        cut.user_posts[action.posts[0].user_id] = action.posts.map(post => post.id);
+      }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
       break;

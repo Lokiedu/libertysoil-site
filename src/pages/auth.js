@@ -31,87 +31,81 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 class AuthContents extends React.Component {
-  registerUser = (user) => {
+  registerUser = async (user) => {
     let {dispatch} = this.props;
     let client = new ApiClient(API_HOST)
 
     dispatch(removeAllMessages());
 
-    (async () => {
-      // FIXME: disable form
-      try {
-        let result = await client.registerUser(user)
+    // FIXME: disable form
+    try {
+      let result = await client.registerUser(user)
 
-        if ('error' in result) {
-          // FIXME: enable form again
-          dispatch(addError(result.error));
-          return;
-        }
-      } catch (e) {
+      if ('error' in result) {
         // FIXME: enable form again
-
-        if (e.response && ('error' in e.response.body)) {
-          // FIXME: enable form again
-          dispatch(addError(e.response.body.error));
-          return;
-        } else {
-          console.log(e)
-          console.log(e.stack)
-          dispatch(addError('Server seems to have problems. Retry later, please'));
-          return;
-        }
+        dispatch(addError(result.error));
+        return;
       }
+    } catch (e) {
+      // FIXME: enable form again
 
-      dispatch(addMessage('User is registered successfully'));
-    })();
+      if (e.response && ('error' in e.response.body)) {
+        // FIXME: enable form again
+        dispatch(addError(e.response.body.error));
+        return;
+      } else {
+        console.log(e)
+        console.log(e.stack)
+        dispatch(addError('Server seems to have problems. Retry later, please'));
+        return;
+      }
+    }
+
+    dispatch(addMessage('User is registered successfully'));
   };
 
-  loginUser = (login_data) => {
+  loginUser = async (login_data) => {
     let {dispatch} = this.props;
     let client = new ApiClient(API_HOST)
 
     dispatch(removeAllMessages());
 
-    (async () => {
-      dispatch(removeAllMessages());
+    let user;
 
-      let user;
+    try {
+      let result = await client.login(login_data)
 
-      try {
-        let result = await client.login(login_data)
-
-        if (result.success) {
-          user = result.user
-        } else {
-          dispatch(addError('Invalid username or password'));
-        }
-      } catch (e) {
+      if (result.success) {
+        user = result.user
+      } else {
         dispatch(addError('Invalid username or password'));
       }
+    } catch (e) {
+      dispatch(addError('Invalid username or password'));
+    }
 
-      dispatch(setCurrentUser(user));
-    })();
+    dispatch(setCurrentUser(user));
   };
 
   render () {
     let {is_logged_in} = this.props;
 
     if (is_logged_in) {
-      return <div className="area__body">
+      return (<div className="area__body">
         <div className="message">
           <div className="message__body">
-            You're logged in already. You can proceed to <Link to="/" className="header__toolbar_item">your feed</Link>
+            You're logged in already. You can proceed to <Link className="header__toolbar_item" to="/">your feed</Link>
           </div>
         </div>
-      </div>;
+      </div>);
     }
 
-    return <div>
+    return (<div>
       <div className="area__body layout-align_start">
         <Login onLoginUser={this.loginUser} />
         <Register onRegisterUser={this.registerUser} />
       </div>
-    </div>
+    </div>);
   }
 }
 
