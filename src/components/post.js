@@ -111,7 +111,7 @@ class Toolbar extends React.Component {
     return (
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
-          <span className="icon fa fa-heart-o"></span>
+          <span className={`icon fa ${heart_class}`}></span>
           {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
