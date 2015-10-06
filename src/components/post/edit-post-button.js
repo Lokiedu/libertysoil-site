@@ -15,27 +15,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
+import { Link } from 'react-router';
 
-import { ShortTextPost, PostWrapper } from './post'
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-export default class RiverOfPostsComponent extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.river)) {
-      return <script/>;
-    }
-
-    let posts = this.props.river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
-      </div>
-    )
+let EditPostButton = (props) => {
+  if (!props.current_user || props.current_user.id !== props.post.user_id) {
+    return <script/>;
   }
-}
+
+  let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
+
+  return (
+    <div className="card__toolbar_item">
+      <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link>
+    </div>
+  );
+};
+
+export default EditPostButton;

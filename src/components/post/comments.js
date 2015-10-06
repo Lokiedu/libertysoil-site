@@ -15,27 +15,19 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
+import ReactDisqusThread from '../../scripts/disqus-thread';
 
-import { ShortTextPost, PostWrapper } from './post'
+let Comments = (props) => (
+  <div className="card__comments">
+    <ReactDisqusThread
+      categoryId={props.post.type}
+      identifier={props.post.id}
+      shortname="lstest"
+      title="Post"
+      url={`http://alpha.libertysoil.org/post/${props.post.id}`}
+    />
+  </div>
+);
 
-export default class RiverOfPostsComponent extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.river)) {
-      return <script/>;
-    }
-
-    let posts = this.props.river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
-      </div>
-    )
-  }
-}
+export default Comments;

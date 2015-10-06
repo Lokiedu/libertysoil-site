@@ -17,34 +17,13 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
-import ReactDisqusThread from '../scripts/disqus-thread';
-import Linkify from 'react-linkify';
 
-import bem from '../utils/bemClassNames';
-import User from './user';
-import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import { API_HOST } from '../../config'
+import ApiClient from '../../api/client'
+import { getStore, addError, setLikes } from '../../store';
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-import { API_HOST } from '../config'
-import ApiClient from '../api/client'
-import { getStore, addError, setLikes } from '../store';
-
-class TagLine extends React.Component {
-  render() {
-    if (this.props.tags.length == 0) {
-      return <script/>
-    }
-
-    let tagBlocks = this.props.tags.map(name => <span className="tag">{name}</span>)
-
-    return (
-      <div className="tags">
-        {tagBlocks}
-      </div>
-    )
-  }
-}
-
-class Toolbar extends React.Component {
+export default class Toolbar extends React.Component {
   async likePost(event) {
     event.preventDefault();
 
@@ -125,81 +104,6 @@ class Toolbar extends React.Component {
           <span className="card__toolbar_item_value disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
         </Link>
       </div>
-    )
-  }
-}
-
-let EditPostButton = (props) => {
-  if (!props.current_user || props.current_user.id !== props.post.user_id) {
-    return <script/>;
-  }
-
-  let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
-
-  return (
-    <div className="card__toolbar_item">
-      <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link>
-    </div>
-  );
-};
-
-export class TextPostComponent extends React.Component {
-  render() {
-    var props = this.props;
-    var post = props.post;
-    var cardClassName = bem.makeClassName({
-      block: 'card',
-      modifiers: {
-        full: props.fullPost
-      }
-    });
-
-    let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
-    let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: post.id });
-
-    let Comments;
-
-    if (this.props.fullPost) {
-      Comments = (props) => (
-        <div className="card__comments">
-          <ReactDisqusThread
-            categoryId={props.post.type}
-            identifier={props.post.id}
-            shortname="lstest"
-            title="Post"
-            url={`http://alpha.libertysoil.org/post/${props.post.id}`}
-          />
-        </div>
-      )
-    } else {
-      Comments = () => { return <script/> };
-    }
-
-    return (
-      <section className={cardClassName}>
-        <div className="card__content">
-          <Linkify properties={{target: '_blank'}}>
-            <p>{post.text}</p>
-          </Linkify>
-        </div>
-
-        <div className="card__owner">
-          <User avatarSize="32" timestamp={post.created_at} timestampLink={post_url} user={this.props.author}/>
-        </div>
-
-        <footer className="card__footer">
-          <TagLine tags={[]}/>
-          <div className="card__toolbars">
-            <Toolbar post={post} current_user={this.props.current_user} />
-            <div className="card__toolbar card__toolbar-right">
-              <EditPostButton current_user={this.props.current_user} post={post} />
-              <div className="card__toolbar_item"><Link to={post_url}><span className="fa fa-link"></span></Link></div>
-            </div>
-          </div>
-        </footer>
-
-        <Comments post={post}/>
-      </section>
     )
   }
 }

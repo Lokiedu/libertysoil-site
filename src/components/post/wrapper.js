@@ -15,27 +15,31 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
 
-import { ShortTextPost, PostWrapper } from './post'
+import bem from '../../utils/bemClassNames';
+import Comments from './comments';
+import PostFooter from './footer';
 
-export default class RiverOfPostsComponent extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.river)) {
-      return <script/>;
+let PostWrapper = (props) => {
+  let cardClassName = bem.makeClassName({
+    block: 'card',
+    modifiers: {
+      full: props.showComments
     }
+  });
 
-    let posts = this.props.river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
+  return (
+    <section className={cardClassName}>
+      <div className="card__content">
+        {props.children}
       </div>
-    )
-  }
-}
+
+      <PostFooter author={props.author} current_user={props.current_user} post={props.post}/>
+
+      {props.showComments && <Comments post={props.post}/>}
+    </section>
+  );
+};
+
+export default PostWrapper;

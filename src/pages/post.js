@@ -22,11 +22,8 @@ import _ from 'lodash';
 import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
-import River from '../components/river_of_posts';
-import Followed from '../components/most_followed_people';
-import Tags from '../components/popular_tags';
 import CurrentUser from '../components/current-user';
-import { TextPostComponent } from '../components/post'
+import { ShortTextPost, PostWrapper } from '../components/post'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
@@ -81,7 +78,9 @@ class PostPage extends React.Component {
             </div>
 
             <div className="page__content">
-              <TextPostComponent post={current_post} author={author} current_user={current_user} key={current_post.id} fullPost={true} />
+              <PostWrapper author={author} current_user={current_user} post={current_post} showComments={true}>
+                <ShortTextPost post={current_post}/>
+              </PostWrapper>
             </div>
           </div>
         </div>

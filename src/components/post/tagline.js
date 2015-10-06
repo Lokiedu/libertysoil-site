@@ -15,27 +15,26 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
 
-import { ShortTextPost, PostWrapper } from './post'
+export default class TagLine extends React.Component {
+  static displayName = "TagLine";
+  static propTypes = {
+    tags: React.PropTypes.arrayOf(React.PropTypes.string)
+  };
 
-export default class RiverOfPostsComponent extends React.Component {
   render() {
-    if (_.isUndefined(this.props.river)) {
+    if (this.props.tags.length == 0) {
       return <script/>;
     }
 
-    let posts = this.props.river.map(id => this.props.posts[id]);
+    let tagBlocks = this.props.tags.map(name => <span className="tag">{name}</span>);
 
     return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
+      <div className="tags">
+        {tagBlocks}
       </div>
-    )
+    );
   }
 }
+

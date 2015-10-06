@@ -15,27 +15,15 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
+import Linkify from 'react-linkify';
 
-import { ShortTextPost, PostWrapper } from './post'
+let ShortTextPost = (props) => {
+  return (
+    <Linkify properties={{target: '_blank'}}>
+      <p>{props.post.text}</p>
+    </Linkify>
+  );
+};
 
-export default class RiverOfPostsComponent extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.river)) {
-      return <script/>;
-    }
-
-    let posts = this.props.river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
-      </div>
-    )
-  }
-}
+export default ShortTextPost;

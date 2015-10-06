@@ -15,27 +15,5 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
-import _ from 'lodash'
-
-import { ShortTextPost, PostWrapper } from './post'
-
-export default class RiverOfPostsComponent extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.river)) {
-      return <script/>;
-    }
-
-    let posts = this.props.river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-          {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
-      </div>
-    )
-  }
-}
+export {default as ShortTextPost} from './short-text';
+export {default as PostWrapper} from './wrapper';
