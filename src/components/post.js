@@ -166,7 +166,7 @@ export class TextPostComponent extends React.Component {
     return (
       <section className={cardClassName}>
         <div className="card__content">
-          <Linkify>
+          <Linkify properties={ {target: '_blank'} }>
             <p>{post.text}</p>
           </Linkify>
         </div>
