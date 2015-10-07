@@ -29,11 +29,11 @@ export default class ProfileHeader extends React.Component {
               </div>
               <div className="layout__grid_item">
                 <br />
-                Following
+                {/*  Following  */}
               </div>
               <div className="layout__grid_item">
                 <br />
-                Followers
+                {/*  Followers  */}
               </div>
               <div className="layout__grid_item">
                 <FollowButton active_user={current_user} user={user} following={i_am_following}/>
