@@ -45,7 +45,7 @@ let RedisStore = initRedisStore(session);
 
 let sessionMiddleware = session({
   store: new RedisStore({
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 6379
   }),
   secret: 'libertysoil',
