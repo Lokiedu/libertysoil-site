@@ -46,7 +46,7 @@ export default class CreatePost extends React.Component {
         <form onSubmit={this.submitHandler} action="" method="post">
           <div className="box__body">
             <div className="layout__row">
-              <textarea className="input input-textarea input-block" placeholder="Share some knowledge" name="text" />
+              <textarea className="input input-textarea input-block" placeholder="Share education related resources, your perspective" name="text" />
             </div>
             <div className="layout__row layout layout-align_right">
               <button className="button button-wide button-green" type="submit">Post</button>
