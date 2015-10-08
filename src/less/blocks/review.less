@@ -17,23 +17,37 @@
  */
 .review {
   margin: auto;
-  max-width: 640px;
+  max-width: 740px;
   padding: @doubleSpace;
+  margin:30px;
+  font-family: 'Open Sans', 'Helvetica Neue';
+  font-weight: 200;
+  font-style: italic;
+
 
   &__body {
-    font-size: 25px;
-    font-style: italic;
+    font-size: 28px;
+    margin-bottom:15px;
 
     &:before {
       content: '“';
       display: inline-block;
-      margin-right: -0.1em;
+      margin-right: 0.1em;
+      font-size:32px;
+      color:#999;
+      font-family:serif;
+      font-weight:bold;
     }
-    
+
     &:after {
       content: '”';
       display: inline-block;
-      margin-left: -0.1em;
+      margin-left: 0.1em;
+      font-size:32px;
+      color:#999;
+      font-family:serif;
+      font-weight:bold;
+
     }
   }
 
