@@ -94,7 +94,7 @@ class AuthContents extends React.Component {
       return (<div className="area__body">
         <div className="message">
           <div className="message__body">
-            You're logged in already. You can proceed to <Link className="link" to="/">your feed</Link>
+            You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.
           </div>
         </div>
       </div>);

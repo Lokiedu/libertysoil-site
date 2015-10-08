@@ -94,10 +94,10 @@ export default class Toolbar extends React.Component {
           {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
-        <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
+      {/*  <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
           <span className="icon fa fa-star-o"></span>
           {false && <span className="card__toolbar_item_value">0</span>}
-        </span>
+        </span> */}
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
           <span className="icon fa fa-comment-o"></span>
