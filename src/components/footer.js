@@ -28,6 +28,7 @@ export default class FooterComponent extends React.Component {
           <a href="#">Privacy policy</a>
         </nav>}
         <p><a href="mailto:info@libertysoil.org">info@libertysoil.org</a></p>
+        <script async src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js" data-trackduck-id="56182f159e7749be13765442"></script>
       </footer>
     )
   }
