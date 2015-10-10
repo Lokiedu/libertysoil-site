@@ -30,16 +30,25 @@ export default class Welcome extends React.Component {
           <Header is_logged_in={false} className="header-transparent" />
           <header className="landing__header">
             <h1 className="landing__title">Education change network</h1>
-            <p className="landing__details"><b>Connect</b> with people from different cultures to make education more humane and child-friendly.</p>
+            <p className="landing__details">Connect with people from around the world to make education more humane.<br></br>No action is too small - it is our world, lets work together to build a better future.</p>
             <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
           </header>
         </section>
         <WhatIsLibertySoil />
         <div className="void void-space content content-center skin skin-red">
-          <h2><a href="#">What is free freedom focused education?</a></h2>
-          <p>We are seeking an approach to education that is adapted more to child needs and want to apply a humanistic perspective.</p>
+          <h2>Child Friendly Education</h2>
+          <p>LibertySoil aims to make best schooling practises from around the world visible, accessible and actionable. Emotional and social development of the child are often overlooked in traditional school system. Join our growing community and help more children reach better education.
+          </p>
+          <p>We encourage people to collect, share and discuss resources on teaching and learning, helping to build a better understanding of the diversity within education. We aim to help families and schools solve problems like bullying, academic pressure, depression, anxiety, professional and social isolation, to name just a few. Needless to say, poor early life experiences negatively affect each person and a society as a whole.</p>
         </div>
-        <div className="page__body">
+          <section className="landing">
+            <header className="landing__header">
+              <h3 className="landing__stats"><a href="http://www,libertysoil.org">LibertySoil.org</a> is in <i>alpha</i> stage starting <time datetime="2015-10-05">October 5th, 2015</time>. Target public <i>beta</i> release date is October 28th, 2015. All LibertySoil.org code is released under the open source <a href="https://github.com/Lokiedu/libertysoil-site/…/master/LICENSE">AGPL license</a> and is free to use. Contribute on <a href="https://github.com/Lokiedu/libertysoil-site"><i>GitHub.</i></a></h3>
+            </header>
+          </section>
+
+
+      {/*  <div className="page__body">
           <div className="page__content">
             <div className="layout__space">
               <h1 className="page__title">Popular Posts</h1>
@@ -127,7 +136,7 @@ export default class Welcome extends React.Component {
               </div>
             </div>
           </aside>
-        </div>
+        </div>*/}
       </div>
       <Reviews/>
       <Footer/>
