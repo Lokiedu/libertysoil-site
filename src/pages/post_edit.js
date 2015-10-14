@@ -27,6 +27,7 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost, removePost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import {EditPost} from '../components/post'
 
 
 class PostEditPage extends React.Component {
@@ -110,14 +111,15 @@ class PostEditPage extends React.Component {
                 <CurrentUser user={current_user} />
               </div>
             </div>
+
             <div className="page__content">
               <div className="box box-post box-space_bottom">
                 <form onSubmit={this.submitHandler} action="" method="post">
                   <input type="hidden" name="id" value={current_post.id} />
+
                   <div className="box__body">
-                    <div className="layout__row">
-                      <textarea className="input input-textarea input-block" defaultValue={current_post.text} name="text"/>
-                    </div>
+                    <EditPost post={current_post}/>
+
                     <div className="layout__row">
                       <div className="layout layout__grid layout-align_right">
                         <button className="button button-red" type="button" onClick={this.removeHandler}><span className="fa fa-trash-o"></span></button>

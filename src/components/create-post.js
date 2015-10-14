@@ -20,8 +20,7 @@ import { connect } from 'react-redux'
 
 import postTypeConstants from '../consts/postTypeConstants'
 
-import EditShortPost from './post/edit-short-post'
-import EditExtendedPost from './post/edit-extended-post'
+import {EditPost} from './post'
 
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
@@ -67,7 +66,8 @@ class CreatePost extends React.Component {
       <div className="box box-post box-space_bottom">
         <form onSubmit={this.submitHandler}>
           <div className="box__body">
-            <EditShortPost />
+            <EditPost />
+
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">
                 {false && <select ref="postType" className="input input-select" onChange={this.switchPostType}>
@@ -75,6 +75,7 @@ class CreatePost extends React.Component {
                   <option value={postTypeConstants.LONG_TEXT}>Long text</option>
                 </select>}
               </div>
+
               <div className="layout__grid_item">
                 <button className="button button-wide button-green" type="submit">Post</button>
               </div>

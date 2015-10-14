@@ -15,15 +15,25 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, {
-    Component
-} from 'react'
+import React, { Component } from 'react'
+import _ from 'lodash'
 
 export default class CreatePostShort extends Component {
   render () {
+    let value = '';
+
+    if (!_.isUndefined(this.props.post)) {
+      value = this.props.post.text;
+    }
+
     return (
         <div className="layout__row">
-          <textarea className="input input-textarea input-block" placeholder="Share education related resources, your perspective" name="text" />
+          <textarea
+            className="input input-textarea input-block"
+            defaultValue={value}
+            name="text"
+            placeholder="Share education related resources, your perspective"
+          />
         </div>
     )
   }
