@@ -335,8 +335,6 @@ let store;
 
 export function initState(state=initialState) {
   store = createStore(theReducer, Immutable.fromJS(state));
-
-  console.log(store.getState());
   return store;
 }
 
