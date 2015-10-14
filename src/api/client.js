@@ -115,13 +115,14 @@ export default class ApiClient
     return response.body;
   }
 
-  async createPost(text) {
-    let response = await this.post(`/api/v1/posts`, {text})
+  async createPost(type, data) {
+    data.type = type;
+    let response = await this.post(`/api/v1/posts`, data)
     return response.body;
   }
 
-  async updatePost(uuid, text) {
-    let response = await this.post(`/api/v1/post/${uuid}`, {text})
+  async updatePost(uuid, data) {
+    let response = await this.post(`/api/v1/post/${uuid}`, data)
     return response.body;
   }
 

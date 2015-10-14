@@ -66,7 +66,7 @@ class PostEditPage extends React.Component {
     let client = new ApiClient(API_HOST)
 
     try {
-      let result = await client.updatePost(this.props.params.uuid, form.text.value);
+      let result = await client.updatePost(this.props.params.uuid, {text: form.text.value});
       this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.uuid }));
     } catch (e) {
       getStore().dispatch(addError(e.message));

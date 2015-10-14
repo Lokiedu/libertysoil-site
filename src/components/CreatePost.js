@@ -26,10 +26,10 @@ export default class CreatePost extends React.Component {
     event.preventDefault();
 
     let form = event.target;
-    let client = new ApiClient(API_HOST)
+    let client = new ApiClient(API_HOST);
 
     try {
-      let result = await client.createPost(form.text.value)
+      let result = await client.createPost('short_text', {text: form.text.value});
       form.text.value = '';
 
       getStore().dispatch(addPostToRiver(result));

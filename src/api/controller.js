@@ -281,27 +281,56 @@ export default class ApiController {
       res.send({error: 'You are not authorized'})
     }
 
-    if (!('text' in req.body)) {
-      res.status(400)
-      res.send({error: '"text" parameter is not given'})
+    if (!('type' in req.body)) {
+      res.status(400);
+      res.send({error: '"type" parameter is not given'});
+      return;
+    }
+
+    let typeRequirements = {
+      short_text: ['text'],
+      long_text: ['title', 'text']
+    };
+
+    if (!(req.body.type in typeRequirements)) {
+      res.status(400);
+      res.send({error: `"${req.body.type}" type is not supported`});
+      return;
+    }
+
+    let thisTypeRequirements = typeRequirements[req.body.type];
+
+    for (let varName of thisTypeRequirements) {
+      if (!(varName in req.body)) {
+        res.status(400);
+        res.send({error: `"${varName}" parameter is not given`});
+        return;
+      }
     }
 
     let Post = this.bookshelf.model('Post');
 
     let obj = new Post({
       id: uuid.v4(),
-      text: req.body.text,
+      type: req.body.type,
       user_id: req.session.user
     });
 
+    if (req.body.type === 'short_text') {
+      obj.set('text', req.body.text);
+    } else if (req.body.type === 'long_text') {
+      obj.set('text', req.body.text);
+      obj.set('more', {title: req.body.title});
+    }
+
     try {
       await obj.save(null, {method: 'insert'});
-      await obj.fetch({require: true, withRelated: ['user']})
+      await obj.fetch({require: true, withRelated: ['user']});
 
       res.send(obj.toJSON());
     } catch (e) {
       res.status(500);
-      res.send({error: e.message})
+      res.send({error: e.message});
     }
   }
 
@@ -316,11 +345,6 @@ export default class ApiController {
       res.send({error: '"id" parameter is not given'});
     }
 
-    if (!('text' in req.body)) {
-      res.status(400)
-      res.send({error: '"text" parameter is not given'})
-    }
-
     let Post = this.bookshelf.model('Post');
 
     let post_object;
@@ -333,7 +357,23 @@ export default class ApiController {
       return
     }
 
-    post_object.set('text', req.body.text);
+    let type = post_object.get('type');
+
+    if (type === 'short_text') {
+      if ('text' in req.body) {
+        post_object.set('text', req.body.text);
+      }
+    } else if (type === 'long_text') {
+      if ('text' in req.body) {
+        post_object.set('text', req.body.text);
+      }
+
+      if ('title' in req.body) {
+        let more = post_object.get('more');
+        more.title = req.body.title;
+        post_object.set('more', more);
+      }
+    }
 
     try {
       await post_object.save(null, {method: 'update'});
