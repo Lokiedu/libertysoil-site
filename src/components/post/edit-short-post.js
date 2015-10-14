@@ -15,29 +15,16 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.input {
-  border-radius: @radius-input;
-  border: 1px solid @color__border;
-  padding: 7px 10px;
-  box-sizing: border-box;
-  resize: vertical;
+import React, {
+    Component
+} from 'react'
 
-  &:focus {
-    border-color: @color__blue;
-    outline: none;
+export default class CreatePostShort extends Component {
+  render () {
+    return (
+        <div className="layout__row">
+          <textarea className="input input-textarea input-block" placeholder="Share education related resources, your perspective" name="text" />
+        </div>
+    )
   }
-}
-
-.input-textarea {
-  min-height: 130px;
-}
-
-.input-select {
-  appearance: none;
-  cursor: pointer;
-}
-
-.input-block {
-  display: block;
-  width: 100%;
 }

@@ -19,6 +19,8 @@ import { createStore } from 'redux'
 import Immutable, { Map } from 'immutable'
 import _ from 'lodash'
 
+import stores from './store/index'
+
 import messageType from './consts/messageTypeConstants';
 
 const ADD_USER = 'ADD_USER';
@@ -137,7 +139,7 @@ export function updateFollowStatus(status) {
   }
 }
 
-function theReducer(state, action) {
+function theReducer(state = initialState, action) {
   let userToStateCut = user => {
     let users = {};
 
@@ -333,6 +335,8 @@ let store;
 
 export function initState(state=initialState) {
   store = createStore(theReducer, Immutable.fromJS(state));
+
+  console.log(store.getState());
   return store;
 }
 

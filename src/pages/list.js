@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import request from 'superagent';
 import _ from 'lodash';
 
-import CreatePost from '../components/CreatePost'
+import CreatePost from '../components/create-post'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
