@@ -17,29 +17,17 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import request from 'superagent';
 import _ from 'lodash';
 
 import CreatePost from '../components/create-post'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
-import Followed from '../components/most_followed_people';
-import Tags from '../components/popular_tags';
 import Sidebar from '../components/sidebar'
-import {API_HOST} from '../config';
-import ApiClient from '../api/client'
-import {getStore, setPostsToRiver} from '../store';
 import {createPost, likePost, unlikePost} from '../triggers';
 
 
 class Index extends React.Component {
-  async componentWillMount() {
-    let client = new ApiClient(API_HOST);
-    let posts = await client.subscriptions();
-    getStore().dispatch(setPostsToRiver(posts));
-  }
-
   render() {
     let current_user;
     if (this.props.is_logged_in) {

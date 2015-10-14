@@ -107,15 +107,13 @@ let reactHandler = async (req, res) => {
     } else if (renderProps == null) {
       res.status(404).send('Not found')
     } else {
-      if (renderProps.routes[1].name == 'post_list' && 'cookie' in req.headers) {
-        let client = new ApiClient(API_HOST, req);
+      let component = _.last(renderProps.routes).component;
 
-        try {
-          let posts = await client.subscriptions();
-          getStore().dispatch(setPostsToRiver(posts));
-        } catch (e) {
-          console.dir(e);
-        }
+      if ('fetchData' in component) {
+        let props = store.getState().toJS();
+        props.params = renderProps.params;
+
+        await component.fetchData(props);
       }
 
       let html = renderToString(<RoutingContext {...renderProps}/>)

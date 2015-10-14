@@ -38,10 +38,15 @@ class PostEditPage extends React.Component {
     this.removeHandler = this.removeHandler.bind(this);
   }
 
-  async componentWillMount() {
+  componentDidMount() {
+    PostEditPage.fetchData(this.props)
+  }
+
+  static async fetchData(props) {
     let client = new ApiClient(API_HOST)
+
     try {
-      let result = await client.postInfo(this.props.params.uuid);
+      let result = await client.postInfo(props.params.uuid);
       getStore().dispatch(addPost(result));
     } catch (e) {
       getStore().dispatch(addError(e.message));

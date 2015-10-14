@@ -24,19 +24,21 @@ import BaseUserPage from './base/user'
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, addUser, setUserPosts, addError} from '../store';
+import {getStore, addUser} from '../store';
 import {followUser, unfollowUser} from '../triggers'
 
 class UserLikesPage extends React.Component {
-  async componentWillMount() {
+  componentDidMount() {
+    UserLikesPage.fetchData(this.props);
+  }
+
+  static async fetchData(props) {
     let client = new ApiClient(API_HOST);
 
-    let userInfo = client.userInfo(this.props.params.username);
-    let userPosts = client.userPosts(this.props.params.username);
-
     try {
+      let userInfo = client.userInfo(props.params.username);
+
       getStore().dispatch(addUser(await userInfo));
-      getStore().dispatch(setUserPosts(await userPosts));
     } catch (e) {
       console.log(e.stack)
     }

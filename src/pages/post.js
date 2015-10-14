@@ -31,10 +31,15 @@ import {likePost, unlikePost} from '../triggers';
 
 
 class PostPage extends React.Component {
-  async componentWillMount() {
+  componentDidMount() {
+    PostPage.fetchData(this.props);
+  }
+
+  static async fetchData(props) {
     let client = new ApiClient(API_HOST)
+
     try {
-      let result = await client.postInfo(this.props.params.uuid)
+      let result = await client.postInfo(props.params.uuid)
       getStore().dispatch(addPost(result));
     } catch (e) {
     }

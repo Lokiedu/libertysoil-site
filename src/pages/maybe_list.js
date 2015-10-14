@@ -20,8 +20,30 @@ import { connect } from 'react-redux';
 
 import List from './list'
 import Welcome from './welcome'
+import {API_HOST} from '../config';
+import ApiClient from '../api/client'
+import {getStore, setPostsToRiver} from '../store';
 
 class MaybeList extends React.Component {
+  componentDidMount() {
+    MaybeList.fetchData(this.props);
+  }
+
+  static async fetchData(props) {
+    if (!props.is_logged_in) {
+      return;
+    }
+
+    let client = new ApiClient(API_HOST);
+
+    try {
+      let posts = await client.subscriptions();
+      getStore().dispatch(setPostsToRiver(posts));
+    } catch (e) {
+      console.log(e.stack)
+    }
+  }
+
   render() {
     if (this.props.is_logged_in) {
       return <List/>

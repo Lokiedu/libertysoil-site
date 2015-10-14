@@ -29,13 +29,17 @@ import {getStore, addUser, setUserPosts, addError} from '../store';
 import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
 
 class UserPage extends React.Component {
-  async componentWillMount() {
+  componentDidMount() {
+    UserPage.fetchData(this.props);
+  }
+
+  static async fetchData(props) {
     let client = new ApiClient(API_HOST);
 
-    let userInfo = client.userInfo(this.props.params.username);
-    let userPosts = client.userPosts(this.props.params.username);
-
     try {
+      let userInfo = client.userInfo(props.params.username);
+      let userPosts = client.userPosts(props.params.username);
+
       getStore().dispatch(addUser(await userInfo));
       getStore().dispatch(setUserPosts(await userPosts));
     } catch (e) {
