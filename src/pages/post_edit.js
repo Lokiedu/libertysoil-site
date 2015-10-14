@@ -25,7 +25,7 @@ import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, addPost, addError} from '../store';
+import {getStore, addPost, removePost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 
@@ -54,8 +54,8 @@ class PostEditPage extends React.Component {
       let client = new ApiClient(API_HOST)
       try {
         let result = await client.deletePost(this.props.params.uuid)
+        getStore().dispatch(removePost(this.props.params.uuid));
         this.props.history.pushState(null, '/');
-        // FIXME: remove from store
       } catch (e) {
       }
     }

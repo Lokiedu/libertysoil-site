@@ -27,6 +27,8 @@ const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 const SET_USER_POSTS = 'SET_USER_POSTS';
+const REMOVE_POST = 'REMOVE_POST';
+
 const SET_LIKES = 'SET_LIKES';
 
 const ADD_ERROR = 'ADD_ERROR';
@@ -70,6 +72,13 @@ export function setUserPosts(posts) {
   return {
     type: SET_USER_POSTS,
     posts
+  }
+}
+
+export function removePost(id) {
+  return {
+    type: REMOVE_POST,
+    id
   }
 }
 
@@ -224,6 +233,30 @@ function theReducer(state, action) {
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
+      break;
+    }
+
+    case REMOVE_POST: {
+      let post_id = action.id;
+
+      state = state.deleteIn(['posts', post_id]);
+
+      {
+        let idx = state.get('river').findIndex(post_id);
+
+        if (idx >= 0) {
+          state = state.deleteIn(['river', idx]);
+        }
+      }
+
+      for (let user_id of state.get('user_posts').keys()) {
+        let idx = state.get('user_posts').get(user_id).findIndex(post_id);
+
+        if (idx >= 0) {
+          state = state.deleteIn(['user_posts', user_id, idx]);
+        }
+      }
+
       break;
     }
 
