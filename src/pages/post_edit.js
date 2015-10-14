@@ -25,7 +25,7 @@ import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, addError} from '../store';
+import {getStore, addPost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 
@@ -48,6 +48,8 @@ class PostEditPage extends React.Component {
   }
 
   async removeHandler(event) {
+    event.preventDefault();
+
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
       let client = new ApiClient(API_HOST)
       try {
@@ -67,7 +69,8 @@ class PostEditPage extends React.Component {
 
     try {
       let result = await client.updatePost(this.props.params.uuid, {text: form.text.value});
-      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.uuid }));
+      getStore().dispatch(addPost(result));
+      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }
