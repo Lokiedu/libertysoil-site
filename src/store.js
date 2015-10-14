@@ -305,6 +305,7 @@ function theReducer(state = initialState, action) {
       );
       break;
     }
+
     case SET_LIKES: {
       state = state.setIn(['likes', action.user_id], action.likes);
       break;

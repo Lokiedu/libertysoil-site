@@ -260,7 +260,7 @@ export default class ApiController {
       req.session.user = user.id;
     }
 
-    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'likes']});
 
     res.send({ success: true, user })
   }

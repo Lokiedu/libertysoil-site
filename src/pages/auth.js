@@ -22,7 +22,7 @@ import { Link } from 'react-router';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {addError, removeAllMessages, addMessage, setCurrentUser} from '../store';
+import {addError, removeAllMessages, addMessage, setCurrentUser, setLikes} from '../store';
 
 import Footer from '../components/footer';
 import Login from '../components/login';
@@ -85,6 +85,7 @@ class AuthContents extends React.Component {
     }
 
     dispatch(setCurrentUser(user));
+    dispatch(setLikes(user.id, user.likes.map(like => like.post_id)));
   };
 
   render () {
