@@ -43,7 +43,7 @@ let Welcome = () => {
       </div>
         <section className="landing">
           <header className="landing__header">
-            <h3 className="landing__stats"><Link to="/">LibertySoil.org</Link> is in <i>alpha</i> stage starting <time datetime="2015-10-05">October 5th, 2015</time>. Target public <i>beta</i> release date is October 28th, 2015. All LibertySoil.org code is released under the open source <a href="https://github.com/Lokiedu/libertysoil-site/…/master/LICENSE">AGPL license</a> and is free to use. Contribute on <a href="https://github.com/Lokiedu/libertysoil-site"><i>GitHub.</i></a></h3>
+            <h3 className="landing__stats"><Link to="/">LibertySoil.org</Link> is in <i>alpha</i> stage starting <time dateTime="2015-10-05">October 5th, 2015</time>. Target public <i>beta</i> release date is October 28th, 2015. All LibertySoil.org code is released under the open source <a href="https://github.com/Lokiedu/libertysoil-site/…/master/LICENSE">AGPL license</a> and is free to use. Contribute on <a href="https://github.com/Lokiedu/libertysoil-site"><i>GitHub.</i></a></h3>
           </header>
         </section>
 
