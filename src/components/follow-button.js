@@ -1,47 +1,30 @@
 import React from 'react';
-import request from 'superagent';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import {API_HOST} from '../config'
-import ApiClient from '../api/client'
-import {getStore, addUser, addError} from '../store';
-
 export default class FollowButton extends React.Component {
-  async followUser(event) {
+  static displayName = 'FollowButton';
+  static propTypes = {
+    active_user: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired
+    }),
+    following: React.PropTypes.arrayOf(React.PropTypes.string),
+    triggers: React.PropTypes.shape({
+      followUser: React.PropTypes.func.isRequired,
+      unfollowUser: React.PropTypes.func.isRequired
+    }),
+    user: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired
+    })
+  };
+
+  followUser(event) {
     event.preventDefault();
-
-    let client = new ApiClient(API_HOST);
-    let user = this.props.user;
-
-    try {
-      let res = await client.follow(user.username);
-
-      if ('user' in res) {
-        getStore().dispatch(addUser(res.user));
-      }
-    } catch (e) {
-      console.log(e)
-      getStore().dispatch(addError(e.message));
-    }
+    this.props.triggers.followUser(this.props.user)
   }
 
-  async unfollowUser(event) {
+  unfollowUser(event) {
     event.preventDefault();
-
-    let client = new ApiClient(API_HOST);
-    let user = this.props.user;
-
-    try {
-      let res = await client.unfollow(user.username);
-
-      if ('user' in res) {
-        getStore().dispatch(addUser(res.user));
-      }
-    } catch (e) {
-      console.log(e)
-      getStore().dispatch(addError(e.message));
-    }
+    this.props.triggers.unfollowUser(this.props.user)
   }
 
   render() {
@@ -55,8 +38,6 @@ export default class FollowButton extends React.Component {
     if (user.id === active_user.id) {
       return <script/>;  // do not allow to follow one's self
     }
-
-    console.dir(this.props.following)
 
     let is_followed = (this.props.following.indexOf(user.id) != -1);
 

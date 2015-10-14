@@ -26,6 +26,7 @@ import River from '../components/river_of_posts';
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
+import {followUser, unfollowUser} from '../triggers'
 
 class UserPage extends React.Component {
   async componentWillMount() {
@@ -62,8 +63,16 @@ class UserPage extends React.Component {
       i_am_following = this.props.following[current_user.id];
     }
 
+    let user_triggers = {followUser, unfollowUser};
+
     return (
-      <BaseUserPage current_user={current_user} i_am_following={i_am_following} is_logged_in={this.props.is_logged_in} page_user={page_user}>
+      <BaseUserPage
+        current_user={current_user}
+        i_am_following={i_am_following}
+        is_logged_in={this.props.is_logged_in}
+        page_user={page_user}
+        triggers={user_triggers}
+      >
         <River current_user={current_user} posts={this.props.posts} river={user_posts} users={this.props.users} />
       </BaseUserPage>
     )

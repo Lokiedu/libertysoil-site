@@ -17,11 +17,12 @@
  */
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
-import { getStore, addError, addPostToRiver, setLikes } from '../store';
+import { getStore, addError, addUser, addPostToRiver, setLikes } from '../store';
+
+let client = new ApiClient(API_HOST);
 
 export async function likePost(current_user_id, post_id) {
   try {
-    let client = new ApiClient(API_HOST);
     let responseBody = await client.like(post_id);
 
     if (responseBody.success) {
@@ -36,7 +37,6 @@ export async function likePost(current_user_id, post_id) {
 
 export async function unlikePost(current_user_id, post_id) {
   try {
-    let client = new ApiClient(API_HOST);
     let responseBody = await client.unlike(post_id);
 
     if (responseBody.success) {
@@ -50,12 +50,34 @@ export async function unlikePost(current_user_id, post_id) {
 }
 
 export async function createPost(type, data) {
-  let client = new ApiClient(API_HOST);
-
   try {
     let result = await client.createPost(type, data);
 
     getStore().dispatch(addPostToRiver(result));
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function followUser(user) {
+  try {
+    let res = await client.follow(user.username);
+
+    if ('user' in res) {
+      getStore().dispatch(addUser(res.user));
+    }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function unfollowUser(user) {
+  try {
+    let res = await client.unfollow(user.username);
+
+    if ('user' in res) {
+      getStore().dispatch(addUser(res.user));
+    }
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
