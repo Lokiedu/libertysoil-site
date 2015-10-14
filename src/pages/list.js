@@ -30,6 +30,7 @@ import Sidebar from '../components/sidebar'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, setPostsToRiver} from '../store';
+import {createPost, likePost, unlikePost} from '../triggers';
 
 
 class Index extends React.Component {
@@ -46,6 +47,8 @@ class Index extends React.Component {
       current_user.likes = this.props.likes[this.props.current_user];
     }
 
+    let triggers = {likePost, unlikePost};
+
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
@@ -54,8 +57,8 @@ class Index extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__content">
-              <CreatePost />
-              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={current_user}/>
+              <CreatePost triggers={{createPost}}/>
+              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>

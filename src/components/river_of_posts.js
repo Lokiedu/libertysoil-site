@@ -31,7 +31,14 @@ export default class RiverOfPostsComponent extends React.Component {
     return (
       <div>
           {posts.map((post) => (
-            <PostWrapper author={this.props.users[post.user_id]} current_user={this.props.current_user} post={post} showComments={false} key={post.id}>
+            <PostWrapper
+              author={this.props.users[post.user_id]}
+              current_user={this.props.current_user}
+              key={post.id}
+              post={post}
+              showComments={false}
+              triggers={this.props.triggers}
+            >
               <ShortTextPost post={post}/>
             </PostWrapper>
           ))}

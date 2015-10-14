@@ -27,6 +27,7 @@ import { ShortTextPost, PostWrapper } from '../components/post'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
+import {likePost, unlikePost} from '../triggers';
 
 
 class PostPage extends React.Component {
@@ -61,6 +62,8 @@ class PostPage extends React.Component {
       current_user.likes = this.props.likes[this.props.current_user];
     }
 
+    let triggers = {likePost, unlikePost};
+
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
@@ -78,7 +81,7 @@ class PostPage extends React.Component {
             </div>
 
             <div className="page__content">
-              <PostWrapper author={author} current_user={current_user} post={current_post} showComments={true}>
+              <PostWrapper author={author} current_user={current_user} post={current_post} showComments={true} triggers={triggers}>
                 <ShortTextPost post={current_post}/>
               </PostWrapper>
             </div>

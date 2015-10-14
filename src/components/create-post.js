@@ -16,55 +16,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import { connect } from 'react-redux'
 
 import postTypeConstants from '../consts/postTypeConstants'
-
 import {EditPost} from './post'
 
-import { API_HOST } from '../config'
-import ApiClient from '../api/client'
-import {
-    getStore,
-    addError,
-    addPostToRiver
-} from '../store';
+export default class CreatePost extends React.Component {
+  static displayName = 'CreatePost';
+  static propTypes = {
+    triggers: React.PropTypes.shape({
+      createPost: React.PropTypes.func.isRequired
+    })
+  };
 
-class CreatePost extends React.Component {
-  static displayName = 'CreatePost'
-
-  async submitHandler(event) {
+  submitHandler(event) {
     event.preventDefault();
 
     let form = event.target;
-    let client = new ApiClient(API_HOST);
 
-    try {
-      let result = await client.createPost('short_text', {text: form.text.value});
-      form.text.value = '';
-
-      getStore().dispatch(addPostToRiver(result));
-    } catch (e) {
-      console.log(e)
-      console.log(e.stack)
-      getStore().dispatch(addError(e.message));
-    }
+    this.props.triggers.createPost('short_text', {text: form.text.value})
+      .then(() => { form.text.value = ''; });
   }
 
   switchPostType = () => {
     const postType = this.refs.postType.value;
 
     console.info('postType', postType);
-  }
+  };
 
   render () {
-    const props = this.props;
-
-    console.info(props);
-
     return (
       <div className="box box-post box-space_bottom">
-        <form onSubmit={this.submitHandler}>
+        <form onSubmit={this.submitHandler.bind(this)}>
           <div className="box__body">
             <EditPost />
 
@@ -86,9 +68,3 @@ class CreatePost extends React.Component {
     )
   }
 }
-
-function select (state) {
-  return state.toJS()
-}
-
-export default connect(select)(CreatePost)

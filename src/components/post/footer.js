@@ -37,7 +37,7 @@ let PostFooter = (props) => {
         <TagLine tags={[]}/>
 
         <div className="card__toolbars">
-          <Toolbar current_user={props.current_user} post={props.post} />
+          <Toolbar current_user={props.current_user} post={props.post} triggers={props.triggers} />
 
           <div className="card__toolbar card__toolbar-right">
             <EditPostButton current_user={props.current_user} post={props.post} />

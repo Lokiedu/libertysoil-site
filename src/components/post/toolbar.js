@@ -18,13 +18,25 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { API_HOST } from '../../config'
-import ApiClient from '../../api/client'
-import { getStore, addError, setLikes } from '../../store';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 export default class Toolbar extends React.Component {
-  async likePost(event) {
+  static displayName = 'post-toolbar';
+  static propTypes = {
+    current_user: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired,
+      likes: React.PropTypes.arrayOf(React.PropTypes.string)
+    }),
+    post: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired
+    }),
+    triggers: React.PropTypes.shape({
+      likePost: React.PropTypes.func.isRequired,
+      unlikePost: React.PropTypes.func.isRequired
+    })
+  };
+
+  likePost(event) {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -32,23 +44,10 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    let post_id = this.props.post.id;
-
-    try {
-      let client = new ApiClient(API_HOST);
-      let responseBody = await client.like(post_id);
-
-      if (responseBody.success) {
-        getStore().dispatch(setLikes(this.props.current_user.id, responseBody.likes));
-      } else {
-        getStore().dispatch(addError('internal server error. please try later'));
-      }
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
+    this.props.triggers.likePost(this.props.current_user.id, this.props.post.id);
   }
 
-  async unlikePost(event) {
+  unlikePost(event) {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -56,20 +55,7 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    let post_id = this.props.post.id;
-
-    try {
-      let client = new ApiClient(API_HOST);
-      let responseBody = await client.unlike(post_id);
-
-      if (responseBody.success) {
-        getStore().dispatch(setLikes(this.props.current_user.id, responseBody.likes));
-      } else {
-        getStore().dispatch(addError('internal server error. please try later'));
-      }
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
+    this.props.triggers.unlikePost(this.props.current_user.id, this.props.post.id);
   }
 
   addPostToFavourites(event) {
