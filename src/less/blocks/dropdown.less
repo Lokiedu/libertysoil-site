@@ -1,0 +1,27 @@
+.dropdown {
+    position: relative;
+}
+
+.dropdown__trigger {
+  &:extend(.layout);
+  &:extend(.layout-align_vertical);
+}
+
+.dropdown__body {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border-radius: @radius;
+    padding: 8px 15px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dropdown-open {
+    .dropdown__body {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

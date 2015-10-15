@@ -19,7 +19,7 @@
   padding: @space;
   background: @color__block_background;
   border-bottom: 1px solid rgba(0,0,0,0.1);
-  
+
   &-transparent {
     background: none;
   }
@@ -40,6 +40,7 @@
   &:extend(.layout-align_vertical);
   &:extend(.layout__grid_item-wide);
   margin-top: 0;
+  margin-right: 0;
 }
 
 .header__logo {
@@ -48,4 +49,6 @@
 
 .header__toolbar_item {
   &:extend(.layout__grid_item all);
+  &:extend(.layout);
+  &:extend(.layout-align_vertical);
 }

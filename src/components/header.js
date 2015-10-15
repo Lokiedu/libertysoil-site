@@ -16,10 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import {Link} from 'react-router';
+import { Link}  from 'react-router';
+
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 import User from './user';
-import {API_HOST} from '../config'
+import { API_HOST } from '../config'
+
+import Dropdown from './dropdown'
 
 let AuthBlock = (props) => {
   if (props.is_logged_in) {
@@ -29,10 +33,13 @@ let AuthBlock = (props) => {
       <div className="header__toolbar">
         <div className="header__toolbar_item">
           <User user={props.current_user} hideText={true} />
+          <Dropdown>
+            <Link to={getUrl(URL_NAMES.USER_SETTINGS, { username: props.current_user.username })} className="menu__item">Profile settings</Link>
+            <form className="menu__item" action={`${API_HOST}${logoutUrl}`} method="post">
+              <button type="submit" className="button button-transparent button-wide button-caption_left">Log out</button>
+            </form>
+          </Dropdown>
         </div>
-        <form className="header__toolbar_item" action={`${API_HOST}${logoutUrl}`} method="post">
-          <button type="submit" className="link">Log out</button>
-        </form>
       </div>
     );
   }

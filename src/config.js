@@ -20,6 +20,7 @@ export const URL_NAMES = {
   AUTH: `AUTH`,
   POST: `POST`,
   USER: `USER`,
+  USER_SETTINGS: `USER_SETTINGS`,
   EDIT_POST: `EDIT_POST`
 };
 
@@ -28,5 +29,6 @@ export const URL = {
   [URL_NAMES.AUTH]: '/auth',
   [URL_NAMES.POST]: '/post/:uuid',
   [URL_NAMES.EDIT_POST]: '/post/edit/:uuid',
-  [URL_NAMES.USER]: '/user/:username'
+  [URL_NAMES.USER]: '/user/:username',
+  [URL_NAMES.USER_SETTINGS]: '/user/:username/settings'
 };
