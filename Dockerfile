@@ -1,4 +1,4 @@
-FROM mhart/alpine-iojs
+FROM mhart/alpine-node
 
 WORKDIR /src
 ADD . .
