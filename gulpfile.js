@@ -67,7 +67,7 @@ function buildScript(file, watch) {
     transform: [babelify.configure({
       stage: 0,
       compact: true,
-      optional: ['runtime'],
+      optional: ['runtime', 'es7.functionBind', 'es7.classProperties', 'es7.decorators'],
       sourceMaps: true
     })]
   };
