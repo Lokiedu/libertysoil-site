@@ -28,6 +28,10 @@ export default class Messages extends React.Component {
   }
 
   render() {
+    if (this.props.messages.length == 0) {
+      return <script/>;
+    }
+
     let msgTags = this.props.messages.map((msg, i) => {
       var cn = bem.makeClassName({
         block: 'message',
@@ -44,6 +48,10 @@ export default class Messages extends React.Component {
       </div>;
     })
 
-    return <div className="message__group">{msgTags}</div>
+    return (
+      <div className="layout layout__space layout-align_center">
+        <div className="message__group">{msgTags}</div>
+      </div>
+    );
   }
 }

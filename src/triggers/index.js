@@ -17,9 +17,9 @@
  */
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
-import { getStore, addError, addUser, addPostToRiver, setLikes } from '../store';
+import { getStore, addError, addMessage, addUser, addPostToRiver, setCurrentUser, setLikes, removeAllMessages } from '../store';
 
-let client = new ApiClient(API_HOST);
+const client = new ApiClient(API_HOST);
 
 export async function likePost(current_user_id, post_id) {
   try {
@@ -81,4 +81,55 @@ export async function unfollowUser(user) {
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
+}
+
+export async function login(username, password) {
+  getStore().dispatch(removeAllMessages());
+
+  let user;
+
+  try {
+    let result = await client.login({username, password})
+
+    if (result.success) {
+      user = result.user
+      getStore().dispatch(setLikes(user.id, user.likes.map(like => like.post_id)));
+    } else {
+      getStore().dispatch(addError('Invalid username or password'));
+    }
+  } catch (e) {
+    getStore().dispatch(addError('Invalid username or password'));
+  }
+
+  getStore().dispatch(setCurrentUser(user));
+}
+
+export async function registerUser(username, password, email, firstName, lastName) {
+  getStore().dispatch(removeAllMessages());
+
+  // FIXME: disable form
+  try {
+    let result = await client.registerUser({username, password, email, firstName, lastName});
+
+    if ('error' in result) {
+      // FIXME: enable form again
+      getStore().dispatch(addError(result.error));
+      return;
+    }
+  } catch (e) {
+    // FIXME: enable form again
+
+    if (e.response && ('error' in e.response.body)) {
+      // FIXME: enable form again
+      getStore().dispatch(addError(e.response.body.error));
+      return;
+    } else {
+      console.log(e)
+      console.log(e.stack)
+      getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
+      return;
+    }
+  }
+
+  getStore().dispatch(addMessage('User is registered successfully'));
 }

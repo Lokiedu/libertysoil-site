@@ -16,11 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import request from 'superagent';
-import { connect } from 'react-redux';
-
-import {API_HOST} from '../config'
-import {getStore, addError, removeAllMessages, setCurrentUser} from '../store';
 
 export default class LoginComponent extends React.Component {
   submitHandler = (event) => {
@@ -28,10 +23,7 @@ export default class LoginComponent extends React.Component {
 
     let form = event.target;
 
-    this.props.onLoginUser({
-      username: form.username.value,
-      password: form.password.value
-    });
+    this.props.onLoginUser(form.username.value, form.password.value);
   };
 
   render() {

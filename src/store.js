@@ -285,16 +285,23 @@ function theReducer(state = initialState, action) {
     }
 
     case SET_CURRENT_USER: {
-      let cut = userToStateCut(action.user)
-      cut.is_logged_in = true
-      cut.current_user = action.user.id
+      let cut;
+
+      if (_.isUndefined(action.user)) {
+        cut = {is_logged_in: false, current_user: null};
+      } else {
+        cut = userToStateCut(action.user)
+        cut.is_logged_in = true
+        cut.current_user = action.user.id
+
+        state = state.setIn(
+          ['following', action.user.id],
+          action.user.following.map(user => user.id)
+        );
+      }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
 
-      state = state.setIn(
-        ['following', action.user.id],
-        action.user.following.map(user => user.id)
-      );
       break;
     }
 
