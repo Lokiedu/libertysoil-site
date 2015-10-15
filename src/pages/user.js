@@ -29,11 +29,13 @@ import {getStore, addUser, setUserPosts, addError} from '../store';
 import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
 
 class UserPage extends React.Component {
-  componentDidMount() {
+  static displayName = 'UserPage'
+
+  componentDidMount () {
     UserPage.fetchData(this.props);
   }
 
-  static async fetchData(props) {
+  static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
     try {
@@ -47,7 +49,7 @@ class UserPage extends React.Component {
     }
   }
 
-  render() {
+  render () {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
 
     if (_.isUndefined(page_user)) {

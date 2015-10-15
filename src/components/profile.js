@@ -4,6 +4,8 @@ import User from './user';
 import FollowButton from '../components/follow-button'
 
 export default class ProfileHeader extends React.Component {
+  static displayName = 'ProfileHeader'
+
   render () {
     const { user, current_user, i_am_following } = this.props;
     let name = user.username;
