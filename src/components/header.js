@@ -34,7 +34,7 @@ let AuthBlock = (props) => {
         <div className="header__toolbar_item">
           <User user={props.current_user} hideText={true} />
           <Dropdown>
-            <Link to={getUrl(URL_NAMES.USER_SETTINGS, { username: props.current_user.username })} className="menu__item">Profile settings</Link>
+            <Link to={getUrl(URL_NAMES.SETTINGS)} className="menu__item">Profile settings</Link>
             <form className="menu__item" action={`${API_HOST}${logoutUrl}`} method="post">
               <button type="submit" className="button button-transparent button-wide button-caption_left">Log out</button>
             </form>

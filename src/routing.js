@@ -18,31 +18,35 @@
 import {Route, IndexRoute} from 'react-router';
 import React from 'react';
 
-import App from './pages/app'
-import Auth from './pages/auth'
-import MaybeList from './pages/maybe_list'
-import PostPage from './pages/post'
-import PostEditPage from './pages/post_edit'
-import UserPage from './pages/user'
-import UserLikesPage from './pages/user-likes'
-import UserFavoritesPage from './pages/user-favories'
-import AboutUserPage from './pages/user-about'
+import App from './pages/app';
+import Auth from './pages/auth';
+import MaybeList from './pages/maybe_list';
+import PostPage from './pages/post';
+import PostEditPage from './pages/post_edit';
+import UserPage from './pages/user';
+import UserLikesPage from './pages/user-likes';
+import UserFavoritesPage from './pages/user-favories';
+import AboutUserPage from './pages/user-about';
+import SettingsPage from './pages/settings';
 
 // <Redirect from="/user/:username" to="/user/:username/posts" />
 
 let routes = (
   <Route component={App}>
-    <Route component={MaybeList} name="post_list" path="/" />
-    <Route component={Auth} name="auth" path="/auth" />
-    <Route component={PostPage} name="post" path="/post/:uuid" />
-    <Route component={PostEditPage} name="post" path="/post/edit/:uuid" />
+    <Route component={MaybeList} path="/" />
+    <Route component={Auth} path="/auth" />
+    <Route component={PostPage} path="/post/:uuid" />
+    <Route component={PostEditPage} path="/post/edit/:uuid" />
+    <Route path="/settings">
+      <IndexRoute component={SettingsPage} />
+    </Route>
     <Route path="/user/:username">
-      <IndexRoute component={UserPage} name="user" />
-      <Route component={UserLikesPage} name="user:likes" path="/user/:username/likes" />
-      <Route component={UserFavoritesPage} name="user:favorites" path="/user/:username/favorites" />
-      <Route component={AboutUserPage} name="user:about" path="/user/:username/about" />
+      <IndexRoute component={UserPage} />
+      <Route component={UserLikesPage} path="/user/:username/likes" />
+      <Route component={UserFavoritesPage} path="/user/:username/favorites" />
+      <Route component={AboutUserPage} path="/user/:username/about" />
     </Route>
   </Route>
-);
+)
 
 export default routes;
