@@ -3,7 +3,7 @@ FROM mhart/alpine-node
 WORKDIR /src
 ADD . .
 
-RUN apk-install make gcc g++ python
+RUN apk add --update make gcc g++ python
 
 RUN /bin/sed -i "s*host: '127.0.0.1'*host: process.env.REDIS_PORT_6379_TCP_ADDR*" index.js && \
   /bin/sed -i "s*port: 6379*port: process.env.REDIS_PORT_6379_TCP_PORT*" index.js
