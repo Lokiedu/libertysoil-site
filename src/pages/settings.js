@@ -58,6 +58,7 @@ class SettingsPage extends React.Component {
     let i_am_following;
     if (this.props.is_logged_in) {
       user.likes = this.props.likes[this.props.current_user];
+      user.favourites = this.props.favourites[this.props.current_user];
       i_am_following = this.props.following[user.id];
     } else {
       return false;

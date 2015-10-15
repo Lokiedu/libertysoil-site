@@ -65,6 +65,7 @@ class PostPage extends React.Component {
     if (this.props.is_logged_in) {
       current_user = _.cloneDeep(this.props.users[this.props.current_user]);
       current_user.likes = this.props.likes[this.props.current_user];
+      current_user.favourites = this.props.favourites[this.props.current_user];
     }
 
     let triggers = {likePost, unlikePost};
