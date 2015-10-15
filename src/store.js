@@ -32,6 +32,7 @@ const SET_USER_POSTS = 'SET_USER_POSTS';
 const REMOVE_POST = 'REMOVE_POST';
 
 const SET_LIKES = 'SET_LIKES';
+const SET_FAVOURITES = 'SET_FAVOURITES';
 
 const ADD_ERROR = 'ADD_ERROR';
 const ADD_MESSAGE = 'ADD_MESSAGE';
@@ -88,6 +89,14 @@ export function setLikes(user_id, likes) {
     type: SET_LIKES,
     user_id,
     likes
+  }
+}
+
+export function setFavourites(user_id, favourites) {
+  return {
+    type: SET_FAVOURITES,
+    user_id,
+    favourites
   }
 }
 
@@ -310,6 +319,10 @@ function theReducer(state = initialState, action) {
       break;
     }
 
+    case SET_FAVOURITES: {
+      state = state.setIn(['favourites', action.user_id], action.favourites);
+      break;
+    }
   }
 
   return state
@@ -320,6 +333,7 @@ let initialState = {
   user_posts: {},
   follows:{},
   likes: {},
+  favourites: {},
   posts: {},
   river: [],
   messages: [],

@@ -31,7 +31,7 @@ import Routes from './src/routing';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
 
-import {initState, setCurrentUser, setLikes} from './src/store';
+import {initState, setCurrentUser, setLikes, setFavourites} from './src/store';
 
 import db_config from './knexfile';
 
@@ -79,8 +79,14 @@ let reactHandler = async (req, res) => {
         .from('likes')
         .where({user_id: req.session.user});
 
+      let favourites = await bookshelf.knex
+        .select('post_id')
+        .from('favourites')
+        .where({user_id: req.session.user});
+
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
+      store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
     } catch (e) {
       console.log(`dispatch failed: ${e.stack}`);
     }

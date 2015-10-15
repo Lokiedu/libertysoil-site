@@ -17,7 +17,12 @@
  */
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
-import { getStore, addError, addMessage, addUser, addPostToRiver, setCurrentUser, setLikes, removeAllMessages } from '../store';
+import {
+  getStore,
+  addError, addMessage, removeAllMessages,
+  addUser, addPostToRiver, setCurrentUser,
+  setLikes, setFavourites
+} from '../store';
 
 const client = new ApiClient(API_HOST);
 
@@ -41,6 +46,34 @@ export async function unlikePost(current_user_id, post_id) {
 
     if (responseBody.success) {
       getStore().dispatch(setLikes(current_user_id, responseBody.likes));
+    } else {
+      getStore().dispatch(addError('internal server error. please try later'));
+    }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function favPost(current_user_id, post_id) {
+  try {
+    let responseBody = await client.fav(post_id);
+
+    if (responseBody.success) {
+      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites));
+    } else {
+      getStore().dispatch(addError('internal server error. please try later'));
+    }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function unfavPost(current_user_id, post_id) {
+  try {
+    let responseBody = await client.unfav(post_id);
+
+    if (responseBody.success) {
+      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites));
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
@@ -89,11 +122,12 @@ export async function login(username, password) {
   let user;
 
   try {
-    let result = await client.login({username, password})
+    let result = await client.login({username, password});
 
     if (result.success) {
-      user = result.user
+      user = result.user;
       getStore().dispatch(setLikes(user.id, user.likes.map(like => like.post_id)));
+      getStore().dispatch(setFavourites(user.id, user.favourites.map(fav => fav.post_id)));
     } else {
       getStore().dispatch(addError('Invalid username or password'));
     }
