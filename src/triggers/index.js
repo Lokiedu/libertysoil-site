@@ -20,7 +20,7 @@ import ApiClient from '../api/client'
 import {
   getStore,
   addError, addMessage, removeAllMessages,
-  addUser, addPostToRiver, setCurrentUser,
+  addUser, addPost, addPostToRiver, setCurrentUser,
   setLikes, setFavourites
 } from '../store';
 
@@ -166,4 +166,20 @@ export async function registerUser(username, password, email, firstName, lastNam
   }
 
   getStore().dispatch(addMessage('User is registered successfully'));
+}
+
+export async function deletePost(post_uuid) {
+  await client.deletePost(post_uuid);
+  getStore().dispatch(removePost(post_uuid));
+}
+
+export async function updatePost(post_uuid, post_fields) {
+  try {
+    let result = await client.updatePost(post_uuid, post_fields);
+    getStore().dispatch(addPost(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
 }

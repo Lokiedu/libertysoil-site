@@ -24,11 +24,11 @@ import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, addPost, removePost, addError} from '../store';
+import {getStore, addPost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
-
 import { defaultSelector } from '../selectors';
+import { deletePost, updatePost } from '../triggers';
 
 class PostEditPage extends React.Component {
   constructor (props) {
@@ -53,33 +53,28 @@ class PostEditPage extends React.Component {
     }
   }
 
-  async removeHandler(event) {
+  removeHandler(event) {
     event.preventDefault();
 
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
-      let client = new ApiClient(API_HOST)
-      try {
-        let result = await client.deletePost(this.props.params.uuid)
-        getStore().dispatch(removePost(this.props.params.uuid));
-        this.props.history.pushState(null, '/');
-      } catch (e) {
-      }
+      deletePost(this.props.params.uuid)
+        .then(() => {
+          this.props.history.pushState(null, '/');
+        }).catch(e => {
+          console.log(e)
+        });
     }
   }
 
-  async submitHandler(event) {
+  submitHandler(event) {
     event.preventDefault();
 
     let form = event.target;
-    let client = new ApiClient(API_HOST)
 
-    try {
-      let result = await client.updatePost(this.props.params.uuid, {text: form.text.value});
-      getStore().dispatch(addPost(result));
-      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
+    updatePost(this.props.params.uuid, {text: form.text.value})
+      .then((result) => {
+        this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
+      });
   }
 
   render() {
