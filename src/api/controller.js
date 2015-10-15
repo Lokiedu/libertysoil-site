@@ -153,7 +153,7 @@ export default class ApiController {
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.favs = favs.map(row => row.post_id)
+      result.favourites = favs.map(row => row.post_id)
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
@@ -185,7 +185,7 @@ export default class ApiController {
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.likes = favs.map(row => row.post_id)
+      result.favourites = favs.map(row => row.post_id)
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
