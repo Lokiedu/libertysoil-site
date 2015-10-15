@@ -43,6 +43,9 @@ export default function initBookshelf(config) {
     liked_posts: function() {
       return this.belongsToMany(User, 'likes', 'user_id', 'post_id');
     },
+    favourited_posts: function() {
+      return this.belongsToMany(User, 'favourites', 'user_id', 'post_id');
+    },
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
@@ -58,6 +61,9 @@ export default function initBookshelf(config) {
     },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
+    },
+    favourers: function() {
+      return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
     }
   });
 
