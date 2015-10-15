@@ -16,8 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Link } from 'react-router';
-import IndexLink from 'react-router/lib/IndexLink'
+import { Link, IndexLink } from 'react-router';
 
 import Header from '../../components/header';
 import Footer from '../../components/footer';
