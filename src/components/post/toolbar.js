@@ -59,18 +59,46 @@ export default class Toolbar extends React.Component {
   }
 
   addPostToFavourites(event) {
+    event.preventDefault();
 
+    if (!this.props.current_user) {
+      alert('Please log in!');
+      return;
+    }
+
+    this.props.triggers.favPost(this.props.current_user.id, this.props.post.id);
+  }
+
+  removePostFromFavourites(event) {
+    event.preventDefault();
+
+    if (!this.props.current_user) {
+      alert('Please log in!');
+      return;
+    }
+
+    this.props.triggers.unfavPost(this.props.current_user.id, this.props.post.id);
   }
 
   render()
   {
     let heart_class = 'fa-heart-o';
+    let star_class = 'fa-star-o';
     let like_action = this.likePost.bind(this);
+    let fav_action = this.addPostToFavourites.bind(this);
 
-    if (this.props.current_user && this.props.current_user.likes.indexOf(this.props.post.id) > -1) {
-      // current user liked this post
-      heart_class = 'fa-heart color-red';
-      like_action = this.unlikePost.bind(this);
+    if (this.props.current_user) {
+      if (this.props.current_user.likes.indexOf(this.props.post.id) > -1) {
+        // current user liked this post
+        heart_class = 'fa-heart color-red';
+        like_action = this.unlikePost.bind(this);
+      }
+
+      if (this.props.current_user.favourites.indexOf(this.props.post.id) > -1) {
+        // current user faved this post
+        star_class = 'fa-star color-yellow';
+        fav_action = this.removePostFromFavourites.bind(this);
+      }
     }
 
     return (
@@ -80,10 +108,10 @@ export default class Toolbar extends React.Component {
           {false && <span className="card__toolbar_item_value">0</span>}
         </span>
 
-      {/*  <span className="card__toolbar_item action" onClick={this.addPostToFavourites.bind(this.props)}>
-          <span className="icon fa fa-star-o"></span>
+        <span className="card__toolbar_item action" onClick={fav_action}>
+          <span className={`icon fa ${star_class}`}></span>
           {false && <span className="card__toolbar_item_value">0</span>}
-        </span> */}
+        </span>
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
           <span className="icon fa fa-comment-o"></span>

@@ -24,7 +24,7 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
-import {createPost, likePost, unlikePost} from '../triggers';
+import { createPost, likePost, unlikePost, favPost, unfavPost } from '../triggers';
 
 
 class Index extends React.Component {
@@ -36,7 +36,7 @@ class Index extends React.Component {
       current_user.favourites = this.props.favourites[this.props.current_user];
     }
 
-    let triggers = {likePost, unlikePost};
+    let triggers = {likePost, unlikePost, favPost, unfavPost};
 
     return (
       <div>
