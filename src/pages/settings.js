@@ -37,6 +37,10 @@ class SettingsPage extends React.Component {
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
+    if (!props.current_user) {
+      return;
+    }
+
     try {
       const user = props.users[props.current_user];
       let userInfo = client.userInfo(user.username);
