@@ -90,6 +90,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async fav(postId) {
+    let response = await this.post(`/api/v1/post/${postId}/fav`)
+    return response.body;
+  }
+
+  async unfav(postId) {
+    let response = await this.post(`/api/v1/post/${postId}/unfav`)
+    return response.body;
+  }
+
   async follow(userName) {
     let response = await this.post(`/api/v1/user/${userName}/follow`)
     return response.body;

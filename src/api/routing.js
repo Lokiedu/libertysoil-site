@@ -38,6 +38,8 @@ export function initApi(bookshelf) {
   api.delete('/post/:id', wrap(controller.removePost.bind(controller)));
   api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
   api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
+  api.post('/post/:id/fav', wrap(controller.favPost.bind(controller)));
+  api.post('/post/:id/unfav', wrap(controller.unfavPost.bind(controller)));
 
   api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
   api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
