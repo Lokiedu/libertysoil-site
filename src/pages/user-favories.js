@@ -26,6 +26,7 @@ import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser} from '../store';
 import {followUser, unfollowUser} from '../triggers'
+import { defaultSelector } from '../selectors';
 
 class UserFavoritesPage extends React.Component {
   componentDidMount() {
@@ -55,20 +56,12 @@ class UserFavoritesPage extends React.Component {
       return <NotFound/>
     }
 
-    let current_user, i_am_following;
-    if (this.props.is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
-      i_am_following = this.props.following[current_user.id];
-    }
-
     let user_triggers = {followUser, unfollowUser};
 
     return (
       <BaseUserPage
-        current_user={current_user}
-        i_am_following={i_am_following}
+        current_user={this.props.current_user}
+        i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
         triggers={user_triggers}
@@ -79,8 +72,4 @@ class UserFavoritesPage extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(UserFavoritesPage);
+export default connect(defaultSelector)(UserFavoritesPage);

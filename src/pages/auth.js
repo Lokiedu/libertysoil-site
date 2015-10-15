@@ -17,13 +17,10 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash'
 import { Link } from 'react-router';
 
-import {API_HOST} from '../config';
-import ApiClient from '../api/client'
-import {addError, removeAllMessages, addMessage, setCurrentUser, setLikes} from '../store';
 import { login, registerUser } from '../triggers';
+import { defaultSelector } from '../selectors';
 
 import Footer from '../components/footer';
 import Login from '../components/login';
@@ -63,15 +60,7 @@ let AuthContents = (props) => {
 
 class Auth extends React.Component {
   render() {
-    let messages;
-    let { dispatch, is_logged_in } = this.props;
-
-    let current_user;
-    if (is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
-    }
+    let { current_user, is_logged_in } = this.props;
 
     let triggers = {login, registerUser};
 
@@ -91,8 +80,5 @@ class Auth extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
+export default connect(defaultSelector)(Auth);
 
-export default connect(select)(Auth);

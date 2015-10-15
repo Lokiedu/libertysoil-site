@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -29,6 +28,7 @@ import {getStore, addPost, removePost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
 
+import { defaultSelector } from '../selectors';
 
 class PostEditPage extends React.Component {
   constructor (props) {
@@ -96,25 +96,18 @@ class PostEditPage extends React.Component {
       return <NotFound/>
     }
 
-    const author = this.props.users[current_post.user_id]
-
-
-    let current_user;
-
-    if (this.props.is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
+    if (current_post.user_id != this.props.current_user.id) {
+      return <script/>;
     }
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
         <div className="page__container">
           <div className="page__body">
             <div className="page__sidebar">
               <div className="layout__row">
-                <CurrentUser user={current_user} />
+                <CurrentUser user={this.props.current_user} />
               </div>
             </div>
 
@@ -144,8 +137,4 @@ class PostEditPage extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(PostEditPage);
+export default connect(defaultSelector)(PostEditPage);

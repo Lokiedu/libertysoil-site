@@ -27,6 +27,7 @@ import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
 import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
+import { defaultSelector } from '../selectors';
 
 class UserPage extends React.Component {
   static displayName = 'UserPage'
@@ -62,27 +63,19 @@ class UserPage extends React.Component {
 
     let user_posts = this.props.user_posts[page_user.id];
 
-    let current_user, i_am_following;
-    if (this.props.is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
-      i_am_following = this.props.following[current_user.id];
-    }
-
     let user_triggers = {followUser, unfollowUser};
     let post_triggers = {likePost, unlikePost};
 
     return (
       <BaseUserPage
-        current_user={current_user}
-        i_am_following={i_am_following}
+        current_user={this.props.current_user}
+        i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
         triggers={user_triggers}
       >
         <River
-          current_user={current_user}
+          current_user={this.props.current_user}
           posts={this.props.posts}
           river={user_posts}
           triggers={post_triggers}
@@ -93,8 +86,4 @@ class UserPage extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(UserPage);
+export default connect(defaultSelector)(UserPage);

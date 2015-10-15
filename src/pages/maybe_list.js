@@ -23,6 +23,8 @@ import Welcome from './welcome'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, setPostsToRiver} from '../store';
+import { defaultSelector } from '../selectors';
+
 
 class MaybeList extends React.Component {
   componentDidMount() {
@@ -53,8 +55,4 @@ class MaybeList extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(MaybeList);
+export default connect(defaultSelector)(MaybeList);

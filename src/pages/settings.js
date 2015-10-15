@@ -17,15 +17,14 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-import NotFound from './not-found'
 import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, addUser, setUserPosts, addError} from '../store';
-import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
+import {getStore, addUser} from '../store';
+import {followUser, unfollowUser} from '../triggers'
+import { defaultSelector } from '../selectors';
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage'
@@ -42,35 +41,24 @@ class SettingsPage extends React.Component {
     }
 
     try {
-      const user = props.users[props.current_user];
-      let userInfo = client.userInfo(user.username);
-
+      let userInfo = client.userInfo(props.current_user.username);
       getStore().dispatch(addUser(await userInfo));
-      //getStore().dispatch(setUserPosts(await userPosts));
     } catch (e) {
       console.log(e.stack)
     }
   }
 
   render () {
-    const user = this.props.users[this.props.current_user];
-
-    let i_am_following;
-    if (this.props.is_logged_in) {
-      user.likes = this.props.likes[this.props.current_user];
-      user.favourites = this.props.favourites[this.props.current_user];
-      i_am_following = this.props.following[user.id];
-    } else {
-      return false;
+    if (!this.props.is_logged_in) {
+      return <script/>;
     }
 
     let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost};
 
     return (
       <BaseSettingsPage
-        user={user}
-        i_am_following={i_am_following}
+        user={this.props.current_user}
+        i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         triggers={user_triggers}
       >
@@ -80,8 +68,4 @@ class SettingsPage extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(SettingsPage);
+export default connect(defaultSelector)(SettingsPage);

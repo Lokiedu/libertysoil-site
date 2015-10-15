@@ -297,10 +297,9 @@ function theReducer(state = initialState, action) {
       let cut;
 
       if (_.isUndefined(action.user)) {
-        cut = {is_logged_in: false, current_user: null};
+        cut = {current_user: null};
       } else {
         cut = userToStateCut(action.user)
-        cut.is_logged_in = true
         cut.current_user = action.user.id
 
         state = state.setIn(
@@ -337,7 +336,6 @@ let initialState = {
   posts: {},
   river: [],
   messages: [],
-  is_logged_in: false,
   current_user: null
 };
 

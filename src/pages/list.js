@@ -25,29 +25,23 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
 import { createPost, likePost, unlikePost, favPost, unfavPost } from '../triggers';
+import { defaultSelector } from '../selectors';
 
 
 class Index extends React.Component {
   render() {
-    let current_user;
-    if (this.props.is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
-    }
-
     let triggers = {likePost, unlikePost, favPost, unfavPost};
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
         <div className="page__container">
           <div className="page__body">
-            <Sidebar current_user={current_user} />
+            <Sidebar current_user={this.props.current_user} />
 
             <div className="page__content">
               <CreatePost triggers={{createPost}}/>
-              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={current_user} triggers={triggers}/>
+              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>
@@ -59,8 +53,4 @@ class Index extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(Index);
+export default connect(defaultSelector)(Index);

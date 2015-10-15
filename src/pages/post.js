@@ -28,6 +28,7 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
 import {likePost, unlikePost} from '../triggers';
+import { defaultSelector } from '../selectors';
 
 
 class PostPage extends React.Component {
@@ -60,25 +61,17 @@ class PostPage extends React.Component {
     }
 
     const author = this.props.users[current_post.user_id]
-
-    let current_user
-    if (this.props.is_logged_in) {
-      current_user = _.cloneDeep(this.props.users[this.props.current_user]);
-      current_user.likes = this.props.likes[this.props.current_user];
-      current_user.favourites = this.props.favourites[this.props.current_user];
-    }
-
     let triggers = {likePost, unlikePost};
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
 
         <div className="page__container">
           <div className="page__body">
             <div className="page__sidebar">
               <div className="layout__row">
-                <CurrentUser user={current_user} />
+                <CurrentUser user={this.props.current_user} />
               </div>
 
               <div className="layout__row">
@@ -87,7 +80,7 @@ class PostPage extends React.Component {
             </div>
 
             <div className="page__content">
-              <PostWrapper author={author} current_user={current_user} post={current_post} showComments={true} triggers={triggers}>
+              <PostWrapper author={author} current_user={this.props.current_user} post={current_post} showComments={true} triggers={triggers}>
                 <ShortTextPost post={current_post}/>
               </PostWrapper>
             </div>
@@ -100,8 +93,4 @@ class PostPage extends React.Component {
   }
 }
 
-function select(state) {
-  return state.toJS();
-}
-
-export default connect(select)(PostPage);
+export default connect(defaultSelector)(PostPage);
