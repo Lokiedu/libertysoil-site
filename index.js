@@ -19,7 +19,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 //import multer from 'multer';
 import _ from 'lodash';
-import bb from 'bluebird';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 
@@ -30,11 +29,9 @@ import { Router, RoutingContext, match } from 'react-router'
 
 import Routes from './src/routing';
 import {initApi} from './src/api/routing'
-import ApiClient from './src/api/client';
 import initBookshelf from './src/api/db';
 
-import {API_HOST} from './src/config';
-import {initState, setCurrentUser, getStore, setPostsToRiver, setLikes} from './src/store';
+import {initState, setCurrentUser, setLikes} from './src/store';
 
 import db_config from './knexfile';
 
