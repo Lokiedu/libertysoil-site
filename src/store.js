@@ -40,7 +40,6 @@ const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
-const UPDATE_FOLLOW_STATUS = 'UPDATE_FOLLOW_STATUS';
 
 export function addUser(user) {
   return {
@@ -129,13 +128,6 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
-  }
-}
-
-export function updateFollowStatus(status) {
-  return {
-    type: UPDATE_FOLLOW_STATUS,
-    status
   }
 }
 
@@ -311,10 +303,6 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case UPDATE_FOLLOW_STATUS: {
-      console.log('changes');
-      break;
-    }
   }
 
   return state
