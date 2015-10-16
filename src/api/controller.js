@@ -538,4 +538,26 @@ export default class ApiController {
 
     res.send(follow_status)
   }
+
+  async countLikes(req, res) {
+    let likes = await this.bookshelf.knex
+      .select('post_id')
+      .count('id as likes')
+      .from('likes')
+      //.where({post_id: req.session.user})
+      .groupBy('post_id');
+
+    res.send(_.indexBy(likes, 'post_id'));
+  }
+
+  async countFavourites(req, res) {
+    let favourites = await this.bookshelf.knex
+      .select('post_id')
+      .count('id as favourites')
+      .from('favourites')
+      //.where({post_id: req.session.user})
+      .groupBy('post_id');
+
+    res.send(_.indexBy(favourites, 'post_id'));
+  }
 }
