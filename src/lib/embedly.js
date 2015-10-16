@@ -3,13 +3,22 @@ import request from 'superagent';
 import _ from 'lodash';
 import twtxt from 'twitter-text';
 
+let cache = {};
 
 async function getPreviewsForUrls(urls) {
   let key = encodeURIComponent('5a4e2e9f83404c70a0fb2509ceef3f07');
 
   let result = {};
 
-  for (let chunk of _.chunk(_.unique(urls), 10)) {
+  let cachedUrls = urls.filter(url => (url in cache));
+
+  for (let url of cachedUrls) {
+    result[url] = _.cloneDeep(cache[url]);
+  }
+
+  let uncachedUrls = urls.filter(url => !(url in cache));
+
+  for (let chunk of _.chunk(_.unique(uncachedUrls), 10)) {
     let encodedUrls = chunk.map(encodeURIComponent);
     let embedlyUrl = `https://api.embed.ly/1/oembed?key=${key}&urls=${encodedUrls.join(',')}&luxe=1&format=json`;
 
@@ -32,11 +41,12 @@ async function getPreviewsForUrls(urls) {
         } else {
           result[url] = false;
         }
+
+        cache[url] = _.cloneDeep(result[url]);
       }
     } catch (e) {
-      console.log(e);
       for (let url of chunk) {
-        result[url] = false;
+        result[url] = false;  // we do not cache this
       }
     }
   }
