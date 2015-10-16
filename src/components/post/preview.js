@@ -7,8 +7,9 @@ let Preview = (props) => {
   }
 
   if (_.isString(props.post.embedly)) {
+    let html = {__html: props.post.embedly};
     return (
-      <div className="card__content" dangerouslySetInnerHTML={props.post.embedly}>
+      <div className="card__content" dangerouslySetInnerHTML={html}>
       </div>
     );
   }
