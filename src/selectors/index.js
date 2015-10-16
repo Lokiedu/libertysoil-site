@@ -18,10 +18,10 @@
 export function defaultSelector(state) {
   let data = state.toJS();
 
-  data.is_logged_in = !!data.current_user;
+  data.is_logged_in = !!data.current_user_id;
 
   if (data.is_logged_in) {
-    let current_user_id = data.current_user;
+    let current_user_id = data.current_user_id;
 
     data.current_user = data.users[current_user_id];
     data.current_user.likes = data.likes[current_user_id];
