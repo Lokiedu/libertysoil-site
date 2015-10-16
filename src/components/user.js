@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
 import moment from 'moment';
 
@@ -36,9 +37,9 @@ export default class User extends Component {
       }
 
       render.avatar = (
-        <a href={user_url} className={avatarClassName}>
+        <Link to={user_url} className={avatarClassName}>
           <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
-        </a>
+        </Link>
       );
     }
 
@@ -56,15 +57,15 @@ export default class User extends Component {
 
         render.timestamp =
           <p className="user_box__text">
-            <a href={timestampLink}>
+            <Link to={timestampLink}>
               {timestamp_string}
-            </a>
+            </Link>
           </p>
       }
 
       render.text =
         <div className="user_box__body">
-          <p className="user_box__name"><a className="user_box__name link" href={user_url}>{name}</a></p>
+          <p className="user_box__name"><Link className="user_box__name link" to={user_url}>{name}</Link></p>
           {render.timestamp}
         </div>;
     }
