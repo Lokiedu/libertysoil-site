@@ -79,9 +79,7 @@ class SettingsPage extends React.Component {
       >
         <div className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Summary</h2>
-          <textarea onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </textarea>
+          <textarea onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" defaultValue={current_user.more.summary} />
         </div>
         {false && <div className="paper__page">
           <h2 className="content__title">Role</h2>
