@@ -105,12 +105,12 @@ export default class Toolbar extends React.Component {
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
           <span className={`icon fa ${heart_class}`}></span>
-          {false && <span className="card__toolbar_item_value">0</span>}
+          <span className="card__toolbar_item_value">{this.props.post.likers.length}</span>
         </span>
 
         <span className="card__toolbar_item action" onClick={fav_action}>
           <span className={`icon fa ${star_class}`}></span>
-          {false && <span className="card__toolbar_item_value">0</span>}
+          <span className="card__toolbar_item_value">{this.props.post.favourers.length}</span>
         </span>
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >

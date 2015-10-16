@@ -34,7 +34,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user']});
+    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers']});
 
     res.send(response.toJSON());
   }
@@ -59,7 +59,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user','likers','favourers']});
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -213,7 +213,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers','likers','favourers']})
 
     res.send(posts.toJSON());
   }
