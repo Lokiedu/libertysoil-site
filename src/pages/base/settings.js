@@ -33,20 +33,19 @@ export default class BaseSettingsPage extends React.Component {
       onSave,
       children,
       is_logged_in,
-      user,
-      ...props
+      current_user
     } = this.props;
 
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={user}/>
+        <Header is_logged_in={is_logged_in} current_user={current_user}/>
 
         <div className="page__container">
           <div className="page__body">
-            <Sidebar current_user={user}/>
+            <Sidebar current_user={current_user} />
 
             <div className="page__body_content">
-              <ProfileHeader user={user} current_user={user} />
+              <ProfileHeader user={current_user} current_user={current_user} />
               <div className="page__content page__content-spacing">
                 <div className="paper layout">
                   <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
@@ -54,7 +53,7 @@ export default class BaseSettingsPage extends React.Component {
                   </div>
                   <div className="layout__grid_item layout__grid_item-fill page__content_sidebar">
                     <div className="tabs tabs-vertical">
-                      <Link to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</Link>
+                      <IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink>
                       <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>
                     </div>
                   </div>

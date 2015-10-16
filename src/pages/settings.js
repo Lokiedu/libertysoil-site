@@ -62,19 +62,19 @@ class SettingsPage extends React.Component {
 
   render() {
     const {
+      current_user,
+      is_logged_in,
       ...props
     } = this.props;
 
-    if (!this.props.is_logged_in) {
+    if (!is_logged_in) {
       return false;
     }
 
-    console.info(this.props);
-
     return (
       <BaseSettingsPage
-        user={this.props.current_user}
-        is_logged_in={this.props.is_logged_in}
+        current_user={current_user}
+        is_logged_in={is_logged_in}
         onSave={this.onSave}
       >
         <div className="paper__page">
