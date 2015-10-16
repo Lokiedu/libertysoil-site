@@ -36,12 +36,12 @@ class SettingsPage extends React.Component {
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
-    if (!props.current_user) {
+    if (!props.current_user_id) {
       return;
     }
 
     try {
-      let userInfo = client.userInfo(props.current_user.username);
+      let userInfo = client.userInfo(props.users[props.current_user_id].username);
       getStore().dispatch(addUser(await userInfo));
     } catch (e) {
       console.log(e.stack)
