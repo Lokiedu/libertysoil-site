@@ -50,7 +50,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false})
+    let posts = await q.fetchAll({require: false, withRelated: ['user','likers','favourers']})
 
     res.send(posts.toJSON());
   }
