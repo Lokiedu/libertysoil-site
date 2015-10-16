@@ -26,11 +26,9 @@ async function getPreviewsForUrls(urls) {
         if ('html' in frame) {
           result[url] = frame.html;
         } else if ('thumbnail_url' in frame) {
-          result[url] = (
-            <a href={url} target="_blank">
-              <img src={frame.thumbnail_url} width={frame.thumbnail_width} height={frame.thumbnail_height} />
-            </a>
-          );
+          result[url] = `<a href="${url}" target="_blank">
+              <img src="${frame.thumbnail_url}" width="${frame.thumbnail_width}" height="${frame.thumbnail_height}" />
+            </a>`;
         } else {
           result[url] = false;
         }
