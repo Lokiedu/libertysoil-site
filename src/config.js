@@ -21,6 +21,7 @@ export const URL_NAMES = {
   POST: `POST`,
   USER: `USER`,
   SETTINGS: `SETTINGS`,
+  CHANGE_PASSWORD: `CHANGE_PASSWORD`,
   EDIT_POST: `EDIT_POST`
 };
 
@@ -30,5 +31,6 @@ export const URL = {
   [URL_NAMES.POST]: '/post/:uuid',
   [URL_NAMES.EDIT_POST]: '/post/edit/:uuid',
   [URL_NAMES.USER]: '/user/:username',
-  [URL_NAMES.SETTINGS]: '/settings'
+  [URL_NAMES.SETTINGS]: '/settings',
+  [URL_NAMES.CHANGE_PASSWORD]: '/settings/password'
 };

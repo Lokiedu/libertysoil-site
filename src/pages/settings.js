@@ -36,6 +36,8 @@ class SettingsPage extends React.Component {
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
+    console.info(props);
+
     if (!props.current_user_id) {
       return;
     }
@@ -48,21 +50,42 @@ class SettingsPage extends React.Component {
     }
   }
 
-  render () {
+  onChange = () => {
+    this.setState({
+      summary: 42
+    });
+  }
+
+  onSave = () => {
+    console.info('on save...');
+  }
+
+  render() {
+    const {
+      ...props
+    } = this.props;
+
     if (!this.props.is_logged_in) {
-      return <script/>;
+      return false;
     }
 
-    let user_triggers = {followUser, unfollowUser};
+    console.info(this.props);
 
     return (
       <BaseSettingsPage
         user={this.props.current_user}
-        i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
-        triggers={user_triggers}
+        onSave={this.onSave}
       >
-        Settings...
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row layout__row-small">Summary</h2>
+          <textarea onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </textarea>
+        </div>
+        {false && <div className="paper__page">
+          <h2 className="content__title">Role</h2>
+        </div>}
       </BaseSettingsPage>
     )
   }

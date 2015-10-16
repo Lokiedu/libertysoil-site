@@ -18,15 +18,24 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 
+import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
+
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 
 export default class BaseSettingsPage extends React.Component {
-  static displayName = 'BaseSettingsPage'
+  static displayName = 'BaseSettingsPage';
+
   render () {
-    let {user, i_am_following, is_logged_in} = this.props;
+    const {
+      onSave,
+      children,
+      is_logged_in,
+      user,
+      ...props
+    } = this.props;
 
     return (
       <div>
@@ -37,9 +46,22 @@ export default class BaseSettingsPage extends React.Component {
             <Sidebar current_user={user}/>
 
             <div className="page__body_content">
-              <ProfileHeader user={user} current_user={user} i_am_following={i_am_following} triggers={this.props.triggers} />
+              <ProfileHeader user={user} current_user={user} />
               <div className="page__content page__content-spacing">
-                {this.props.children}
+                <div className="paper layout">
+                  <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
+                      {children}
+                  </div>
+                  <div className="layout__grid_item layout__grid_item-fill page__content_sidebar">
+                    <div className="tabs tabs-vertical">
+                      <Link to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</Link>
+                      <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>
+                    </div>
+                  </div>
+                </div>
+                <div className="void">
+                  <span className="button button-green action" onClick={onSave}>Save changes</span>
+                </div>
               </div>
             </div>
           </div>

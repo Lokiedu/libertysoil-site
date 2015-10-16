@@ -6,9 +6,23 @@
     padding: 6px @space;
     border: none;
     border-radius: @radius-button;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &-active {
       background: #dcd5cd;
+    }
+  }
+
+  &-vertical {
+    font-size: inherit;
+    overflow: hidden;
+    border-radius: 0 @radius-button @radius-button 0;
+
+    .tabs__link {
+      padding: 10px @space;
+      border-radius: 0;
     }
   }
 }
