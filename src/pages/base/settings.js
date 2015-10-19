@@ -49,11 +49,17 @@ export default class BaseSettingsPage extends React.Component {
             <div className="page__body_content">
               <ProfileHeader user={current_user} current_user={current_user} />
               <div className="page__content page__content-spacing">
+                <div className="layout__row layout-small">
+                  <div className="layout__grid tabs">
+                    <div className="layout__grid_item"><IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink></div>
+                    <div className="layout__grid_item"><Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link></div>
+                  </div>
+                </div>
                 <div className="paper layout">
                   <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
                       {children}
                   </div>
-                  <div className="layout__grid_item layout__grid_item-fill page__content_sidebar">
+                  <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
                     <div className="tabs tabs-vertical">
                       <IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink>
                       <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>

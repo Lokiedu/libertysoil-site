@@ -83,6 +83,20 @@
   }
 }
 
+.layout-normal {
+  display: none;
+}
+
+@media @after-small {
+  .layout-small {
+    display: none;
+  }
+
+  .layout-normal {
+    display: block;
+  }
+}
+
 @media @before-normal {
   .layout__grid-responsive {
     display: block;
