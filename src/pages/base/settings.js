@@ -24,6 +24,7 @@ import Header from '../../components/header';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
+import Messages from '../../components/messages';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -33,7 +34,8 @@ export default class BaseSettingsPage extends React.Component {
       onSave,
       children,
       is_logged_in,
-      current_user
+      current_user,
+      messages
     } = this.props;
 
     return (
@@ -61,6 +63,7 @@ export default class BaseSettingsPage extends React.Component {
                 <div className="void">
                   <span className="button button-green action" onClick={onSave}>Save changes</span>
                 </div>
+                <Messages messages={this.props.messages}/>
               </div>
             </div>
           </div>

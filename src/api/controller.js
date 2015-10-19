@@ -526,7 +526,7 @@ export default class ApiController {
         user.set('more', properties);
       }
       user.save(null, {method: 'update'});
-      res.send(user);
+      res.send({user});
     } catch(ex) {
       console.log(ex);
       res.status(500);

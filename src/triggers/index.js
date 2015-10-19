@@ -97,7 +97,9 @@ export async function updateUserInfo(user) {
     let res = await client.updateUser(user);
 
     if ('user' in res) {
+      getStore().dispatch(addMessage('Saved successfully'));
       getStore().dispatch(updateUser(res.user));
+
     }
   } catch (e) {
     getStore().dispatch(addError(e.message));

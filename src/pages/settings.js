@@ -67,6 +67,7 @@ class SettingsPage extends React.Component {
     const {
       current_user,
       is_logged_in,
+      messages,
       ...props
     } = this.props;
 
@@ -79,6 +80,7 @@ class SettingsPage extends React.Component {
         current_user={current_user}
         is_logged_in={is_logged_in}
         onSave={this.onSave}
+        messages={messages}
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
