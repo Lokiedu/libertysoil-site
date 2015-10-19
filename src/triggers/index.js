@@ -98,8 +98,7 @@ export async function updateUserInfo(user) {
 
     if ('user' in res) {
       getStore().dispatch(addMessage('Saved successfully'));
-      getStore().dispatch(updateUser(res.user));
-
+      getStore().dispatch(addUser(res.user));
     }
   } catch (e) {
     getStore().dispatch(addError(e.message));
