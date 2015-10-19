@@ -65,6 +65,20 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
+  async postJSON(relativeUrl, data=null) {
+    let req = request.post(this.apiUrl(relativeUrl));
+
+    if (this.serverReq !== null) {
+      req = req.set('Cookie', this.serverReq.headers['cookie']);
+    }
+
+    if (data !== null) {
+      req = req.send(data)
+    }
+
+    return Promise.resolve(req);
+  }
+
   async subscriptions() {
     let response = await this.get('/api/v1/posts');
     return response.body;
@@ -102,6 +116,11 @@ export default class ApiClient
 
   async follow(userName) {
     let response = await this.post(`/api/v1/user/${userName}/follow`)
+    return response.body;
+  }
+
+  async updateUser(user) {
+    let response = await this.postJSON(`/api/v1/user`, user)
     return response.body;
   }
 

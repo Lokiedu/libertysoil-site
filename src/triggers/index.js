@@ -20,7 +20,7 @@ import ApiClient from '../api/client'
 import {
   getStore,
   addError, addMessage, removeAllMessages,
-  addUser, addPost, addPostToRiver, setCurrentUser,
+  addUser, updateUser, addPost, addPostToRiver, setCurrentUser,
   setLikes, setFavourites
 } from '../store';
 import { addPreviewToPost } from '../lib/embedly';
@@ -90,6 +90,19 @@ export async function createPost(type, data) {
     getStore().dispatch(addPostToRiver(
       await addPreviewToPost(result)
     ));
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function updateUserInfo(user) {
+  try {
+    let res = await client.updateUser(user);
+
+    if ('user' in res) {
+      getStore().dispatch(addMessage('Saved successfully'));
+      getStore().dispatch(addUser(res.user));
+    }
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }

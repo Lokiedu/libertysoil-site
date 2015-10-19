@@ -135,6 +135,7 @@ app.set('view engine', 'ejs');
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());  // for parsing application/json
 //app.use(multer());  // for parsing multipart/form-data
 app.use(corsMiddleware);
 

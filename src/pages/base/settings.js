@@ -18,28 +18,52 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 
+import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
+
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
+import Messages from '../../components/messages';
 
 export default class BaseSettingsPage extends React.Component {
-  static displayName = 'BaseSettingsPage'
+  static displayName = 'BaseSettingsPage';
+
   render () {
-    let {user, i_am_following, is_logged_in} = this.props;
+    const {
+      onSave,
+      children,
+      is_logged_in,
+      current_user,
+      messages
+    } = this.props;
 
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={user}/>
+        <Header is_logged_in={is_logged_in} current_user={current_user}/>
 
         <div className="page__container">
           <div className="page__body">
-            <Sidebar current_user={user}/>
+            <Sidebar current_user={current_user} />
 
             <div className="page__body_content">
-              <ProfileHeader user={user} current_user={user} i_am_following={i_am_following} triggers={this.props.triggers} />
+              <ProfileHeader user={current_user} current_user={current_user} />
               <div className="page__content page__content-spacing">
-                {this.props.children}
+                <div className="paper layout">
+                  <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
+                      {children}
+                  </div>
+                  <div className="layout__grid_item layout__grid_item-fill page__content_sidebar">
+                    <div className="tabs tabs-vertical">
+                      <IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink>
+                      <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>
+                    </div>
+                  </div>
+                </div>
+                <div className="void">
+                  <span className="button button-green action" onClick={onSave}>Save changes</span>
+                </div>
+                <Messages messages={this.props.messages}/>
               </div>
             </div>
           </div>

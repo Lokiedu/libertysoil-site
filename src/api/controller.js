@@ -510,6 +510,31 @@ export default class ApiController {
     res.send(follow_status)
   }
 
+  async updateUser(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+
+    let User = this.bookshelf.model('User');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true});
+
+      if(!_.isEmpty(req.body.more)) {
+        let properties = _.extend(user.get('more'), req.body.more);
+        user.set('more', properties);
+      }
+      user.save(null, {method: 'update'});
+      res.send({user});
+    } catch(ex) {
+      console.log(ex);
+      res.status(500);
+      res.send({error: 'Update failed'});
+    }
+
+
+  }
   async unfollowUser(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)

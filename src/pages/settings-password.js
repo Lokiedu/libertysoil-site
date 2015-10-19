@@ -23,20 +23,18 @@ import BaseSettingsPage from './base/settings'
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
-import { updateUserInfo } from '../triggers'
+import { followUser, unfollowUser } from '../triggers'
 import { defaultSelector } from '../selectors';
 
-class SettingsPage extends React.Component {
-  static displayName = 'SettingsPage'
+class SettingsPasswordPage extends React.Component {
+  static displayName = 'SettingsPasswordPage'
 
   componentDidMount () {
-    SettingsPage.fetchData(this.props);
+    SettingsPasswordPage.fetchData(this.props);
   }
 
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
-
-    console.info(props);
 
     if (!props.current_user_id) {
       return;
@@ -50,16 +48,17 @@ class SettingsPage extends React.Component {
     }
   }
 
-  onChange = () => {
-    
+  onSave = () => {
+    this.refs.submit.click();
   }
 
-  onSave = () => {
-    updateUserInfo({
-      more: {
-        summary: this.refs.form.summary.value,
-        bio: this.refs.form.bio.value
-      }
+  save = (e) => {
+    e && e.preventDefault();
+
+    console.info('Save...', {
+      currentPasssword: this.refs.form.currentPasssword.value,
+      newPassord: this.refs.form.newPasssword.value,
+      newPassord2: this.refs.form.newPasssword2.value
     });
   }
 
@@ -67,7 +66,6 @@ class SettingsPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      messages,
       ...props
     } = this.props;
 
@@ -80,14 +78,16 @@ class SettingsPage extends React.Component {
         current_user={current_user}
         is_logged_in={is_logged_in}
         onSave={this.onSave}
-        messages={messages}
       >
-        <form ref="form" className="paper__page">
-          <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
-          <label htmlFor="summary" className="layout__row layout__row-small">Summary</label>
-          <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
-          <label htmlFor="bio" className="layout__row layout__row-small">Bio</label>
-          <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+        <form action="" ref="form" className="paper__page" onSubmit={this.save}>
+          <h2 className="content__sub_title layout__row layout__row">Password</h2>
+          <label htmlFor="currentPasssword" className="layout__row layout__row-small">Current password</label>
+          <input name="currentPasssword" id="currentPasssword" className="input input-block layout__row layout__row-small" placeholder="Current password..." type="password" required />
+          <label htmlFor="newPasssword" className="layout__row layout__row-small">New password</label>
+          <input name="newPasssword" id="newPasssword" className="input input-block layout__row layout__row-small" placeholder="New password..." type="password" required />
+          <label htmlFor="newPasssword2" className="layout__row layout__row-small">Repeat mew password...</label>
+          <input name="newPasssword2" id="newPasssword2" className="input input-block layout__row layout__row-small" placeholder="Repeat mew password..." type="password" required />
+          <input ref="submit" type="submit" className="hidden" />
         </form>
         {false && <div className="paper__page">
           <h2 className="content__title">Role</h2>
@@ -97,4 +97,4 @@ class SettingsPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsPage);
+export default connect(defaultSelector)(SettingsPasswordPage);
