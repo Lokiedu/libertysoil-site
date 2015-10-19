@@ -176,6 +176,16 @@ function theReducer(state = initialState, action) {
       break;
     }
 
+    case UPDATE_USER: {
+      state = state.mergeDeep(Immutable.fromJS(userToStateCut(action.user)));
+
+      state = state.setIn(
+        ['users', action.user.id],
+        action.user
+      );
+      break;
+    }
+
     case ADD_POST: {
       let user = action.post.user
 

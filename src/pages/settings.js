@@ -23,7 +23,7 @@ import BaseSettingsPage from './base/settings'
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
-import { updateUser } from '../triggers'
+import { updateUserInfo } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsPage extends React.Component {
@@ -51,13 +51,11 @@ class SettingsPage extends React.Component {
   }
 
   onChange = () => {
-    this.setState({
-      summary: 42
-    });
+    
   }
 
   onSave = () => {
-    updateUser(this.props.current_user_id, {
+    updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value
