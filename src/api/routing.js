@@ -48,6 +48,8 @@ export function initApi(bookshelf) {
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
 
+  api.post('/user/', wrap(controller.updateUser.bind(controller)));
+
   api.post('/logout', wrap(controller.logout.bind(controller)));
 
   return api;
