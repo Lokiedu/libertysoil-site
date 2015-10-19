@@ -66,6 +66,7 @@ class SettingsPasswordPage extends React.Component {
     const {
       current_user,
       is_logged_in,
+      messages,
       ...props
     } = this.props;
 
@@ -77,6 +78,7 @@ class SettingsPasswordPage extends React.Component {
       <BaseSettingsPage
         current_user={current_user}
         is_logged_in={is_logged_in}
+        messages={messages}
         onSave={this.onSave}
       >
         <form action="" ref="form" className="paper__page" onSubmit={this.save}>
