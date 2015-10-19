@@ -20,7 +20,7 @@ async function getPreviewsForUrls(urls) {
 
   for (let chunk of _.chunk(_.unique(uncachedUrls), 10)) {
     let encodedUrls = chunk.map(encodeURIComponent);
-    let embedlyUrl = `https://api.embed.ly/1/oembed?key=${key}&urls=${encodedUrls.join(',')}&luxe=1&format=json`;
+    let embedlyUrl = `https://api.embed.ly/1/oembed?key=${key}&urls=${encodedUrls.join(',')}&luxe=1&width=800&format=json`;
 
     try {
       let req = request.get(embedlyUrl);
@@ -35,8 +35,9 @@ async function getPreviewsForUrls(urls) {
         if ('html' in frame) {
           result[url] = frame.html;
         } else if ('thumbnail_url' in frame) {
+          let width = frame.thumbnail_width <= 800 ? frame.thumbnail_width : 800;
           result[url] = `<a href="${url}" target="_blank">
-              <img src="${frame.thumbnail_url}" width="${frame.thumbnail_width}" height="${frame.thumbnail_height}" />
+              <img src="${frame.thumbnail_url}" width="${width}" />
             </a>`;
         } else {
           result[url] = false;
