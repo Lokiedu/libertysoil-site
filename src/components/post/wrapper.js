@@ -20,6 +20,7 @@ import React from 'react';
 import bem from '../../utils/bemClassNames';
 import Comments from './comments';
 import PostFooter from './footer';
+import Preview from './preview';
 
 let PostWrapper = (props) => {
   let cardClassName = bem.makeClassName({
@@ -31,6 +32,8 @@ let PostWrapper = (props) => {
 
   return (
     <section className={cardClassName}>
+      <Preview post={props.post}/>
+
       <div className="card__content">
         {props.children}
       </div>

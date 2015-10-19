@@ -24,6 +24,7 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, setPostsToRiver} from '../store';
 import { defaultSelector } from '../selectors';
+import { addPreviewsToPosts } from '../lib/embedly';
 
 
 class MaybeList extends React.Component {
@@ -40,7 +41,9 @@ class MaybeList extends React.Component {
 
     try {
       let posts = await client.subscriptions();
-      getStore().dispatch(setPostsToRiver(posts));
+      getStore().dispatch(setPostsToRiver(
+        await addPreviewsToPosts(posts)
+      ));
     } catch (e) {
       console.log(e.stack)
     }
