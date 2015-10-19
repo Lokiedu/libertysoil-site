@@ -108,6 +108,34 @@ export async function updateUserInfo(user) {
   }
 }
 
+export async function changePassword(old_password, new_password1, new_password2)
+{
+  if (old_password.trim() == '' || new_password1.trim() == '' || new_password2.trim() == '') {
+    getStore().dispatch(addError('some of the fields are empty'));
+    return;
+  }
+
+  if (new_password1 !== new_password2) {
+    getStore().dispatch(addError('passwords do not match'));
+    return;
+  }
+
+  try {
+    let res = await client.changePassword(old_password, new_password1);
+
+    if ('success' in res && res.success === true) {
+      getStore().dispatch(addMessage('Password is changed successfully'));
+    }
+  } catch (e) {
+    if (('body' in e.response) && ('error' in e.response.body)) {
+      getStore().dispatch(addError(e.response.body.error));
+    } else {
+      getStore().dispatch(addError(e.message));
+    }
+  }
+}
+
+
 export async function followUser(user) {
   try {
     let res = await client.follow(user.username);

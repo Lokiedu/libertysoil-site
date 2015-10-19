@@ -23,7 +23,7 @@ import BaseSettingsPage from './base/settings'
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
-import { followUser, unfollowUser } from '../triggers'
+import { changePassword } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
@@ -55,12 +55,16 @@ class SettingsPasswordPage extends React.Component {
   save = (e) => {
     e && e.preventDefault();
 
-    console.info('Save...', {
-      currentPasssword: this.refs.form.currentPasssword.value,
-      newPassord: this.refs.form.newPasssword.value,
-      newPassord2: this.refs.form.newPasssword2.value
-    });
-  }
+    let promise = changePassword(
+      this.refs.form.currentPasssword.value,
+      this.refs.form.newPasssword.value, this.refs.form.newPasssword2.value
+    );
+
+    promise.catch(e => {
+      console.log(e);
+      console.log(e.stack);
+    })
+  };
 
   render() {
     const {
