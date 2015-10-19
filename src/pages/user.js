@@ -28,7 +28,6 @@ import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
 import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
 import { defaultSelector } from '../selectors';
-import { addPreviewsToPosts } from '../lib/embedly';
 
 class UserPage extends React.Component {
   static displayName = 'UserPage'
@@ -45,9 +44,7 @@ class UserPage extends React.Component {
       let userPosts = client.userPosts(props.params.username);
 
       getStore().dispatch(addUser(await userInfo));
-      getStore().dispatch(setUserPosts(
-        await addPreviewsToPosts(await userPosts)
-      ));
+      getStore().dispatch(setUserPosts(await userPosts));
     } catch (e) {
       console.log(e.stack)
     }

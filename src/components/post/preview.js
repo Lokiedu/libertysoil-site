@@ -1,24 +1,16 @@
 import React from 'react';
 import _ from 'lodash';
+import twtxt from 'twitter-text';
 
 let Preview = (props) => {
-  if (!('embedly' in props.post) || props.post.embedly === false) {
+  let text = props.post.text;
+  let urls = twtxt.extractUrlsWithIndices(text);
+
+  if (urls.length === 0) {
     return <script/>;
   }
 
-  if (_.isString(props.post.embedly)) {
-    let html = {__html: props.post.embedly};
-    return (
-      <div className="card__content" dangerouslySetInnerHTML={html}>
-      </div>
-    );
-  }
-
-  return (
-    <div className="card__content">
-      {props.post.embedly}
-    </div>
-  );
+  return <a className="embedly-card" href={urls[0].url}></a>;
 };
 
 export default Preview;

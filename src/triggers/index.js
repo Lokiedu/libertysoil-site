@@ -23,7 +23,6 @@ import {
   addUser, updateUser, addPost, addPostToRiver, setCurrentUser,
   setLikes, setFavourites
 } from '../store';
-import { addPreviewToPost } from '../lib/embedly';
 
 const client = new ApiClient(API_HOST);
 
@@ -87,9 +86,7 @@ export async function createPost(type, data) {
   try {
     let result = await client.createPost(type, data);
 
-    getStore().dispatch(addPostToRiver(
-      await addPreviewToPost(result)
-    ));
+    getStore().dispatch(addPostToRiver(result));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
@@ -220,9 +217,7 @@ export async function deletePost(post_uuid) {
 export async function updatePost(post_uuid, post_fields) {
   try {
     let result = await client.updatePost(post_uuid, post_fields);
-    getStore().dispatch(addPost(
-      await addPreviewToPost(result)
-    ));
+    getStore().dispatch(addPost(result));
 
     return result;
   } catch (e) {

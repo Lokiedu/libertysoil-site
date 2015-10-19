@@ -29,7 +29,6 @@ import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
 import {likePost, unlikePost} from '../triggers';
 import { defaultSelector } from '../selectors';
-import { addPreviewToPost } from '../lib/embedly';
 
 
 class PostPage extends React.Component {
@@ -42,9 +41,7 @@ class PostPage extends React.Component {
 
     try {
       let result = await client.postInfo(props.params.uuid)
-      getStore().dispatch(addPost(
-        await addPreviewToPost(result)
-      ));
+      getStore().dispatch(addPost(result));
     } catch (e) {
     }
   }
