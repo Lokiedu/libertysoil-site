@@ -514,6 +514,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
+      return;
     }
 
     let User = this.bookshelf.model('User');
@@ -525,16 +526,57 @@ export default class ApiController {
         let properties = _.extend(user.get('more'), req.body.more);
         user.set('more', properties);
       }
-      user.save(null, {method: 'update'});
+
+      await user.save(null, {method: 'update'});
+
       res.send({user});
     } catch(ex) {
       console.log(ex);
       res.status(500);
       res.send({error: 'Update failed'});
     }
-
-
   }
+
+  async changePassword(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+      return;
+    }
+
+    if (!('old_password' in req.body) || !('new_password' in req.body)) {
+      res.status(400);
+      res.send({error: '"old_password" or "new_password" parameter is not provided'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true});
+
+      let passwordIsValid = await bcryptAsync.compareAsync(req.body.old_password, user.get('hashed_password'));
+
+      if (!passwordIsValid) {
+        res.status(401);
+        res.send({error: 'old password is incorrect'});
+        return
+      }
+
+      let hashedPassword = await bcryptAsync.hashAsync(req.body.new_password, 10);
+
+      user.set('hashed_password', hashedPassword);
+
+      await user.save(null, {method: 'update'});
+
+      res.send({success: true});
+    } catch(ex) {
+      console.log(ex);
+      res.status(500);
+      res.send({error: 'Update failed'});
+    }
+  }
+
   async unfollowUser(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)

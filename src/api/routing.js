@@ -49,6 +49,7 @@ export function initApi(bookshelf) {
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
 
   api.post('/user/', wrap(controller.updateUser.bind(controller)));
+  api.post('/user/password', wrap(controller.changePassword.bind(controller)));
 
   api.post('/logout', wrap(controller.logout.bind(controller)));
 

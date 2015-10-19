@@ -124,6 +124,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async changePassword(old_password, new_password) {
+    let response = await this.postJSON(`/api/v1/user/password`, {old_password, new_password});
+    return response.body;
+  }
+
   async unfollow(userName) {
     let response = await this.post(`/api/v1/user/${userName}/unfollow`)
     return response.body;
