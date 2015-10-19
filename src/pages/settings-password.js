@@ -23,7 +23,7 @@ import BaseSettingsPage from './base/settings'
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
-import { followUser, unfollowUser } from '../triggers'
+import { changePassword } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
@@ -55,17 +55,22 @@ class SettingsPasswordPage extends React.Component {
   save = (e) => {
     e && e.preventDefault();
 
-    console.info('Save...', {
-      currentPasssword: this.refs.form.currentPasssword.value,
-      newPassord: this.refs.form.newPasssword.value,
-      newPassord2: this.refs.form.newPasssword2.value
-    });
-  }
+    let promise = changePassword(
+      this.refs.form.currentPasssword.value,
+      this.refs.form.newPasssword.value, this.refs.form.newPasssword2.value
+    );
+
+    promise.catch(e => {
+      console.log(e);
+      console.log(e.stack);
+    })
+  };
 
   render() {
     const {
       current_user,
       is_logged_in,
+      messages,
       ...props
     } = this.props;
 
@@ -77,18 +82,24 @@ class SettingsPasswordPage extends React.Component {
       <BaseSettingsPage
         current_user={current_user}
         is_logged_in={is_logged_in}
+        messages={messages}
         onSave={this.onSave}
       >
         <form action="" ref="form" className="paper__page" onSubmit={this.save}>
           <h2 className="content__sub_title layout__row layout__row">Password</h2>
+
           <label htmlFor="currentPasssword" className="layout__row layout__row-small">Current password</label>
-          <input name="currentPasssword" id="currentPasssword" className="input input-block layout__row layout__row-small" placeholder="Current password..." type="password" required />
+          <input name="currentPasssword" id="currentPasssword" className="input input-block layout__row layout__row-small" placeholder="secret" type="password" required />
+
           <label htmlFor="newPasssword" className="layout__row layout__row-small">New password</label>
-          <input name="newPasssword" id="newPasssword" className="input input-block layout__row layout__row-small" placeholder="New password..." type="password" required />
-          <label htmlFor="newPasssword2" className="layout__row layout__row-small">Repeat mew password...</label>
-          <input name="newPasssword2" id="newPasssword2" className="input input-block layout__row layout__row-small" placeholder="Repeat mew password..." type="password" required />
+          <input name="newPasssword" id="newPasssword" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
+
+          <label htmlFor="newPasssword2" className="layout__row layout__row-small">Repeat new password...</label>
+          <input name="newPasssword2" id="newPasssword2" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
+
           <input ref="submit" type="submit" className="hidden" />
         </form>
+
         {false && <div className="paper__page">
           <h2 className="content__title">Role</h2>
         </div>}
