@@ -21,9 +21,9 @@ import { connect } from 'react-redux';
 import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
-import {API_HOST} from '../config';
-import {getStore, addUser} from '../store';
-import {followUser, unfollowUser} from '../triggers'
+import { API_HOST } from '../config';
+import { getStore, addUser } from '../store';
+import { updateUser } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsPage extends React.Component {
@@ -57,7 +57,12 @@ class SettingsPage extends React.Component {
   }
 
   onSave = () => {
-    console.info('on save...');
+    updateUser(this.props.current_user_id, {
+      more: {
+        summary: this.refs.form.summary.value,
+        bio: this.refs.form.bio.value
+      }
+    });
   }
 
   render() {
@@ -77,10 +82,13 @@ class SettingsPage extends React.Component {
         is_logged_in={is_logged_in}
         onSave={this.onSave}
       >
-        <div className="paper__page">
-          <h2 className="content__sub_title layout__row layout__row-small">Summary</h2>
-          <textarea onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" defaultValue={current_user.more.summary} />
-        </div>
+        <form ref="form" className="paper__page">
+          <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
+          <label htmlFor="summary" className="layout__row layout__row-small">Summary</label>
+          <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
+          <label htmlFor="bio" className="layout__row layout__row-small">Bio</label>
+          <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+        </form>
         {false && <div className="paper__page">
           <h2 className="content__title">Role</h2>
         </div>}

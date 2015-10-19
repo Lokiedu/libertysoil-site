@@ -24,6 +24,7 @@ import stores from './store/index'
 import messageType from './consts/messageTypeConstants';
 
 const ADD_USER = 'ADD_USER';
+const UPDATE_USER = 'UPDATE_USER';
 
 const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
@@ -45,6 +46,13 @@ const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export function addUser(user) {
   return {
     type: ADD_USER,
+    user
+  }
+}
+
+export function updateUser(user) {
+  return {
+    type: UPDATE_USER,
     user
   }
 }

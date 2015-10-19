@@ -92,6 +92,21 @@ export async function createPost(type, data) {
   }
 }
 
+export async function updateUser(user_id, user) {
+  try {
+    let res = await client.updateUser(user);
+
+    console.info(res);
+
+    return;
+    if ('user' in res) {
+      getStore().dispatch(addUser(res.user));
+    }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
 export async function followUser(user) {
   try {
     let res = await client.follow(user.username);
