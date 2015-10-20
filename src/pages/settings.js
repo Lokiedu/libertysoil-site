@@ -40,7 +40,15 @@ class SettingsPage extends React.Component {
   }
 
   componentDidMount () {
+    const { current_user } = this.props;
+
     SettingsPage.fetchData(this.props);
+
+    if (current_user && current_user.more && current_user.more.roles) {
+      this.setState({
+        roles: current_user.more.roles
+      });
+    }
   }
 
   static async fetchData (props) {
@@ -55,7 +63,6 @@ class SettingsPage extends React.Component {
     try {
       let userInfo = client.userInfo(props.users[props.current_user_id].username);
       getStore().dispatch(addUser(await userInfo));
-      // TODO: set state with roles
     } catch (e) {
       console.log(e.stack)
     }
@@ -66,14 +73,7 @@ class SettingsPage extends React.Component {
   }
 
   onSave = () => {
-    const {
-      current_user
-    } = this.props;
-    let roles = current_user.more.roles || [];
-
-    if (this.state.roles.length) {
-      roles = this.state.roles;
-    }
+    let roles = this.state.roles;
 
     updateUserInfo({
       more: {

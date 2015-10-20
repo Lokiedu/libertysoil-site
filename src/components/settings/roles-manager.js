@@ -42,9 +42,6 @@ class RolesManager extends React.Component {
 
     roles.splice(i, 1);
 
-    console.info(i);
-    console.info(roles);
-
     onChange(roles);
   }
 
@@ -60,13 +57,13 @@ class RolesManager extends React.Component {
     return (
       <div>
         {roles.map((role, i) => (
-          <div className="layout__row">
+          <div key={i} className="layout__row">
             <label htmlFor="role1" className="layout__block layout__row layout__row-small">Role</label>
             <div className="layout__row layout__row-small layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">
                 <select ref={`role${i}_key`} id="role1" defaultValue={role[0]} onChange={this.onChange} className="input input-block input-select">
                   {ROLES.map(role => (
-                    <option value={role}>{role}</option>
+                    <option key={role} value={role}>{role}</option>
                   ))}
                 </select>
               </div>
