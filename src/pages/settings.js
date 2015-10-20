@@ -26,8 +26,18 @@ import { getStore, addUser } from '../store';
 import { updateUserInfo } from '../triggers'
 import { defaultSelector } from '../selectors';
 
+import { RolesManager } from '../components/settings';
+import { ROLES } from '../consts/profileConstants';
+
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage'
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      roles: []
+    };
+  }
 
   componentDidMount () {
     SettingsPage.fetchData(this.props);
@@ -36,15 +46,16 @@ class SettingsPage extends React.Component {
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
-    console.info(props);
-
     if (!props.current_user_id) {
       return;
     }
 
+    //console.info(props);
+
     try {
       let userInfo = client.userInfo(props.users[props.current_user_id].username);
       getStore().dispatch(addUser(await userInfo));
+
     } catch (e) {
       console.log(e.stack)
     }
@@ -55,12 +66,36 @@ class SettingsPage extends React.Component {
   }
 
   onSave = () => {
+    const {
+      current_user
+    } = this.props;
+    let roles = current_user.more.roles || [];
+
+    if (this.state.roles.length) {
+      roles = this.state.roles;
+    }
+
     updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
-        bio: this.refs.form.bio.value
+        bio: this.refs.form.bio.value,
+        roles: roles
       }
     });
+  }
+
+  addRole = () => {
+    let roles = this.state.roles;
+
+    roles.push([ROLES[0], '']);
+
+    this.setState({ roles });
+  }
+
+  onRolesChange = (roles) => {
+    console.info(roles);
+
+    this.setState({ roles });
   }
 
   render() {
@@ -76,6 +111,8 @@ class SettingsPage extends React.Component {
     if (!is_logged_in) {
       return false;
     }
+
+    let roles = this.state.roles;
 
     return (
       <BaseSettingsPage
@@ -99,29 +136,11 @@ class SettingsPage extends React.Component {
         </form>
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Roles</h2>
-          <div className="layout__row">
-            <label htmlFor="role1" className="layout__block layout__row layout__row-small">Role</label>
-            <div className="layout__row layout__row-small layout layout-align_vertical">
-              <div className="layout__grid_item layout__grid_item-wide">
-                <select id="role1" onChange={this.onChange} className="input input-block input-select">
-                  <option>Role 1</option>
-                  <option>Role 2</option>
-                </select>
-              </div>
-              <div className="layout__grid_item layout">
-                <div className="button action button-icon button-transparent">
-                  <span className="micon micon-small button__icon">close</span>Remove role
-                </div>
-              </div>
-            </div>
-            <div className="layout__row">
-              <label className="layout__block layout__row layout__row-small">Description</label>
-              <textarea className="layout__row layout__row-small input input-block input-textarea input-textarea_small"></textarea>
-            </div>
-          </div>
-          <div className="layout__row layout__row-double">
-            <span className="button button-blue action">Add role</span>
-          </div>
+          <RolesManager
+            roles={roles}
+            onAdd={this.addRole}
+            onChange={this.onRolesChange}
+            />
         </div>
       </BaseSettingsPage>
     )
