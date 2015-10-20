@@ -28,15 +28,13 @@ import { defaultSelector } from '../selectors';
 
 class MaybeList extends React.Component {
   componentDidMount() {
-    MaybeList.fetchData(this.props);
+    MaybeList.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData(props) {
-    if (!props.is_logged_in) {
+  static async fetchData(props, client) {
+    if (!props.current_user_id) {
       return;
     }
-
-    let client = new ApiClient(API_HOST);
 
     try {
       let posts = await client.subscriptions();

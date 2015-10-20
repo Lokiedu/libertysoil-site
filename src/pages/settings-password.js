@@ -30,12 +30,10 @@ class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
   componentDidMount () {
-    SettingsPasswordPage.fetchData(this.props);
+    SettingsPasswordPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData (props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData (props, client) {
     if (!props.current_user_id) {
       return;
     }

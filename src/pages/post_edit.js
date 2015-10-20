@@ -41,12 +41,10 @@ class PostEditPage extends React.Component {
   }
 
   componentDidMount() {
-    PostEditPage.fetchData(this.props)
+    PostEditPage.fetchData(this.props, new ApiClient(API_HOST))
   }
 
-  static async fetchData(props) {
-    let client = new ApiClient(API_HOST)
-
+  static async fetchData(props, client) {
     try {
       let result = await client.postInfo(props.params.uuid);
       getStore().dispatch(addPost(result));
