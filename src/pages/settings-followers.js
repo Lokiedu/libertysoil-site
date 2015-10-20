@@ -91,7 +91,7 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row">
-            <div className="layout__grid">
+            <div className="layout__grid layout__grid-responsive">
               {followingUsers.map((user) => (
                 <div className="layout__grid_item layout__grid_item-identical">
                   <div className="layout__row layout__row-small">
@@ -116,7 +116,7 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
             <div className="layout__row">
-              <div className="layout__grid">
+              <div className="layout__grid layout__grid-responsive">
                 {followsUsers.map((user) => (
                   <div className="layout__grid_item layout__grid_item-identical">
                     <div className="layout__grid_item layout__grid_item-identical">
