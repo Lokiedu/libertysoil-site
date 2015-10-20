@@ -72,10 +72,12 @@ export default function initBookshelf(config) {
     attachLabels: async function(names) {
       let labels = this.labels();
 
-      let tagPromises = names.map(tag_name => Label.createOrSelect(tag_name));
-      let attachPromises = tagPromises.map(async (promise) => labels.attach(await promise));
+      let tags = await Promise.all(names.map(tag_name => Label.createOrSelect(tag_name)));
+      let attachPromises = tags.map(async (tag) => {
+        labels.attach(tag)
+      });
 
-      return Promise.all(attachPromises);
+      await Promise.all(attachPromises);
     }
   });
 
@@ -88,18 +90,19 @@ export default function initBookshelf(config) {
 
   Label.createOrSelect = async (name) => {
     try {
-      return Label.where({ name }).fetch({require: true});
+      return await Label.where({ name }).fetch({require: true});
     } catch (e) {
       let label = new Label({
         id: uuid.v4(),
         name
       });
 
-      return label.save(null, {method: 'insert'});
+      await label.save(null, {method: 'insert'});
+      return label
     }
-  }
+  };
 
-  let Posts
+  let Posts;
 
   Posts = bookshelf.Collection.extend({
     model: Post
