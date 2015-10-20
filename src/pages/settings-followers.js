@@ -119,9 +119,21 @@ class SettingsFollowersPage extends React.Component {
               <div className="layout__grid">
                 {followsUsers.map((user) => (
                   <div className="layout__grid_item layout__grid_item-identical">
-                    <User
-                      user={user}
-                      />
+                    <div className="layout__grid_item layout__grid_item-identical">
+                      <div className="layout__row layout__row-small">
+                        <User
+                          user={user}
+                          />
+                      </div>
+                      <div className="layout__row layout__row-small">
+                        <FollowButton
+                          active_user={user}
+                          user={current_user}
+                          following={Object.keys(following)}
+                          triggers={{ followUser, unfollowUser }}
+                          />
+                      </div>
+                    </div>
                   </div>
                 ))}
                 {!followsUsers.length && <div>No following you users...</div>}
