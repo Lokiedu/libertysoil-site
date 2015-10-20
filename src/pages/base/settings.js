@@ -35,6 +35,8 @@ export default class BaseSettingsPage extends React.Component {
       children,
       is_logged_in,
       current_user,
+      following,
+      follows,
       messages
     } = this.props;
 
@@ -47,7 +49,12 @@ export default class BaseSettingsPage extends React.Component {
             <Sidebar current_user={current_user} />
 
             <div className="page__body_content">
-              <ProfileHeader user={current_user} current_user={current_user} />
+              <ProfileHeader
+                user={current_user}
+                current_user={current_user}
+                following={following}
+                follows={follows}
+                />
               <div className="page__content page__content-spacing">
                 <div className="layout__row layout-small">
                   <div className="layout__grid tabs">
@@ -62,6 +69,7 @@ export default class BaseSettingsPage extends React.Component {
                   <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
                     <div className="tabs tabs-vertical">
                       <IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink>
+                      <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)} activeClassName="tabs__link-active" className="tabs__link">Manage Followers</Link>
                       <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>
                     </div>
                   </div>

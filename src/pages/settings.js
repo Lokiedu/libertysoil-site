@@ -51,7 +51,7 @@ class SettingsPage extends React.Component {
   }
 
   onChange = () => {
-    
+
   }
 
   onSave = () => {
@@ -68,6 +68,8 @@ class SettingsPage extends React.Component {
       current_user,
       is_logged_in,
       messages,
+      following,
+      follows,
       ...props
     } = this.props;
 
@@ -81,6 +83,8 @@ class SettingsPage extends React.Component {
         is_logged_in={is_logged_in}
         onSave={this.onSave}
         messages={messages}
+        following={following}
+        follows={follows}
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>

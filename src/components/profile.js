@@ -24,9 +24,11 @@ export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader'
 
   render () {
-    const { user, current_user, i_am_following } = this.props;
+    const { user, current_user, i_am_following, following, follows } = this.props;
     let name = user.username;
     let summary = '';
+    let followingCount;
+    let followsCount;
 
     if (user.more) {
       if (user.more.firstName || user.more.lastName) {
@@ -36,6 +38,26 @@ export default class ProfileHeader extends React.Component {
       if (user.more.summary) {
         summary = user.more.summary;
       }
+    }
+
+    console.info(this.props);
+
+    if (following && following[current_user.id]) {
+      followingCount = (
+        <div>
+          {following[current_user.id].length}<br />
+          Following
+        </div>
+      );
+    }
+
+    if (follows && follows[current_user.id]) {
+      followsCount = (
+        <div>
+          {follows[current_user.id].length}<br />
+          Followers
+        </div>
+      );
     }
 
     name = name.trim();
@@ -53,12 +75,10 @@ export default class ProfileHeader extends React.Component {
                 <div className="profile__summary">{summary}</div>
               </div>
               <div className="layout__grid_item">
-                <br />
-                {/*  Following  */}
+                {followingCount}
               </div>
               <div className="layout__grid_item">
-                <br />
-                {/*  Followers  */}
+                {followsCount}
               </div>
               <div className="layout__grid_item">
                 <FollowButton active_user={current_user} user={user} following={i_am_following} triggers={this.props.triggers} />

@@ -21,6 +21,7 @@ export const URL_NAMES = {
   POST: `POST`,
   USER: `USER`,
   SETTINGS: `SETTINGS`,
+  MANAGE_FOLLOWERS: `MANAGE_FOLLOWERS`,
   CHANGE_PASSWORD: `CHANGE_PASSWORD`,
   EDIT_POST: `EDIT_POST`
 };
@@ -32,5 +33,6 @@ export const URL = {
   [URL_NAMES.EDIT_POST]: '/post/edit/:uuid',
   [URL_NAMES.USER]: '/user/:username',
   [URL_NAMES.SETTINGS]: '/settings',
+  [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
   [URL_NAMES.CHANGE_PASSWORD]: '/settings/password'
 };
