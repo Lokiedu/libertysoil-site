@@ -19,6 +19,7 @@ import React from 'react';
 
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
+import TagsEditor from './post/tags-editor';
 
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
@@ -33,8 +34,15 @@ export default class CreatePost extends React.Component {
 
     let form = event.target;
 
-    this.props.triggers.createPost('short_text', {text: form.text.value})
-      .then(() => { form.text.value = ''; });
+    this.props.triggers.createPost(
+      'short_text',
+      {
+        text: form.text.value,
+        tags: this.editor.getTags()
+      }
+    ).then(() => {
+      form.text.value = '';
+    });
   }
 
   switchPostType = () => {
@@ -49,6 +57,8 @@ export default class CreatePost extends React.Component {
         <form onSubmit={this.submitHandler.bind(this)}>
           <div className="box__body">
             <EditPost />
+
+            <TagsEditor ref={(editor) => this.editor = editor} tags={[]} autocompleteTags={['tag1', 'tag2']} />
 
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">

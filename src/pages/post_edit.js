@@ -27,6 +27,8 @@ import ApiClient from '../api/client'
 import {getStore, addPost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
+import TagsEditor from '../components/post/tags-editor';
+
 import { defaultSelector } from '../selectors';
 import { deletePost, updatePost } from '../triggers';
 
@@ -62,6 +64,7 @@ class PostEditPage extends React.Component {
           this.props.history.pushState(null, '/');
         }).catch(e => {
           console.log(e)
+          console.log(e.stack)
         });
     }
   }
@@ -71,10 +74,15 @@ class PostEditPage extends React.Component {
 
     let form = event.target;
 
-    updatePost(this.props.params.uuid, {text: form.text.value})
-      .then((result) => {
-        this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
-      });
+    updatePost(
+      this.props.params.uuid,
+      {
+        text: form.text.value,
+        tags: this.editor.getTags()
+      }
+    ).then((result) => {
+      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
+    });
   }
 
   render() {
@@ -113,6 +121,8 @@ class PostEditPage extends React.Component {
 
                   <div className="box__body">
                     <EditPost post={current_post}/>
+
+                    <TagsEditor ref={(editor) => this.editor = editor} tags={current_post.labels} autocompleteTags={['tag1', 'tag2']} />
 
                     <div className="layout__row">
                       <div className="layout layout__grid layout-align_right">

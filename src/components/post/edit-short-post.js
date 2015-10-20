@@ -18,8 +18,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-import TagsEditor from './tags-editor';
-
 export default class EditPostShort extends Component {
   updateNewPostTags = (tags) => {
     console.info(tags);
@@ -27,12 +25,9 @@ export default class EditPostShort extends Component {
 
   render () {
     let value = '';
-    let tags = [];
 
     if (!_.isUndefined(this.props.post)) {
       value = this.props.post.text;
-
-      tags = this.props.post.tags || [];
     }
 
     return (
@@ -45,7 +40,6 @@ export default class EditPostShort extends Component {
             placeholder="Share education related resources, your perspective"
           />
         </div>
-        <TagsEditor onUpdate={this.updateNewPostTags} tags={tags} autocompleteTags={['tag1', 'tag2']} />
       </div>
     )
   }

@@ -45,16 +45,16 @@ export default class TagsEditor extends Component {
     };
 
     addTag = (e) => {
-        var title = this.state.tag || '';
+        var name = this.state.tag || '';
 
         e && e.preventDefault();
 
-        if (this.state.tags.length >= this.props.tagsMaxCount || _.find(this.state.tags, { title })) {
+        if (this.state.tags.length >= this.props.tagsMaxCount || _.find(this.state.tags, { name })) {
             return;
         }
 
         this.state.tags.unshift({
-          title
+          name
           //type: this.refs.type.value
         });
         this.onTagsUpdate(this.state.tags);
@@ -82,7 +82,7 @@ export default class TagsEditor extends Component {
     };
 
     getTags() {
-      return this.state.tags.map(tag => tag.title);
+      return this.state.tags.map(tag => tag.name);
     }
 
     render () {
@@ -131,7 +131,7 @@ export default class TagsEditor extends Component {
                     title="Remove tag"
                     onClick={this.removeTag.bind(null, tag)}
                     key={i}>
-                    {tag.title}
+                    {tag.name}
                     <i className="micon micon-micro micon-left_space">close</i>
                   </span>
                 )}
