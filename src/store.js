@@ -267,7 +267,7 @@ function theReducer(state = initialState, action) {
       state = state.deleteIn(['posts', post_id]);
 
       {
-        let idx = state.get('river').findIndex(post_id);
+        let idx = state.get('river').findIndex(river_post_id => river_post_id === post_id);
 
         if (idx >= 0) {
           state = state.deleteIn(['river', idx]);
@@ -275,7 +275,7 @@ function theReducer(state = initialState, action) {
       }
 
       for (let user_id of state.get('user_posts').keys()) {
-        let idx = state.get('user_posts').get(user_id).findIndex(post_id);
+        let idx = state.get('user_posts').get(user_id).findIndex(user_post_id => user_post_id === post_id);
 
         if (idx >= 0) {
           state = state.deleteIn(['user_posts', user_id, idx]);
