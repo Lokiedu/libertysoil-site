@@ -36,7 +36,7 @@ let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
   return (
     <div className="layout__grid layout__grid-responsive">
       {users.map((user) => (
-        <div className="layout__grid_item layout__grid_item-identical">
+        <div className="layout__grid_item layout__grid_item-identical" key={`user-${user.id}`}>
           <div className="layout__row layout__row-small">
             <User
               user={user}
@@ -86,7 +86,7 @@ class SettingsFollowersPage extends React.Component {
       i_am_following,
       messages,
       following,
-      follows,
+      followers,
       users,
       ...props
     } = this.props;
@@ -96,19 +96,10 @@ class SettingsFollowersPage extends React.Component {
     }
 
     let followingUsers = following[current_user.id] || [];
-    let followsUsers = follows[current_user.id] || [];
+    let followersUsers = followers[current_user.id] || [];
 
-    followingUsers = followingUsers.map((user_id) => {
-      let user = users[user_id];
-
-      user.following = [current_user.id];
-
-      return user;
-    });
-
-    followsUsers = followsUsers.map((user_id) => {
-      return users[user_id];
-    });
+    followingUsers = followingUsers.map(user_id => users[user_id]);
+    followersUsers = followersUsers.map(user_id => users[user_id]);
 
     return (
       <BaseSettingsPage
@@ -117,7 +108,7 @@ class SettingsFollowersPage extends React.Component {
         onSave={this.onSave}
         messages={messages}
         following={following}
-        follows={follows}
+        follows={followers}
       >
         <div className="paper__page">
           <h1 className="content__title">Manage Followers</h1>
@@ -144,7 +135,7 @@ class SettingsFollowersPage extends React.Component {
                 empty_msg="Noone follows you yet"
                 i_am_following={i_am_following}
                 triggers={{followUser, unfollowUser}}
-                users={followsUsers}
+                users={followersUsers}
               />
             </div>
         </div>
