@@ -33,6 +33,7 @@
     "express": "^4.13.3",
     "express-session": "^1.11.3",
     "font-awesome": "",
+    "grapheme-breaker": "^0.3.1",
     "gulp": "",
     "gulp-autoprefixer": "",
     "gulp-concat": "",

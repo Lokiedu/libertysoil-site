@@ -18,6 +18,7 @@
 import md5 from 'md5';
 import Knex from 'knex';
 import Bookshelf from 'bookshelf';
+import uuid from 'uuid'
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -67,6 +68,14 @@ export default function initBookshelf(config) {
     },
     favourers: function() {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
+    },
+    attachLabels: async function(names) {
+      let labels = this.labels();
+
+      let tagPromises = names.map(tag_name => Label.createOrSelect(tag_name));
+      let attachPromises = tagPromises.map(async (promise) => labels.attach(await promise));
+
+      return Promise.all(attachPromises);
     }
   });
 
@@ -76,6 +85,19 @@ export default function initBookshelf(config) {
       return this.belongsToMany(Post, 'labels_posts', 'label_id', 'post_id');
     }
   });
+
+  Label.createOrSelect = async (name) => {
+    try {
+      return Label.where({ name }).fetch({require: true});
+    } catch (e) {
+      let label = new Label({
+        id: uuid.v4(),
+        name
+      });
+
+      return label.save(null, {method: 'insert'});
+    }
+  }
 
   let Posts
 

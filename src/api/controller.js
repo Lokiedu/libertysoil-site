@@ -18,7 +18,10 @@
 import _ from 'lodash'
 import bcrypt from 'bcrypt'
 import bb from 'bluebird'
+import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
+
+import { createOrSelectLabel } from 'db/tags';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -372,6 +375,24 @@ export default class ApiController {
       }
     }
 
+    let tags;
+
+    if ('tags' in req.body) {
+      if (!_.isArray(req.body.tags)) {
+        res.status(400);
+        res.send({error: `"tags" parameter is expected to be an array`});
+        return;
+      }
+
+      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+        res.status(400);
+        res.send({error: `each of tags should be at least 3 characters wide`});
+        return;
+      }
+
+      tags = _.unique(req.body.tags);
+    }
+
     let Post = this.bookshelf.model('Post');
 
     let obj = new Post({
@@ -389,7 +410,12 @@ export default class ApiController {
 
     try {
       await obj.save(null, {method: 'insert'});
-      await obj.fetch({require: true, withRelated: ['user']});
+
+      if (_.isArray(tags)) {
+        await obj.attachLabels(tags)
+      }
+
+      await obj.fetch({require: true, withRelated: ['user', 'labels']});
 
       res.send(obj.toJSON());
     } catch (e) {
@@ -423,6 +449,24 @@ export default class ApiController {
 
     let type = post_object.get('type');
 
+    let tags;
+
+    if ('tags' in req.body) {
+      if (!_.isArray(req.body.tags)) {
+        res.status(400);
+        res.send({error: `"tags" parameter is expected to be an array`});
+        return;
+      }
+
+      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+        res.status(400);
+        res.send({error: `each of tags should be at least 3 characters wide`});
+        return;
+      }
+
+      tags = _.unique(req.body.tags);
+    }
+
     if (type === 'short_text') {
       if ('text' in req.body) {
         post_object.set('text', req.body.text);
@@ -441,7 +485,12 @@ export default class ApiController {
 
     try {
       await post_object.save(null, {method: 'update'});
-      await post_object.fetch({require: true, withRelated: ['user']})
+
+      if (_.isArray(tags)) {
+        await post_object.attachLabels(tags)
+      }
+
+      await post_object.fetch({require: true, withRelated: ['user', 'labels']})
 
       res.send(post_object.toJSON());
     } catch (e) {
