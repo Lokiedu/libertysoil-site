@@ -55,7 +55,7 @@ class SettingsPage extends React.Component {
     try {
       let userInfo = client.userInfo(props.users[props.current_user_id].username);
       getStore().dispatch(addUser(await userInfo));
-
+      // TODO: set state with roles
     } catch (e) {
       console.log(e.stack)
     }
