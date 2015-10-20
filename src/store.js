@@ -160,11 +160,17 @@ function theReducer(state = initialState, action) {
 
   switch (action.type) {
     case ADD_USER: {
-      state = state.mergeDeep(Immutable.fromJS(userToStateCut(action.user)));
-      state = state.setIn(
-        ['following', action.user.id],
-        action.user.following.map(user => user.id)
-      );
+      const user = action.user;
+
+      state = state.mergeDeep(Immutable.fromJS(userToStateCut(user)));
+
+      if (user.following) {
+        state = state.setIn(
+          ['following', user.id],
+          user.following.map(user => user.id)
+        );
+      }
+
       break;
     }
 
