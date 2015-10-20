@@ -27,7 +27,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post;
+  let User, Post, Label;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -59,11 +59,21 @@ export default function initBookshelf(config) {
     user: function() {
       return this.belongsTo(User, 'user_id');
     },
+    labels: function() {
+      return this.belongsToMany(Label, 'labels_posts', 'post_id', 'label_id');
+    },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
     },
     favourers: function() {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
+    }
+  });
+
+  Label = bookshelf.Model.extend({
+    tableName: 'labels',
+    posts: function() {
+      return this.belongsToMany(Post, 'labels_posts', 'label_id', 'post_id');
     }
   });
 
@@ -76,6 +86,7 @@ export default function initBookshelf(config) {
   // adding to registry
   bookshelf.model('User', User);
   bookshelf.model('Post', Post);
+  bookshelf.model('Label', Label);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
