@@ -26,10 +26,15 @@ export default class ProfileHeader extends React.Component {
   render () {
     const { user, current_user, i_am_following } = this.props;
     let name = user.username;
+    let summary = '';
 
     if (user.more) {
       if (user.more.firstName || user.more.lastName) {
         name = `${user.more.firstName} ${user.more.lastName}`;
+      }
+
+      if (user.more.summary) {
+        summary = user.more.summary;
       }
     }
 
@@ -45,6 +50,7 @@ export default class ProfileHeader extends React.Component {
             <div className="layout__grid">
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="profile__title">{name}</div>
+                <div className="profile__summary">{summary}</div>
               </div>
               <div className="layout__grid_item">
                 <br />
