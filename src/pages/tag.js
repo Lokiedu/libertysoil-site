@@ -17,11 +17,10 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import {getStore, addUser} from '../store';
+import {getStore, setTagPosts} from '../store';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -40,40 +39,48 @@ class TagPage extends Component {
 
   static async fetchData(props, client) {
     try {
-      let userInfo = client.userInfo(props.params.username);
+      let tagPosts = client.tagPosts(props.params.tag);
 
-      getStore().dispatch(addUser(await userInfo));
+      getStore().dispatch(setTagPosts(props.params.tag, await tagPosts));
     } catch (e) {
-      console.log(e.stack)
+      console.log(e);
+      console.log(e.stack);
     }
   }
 
   render() {
     const {
       is_logged_in,
-      current_user
+      current_user,
+      posts,
+      tag_posts,
+      users
     } = this.props;
-    let triggers = {likePost, unlikePost, favPost, unfavPost};
+    const triggers = {likePost, unlikePost, favPost, unfavPost};
+    const thisTagPosts = tag_posts[this.props.params.tag] || [];
 
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user} />
+
         <div className="page__container">
           <div className="page__body">
-            <Sidebar current_user={this.props.current_user} />
+            <Sidebar current_user={current_user} />
+
             <div className="page__body_content">
               <div className="tag_header">
-                Tag title...
+                {this.props.params.tag}
               </div>
+
               <div className="page__content page__content-spacing">
-                Posts here...
-                <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+                <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
                 {/*<Followed/> */}
                 {/*<Tags/>*/}
               </div>
             </div>
           </div>
         </div>
+
         <Footer/>
       </div>
     )
