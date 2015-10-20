@@ -54,6 +54,7 @@ class SettingsFollowersPage extends React.Component {
     const {
       current_user,
       is_logged_in,
+      i_am_following,
       messages,
       following,
       follows,
@@ -105,18 +106,19 @@ class SettingsFollowersPage extends React.Component {
                   </div>
                   <div className="layout__row layout__row-small">
                     <FollowButton
-                      active_user={user}
-                      user={current_user}
-                      following={user.following}
+                      active_user={current_user}
+                      user={user}
+                      following={i_am_following}
                       triggers={{ followUser, unfollowUser }}
                       />
                   </div>
                 </div>
               ))}
-              {!followingUsers.length && <div>You no following users...</div>}
+              {!followingUsers.length && <div>You are not following any users</div>}
             </div>
           </div>
         </div>
+
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
             <div className="layout__row">
@@ -131,16 +133,16 @@ class SettingsFollowersPage extends React.Component {
                       </div>
                       <div className="layout__row layout__row-small">
                         <FollowButton
-                          active_user={user}
-                          user={current_user}
-                          following={Object.keys(following)}
+                          active_user={current_user}
+                          user={user}
+                          following={i_am_following}
                           triggers={{ followUser, unfollowUser }}
                           />
                       </div>
                     </div>
                   </div>
                 ))}
-                {!followsUsers.length && <div>No following you users...</div>}
+                {!followsUsers.length && <div>Noone follows you yet</div>}
               </div>
             </div>
         </div>
