@@ -88,14 +88,41 @@ class SettingsPage extends React.Component {
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
-          <label htmlFor="summary" className="layout__row layout__row-small">Summary</label>
-          <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
-          <label htmlFor="bio" className="layout__row layout__row-small">Bio</label>
-          <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+          <div className="layout__row">
+            <label htmlFor="summary" className="layout__block layout__row layout__row-small">Summary</label>
+            <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
+          </div>
+          <div className="layout__row">
+            <label htmlFor="bio" className="layout__block layout__row layout__row-small">Bio</label>
+            <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+          </div>
         </form>
-        {false && <div className="paper__page">
-          <h2 className="content__title">Role</h2>
-        </div>}
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row">Roles</h2>
+          <div className="layout__row">
+            <label htmlFor="role1" className="layout__block layout__row layout__row-small">Role</label>
+            <div className="layout__row layout__row-small layout layout-align_vertical">
+              <div className="layout__grid_item layout__grid_item-wide">
+                <select id="role1" onChange={this.onChange} className="input input-block input-select">
+                  <option>Role 1</option>
+                  <option>Role 2</option>
+                </select>
+              </div>
+              <div className="layout__grid_item layout">
+                <div className="button action button-icon button-transparent">
+                  <span className="micon micon-small button__icon">close</span>Remove role
+                </div>
+              </div>
+            </div>
+            <div className="layout__row">
+              <label className="layout__block layout__row layout__row-small">Description</label>
+              <textarea className="layout__row layout__row-small input input-block input-textarea input-textarea_small"></textarea>
+            </div>
+          </div>
+          <div className="layout__row layout__row-double">
+            <span className="button button-blue action">Add role</span>
+          </div>
+        </div>
       </BaseSettingsPage>
     )
   }
