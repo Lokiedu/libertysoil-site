@@ -69,7 +69,11 @@ class SettingsFollowersPage extends React.Component {
     let followsUsers = follows[current_user.id] || [];
 
     followingUsers = followingUsers.map((user_id) => {
-      return users[user_id];
+      let user = users[user_id];
+
+      user.following = [current_user.id];
+
+      return user;
     });
 
     followsUsers = followsUsers.map((user_id) => {
@@ -103,7 +107,7 @@ class SettingsFollowersPage extends React.Component {
                     <FollowButton
                       active_user={user}
                       user={current_user}
-                      following={Object.keys(following)}
+                      following={user.following}
                       triggers={{ followUser, unfollowUser }}
                       />
                   </div>
