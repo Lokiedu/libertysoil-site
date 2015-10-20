@@ -26,11 +26,11 @@ import { getStore, addUser } from '../store';
 import { changePassword } from '../triggers'
 import { defaultSelector } from '../selectors';
 
-class SettingsPasswordPage extends React.Component {
+class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
   componentDidMount () {
-    SettingsPasswordPage.fetchData(this.props);
+    SettingsFollowersPage.fetchData(this.props);
   }
 
   static async fetchData (props) {
@@ -47,24 +47,6 @@ class SettingsPasswordPage extends React.Component {
       console.log(e.stack)
     }
   }
-
-  onSave = () => {
-    this.refs.submit.click();
-  }
-
-  save = (e) => {
-    e && e.preventDefault();
-
-    let promise = changePassword(
-      this.refs.form.currentPasssword.value,
-      this.refs.form.newPasssword.value, this.refs.form.newPasssword2.value
-    );
-
-    promise.catch(e => {
-      console.log(e);
-      console.log(e.stack);
-    })
-  };
 
   render() {
     const {
@@ -89,27 +71,28 @@ class SettingsPasswordPage extends React.Component {
         following={following}
         follows={follows}
       >
-        <form action="" ref="form" className="paper__page" onSubmit={this.save}>
-          <h2 className="content__sub_title layout__row layout__row">Password</h2>
-
-          <label htmlFor="currentPasssword" className="layout__row layout__row-small">Current password</label>
-          <input name="currentPasssword" id="currentPasssword" className="input input-block layout__row layout__row-small" placeholder="secret" type="password" required />
-
-          <label htmlFor="newPasssword" className="layout__row layout__row-small">New password</label>
-          <input name="newPasssword" id="newPasssword" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
-
-          <label htmlFor="newPasssword2" className="layout__row layout__row-small">Repeat new password...</label>
-          <input name="newPasssword2" id="newPasssword2" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
-
-          <input ref="submit" type="submit" className="hidden" />
-        </form>
-
-        {false && <div className="paper__page">
-          <h2 className="content__title">Role</h2>
-        </div>}
+        <div className="paper__page">
+          <h1 className="content__title">Manage Followers</h1>
+        </div>
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row">People you follow</h2>
+          <div className="layout__row">
+            <div className="layout__grid">
+              <div className="layout__grid_item layout__grid_item-50">
+                user
+              </div>
+              <div className="layout__grid_item layout__grid_item-50">
+                user
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row">Following you</h2>
+        </div>
       </BaseSettingsPage>
     )
   }
 }
 
-export default connect(defaultSelector)(SettingsPasswordPage);
+export default connect(defaultSelector)(SettingsFollowersPage);
