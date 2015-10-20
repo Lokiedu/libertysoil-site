@@ -23,7 +23,7 @@ import NotFound from './not-found'
 import BaseUserPage from './base/user'
 
 import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import {getStore, addUser} from '../store';
 import {followUser, unfollowUser} from '../triggers'
 import { defaultSelector } from '../selectors';
