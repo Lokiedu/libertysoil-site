@@ -40,10 +40,7 @@ let routes = (
     <Route component={Auth} path="/auth" />
     <Route component={PostPage} path="/post/:uuid" />
     <Route component={PostEditPage} path="/post/edit/:uuid" />
-    <Route path="/tag">
-      <IndexRoute component={TagPage} />
-      <Route component={TagPage} path=":tag" />
-    </Route>
+    <Route component={TagPage} path="/tag/:tag" />
     <Route path="/settings">
       <IndexRoute component={SettingsPage} />
       <Route component={SettingsPasswordPage} path="password" />

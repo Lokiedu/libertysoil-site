@@ -16,13 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
 let TagLine = ({tags}) => {
   if (tags.length == 0) {
     return <script/>;
   }
 
-  let tagBlocks = tags.map(tag => <span className="tag" key={`tag-${tag.id}`}>{tag.name}</span>);
+  let tagBlocks = tags.map(tag => (
+    <Link to={`/tag/${tag.name}`} className="tag" key={`tag-${tag.id}`}>
+      {tag.name}
+    </Link>
+  ));
 
   return (
     <div className="tags">
