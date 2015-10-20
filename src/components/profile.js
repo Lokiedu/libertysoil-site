@@ -40,8 +40,6 @@ export default class ProfileHeader extends React.Component {
       }
     }
 
-    console.info(this.props);
-
     if (following && following[current_user.id]) {
       followingCount = (
         <div>
