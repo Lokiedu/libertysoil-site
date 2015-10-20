@@ -21,8 +21,6 @@ import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 
-import { createOrSelectLabel } from 'db/tags';
-
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
 export default class ApiController {
@@ -37,7 +35,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers']});
+    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
 
     res.send(response.toJSON());
   }
@@ -53,7 +51,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user','likers','favourers']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
 
     res.send(posts.toJSON());
   }
@@ -62,7 +60,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user','likers','favourers']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels']});
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -216,7 +214,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers','likers','favourers']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']})
 
     res.send(posts.toJSON());
   }
@@ -415,7 +413,7 @@ export default class ApiController {
         await obj.attachLabels(tags)
       }
 
-      await obj.fetch({require: true, withRelated: ['user', 'labels']});
+      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']});
 
       res.send(obj.toJSON());
     } catch (e) {
@@ -490,7 +488,7 @@ export default class ApiController {
         await post_object.attachLabels(tags)
       }
 
-      await post_object.fetch({require: true, withRelated: ['user', 'labels']})
+      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']})
 
       res.send(post_object.toJSON());
     } catch (e) {
