@@ -324,7 +324,7 @@ export default class ApiController {
       req.session.user = user.id;
     }
 
-    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'likes', 'favourites']});
+    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
 
     res.send({ success: true, user })
   }
@@ -476,7 +476,7 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following']});
+    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
 
     res.send(u.toJSON());
   }
@@ -491,14 +491,14 @@ export default class ApiController {
     let follow_status = { success: false };
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
       let follow = await User.where({username: req.params.username}).fetch({require: true});
 
       if (user.id != follow.id && _.isUndefined(user.related('following').find({id: follow.id}))) {
         await user.following().attach(follow);
 
         follow_status.success = true;
-        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
       }
 
       follow_status.user = user.toJSON();
@@ -587,14 +587,14 @@ export default class ApiController {
     let follow_status = { success: false };
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
       let follow = await User.where({username: req.params.username}).fetch({require: true});
 
       if (user.id != follow.id && !_.isUndefined(user.related('following').find({id: follow.id}))) {
         await user.following().detach(follow);
 
         follow_status.success = true;
-        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following']});
+        user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
       }
 
       follow_status.user = user.toJSON();

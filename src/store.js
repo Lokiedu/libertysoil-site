@@ -153,6 +153,15 @@ function theReducer(state = initialState, action) {
       delete user.following
     }
 
+    if ('followers' in user) {
+      for (let follower of user.followers) {
+        users[follower.id] = follower;
+      }
+
+      user = _.cloneDeep(user)
+      delete user.following
+    }
+
     users[user.id] = user;
 
     return {users: users};
@@ -168,6 +177,13 @@ function theReducer(state = initialState, action) {
         state = state.setIn(
           ['following', user.id],
           user.following.map(user => user.id)
+        );
+      }
+
+      if (user.followers) {
+        state = state.setIn(
+          ['followers', user.id],
+          user.followers.map(user => user.id)
         );
       }
 
@@ -336,7 +352,8 @@ function theReducer(state = initialState, action) {
 let initialState = {
   users: {},
   user_posts: {},
-  follows:{},
+  following: {},
+  followers: {},
   likes: {},
   favourites: {},
   posts: {},
