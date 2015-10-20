@@ -36,6 +36,11 @@
   min-width: 100px;
 }
 
+.button-icon {
+  display: inline-flex;
+  &:extend(.layout-align_vertical);
+}
+
 .button-caption_left {
   text-align: left;
 }
@@ -57,4 +62,13 @@
   background: #fbbe14;
   color: #fff;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.button-blue {
+  &:extend(.button-transparent);
+  color: @color__blue;
+}
+
+.button__icon {
+  margin-right: 5px;
 }

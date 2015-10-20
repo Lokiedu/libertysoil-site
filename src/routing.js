@@ -29,6 +29,7 @@ import UserFavoritesPage from './pages/user-favories';
 import AboutUserPage from './pages/user-about';
 import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
+import SettingsFollowersPage from './pages/settings-followers';
 
 // <Redirect from="/user/:username" to="/user/:username/posts" />
 
@@ -41,6 +42,7 @@ let routes = (
     <Route path="/settings">
       <IndexRoute component={SettingsPage} />
       <Route component={SettingsPasswordPage} path="password" />
+      <Route component={SettingsFollowersPage} path="followers" />
     </Route>
     <Route path="/user/:username">
       <IndexRoute component={UserPage} />

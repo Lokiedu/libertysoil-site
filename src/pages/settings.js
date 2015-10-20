@@ -26,21 +26,39 @@ import { getStore, addUser } from '../store';
 import { updateUserInfo } from '../triggers'
 import { defaultSelector } from '../selectors';
 
+import { RolesManager } from '../components/settings';
+import { ROLES } from '../consts/profileConstants';
+
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage'
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      roles: []
+    };
+  }
+
   componentDidMount () {
+    const { current_user } = this.props;
+
     SettingsPage.fetchData(this.props);
+
+    if (current_user && current_user.more && current_user.more.roles) {
+      this.setState({
+        roles: current_user.more.roles
+      });
+    }
   }
 
   static async fetchData (props) {
     let client = new ApiClient(API_HOST);
 
-    console.info(props);
-
     if (!props.current_user_id) {
       return;
     }
+
+    //console.info(props);
 
     try {
       let userInfo = client.userInfo(props.users[props.current_user_id].username);
@@ -55,12 +73,29 @@ class SettingsPage extends React.Component {
   }
 
   onSave = () => {
+    let roles = this.state.roles;
+
     updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
-        bio: this.refs.form.bio.value
+        bio: this.refs.form.bio.value,
+        roles: roles
       }
     });
+  }
+
+  addRole = () => {
+    let roles = this.state.roles;
+
+    roles.push([ROLES[0], '']);
+
+    this.setState({ roles });
+  }
+
+  onRolesChange = (roles) => {
+    console.info(roles);
+
+    this.setState({ roles });
   }
 
   render() {
@@ -77,6 +112,8 @@ class SettingsPage extends React.Component {
       return false;
     }
 
+    let roles = this.state.roles;
+
     return (
       <BaseSettingsPage
         current_user={current_user}
@@ -88,14 +125,23 @@ class SettingsPage extends React.Component {
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
-          <label htmlFor="summary" className="layout__row layout__row-small">Summary</label>
-          <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
-          <label htmlFor="bio" className="layout__row layout__row-small">Bio</label>
-          <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+          <div className="layout__row">
+            <label htmlFor="summary" className="layout__block layout__row layout__row-small">Summary</label>
+            <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
+          </div>
+          <div className="layout__row">
+            <label htmlFor="bio" className="layout__block layout__row layout__row-small">Bio</label>
+            <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+          </div>
         </form>
-        {false && <div className="paper__page">
-          <h2 className="content__title">Role</h2>
-        </div>}
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row">Roles</h2>
+          <RolesManager
+            roles={roles}
+            onAdd={this.addRole}
+            onChange={this.onRolesChange}
+            />
+        </div>
       </BaseSettingsPage>
     )
   }

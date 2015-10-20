@@ -153,6 +153,15 @@ function theReducer(state = initialState, action) {
       delete user.following
     }
 
+    if ('followers' in user) {
+      for (let follower of user.followers) {
+        users[follower.id] = follower;
+      }
+
+      user = _.cloneDeep(user)
+      delete user.following
+    }
+
     users[user.id] = user;
 
     return {users: users};
@@ -160,11 +169,24 @@ function theReducer(state = initialState, action) {
 
   switch (action.type) {
     case ADD_USER: {
-      state = state.mergeDeep(Immutable.fromJS(userToStateCut(action.user)));
-      state = state.setIn(
-        ['following', action.user.id],
-        action.user.following.map(user => user.id)
-      );
+      const user = action.user;
+
+      state = state.mergeDeep(Immutable.fromJS(userToStateCut(user)));
+
+      if (user.following) {
+        state = state.setIn(
+          ['following', user.id],
+          user.following.map(user => user.id)
+        );
+      }
+
+      if (user.followers) {
+        state = state.setIn(
+          ['followers', user.id],
+          user.followers.map(user => user.id)
+        );
+      }
+
       break;
     }
 
@@ -330,7 +352,8 @@ function theReducer(state = initialState, action) {
 let initialState = {
   users: {},
   user_posts: {},
-  follows:{},
+  following: {},
+  followers: {},
   likes: {},
   favourites: {},
   posts: {},

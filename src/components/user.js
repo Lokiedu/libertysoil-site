@@ -84,7 +84,6 @@ export default class User extends Component {
       username: React.PropTypes.string.isRequired,
       avatar: React.PropTypes.string
     }).isRequired,
-    gravatarHash: React.PropTypes.string,
     avatarSize: React.PropTypes.any.isRequired,
     hideAvatar: React.PropTypes.bool,
     isRound: React.PropTypes.bool,

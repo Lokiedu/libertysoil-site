@@ -41,6 +41,7 @@
     "gulp-notify": "",
     "gulp-plumber": "",
     "gulp-util": "",
+    "gulp-watch": "^4.3.5",
     "history": "^1.12.5",
     "immutable": "^3.7.5",
     "knex": "^0.8.6",
