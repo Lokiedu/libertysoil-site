@@ -51,7 +51,7 @@ export default class BaseSettingsPage extends React.Component {
               <div className="page__content page__content-spacing">
                 <div className="layout__row layout-small">
                   <div className="layout__grid tabs">
-                    <div className="layout__grid_item"><IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink></div>
+                    <div className="layout__grid_item"><IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">About</IndexLink></div>
                     <div className="layout__grid_item"><Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link></div>
                   </div>
                 </div>
