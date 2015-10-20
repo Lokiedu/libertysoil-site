@@ -42,7 +42,7 @@ class SettingsPage extends React.Component {
   componentDidMount () {
     const { current_user } = this.props;
 
-    SettingsPage.fetchData(this.props);
+    SettingsPage.fetchData(this.props, new ApiClient(API_HOST));
 
     if (current_user && current_user.more && current_user.more.roles) {
       this.setState({
@@ -51,9 +51,7 @@ class SettingsPage extends React.Component {
     }
   }
 
-  static async fetchData (props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData(props, client) {
     if (!props.current_user_id) {
       return;
     }

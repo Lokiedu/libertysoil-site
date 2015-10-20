@@ -33,12 +33,10 @@ import { defaultSelector } from '../selectors';
 
 class PostPage extends React.Component {
   componentDidMount() {
-    PostPage.fetchData(this.props);
+    PostPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData(props) {
-    let client = new ApiClient(API_HOST)
-
+  static async fetchData(props, client) {
     try {
       let result = await client.postInfo(props.params.uuid)
       getStore().dispatch(addPost(result));

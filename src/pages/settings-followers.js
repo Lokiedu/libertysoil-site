@@ -60,13 +60,11 @@ let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  componentDidMount () {
-    SettingsFollowersPage.fetchData(this.props);
+  componentDidMount() {
+    SettingsFollowersPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData (props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData(props, client) {
     if (!props.current_user_id) {
       return;
     }

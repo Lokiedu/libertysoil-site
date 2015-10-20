@@ -23,19 +23,17 @@ import NotFound from './not-found'
 import BaseUserPage from './base/user'
 
 import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import {getStore, addUser} from '../store';
 import {followUser, unfollowUser} from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class UserLikesPage extends React.Component {
   componentDidMount() {
-    UserLikesPage.fetchData(this.props);
+    UserLikesPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData(props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData(props, client) {
     try {
       let userInfo = client.userInfo(props.params.username);
 

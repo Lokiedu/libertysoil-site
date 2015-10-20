@@ -30,6 +30,8 @@ import { Router, RoutingContext, match } from 'react-router'
 import Routes from './src/routing';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
+import {API_HOST} from './src/config';
+import ApiClient from './src/api/client'
 
 import {initState, setCurrentUser, setLikes, setFavourites} from './src/store';
 
@@ -116,7 +118,8 @@ let reactHandler = async (req, res) => {
         let props = store.getState().toJS();
         props.params = renderProps.params;
 
-        await component.fetchData(props);
+        let client = new ApiClient(API_HOST, req);
+        await component.fetchData(props, client);
       }
 
       let html = renderToString(<RoutingContext {...renderProps}/>)

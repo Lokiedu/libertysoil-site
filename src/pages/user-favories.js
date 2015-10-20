@@ -30,12 +30,10 @@ import { defaultSelector } from '../selectors';
 
 class UserFavoritesPage extends React.Component {
   componentDidMount() {
-    UserFavoritesPage.fetchData(this.props);
+    UserFavoritesPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData(props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData(props, client) {
     try {
       let userInfo = client.userInfo(props.params.username);
 

@@ -24,23 +24,23 @@ import Toolbar from './toolbar'
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-let PostFooter = (props) => {
-  let post_url = getUrl(URL_NAMES.POST, { uuid: props.post.id });
+let PostFooter = ({author, current_user, post, triggers}) => {
+  let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
 
   return (
     <div>
       <div className="card__owner">
-        <User avatarSize="32" timestamp={props.post.created_at} timestampLink={post_url} user={props.author}/>
+        <User avatarSize="32" timestamp={post.created_at} timestampLink={post_url} user={author}/>
       </div>
 
       <footer className="card__footer">
-        <TagLine tags={[]}/>
+        <TagLine tags={post.labels}/>
 
         <div className="card__toolbars">
-          <Toolbar current_user={props.current_user} post={props.post} triggers={props.triggers} />
+          <Toolbar current_user={current_user} post={post} triggers={triggers} />
 
           <div className="card__toolbar card__toolbar-right">
-            <EditPostButton current_user={props.current_user} post={props.post} />
+            <EditPostButton current_user={current_user} post={post} />
 
             <div className="card__toolbar_item"><Link to={post_url}><span className="fa fa-link"></span></Link></div>
           </div>

@@ -94,6 +94,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async tagPosts(tag) {
+    let response = await this.get(`/api/v1/posts/tag/${tag}`)
+    return response.body;
+  }
+
   async like(postId) {
     let response = await this.post(`/api/v1/post/${postId}/like`)
     return response.body;
@@ -151,12 +156,12 @@ export default class ApiClient
 
   async createPost(type, data) {
     data.type = type;
-    let response = await this.post(`/api/v1/posts`, data)
+    let response = await this.postJSON(`/api/v1/posts`, data)
     return response.body;
   }
 
   async updatePost(uuid, data) {
-    let response = await this.post(`/api/v1/post/${uuid}`, data)
+    let response = await this.postJSON(`/api/v1/post/${uuid}`, data)
     return response.body;
   }
 

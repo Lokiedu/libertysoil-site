@@ -32,13 +32,11 @@ import { defaultSelector } from '../selectors';
 class UserPage extends React.Component {
   static displayName = 'UserPage'
 
-  componentDidMount () {
-    UserPage.fetchData(this.props);
+  componentDidMount() {
+    UserPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
-  static async fetchData (props) {
-    let client = new ApiClient(API_HOST);
-
+  static async fetchData(props, client) {
     try {
       let userInfo = client.userInfo(props.params.username);
       let userPosts = client.userPosts(props.params.username);

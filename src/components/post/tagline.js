@@ -16,25 +16,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
-export default class TagLine extends React.Component {
-  static displayName = "TagLine";
-  static propTypes = {
-    tags: React.PropTypes.arrayOf(React.PropTypes.string)
-  };
-
-  render() {
-    if (this.props.tags.length == 0) {
-      return <script/>;
-    }
-
-    let tagBlocks = this.props.tags.map(name => <span className="tag">{name}</span>);
-
-    return (
-      <div className="tags">
-        {tagBlocks}
-      </div>
-    );
+let TagLine = ({tags}) => {
+  if (tags.length == 0) {
+    return <script/>;
   }
-}
 
+  let tagBlocks = tags.map(tag => (
+    <Link to={`/tag/${tag.name}`} className="tag" key={`tag-${tag.id}`}>
+      {tag.name}
+    </Link>
+  ));
+
+  return (
+    <div className="tags">
+      {tagBlocks}
+    </div>
+  );
+};
+
+TagLine.displayName = "TagLine";
+TagLine.propTypes = {
+  tags: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.string,
+    name: React.PropTypes.string
+  }))
+};
+
+
+export default TagLine;

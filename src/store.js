@@ -29,6 +29,7 @@ const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 const SET_USER_POSTS = 'SET_USER_POSTS';
+const SET_TAG_POSTS = 'SET_TAG_POSTS';
 const REMOVE_POST = 'REMOVE_POST';
 
 const SET_LIKES = 'SET_LIKES';
@@ -73,6 +74,14 @@ export function setPostsToRiver(posts) {
 export function setUserPosts(posts) {
   return {
     type: SET_USER_POSTS,
+    posts
+  }
+}
+
+export function setTagPosts(tag, posts) {
+  return {
+    type: SET_TAG_POSTS,
+    tag,
     posts
   }
 }
@@ -261,13 +270,40 @@ function theReducer(state = initialState, action) {
       break;
     }
 
+    case SET_TAG_POSTS: {
+      let cut = {posts: {}, tag_posts: {}, users: {}};
+
+      if (action.posts.length) {
+        let postsWithoutUsers = action.posts.map(post => {
+          let postCopy = _.cloneDeep(post);
+          delete postCopy.user;
+          return postCopy;
+        });
+
+        let users = _.unique(action.posts.map(post => post.user), 'id')
+
+        for (let user of users) {
+          cut.users[user.id] = user;
+        }
+
+        for (let post of postsWithoutUsers) {
+          cut.posts[post.id] = post;
+        }
+
+        cut.tag_posts[action.tag] = action.posts.map(post => post.id);
+      }
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+      break;
+    }
+
     case REMOVE_POST: {
       let post_id = action.id;
 
       state = state.deleteIn(['posts', post_id]);
 
       {
-        let idx = state.get('river').findIndex(post_id);
+        let idx = state.get('river').findIndex(river_post_id => river_post_id === post_id);
 
         if (idx >= 0) {
           state = state.deleteIn(['river', idx]);
@@ -275,7 +311,7 @@ function theReducer(state = initialState, action) {
       }
 
       for (let user_id of state.get('user_posts').keys()) {
-        let idx = state.get('user_posts').get(user_id).findIndex(post_id);
+        let idx = state.get('user_posts').get(user_id).findIndex(user_post_id => user_post_id === post_id);
 
         if (idx >= 0) {
           state = state.deleteIn(['user_posts', user_id, idx]);
@@ -352,6 +388,7 @@ function theReducer(state = initialState, action) {
 let initialState = {
   users: {},
   user_posts: {},
+  tag_posts: {},
   following: {},
   followers: {},
   likes: {},

@@ -18,6 +18,7 @@
 import _ from 'lodash'
 import bcrypt from 'bcrypt'
 import bb from 'bluebird'
+import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
@@ -34,7 +35,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers']});
+    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
 
     res.send(response.toJSON());
   }
@@ -46,11 +47,28 @@ export default class ApiController {
       .query(qb => {
         qb
           .join('users', 'users.id', 'posts.user_id')
-          .where('users.username', '=', req.params.user)  // followed posts
+          .where('users.username', '=', req.params.user)
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user','likers','favourers']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
+
+    res.send(posts.toJSON());
+  }
+
+  async tagPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .join('labels_posts', 'posts.id', 'labels_posts.post_id')
+          .join('labels', 'labels_posts.label_id', 'labels.id')
+          .where('labels.name', '=', req.params.tag)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
 
     res.send(posts.toJSON());
   }
@@ -59,7 +77,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user','likers','favourers']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels']});
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -213,7 +231,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user','user.followers','likers','favourers']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']})
 
     res.send(posts.toJSON());
   }
@@ -372,6 +390,24 @@ export default class ApiController {
       }
     }
 
+    let tags;
+
+    if ('tags' in req.body) {
+      if (!_.isArray(req.body.tags)) {
+        res.status(400);
+        res.send({error: `"tags" parameter is expected to be an array`});
+        return;
+      }
+
+      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+        res.status(400);
+        res.send({error: `each of tags should be at least 3 characters wide`});
+        return;
+      }
+
+      tags = _.unique(req.body.tags);
+    }
+
     let Post = this.bookshelf.model('Post');
 
     let obj = new Post({
@@ -389,10 +425,17 @@ export default class ApiController {
 
     try {
       await obj.save(null, {method: 'insert'});
-      await obj.fetch({require: true, withRelated: ['user']});
+
+      if (_.isArray(tags)) {
+        await obj.attachLabels(tags)
+      }
+
+      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']});
 
       res.send(obj.toJSON());
     } catch (e) {
+      console.log(e)
+      console.log(e.stack)
       res.status(500);
       res.send({error: e.message});
     }
@@ -423,6 +466,24 @@ export default class ApiController {
 
     let type = post_object.get('type');
 
+    let tags;
+
+    if ('tags' in req.body) {
+      if (!_.isArray(req.body.tags)) {
+        res.status(400);
+        res.send({error: `"tags" parameter is expected to be an array`});
+        return;
+      }
+
+      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+        res.status(400);
+        res.send({error: `each of tags should be at least 3 characters wide`});
+        return;
+      }
+
+      tags = _.unique(req.body.tags);
+    }
+
     if (type === 'short_text') {
       if ('text' in req.body) {
         post_object.set('text', req.body.text);
@@ -441,7 +502,12 @@ export default class ApiController {
 
     try {
       await post_object.save(null, {method: 'update'});
-      await post_object.fetch({require: true, withRelated: ['user']})
+
+      if (_.isArray(tags)) {
+        await post_object.attachLabels(tags)
+      }
+
+      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']})
 
       res.send(post_object.toJSON());
     } catch (e) {

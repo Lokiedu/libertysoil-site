@@ -20,7 +20,7 @@ import ApiClient from '../api/client'
 import {
   getStore,
   addError, addMessage, removeAllMessages,
-  addUser, updateUser, addPost, addPostToRiver, setCurrentUser,
+  addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites
 } from '../store';
 
@@ -88,6 +88,9 @@ export async function createPost(type, data) {
 
     getStore().dispatch(addPostToRiver(result));
   } catch (e) {
+    console.log(e)
+    console.log(e.stack)
+
     getStore().dispatch(addError(e.message));
   }
 }

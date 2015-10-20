@@ -15,10 +15,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react'
-import _ from 'lodash'
+import React, { Component } from 'react';
+import _ from 'lodash';
 
-export default class CreatePostShort extends Component {
+export default class EditPostShort extends Component {
+  updateNewPostTags = (tags) => {
+    console.info(tags);
+  }
+
   render () {
     let value = '';
 
@@ -27,6 +31,7 @@ export default class CreatePostShort extends Component {
     }
 
     return (
+      <div>
         <div className="layout__row">
           <textarea
             className="input input-textarea input-block"
@@ -35,6 +40,7 @@ export default class CreatePostShort extends Component {
             placeholder="Share education related resources, your perspective"
           />
         </div>
+      </div>
     )
   }
 }
