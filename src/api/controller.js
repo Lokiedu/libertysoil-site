@@ -47,7 +47,24 @@ export default class ApiController {
       .query(qb => {
         qb
           .join('users', 'users.id', 'posts.user_id')
-          .where('users.username', '=', req.params.user)  // followed posts
+          .where('users.username', '=', req.params.user)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
+
+    res.send(posts.toJSON());
+  }
+
+  async tagPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .join('labels_posts', 'posts.id', 'labels_posts.post_id')
+          .join('labels', 'labels_posts.label_id', 'labels.id')
+          .where('labels.name', '=', req.params.tag)
           .orderBy('posts.created_at', 'desc')
       });
 
