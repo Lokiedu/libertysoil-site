@@ -81,6 +81,10 @@ export default class TagsEditor extends Component {
         });
     };
 
+    getTags() {
+      return this.state.tags.map(tag => tag.title);
+    }
+
     render () {
         var props = this.props;
         var state = this.state;
