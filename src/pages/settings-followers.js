@@ -28,6 +28,35 @@ import { getStore, addUser } from '../store';
 import { followUser, unfollowUser } from '../triggers'
 import { defaultSelector } from '../selectors';
 
+let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
+  if (users.length === 0) {
+    return <div>{empty_msg}</div>;
+  }
+
+  return (
+    <div className="layout__grid layout__grid-responsive">
+      {users.map((user) => (
+        <div className="layout__grid_item layout__grid_item-identical">
+          <div className="layout__row layout__row-small">
+            <User
+              user={user}
+            />
+          </div>
+
+          <div className="layout__row layout__row-small">
+            <FollowButton
+              active_user={current_user}
+              following={i_am_following}
+              triggers={triggers}
+              user={user}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
@@ -93,57 +122,30 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h1 className="content__title">Manage Followers</h1>
         </div>
+
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row">
-            <div className="layout__grid layout__grid-responsive">
-              {followingUsers.map((user) => (
-                <div className="layout__grid_item layout__grid_item-identical">
-                  <div className="layout__row layout__row-small">
-                    <User
-                      user={user}
-                      />
-                  </div>
-                  <div className="layout__row layout__row-small">
-                    <FollowButton
-                      active_user={current_user}
-                      user={user}
-                      following={i_am_following}
-                      triggers={{ followUser, unfollowUser }}
-                      />
-                  </div>
-                </div>
-              ))}
-              {!followingUsers.length && <div>You are not following any users</div>}
-            </div>
+            <UserGrid
+              current_user={current_user}
+              empty_msg="You are not following any users"
+              i_am_following={i_am_following}
+              triggers={{followUser, unfollowUser}}
+              users={followingUsers}
+            />
           </div>
         </div>
 
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
             <div className="layout__row">
-              <div className="layout__grid layout__grid-responsive">
-                {followsUsers.map((user) => (
-                  <div className="layout__grid_item layout__grid_item-identical">
-                    <div className="layout__grid_item layout__grid_item-identical">
-                      <div className="layout__row layout__row-small">
-                        <User
-                          user={user}
-                          />
-                      </div>
-                      <div className="layout__row layout__row-small">
-                        <FollowButton
-                          active_user={current_user}
-                          user={user}
-                          following={i_am_following}
-                          triggers={{ followUser, unfollowUser }}
-                          />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {!followsUsers.length && <div>Noone follows you yet</div>}
-              </div>
+              <UserGrid
+                current_user={current_user}
+                empty_msg="Noone follows you yet"
+                i_am_following={i_am_following}
+                triggers={{followUser, unfollowUser}}
+                users={followsUsers}
+              />
             </div>
         </div>
       </BaseSettingsPage>
