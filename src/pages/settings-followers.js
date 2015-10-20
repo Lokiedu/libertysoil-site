@@ -18,12 +18,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BaseSettingsPage from './base/settings'
+import BaseSettingsPage from './base/settings';
+import User from '../components/user';
+import FollowButton from '../components/follow-button';
 
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
-import { changePassword } from '../triggers'
+import { followUser, unfollowUser } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsFollowersPage extends React.Component {
@@ -55,12 +57,24 @@ class SettingsFollowersPage extends React.Component {
       messages,
       following,
       follows,
+      users,
       ...props
     } = this.props;
 
     if (!is_logged_in) {
       return false;
     }
+
+    let followingUsers = following[current_user.id] || [];
+    let followsUsers = follows[current_user.id] || [];
+
+    followingUsers = followingUsers.map((user_id) => {
+      return users[user_id];
+    });
+
+    followsUsers = followsUsers.map((user_id) => {
+      return users[user_id];
+    });
 
     return (
       <BaseSettingsPage
@@ -78,17 +92,41 @@ class SettingsFollowersPage extends React.Component {
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row">
             <div className="layout__grid">
-              <div className="layout__grid_item layout__grid_item-50">
-                user
-              </div>
-              <div className="layout__grid_item layout__grid_item-50">
-                user
-              </div>
+              {followingUsers.map((user) => (
+                <div className="layout__grid_item layout__grid_item-identical">
+                  <div className="layout__row layout__row-small">
+                    <User
+                      user={user}
+                      />
+                  </div>
+                  <div className="layout__row layout__row-small">
+                    <FollowButton
+                      active_user={user}
+                      user={current_user}
+                      following={Object.keys(following)}
+                      triggers={{ followUser, unfollowUser }}
+                      />
+                  </div>
+                </div>
+              ))}
+              {!followingUsers.length && <div>You no following users...</div>}
             </div>
           </div>
         </div>
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
+            <div className="layout__row">
+              <div className="layout__grid">
+                {followsUsers.map((user) => (
+                  <div className="layout__grid_item layout__grid_item-identical">
+                    <User
+                      user={user}
+                      />
+                  </div>
+                ))}
+                {!followsUsers.length && <div>No following you users...</div>}
+              </div>
+            </div>
         </div>
       </BaseSettingsPage>
     )
