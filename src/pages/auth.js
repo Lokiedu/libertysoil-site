@@ -67,12 +67,9 @@ class Auth extends React.Component {
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user} />
-        <div className="page__body page__body-rows">
+        <div className="page__body">
           <Messages messages={this.props.messages}/>
-
-          <div className="area">
-            <AuthContents is_logged_in={is_logged_in} triggers={triggers}/>
-          </div>
+          <AuthContents is_logged_in={is_logged_in} triggers={triggers}/>
         </div>
         <Footer/>
       </div>
@@ -81,4 +78,3 @@ class Auth extends React.Component {
 }
 
 export default connect(defaultSelector)(Auth);
-
