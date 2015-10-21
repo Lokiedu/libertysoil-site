@@ -39,16 +39,18 @@ class SettingsPage extends React.Component {
     };
   }
 
-  componentDidMount () {
+  componentWillMount () {
     const { current_user } = this.props;
-
-    SettingsPage.fetchData(this.props, new ApiClient(API_HOST));
 
     if (current_user && current_user.more && current_user.more.roles) {
       this.setState({
         roles: current_user.more.roles
       });
     }
+  }
+
+  componentDidMount () {
+    SettingsPage.fetchData(this.props, new ApiClient(API_HOST));
   }
 
   static async fetchData(props, client) {
