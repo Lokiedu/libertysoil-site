@@ -49,7 +49,11 @@ export default class TagsEditor extends Component {
 
         e && e.preventDefault();
 
-        if (this.state.tags.length >= this.props.tagsMaxCount || _.find(this.state.tags, { name })) {
+        if (
+          this.state.tags.length >= this.props.tagsMaxCount
+          || name.length < this.props.tagMinSize
+          || _.find(this.state.tags, { name })
+        ) {
             return;
         }
 
