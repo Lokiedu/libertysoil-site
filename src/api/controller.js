@@ -457,7 +457,7 @@ export default class ApiController {
     let post_object;
 
     try {
-      post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true});
+      post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true, withRelated: ['labels']});
     } catch(e) {
       res.status(500);
       res.send({error: e.message})
@@ -504,13 +504,16 @@ export default class ApiController {
       await post_object.save(null, {method: 'update'});
 
       if (_.isArray(tags)) {
-        await post_object.attachLabels(tags)
+        await post_object.attachLabels(tags, true)
       }
 
       await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']})
 
       res.send(post_object.toJSON());
     } catch (e) {
+      console.log(e)
+      console.log(e.stack)
+
       res.status(500);
       res.send({error: e.message})
     }
