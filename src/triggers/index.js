@@ -140,8 +140,9 @@ export async function followUser(user) {
   try {
     let res = await client.follow(user.username);
 
-    if ('user' in res) {
-      getStore().dispatch(addUser(res.user));
+    if ('user1' in res) {
+      getStore().dispatch(addUser(res.user1));
+      getStore().dispatch(addUser(res.user2));
     }
   } catch (e) {
     getStore().dispatch(addError(e.message));
@@ -152,8 +153,9 @@ export async function unfollowUser(user) {
   try {
     let res = await client.unfollow(user.username);
 
-    if ('user' in res) {
-      getStore().dispatch(addUser(res.user));
+    if ('user1' in res) {
+      getStore().dispatch(addUser(res.user1));
+      getStore().dispatch(addUser(res.user2));
     }
   } catch (e) {
     getStore().dispatch(addError(e.message));

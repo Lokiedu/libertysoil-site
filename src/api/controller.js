@@ -561,16 +561,18 @@ export default class ApiController {
 
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
-      let follow = await User.where({username: req.params.username}).fetch({require: true});
+      let follow = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
 
       if (user.id != follow.id && _.isUndefined(user.related('following').find({id: follow.id}))) {
         await user.following().attach(follow);
 
         follow_status.success = true;
         user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
+        follow = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
       }
 
-      follow_status.user = user.toJSON();
+      follow_status.user1 = user.toJSON();
+      follow_status.user2 = follow.toJSON();
     } catch(ex) {
       res.status(500);
       follow_status.error = ex.message;
@@ -657,16 +659,18 @@ export default class ApiController {
 
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
-      let follow = await User.where({username: req.params.username}).fetch({require: true});
+      let follow = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
 
       if (user.id != follow.id && !_.isUndefined(user.related('following').find({id: follow.id}))) {
         await user.following().detach(follow);
 
         follow_status.success = true;
         user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers']});
+        follow = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
       }
 
-      follow_status.user = user.toJSON();
+      follow_status.user1 = user.toJSON();
+      follow_status.user2 = follow.toJSON();
     } catch(ex) {
       res.status(500);
       follow_status.error = ex.message;
