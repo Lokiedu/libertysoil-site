@@ -205,11 +205,9 @@ function theReducer(state = initialState, action) {
       let postCopy = _.cloneDeep(action.post);
       delete postCopy.user;
 
-      let cut = {posts: {}, users: {}};
-      cut.users[user.id] = user;
-      cut.posts[postCopy.id] = postCopy;
+      state = state.setIn(['users', user.id], Immutable.fromJS(user));
+      state = state.setIn(['posts', postCopy.id], Immutable.fromJS(postCopy));
 
-      state = state.mergeDeep(Immutable.fromJS(cut));
       break;
     }
 
