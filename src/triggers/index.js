@@ -194,6 +194,9 @@ export async function registerUser(username, password, email, firstName, lastNam
       getStore().dispatch(addError(result.error));
       return;
     }
+
+    getStore().dispatch(setCurrentUser(result));
+
   } catch (e) {
     // FIXME: enable form again
 

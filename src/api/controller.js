@@ -289,8 +289,15 @@ export default class ApiController {
 
     try {
       await obj.save(null, {method: 'insert'});
+
+      if (req.session) {
+        req.session.user = obj.id;
+      }
+
       res.send(obj.toJSON());
-      return
+
+
+      return;
     } catch (e) {
       if (e.code == 23505) {
         res.status(401)

@@ -51,7 +51,7 @@ let AuthContents = (props) => {
       <div>
         <div className="area__body layout-align_start">
           <Login onLoginUser={props.triggers.login} />
-          <Register onRegisterUser={props.triggers.registerUser} />
+          <Register onRegisterUser={props.triggers.registerUser} history={props.history} />
         </div>
       </div>
     </div>
@@ -60,7 +60,7 @@ let AuthContents = (props) => {
 
 class Auth extends React.Component {
   render() {
-    let { current_user, is_logged_in } = this.props;
+    let { current_user, is_logged_in, history } = this.props;
 
     let triggers = {login, registerUser};
 
@@ -71,7 +71,7 @@ class Auth extends React.Component {
           <Messages messages={this.props.messages}/>
 
           <div className="area">
-            <AuthContents is_logged_in={is_logged_in} triggers={triggers}/>
+            <AuthContents is_logged_in={is_logged_in} triggers={triggers} history={history}/>
           </div>
         </div>
         <Footer/>

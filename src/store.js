@@ -355,13 +355,16 @@ function theReducer(state = initialState, action) {
       if (_.isUndefined(action.user)) {
         cut = {current_user_id: null};
       } else {
-        cut = userToStateCut(action.user)
-        cut.current_user_id = action.user.id
+        cut = userToStateCut(action.user);
+        cut.current_user_id = action.user.id;
 
-        state = state.setIn(
-          ['following', action.user.id],
-          action.user.following.map(user => user.id)
-        );
+        if('following' in action.user) {
+          state = state.setIn(
+            ['following', action.user.id],
+            action.user.following.map(user => user.id)
+          );
+        }
+
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));

@@ -35,6 +35,7 @@ export default class RegisterComponent extends React.Component {
       return;
     }
 
+
     this.props.onRegisterUser(
       form.username.value,
       form.password.value,
@@ -42,6 +43,8 @@ export default class RegisterComponent extends React.Component {
       form.firstName.value,
       form.lastName.value
     );
+
+    this.props.history.pushState(null, '/');
   };
 
   render() {
