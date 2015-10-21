@@ -26,7 +26,7 @@ import River from '../components/river_of_posts';
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
-import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
+import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class UserPage extends React.Component {
@@ -68,7 +68,7 @@ class UserPage extends React.Component {
     let user_posts = this.props.user_posts[page_user.id];
 
     let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost};
+    let post_triggers = {likePost, unlikePost, favPost, unfavPost};
 
     return (
       <BaseUserPage

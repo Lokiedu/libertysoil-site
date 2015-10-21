@@ -27,7 +27,7 @@ import { ShortTextPost, PostWrapper } from '../components/post'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
-import {likePost, unlikePost} from '../triggers';
+import {likePost, unlikePost, favPost, unfavPost} from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -59,7 +59,7 @@ class PostPage extends React.Component {
     }
 
     const author = this.props.users[current_post.user_id]
-    let triggers = {likePost, unlikePost};
+    let triggers = {likePost, unlikePost, favPost, unfavPost};
 
     return (
       <div>
