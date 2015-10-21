@@ -18,10 +18,16 @@
 import React from 'react';
 import Linkify from 'react-linkify';
 
-let ShortTextPost = (props) => {
+let ShortTextPost = ({ post }) => {
+  let text = '';
+
+  if (post.text) {
+    text = post.text.split("\n").map((line, i) => <p key={`text-${i}`}>{line}</p>);
+  }
+
   return (
     <Linkify properties={{target: '_blank'}}>
-      <p>{props.post.text}</p>
+      {text}
     </Linkify>
   );
 };
