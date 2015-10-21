@@ -1,147 +1,154 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 
 export default class TagsEditor extends Component {
-    static defaultProps = {
-        tag: '',
-        tagMinSize: 3,
-        tagMaxSize: 128,
-        tagsMaxCount: 42,
-        tags: [],
-        autocompleteTags: []
+  static displayName = 'TagsEditor';
+
+  static propTypes = {
+    tags: PropTypes.array,
+    autocompleteTags: PropTypes.array
+  }
+
+  static defaultProps = {
+    tag: '',
+    tagMinSize: 3,
+    tagMaxSize: 128,
+    tagsMaxCount: 42,
+    tags: [],
+    autocompleteTags: []
+  }
+
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      tags: props.tags,
+      autocompleteTags: props.autocompleteTags,
+      tag: props.tag
     };
+  }
 
-    constructor (props) {
-        super(props);
+  componentWillReceiveProps (props) {
+    this.state = {
+      tags: props.tags,
+      autocompleteTags: props.autocompleteTags,
+      tag: props.tag
+    };
+  }
 
-        this.state = {
-            tags: props.tags,
-            autocompleteTags: props.autocompleteTags,
-            tag: props.tag
-        };
+  updateTag = () => {
+    var tag = this.refs.newTag.value || '';
+
+    this.setState({
+      tag
+    });
+  };
+
+  handleKeyPress = (e) => {
+    if (e.keyCode == 13) { // Enter
+      e && e.preventDefault();
+      this.addTag();
+    }
+  };
+
+  addTag = (e) => {
+    var name = this.state.tag || '';
+
+    e && e.preventDefault();
+
+    if (
+      this.state.tags.length >= this.props.tagsMaxCount
+      || name.length < this.props.tagMinSize
+      || _.find(this.state.tags, { name })
+    ) {
+      return;
     }
 
-    componentWillReceiveProps (props) {
-        this.state = {
-            tags: props.tags,
-            autocompleteTags: props.autocompleteTags,
-            tag: props.tag
-        };
-    }
+    this.state.tags.unshift({
+      name
+      //type: this.refs.type.value
+    });
+    this.onTagsUpdate(this.state.tags);
 
-    updateTag = () => {
-        var tag = this.refs.newTag.value || '';
+    this.setState({
+      tags: this.state.tags,
+      type: 'school',
+      tag: ''
+    });
+  };
 
-        this.setState({
-            tag
-        });
-    };
+  onTagsUpdate (tags) {
+    this.props.onUpdate && this.props.onUpdate(tags);
+  }
 
-    handleKeyPress = (e) => {
-        if (e.keyCode == 13) { // Enter
-            e && e.preventDefault();
-            this.addTag();
-        }
-    };
+  removeTag = (tag) => {
+    var tags = this.state.tags;
 
-    addTag = (e) => {
-        var name = this.state.tag || '';
+    tags.splice(tags.indexOf(tag), 1);
 
-        e && e.preventDefault();
+    this.onTagsUpdate(tags);
+    this.setState({
+      tags: tags
+    });
+  };
 
-        if (
-          this.state.tags.length >= this.props.tagsMaxCount
-          || name.length < this.props.tagMinSize
-          || _.find(this.state.tags, { name })
-        ) {
-            return;
-        }
+  getTags() {
+    return this.state.tags.map(tag => tag.name.trim());
+  }
 
-        this.state.tags.unshift({
-          name
-          //type: this.refs.type.value
-        });
-        this.onTagsUpdate(this.state.tags);
+  render () {
+    var props = this.props;
+    var state = this.state;
 
-        this.setState({
-            tags: this.state.tags,
-            type: 'school',
-            tag: ''
-        });
-    };
+    var newTagCreationIsDisabled = (state.tags.length >= props.tagsMaxCount);
 
-    onTagsUpdate (tags) {
-        this.props.onUpdate && this.props.onUpdate(tags);
-    }
-
-    removeTag = (tag) => {
-        var tags = this.state.tags;
-
-        tags.splice(tags.indexOf(tag), 1);
-
-        this.onTagsUpdate(tags);
-        this.setState({
-            tags: tags
-        });
-    };
-
-    getTags() {
-      return this.state.tags.map(tag => tag.name.trim());
-    }
-
-    render () {
-        var props = this.props;
-        var state = this.state;
-
-        var newTagCreationIsDisabled = (state.tags.length >= props.tagsMaxCount);
-
-        return (
-          <div>
-            <div className="layout__row">
-              <div className="layout layout-vertical layout__row layout__row-micro_spacing">
-                <input
-                  id="newTag"
-                  ref="newTag"
-                  placeholder="New tag"
-                  disabled={newTagCreationIsDisabled}
-                  value={state.tag}
-                  onChange={this.updateTag}
-                  onKeyDown={this.handleKeyPress}
-                  className="input"
-                  list="autocompleteTags" />
-                {false && <select
-                  ref="type"
-                  className="input layout__space_left"
-                  name="type">
-                  <option value="school">School</option>
-                  <option value="location">Location</option>
-                </select>}
-                <button
-                  disabled={newTagCreationIsDisabled}
-                  onClick={this.addTag}
-                  className="button button-form layout__space_left">Add</button>
-                <datalist id="autocompleteTags">
-                  {props.autocompleteTags.map((tag, i) =>
-                    <option value={tag} key={i} />
-                  )}
-                </datalist>
-              </div>
-            </div>
-            <div className="layout__row">
-              <div className="layout layout__grid layout__grid-small">
-                {state.tags.map((tag, i) =>
-                  <span
-                    className="tag action"
-                    title="Remove tag"
-                    onClick={this.removeTag.bind(null, tag)}
-                    key={i}>
-                    {tag.name}
-                    <i className="micon micon-micro micon-left_space">close</i>
-                  </span>
-                )}
-              </div>
-            </div>
+    return (
+      <div>
+        <div className="layout__row">
+          <div className="layout layout-vertical layout__row layout__row-micro_spacing">
+            <input
+              id="newTag"
+              ref="newTag"
+              placeholder="New tag"
+              disabled={newTagCreationIsDisabled}
+              value={state.tag}
+              onChange={this.updateTag}
+              onKeyDown={this.handleKeyPress}
+              className="input"
+              list="autocompleteTags" />
+            {false && <select
+              ref="type"
+              className="input layout__space_left"
+              name="type">
+              <option value="school">School</option>
+              <option value="location">Location</option>
+            </select>}
+            <button
+              disabled={newTagCreationIsDisabled}
+              onClick={this.addTag}
+              className="button button-form layout__space_left">Add</button>
+            <datalist id="autocompleteTags">
+              {props.autocompleteTags.map((tag, i) =>
+                <option value={tag} key={i} />
+              )}
+            </datalist>
           </div>
-          );
-    }
-};
+        </div>
+        <div className="layout__row">
+          <div className="layout layout__grid layout__grid-small">
+            {state.tags.map((tag, i) =>
+              <span
+                className="tag action"
+                title="Remove tag"
+                onClick={this.removeTag.bind(null, tag)}
+                key={i}>
+                {tag.name}
+                <i className="micon micon-micro micon-left_space">close</i>
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+}

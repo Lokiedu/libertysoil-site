@@ -58,7 +58,7 @@ export default class CreatePost extends React.Component {
           <div className="box__body">
             <EditPost />
 
-            <TagsEditor ref={(editor) => this.editor = editor} tags={[]} autocompleteTags={['tag1', 'tag2']} />
+            <TagsEditor ref={(editor) => this.editor = editor} tags={[]} />
 
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">
