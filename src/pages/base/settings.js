@@ -36,7 +36,7 @@ export default class BaseSettingsPage extends React.Component {
       is_logged_in,
       current_user,
       following,
-      follows,
+      followers,
       messages
     } = this.props;
 
@@ -53,7 +53,7 @@ export default class BaseSettingsPage extends React.Component {
                 user={current_user}
                 current_user={current_user}
                 following={following}
-                follows={follows}
+                followers={followers}
                 />
               <div className="page__content page__content-spacing">
                 <div className="layout__row layout-small">

@@ -26,7 +26,7 @@ import River from '../components/river_of_posts';
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, addUser, setUserPosts, addError} from '../store';
-import {followUser, unfollowUser, likePost, unlikePost} from '../triggers'
+import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class UserPage extends React.Component {
@@ -50,6 +50,10 @@ class UserPage extends React.Component {
 
   render () {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
+    const {
+      following,
+      followers
+    } = this.props;
 
     if (_.isUndefined(page_user)) {
       return <script/>;  // not loaded yet
@@ -59,14 +63,18 @@ class UserPage extends React.Component {
       return <NotFound/>
     }
 
+    //console.info(this.props);
+
     let user_posts = this.props.user_posts[page_user.id];
 
     let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost};
+    let post_triggers = {likePost, unlikePost, favPost, unfavPost};
 
     return (
       <BaseUserPage
         current_user={this.props.current_user}
+        following={following}
+        followers={followers}
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}

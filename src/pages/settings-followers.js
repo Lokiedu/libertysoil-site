@@ -107,7 +107,7 @@ class SettingsFollowersPage extends React.Component {
         onSave={this.onSave}
         messages={messages}
         following={following}
-        follows={followers}
+        followers={followers}
       >
         <div className="paper__page">
           <h1 className="content__title">Manage Followers</h1>
