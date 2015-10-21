@@ -45,7 +45,7 @@ class AboutUserPage extends React.Component {
 
   render() {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
-    let linesOfBio = '<p>No information provided...</p>';
+    let linesOfBio = <p>No information provided...</p>;
 
     if (_.isUndefined(page_user)) {
       return <script/>;  // not loaded yet
