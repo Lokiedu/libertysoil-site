@@ -43,20 +43,19 @@ export default class ProfileHeader extends React.Component {
       }
     }
 
-    if (following && following[current_user.id]) {
+    if (following && following[user.id]) {
       followingCount = (
         <div>
-          {following[current_user.id].length}<br />
+          {following[user.id].length}<br />
           <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Following</Link>
         </div>
       );
     }
 
-    if (follows && follows[current_user.id]) {
+    if (follows && follows[user.id]) {
       followsCount = (
         <div>
-          {follows[current_user.id].length}<br />
-
+          {follows[user.id].length}<br />
           <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Followers</Link>
         </div>
       );

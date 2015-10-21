@@ -50,6 +50,10 @@ class UserPage extends React.Component {
 
   render () {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
+    const {
+      following,
+      follows
+    } = this.props;
 
     if (_.isUndefined(page_user)) {
       return <script/>;  // not loaded yet
@@ -58,6 +62,8 @@ class UserPage extends React.Component {
     if (false === page_user) {
       return <NotFound/>
     }
+
+    //console.info(this.props);
 
     let user_posts = this.props.user_posts[page_user.id];
 
@@ -71,6 +77,8 @@ class UserPage extends React.Component {
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
         triggers={user_triggers}
+        following={following}
+        follows={follows}
       >
         <River
           current_user={this.props.current_user}

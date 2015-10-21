@@ -26,7 +26,14 @@ import Sidebar from '../../components/sidebar';
 export default class BaseUserPage extends React.Component {
   static displayName = 'BaseUserPage'
   render () {
-    let {current_user, i_am_following, is_logged_in, page_user} = this.props;
+    let {
+      current_user,
+      i_am_following,
+      is_logged_in,
+      page_user,
+      following,
+      follows
+    } = this.props;
 
     return (
       <div>
@@ -37,7 +44,13 @@ export default class BaseUserPage extends React.Component {
             <Sidebar current_user={current_user}/>
 
             <div className="page__body_content">
-              <ProfileHeader user={page_user} current_user={current_user} i_am_following={i_am_following} triggers={this.props.triggers} />
+              <ProfileHeader
+                user={page_user}
+                current_user={current_user}
+                i_am_following={i_am_following}
+                following={following}
+                follows={follows}
+                triggers={this.props.triggers} />
 
               <div className="page__content page__content-horizontal_space">
                 <div className="layout__space-double">
