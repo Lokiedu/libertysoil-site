@@ -55,6 +55,7 @@ class AboutUserPage extends React.Component {
     }
 
     let user_triggers = {followUser, unfollowUser};
+    let lines = page_user.more.bio.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
 
     return (
       <BaseUserPage
@@ -64,7 +65,7 @@ class AboutUserPage extends React.Component {
         page_user={page_user}
         triggers={user_triggers}
       >
-        <p>About</p>
+        <div>{lines}</div>
       </BaseUserPage>
     )
   }
