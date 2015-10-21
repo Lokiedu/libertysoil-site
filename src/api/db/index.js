@@ -69,15 +69,43 @@ export default function initBookshelf(config) {
     favourers: function() {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
     },
-    attachLabels: async function(names) {
+    attachLabels: async function(names, removeUnused=false) {
       let labels = this.labels();
 
-      let tags = await Promise.all(names.map(tag_name => Label.createOrSelect(tag_name)));
-      let attachPromises = tags.map(async (tag) => {
-        labels.attach(tag)
+      let labelsToRemove = [];
+      let labelNamesToKeep = [];
+
+      (await labels.fetch()).map(label => {
+        let name = label.get('name');
+
+        if (names.indexOf(name) == -1) {
+          labelsToRemove.push(label);
+        } else {
+          labelNamesToKeep.push(name);
+        }
       });
 
-      await Promise.all(attachPromises);
+      let labelNamesToAdd = [];
+      for (let name of names) {
+        if (labelNamesToKeep.indexOf(name) == -1) {
+          labelNamesToAdd.push(name);
+        }
+      }
+
+      let tags = await Promise.all(labelNamesToAdd.map(tag_name => Label.createOrSelect(tag_name)));
+      let promises = tags.map(async (tag) => {
+        await labels.attach(tag)
+      });
+
+      if (removeUnused) {
+        let morePromises = labelsToRemove.map(async (tag) => {
+          await labels.detach(tag);
+        });
+
+        promises = [...promises, ...morePromises];
+      }
+
+      await Promise.all(promises);
     }
   });
 
