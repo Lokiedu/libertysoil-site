@@ -511,6 +511,9 @@ export default class ApiController {
 
       res.send(post_object.toJSON());
     } catch (e) {
+      console.log(e)
+      console.log(e.stack)
+
       res.status(500);
       res.send({error: e.message})
     }
