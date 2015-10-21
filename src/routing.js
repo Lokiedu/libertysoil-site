@@ -31,6 +31,7 @@ import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
+import UsersPage from './pages/users';
 
 // <Redirect from="/user/:username" to="/user/:username/posts" />
 
@@ -41,6 +42,7 @@ let routes = (
     <Route component={PostPage} path="/post/:uuid" />
     <Route component={PostEditPage} path="/post/edit/:uuid" />
     <Route component={TagPage} path="/tag/:tag" />
+    <Route component={UsersPage} path="/users" />
     <Route path="/settings">
       <IndexRoute component={SettingsPage} />
       <Route component={SettingsPasswordPage} path="password" />

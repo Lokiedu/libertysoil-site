@@ -19,44 +19,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import BaseSettingsPage from './base/settings';
-import User from '../components/user';
-import FollowButton from '../components/follow-button';
+import UsersGrid from '../components/users-grid';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { getStore, addUser } from '../store';
 import { followUser, unfollowUser } from '../triggers'
 import { defaultSelector } from '../selectors';
-
-let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
-  if (users.length === 0) {
-    return <div>{empty_msg}</div>;
-  }
-
-  return (
-    <div className="layout__grids layout__grids-space layout__grid-responsive">
-      {users.map((user) => (
-        <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
-          <div className="layout__row layout__row-small">
-            <User
-              user={user}
-              avatarSize="32"
-            />
-          </div>
-
-          <div className="layout__row layout__row-small">
-            <FollowButton
-              active_user={current_user}
-              following={i_am_following}
-              triggers={triggers}
-              user={user}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
@@ -81,11 +50,11 @@ class SettingsFollowersPage extends React.Component {
   render() {
     const {
       current_user,
-      is_logged_in,
-      i_am_following,
-      messages,
-      following,
       followers,
+      following,
+      i_am_following,
+      is_logged_in,
+      messages,
       users,
       ...props
     } = this.props;
@@ -103,8 +72,9 @@ class SettingsFollowersPage extends React.Component {
     return (
       <BaseSettingsPage
         current_user={current_user}
+        followers={followers}
+        following={following}
         is_logged_in={is_logged_in}
-        onSave={this.onSave}
         messages={messages}
         following={following}
         follows={followers}
@@ -116,7 +86,7 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row layout__row-double">
-            <UserGrid
+            <UsersGrid
               current_user={current_user}
               empty_msg="You are not following any users"
               i_am_following={i_am_following}
@@ -129,7 +99,7 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
             <div className="layout__row layout__row-double">
-              <UserGrid
+              <UsersGrid
                 current_user={current_user}
                 empty_msg="Noone follows you yet"
                 i_am_following={i_am_following}
