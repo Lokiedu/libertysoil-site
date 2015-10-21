@@ -45,6 +45,7 @@ class AboutUserPage extends React.Component {
 
   render() {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
+    let linesOfBio = '<p>No information provided...</p>';
 
     if (_.isUndefined(page_user)) {
       return <script/>;  // not loaded yet
@@ -55,7 +56,14 @@ class AboutUserPage extends React.Component {
     }
 
     let user_triggers = {followUser, unfollowUser};
-    let lines = page_user.more.bio.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
+
+    if (page_user.more) {
+      if (page_user.more.bio) {
+        linesOfBio = page_user.more.bio.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
+      }
+    }
+
+
 
     return (
       <BaseUserPage
@@ -65,7 +73,11 @@ class AboutUserPage extends React.Component {
         page_user={page_user}
         triggers={user_triggers}
       >
-        <div>{lines}</div>
+        <div className="paper">
+          <div className="paper__page content">
+            {linesOfBio}
+          </div>
+        </div>
       </BaseUserPage>
     )
   }
