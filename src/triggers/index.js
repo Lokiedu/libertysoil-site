@@ -192,7 +192,7 @@ export async function registerUser(username, password, email, firstName, lastNam
     if ('error' in result) {
       // FIXME: enable form again
       getStore().dispatch(addError(result.error));
-      return;
+      throw result.error;
     }
 
     getStore().dispatch(setCurrentUser(result));
@@ -203,12 +203,13 @@ export async function registerUser(username, password, email, firstName, lastNam
     if (e.response && ('error' in e.response.body)) {
       // FIXME: enable form again
       getStore().dispatch(addError(e.response.body.error));
-      return;
+      throw e.response.body.error;
     } else {
+      let error = 'Server seems to have problems. Retry later, please';
       console.log(e)
       console.log(e.stack)
-      getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
-      return;
+      getStore().dispatch(addError(error));
+      throw error;
     }
   }
 

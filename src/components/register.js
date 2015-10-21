@@ -35,16 +35,17 @@ export default class RegisterComponent extends React.Component {
       return;
     }
 
-
     this.props.onRegisterUser(
       form.username.value,
       form.password.value,
       form.email.value,
       form.firstName.value,
       form.lastName.value
-    );
+    )
+      .then(() => { this.props.history.pushState(null, '/'); })
+      .catch(() => {});
 
-    this.props.history.pushState(null, '/');
+
   };
 
   render() {
