@@ -30,7 +30,7 @@ export default class TagsEditor extends Component {
     }
 
     updateTag = () => {
-        var tag = (this.refs.newTag.value || '').trim();
+        var tag = this.refs.newTag.value || '';
 
         this.setState({
             tag
@@ -86,7 +86,7 @@ export default class TagsEditor extends Component {
     };
 
     getTags() {
-      return this.state.tags.map(tag => tag.name);
+      return this.state.tags.map(tag => tag.name.trim());
     }
 
     render () {
