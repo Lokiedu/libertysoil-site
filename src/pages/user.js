@@ -52,7 +52,7 @@ class UserPage extends React.Component {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
       following,
-      follows
+      followers
     } = this.props;
 
     if (_.isUndefined(page_user)) {
@@ -78,7 +78,7 @@ class UserPage extends React.Component {
         page_user={page_user}
         triggers={user_triggers}
         following={following}
-        follows={follows}
+        follows={followers}
       >
         <River
           current_user={this.props.current_user}
