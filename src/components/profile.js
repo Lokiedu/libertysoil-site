@@ -27,11 +27,11 @@ export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader'
 
   render () {
-    const { user, current_user, i_am_following, following, follows } = this.props;
+    const { user, current_user, i_am_following, following, followers } = this.props;
     let name = user.username;
     let summary = '';
     let followingCount;
-    let followsCount;
+    let followersCount;
 
     if (user.more) {
       if (user.more.firstName || user.more.lastName) {
@@ -43,18 +43,18 @@ export default class ProfileHeader extends React.Component {
       }
     }
 
-    if (following && following[current_user.id]) {
-      if(current_user.id != user.id) {
+    if (following && following[user.id]) {
+      if (current_user.id != user.id) {
         followingCount = (
           <div>
-            {following[current_user.id].length}<br />
+            {following[user.id].length}<br />
             Following
           </div>
         );
       } else {
         followingCount = (
           <div>
-            {following[current_user.id].length}<br />
+            {following[user.id].length}<br />
             <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Following</Link>
           </div>
         );
@@ -62,18 +62,18 @@ export default class ProfileHeader extends React.Component {
 
     }
 
-    if (follows && follows[current_user.id]) {
-      if(current_user.id != user.id) {
-        followsCount = (
+    if (followers && followers[user.id]) {
+      if (current_user.id != user.id) {
+        followersCount = (
           <div>
-            {follows[current_user.id].length}<br />
+            {followers[user.id].length}<br />
             Followers
           </div>
         );
       } else {
-        followsCount = (
+        followersCount = (
           <div>
-            {follows[current_user.id].length}<br />
+            {followers[user.id].length}<br />
 
             <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Followers</Link>
           </div>
@@ -100,7 +100,7 @@ export default class ProfileHeader extends React.Component {
                 {followingCount}
               </div>
               <div className="layout__grid_item">
-                {followsCount}
+                {followersCount}
               </div>
               <div className="layout__grid_item">
                 <FollowButton active_user={current_user} user={user} following={i_am_following} triggers={this.props.triggers} />

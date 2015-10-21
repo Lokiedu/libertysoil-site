@@ -32,7 +32,7 @@ export default class BaseUserPage extends React.Component {
       is_logged_in,
       page_user,
       following,
-      follows
+      followers
     } = this.props;
 
     return (
@@ -49,7 +49,7 @@ export default class BaseUserPage extends React.Component {
                 current_user={current_user}
                 i_am_following={i_am_following}
                 following={following}
-                follows={follows}
+                followers={followers}
                 triggers={this.props.triggers} />
 
               <div className="page__content page__content-horizontal_space">

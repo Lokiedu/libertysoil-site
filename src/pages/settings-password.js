@@ -85,7 +85,7 @@ class SettingsPasswordPage extends React.Component {
         onSave={this.onSave}
         messages={messages}
         following={following}
-        follows={followers}
+        followers={followers}
       >
         <form action="" ref="form" className="paper__page" onSubmit={this.save}>
           <h2 className="content__sub_title layout__row layout__row">Password</h2>

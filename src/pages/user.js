@@ -73,12 +73,12 @@ class UserPage extends React.Component {
     return (
       <BaseUserPage
         current_user={this.props.current_user}
+        following={following}
+        followers={followers}
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
         triggers={user_triggers}
-        following={following}
-        follows={followers}
       >
         <River
           current_user={this.props.current_user}
