@@ -31,15 +31,13 @@ export default class EditPostShort extends Component {
     }
 
     return (
-      <div>
-        <div className="layout__row">
-          <textarea
-            className="input input-textarea input-block"
-            defaultValue={value}
-            name="text"
-            placeholder="Share education related resources, your perspective"
-          />
-        </div>
+      <div className="layout__row">
+        <textarea
+          className="input input-textarea input-block"
+          defaultValue={value}
+          name="text"
+          placeholder="Share education related resources, your perspective"
+        />
       </div>
     )
   }
