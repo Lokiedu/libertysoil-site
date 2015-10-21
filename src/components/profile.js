@@ -18,7 +18,10 @@
 import React from 'react';
 
 import User from './user';
-import FollowButton from '../components/follow-button'
+import FollowButton from './follow-button';
+import { Link } from 'react-router';
+
+import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader'
@@ -44,7 +47,7 @@ export default class ProfileHeader extends React.Component {
       followingCount = (
         <div>
           {following[current_user.id].length}<br />
-          Following
+          <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Following</Link>
         </div>
       );
     }
@@ -53,7 +56,8 @@ export default class ProfileHeader extends React.Component {
       followsCount = (
         <div>
           {follows[current_user.id].length}<br />
-          Followers
+
+          <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Followers</Link>
         </div>
       );
     }
