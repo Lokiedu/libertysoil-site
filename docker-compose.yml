@@ -24,16 +24,3 @@ web:
     - "80:80"
   volumes:
     - "/var/run/docker.sock:/tmp/docker.sock:ro"
-# web:
-#   image: "quay.io/indeyets/nginx17-fpm:latest"
-#   links:
-#     - fpm
-#   volumes_from:
-#     - symfony
-#   environment:
-#     - "NGINX_HOST=showroom-stg.adform.com"
-#     - "NGINX_DATA_ROOT=/app/adform/web"
-#   ports:
-#     - "80:80"
-#   volumes:
-#     - "/mnt/data/media:/app/adform/web/media"
