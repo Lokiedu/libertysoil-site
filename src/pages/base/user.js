@@ -20,6 +20,7 @@ import { Link, IndexLink } from 'react-router';
 
 import Header from '../../components/header';
 import Footer from '../../components/footer';
+import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 
@@ -58,7 +59,7 @@ export default class BaseUserPage extends React.Component {
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
                     {/*<div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</Link></div>*/}
                     {/*<div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</Link></div>*/}
-                    <div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/bio`}>Bio</Link></div>
+                    <div className="layout__grid_item"><PageContentLink visible={!!page_user.more.bio} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/bio`}>Bio</PageContentLink></div>
                   </div>
                 </div>
                 <div className="layout__row layout__row-double">
