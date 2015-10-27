@@ -6,6 +6,12 @@
 * `npm install -g babel babel-eslint eslint eslint-plugin-react gulp nodemon knex`
 * `npm install`
 
+## Setting Up Development Environment
+
+Currently there's more than one way to get the application up and running locally for development (suggested is using Docker with Docker Compose).
+
+Be sure to check out [LibertySoil's Setup Wiki Page](https://github.com/Lokiedu/libertysoil-site/wiki/LibertySoil-Setup) for more information.
+
 ## License
 
 Most source files of Libertysoil.org website are made available under the terms of the GNU Affero General Public License
