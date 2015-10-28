@@ -31,7 +31,7 @@ export async function likePost(current_user_id, post_id) {
     let responseBody = await client.like(post_id);
 
     if (responseBody.success) {
-      getStore().dispatch(setLikes(current_user_id, responseBody.likes));
+      getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
@@ -45,7 +45,7 @@ export async function unlikePost(current_user_id, post_id) {
     let responseBody = await client.unlike(post_id);
 
     if (responseBody.success) {
-      getStore().dispatch(setLikes(current_user_id, responseBody.likes));
+      getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
@@ -59,7 +59,7 @@ export async function favPost(current_user_id, post_id) {
     let responseBody = await client.fav(post_id);
 
     if (responseBody.success) {
-      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites));
+      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
@@ -73,7 +73,7 @@ export async function unfavPost(current_user_id, post_id) {
     let responseBody = await client.unfav(post_id);
 
     if (responseBody.success) {
-      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites));
+      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }

@@ -101,13 +101,16 @@ export default class ApiController {
 
       await user.liked_posts().attach(post);
 
+      post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
+
       let likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.likes = likes.map(row => row.post_id)
+      result.likes = likes.map(row => row.post_id);
+      result.likers = post.relations.likers;
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
@@ -133,13 +136,16 @@ export default class ApiController {
 
       await user.liked_posts().detach(post);
 
+      post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
+
       let likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.likes = likes.map(row => row.post_id)
+      result.likes = likes.map(row => row.post_id);
+      result.likers = post.relations.likers;
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
@@ -165,13 +171,16 @@ export default class ApiController {
 
       await user.favourited_posts().attach(post);
 
+      post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['favourers']});
+
       let favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.favourites = favs.map(row => row.post_id)
+      result.favourites = favs.map(row => row.post_id);
+      result.favourers = post.relations.favourers;
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
@@ -197,13 +206,16 @@ export default class ApiController {
 
       await user.favourited_posts().detach(post);
 
+      post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['favourers']});
+
       let favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
         .where({user_id: req.session.user});
 
       result.success = true;
-      result.favourites = favs.map(row => row.post_id)
+      result.favourites = favs.map(row => row.post_id);
+      result.favourers = post.relations.favourers;
     } catch (ex) {
       res.status(500);
       result.error = ex.message;
