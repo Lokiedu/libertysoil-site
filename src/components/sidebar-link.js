@@ -15,23 +15,33 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import React from 'react';
+import _ from 'lodash';
+import { Link } from 'react-router';
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+export default class SidebarLink extends React.Component {
+  static displayName = 'SidebarLink';
+  static propTypes = {
+    enabled: React.PropTypes.bool,
+    className: React.PropTypes.string,
+    activeClassName: React.PropTypes.string
+  };
 
-.link {
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
-  border: none;
-  border-bottom: 1px solid @color__gray;
-  background: none;
-  appearance: none;
+  render() {
+    let {
+      enabled,
+      className,
+      activeClassName,
+      to,
+      children
+    } = this.props;
 
-  &.disabled {
-    color: #767676;
-    border-bottom: none;
+    if (enabled) {
+      return <Link className={className} activeClassName={activeClassName} to={to}>{children}</Link>;
+    }
+
+    className = className + ' disabled';
+
+    return <span className={className}>{children}</span>;
   }
 }

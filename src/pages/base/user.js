@@ -36,6 +36,14 @@ export default class BaseUserPage extends React.Component {
       followers
     } = this.props;
 
+    let likes_visible = (page_user.likes && page_user.likes.length > 0);
+    let favourites_visible = (page_user.favourites && page_user.favourites.length > 0);
+    let bio_visible = !!page_user.more.bio;
+    
+    let likes_grid_item_class = (likes_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
+    let favourites_grid_item_class = (favourites_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
+    let bio_grid_item_class = (bio_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
+
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}/>
@@ -57,9 +65,9 @@ export default class BaseUserPage extends React.Component {
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
-                    {/*<div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</Link></div>*/}
-                    {/*<div className="layout__grid_item"><Link className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</Link></div>*/}
-                    <div className="layout__grid_item"><PageContentLink visible={!!page_user.more.bio} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/bio`}>Bio</PageContentLink></div>
+                    <div className={likes_grid_item_class}><PageContentLink visible={likes_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</PageContentLink></div>
+                    <div className={favourites_grid_item_class}><PageContentLink visible={favourites_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</PageContentLink></div>
+                    <div className={bio_grid_item_class}><PageContentLink visible={bio_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/bio`}>Bio</PageContentLink></div>
                   </div>
                 </div>
                 <div className="layout__row layout__row-double">
