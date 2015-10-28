@@ -93,19 +93,23 @@ export function removePost(id) {
   }
 }
 
-export function setLikes(user_id, likes) {
+export function setLikes(user_id, likes, post_id, likers) {
   return {
     type: SET_LIKES,
     user_id,
-    likes
+    likes,
+    post_id,
+    likers
   }
 }
 
-export function setFavourites(user_id, favourites) {
+export function setFavourites(user_id, favourites, post_id, favourers) {
   return {
     type: SET_FAVOURITES,
     user_id,
-    favourites
+    favourites,
+    post_id,
+    favourers
   }
 }
 
@@ -371,11 +375,13 @@ function theReducer(state = initialState, action) {
 
     case SET_LIKES: {
       state = state.setIn(['likes', action.user_id], action.likes);
+      state = state.updateIn(['posts', action.post_id, 'likers'], likers => action.likers);
       break;
     }
 
     case SET_FAVOURITES: {
       state = state.setIn(['favourites', action.user_id], action.favourites);
+      state = state.updateIn(['posts', action.post_id, 'favourers'], favourers => action.favourers);
       break;
     }
   }
