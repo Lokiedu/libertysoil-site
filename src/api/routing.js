@@ -44,6 +44,7 @@ export function initApi(bookshelf) {
   api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
   api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
   api.get('/posts/tag/:tag', wrap(controller.tagPosts.bind(controller)));
+  api.get('/user/tags', wrap(controller.userTags.bind(controller)));
 
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));

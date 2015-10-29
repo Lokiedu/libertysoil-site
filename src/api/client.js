@@ -59,7 +59,7 @@ export default class ApiClient
     }
 
     if (data !== null) {
-      req = req.type('form').send(data)
+      req = req.type('form').send(data);
     }
 
     return Promise.resolve(req);
@@ -73,7 +73,7 @@ export default class ApiClient
     }
 
     if (data !== null) {
-      req = req.send(data)
+      req = req.send(data);
     }
 
     return Promise.resolve(req);
@@ -85,47 +85,52 @@ export default class ApiClient
   }
 
   async userInfo(username) {
-    let response = await this.get(`/api/v1/user/${username}`)
+    let response = await this.get(`/api/v1/user/${username}`);
     return response.body;
   }
 
   async userPosts(username) {
-    let response = await this.get(`/api/v1/posts/user/${username}`)
+    let response = await this.get(`/api/v1/posts/user/${username}`);
+    return response.body;
+  }
+
+  async userTags(username) {
+    let response = await this.get(`/api/v1/user/tags`);
     return response.body;
   }
 
   async tagPosts(tag) {
-    let response = await this.get(`/api/v1/posts/tag/${tag}`)
+    let response = await this.get(`/api/v1/posts/tag/${tag}`);
     return response.body;
   }
 
   async like(postId) {
-    let response = await this.post(`/api/v1/post/${postId}/like`)
+    let response = await this.post(`/api/v1/post/${postId}/like`);
     return response.body;
   }
 
   async unlike(postId) {
-    let response = await this.post(`/api/v1/post/${postId}/unlike`)
+    let response = await this.post(`/api/v1/post/${postId}/unlike`);
     return response.body;
   }
 
   async fav(postId) {
-    let response = await this.post(`/api/v1/post/${postId}/fav`)
+    let response = await this.post(`/api/v1/post/${postId}/fav`);
     return response.body;
   }
 
   async unfav(postId) {
-    let response = await this.post(`/api/v1/post/${postId}/unfav`)
+    let response = await this.post(`/api/v1/post/${postId}/unfav`);
     return response.body;
   }
 
   async follow(userName) {
-    let response = await this.post(`/api/v1/user/${userName}/follow`)
+    let response = await this.post(`/api/v1/user/${userName}/follow`);
     return response.body;
   }
 
   async updateUser(user) {
-    let response = await this.postJSON(`/api/v1/user`, user)
+    let response = await this.postJSON(`/api/v1/user`, user);
     return response.body;
   }
 
@@ -135,38 +140,38 @@ export default class ApiClient
   }
 
   async unfollow(userName) {
-    let response = await this.post(`/api/v1/user/${userName}/unfollow`)
+    let response = await this.post(`/api/v1/user/${userName}/unfollow`);
     return response.body;
   }
 
   async registerUser(userData) {
-    let response = await this.post(`/api/v1/users`, userData)
+    let response = await this.post(`/api/v1/users`, userData);
     return response.body;
   }
 
   async login(loginData) {
-    let response = await this.post(`/api/v1/session`, loginData)
+    let response = await this.post(`/api/v1/session`, loginData);
     return response.body;
   }
 
   async postInfo(uuid) {
-    let response = await this.get(`/api/v1/post/${uuid}`)
+    let response = await this.get(`/api/v1/post/${uuid}`);
     return response.body;
   }
 
   async createPost(type, data) {
     data.type = type;
-    let response = await this.postJSON(`/api/v1/posts`, data)
+    let response = await this.postJSON(`/api/v1/posts`, data);
     return response.body;
   }
 
   async updatePost(uuid, data) {
-    let response = await this.postJSON(`/api/v1/post/${uuid}`, data)
+    let response = await this.postJSON(`/api/v1/post/${uuid}`, data);
     return response.body;
   }
 
   async deletePost(uuid) {
-    let response = await this.del(`/api/v1/post/${uuid}`)
+    let response = await this.del(`/api/v1/post/${uuid}`);
     return response.body;
   }
 }
