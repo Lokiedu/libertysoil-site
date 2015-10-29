@@ -28,7 +28,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label;
+  let User, Post, Label, School;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -63,6 +63,9 @@ export default function initBookshelf(config) {
     labels: function() {
       return this.belongsToMany(Label, 'labels_posts', 'post_id', 'label_id');
     },
+    schools: function() {
+      return this.belongsToMany(School, 'posts_schools', 'post_id', 'school_id');
+    },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
     },
@@ -74,6 +77,7 @@ export default function initBookshelf(config) {
 
       let labelsToRemove = [];
       let labelNamesToKeep = [];
+      let schoolNames = [];
 
       (await labels.fetch()).map(label => {
         let name = label.get('name');
@@ -104,6 +108,21 @@ export default function initBookshelf(config) {
 
         promises = [...promises, ...morePromises];
       }
+      
+      let schools = this.schools();
+
+      for (let name of labelNamesToAdd) {
+        if (schoolNames.indexOf(name) == -1) {
+          schoolNames.push(name);
+        }
+      }
+
+      let school_tags = await Promise.all(schoolNames.map(tag_name => School.createOrSelect(tag_name)));
+      let schoolPromises = school_tags.map(async (tag) => {
+        await schools.attach(tag)
+      });
+      
+      promises = [...promises, ...schoolPromises];
 
       await Promise.all(promises);
     }
@@ -130,6 +149,27 @@ export default function initBookshelf(config) {
     }
   };
 
+  School = bookshelf.Model.extend({
+    tableName: 'schools',
+    posts: function() {
+      return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
+    }
+  });
+
+  School.createOrSelect = async (name) => {
+    try {
+      return await School.where({ name }).fetch({require: true});
+    } catch (e) {
+      let school = new School({
+        id: uuid.v4(),
+        name
+      });
+
+      await school.save(null, {method: 'insert'});
+      return school;
+    }
+  };
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -140,6 +180,7 @@ export default function initBookshelf(config) {
   bookshelf.model('User', User);
   bookshelf.model('Post', Post);
   bookshelf.model('Label', Label);
+  bookshelf.model('School', School);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
