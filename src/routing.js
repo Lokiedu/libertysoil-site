@@ -27,6 +27,7 @@ import UserPage from './pages/user';
 import UserLikesPage from './pages/user-likes';
 import UserFavoritesPage from './pages/user-favories';
 import AboutUserPage from './pages/user-bio';
+import SchoolPage from './pages/school';
 import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
@@ -51,6 +52,9 @@ let routes = (
       <Route component={UserLikesPage} path="/user/:username/likes" />
       <Route component={UserFavoritesPage} path="/user/:username/favorites" />
       <Route component={AboutUserPage} path="/user/:username/bio" />
+    </Route>
+    <Route path="/s/:school_name">
+      <IndexRoute component={SchoolPage} />
     </Route>
   </Route>
 )
