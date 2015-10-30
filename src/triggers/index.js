@@ -56,10 +56,19 @@ export async function unlikePost(current_user_id, post_id) {
   }
 }
 
-export async function syncLikedPosts(user_id) {
+export async function syncLikedPosts() {
   try {
     let likedPosts = client.userLikedPosts();
-    getStore().dispatch(setPostsToLikesRiver(user_id, await likedPosts));
+    getStore().dispatch(setPostsToLikesRiver(await likedPosts));
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function syncFavouredPosts() {
+  try {
+    let favouredPosts = client.userFavouredPosts();
+    getStore().dispatch(setPostsToFavouritesRiver(await favouredPosts));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
@@ -105,8 +114,10 @@ export async function syncFavouredPosts(user_id) {
 export async function createPost(type, data) {
   try {
     let result = await client.createPost(type, data);
-
     getStore().dispatch(addPostToRiver(result));
+
+    let userTags = client.userTags();
+    getStore().dispatch(setUserTags(await userTags));
   } catch (e) {
     console.log(e)
     console.log(e.stack)
