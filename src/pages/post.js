@@ -24,6 +24,7 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import { ShortTextPost, PostWrapper } from '../components/post'
+import Sidebar from '../components/sidebar';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, addPost} from '../store';
@@ -67,15 +68,7 @@ class PostPage extends React.Component {
 
         <div className="page__container">
           <div className="page__body">
-            <div className="page__sidebar">
-              <div className="layout__row">
-                <CurrentUser user={this.props.current_user} />
-              </div>
-
-              <div className="layout__row">
-                <a href="/">News feed</a>
-              </div>
-            </div>
+            <Sidebar current_user={this.props.current_user}/>
 
             <div className="page__content">
               <PostWrapper author={author} current_user={this.props.current_user} post={current_post} showComments={true} triggers={triggers}>
