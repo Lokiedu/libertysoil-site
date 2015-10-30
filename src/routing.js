@@ -25,7 +25,7 @@ import PostPage from './pages/post';
 import PostEditPage from './pages/post_edit';
 import UserPage from './pages/user';
 import UserLikesPage from './pages/user-likes';
-import UserFavoritesPage from './pages/user-favories';
+import UserFavoritesPage from './pages/user-favorites';
 import AboutUserPage from './pages/user-bio';
 import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';

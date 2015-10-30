@@ -104,6 +104,130 @@ export default class ApiController {
     }
   }
 
+  async userLikedPosts(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let likes = await this.bookshelf.knex
+        .select('post_id')
+        .from('likes')
+        .where({user_id: req.session.user})
+        .map(row => row.post_id);
+
+      let q = Post.forge()
+      .query(qb => {
+        qb
+          .whereIn('id', likes)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
+
+      res.send(posts);
+    } catch (ex) {
+      res.status(500);
+      res.send(ex.message);
+    }
+  }
+
+  async getLikedPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user_id = await this.bookshelf.knex
+        .select('id')
+        .from('users')
+        .where('users.username', '=', req.params.user)
+        .map(row => row.id);
+
+      let likes = await this.bookshelf.knex
+        .select('post_id')
+        .from('likes')
+        .where({user_id: user_id[0]})
+        .map(row => row.post_id);
+
+      let q = Post.forge()
+      .query(qb => {
+        qb
+          .whereIn('id', likes)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
+
+      res.send(posts);
+    } catch (ex) {
+      res.status(500);
+      res.send(ex.message);
+    }
+  }
+
+  async userFavouredPosts(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let favourites = await this.bookshelf.knex
+        .select('post_id')
+        .from('favourites')
+        .where({user_id: req.session.user})
+        .map(row => row.post_id);
+
+      let q = Post.forge()
+      .query(qb => {
+        qb
+          .whereIn('id', favourites)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
+
+      res.send(posts);
+    } catch (ex) {
+      res.status(500);
+      res.send(ex.message);
+    }
+  }
+
+  async getFavouredPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user_id = await this.bookshelf.knex
+        .select('id')
+        .from('users')
+        .where('users.username', '=', req.params.user)
+        .map(row => row.id);
+
+      let favourites = await this.bookshelf.knex
+        .select('post_id')
+        .from('favourites')
+        .where({user_id: user_id[0]})
+        .map(row => row.post_id);
+
+      let q = Post.forge()
+      .query(qb => {
+        qb
+          .whereIn('id', favourites)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
+
+      res.send(posts);
+    } catch (ex) {
+      res.status(500);
+      res.send(ex.message);
+    }
+  }
+
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -577,7 +701,7 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers']});
+    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
 
     res.send(u.toJSON());
   }
@@ -633,8 +757,9 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
 
       res.send({user});
-    } catch(ex) {
-      console.log(ex);
+    } catch(e) {
+      console.log(e);
+      console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
     }
@@ -673,8 +798,9 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
 
       res.send({success: true});
-    } catch(ex) {
-      console.log(ex);
+    } catch(e) {
+      console.log(e);
+      console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
     }

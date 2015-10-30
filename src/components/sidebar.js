@@ -22,6 +22,7 @@ import { Link, IndexLink } from 'react-router';
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import {getStore, setUserTags, addError} from '../store';
+import SidebarLink from './sidebar-link';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import { defaultSelector } from '../selectors';
@@ -65,11 +66,29 @@ export default class Sidebar extends React.Component {
       return <script/>
     }
 
+    let {
+      current_user
+    } = this.props;
+
+    let likes_enabled = (current_user.likes && current_user.likes.length > 0);
+    let favorites_enabled = (current_user.favourites && current_user.favourites.length > 0);
+
     return (
       <div className="page__sidebar">
         <div className="layout__row page__sidebar_user">
-          <CurrentUser user={this.props.current_user} />
+          <CurrentUser user={current_user} />
         </div>
+
+        <div className="layout__row">
+          <SidebarLink className="link" enabled={true} to={`/user/${current_user.username}`}><i className="icon fa fa-feed"></i> News Feed</SidebarLink>
+        </div>
+        <div className="layout__row">
+          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><i className="icon fa fa-heart"></i> My Likes</SidebarLink>
+        </div>
+        <div className="layout__row">
+          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><i className="icon fa fa-star"></i> My Favorites</SidebarLink>
+        </div>
+
         <SidebarTagCloud tags={this.props.current_user_tags}/>
       </div>
     )

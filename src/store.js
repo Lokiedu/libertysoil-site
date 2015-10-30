@@ -28,6 +28,8 @@ const ADD_USER = 'ADD_USER';
 const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
 const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
+const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
+const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 const SET_USER_POSTS = 'SET_USER_POSTS';
 const SET_USER_TAGS = 'SET_USER_TAGS';
 const SET_TAG_POSTS = 'SET_TAG_POSTS';
@@ -72,9 +74,26 @@ export function setPostsToRiver(posts) {
   }
 }
 
-export function setUserPosts(posts) {
+export function setPostsToLikesRiver(user_id, posts) {
+  return {
+    type: SET_POSTS_TO_LIKES_RIVER,
+    user_id,
+    posts
+  }
+}
+
+export function setPostsToFavouritesRiver(user_id, posts) {
+  return {
+    type: SET_POSTS_TO_FAVOURITES_RIVER,
+    user_id,
+    posts
+  }
+}
+
+export function setUserPosts(user_id, posts) {
   return {
     type: SET_USER_POSTS,
+    user_id,
     posts
   }
 }
@@ -265,6 +284,60 @@ function theReducer(state = initialState, action) {
       break;
     }
 
+    case SET_POSTS_TO_LIKES_RIVER: {
+      let posts = action.posts;
+
+      let postsWithoutUsers = action.posts.map(post => {
+        let postCopy = _.cloneDeep(post);
+        delete postCopy.user;
+        return postCopy;
+      });
+
+      let users = _.unique(posts.map(post => post.user), 'id')
+
+      let cut = {users: {}, posts: {}};
+      for (let user of users) {
+        cut.users[user.id] = user;
+      }
+
+      let river = [];
+      for (let post of postsWithoutUsers) {
+        cut.posts[post.id] = post;
+        river.push(post.id);
+      }
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+      state = state.setIn(['likes_river', action.user_id], Immutable.fromJS(river));
+      break;
+    }
+
+    case SET_POSTS_TO_FAVOURITES_RIVER: {
+      let posts = action.posts;
+
+      let postsWithoutUsers = action.posts.map(post => {
+        let postCopy = _.cloneDeep(post);
+        delete postCopy.user;
+        return postCopy;
+      });
+
+      let users = _.unique(posts.map(post => post.user), 'id')
+
+      let cut = {users: {}, posts: {}};
+      for (let user of users) {
+        cut.users[user.id] = user;
+      }
+
+      let river = [];
+      for (let post of postsWithoutUsers) {
+        cut.posts[post.id] = post;
+        river.push(post.id);
+      }
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+      state = state.set(['favourites_river', action.user_id], Immutable.fromJS(river));
+      break;
+    }
+
     case SET_USER_POSTS: {
       let cut = {posts: {}, user_posts: {}};
 
@@ -273,7 +346,7 @@ function theReducer(state = initialState, action) {
           cut.posts[post.id] = post;
         }
 
-        cut.user_posts[action.posts[0].user_id] = action.posts.map(post => post.id);
+        cut.user_posts[action.user_id] = action.posts.map(post => post.id);
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
@@ -423,6 +496,8 @@ let initialState = {
   favourites: {},
   posts: {},
   river: [],
+  likes_river: {},
+  favourites_river: {},
   messages: [],
   current_user_id: null
 };

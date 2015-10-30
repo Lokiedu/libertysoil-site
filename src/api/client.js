@@ -99,6 +99,26 @@ export default class ApiClient
     return response.body;
   }
 
+  async userLikedPosts(username) {
+    let response = await this.get(`/api/v1/posts/liked`)
+    return response.body;
+  }
+
+  async getLikedPosts(username) {
+    let response = await this.get(`/api/v1/posts/liked/${username}`)
+    return response.body;
+  }
+
+  async userFavouredPosts(username) {
+    let response = await this.get(`/api/v1/posts/favoured`)
+    return response.body;
+  }
+
+  async getFavouredPosts(username) {
+    let response = await this.get(`/api/v1/posts/favoured/${username}`)
+    return response.body;
+  }
+
   async tagPosts(tag) {
     let response = await this.get(`/api/v1/posts/tag/${tag}`);
     return response.body;
