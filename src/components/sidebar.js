@@ -78,7 +78,7 @@ class Sidebar extends React.Component {
         </div>
 
         <div className="layout__row">
-          <SidebarLink className="link" enabled={true} to={`/user/${current_user.username}`}><i className="icon fa fa-feed"></i> News Feed</SidebarLink>
+          <SidebarLink className="link" enabled to="/"><i className="icon fa fa-feed"></i> News Feed</SidebarLink>
         </div>
         <div className="layout__row">
           <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><i className="icon fa fa-heart"></i> My Likes</SidebarLink>
