@@ -73,16 +73,18 @@ export function setPostsToRiver(posts) {
   }
 }
 
-export function setPostsToLikesRiver(posts) {
+export function setPostsToLikesRiver(user_id, posts) {
   return {
     type: SET_POSTS_TO_LIKES_RIVER,
+    user_id,
     posts
   }
 }
 
-export function setPostsToFavouritesRiver(posts) {
+export function setPostsToFavouritesRiver(user_id, posts) {
   return {
     type: SET_POSTS_TO_FAVOURITES_RIVER,
+    user_id,
     posts
   }
 }
@@ -290,14 +292,14 @@ function theReducer(state = initialState, action) {
         cut.users[user.id] = user;
       }
 
-      let river = []
+      let river = [];
       for (let post of postsWithoutUsers) {
         cut.posts[post.id] = post;
         river.push(post.id);
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
-      state = state.set('likes_river', Immutable.fromJS(river));
+      state = state.setIn(['likes_river', action.user_id], Immutable.fromJS(river));
       break;
     }
 
@@ -317,14 +319,14 @@ function theReducer(state = initialState, action) {
         cut.users[user.id] = user;
       }
 
-      let river = []
+      let river = [];
       for (let post of postsWithoutUsers) {
         cut.posts[post.id] = post;
         river.push(post.id);
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
-      state = state.set('favourites_river', Immutable.fromJS(river));
+      state = state.set(['favourites_river', action.user_id], Immutable.fromJS(river));
       break;
     }
 
@@ -470,8 +472,8 @@ let initialState = {
   favourites: {},
   posts: {},
   river: [],
-  likes_river: [],
-  favourites_river: [],
+  likes_river: {},
+  favourites_river: {},
   messages: [],
   current_user_id: null
 };

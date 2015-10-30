@@ -38,11 +38,11 @@ class UserLikesPage extends React.Component {
 
   static async fetchData(props, client) {
     try {
-      let userInfo = client.userInfo(props.params.username);
-      getStore().dispatch(addUser(await userInfo));
+      let userInfo = await client.userInfo(props.params.username);
+      getStore().dispatch(addUser(userInfo));
 
       let likedPosts = client.getLikedPosts(props.params.username);
-      getStore().dispatch(setPostsToLikesRiver(await likedPosts));
+      getStore().dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
     } catch (e) {
       console.log(e.stack)
     }
@@ -81,7 +81,7 @@ class UserLikesPage extends React.Component {
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}
-          river={this.props.likes_river}
+          river={this.props.likes_river[page_user.id]}
           triggers={post_triggers}
           users={this.props.users}
         />

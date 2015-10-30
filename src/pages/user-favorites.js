@@ -38,11 +38,11 @@ class UserFavoritesPage extends React.Component {
 
   static async fetchData(props, client) {
     try {
-      let userInfo = client.userInfo(props.params.username);
-      getStore().dispatch(addUser(await userInfo));
+      let userInfo = await client.userInfo(props.params.username);
+      getStore().dispatch(addUser(userInfo));
 
       let favouredPosts = client.getFavouredPosts(props.params.username);
-      getStore().dispatch(setPostsToFavouritesRiver(await favouredPosts));
+      getStore().dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
     } catch (e) {
       console.log(e.stack)
     }
@@ -81,7 +81,7 @@ class UserFavoritesPage extends React.Component {
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}
-          river={this.props.favourites_river}
+          river={this.props.favourites_river[page_user.id]}
           triggers={post_triggers}
           users={this.props.users}
         />

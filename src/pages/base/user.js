@@ -36,8 +36,10 @@ export default class BaseUserPage extends React.Component {
       followers
     } = this.props;
 
-    let likes_visible = (page_user.likes && page_user.likes.length > 0);
-    let favourites_visible = (page_user.favourites && page_user.favourites.length > 0);
+    //let likes_visible = (page_user.likes && page_user.likes.length > 0);
+    //let favourites_visible = (page_user.favourites && page_user.favourites.length > 0);
+    let likes_visible = true;
+    let favourites_visible = true;
     let bio_visible = !!page_user.more.bio;
     
     let likes_grid_item_class = (likes_visible)? 'layout__grid_item' : 'layout__grid_item-fill';

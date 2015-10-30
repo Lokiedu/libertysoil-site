@@ -20,7 +20,7 @@ import { Link, IndexLink } from 'react-router';
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, setPostsToLikesRiver, addError} from '../store';
+import {getStore, addError} from '../store';
 import SidebarLink from './sidebar-link';
 import CurrentUser from './current-user';
 

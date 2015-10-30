@@ -38,12 +38,11 @@ class UserPage extends React.Component {
 
   static async fetchData(props, client) {
     try {
-      let page_user = _.find(props.users, {username: props.params.username});
-      let userInfo = client.userInfo(props.params.username);
+      let userInfo = await client.userInfo(props.params.username);
       let userPosts = client.userPosts(props.params.username);
 
-      getStore().dispatch(addUser(await userInfo));
-      getStore().dispatch(setUserPosts(page_user.id, await userPosts));
+      getStore().dispatch(addUser(userInfo));
+      getStore().dispatch(setUserPosts(userInfo.id, await userPosts));
     } catch (e) {
       console.log(e.stack)
     }
