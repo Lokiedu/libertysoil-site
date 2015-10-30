@@ -30,7 +30,7 @@ import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from
 import { defaultSelector } from '../selectors';
 
 class UserPage extends React.Component {
-  static displayName = 'UserPage'
+  static displayName = 'UserPage';
 
   componentDidMount() {
     UserPage.fetchData(this.props, new ApiClient(API_HOST));
@@ -38,11 +38,11 @@ class UserPage extends React.Component {
 
   static async fetchData(props, client) {
     try {
-      let userInfo = client.userInfo(props.params.username);
+      let userInfo = await client.userInfo(props.params.username);
       let userPosts = client.userPosts(props.params.username);
 
-      getStore().dispatch(addUser(await userInfo));
-      getStore().dispatch(setUserPosts(await userPosts));
+      getStore().dispatch(addUser(userInfo));
+      getStore().dispatch(setUserPosts(userInfo.id, await userPosts));
     } catch (e) {
       console.log(e.stack)
     }

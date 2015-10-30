@@ -21,7 +21,7 @@ import {
   getStore,
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
-  setLikes, setFavourites
+  setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver
 } from '../store';
 
 const client = new ApiClient(API_HOST);
@@ -32,6 +32,7 @@ export async function likePost(current_user_id, post_id) {
 
     if (responseBody.success) {
       getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+      syncLikedPosts(current_user_id);
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
@@ -46,9 +47,19 @@ export async function unlikePost(current_user_id, post_id) {
 
     if (responseBody.success) {
       getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+      syncLikedPosts(current_user_id);
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function syncLikedPosts(user_id) {
+  try {
+    let likedPosts = client.userLikedPosts();
+    getStore().dispatch(setPostsToLikesRiver(user_id, await likedPosts));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
@@ -77,6 +88,15 @@ export async function unfavPost(current_user_id, post_id) {
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function syncFavouredPosts(user_id) {
+  try {
+    let favouredPosts = client.userFavouredPosts();
+    getStore().dispatch(setPostsToFavouritesRiver(user_id, await favouredPosts));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
