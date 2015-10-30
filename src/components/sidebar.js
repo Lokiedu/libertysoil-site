@@ -42,9 +42,7 @@ let SidebarTagCloud = ({tags}) => {
 
 SidebarTagCloud.displayName = "SidebarTagCloud";
 
-export default SidebarTagCloud;
-
-export default class Sidebar extends React.Component {
+class Sidebar extends React.Component {
   static displayName = 'Sidebar'
 
   componentDidMount() {
