@@ -24,6 +24,7 @@ import stores from './store/index'
 import messageType from './consts/messageTypeConstants';
 
 const ADD_USER = 'ADD_USER';
+const ADD_SCHOOL = 'ADD_SCHOOL';
 
 const ADD_POST = 'ADD_POST';
 const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
@@ -47,6 +48,13 @@ export function addUser(user) {
   return {
     type: ADD_USER,
     user
+  }
+}
+
+export function addSchool(school) {
+  return {
+    type: ADD_SCHOOL,
+    school
   }
 }
 
@@ -199,6 +207,14 @@ function theReducer(state = initialState, action) {
           user.followers.map(user => user.id)
         );
       }
+
+      break;
+    }
+
+    case ADD_SCHOOL: {
+      const school = action.school;
+
+      state = state.setIn(['schools', school.id], Immutable.fromJS(school));
 
       break;
     }
@@ -400,6 +416,7 @@ let initialState = {
   posts: {},
   river: [],
   messages: [],
+  schools: {},
   current_user_id: null
 };
 
