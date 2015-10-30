@@ -35,7 +35,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']});
+    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
 
     res.send(response.toJSON());
   }
@@ -51,7 +51,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']})
 
     res.send(posts.toJSON());
   }
@@ -68,7 +68,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']})
 
     res.send(posts.toJSON());
   }
@@ -77,8 +77,19 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
       res.send(post.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
+  async getSchool(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      let school = await School.where({url_name: req.params.url_name}).fetch();
+      res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
     }
@@ -243,7 +254,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools']})
 
     res.send(posts.toJSON());
   }
@@ -442,7 +453,7 @@ export default class ApiController {
         await obj.attachLabels(tags)
       }
 
-      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']});
+      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
 
       res.send(obj.toJSON());
     } catch (e) {
@@ -519,7 +530,7 @@ export default class ApiController {
         await post_object.attachLabels(tags, true)
       }
 
-      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers']})
+      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']})
 
       res.send(post_object.toJSON());
     } catch (e) {
