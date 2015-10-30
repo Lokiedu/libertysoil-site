@@ -326,7 +326,7 @@ function theReducer(state = initialState, action) {
       }
 
       state = state.mergeDeep(Immutable.fromJS(cut));
-      state = state.set(['favourites_river', action.user_id], Immutable.fromJS(river));
+      state = state.setIn(['favourites_river', action.user_id], Immutable.fromJS(river));
       break;
     }
 
