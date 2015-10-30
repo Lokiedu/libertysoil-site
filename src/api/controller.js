@@ -73,6 +73,26 @@ export default class ApiController {
     res.send(posts.toJSON());
   }
 
+  async userTags(req, res){
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .where({user_id: req.session.user})
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let labels = await q.fetchAll({require: false, withRelated: ['labels']})
+    labels = labels.map(row => row.relations.labels);
+
+    res.send(labels);
+  }
+
   async getPost(req, res) {
     let Post = this.bookshelf.model('Post');
 
