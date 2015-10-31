@@ -368,8 +368,31 @@ export default class ApiController {
       })
 
     let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']})
+    let users = posts.map(row => row.relations.user.id).filter(user => user != uid);
 
-    res.send(posts.toJSON());
+    q = Post.forge()
+      .query(qb => {
+        qb
+          .select()
+          .from('posts')
+          .whereIn('id', function(){
+            this.select('post_id')
+              .from('likes') // my followed users' liked posts
+              .whereIn('user_id', users);
+          })
+          .orWhereIn('id', function(){
+            this.select('post_id')
+              .from('favourites') // my followed users' favoured posts
+              .whereIn('user_id', users);
+          })
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let second_level_posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']});
+
+    posts.add(second_level_posts.models);
+
+    res.send(posts);
   }
 
   async registerUser(req, res) {
