@@ -169,6 +169,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async initialSuggestions() {
+    let response = await this.get(`/api/v1/suggestions/initial`);
+    return response.body;
+  }
+
   async postInfo(uuid) {
     let response = await this.get(`/api/v1/post/${uuid}`)
     return response.body;

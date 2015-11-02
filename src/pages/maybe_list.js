@@ -20,9 +20,11 @@ import { connect } from 'react-redux';
 
 import List from './list'
 import Welcome from './welcome'
+import Induction from './induction'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import {getStore, setPostsToRiver} from '../store';
+import { updateUserInfo } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -44,8 +46,18 @@ class MaybeList extends React.Component {
     }
   }
 
+  doneInduction = (event) => {
+    updateUserInfo({
+      more: {
+        first_login: false
+      }
+    });
+  };
+
   render() {
-    if (this.props.is_logged_in) {
+    if (this.props.is_logged_in && this.props.current_user.more.first_login) {
+      return <Induction on_complete={this.doneInduction}/>
+    } else if (this.props.is_logged_in) {
       return <List/>
     } else {
       return <Welcome/>
