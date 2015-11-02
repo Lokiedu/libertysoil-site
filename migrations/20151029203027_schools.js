@@ -20,6 +20,6 @@ export async function up(knex, Promise) {
 };
 
 export async function down(knex, Promise) {
-  await knex.schema.dropTable('schools');
   await knex.schema.dropTable('posts_schools');
+  await knex.schema.dropTable('schools');
 };
