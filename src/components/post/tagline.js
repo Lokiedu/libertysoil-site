@@ -40,22 +40,22 @@ export default class TagLine extends React.Component {
         schools
       } = this.props;
 
-    if (tags.length == 0 || !schools) {
+    if ((!tags || !schools) || (tags.length == 0 && schools.length == 0)) {
       return <script/>;
     }
 
-    let tagBlocks = tags.map(tag => {
-      let school = _.find(schools, {name: tag.name});
-      let class_name = 'tag';
-      let link_to = `/tag/${tag.name}`;
-
-      if (school) {
-        class_name = 'tag school';
-        link_to = `/s/${school.url_name}`;
-      }
-
+    let schoolBlocks = schools.map(school => {
+      console.log(school);
       return (
-        <Link to={link_to} className={class_name} key={`tag-${tag.id}`}>
+        <Link to={`/s/${school.url_name}`} className='tag school' key={`school-${school.id}`}>
+          {school.name}
+        </Link>
+      )
+    });
+
+    let tagBlocks = tags.map(tag => {
+      return (
+        <Link to={`/tag/${tag.name}`} className='tag' key={`tag-${tag.id}`}>
           {tag.name}
         </Link>
       )
@@ -63,6 +63,7 @@ export default class TagLine extends React.Component {
 
     return (
       <div className="tags">
+        {schoolBlocks}
         {tagBlocks}
       </div>
     );
