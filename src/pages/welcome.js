@@ -30,7 +30,7 @@ let Welcome = () => {
         <Header is_logged_in={false} className="header-transparent" />
         <header className="landing__header">
           <h1 className="landing__title">Education change network</h1>
-          <p className="landing__details">Connect with people from around the world to make education more humane.<br></br>No action is too small - it is our world, lets work together to build a better future.</p>
+          <p className="landing__details">Connect with people from around the world to make education more humane.<br></br>No action is too small - it is our world, lets work together to make it better for everyone.</p>
           <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
         </header>
       </section>
