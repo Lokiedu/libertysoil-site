@@ -495,6 +495,40 @@ export default class ApiController {
   async whoAmI(req, res) {
   }
 
+  async userSuggestions(req, res) {
+    let following = await this.bookshelf.knex
+      .select('followers.following_user_id')
+      .from('followers')
+      .where('followers.user_id', '=', req.session.user)
+      .map(row => row.id);
+
+    let User = this.bookshelf.model('User');
+
+    let q = User.forge()
+      .query(qb => {
+        qb
+          .select('active_users.*', 'followers.user_id', 'followers.following_user_id')
+          .from(function(){
+            this.select('users.*')
+              .count('posts.id as post_count')
+              .from('users')
+              .where('users.id', '!=', req.session.user)
+              .leftJoin('posts', 'users.id', 'posts.user_id')
+              .groupBy('users.id')
+              .as('active_users');
+          })
+          .leftJoin('followers', 'active_users.id', 'followers.following_user_id')
+          .whereNull('followers.user_id')
+          .orWhereNotIn('active_users.id', following)
+          .orderBy('post_count', 'desc')
+          .limit(6);
+      });
+
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+
+    res.send(suggestions);
+  }
+
   async initialSuggestions(req, res) {
     let User = this.bookshelf.model('User');
 
