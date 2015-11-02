@@ -418,6 +418,8 @@ export default class ApiController {
         moreData[fieldName] = req.body[fieldName];
       }
     }
+    
+    moreData.first_login = true;
 
     if (!_.isEmpty(moreData)) {
       obj.set('more', moreData);
@@ -491,6 +493,27 @@ export default class ApiController {
   }
 
   async whoAmI(req, res) {
+  }
+
+  async initialSuggestions(req, res) {
+    let User = this.bookshelf.model('User');
+
+    let q = User.forge()
+      .query(qb => {
+        qb
+          .select('users.*')
+          .count('posts.id as post_count')
+          .from('users')
+          .where('users.id', '!=', req.session.user)
+          .leftJoin('posts', 'users.id', 'posts.user_id')
+          .groupBy('users.id')
+          .orderBy('post_count', 'desc')
+          .limit(20)
+      })
+
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+
+    res.send(suggestions);
   }
 
   async createPost(req, res) {

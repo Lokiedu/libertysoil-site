@@ -29,21 +29,27 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-let AlreadyLoggedIn = () => (
+let AlreadyLoggedIn = (props) => {
+  let link_copy = 'your feed';
+  if (props.is_first_login) {
+    link_copy = 'the next step';
+  }
+  
+  return (
   <div className="area">
     <div className="area__body">
       <div className="message">
         <div className="message__body">
-          You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.
+          You are logged in. You can proceed to <Link className="link" to="/">{link_copy}</Link>.
         </div>
       </div>
     </div>
   </div>
-);
+)};
 
 let AuthContents = (props) => {
   if (props.is_logged_in) {
-    return <AlreadyLoggedIn/>;
+    return <AlreadyLoggedIn is_first_login={props.is_first_login}/>;
   }
 
   return (
@@ -64,12 +70,17 @@ class Auth extends React.Component {
 
     let triggers = {login, registerUser};
 
+    let is_first_login = false;
+    if (current_user){
+      is_first_login = current_user.more.first_login;
+    }
+
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user} />
         <div className="page__body">
           <Messages messages={this.props.messages}/>
-          <AuthContents is_logged_in={is_logged_in} triggers={triggers}/>
+          <AuthContents is_logged_in={is_logged_in} is_first_login={is_first_login} triggers={triggers}/>
         </div>
         <Footer/>
       </div>
