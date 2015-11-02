@@ -28,45 +28,68 @@ import Register from '../components/register';
 import Header from '../components/header';
 import Messages from '../components/messages';
 
+import Suggestions from './suggestions';
 
-let AlreadyLoggedIn = (props) => {
-  let link_copy = 'your feed';
-  if (props.is_first_login) {
-    link_copy = 'the next step';
-  }
-  
+
+let FirstLogin = (props) => {
   return (
   <div className="area">
     <div className="area__body">
       <div className="message">
         <div className="message__body">
-          You are logged in. You can proceed to <Link className="link" to="/">{link_copy}</Link>.
+          You are logged in. You can proceed to <Link className="link" to="/">the next step</Link>.
         </div>
       </div>
     </div>
   </div>
 )};
 
+let AuthForms = (props) => {
+  return (
+  <div className="area">
+    <div>
+      <div className="area__body layout-align_start">
+        <Login onLoginUser={props.triggers.login} />
+        <Register onRegisterUser={props.triggers.registerUser} />
+      </div>
+    </div>
+  </div>
+)};
+
 let AuthContents = (props) => {
-  if (props.is_logged_in) {
-    return <AlreadyLoggedIn is_first_login={props.is_first_login}/>;
+  let {
+    current_user,
+    is_logged_in,
+    is_first_login,
+    triggers,
+    messages
+  } = props;
+  
+  if(is_logged_in && !is_first_login){
+    return <Suggestions/>;
+  }
+  
+  let content = <FirstLogin/>;
+
+  if (!is_logged_in) {
+    content = <AuthForms triggers={triggers}/>;
   }
 
   return (
-    <div className="area">
-      <div>
-        <div className="area__body layout-align_start">
-          <Login onLoginUser={props.triggers.login} />
-          <Register onRegisterUser={props.triggers.registerUser} />
-        </div>
+    <div>
+      <Header is_logged_in={is_logged_in} current_user={current_user} />
+      <div className="page__body">
+        <Messages messages={messages}/>
+        {content}
       </div>
+      <Footer/>
     </div>
   );
 };
 
 class Auth extends React.Component {
   render() {
-    let { current_user, is_logged_in } = this.props;
+    let { current_user, is_logged_in, messages } = this.props;
 
     let triggers = {login, registerUser};
 
@@ -76,14 +99,13 @@ class Auth extends React.Component {
     }
 
     return (
-      <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user} />
-        <div className="page__body">
-          <Messages messages={this.props.messages}/>
-          <AuthContents is_logged_in={is_logged_in} is_first_login={is_first_login} triggers={triggers}/>
-        </div>
-        <Footer/>
-      </div>
+      <AuthContents
+        current_user={current_user}
+        is_logged_in={is_logged_in}
+        is_first_login={is_first_login}
+        triggers={triggers}
+        messages={messages}
+        />
     )
   }
 }
