@@ -169,6 +169,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async userSuggestions() {
+    let response = await this.get(`/api/v1/suggestions/personalized`);
+    return response.body;
+  }
+
   async initialSuggestions() {
     let response = await this.get(`/api/v1/suggestions/initial`);
     return response.body;

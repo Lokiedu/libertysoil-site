@@ -58,6 +58,7 @@ export function initApi(bookshelf) {
 
   api.post('/logout', wrap(controller.logout.bind(controller)));
 
+  api.get('/suggestions/personalized', wrap(controller.userSuggestions.bind(controller)));
   api.get('/suggestions/initial', wrap(controller.initialSuggestions.bind(controller)));
 
   return api;
