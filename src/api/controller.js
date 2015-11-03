@@ -367,32 +367,41 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user']})
     let users = posts.map(row => row.relations.user.id).filter(user => user != uid);
 
     q = Post.forge()
       .query(qb => {
         qb
-          .select()
-          .from('posts')
-          .whereIn('id', function(){
-            this.select('post_id')
-              .from('likes') // my followed users' liked posts
-              .whereIn('user_id', users);
+          .select('subs_posts.*')
+          .from(function(){
+            this.select('posts.*')
+              .from('posts')
+              .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
+              .where('followers.user_id', '=', uid)  // followed posts
+              .orWhere('posts.user_id', '=', uid)    // own posts
+              .union(function(){
+                this.select('posts.*')
+                  .from('posts')
+                  .whereIn('posts.id', function(){
+                    this.select('post_id')
+                      .from('likes') // my followed users' liked posts
+                      .whereIn('user_id', users);
+                  })
+                  .orWhereIn('posts.id', function(){
+                    this.select('post_id')
+                      .from('favourites') // my followed users' favoured posts
+                      .whereIn('user_id', users);
+                  });
+              })
+              .as('subs_posts');
           })
-          .orWhereIn('id', function(){
-            this.select('post_id')
-              .from('favourites') // my followed users' favoured posts
-              .whereIn('user_id', users);
-          })
-          .orderBy('posts.created_at', 'desc')
+          .orderBy('subs_posts.updated_at', 'desc')
       });
 
-    let second_level_posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']});
+    let subscribed_posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels']});
 
-    posts.add(second_level_posts.models);
-
-    res.send(posts);
+    res.send(subscribed_posts);
   }
 
   async registerUser(req, res) {
