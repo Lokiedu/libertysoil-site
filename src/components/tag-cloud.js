@@ -24,7 +24,7 @@ let TagCloud = ({tags}) => {
   }
 
   let tagBlocks = tags.map(tag => (
-    <Link to={`/tag/${tag.name}`} className="tag" key={`tag-${tag.id}`}>
+    <Link to={`/tag/${tag.name}`} className="tag tag-blue" key={`tag-${tag.id}`}>
       {tag.name}
     </Link>
   ));
