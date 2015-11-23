@@ -10,6 +10,7 @@ export async function up(knex, Promise) {
     table.float('areainsqkm');
     table.integer('population');
     table.text('continent');
+    table.text('tld');
     table.text('currencycode');
     table.text('currencyname');
     table.text('phone');
