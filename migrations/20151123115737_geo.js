@@ -10,7 +10,6 @@ export async function up(knex, Promise) {
     table.float('areainsqkm');
     table.integer('population');
     table.text('continent');
-
     table.text('currencycode');
     table.text('currencyname');
     table.text('phone');
@@ -18,7 +17,6 @@ export async function up(knex, Promise) {
     table.text('postalcoderegex');
     table.text('languages');
     table.json('neighbors', true);
-    table.json('equivfipscode', true);
   });
 
   await knex.schema.createTable('geonames_cities', function(table) {
