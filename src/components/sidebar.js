@@ -27,15 +27,19 @@ import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import { defaultSelector } from '../selectors';
 
-let SidebarTagCloud = ({tags}) => {
+let SidebarTagCloud = ({ tags, title, ...props }) => {
   if (tags.length == 0) {
     return <script/>;
   }
 
   return (
-    <div className="layout__row">
-      <h4>Tags</h4>
-      <TagCloud tags={tags}/>
+    <div {...props}>
+      <div className="layout__row">
+        <h4 className="head head-sub">{title}</h4>
+      </div>
+      <div className="layout__row">
+        <TagCloud tags={tags}/>
+      </div>
     </div>
   );
 };
@@ -78,16 +82,16 @@ class Sidebar extends React.Component {
         </div>
 
         <div className="layout__row">
-          <SidebarLink className="link" enabled to="/"><i className="icon fa fa-feed"></i> News Feed</SidebarLink>
+          <SidebarLink className="link" enabled to="/"><span className="icon fa fa-feed"></span> News Feed</SidebarLink>
         </div>
         <div className="layout__row">
-          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><i className="icon fa fa-heart"></i> My Likes</SidebarLink>
+          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><span className="icon fa fa-heart"></span> My Likes</SidebarLink>
         </div>
         <div className="layout__row">
-          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><i className="icon fa fa-star"></i> My Favorites</SidebarLink>
+          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><span className="icon fa fa-star"></span> My Favorites</SidebarLink>
         </div>
 
-        <SidebarTagCloud tags={this.props.current_user_tags}/>
+        <SidebarTagCloud className="layout__row layout__row-double" tags={this.props.current_user_tags} title="Tags" />
       </div>
     )
   }
