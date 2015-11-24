@@ -16,9 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .page {
-  &__sidebar_user {
-    padding-left: 4px;
-  }
+
 }
 
 .page__title {
@@ -82,7 +80,9 @@
   }
 
   &-spacing {
-    padding: @space * 3;
+    @media @after-normal {
+      padding: @space * 3;
+    }
   }
 }
 

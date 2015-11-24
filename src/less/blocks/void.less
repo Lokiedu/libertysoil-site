@@ -16,9 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .void {
-  padding: @doubleSpace;
+  padding: @space;
+
+  @media @after-normal {
+    padding: @doubleSpace;
+  }
 
   &-space {
-    padding: @doubleSpace * 2;
+    padding: @doubleSpace;
+
+    @media @after-normal {
+      padding:@doubleSpace * 2;
+    }
   }
 }

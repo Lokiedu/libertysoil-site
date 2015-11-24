@@ -29,9 +29,12 @@
   &:extend(.layout);
   &:extend(.layout__grid all);
   max-width: @siteWidth;
-  padding: 0 @space;
   margin: 0 auto;
   box-sizing: border-box;
+
+  @media @after-normal {
+    padding: 0 @space;
+  }
 }
 
 .header__toolbar {

@@ -5,7 +5,13 @@
 }
 
 .profile__body {
-  padding: @space * 3;
+  padding: @space;
+
+  &-spacing {
+    @media @after-normal {
+      padding: @space * 3;
+    }
+  }
 }
 
 .profile__title {
