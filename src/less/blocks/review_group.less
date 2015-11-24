@@ -29,9 +29,14 @@
     &_item {
       opacity: 0.75;
       cursor: pointer;
+      margin: @space 0;
 
       &-active {
         opacity: 1;
+      }
+
+      @media @after-normal {
+        margin: 0;
       }
     }
   }

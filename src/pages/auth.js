@@ -47,11 +47,10 @@ let FirstLogin = (props) => {
 let AuthForms = (props) => {
   return (
   <div className="area">
-    <div>
-      <div className="area__body layout-align_start">
-        <Login onLoginUser={props.triggers.login} />
-        <Register onRegisterUser={props.triggers.registerUser} />
-      </div>
+    <Messages messages={props.messages}/>
+    <div className="area__body layout-align_start">
+      <Login onLoginUser={props.triggers.login} />
+      <Register onRegisterUser={props.triggers.registerUser} />
     </div>
   </div>
 )};
@@ -72,14 +71,13 @@ let AuthContents = (props) => {
   let content = <FirstLogin/>;
 
   if (!is_logged_in) {
-    content = <AuthForms triggers={triggers}/>;
+    content = <AuthForms triggers={triggers} messages={messages} />;
   }
 
   return (
     <div>
       <Header is_logged_in={is_logged_in} current_user={current_user} />
       <div className="page__body">
-        <Messages messages={messages}/>
         {content}
       </div>
       <Footer/>

@@ -33,7 +33,12 @@
 }
 
 .box-middle {
-  min-width: 320px;
+  width: 100%;
+
+  @media @after-small {
+    min-width: 320px;
+    width: auto;
+  }
 }
 
 .box-space_bottom {
