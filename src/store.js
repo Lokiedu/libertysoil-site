@@ -16,10 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { createStore } from 'redux'
-import Immutable, { Map } from 'immutable'
+import Immutable from 'immutable'
 import _ from 'lodash'
-
-import stores from './store/index'
 
 import messageType from './consts/messageTypeConstants';
 
