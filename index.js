@@ -27,7 +27,8 @@ import { renderToString } from 'react-dom/server'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { Router, RoutingContext, match } from 'react-router'
 
-import Routes from './src/routing';
+import { getRoutes } from './src/routing';
+import { EnterHandler } from './src/utils/loader';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
 import {API_HOST} from './src/config';
@@ -94,11 +95,13 @@ let reactHandler = async (req, res) => {
     }
   }
 
+  const Routes = getRoutes();
+  console.log(Routes);
   const makeRoutes = (history) => (
     <Router history={history}>
       {Routes}
     </Router>
-  )
+  );
 
   let history = createMemoryHistory();
   let location = history.createLocation(req.url);
@@ -112,15 +115,8 @@ let reactHandler = async (req, res) => {
     } else if (renderProps == null) {
       res.status(404).send('Not found')
     } else {
-      let component = _.last(renderProps.routes).component;
-
-      if ('fetchData' in component) {
-        let props = store.getState().toJS();
-        props.params = renderProps.params;
-
-        let client = new ApiClient(API_HOST, req);
-        await component.fetchData(props, client);
-      }
+      const enterHandler = new EnterHandler(store, new ApiClient(API_HOST, req));
+      await enterHandler.handle(renderProps);
 
       let html = renderToString(<RoutingContext {...renderProps}/>)
       let state = JSON.stringify(store.getState().toJS());

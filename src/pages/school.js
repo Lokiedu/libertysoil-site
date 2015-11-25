@@ -29,13 +29,9 @@ import {getStore, addSchool} from '../store';
 import { defaultSelector } from '../selectors';
 
 class SchoolPage extends React.Component {
-  componentDidMount() {
-    SchoolPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let schoolInfo = client.schoolInfo(props.params.school_name);
+      let schoolInfo = client.schoolInfo(params.school_name);
 
       getStore().dispatch(addSchool(await schoolInfo));
     } catch (e) {

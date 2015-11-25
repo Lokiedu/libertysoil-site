@@ -61,17 +61,17 @@ let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  componentDidMount() {
-    SettingsFollowersPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
+  static async fetchData(params, props, client) {
+    const currentUserId = props.get('current_user_id');
 
-  static async fetchData(props, client) {
-    if (!props.current_user_id) {
+    if (currentUserId === null) {
       return;
     }
 
+    let currentUser = props.get('users').get(currentUserId);
+
     try {
-      let userInfo = client.userInfo(props.users[props.current_user_id].username);
+      let userInfo = client.userInfo(currentUser.get('username'));
       getStore().dispatch(addUser(await userInfo));
     } catch (e) {
       console.log(e.stack)

@@ -33,15 +33,11 @@ import { defaultSelector } from '../selectors';
 class TagPage extends Component {
   static displayName = 'TagPage'
 
-  componentDidMount() {
-    TagPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let tagPosts = client.tagPosts(props.params.tag);
+      let tagPosts = client.tagPosts(params.tag);
 
-      getStore().dispatch(setTagPosts(props.params.tag, await tagPosts));
+      getStore().dispatch(setTagPosts(params.tag, await tagPosts));
     } catch (e) {
       console.log(e);
       console.log(e.stack);

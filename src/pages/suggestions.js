@@ -73,19 +73,19 @@ export default class UserGrid extends React.Component {
 class SuggestionsPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  componentDidMount() {
-    SuggestionsPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
+  static async fetchData(params, props, client) {
+    const currentUserId = props.get('current_user_id');
 
-  static async fetchData(props, client) {
-    if (!props.current_user_id) {
-      return false;
+    if (currentUserId === null) {
+      return;
     }
+
+    let currentUser = props.get('users').get(currentUserId);
 
     try {
       let suggestedUsers = await client.userSuggestions();
 
-      let userInfo = await client.userInfo(props.users[props.current_user_id].username);
+      let userInfo = client.userInfo(currentUser.get('username'));
       userInfo.more.suggested_users = suggestedUsers;
 
       getStore().dispatch(addUser(userInfo));

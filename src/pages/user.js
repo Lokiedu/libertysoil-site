@@ -32,14 +32,10 @@ import { defaultSelector } from '../selectors';
 class UserPage extends React.Component {
   static displayName = 'UserPage';
 
-  componentDidMount() {
-    UserPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let userInfo = await client.userInfo(props.params.username);
-      let userPosts = client.userPosts(props.params.username);
+      let userInfo = await client.userInfo(params.username);
+      let userPosts = client.userPosts(params.username);
 
       getStore().dispatch(addUser(userInfo));
       getStore().dispatch(setUserPosts(userInfo.id, await userPosts));

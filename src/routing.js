@@ -33,30 +33,29 @@ import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
 
-// <Redirect from="/user/:username" to="/user/:username/posts" />
 
-let routes = (
-  <Route component={App}>
-    <Route component={MaybeList} path="/" />
-    <Route component={Auth} path="/auth" />
-    <Route component={PostPage} path="/post/:uuid" />
-    <Route component={PostEditPage} path="/post/edit/:uuid" />
-    <Route component={TagPage} path="/tag/:tag" />
-    <Route path="/settings">
-      <IndexRoute component={SettingsPage} />
-      <Route component={SettingsPasswordPage} path="password" />
-      <Route component={SettingsFollowersPage} path="followers" />
+export function getRoutes(onEnterHandler) {
+  return (
+    <Route component={App}>
+      <Route component={MaybeList} path="/" onEnter={onEnterHandler} />
+      <Route component={Auth} path="/auth" onEnter={onEnterHandler} />
+      <Route component={PostPage} path="/post/:uuid" onEnter={onEnterHandler} />
+      <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={onEnterHandler} />
+      <Route component={TagPage} path="/tag/:tag" onEnter={onEnterHandler} />
+      <Route path="/settings">
+        <IndexRoute component={SettingsPage} onEnter={onEnterHandler} />
+        <Route component={SettingsPasswordPage} path="password" onEnter={onEnterHandler} />
+        <Route component={SettingsFollowersPage} path="followers" onEnter={onEnterHandler} />
+      </Route>
+      <Route path="/user/:username">
+        <IndexRoute component={UserPage} onEnter={onEnterHandler} />
+        <Route component={UserLikesPage} path="/user/:username/likes" onEnter={onEnterHandler} />
+        <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={onEnterHandler} />
+        <Route component={AboutUserPage} path="/user/:username/bio" onEnter={onEnterHandler} />
+      </Route>
+      <Route path="/s/:school_name">
+        <IndexRoute component={SchoolPage} onEnter={onEnterHandler} />
+      </Route>
     </Route>
-    <Route path="/user/:username">
-      <IndexRoute component={UserPage} />
-      <Route component={UserLikesPage} path="/user/:username/likes" />
-      <Route component={UserFavoritesPage} path="/user/:username/favorites" />
-      <Route component={AboutUserPage} path="/user/:username/bio" />
-    </Route>
-    <Route path="/s/:school_name">
-      <IndexRoute component={SchoolPage} />
-    </Route>
-  </Route>
-)
-
-export default routes;
+  );
+}

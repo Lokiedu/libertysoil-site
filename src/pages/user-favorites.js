@@ -32,16 +32,12 @@ import { defaultSelector } from '../selectors';
 class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage'
 
-  componentDidMount() {
-    UserFavoritesPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let userInfo = await client.userInfo(props.params.username);
+      let userInfo = await client.userInfo(params.username);
       getStore().dispatch(addUser(userInfo));
 
-      let favouredPosts = client.getFavouredPosts(props.params.username);
+      let favouredPosts = client.getFavouredPosts(params.username);
       getStore().dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
     } catch (e) {
       console.log(e.stack)

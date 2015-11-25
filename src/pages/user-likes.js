@@ -32,16 +32,12 @@ import { defaultSelector } from '../selectors';
 class UserLikesPage extends React.Component {
   static displayName = 'UserLikesPage'
 
-  componentDidMount() {
-    UserLikesPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let userInfo = await client.userInfo(props.params.username);
+      let userInfo = await client.userInfo(params.username);
       getStore().dispatch(addUser(userInfo));
 
-      let likedPosts = client.getLikedPosts(props.params.username);
+      let likedPosts = client.getLikedPosts(params.username);
       getStore().dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
     } catch (e) {
       console.log(e.stack)

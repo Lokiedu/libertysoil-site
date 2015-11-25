@@ -21,19 +21,23 @@ import ReactDOM from 'react-dom'
 import {createHistory} from 'history'
 import {Router} from 'react-router';
 
-import routing from '../routing'
+import { getRoutes } from '../routing'
+import { EnterHandler } from '../utils/loader';
+import { API_HOST } from '../config';
+import ApiClient from '../api/client';
 import { initState } from '../store'
 
 bluebird.longStackTraces();
 window.Promise = bluebird;
 
-initState(window.state);
+let store = initState(window.state);
 
 let history = createHistory();
+let enterHandler = new EnterHandler(store, new ApiClient(API_HOST));
 
 ReactDOM.render(
   <Router history={history}>
-    {routing}
+    {getRoutes(enterHandler.handle)}
   </Router>,
   document.getElementById('content')
 );

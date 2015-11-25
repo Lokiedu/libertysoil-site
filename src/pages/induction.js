@@ -84,12 +84,8 @@ export default class UserGrid extends React.Component {
 class InductionPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  componentDidMount() {
-    InductionPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
-    if (!props.current_user_id) {
+  static async fetchData(params, props, client) {
+    if (props.get('current_user_id') === null) {
       return false;
     }
 

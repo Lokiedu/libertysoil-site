@@ -29,13 +29,9 @@ import {followUser, unfollowUser} from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class AboutUserPage extends React.Component {
-  componentDidMount() {
-    AboutUserPage.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
+  static async fetchData(params, props, client) {
     try {
-      let userInfo = client.userInfo(props.params.username);
+      let userInfo = client.userInfo(params.username);
 
       getStore().dispatch(addUser(await userInfo));
     } catch (e) {
