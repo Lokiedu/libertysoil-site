@@ -64,6 +64,7 @@ function buildScript(file, watch) {
   var props = {
     entries: [path.src.scriptsDir + file],
     debug: true,
+    cache: {}, packageCache: {}, fullPaths: true, // Requirement of watchify
     transform: [babelify.configure({
       stage: 0,
       compact: true,
