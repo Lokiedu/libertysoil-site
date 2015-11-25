@@ -22,7 +22,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver,
-  setSchools
+  setSchools, setUserTags
 } from '../store';
 
 const client = new ApiClient(API_HOST);
