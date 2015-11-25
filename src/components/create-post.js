@@ -20,13 +20,15 @@ import React from 'react';
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
 import TagsEditor from './post/tags-editor';
+import SchoolSelect from './post/school-select';
 
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
     triggers: React.PropTypes.shape({
       createPost: React.PropTypes.func.isRequired
-    })
+    }),
+    schools: React.PropTypes.array
   };
 
   submitHandler(event) {
@@ -38,7 +40,8 @@ export default class CreatePost extends React.Component {
       'short_text',
       {
         text: form.text.value,
-        tags: this.editor.getTags()
+        tags: this.editor.getTags(),
+        schools: this.editor.getSchools()
       }
     ).then(() => {
       form.text.value = '';
@@ -57,8 +60,8 @@ export default class CreatePost extends React.Component {
         <form onSubmit={this.submitHandler.bind(this)}>
           <div className="box__body">
             <EditPost />
-
-            <TagsEditor ref={(editor) => this.editor = editor} tags={[]} />
+            <TagsEditor ref={(editor) => this.editor = editor}
+                        autocompleteSchools={[{id: 1, name: 'school one'}, {id: 2, name: 'school two'}]} />
 
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">
