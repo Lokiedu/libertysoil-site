@@ -500,7 +500,7 @@ export default class ApiController {
       req.session.user = user.id;
     }
 
-    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send({ success: true, user });
   }
@@ -758,7 +758,7 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(u.toJSON());
   }

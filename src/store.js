@@ -471,13 +471,17 @@ function theReducer(state = initialState, action) {
 
     case SET_LIKES: {
       state = state.setIn(['likes', action.user_id], action.likes);
-      state = state.updateIn(['posts', action.post_id, 'likers'], likers => action.likers);
+      if (action.post_id) {
+        state = state.setIn(['posts', action.post_id, 'likers'], action.likers);
+      }
       break;
     }
 
     case SET_FAVOURITES: {
       state = state.setIn(['favourites', action.user_id], action.favourites);
-      state = state.updateIn(['posts', action.post_id, 'favourers'], favourers => action.favourers);
+      if (action.post_id) {
+        state = state.setIn(['posts', action.post_id, 'favourers'], action.favourers);
+      }
       break;
     }
   }

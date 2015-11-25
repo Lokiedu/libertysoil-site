@@ -196,23 +196,22 @@ export async function unfollowUser(user) {
 export async function login(username, password) {
   getStore().dispatch(removeAllMessages());
 
-  let user;
-
   try {
     let result = await client.login({username, password});
 
     if (result.success) {
-      user = result.user;
-      getStore().dispatch(setLikes(user.id, user.likes.map(like => like.post_id)));
-      getStore().dispatch(setFavourites(user.id, user.favourites.map(fav => fav.post_id)));
+      let user = result.user;
+      getStore().dispatch(setCurrentUser(user));
+      getStore().dispatch(setLikes(user.id, user.liked_posts.map(like => like.post_id)));
+      getStore().dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.post_id)));
     } else {
+      getStore().dispatch(setCurrentUser(null));
       getStore().dispatch(addError('Invalid username or password'));
     }
   } catch (e) {
+    getStore().dispatch(setCurrentUser(null));
     getStore().dispatch(addError('Invalid username or password'));
   }
-
-  getStore().dispatch(setCurrentUser(user));
 }
 
 export async function registerUser(username, password, email, firstName, lastName) {
