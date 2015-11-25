@@ -17,32 +17,55 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
+import _ from 'lodash';
 
-let TagLine = ({tags}) => {
-  if (tags.length == 0) {
-    return <script/>;
+export default class TagLine extends React.Component {
+  static displayName = "TagLine"
+
+  static propTypes = {
+    tags: React.PropTypes.arrayOf(React.PropTypes.shape({
+      id: React.PropTypes.string,
+      name: React.PropTypes.string
+    })),
+    schools: React.PropTypes.arrayOf(React.PropTypes.shape({
+      id: React.PropTypes.string,
+      name: React.PropTypes.string,
+      url_name: React.PropTypes.string,
+    }))
+  };
+
+  render () {
+    let {
+        tags,
+        schools
+      } = this.props;
+
+    if ((!tags || !schools) || (tags.length == 0 && schools.length == 0)) {
+      return <script/>;
+    }
+
+    let schoolBlocks = schools.map(school => {
+      console.log(school);
+      return (
+        <Link to={`/s/${school.url_name}`} className='tag school' key={`school-${school.id}`}>
+          {school.name}
+        </Link>
+      )
+    });
+
+    let tagBlocks = tags.map(tag => {
+      return (
+        <Link to={`/tag/${tag.name}`} className='tag' key={`tag-${tag.id}`}>
+          {tag.name}
+        </Link>
+      )
+    });
+
+    return (
+      <div className="tags">
+        {schoolBlocks}
+        {tagBlocks}
+      </div>
+    );
   }
-
-  let tagBlocks = tags.map(tag => (
-    <Link to={`/tag/${tag.name}`} className="tag" key={`tag-${tag.id}`}>
-      {tag.name}
-    </Link>
-  ));
-
-  return (
-    <div className="tags">
-      {tagBlocks}
-    </div>
-  );
-};
-
-TagLine.displayName = "TagLine";
-TagLine.propTypes = {
-  tags: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.string,
-    name: React.PropTypes.string
-  }))
-};
-
-
-export default TagLine;
+}
