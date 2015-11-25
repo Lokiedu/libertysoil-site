@@ -36,8 +36,12 @@ export default class ApiController {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
     let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    response = response.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      return post;
+    });
 
-    res.send(response.toJSON());
+    res.send(response);
   }
 
   async userPosts(req, res) {
@@ -52,8 +56,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    posts = posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      return post;
+    });
 
-    res.send(posts.toJSON());
+    res.send(posts);
   }
 
   async tagPosts(req, res) {
@@ -69,8 +77,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    posts = posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      return post;
+    });
 
-    res.send(posts.toJSON());
+    res.send(posts);
   }
 
   async getPost(req, res) {
@@ -78,6 +90,7 @@ export default class ApiController {
 
     try {
       let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -379,8 +392,12 @@ export default class ApiController {
       })
 
     let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools']})
+    posts = posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      return post;
+    });
 
-    res.send(posts.toJSON());
+    res.send(posts);
   }
 
   async registerUser(req, res) {
@@ -635,6 +652,7 @@ export default class ApiController {
       }
 
       await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
+      obj.relations.schools = obj.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(obj.toJSON());
     } catch (e) {
@@ -712,6 +730,7 @@ export default class ApiController {
       }
 
       await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']})
+      post_object.relations.schools = post_object.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(post_object.toJSON());
     } catch (e) {
