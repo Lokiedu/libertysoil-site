@@ -517,7 +517,7 @@ function theReducer(state = initialState, action) {
         schools[school.id] = school;
       });
 
-      state = state.set('schools', schools);
+      state = state.set('schools', Immutable.fromJS(schools));
       break;
     }
   }

@@ -21,15 +21,14 @@ import _ from 'lodash';
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
 import TagsEditor from './post/tags-editor';
-import SchoolSelect from './post/school-select';
 
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
+    schools: React.PropTypes.object,
     triggers: React.PropTypes.shape({
       createPost: React.PropTypes.func.isRequired
-    }),
-    schools: React.PropTypes.object
+    })
   };
 
   submitHandler(event) {
