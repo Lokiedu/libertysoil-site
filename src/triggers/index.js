@@ -21,7 +21,8 @@ import {
   getStore,
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
-  setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver
+  setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver,
+  setSchools
 } from '../store';
 
 const client = new ApiClient(API_HOST);
@@ -253,6 +254,17 @@ export async function updatePost(post_uuid, post_fields) {
   try {
     let result = await client.updatePost(post_uuid, post_fields);
     getStore().dispatch(addPost(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function loadSchools() {
+  try {
+    let result = await client.schools();
+    getStore().dispatch(setSchools(result));
 
     return result;
   } catch (e) {

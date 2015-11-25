@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import _ from 'lodash';
 
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
@@ -28,7 +29,7 @@ export default class CreatePost extends React.Component {
     triggers: React.PropTypes.shape({
       createPost: React.PropTypes.func.isRequired
     }),
-    schools: React.PropTypes.array
+    schools: React.PropTypes.object
   };
 
   submitHandler(event) {
@@ -61,7 +62,7 @@ export default class CreatePost extends React.Component {
           <div className="box__body">
             <EditPost />
             <TagsEditor ref={(editor) => this.editor = editor}
-                        autocompleteSchools={[{id: 1, name: 'school one'}, {id: 2, name: 'school two'}]} />
+                        autocompleteSchools={_.values(this.props.schools)} />
 
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">

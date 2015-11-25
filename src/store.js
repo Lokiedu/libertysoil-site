@@ -47,6 +47,8 @@ const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
+const SET_SCHOOLS = 'SET_SCHOOLS';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -185,6 +187,13 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
+  }
+}
+
+export function setSchools(schools) {
+  return {
+    type: SET_SCHOOLS,
+    schools
   }
 }
 
@@ -498,6 +507,17 @@ function theReducer(state = initialState, action) {
       if (action.post_id) {
         state = state.setIn(['posts', action.post_id, 'favourers'], action.favourers);
       }
+      break;
+    }
+
+    case SET_SCHOOLS: {
+      let schools = {};
+
+      action.schools.forEach(school => {
+        schools[school.id] = school;
+      });
+
+      state = state.set('schools', schools);
       break;
     }
   }
