@@ -15,22 +15,34 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.tag {
-  &:extend(.layout);
-  &:extend(.layout-align_vertical);
-  &.school {
-    border: 1px solid @color__green;
-    color: @color__green;
-  }
-  
-  padding: 3px 10px;
-  border: 1px solid #ccc;
-  border-radius: @space;
-  font-size: @font__size-small;
+import React from 'react';
+import { Link } from 'react-router';
 
-  &-blue {
-    border: 1px solid @color__blue;
-    color: @color__blue;
-    background: #fff;
+let TagCloud = ({tags}) => {
+  if (tags.length == 0) {
+    return <script/>;
   }
-}
+
+  let tagBlocks = tags.map(tag => (
+    <Link to={`/tag/${tag.name}`} className="tag tag-blue" key={`tag-${tag.id}`}>
+      {tag.name}
+    </Link>
+  ));
+
+  return (
+    <div className="tags">
+      {tagBlocks}
+    </div>
+  );
+};
+
+TagCloud.displayName = "TagCloud";
+TagCloud.propTypes = {
+  tags: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.string,
+    name: React.PropTypes.string
+  }))
+};
+
+
+export default TagCloud;

@@ -15,6 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import bluebird from 'bluebird';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {createHistory} from 'history'
@@ -22,6 +23,9 @@ import {Router} from 'react-router';
 
 import routing from '../routing'
 import { initState } from '../store'
+
+bluebird.longStackTraces();
+window.Promise = bluebird;
 
 initState(window.state);
 

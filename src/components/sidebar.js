@@ -16,17 +16,55 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link, IndexLink } from 'react-router';
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, addError} from '../store';
+import {getStore, setUserTags, addError} from '../store';
 import SidebarLink from './sidebar-link';
 import CurrentUser from './current-user';
+import TagCloud from './tag-cloud';
+import { defaultSelector } from '../selectors';
 
-export default class Sidebar extends React.Component {
+let SidebarTagCloud = ({ tags, title, ...props }) => {
+  if (tags.length == 0) {
+    return <script/>;
+  }
+
+  return (
+    <div {...props}>
+      <div className="layout__row">
+        <h4 className="head head-sub">{title}</h4>
+      </div>
+      <div className="layout__row">
+        <TagCloud tags={tags}/>
+      </div>
+    </div>
+  );
+};
+
+SidebarTagCloud.displayName = "SidebarTagCloud";
+
+class Sidebar extends React.Component {
+  static displayName = 'Sidebar'
+
+  componentDidMount() {
+    Sidebar.fetchData(this.props, new ApiClient(API_HOST));
+  }
+
+  static async fetchData(props, client) {
+    try {
+      let userTags = client.userTags();
+
+      getStore().dispatch(setUserTags(await userTags));
+    } catch (e) {
+      console.log(e.stack)
+    }
+  }
+
   render() {
-    if (!this.props.current_user) {
+    if (!this.props.current_user || !this.props.current_user_tags) {
       return <script/>
     }
 
@@ -44,25 +82,19 @@ export default class Sidebar extends React.Component {
         </div>
 
         <div className="layout__row">
-          <SidebarLink className="link" enabled={true} to={`/user/${current_user.username}`}><i className="icon fa fa-feed"></i> News Feed</SidebarLink>
+          <SidebarLink className="link" enabled to="/"><span className="icon fa fa-feed"></span> News Feed</SidebarLink>
         </div>
         <div className="layout__row">
-          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><i className="icon fa fa-heart"></i> My Likes</SidebarLink>
+          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><span className="icon fa fa-heart"></span> My Likes</SidebarLink>
         </div>
         <div className="layout__row">
-          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><i className="icon fa fa-star"></i> My Favorites</SidebarLink>
+          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><span className="icon fa fa-star"></span> My Favorites</SidebarLink>
         </div>
 
-        {/*<div className="layout__row">
-          <h3 className="head head-sub">Popular tags</h3>
-        </div>*/}
-        {/*<div className="layout__row">
-          <div className="tags">
-            <span className="tag">Psychology</span>
-            <span className="tag">Gaming</span>
-          </div>
-        </div>*/}
+        <SidebarTagCloud className="layout__row layout__row-double" tags={this.props.current_user_tags} title="Tags" />
       </div>
     )
   }
 }
+
+export default connect(defaultSelector)(Sidebar);

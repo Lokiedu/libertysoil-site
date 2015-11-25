@@ -85,6 +85,26 @@ export default class ApiController {
     res.send(posts);
   }
 
+  async userTags(req, res){
+    if (!req.session || !req.session.user) {
+      res.status(403)
+      res.send({error: 'You are not authorized'})
+    }
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .where({user_id: req.session.user})
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let labels = await q.fetchAll({require: false, withRelated: ['labels']})
+    labels = labels.map(row => row.relations.labels);
+
+    res.send(labels);
+  }
+
   async getPost(req, res) {
     let Post = this.bookshelf.model('Post');
 
@@ -93,7 +113,7 @@ export default class ApiController {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       res.send(post.toJSON());
     } catch (e) {
-      res.sendStatus(404)
+      res.sendStatus(404);
     }
   }
 
@@ -234,8 +254,8 @@ export default class ApiController {
 
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     let result = { success: false };
@@ -264,7 +284,7 @@ export default class ApiController {
       result.error = ex.message;
     }
 
-    res.send(result)
+    res.send(result);
   }
 
   async unlikePost(req, res) {
@@ -299,13 +319,13 @@ export default class ApiController {
       result.error = ex.message;
     }
 
-    res.send(result)
+    res.send(result);
   }
 
   async favPost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     let result = { success: false };
@@ -334,13 +354,13 @@ export default class ApiController {
       result.error = ex.message;
     }
 
-    res.send(result)
+    res.send(result);
   }
 
   async unfavPost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     let result = { success: false };
@@ -369,17 +389,17 @@ export default class ApiController {
       result.error = ex.message;
     }
 
-    res.send(result)
+    res.send(result);
   }
 
   async subscriptions(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
-      return
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
     }
 
-    let uid = req.session.user
+    let uid = req.session.user;
     let Post = this.bookshelf.model('Post');
 
     let q = Post.forge()
@@ -391,7 +411,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools']})
+    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools']});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -415,19 +435,19 @@ export default class ApiController {
     let User = this.bookshelf.model('User');
 
     {
-      let check = await User.where({username: req.body.username}).fetch({require: false})
+      let check = await User.where({username: req.body.username}).fetch({require: false});
       if (check) {
         res.status(409);
-        res.send({error: 'User with this username is already registered'})
+        res.send({error: 'User with this username is already registered'});
         return;
       }
     }
 
     {
-      let check = await User.where({email: req.body.email}).fetch({require: false})
+      let check = await User.where({email: req.body.email}).fetch({require: false});
       if (check) {
         res.status(409);
-        res.send({error: 'User with this email is already registered'})
+        res.send({error: 'User with this email is already registered'});
         return;
       }
     }
@@ -459,15 +479,15 @@ export default class ApiController {
       return
     } catch (e) {
       if (e.code == 23505) {
-        res.status(401)
-        res.send({error: 'User already exists'})
-        return
+        res.status(401);
+        res.send({error: 'User already exists'});
+        return;
       } else {
-        console.dir(e)
+        console.dir(e);
 
         res.status(500);
-        res.send({error: e.message})
-        return
+        res.send({error: e.message});
+        return;
       }
     }
   }
@@ -479,38 +499,38 @@ export default class ApiController {
       if (!(fieldName in req.body)) {
         res.status(400);
         res.send({error: 'Bad Request'});
-        return
+        return;
       }
     }
 
     let User = this.bookshelf.model('User');
 
-    let user
+    let user;
 
     try {
       user = await new User({username: req.body.username}).fetch({require: true});
     } catch (e) {
-      console.log(`user '${req.body.username}' is not found`)
-      res.status(401)
-      res.send({success: false})
+      console.log(`user '${req.body.username}' is not found`);
+      res.status(401);
+      res.send({success: false});
       return
     }
 
     let passwordIsValid = await bcryptAsync.compareAsync(req.body.password, user.get('hashed_password'));
 
     if (!passwordIsValid) {
-      console.log(`password for user '${req.body.username}' is not found`)
-      res.status(401)
-      res.send({success: false})
+      console.log(`password for user '${req.body.username}' is not found`);
+      res.status(401);
+      res.send({success: false});
       return
     }
     if (req.session) {
       req.session.user = user.id;
     }
 
-    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
-    res.send({ success: true, user })
+    res.send({ success: true, user });
   }
 
   async logout(req, res) {
@@ -580,8 +600,8 @@ export default class ApiController {
 
   async createPost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     if (!('type' in req.body)) {
@@ -648,7 +668,7 @@ export default class ApiController {
       await obj.save(null, {method: 'insert'});
 
       if (_.isArray(tags)) {
-        await obj.attachLabels(tags)
+        await obj.attachLabels(tags);
       }
 
       await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
@@ -656,8 +676,8 @@ export default class ApiController {
 
       res.send(obj.toJSON());
     } catch (e) {
-      console.log(e)
-      console.log(e.stack)
+      console.log(e);
+      console.log(e.stack);
       res.status(500);
       res.send({error: e.message});
     }
@@ -665,12 +685,12 @@ export default class ApiController {
 
   async updatePost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     if (!('id' in req.params)) {
-      res.status(400)
+      res.status(400);
       res.send({error: '"id" parameter is not given'});
     }
 
@@ -682,7 +702,7 @@ export default class ApiController {
       post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true, withRelated: ['labels']});
     } catch(e) {
       res.status(500);
-      res.send({error: e.message})
+      res.send({error: e.message});
       return
     }
 
@@ -726,30 +746,30 @@ export default class ApiController {
       await post_object.save(null, {method: 'update'});
 
       if (_.isArray(tags)) {
-        await post_object.attachLabels(tags, true)
+        await post_object.attachLabels(tags, true);
       }
 
-      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']})
+      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
       post_object.relations.schools = post_object.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(post_object.toJSON());
     } catch (e) {
-      console.log(e)
-      console.log(e.stack)
+      console.log(e);
+      console.log(e.stack);
 
       res.status(500);
-      res.send({error: e.message})
+      res.send({error: e.message});
     }
   }
 
   async removePost(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     if (!('id' in req.params)) {
-      res.status(400)
+      res.status(400);
       res.send({error: '"id" parameter is not given'});
     }
 
@@ -760,7 +780,7 @@ export default class ApiController {
       post_object.destroy();
     } catch(e) {
       res.status(500);
-      res.send({error: e.message})
+      res.send({error: e.message});
     }
     res.status(200);
     res.send({success: true});
@@ -768,15 +788,15 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(u.toJSON());
   }
 
   async followUser(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     let User = this.bookshelf.model('User');
@@ -801,13 +821,13 @@ export default class ApiController {
       follow_status.error = ex.message;
     }
 
-    res.send(follow_status)
+    res.send(follow_status);
   }
 
   async updateUser(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
       return;
     }
 
@@ -834,8 +854,8 @@ export default class ApiController {
 
   async changePassword(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
       return;
     }
 
@@ -875,8 +895,8 @@ export default class ApiController {
 
   async unfollowUser(req, res) {
     if (!req.session || !req.session.user) {
-      res.status(403)
-      res.send({error: 'You are not authorized'})
+      res.status(403);
+      res.send({error: 'You are not authorized'});
     }
 
     let User = this.bookshelf.model('User');
@@ -901,6 +921,6 @@ export default class ApiController {
       follow_status.error = ex.message;
     }
 
-    res.send(follow_status)
+    res.send(follow_status);
   }
 }

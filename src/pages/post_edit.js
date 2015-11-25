@@ -28,6 +28,7 @@ import {getStore, addPost, addError} from '../store';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
 import TagsEditor from '../components/post/tags-editor';
+import Sidebar from '../components/sidebar';
 
 import { defaultSelector } from '../selectors';
 import { deletePost, updatePost } from '../triggers';
@@ -106,11 +107,7 @@ class PostEditPage extends React.Component {
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
         <div className="page__container">
           <div className="page__body">
-            <div className="page__sidebar">
-              <div className="layout__row">
-                <CurrentUser user={this.props.current_user} />
-              </div>
-            </div>
+            <Sidebar current_user={this.props.current_user}/>
 
             <div className="page__content">
               <div className="box box-post box-space_bottom">

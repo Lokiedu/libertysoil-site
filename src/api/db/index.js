@@ -43,10 +43,10 @@ export default function initBookshelf(config) {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
     liked_posts: function() {
-      return this.belongsToMany(User, 'likes', 'user_id', 'post_id');
+      return this.belongsToMany(Post, 'likes', 'user_id', 'post_id');
     },
     favourited_posts: function() {
-      return this.belongsToMany(User, 'favourites', 'user_id', 'post_id');
+      return this.belongsToMany(Post, 'favourites', 'user_id', 'post_id');
     },
     virtuals: {
       gravatarHash: function() {

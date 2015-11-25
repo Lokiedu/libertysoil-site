@@ -56,10 +56,19 @@ export async function unlikePost(current_user_id, post_id) {
   }
 }
 
-export async function syncLikedPosts(user_id) {
+export async function syncLikedPosts() {
   try {
     let likedPosts = client.userLikedPosts();
-    getStore().dispatch(setPostsToLikesRiver(user_id, await likedPosts));
+    getStore().dispatch(setPostsToLikesRiver(await likedPosts));
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function syncFavouredPosts() {
+  try {
+    let favouredPosts = client.userFavouredPosts();
+    getStore().dispatch(setPostsToFavouritesRiver(await favouredPosts));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
@@ -105,8 +114,10 @@ export async function syncFavouredPosts(user_id) {
 export async function createPost(type, data) {
   try {
     let result = await client.createPost(type, data);
-
     getStore().dispatch(addPostToRiver(result));
+
+    let userTags = client.userTags();
+    getStore().dispatch(setUserTags(await userTags));
   } catch (e) {
     console.log(e)
     console.log(e.stack)
@@ -185,23 +196,22 @@ export async function unfollowUser(user) {
 export async function login(username, password) {
   getStore().dispatch(removeAllMessages());
 
-  let user;
-
   try {
     let result = await client.login({username, password});
 
     if (result.success) {
-      user = result.user;
-      getStore().dispatch(setLikes(user.id, user.likes.map(like => like.post_id)));
-      getStore().dispatch(setFavourites(user.id, user.favourites.map(fav => fav.post_id)));
+      let user = result.user;
+      getStore().dispatch(setCurrentUser(user));
+      getStore().dispatch(setLikes(user.id, user.liked_posts.map(like => like.post_id)));
+      getStore().dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.post_id)));
     } else {
+      getStore().dispatch(setCurrentUser(null));
       getStore().dispatch(addError('Invalid username or password'));
     }
   } catch (e) {
+    getStore().dispatch(setCurrentUser(null));
     getStore().dispatch(addError('Invalid username or password'));
   }
-
-  getStore().dispatch(setCurrentUser(user));
 }
 
 export async function registerUser(username, password, email, firstName, lastName) {

@@ -32,6 +32,7 @@ const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 const SET_USER_POSTS = 'SET_USER_POSTS';
+const SET_USER_TAGS = 'SET_USER_TAGS';
 const SET_TAG_POSTS = 'SET_TAG_POSTS';
 const REMOVE_POST = 'REMOVE_POST';
 
@@ -102,6 +103,13 @@ export function setUserPosts(user_id, posts) {
     type: SET_USER_POSTS,
     user_id,
     posts
+  }
+}
+
+export function setUserTags(tags) {
+  return {
+    type: SET_USER_TAGS,
+    tags
   }
 }
 
@@ -361,6 +369,21 @@ function theReducer(state = initialState, action) {
       break;
     }
 
+    case SET_USER_TAGS: {
+      let cut = {current_user_tags: []};
+      let tags = _.chain(action.tags)
+        .flatten()
+        .uniq(tag => tag.name)
+        .take(10)
+        .value();
+
+      if (tags) cut.current_user_tags = tags;
+
+      state = state.mergeDeep(Immutable.fromJS(cut));
+
+      break;
+    }
+
     case SET_TAG_POSTS: {
       let cut = {posts: {}, tag_posts: {}, users: {}};
 
@@ -464,13 +487,17 @@ function theReducer(state = initialState, action) {
 
     case SET_LIKES: {
       state = state.setIn(['likes', action.user_id], action.likes);
-      state = state.updateIn(['posts', action.post_id, 'likers'], likers => action.likers);
+      if (action.post_id) {
+        state = state.setIn(['posts', action.post_id, 'likers'], action.likers);
+      }
       break;
     }
 
     case SET_FAVOURITES: {
       state = state.setIn(['favourites', action.user_id], action.favourites);
-      state = state.updateIn(['posts', action.post_id, 'favourers'], favourers => action.favourers);
+      if (action.post_id) {
+        state = state.setIn(['posts', action.post_id, 'favourers'], action.favourers);
+      }
       break;
     }
   }
@@ -481,6 +508,7 @@ function theReducer(state = initialState, action) {
 let initialState = {
   users: {},
   user_posts: {},
+  current_user_tags: [],
   tag_posts: {},
   following: {},
   followers: {},
