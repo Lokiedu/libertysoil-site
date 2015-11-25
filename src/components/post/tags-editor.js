@@ -6,10 +6,16 @@ export default class TagsEditor extends Component {
   static displayName = 'TagsEditor';
 
   static propTypes = {
-    tags: PropTypes.array,
-    schools: PropTypes.array,
-    autocompleteTags: PropTypes.array,
-    autocompleteSchools: PropTypes.array
+    autocompleteSchools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    autocompleteTags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    school: PropTypes.string,
+    schools: PropTypes.arrayOf(PropTypes.string),
+    tag: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.string)
   };
 
   static defaultProps = {

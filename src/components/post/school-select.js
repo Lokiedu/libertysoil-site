@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-export default class SchoolSelect extends React.Component {
+export default class SchoolSelect extends Component {
   static propTypes = {
-    schools: React.PropTypes.array
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    }))
   };
 
   static defaultProps = {
@@ -11,7 +13,7 @@ export default class SchoolSelect extends React.Component {
 
   render() {
     return (
-      <select name="school" className="input" defaultValue="" {...this.props}>
+      <select className="input" name="school" defaultValue="" {...this.props}>
         <option disabled value="">Select school...</option>
         {this._renderOptions()}
       </select>
