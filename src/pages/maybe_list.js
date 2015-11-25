@@ -23,7 +23,8 @@ import Welcome from './welcome'
 import Induction from './induction'
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, setPostsToRiver} from '../store';
+import { getStore } from '../store';
+import { setPostsToRiver } from '../actions';
 import { updateUserInfo } from '../triggers';
 import { defaultSelector } from '../selectors';
 

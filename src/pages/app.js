@@ -18,7 +18,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import {getStore} from '../store';
+import { getStore } from '../store';
 
 export default class App extends React.Component {
   render() {

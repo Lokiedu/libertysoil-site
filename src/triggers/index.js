@@ -17,12 +17,12 @@
  */
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
+import { getStore } from '../store';
 import {
-  getStore,
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver
-} from '../store';
+} from '../actions';
 
 const client = new ApiClient(API_HOST);
 

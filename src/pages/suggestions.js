@@ -25,7 +25,8 @@ import FollowButton from '../components/follow-button';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { getStore, addUser } from '../store';
+import { getStore } from '../store';
+import { addUser } from '../actions';
 import { followUser, unfollowUser, doneSuggestions } from '../triggers'
 import { defaultSelector } from '../selectors';
 

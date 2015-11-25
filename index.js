@@ -34,7 +34,8 @@ import initBookshelf from './src/api/db';
 import {API_HOST} from './src/config';
 import ApiClient from './src/api/client'
 
-import {initState, setCurrentUser, setLikes, setFavourites} from './src/store';
+import { initState } from './src/store';
+import { setCurrentUser, setLikes, setFavourites } from './src/actions';
 
 import db_config from './knexfile';
 

@@ -20,171 +20,7 @@ import Immutable from 'immutable'
 import _ from 'lodash'
 
 import messageType from './consts/messageTypeConstants';
-
-const ADD_USER = 'ADD_USER';
-const ADD_SCHOOL = 'ADD_SCHOOL';
-
-const ADD_POST = 'ADD_POST';
-const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
-const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
-const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
-const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
-const SET_USER_POSTS = 'SET_USER_POSTS';
-const SET_USER_TAGS = 'SET_USER_TAGS';
-const SET_TAG_POSTS = 'SET_TAG_POSTS';
-const REMOVE_POST = 'REMOVE_POST';
-
-const SET_LIKES = 'SET_LIKES';
-const SET_FAVOURITES = 'SET_FAVOURITES';
-
-const ADD_ERROR = 'ADD_ERROR';
-const ADD_MESSAGE = 'ADD_MESSAGE';
-const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
-const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
-
-const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-const SET_CURRENT_USER = 'SET_CURRENT_USER';
-
-export function addUser(user) {
-  return {
-    type: ADD_USER,
-    user
-  }
-}
-
-export function addSchool(school) {
-  return {
-    type: ADD_SCHOOL,
-    school
-  }
-}
-
-export function addPost(post) {
-  return {
-    type: ADD_POST,
-    post
-  }
-}
-
-export function addPostToRiver(post) {
-  return {
-    type: ADD_POST_TO_RIVER,
-    post
-  }
-}
-
-export function setPostsToRiver(posts) {
-  return {
-    type: SET_POSTS_TO_RIVER,
-    posts
-  }
-}
-
-export function setPostsToLikesRiver(user_id, posts) {
-  return {
-    type: SET_POSTS_TO_LIKES_RIVER,
-    user_id,
-    posts
-  }
-}
-
-export function setPostsToFavouritesRiver(user_id, posts) {
-  return {
-    type: SET_POSTS_TO_FAVOURITES_RIVER,
-    user_id,
-    posts
-  }
-}
-
-export function setUserPosts(user_id, posts) {
-  return {
-    type: SET_USER_POSTS,
-    user_id,
-    posts
-  }
-}
-
-export function setUserTags(tags) {
-  return {
-    type: SET_USER_TAGS,
-    tags
-  }
-}
-
-export function setTagPosts(tag, posts) {
-  return {
-    type: SET_TAG_POSTS,
-    tag,
-    posts
-  }
-}
-
-export function removePost(id) {
-  return {
-    type: REMOVE_POST,
-    id
-  }
-}
-
-export function setLikes(user_id, likes, post_id, likers) {
-  return {
-    type: SET_LIKES,
-    user_id,
-    likes,
-    post_id,
-    likers
-  }
-}
-
-export function setFavourites(user_id, favourites, post_id, favourers) {
-  return {
-    type: SET_FAVOURITES,
-    user_id,
-    favourites,
-    post_id,
-    favourers
-  }
-}
-
-export function addError(message) {
-  return {
-    type: ADD_ERROR,
-    message
-  }
-}
-
-export function addMessage(message) {
-  return {
-    type: ADD_MESSAGE,
-    message
-  }
-}
-
-export function removeMessage(index) {
-  return {
-    type: REMOVE_MESSAGE,
-    index
-  }
-}
-
-export function removeAllMessages() {
-  return {
-    type: REMOVE_ALL_MESSAGES
-  }
-}
-
-export function loginSuccess() {
-  return {
-    type: LOGIN_SUCCESS
-  }
-}
-
-export function setCurrentUser(user) {
-  return {
-    type: SET_CURRENT_USER,
-    user
-  }
-}
+import * as a from './actions';
 
 function theReducer(state = initialState, action) {
   let userToStateCut = user => {
@@ -214,7 +50,7 @@ function theReducer(state = initialState, action) {
   };
 
   switch (action.type) {
-    case ADD_USER: {
+    case a.ADD_USER: {
       const user = action.user;
 
       state = state.mergeDeep(Immutable.fromJS(userToStateCut(user)));
@@ -236,7 +72,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case ADD_SCHOOL: {
+    case a.ADD_SCHOOL: {
       const school = action.school;
 
       state = state.setIn(['schools', school.id], Immutable.fromJS(school));
@@ -244,7 +80,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case ADD_POST: {
+    case a.ADD_POST: {
       let user = action.post.user
 
       let postCopy = _.cloneDeep(action.post);
@@ -256,7 +92,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case ADD_POST_TO_RIVER: {
+    case a.ADD_POST_TO_RIVER: {
       let user = action.post.user
 
       let postCopy = _.cloneDeep(action.post);
@@ -271,7 +107,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_POSTS_TO_RIVER: {
+    case a.SET_POSTS_TO_RIVER: {
       let posts = action.posts;
 
       let postsWithoutUsers = action.posts.map(post => {
@@ -298,7 +134,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_POSTS_TO_LIKES_RIVER: {
+    case a.SET_POSTS_TO_LIKES_RIVER: {
       let posts = action.posts;
 
       let postsWithoutUsers = action.posts.map(post => {
@@ -325,7 +161,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_POSTS_TO_FAVOURITES_RIVER: {
+    case a.SET_POSTS_TO_FAVOURITES_RIVER: {
       let posts = action.posts;
 
       let postsWithoutUsers = action.posts.map(post => {
@@ -352,7 +188,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_USER_POSTS: {
+    case a.SET_USER_POSTS: {
       let cut = {posts: {}, user_posts: {}};
 
       if (action.posts.length) {
@@ -367,7 +203,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_USER_TAGS: {
+    case a.SET_USER_TAGS: {
       let cut = {current_user_tags: []};
       let tags = _.chain(action.tags)
         .flatten()
@@ -382,7 +218,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_TAG_POSTS: {
+    case a.SET_TAG_POSTS: {
       let cut = {posts: {}, tag_posts: {}, users: {}};
 
       if (action.posts.length) {
@@ -409,7 +245,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case REMOVE_POST: {
+    case a.REMOVE_POST: {
       let post_id = action.id;
 
       state = state.deleteIn(['posts', post_id]);
@@ -433,7 +269,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case ADD_ERROR: {
+    case a.ADD_ERROR: {
       state = state.updateIn(['messages'], messages => messages.push({
         type: messageType.ERROR,
         message: action.message
@@ -441,7 +277,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case ADD_MESSAGE: {
+    case a.ADD_MESSAGE: {
       state = state.updateIn(['messages'], messages => messages.push({
         type: messageType.MESSAGE,
         message: action.message
@@ -449,7 +285,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case REMOVE_MESSAGE: {
+    case a.REMOVE_MESSAGE: {
       var messages = state.get('messages').toJS();
 
       messages.splice(action.index, 1);
@@ -458,12 +294,12 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case REMOVE_ALL_MESSAGES: {
+    case a.REMOVE_ALL_MESSAGES: {
       state = state.set('messages', Immutable.fromJS([]));
       break;
     }
 
-    case SET_CURRENT_USER: {
+    case a.SET_CURRENT_USER: {
       let cut;
 
       if (_.isUndefined(action.user)) {
@@ -483,7 +319,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_LIKES: {
+    case a.SET_LIKES: {
       state = state.setIn(['likes', action.user_id], action.likes);
       if (action.post_id) {
         state = state.setIn(['posts', action.post_id, 'likers'], action.likers);
@@ -491,7 +327,7 @@ function theReducer(state = initialState, action) {
       break;
     }
 
-    case SET_FAVOURITES: {
+    case a.SET_FAVOURITES: {
       state = state.setIn(['favourites', action.user_id], action.favourites);
       if (action.post_id) {
         state = state.setIn(['posts', action.post_id, 'favourers'], action.favourers);

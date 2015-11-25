@@ -22,7 +22,8 @@ import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore, addUser } from '../store';
+import { getStore } from '../store';
+import { addUser } from '../actions';
 import { updateUserInfo } from '../triggers'
 import { defaultSelector } from '../selectors';
 
