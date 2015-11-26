@@ -410,6 +410,7 @@ export default class ApiController {
     let q = Post.forge()
       .query(qb => {
         qb
+          .distinct()
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .where('followers.user_id', '=', uid)  // followed posts
           .orWhere('posts.user_id', '=', uid)    // own posts
