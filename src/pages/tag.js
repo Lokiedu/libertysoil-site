@@ -20,7 +20,8 @@ import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import {getStore, setTagPosts} from '../store';
+import { getStore } from '../store';
+import { setTagPosts } from '../actions';
 
 import Header from '../components/header';
 import Footer from '../components/footer';

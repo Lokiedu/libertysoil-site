@@ -15,16 +15,24 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import i from 'immutable';
+import _ from 'lodash';
 
-import postTypeConstants from '../consts/postTypeConstants'
+import * as a from '../actions';
 
-export let defaultState = {
-  type: postTypeConstants.SHORT_TEXT
-}
 
-export default function newPostReducer(state = defaultState, action) {
+const initialState = i.Map({});
+
+export default function reducer(state=initialState, action) {
   switch (action.type) {
-    default:
-      return state;
+    case a.SET_POSTS_TO_LIKES_RIVER: {
+      let posts = i.List(action.posts.map(post => post.id));
+
+      state = state.set(action.user_id, posts);
+
+      break;
+    }
   }
+
+  return state;
 }

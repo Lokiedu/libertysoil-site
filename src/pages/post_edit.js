@@ -24,7 +24,8 @@ import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, addPost, addError} from '../store';
+import { getStore } from '../store';
+import { addPost, addError } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
 import TagsEditor from '../components/post/tags-editor';

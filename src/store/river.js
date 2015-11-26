@@ -15,24 +15,41 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-export function defaultSelector(state) {
-  let data = state.toJS();
+import i from 'immutable';
+import _ from 'lodash';
 
-  data.is_logged_in = !!data.current_user.id;
+import * as a from '../actions';
 
-  if (data.is_logged_in) {
-    let current_user_id = data.current_user.id;
 
-    data.current_user_tags = data.current_user.tags;
+const initialState = i.List([]);
 
-    data.current_user = data.users[current_user_id];
-    data.current_user.likes = data.likes[current_user_id];
-    data.current_user.favourites = data.favourites[current_user_id];
+export default function reducer(state=initialState, action) {
+  switch (action.type) {
+    case a.ADD_POST_TO_RIVER: {
+      state = state.unshift(action.post.id);
+      break;
+    }
 
-    data.i_am_following = data.following[current_user_id];
-  } else {
-    data.current_user = null;
+    case a.SET_POSTS_TO_RIVER: {
+      let posts = i.List(action.posts.map(post => post.id));
+
+      if (!i.is(state, posts)) {
+        state = posts;
+      }
+
+      break;
+    }
+
+    case a.REMOVE_POST: {
+      let idx = state.findIndex(river_post_id => (river_post_id === action.id));
+
+      if (idx >= 0) {
+        state = state.remove(idx);
+      }
+
+      break;
+    }
   }
 
-  return data;
+  return state;
 }

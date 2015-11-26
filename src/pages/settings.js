@@ -22,7 +22,8 @@ import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore, addUser } from '../store';
+import { getStore } from '../store';
+import { addUser } from '../actions';
 import { updateUserInfo } from '../triggers'
 import { defaultSelector } from '../selectors';
 
@@ -50,7 +51,7 @@ class SettingsPage extends React.Component {
   }
 
   static async fetchData(params, props, client) {
-    const currentUserId = props.get('current_user_id');
+    const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
       return;

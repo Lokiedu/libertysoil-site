@@ -15,24 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-export function defaultSelector(state) {
-  let data = state.toJS();
+import i from 'immutable';
+import _ from 'lodash';
 
-  data.is_logged_in = !!data.current_user.id;
+import * as a from '../actions';
 
-  if (data.is_logged_in) {
-    let current_user_id = data.current_user.id;
 
-    data.current_user_tags = data.current_user.tags;
+const initialState = i.Map({});
 
-    data.current_user = data.users[current_user_id];
-    data.current_user.likes = data.likes[current_user_id];
-    data.current_user.favourites = data.favourites[current_user_id];
-
-    data.i_am_following = data.following[current_user_id];
-  } else {
-    data.current_user = null;
+export default function reducer(state=initialState, action) {
+  switch (action.type) {
+    case a.SET_FAVOURITES: {
+      state = state.set(action.user_id, i.List(action.favourites));
+      break;
+    }
   }
 
-  return data;
+  return state;
 }

@@ -24,7 +24,8 @@ import BaseSchoolPage from './base/school'
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, addSchool} from '../store';
+import { getStore } from '../store';
+import { addSchool } from '../actions';
 //import {followSchool, unfollowSchool} from '../triggers'
 import { defaultSelector } from '../selectors';
 
