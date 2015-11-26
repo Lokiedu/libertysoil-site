@@ -21,6 +21,7 @@ import { combineReducers } from 'redux-immutablejs'
 
 import current_user from './current-user';
 import favourites from './favourites';
+import favourites_river from './favourites_river';
 import followers from './followers';
 import following from './following';
 import likes from './likes';
@@ -39,6 +40,7 @@ let store;
 const theReducer = combineReducers(i.Map({
   current_user,
   favourites,
+  favourites_river,
   followers,
   following,
   likes,
@@ -58,10 +60,11 @@ const initialState = i.Map({
     tags: i.List([])
   }),
   favourites: i.Map({}),
+  favourites_river: i.Map({}),
   followers: i.Map({}),
   following: i.Map({}),
   likes: i.Map({}),
-  likes_river: i.List([]),
+  likes_river: i.Map({}),
   messages: i.List([]),
   posts: i.Map({}),
   river: i.List([]),

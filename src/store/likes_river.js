@@ -21,16 +21,14 @@ import _ from 'lodash';
 import * as a from '../actions';
 
 
-const initialState = i.List([]);
+const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_POSTS_TO_LIKES_RIVER: {
       let posts = i.List(action.posts.map(post => post.id));
 
-      if (!i.is(state, posts)) {
-        state = posts;
-      }
+      state = state.set(action.user_id, posts);
 
       break;
     }
