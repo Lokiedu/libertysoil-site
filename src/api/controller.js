@@ -99,8 +99,13 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let labels = await q.fetchAll({require: false, withRelated: ['labels']})
-    labels = labels.map(row => row.relations.labels);
+    let posts = await q.fetchAll({require: false, withRelated: ['labels']})
+
+    let label_lists = posts
+      .map(row => row.relations.labels.toJSON())
+      .filter(labels => labels.length > 0);
+
+    let labels = _.uniq(_.flatten(label_lists), 'id')
 
     res.send(labels);
   }

@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Map as iMap } from 'immutable';
+import i from 'immutable';
 import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutablejs'
 
@@ -36,7 +36,7 @@ import users from './users';
 
 let store;
 
-const theReducer = combineReducers({
+const theReducer = combineReducers(i.Map({
   current_user,
   favourites,
   followers,
@@ -50,12 +50,29 @@ const theReducer = combineReducers({
   tag_posts,
   user_posts,
   users
+}));
+
+const initialState = i.Map({
+  current_user: i.Map({
+    id: null,
+    tags: i.List([])
+  }),
+  favourites: i.Map({}),
+  followers: i.Map({}),
+  following: i.Map({}),
+  likes: i.Map({}),
+  likes_river: i.List([]),
+  messages: i.List([]),
+  posts: i.Map({}),
+  river: i.List([]),
+  schools: i.Map({}),
+  tag_posts: i.Map({}),
+  user_posts: i.Map({}),
+  users: i.Map({})
 });
 
-const initialState = iMap({});
-
 export function initState(state=initialState) {
-  store = createStore(theReducer, state);
+  store = createStore(theReducer, i.fromJS(state));
   return store;
 }
 

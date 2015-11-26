@@ -63,7 +63,7 @@ class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
   static async fetchData(params, props, client) {
-    const currentUserId = props.get('current_user_id');
+    const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
       return;

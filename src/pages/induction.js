@@ -86,14 +86,14 @@ class InductionPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
   static async fetchData(params, props, client) {
-    if (props.get('current_user_id') === null) {
+    if (props.get('current_user').get('id') === null) {
       return false;
     }
 
     try {
       let suggestedUsers = await client.initialSuggestions();
 
-      let userInfo = await client.userInfo(props.users[props.current_user_id].username);
+      let userInfo = await client.userInfo(props.users[props.current_user.id].username);
       userInfo.more.suggested_users = suggestedUsers;
 
       getStore().dispatch(addUser(userInfo));

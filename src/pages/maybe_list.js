@@ -31,7 +31,7 @@ import { defaultSelector } from '../selectors';
 
 class MaybeList extends React.Component {
   static async fetchData(params, props, client) {
-    if (props.get('current_user_id') === null) {
+    if (props.get('current_user').get('id') === null) {
       return;
     }
 

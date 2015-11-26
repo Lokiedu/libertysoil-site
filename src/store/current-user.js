@@ -42,14 +42,10 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_USER_TAGS: {
-      let tags = _.chain(action.tags)
-        .flatten()
-        .uniq(tag => tag.name)
-        .take(10)
-        .value();
+      let tags = _.take(action.tags, 10);
 
       if (tags)
-        state = state.set('tags', i.toJS(tags));
+        state = state.set('tags', i.fromJS(tags));
       else
         state = state.set('tags', i.List([]));
 

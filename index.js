@@ -97,7 +97,7 @@ let reactHandler = async (req, res) => {
   }
 
   const Routes = getRoutes();
-  console.log(Routes);
+
   const makeRoutes = (history) => (
     <Router history={history}>
       {Routes}
