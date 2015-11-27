@@ -13,9 +13,13 @@ export default class TagsEditor extends Component {
       name: PropTypes.string
     })),
     school: PropTypes.string,
-    schools: PropTypes.arrayOf(PropTypes.string),
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
     tag: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string)
+    tags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    }))
   };
 
   static defaultProps = {
