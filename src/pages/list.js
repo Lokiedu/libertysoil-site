@@ -26,23 +26,32 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
+import { getStore } from '../store';
+import { addError } from '../actions';
 import { createPost, likePost, unlikePost, favPost, unfavPost, loadSchools } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class Index extends React.Component {
 
+  // TODO(voidxnull): EnterHandler doesn't call the fetchData function for the component.
+  componentDidMount() {
+    Index.fetchData(this.props);
+  }
+
   static async fetchData(props) {
     if (props.current_user_id === null) {
       return;
     }
 
-    loadSchools();
-  }
+    try {
+      if (getStore().getState().get('schools').isEmpty()) {
+        await loadSchools();
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
 
-  // TODO(voidxnull): EnterHandler doesn't call the fetchData function for the component.
-  componentDidMount() {
-    Index.fetchData(this.props);
   }
 
   render() {
