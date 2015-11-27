@@ -257,6 +257,17 @@ export default class ApiController {
     }
   }
 
+  async getSchools(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      let schools = await School.fetchAll();
+      res.send(schools.toJSON());
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  }
+
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
