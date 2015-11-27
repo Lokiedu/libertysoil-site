@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -32,7 +33,7 @@ import TagsEditor from '../components/post/tags-editor';
 import Sidebar from '../components/sidebar';
 
 import { defaultSelector } from '../selectors';
-import { deletePost, updatePost } from '../triggers';
+import { deletePost, updatePost, loadSchools } from '../triggers';
 
 class PostEditPage extends React.Component {
   constructor (props) {
@@ -46,6 +47,10 @@ class PostEditPage extends React.Component {
     try {
       let result = await client.postInfo(params.uuid);
       getStore().dispatch(addPost(result));
+
+      if (getStore().getState().get('schools').isEmpty()) {
+        await loadSchools();
+      }
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }
@@ -74,7 +79,8 @@ class PostEditPage extends React.Component {
       this.props.params.uuid,
       {
         text: form.text.value,
-        tags: this.editor.getTags()
+        tags: this.editor.getTags(),
+        schools: this.editor.getSchools()
       }
     ).then((result) => {
       this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
@@ -114,7 +120,13 @@ class PostEditPage extends React.Component {
                   <div className="box__body">
                     <EditPost post={current_post}/>
 
-                    <TagsEditor ref={(editor) => this.editor = editor} tags={current_post.labels} autocompleteTags={['tag1', 'tag2']} />
+                    <TagsEditor
+                      autocompleteSchools={_.values(this.props.schools)}
+                      autocompleteTags={[{name: 'TestTagOne'}, {name: 'TestTagTwo'}]}
+                      ref={(editor) => this.editor = editor}
+                      schools={current_post.schools}
+                      tags={current_post.labels}
+                    />
 
                     <div className="layout__row">
                       <div className="layout layout__grid layout-align_right">
