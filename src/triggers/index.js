@@ -17,13 +17,13 @@
  */
 import { API_HOST } from '../config'
 import ApiClient from '../api/client'
+import { getStore } from '../store';
 import {
-  getStore,
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
-  setLikes, setFavourites, setPostsToLikesRiver, setPostsToFavouritesRiver,
-  setSchools, setUserTags
-} from '../store';
+  setLikes, setFavourites, setPostsToLikesRiver,
+  setUserTags
+} from '../actions';
 
 const client = new ApiClient(API_HOST);
 
@@ -66,15 +66,6 @@ export async function syncLikedPosts() {
   }
 }
 
-export async function syncFavouredPosts() {
-  try {
-    let favouredPosts = client.userFavouredPosts();
-    getStore().dispatch(setPostsToFavouritesRiver(await favouredPosts));
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
 export async function favPost(current_user_id, post_id) {
   try {
     let responseBody = await client.fav(post_id);
@@ -98,15 +89,6 @@ export async function unfavPost(current_user_id, post_id) {
     } else {
       getStore().dispatch(addError('internal server error. please try later'));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function syncFavouredPosts(user_id) {
-  try {
-    let favouredPosts = client.userFavouredPosts();
-    getStore().dispatch(setPostsToFavouritesRiver(user_id, await favouredPosts));
   } catch (e) {
     getStore().dispatch(addError(e.message));
   }
@@ -254,17 +236,6 @@ export async function updatePost(post_uuid, post_fields) {
   try {
     let result = await client.updatePost(post_uuid, post_fields);
     getStore().dispatch(addPost(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function loadSchools() {
-  try {
-    let result = await client.schools();
-    getStore().dispatch(setSchools(result));
 
     return result;
   } catch (e) {

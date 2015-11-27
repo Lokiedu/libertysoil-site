@@ -15,24 +15,43 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-export function defaultSelector(state) {
-  let data = state.toJS();
+import i from 'immutable';
+import _ from 'lodash';
 
-  data.is_logged_in = !!data.current_user.id;
+import * as a from '../actions';
+import messageType from '../consts/messageTypeConstants';
 
-  if (data.is_logged_in) {
-    let current_user_id = data.current_user.id;
 
-    data.current_user_tags = data.current_user.tags;
+const initialState = i.List([]);
 
-    data.current_user = data.users[current_user_id];
-    data.current_user.likes = data.likes[current_user_id];
-    data.current_user.favourites = data.favourites[current_user_id];
+export default function reducer(state=initialState, action) {
+  switch (action.type) {
+    case a.ADD_ERROR: {
+      state = state.push({
+        type: messageType.ERROR,
+        message: action.message
+      });
+      break;
+    }
 
-    data.i_am_following = data.following[current_user_id];
-  } else {
-    data.current_user = null;
+    case a.ADD_MESSAGE: {
+      state = state.push({
+        type: messageType.MESSAGE,
+        message: action.message
+      });
+      break;
+    }
+
+    case a.REMOVE_MESSAGE: {
+      state = state.remove(action.index);
+      break;
+    }
+
+    case a.REMOVE_ALL_MESSAGES: {
+      state = state.clear();
+      break;
+    }
   }
 
-  return data;
+  return state;
 }

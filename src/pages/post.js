@@ -27,7 +27,8 @@ import { ShortTextPost, PostWrapper } from '../components/post'
 import Sidebar from '../components/sidebar';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import {getStore, addPost} from '../store';
+import { getStore } from '../store';
+import { addPost } from '../actions';
 import {likePost, unlikePost, favPost, unfavPost} from '../triggers';
 import { defaultSelector } from '../selectors';
 

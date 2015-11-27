@@ -21,7 +21,8 @@ import { Link, IndexLink } from 'react-router';
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import {getStore, setUserTags, addError} from '../store';
+import { getStore } from '../store';
+import { setUserTags } from '../actions';
 import SidebarLink from './sidebar-link';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';

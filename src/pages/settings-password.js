@@ -22,7 +22,8 @@ import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore, addUser } from '../store';
+import { getStore } from '../store';
+import { addUser } from '../actions';
 import { changePassword } from '../triggers'
 import { defaultSelector } from '../selectors';
 
@@ -30,7 +31,7 @@ class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
   static async fetchData(params, props, client) {
-    const currentUserId = props.get('current_user_id');
+    const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
       return;

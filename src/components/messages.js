@@ -18,7 +18,8 @@
 import React from 'react';
 import bem from '../utils/bemClassNames';
 
-import {getStore, removeMessage} from '../store';
+import { getStore } from '../store';
+import { removeMessage } from '../actions';
 
 import messageType from '../consts/messageTypeConstants';
 
