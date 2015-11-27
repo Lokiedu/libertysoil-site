@@ -98,7 +98,11 @@ export default class ApiClient
     // TODO(voidxnull): Implement api
     //let response = await this.get('/api/v1/schools');
     //return response.body;
-    return Promise.resolve([{id: 1, name: 'First school'}, {id: 2, name: 'Second school'}]);
+    return [
+      {id: 1, name: 'First school'},
+      {id: 2, name: 'Second school'},
+      {id: 3, name: 'Another school'}
+    ];
   }
 
   async userPosts(username) {
