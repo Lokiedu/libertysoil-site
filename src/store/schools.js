@@ -32,6 +32,18 @@ export default function reducer(state=initialState, action) {
 
       break;
     }
+
+    case a.SET_SCHOOLS: {
+      let schools = {};
+
+      action.schools.forEach(school => {
+        schools[school.id] = school;
+      });
+
+      state = i.fromJS(schools);
+
+      break;
+    }
   }
 
   return state;

@@ -26,6 +26,7 @@ export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 export const SET_USER_POSTS = 'SET_USER_POSTS';
 export const SET_USER_TAGS = 'SET_USER_TAGS';
 export const SET_TAG_POSTS = 'SET_TAG_POSTS';
+export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -137,6 +138,13 @@ export function setFavourites(user_id, favourites, post_id, favourers) {
     favourites,
     post_id,
     favourers
+  }
+}
+
+export function setSchools(schools) {
+  return {
+    type: SET_SCHOOLS,
+    schools
   }
 }
 
