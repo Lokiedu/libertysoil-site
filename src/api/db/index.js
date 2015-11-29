@@ -79,9 +79,6 @@ export default function initBookshelf(config) {
       let labelsToRemove = [];
       let labelNamesToKeep = [];
 
-      let schoolNames = [];
-      let schoolNamesToKeep = [];
-
       (await labels.fetch()).map(label => {
         let name = label.get('name');
 
@@ -99,17 +96,6 @@ export default function initBookshelf(config) {
         }
       }
 
-      let schools = this.schools();
-      schoolNames = await School.fetchAll();
-      schoolNames = schoolNames.serialize().map(row => row.name);
-
-      for (let name of labelNamesToAdd) {
-        if (schoolNames.indexOf(name) > -1) {
-          schoolNamesToKeep.push(name);
-          _.pull(labelNamesToAdd, name);
-        }
-      }
-
       let tags = await Promise.all(labelNamesToAdd.map(tag_name => Label.createOrSelect(tag_name)));
       let promises = tags.map(async (tag) => {
         await labels.attach(tag)
@@ -123,14 +109,6 @@ export default function initBookshelf(config) {
         promises = [...promises, ...morePromises];
       }
 
-      let school_tags = await Promise.all(schoolNamesToKeep.map(tag_name => School.createOrSelect(tag_name)));
-      let schoolPromises = school_tags.map(async (tag) => {
-        await schools.attach(tag)
-      });
-
-      promises = [...promises, ...schoolPromises];
-
-      await Promise.all(promises);
     }
   });
 
