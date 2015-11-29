@@ -185,8 +185,8 @@ export async function login(username, password) {
     if (result.success) {
       let user = result.user;
       getStore().dispatch(setCurrentUser(user));
-      getStore().dispatch(setLikes(user.id, user.liked_posts.map(like => like.post_id)));
-      getStore().dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.post_id)));
+      getStore().dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
+      getStore().dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
     } else {
       getStore().dispatch(setCurrentUser(null));
       getStore().dispatch(addError('Invalid username or password'));
