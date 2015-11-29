@@ -19,16 +19,41 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import CreatePost from '../components/create-post'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
-import { createPost, likePost, unlikePost, favPost, unfavPost } from '../triggers';
+import { getStore } from '../store';
+import { addError } from '../actions';
+import { createPost, likePost, unlikePost, favPost, unfavPost, loadSchools } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class Index extends React.Component {
+
+  // TODO(voidxnull): EnterHandler doesn't call the fetchData function for the component.
+  componentDidMount() {
+    Index.fetchData(this.props);
+  }
+
+  static async fetchData(props) {
+    if (props.current_user_id === null) {
+      return;
+    }
+
+    try {
+      if (getStore().getState().get('schools').isEmpty()) {
+        await loadSchools();
+      }
+    } catch (e) {
+      getStore().dispatch(addError(e.message));
+    }
+
+  }
+
   render() {
     let triggers = {likePost, unlikePost, favPost, unfavPost};
 
@@ -40,7 +65,7 @@ class Index extends React.Component {
             <Sidebar current_user={this.props.current_user} />
 
             <div className="page__content">
-              <CreatePost triggers={{createPost}}/>
+              <CreatePost triggers={{createPost}} schools={this.props.schools} />
               <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}

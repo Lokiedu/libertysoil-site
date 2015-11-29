@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import _ from 'lodash';
 
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
@@ -24,6 +25,7 @@ import TagsEditor from './post/tags-editor';
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
+    schools: React.PropTypes.object,
     triggers: React.PropTypes.shape({
       createPost: React.PropTypes.func.isRequired
     })
@@ -38,7 +40,8 @@ export default class CreatePost extends React.Component {
       'short_text',
       {
         text: form.text.value,
-        tags: this.editor.getTags()
+        tags: this.editor.getTags(),
+        schools: this.editor.getSchools()
       }
     ).then(() => {
       form.text.value = '';
@@ -57,8 +60,8 @@ export default class CreatePost extends React.Component {
         <form onSubmit={this.submitHandler.bind(this)}>
           <div className="box__body">
             <EditPost />
-
-            <TagsEditor ref={(editor) => this.editor = editor} tags={[]} />
+            <TagsEditor ref={(editor) => this.editor = editor}
+                        autocompleteSchools={_.values(this.props.schools)} />
 
             <div className="layout__row layout layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">

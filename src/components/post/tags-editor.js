@@ -1,38 +1,56 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
+import SchoolSelect from './school-select';
 
 export default class TagsEditor extends Component {
   static displayName = 'TagsEditor';
 
   static propTypes = {
-    tags: PropTypes.array,
-    autocompleteTags: PropTypes.array
-  }
+    autocompleteSchools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    autocompleteTags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    school: PropTypes.string,
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    tag: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    }))
+  };
 
   static defaultProps = {
     tag: '',
+    school: '',
     tagMinSize: 3,
     tagMaxSize: 128,
     tagsMaxCount: 42,
     tags: [],
-    autocompleteTags: []
-  }
+    schools: [],
+    autocompleteTags: [],
+    autocompleteSchools: []
+  };
 
   constructor (props) {
     super(props);
 
     this.state = {
       tags: props.tags,
-      autocompleteTags: props.autocompleteTags,
-      tag: props.tag
+      schools: props.schools,
+      tag: props.tag,
+      school: props.school
     };
   }
 
   componentWillReceiveProps (props) {
     this.state = {
       tags: props.tags,
-      autocompleteTags: props.autocompleteTags,
-      tag: props.tag
+      schools: props.schools,
+      tag: props.tag,
+      school: props.school
     };
   }
 
@@ -41,6 +59,14 @@ export default class TagsEditor extends Component {
 
     this.setState({
       tag
+    });
+  };
+
+  updateSchool = (e) => {
+    let school = e.target.value || '';
+
+    this.setState({
+      school
     });
   };
 
@@ -72,8 +98,29 @@ export default class TagsEditor extends Component {
 
     this.setState({
       tags: this.state.tags,
-      type: 'school',
       tag: ''
+    });
+  };
+
+  addSchool = (e) => {
+    let name = this.state.school || '';
+    let schools = this.state.schools;
+
+    if (
+      schools.length >= this.props.tagsMaxCount
+      || name.length === 0
+      || _.find(schools, { name })
+    ) {
+      return;
+    }
+
+    schools.unshift({
+      name
+    });
+
+    this.setState({
+      schools: schools,
+      school: ''
     });
   };
 
@@ -86,14 +133,28 @@ export default class TagsEditor extends Component {
 
     tags.splice(tags.indexOf(tag), 1);
 
-    this.onTagsUpdate(tags);
     this.setState({
       tags: tags
     });
   };
 
+  removeSchool = (school) => {
+    var schools = this.state.schools;
+
+    schools.splice(schools.indexOf(school), 1);
+
+    this.onTagsUpdate(schools);
+    this.setState({
+      schools: schools
+    });
+  };
+
   getTags() {
     return this.state.tags.map(tag => tag.name.trim());
+  }
+
+  getSchools() {
+    return this.state.schools.map(school => school.name.trim());
   }
 
   render () {
@@ -116,13 +177,6 @@ export default class TagsEditor extends Component {
               onKeyDown={this.handleKeyPress}
               className="input"
               list="autocompleteTags" />
-            {false && <select
-              ref="type"
-              className="input layout__space_left"
-              name="type">
-              <option value="school">School</option>
-              <option value="location">Location</option>
-            </select>}
             <button
               disabled={newTagCreationIsDisabled}
               onClick={this.addTag}
@@ -133,9 +187,29 @@ export default class TagsEditor extends Component {
               )}
             </datalist>
           </div>
+          <div className="layout layout-vertical layout__row layout__row-micro_spacing">
+            <SchoolSelect schools={this.props.autocompleteSchools}
+                          onChange={this.updateSchool}
+                          value={this.state.school} />
+            <button
+              type="button"
+              disabled={newTagCreationIsDisabled}
+              onClick={this.addSchool}
+              className="button button-form layout__space_left">Add</button>
+          </div>
         </div>
         <div className="layout__row">
           <div className="layout layout__grid layout__grid-small">
+            {state.schools.map((school, i) =>
+              <span
+                className="tag action school"
+                title="Remove tag"
+                onClick={this.removeSchool.bind(null, school)}
+                key={i}>
+                {school.name}
+                <i className="micon micon-micro micon-left_space">close</i>
+              </span>
+            )}
             {state.tags.map((tag, i) =>
               <span
                 className="tag action"

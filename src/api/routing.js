@@ -51,6 +51,7 @@ export function initApi(bookshelf) {
   api.get('/user/tags', wrap(controller.userTags.bind(controller)));
 
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
+  api.get('/schools', wrap(controller.getSchools.bind(controller)));
 
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));

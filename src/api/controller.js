@@ -257,6 +257,17 @@ export default class ApiController {
     }
   }
 
+  async getSchools(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      let schools = await School.fetchAll();
+      res.send(schools.toJSON());
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  }
+
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -655,6 +666,18 @@ export default class ApiController {
       tags = _.unique(req.body.tags);
     }
 
+    let schools;
+
+    if ('schools' in req.body) {
+      if (!_.isArray(req.body.schools)) {
+        res.status(400);
+        res.send({error: `"schools" parameter is expected to be an array`});
+        return;
+      }
+
+      schools = _.unique(req.body.schools);
+    }
+
     let Post = this.bookshelf.model('Post');
 
     let obj = new Post({
@@ -675,6 +698,10 @@ export default class ApiController {
 
       if (_.isArray(tags)) {
         await obj.attachLabels(tags);
+      }
+
+      if (_.isArray(schools)) {
+        await obj.attachSchools(schools);
       }
 
       await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
@@ -732,6 +759,18 @@ export default class ApiController {
       tags = _.unique(req.body.tags);
     }
 
+    let schools;
+
+    if ('schools' in req.body) {
+      if (!_.isArray(req.body.schools)) {
+        res.status(400);
+        res.send({error: `"schools" parameter is expected to be an array`});
+        return;
+      }
+
+      schools = _.unique(req.body.schools);
+    }
+
     if (type === 'short_text') {
       if ('text' in req.body) {
         post_object.set('text', req.body.text);
@@ -753,6 +792,10 @@ export default class ApiController {
 
       if (_.isArray(tags)) {
         await post_object.attachLabels(tags, true);
+      }
+
+      if (_.isArray(schools)) {
+        await post_object.updateSchools(schools, true);
       }
 
       await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools']});
