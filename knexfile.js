@@ -1,6 +1,10 @@
 // Update with your config settings.
 
-require("babel/register")();
+try {
+  require("babel/register")();
+} catch(e) {
+  // it's ok. might be already enabled
+}
 
 module.exports = {
 

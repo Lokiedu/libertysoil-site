@@ -68,6 +68,8 @@
   },
   "devDependencies": {
     "browser-sync": "",
+    "csv": "^0.4.6",
+    "slug": "^0.9.1",
     "watchify": ""
   }
 }
