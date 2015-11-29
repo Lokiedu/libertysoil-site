@@ -109,6 +109,39 @@ export default function initBookshelf(config) {
         promises = [...promises, ...morePromises];
       }
 
+      await Promise.all(promises);
+    },
+    /**
+     * Attaches schools to the post without checking already attached schools.
+     * @param {Array} names
+     */
+    attachSchools: async function(names) {
+      let schoolsToAdd = await School.collection().query(qb => {
+        qb.whereIn('name', names);
+      }).fetch();
+
+      await this.schools().attach(schoolsToAdd.pluck('id'));
+    },
+    /**
+     * Attaches schools, checking if a school is already attached,
+     * and detaches schools that are not in names.
+     * @param {Array} names
+     */
+    updateSchools: async function(names) {
+      let schools = this.schools();
+
+      let schoolsToDetach = await School.collection().query(qb => {
+        qb.innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
+          .whereNotIn('schools.name', names)
+          .where('posts_schools.post_id', this.id);
+      }).fetch();
+
+      let schoolNamesToAdd = _.difference(names, schools.pluck('name'));
+
+      await Promise.all([
+        schools.detach(schoolsToDetach.pluck('id')),
+        this.attachSchools(schoolNamesToAdd)
+      ]);
     }
   });
 
