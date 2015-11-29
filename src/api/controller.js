@@ -268,6 +268,88 @@ export default class ApiController {
     }
   }
 
+  async getCountries(req, res) {
+    let Country = this.bookshelf.model('Country');
+
+    try {
+      let countries = await Country.fetchAll();
+      res.send(countries.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
+  async getCountry(req, res) {
+    let Country = this.bookshelf.model('Country');
+
+    try {
+      let country = await Country.where({iso_alpha2: req.params.code}).fetch();
+      res.send(country.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
+  async getCountryPosts(req, res) {
+    let Country = this.bookshelf.model('Country');
+
+    try {
+
+      let country_posts_via_city = await this.bookshelf.knex
+        .select('*')
+        .from('posts_cities')
+        .leftJoin('geonames_cities','city_id','geonames_cities.id')
+        .where({
+          'geonames_cities.country': req.params.code
+        })
+        .map(row => row.post_id);
+
+      let country_posts = await this.bookshelf.knex
+        .select('*')
+        .from('posts_countries')
+        .where({
+          country_id: req.params.code
+        })
+        .map(row => row.post_id);
+      let Post = this.bookshelf.model('Post');
+
+      let q = Post.forge()
+        .query(qb => {
+          qb
+            .whereIn('id', _.union(country_posts,country_posts_via_city))
+        });
+
+      let response = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+
+      res.send(response.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
+  async getCity(req, res) {
+    let City = this.bookshelf.model('City');
+
+    try {
+      let city = await City.where({id: req.params.id}).fetch();
+      res.send(city.toJSON());
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  }
+
+  async getCityPosts(req, res) {
+    let City = this.bookshelf.model('City');
+
+    try {
+      let city = await City.where({id: req.params.id}).fetch({withRelated: ['posts']});
+      res.send(city.related('posts').toJSON());
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(404)
+    }
+  }
+
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
