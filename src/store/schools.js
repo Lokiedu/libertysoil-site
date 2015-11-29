@@ -27,19 +27,13 @@ export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_SCHOOL: {
       const school = action.school;
-
       state = state.set(school.id, i.fromJS(school));
 
       break;
     }
 
     case a.SET_SCHOOLS: {
-      let schools = {};
-
-      action.schools.forEach(school => {
-        schools[school.id] = school;
-      });
-
+      const schools = _.indexBy(action.schools, 'id');
       state = i.fromJS(schools);
 
       break;
