@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore } from '../store';
-import { setTagPosts } from '../actions';
+import { addCountry, setCountryPosts } from '../actions';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -36,9 +36,14 @@ class CountryPage extends Component {
 
   static async fetchData(params, props, client) {
     try {
-      let tagPosts = client.tagPosts(params.tag);
+      let country = await client.country(params.country);
 
-      getStore().dispatch(setTagPosts(params.tag, await tagPosts));
+      getStore().dispatch(addCountry(country));
+
+      let countryPosts = client.countryPosts(country.iso_alpha2);
+
+      getStore().dispatch(setCountryPosts(country.iso_alpha2, await countryPosts));
+
     } catch (e) {
       console.log(e);
       console.log(e.stack);
@@ -50,11 +55,24 @@ class CountryPage extends Component {
       is_logged_in,
       current_user,
       posts,
-      tag_posts,
+      geo,
       users
       } = this.props;
     const triggers = {likePost, unlikePost, favPost, unfavPost};
-    const thisTagPosts = tag_posts[this.props.params.tag] || [];
+
+    let thisCountry = {
+      name: ''
+    };
+
+    if(this.props.params.country in geo.countries) {
+      thisCountry = geo.countries[this.props.params.country];
+    }
+
+    let thisCountryPosts = [];
+
+    if(geo && geo.countryPosts && this.props.params.country in geo.countryPosts) {
+      thisCountryPosts = geo.countryPosts[this.props.params.country];
+    }
 
     return (
       <div>
@@ -66,11 +84,11 @@ class CountryPage extends Component {
 
             <div className="page__body_content">
               <div className="tag_header">
-                {this.props.params.tag}
+                {thisCountry.name}
               </div>
 
               <div className="page__content page__content-spacing">
-                <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
+                <River river={thisCountryPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
                 {/*<Followed/> */}
                 {/*<Tags/>*/}
               </div>
