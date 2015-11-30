@@ -40,6 +40,12 @@ export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
+export const SET_COUNTRIES = 'SET_COUNTRIES';
+export const ADD_COUNTRY = 'ADD_COUNTRY';
+export const ADD_CITY = 'ADD_CITY';
+export const SET_COUNTRY_POSTS = 'SET_COUNTRY_POSTS';
+export const SET_CITY_POSTS = 'SET_CITY_POSTS';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -185,5 +191,44 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
+  }
+}
+
+export function setCountries(countries) {
+  return {
+    type: SET_COUNTRIES,
+    countries
+  }
+}
+
+export function addCountry(country) {
+  return {
+    type: ADD_COUNTRY,
+    country
+  }
+}
+
+export function addCity(city) {
+  return {
+    type: ADD_CITY,
+    city
+  }
+}
+
+function setCountryPosts(countryCode, posts)
+{
+  return {
+    type: SET_COUNTRY_POSTS,
+    countryCode,
+    posts
+  }
+}
+
+function setCityPosts(cityId, posts)
+{
+  return {
+    type: SET_CITY_POSTS,
+    cityId,
+    posts
   }
 }
