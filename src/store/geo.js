@@ -20,8 +20,14 @@ import _ from 'lodash';
 
 import * as a from '../actions';
 
+const initialState = i.Map({
+  cities: i.Map({}),    // index by numeric id
+  cityPosts: i.Map({}),
+  countries: i.Map({}),  // index by ISO-code
+  countryPosts: i.Map({})
+});
 
-export default function reducer(state, action) {
+export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_COUNTRIES: {
       state = state.set('countries', i.fromJS(_.indexBy(action.countries, 'iso_alpha2')));
