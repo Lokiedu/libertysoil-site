@@ -26,7 +26,8 @@ import { setTagPosts } from '../actions';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
-import Sidebar from '../components/sidebar'
+import Sidebar from '../components/sidebar';
+import SidebarAlt from '../components/sidebarAlt';
 import { likePost, unlikePost, favPost, unfavPost } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -75,6 +76,7 @@ class TagPage extends Component {
                 {/*<Tags/>*/}
               </div>
             </div>
+            <SidebarAlt />
           </div>
         </div>
 

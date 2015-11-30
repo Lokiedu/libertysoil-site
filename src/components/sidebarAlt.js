@@ -15,58 +15,22 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.user_box {
-  &:extend(.layout);
-  &:extend(.layout-align_vertical);
-  border: none;
-  font-size: 14px;
+import React from 'react';
+import { connect } from 'react-redux';
+import { Link, IndexLink } from 'react-router';
 
+import { defaultSelector } from '../selectors';
 
+class SidebarAlt extends React.Component {
+  static displayName = 'SidebarAlt'
 
-  &__name {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    &:extend(.layout);
-
-    a {
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-  }
-
-  &__body {
-    flex: 1;
-    &:extend(.layout);
-    &:extend(.layout-rows);
-
-    .user_box__avatar + & {
-      margin-left: 10px;
-    }
-  }
-
-  &__avatar {
-    border-radius: 4px;
-    overflow: hidden;
-    border: none;
-    flex: none;
-
-    img {
-      display: block;
-    }
-
-    &-round {
-      border-radius: 50%;
-    }
-  }
-
-  &__text {
-    font-size: @font__size-small;
-
-    a {
-      border: none;
-    }
+  render() {
+    return (
+      <div className="page__sidebar page__sidebar-alt">
+        
+      </div>
+    )
   }
 }
+
+export default connect(defaultSelector)(SidebarAlt);

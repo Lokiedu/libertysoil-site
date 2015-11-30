@@ -65,7 +65,7 @@ export default class User extends Component {
 
       render.text =
         <div className="user_box__body">
-          <p className="user_box__name"><Link className="user_box__name link" to={user_url}>{name}</Link></p>
+          <p className="user_box__name"><Link className="link" to={user_url}>{name}</Link></p>
           {render.timestamp}
         </div>;
     }

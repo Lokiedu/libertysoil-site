@@ -25,6 +25,7 @@ import Footer from '../components/footer';
 import CurrentUser from '../components/current-user';
 import { ShortTextPost, PostWrapper } from '../components/post'
 import Sidebar from '../components/sidebar';
+import SidebarAlt from '../components/sidebarAlt';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import { getStore } from '../store';
@@ -72,6 +73,7 @@ class PostPage extends React.Component {
                 <ShortTextPost post={current_post}/>
               </PostWrapper>
             </div>
+            <SidebarAlt />
           </div>
         </div>
 

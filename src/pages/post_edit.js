@@ -31,6 +31,7 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
 import TagsEditor from '../components/post/tags-editor';
 import Sidebar from '../components/sidebar';
+import SidebarAlt from '../components/sidebarAlt';
 
 import { defaultSelector } from '../selectors';
 import { deletePost, updatePost, loadSchools } from '../triggers';
@@ -138,6 +139,8 @@ class PostEditPage extends React.Component {
                 </form>
               </div>
             </div>
+
+            <SidebarAlt />
           </div>
         </div>
         <Footer/>

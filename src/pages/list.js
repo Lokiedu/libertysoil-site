@@ -25,7 +25,8 @@ import CreatePost from '../components/create-post'
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
-import Sidebar from '../components/sidebar'
+import Sidebar from '../components/sidebar';
+import SidebarAlt from '../components/sidebarAlt';
 import { getStore } from '../store';
 import { addError } from '../actions';
 import { createPost, likePost, unlikePost, favPost, unfavPost, loadSchools } from '../triggers';
@@ -63,13 +64,13 @@ class Index extends React.Component {
         <div className="page__container">
           <div className="page__body">
             <Sidebar current_user={this.props.current_user} />
-
             <div className="page__content">
               <CreatePost triggers={{createPost}} schools={this.props.schools} />
               <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>
+            <SidebarAlt />
           </div>
         </div>
         <Footer/>

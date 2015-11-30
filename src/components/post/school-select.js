@@ -22,7 +22,7 @@ export default class SchoolSelect extends Component {
 
   render() {
     return (
-      <select className="input" defaultValue="" name="school" {...this.props}>
+      <select className="input input-select input-block" defaultValue="" name="school" {...this.props}>
         <option disabled key="-1" value="">Select school...</option>
         {this._renderOptions()}
       </select>

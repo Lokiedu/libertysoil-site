@@ -188,14 +188,17 @@ export default class TagsEditor extends Component {
             </datalist>
           </div>
           <div className="layout layout-vertical layout__row layout__row-micro_spacing">
-            <SchoolSelect schools={this.props.autocompleteSchools}
-                          onChange={this.updateSchool}
-                          value={this.state.school} />
+            <div className="layout__grid_item layout__grid_item-wide">
+              <SchoolSelect
+                  schools={this.props.autocompleteSchools}
+                  onChange={this.updateSchool}
+                  value={this.state.school} />
+            </div>
             <button
               type="button"
               disabled={newTagCreationIsDisabled}
               onClick={this.addSchool}
-              className="button button-form layout__space_left">Add</button>
+              className="button layout__grid_item button-form">Add</button>
           </div>
         </div>
         <div className="layout__row">
@@ -210,6 +213,7 @@ export default class TagsEditor extends Component {
                 <i className="micon micon-micro micon-left_space">close</i>
               </span>
             )}
+
             {state.tags.map((tag, i) =>
               <span
                 className="tag action"

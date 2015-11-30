@@ -23,6 +23,7 @@ import Footer from '../../components/footer';
 import PageContentLink from '../../components/page-content-link';
 import SchoolHeader from '../../components/school-header';
 import Sidebar from '../../components/sidebar';
+import SidebarAlt from '../../components/sidebarAlt';
 
 export default class BaseSchoolPage extends React.Component {
   static displayName = 'BaseSchoolPage'
@@ -41,7 +42,7 @@ export default class BaseSchoolPage extends React.Component {
           <div className="page__body">
             <Sidebar current_user={current_user}/>
 
-            <div className="page__body_content">
+            <div className="page__content page__content-fill">
               <SchoolHeader
                 school={page_school}
                 current_user={current_user}
@@ -58,6 +59,7 @@ export default class BaseSchoolPage extends React.Component {
                 </div>
               </div>
             </div>
+            <SidebarAlt />
           </div>
         </div>
 
