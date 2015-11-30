@@ -69,7 +69,7 @@ const initialState = i.Map({
     cities: i.Map({}),    // index by numeric id
     cityPosts: i.Map({}),
     countries: i.Map({}),  // index by ISO-code
-    countryPosts: i.Map(())
+    countryPosts: i.Map({})
   }),
   likes: i.Map({}),
   likes_river: i.Map({}),
