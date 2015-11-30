@@ -16,9 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .page {
-  &__sidebar_user {
-    padding-left: 4px;
-  }
+
 }
 
 .page__title {
@@ -31,12 +29,18 @@
 
 .page__sidebar {
   padding: @space;
-  flex: 0 0 230px;
+  flex: 0 0 18%;
   box-sizing: border-box;
+  order: 20;
+
+  @media @after-normal {
+    order: 0;
+  }
 }
 
 .page__container {
   background: #f3f2f1;
+  order: 10;
 
 // this needs to be changed @agat
 // min page height should be set instead
@@ -48,12 +52,12 @@
 }
 
 .page__body {
+  .layout;
   &:extend(.layout-rows);
   max-width: @siteWidth;
   margin: auto;
 
   @media @after-normal {
-    .layout;
     .layout-columns;
 
     &-rows {

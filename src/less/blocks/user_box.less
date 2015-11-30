@@ -24,12 +24,20 @@
 
 
   &__name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
     a {
       display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
   }
 
   &__body {
+    flex: 1;
     &:extend(.layout);
     &:extend(.layout-rows);
 
@@ -42,6 +50,7 @@
     border-radius: 4px;
     overflow: hidden;
     border: none;
+    flex: none;
 
     img {
       display: block;
