@@ -85,6 +85,28 @@ export default class ApiController {
     res.send(posts);
   }
 
+  async schoolPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts.id', 'posts_schools.post_id')
+          .join('schools', 'posts_schools.school_id', 'schools.id')
+          .where('schools.name', req.params.school)
+          .where('posts_schools.visible', true)
+          .orderBy('schools.created_at', 'desc');
+      });
+
+    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    posts = posts.serialize();
+    posts.forEach(post => {
+      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+    });
+
+    res.send(posts);
+  }
+
   async userTags(req, res){
     if (!req.session || !req.session.user) {
       res.status(403)
