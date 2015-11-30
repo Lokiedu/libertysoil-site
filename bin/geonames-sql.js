@@ -4,6 +4,13 @@ import AdmZip from 'adm-zip';
 import tmp from 'tmp';
 import fs from 'fs';
 import http from 'http';
+import knex from 'knex';
+
+
+let exec_env = process.env.DB_ENV || 'development';
+let root = fs.realpathSync(`${__dirname}/..`);
+
+let Knex = knex(require(`${root}/knexfile.js`)[exec_env]);
 
 async function countries() {
   let req = await request.get('http://download.geonames.org/export/dump/countryInfo.txt');
@@ -33,9 +40,11 @@ async function countries() {
 
   });
 
-  countries_data.map((row) => {
-    console.log(`INSERT INTO geonames_countries VALUES (${row.join(',')});`);
-  });
+  let q = countries_data.map((row) => {
+    return `INSERT INTO geonames_countries VALUES (${row.join(',')});`;
+  }).join("\n");
+
+  await Knex.raw(q);
 
 }
 
@@ -49,7 +58,7 @@ function cities() {
 
     let content_lines = zip.readAsText("cities1000.txt").split("\n");
 
-    let cities_data = content_lines/*.slice(0, 100)*/.map((line) => {
+    let cities_data = content_lines.map((line) => {
       let city_fields = line.split("\t");
       try {
         city_fields.map((field, index) => {
@@ -68,13 +77,32 @@ function cities() {
 
     });
 
-    cities_data.map((row) => {
-      console.log(`INSERT INTO geonames_cities VALUES (${row.join(',')});`);
+    cities_data.pop();
+
+    let q = cities_data.map((row) => {
+      return `INSERT INTO geonames_cities VALUES (${row.join(',')});`;
+    }).join("\n");
+
+    Knex.raw(q)
+      .then(() => {
+      process.stdout.write("=== CITIES DONE ===\n");
+      process.exit();
+    }).catch(e => {
+      console.error(e);  // eslint-disable-line no-console
+      process.exit(1);
     });
   });
 
   request.get('http://download.geonames.org/export/dump/cities1000.zip').pipe(output);
 }
 
-//countries().catch(e => { console.error(e); });
-//cities();
+countries()
+  .then(() => {
+    process.stdout.write("=== COUNTRIES DONE ===\n");
+  })
+  .catch(e => {
+    console.error(e);  // eslint-disable-line no-console
+    process.exit(1);
+  });
+
+cities();
