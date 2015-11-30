@@ -386,6 +386,32 @@ export default class ApiController {
     }
   }
 
+  async updateSchool(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+    }
+
+    let School = this.bookshelf.model('School');
+
+    try {
+      let school = await School.where({id: req.params.id}).fetch({require: true});
+      let newAttributes = _.pick(res.body, 'name', 'url_name', 'description', 'more');
+
+      school = await school.save(newAttributes);
+
+      res.send(school);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
   async likePost(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
