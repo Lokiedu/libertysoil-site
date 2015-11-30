@@ -94,7 +94,7 @@ export default class ApiController {
           .join('posts_schools', 'posts.id', 'posts_schools.post_id')
           .join('schools', 'posts_schools.school_id', 'schools.id')
           .where('schools.name', req.params.school)
-          .where('posts_schools.visible', true)
+          .andWhere('posts_schools.visible', true)
           .orderBy('schools.created_at', 'desc');
       });
 
