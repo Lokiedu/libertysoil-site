@@ -224,7 +224,7 @@ function setCountryPosts(countryCode, posts)
   }
 }
 
-function setCityPosts(cityId, posts)
+export function setCityPosts(cityId, posts)
 {
   return {
     type: SET_CITY_POSTS,

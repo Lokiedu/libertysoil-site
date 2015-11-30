@@ -339,11 +339,25 @@ export default class ApiController {
   }
 
   async getCityPosts(req, res) {
-    let City = this.bookshelf.model('City');
 
     try {
-      let city = await City.where({id: req.params.id}).fetch({withRelated: ['posts']});
-      res.send(city.related('posts').toJSON());
+      let Post = this.bookshelf.model('Post');
+
+      let q = Post.forge()
+        .query(qb => {
+          qb
+            .join('posts_cities', 'posts.id', 'posts_cities.post_id')
+            .where('posts_cities.city_id', '=', req.params.id)
+            .orderBy('posts.created_at', 'desc')
+        });
+
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+      posts = posts.map(post => {
+        post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+        return post;
+      });
+
+      res.send(posts);
     } catch (e) {
       console.log(e);
       res.sendStatus(404)

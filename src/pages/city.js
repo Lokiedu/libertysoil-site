@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore } from '../store';
-import { setTagPosts } from '../actions';
+import { addCountry, addCity, setCityPosts } from '../actions';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -36,9 +36,16 @@ class CityPage extends Component {
 
   static async fetchData(params, props, client) {
     try {
-      let tagPosts = client.tagPosts(params.tag);
+      let city = await client.city(params.city);
+      let country = await client.country(params.country);
 
-      getStore().dispatch(setTagPosts(params.tag, await tagPosts));
+      getStore().dispatch(addCity(city));
+      getStore().dispatch(addCountry(country));
+
+      let cityPosts = client.cityPosts(city.id);
+
+      getStore().dispatch(setCityPosts(city.id, await cityPosts));
+
     } catch (e) {
       console.log(e);
       console.log(e.stack);
@@ -50,12 +57,17 @@ class CityPage extends Component {
       is_logged_in,
       current_user,
       posts,
-      tag_posts,
-      users
+      geo,
+      users,
       } = this.props;
-    const triggers = {likePost, unlikePost, favPost, unfavPost};
-    const thisTagPosts = tag_posts[this.props.params.tag] || [];
 
+    const triggers = {likePost, unlikePost, favPost, unfavPost};
+    let thisCityPosts = [];
+
+    if(geo && geo.cityPosts && this.props.params.city in geo.cityPosts) {
+      thisCityPosts = geo.cityPosts[this.props.params.city];
+    }
+    
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user} />
@@ -66,11 +78,13 @@ class CityPage extends Component {
 
             <div className="page__body_content">
               <div className="tag_header">
-                {this.props.params.tag}
+                {(geo && geo.cities && geo.countries && this.props.params.city in geo.cities && this.props.params.country in geo.countries)
+                  ?
+                  `${geo.cities[this.props.params.city].asciiname}, ${geo.countries[this.props.params.country].name}` : '' }
               </div>
 
               <div className="page__content page__content-spacing">
-                <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
+                <River river={thisCityPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
                 {/*<Followed/> */}
                 {/*<Tags/>*/}
               </div>
