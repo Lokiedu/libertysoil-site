@@ -94,8 +94,11 @@ class Auth extends React.Component {
     let triggers = {login, registerUser};
 
     let is_first_login = false;
-    if (current_user){
-      is_first_login = current_user.more.first_login;
+    if (current_user) {
+
+      if (current_user.more) {
+        is_first_login = current_user.more.first_login;
+      }
     }
 
     return (
