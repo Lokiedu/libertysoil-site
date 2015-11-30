@@ -401,7 +401,7 @@ export default class ApiController {
 
     try {
       let school = await School.where({id: req.params.id}).fetch({require: true});
-      let newAttributes = _.pick(res.body, 'name', 'url_name', 'description', 'more');
+      let newAttributes = _.pick(req.body, 'name', 'url_name', 'description', 'more');
 
       school = await school.save(newAttributes);
 
