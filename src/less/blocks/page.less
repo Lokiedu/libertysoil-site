@@ -16,7 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .page {
+  &__sidebar_user {
+    margin-left: 5px;
 
+    .link {
+      border: none;
+    }
+  }
 }
 
 .page__title {
@@ -28,7 +34,7 @@
 }
 
 .page__sidebar {
-  padding: @space;
+  padding: 10px;
   flex: 0 0 100%;
   min-width: 190px;
   box-sizing: border-box;
@@ -64,6 +70,7 @@
 .page__body {
   display: flex;
   max-width: @siteWidth;
+  overflow: hidden;
   margin: auto;
   flex-wrap: wrap;
 
@@ -91,7 +98,7 @@
 }
 
 .page__content {
-  padding: @space;
+  padding: 10px;
   flex: 1;
 
   &-horizontal_space {

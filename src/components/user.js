@@ -24,8 +24,10 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export default class User extends Component {
   render () {
-    var { user, hideAvatar, hideText, isRound, avatarSize, timestamp, timestampLink } = this.props;
+    var { user, hideAvatar, hideText, isRound, avatarSize, timestamp, timestampLink, className } = this.props;
     var render = {};
+
+    render.cn = `user_box ${className}`;
 
     let user_url = getUrl(URL_NAMES.USER, { username: user.username })
 
@@ -71,7 +73,7 @@ export default class User extends Component {
     }
 
     return (
-        <div className="user_box">
+        <div className={render.cn}>
           {render.avatar}
           {render.text}
         </div>

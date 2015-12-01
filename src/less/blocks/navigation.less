@@ -1,0 +1,50 @@
+.navigation {
+  font-size: 14px;
+  color: #333;
+
+  &-sidebar {
+    margin-right: -10px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 11px 0 11px 5px;
+
+    &-active {
+      background: #fff;
+    }
+
+    &-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  &__icon {
+    width: 24px;
+    margin: 0 5px 0 0;
+    color: #000;
+    opacity: 0.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .micon {
+      font-size: 20px;
+    }
+  }
+
+  &__title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+  }
+
+  &__badge {
+    width: 30px;
+    font-size: 12px;
+  }
+}

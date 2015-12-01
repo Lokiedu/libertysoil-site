@@ -23,7 +23,7 @@ import ApiClient from '../api/client'
 import {API_HOST} from '../config';
 import { getStore } from '../store';
 import { setUserTags } from '../actions';
-import SidebarLink from './sidebar-link';
+import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import { defaultSelector } from '../selectors';
@@ -77,19 +77,15 @@ class Sidebar extends React.Component {
     let favorites_enabled = (current_user.favourites && current_user.favourites.length > 0);
 
     return (
-      <div className="page__sidebar">
+      <div className="page__sidebar font-open_sans">
         <div className="layout__row page__sidebar_user">
           <CurrentUser user={current_user} />
         </div>
 
-        <div className="layout__row">
-          <SidebarLink className="link" enabled to="/"><span className="icon fa fa-feed"></span> News Feed</SidebarLink>
-        </div>
-        <div className="layout__row">
-          <SidebarLink className="link" enabled={likes_enabled} to={`/user/${current_user.username}/likes`}><span className="icon fa fa-heart"></span> My Likes</SidebarLink>
-        </div>
-        <div className="layout__row">
-          <SidebarLink className="link" enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`}><span className="icon fa fa-star"></span> My Favorites</SidebarLink>
+        <div className="navigation navigation-sidebar">
+          <NavigationItem enabled to="/" icon="star" icon="public">News Feed</NavigationItem>
+          <NavigationItem enabled={likes_enabled} to={`/user/${current_user.username}/likes`} icon="favorite">My Likes</NavigationItem>
+          <NavigationItem  enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`} icon="star">My Favorites</NavigationItem>
         </div>
 
         <SidebarTagCloud className="layout__row layout__row-double" tags={this.props.current_user_tags} title="Tags" />
