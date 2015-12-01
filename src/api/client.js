@@ -239,4 +239,9 @@ export default class ApiClient
     let response = await this.del(`/api/v1/post/${uuid}`);
     return response.body;
   }
+
+  async updateSchool(uuid, data) {
+    let response = await this.postJSON(`/api/v1/school/${uuid}`, data);
+    return response.body;
+  }
 }
