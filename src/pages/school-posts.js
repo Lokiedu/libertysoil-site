@@ -4,8 +4,6 @@ import _ from 'lodash';
 
 import BaseSchoolPage from './base/school'
 import River from '../components/river_of_posts';
-import ApiClient from '../api/client'
-import { API_HOST } from '../config';
 import { getStore } from '../store';
 import { addSchool, setSchoolPosts } from '../actions';
 import { likePost, unlikePost, favPost, unfavPost } from '../triggers'
@@ -17,10 +15,10 @@ class SchoolPostsPage extends React.Component {
   static async fetchData(params, props, client) {
     try {
       let schoolInfo = await client.schoolInfo(params.school_name);
-      let result = await client.schoolPosts(schoolInfo.name);
+      let posts = await client.schoolPosts(schoolInfo.name);
 
       getStore().dispatch(addSchool(schoolInfo));
-      getStore().dispatch(setSchoolPosts(schoolInfo, result));
+      getStore().dispatch(setSchoolPosts(schoolInfo, posts));
     } catch (e) {
       console.log(e.stack)
     }
