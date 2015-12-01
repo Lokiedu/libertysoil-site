@@ -46,12 +46,30 @@ export default class BaseSchoolPage extends React.Component {
               <SchoolHeader
                 school={page_school}
                 current_user={current_user}
-                />
+              />
 
               <div className="page__content page__content-horizontal_space">
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
-                    <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/s/${page_school.url_name}`}>About</IndexLink></div>
+                    <div className="layout__grid_item">
+                      <IndexLink
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${page_school.url_name}`}
+                      >
+                        About
+                      </IndexLink>
+                    </div>
+                    <div className="layout__grid_item">
+                      <PageContentLink
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${page_school.url_name}/posts`}
+                        visible={true}
+                      >
+                        Posts
+                      </PageContentLink>
+                    </div>
                   </div>
                 </div>
                 <div className="layout__row layout__row-double">

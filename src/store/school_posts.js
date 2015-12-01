@@ -23,56 +23,22 @@ import * as a from '../actions';
 
 const initialState = i.Map({});
 
-const cleanUser = user => {
-  let users = {};
-
-  if (user.following) {
-    for (let followed_user of user.following) {
-      users[followed_user.id] = followed_user;
-    }
-
-    user = _.cloneDeep(user);
-    delete user.following;
-  }
-
-  if (user.followers) {
-    for (let follower of user.followers) {
-      users[follower.id] = follower;
-    }
-
-    user = _.cloneDeep(user);
-    delete user.following;
-  }
-
-  users[user.id] = user;
-
-  return users;
-};
-
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.ADD_USER:
-    case a.SET_CURRENT_USER:
-    {
-      state = state.merge(i.fromJS(cleanUser(action.user)));
+    case a.SET_SCHOOL_POSTS: {
+      state = state.set(action.school.id, i.List(action.posts.map(post => post.id)));
       break;
     }
 
-    case a.ADD_POST:
-    case a.ADD_POST_TO_RIVER: {
-      const user = action.post.user;
-      state = state.set(user.id, i.fromJS(user));
+    case a.REMOVE_POST: {
+      for (let schoolId of state.keys()) {
+        let idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
 
+        if (idx >= 0) {
+          state = state.deleteIn([schoolId, idx]);
+        }
+      }
       break;
-    }
-
-    case a.SET_POSTS_TO_RIVER:
-    case a.SET_POSTS_TO_LIKES_RIVER:
-    case a.SET_POSTS_TO_FAVOURITES_RIVER:
-    case a.SET_SCHOOL_POSTS:
-    case a.SET_TAG_POSTS: {
-      let users = _.indexBy(_.unique(action.posts.map(post => post.user), 'id'), 'id');
-      state = state.merge(i.fromJS(users));
     }
   }
 

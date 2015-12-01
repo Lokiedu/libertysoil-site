@@ -31,6 +31,7 @@ import messages from './messages';
 import posts from './posts';
 import river from './river';
 import schools from './schools';
+import school_posts from './school_posts';
 import tag_posts from './tag_posts';
 import user_posts from './user_posts';
 import users from './users';
@@ -51,6 +52,7 @@ const theReducer = combineReducers(i.Map({
   posts,
   river,
   schools,
+  school_posts,
   tag_posts,
   user_posts,
   users
@@ -77,6 +79,7 @@ const initialState = i.Map({
   posts: i.Map({}),
   river: i.List([]),
   schools: i.Map({}),
+  school_posts: i.Map({}),
   tag_posts: i.Map({}),
   user_posts: i.Map({}),
   users: i.Map({})

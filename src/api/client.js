@@ -114,6 +114,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async schoolPosts(schoolName) {
+    let response = await this.get(`/api/v1/posts/school/${schoolName}`);
+    return response.body;
+  }
+
   async getLikedPosts(username) {
     let response = await this.get(`/api/v1/posts/liked/${username}`)
     return response.body;

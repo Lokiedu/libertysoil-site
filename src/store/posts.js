@@ -43,6 +43,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_CITY_POSTS:
     case a.SET_COUNTRY_POSTS:
+    case a.SET_SCHOOL_POSTS:
     {
       let postsWithoutUsers = _.indexBy(action.posts.map(post => {
         let postCopy = _.cloneDeep(post);
