@@ -135,14 +135,16 @@ export default function initBookshelf(config) {
      */
     updateSchools: async function(names) {
       let schools = this.schools();
+      let relatedSchools = await this.related('schools').fetch();
 
       let schoolsToDetach = await School.collection().query(qb => {
-        qb.innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
+        qb
+          .innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
           .whereNotIn('schools.name', names)
           .where('posts_schools.post_id', this.id);
       }).fetch();
 
-      let schoolNamesToAdd = _.difference(names, schools.pluck('name'));
+      let schoolNamesToAdd = _.difference(names, relatedSchools.pluck('name'));
 
       await Promise.all([
         schools.detach(schoolsToDetach.pluck('id')),
