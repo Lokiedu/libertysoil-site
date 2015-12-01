@@ -78,10 +78,9 @@ class Sidebar extends React.Component {
 
     return (
       <div className="page__sidebar font-open_sans">
-        <div className="layout__row page__sidebar_user">
+        <div className="page__sidebar_user">
           <CurrentUser user={current_user} />
         </div>
-
         <div className="navigation navigation-sidebar">
           <NavigationItem enabled to="/" icon="star" icon="public">News Feed</NavigationItem>
           <NavigationItem enabled={likes_enabled} to={`/user/${current_user.username}/likes`} icon="favorite">My Likes</NavigationItem>
