@@ -26,7 +26,7 @@ const initialState = i.Map({});
 const cleanUser = user => {
   let users = {};
 
-  if ('following' in user) {
+  if (user.following) {
     for (let followed_user of user.following) {
       users[followed_user.id] = followed_user;
     }
@@ -35,7 +35,7 @@ const cleanUser = user => {
     delete user.following;
   }
 
-  if ('followers' in user) {
+  if (user.followers) {
     for (let follower of user.followers) {
       users[follower.id] = follower;
     }
