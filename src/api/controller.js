@@ -93,7 +93,7 @@ export default class ApiController {
         qb
           .join('posts_schools', 'posts.id', 'posts_schools.post_id')
           .join('schools', 'posts_schools.school_id', 'schools.id')
-          .where('schools.name', req.params.school)
+          .where('schools.url_name', req.params.school)
           .andWhere('posts_schools.visible', true)
           .orderBy('schools.created_at', 'desc');
       });

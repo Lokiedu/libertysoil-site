@@ -114,8 +114,8 @@ export default class ApiClient
     return response.body;
   }
 
-  async schoolPosts(schoolName) {
-    let response = await this.get(`/api/v1/posts/school/${schoolName}`);
+  async schoolPosts(schoolUrlName) {
+    let response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
     return response.body;
   }
 

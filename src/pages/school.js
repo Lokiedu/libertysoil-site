@@ -32,7 +32,7 @@ class SchoolPage extends React.Component {
   static async fetchData(params, props, client) {
     try {
       let schoolInfo = await client.schoolInfo(params.school_name);
-      let posts = await client.schoolPosts(schoolInfo.name);
+      let posts = await client.schoolPosts(params.school_name);
 
       getStore().dispatch(addSchool(schoolInfo));
       getStore().dispatch(setSchoolPosts(schoolInfo, posts));
