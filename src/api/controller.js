@@ -20,6 +20,7 @@ import bcrypt from 'bcrypt'
 import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
+import crypto from 'crypto'
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -550,6 +551,49 @@ export default class ApiController {
     res.send({ success: true, user });
   }
 
+  /**
+   * Looks users record by submitted email, saves user random SHA1 hash.
+   * If user is authorized. Show error message.
+   *
+   * If no user found send status 401.
+   *
+   * When user saved successfully, send message (publich event?) to user with
+   * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
+   */
+  async resetPassword(req, res) {
+
+    if (req.session && req.session.user) {
+      res.status(403);
+      res.send({error: 'Please use profile change password feature.'});
+    }
+
+    for (let fieldName of ['email']) {
+      if (!(fieldName in req.body)) {
+        res.status(400);
+        res.send({error: 'Bad Request'});
+        return;
+      }
+    }
+
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email: req.body.email}).fetch({require: true});
+      let random = Math.random().toString();
+      let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
+      // save user
+      // emit event? to send an email
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
+  }
+
   async logout(req, res) {
     if (req.session && req.session.user) {
       req.session.destroy();
@@ -641,7 +685,7 @@ export default class ApiController {
     let thisTypeRequirements = typeRequirements[req.body.type];
 
     for (let varName of thisTypeRequirements) {
-      if (!(varName in req.body)) {
+      if (!(reqName in req.body)) {
         res.status(400);
         res.send({error: `"${varName}" parameter is not given`});
         return;

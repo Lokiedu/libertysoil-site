@@ -21,6 +21,8 @@ import React from 'react';
 import App from './pages/app';
 import Auth from './pages/auth';
 import MaybeList from './pages/maybe_list';
+import NewPassword from './pages/new-password';
+import PasswordReset from './pages/password-reset';
 import PostPage from './pages/post';
 import PostEditPage from './pages/post_edit';
 import UserPage from './pages/user';
@@ -32,7 +34,6 @@ import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
-
 
 export function getRoutes(onEnterHandler) {
   return (
@@ -56,6 +57,8 @@ export function getRoutes(onEnterHandler) {
       <Route path="/s/:school_name">
         <IndexRoute component={SchoolPage} onEnter={onEnterHandler} />
       </Route>
+      <Route component={PasswordReset} path="/resetpassword" onEnter={onEnterHandler} />
+      <Route component={NewPassword} path="/newpassword" onEnter={onEnterHandler} />
     </Route>
   );
 }
