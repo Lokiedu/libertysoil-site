@@ -21,6 +21,8 @@ import Bookshelf from 'bookshelf';
 import uuid from 'uuid'
 import _ from 'lodash'
 
+import { uploadAttachment, getMetadata } from '../../utils/attachments';
+
 export default function initBookshelf(config) {
   let knex = Knex(config);
   let bookshelf = Bookshelf(knex);
@@ -29,7 +31,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School, Country, City;
+  let User, Post, Label, School, Country, City, Attachment;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -207,6 +209,40 @@ export default function initBookshelf(config) {
     }
   });
 
+  Attachment = bookshelf.Model.extend({
+    tableName: 'attachments',
+    user: function() {
+      return this.belongsTo(User);
+    },
+    original: function() {
+      return this.belongsTo(Attachment, 'original_id');
+    }
+  });
+
+  /**
+   * Uploads the file to s3 and creates an attachment.
+   * @param {String} fileName
+   * @param {*} fileData An arbitrarily sized buffer, blob, or stream
+   * @param {String} userId
+   * @returns {Attachment}
+   */
+  Attachment.create = async function create(fileName, fileData, userId) {
+    let attachment = Attachment.forge();
+
+    // Upload
+    let response = await uploadAttachment(fileName, fileData);
+
+    // Get metadata
+    // TODO: At this point s3.headObject fails with 400 BadRequest. Find a way to get metadata.
+    //let metadata = await getMetadata(fileName);
+
+    // Save to the database
+    return await attachment.save({
+      s3_url: response.Location,
+      user_id: userId
+    });
+  };
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -220,6 +256,7 @@ export default function initBookshelf(config) {
   bookshelf.model('School', School);
   bookshelf.model('Country', Country);
   bookshelf.model('City', City);
+  bookshelf.model('Attachment', Attachment);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
