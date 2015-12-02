@@ -1068,4 +1068,31 @@ export default class ApiController {
 
     res.send(follow_status);
   }
+
+  async uploadFiles(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
+    if (!req.files.length) {
+      res.status(400);
+      res.send({error: '"files" parameter is not provided'});
+    }
+
+    let Attachment = this.bookshelf.model('Attachment');
+
+    try {
+      let promises = req.files.map(file => {
+        return Attachment.create(file.originalname, file.buffer, req.session.user)
+      });
+
+      let attachments = await Promise.all(promises);
+
+      res.send({success: true, attachments});
+    } catch (e) {
+      res.status(500);
+      res.send({error: 'Upload failed'});
+    }
+  }
 }
