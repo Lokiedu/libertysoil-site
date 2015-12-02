@@ -685,7 +685,7 @@ export default class ApiController {
     let thisTypeRequirements = typeRequirements[req.body.type];
 
     for (let varName of thisTypeRequirements) {
-      if (!(reqName in req.body)) {
+      if (!(varName in req.body)) {
         res.status(400);
         res.send({error: `"${varName}" parameter is not given`});
         return;
