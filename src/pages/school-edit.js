@@ -31,7 +31,6 @@ class SchoolEditPage extends React.Component {
       form.id.value,
       {
         name: form.name.value,
-        url_name: form.url_name.value,
         description: form.description.value
       }
     ).then((result) => {
@@ -61,16 +60,6 @@ class SchoolEditPage extends React.Component {
                   className="input input-block content layout__row layout__row-small"
                   defaultValue={school.name}
                   name="name"
-                  type="text"
-                />
-              </div>
-
-              <div className="layout__row">
-                <label htmlFor="url_name" className="layout__block layout__row layout__row-small">Url name</label>
-                <input
-                  className="input input-block content layout__row layout__row-small"
-                  defaultValue={school.url_name}
-                  name="url_name"
                   type="text"
                 />
               </div>
