@@ -24,6 +24,7 @@ import favourites from './favourites';
 import favourites_river from './favourites_river';
 import followers from './followers';
 import following from './following';
+import geo from './geo';
 import likes from './likes';
 import likes_river from './likes_river';
 import messages from './messages';
@@ -43,6 +44,7 @@ const theReducer = combineReducers(i.Map({
   favourites_river,
   followers,
   following,
+  geo,
   likes,
   likes_river,
   messages,
@@ -63,6 +65,12 @@ const initialState = i.Map({
   favourites_river: i.Map({}),
   followers: i.Map({}),
   following: i.Map({}),
+  geo: i.Map({
+    cities: i.Map({}),    // index by numeric id
+    cityPosts: i.Map({}),
+    countries: i.Map({}),  // index by ISO-code
+    countryPosts: i.Map({})
+  }),
   likes: i.Map({}),
   likes_river: i.Map({}),
   messages: i.List([]),

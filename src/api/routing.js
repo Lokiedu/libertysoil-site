@@ -53,6 +53,13 @@ export function initApi(bookshelf) {
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
 
+  api.get('/countries/', wrap(controller.getCountries.bind(controller)));
+  api.get('/country/:code', wrap(controller.getCountry.bind(controller)));
+  api.get('/country/:code/posts', wrap(controller.getCountryPosts.bind(controller)));
+  //api.get('/cities/', wrap(controller.getCities.bind(controller)));
+  api.get('/city/:id', wrap(controller.getCity.bind(controller)));
+  api.get('/city/:id/posts', wrap(controller.getCityPosts.bind(controller)));
+
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));

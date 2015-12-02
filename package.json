@@ -67,9 +67,11 @@
     "vinyl-source-stream": ""
   },
   "devDependencies": {
+    "adm-zip": "^0.4.7",
     "browser-sync": "",
     "csv": "^0.4.6",
     "slug": "^0.9.1",
+    "tmp": "0.0.28",
     "watchify": ""
   }
 }
