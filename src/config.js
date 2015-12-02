@@ -23,7 +23,8 @@ export const URL_NAMES = {
   SETTINGS: `SETTINGS`,
   MANAGE_FOLLOWERS: `MANAGE_FOLLOWERS`,
   CHANGE_PASSWORD: `CHANGE_PASSWORD`,
-  EDIT_POST: `EDIT_POST`
+  EDIT_POST: `EDIT_POST`,
+  SCHOOL: 'SCHOOL'
 };
 
 export const URL = {
@@ -34,5 +35,6 @@ export const URL = {
   [URL_NAMES.USER]: '/user/:username',
   [URL_NAMES.SETTINGS]: '/settings',
   [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
-  [URL_NAMES.CHANGE_PASSWORD]: '/settings/password'
+  [URL_NAMES.CHANGE_PASSWORD]: '/settings/password',
+  [URL_NAMES.SCHOOL]: '/s/:url_name'
 };

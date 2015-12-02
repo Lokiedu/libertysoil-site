@@ -34,9 +34,7 @@ class SchoolEditPage extends React.Component {
         description: form.description.value
       }
     ).then((result) => {
-      console.log(result)
-      // TODO: Redirect to the school page.
-      //this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
+      this.props.history.pushState(null, getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
     });
   }
 
