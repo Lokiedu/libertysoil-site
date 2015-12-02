@@ -21,53 +21,65 @@ import _ from 'lodash';
 
 import NotFound from './not-found'
 import BaseSchoolPage from './base/school'
+import River from '../components/river_of_posts';
 
-import ApiClient from '../api/client'
-import {API_HOST} from '../config';
 import { getStore } from '../store';
-import { addSchool } from '../actions';
-//import {followSchool, unfollowSchool} from '../triggers'
+import { addSchool, setSchoolPosts } from '../actions';
+import { likePost, unlikePost, favPost, unfavPost } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SchoolPage extends React.Component {
   static async fetchData(params, props, client) {
     try {
-      let schoolInfo = client.schoolInfo(params.school_name);
+      let schoolInfo = await client.schoolInfo(params.school_name);
+      let posts = await client.schoolPosts(schoolInfo.name);
 
-      getStore().dispatch(addSchool(await schoolInfo));
+      getStore().dispatch(addSchool(schoolInfo));
+      getStore().dispatch(setSchoolPosts(schoolInfo, posts));
     } catch (e) {
       console.log(e.stack)
     }
   }
 
   render() {
-    let page_school = _.find(this.props.schools, {url_name: this.props.params.school_name});
+    let postTriggers = {likePost, unlikePost, favPost, unfavPost};
+    let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
+    let schoolPosts = this.props.school_posts[school.id];
     let linesOfDescription = <p>No information provided...</p>;
 
-    if (_.isUndefined(page_school)) {
+    if (_.isUndefined(school)) {
       return <script/>;  // not loaded yet
     }
 
-    if (false === page_school) {
+    if (false === school) {
       return <NotFound/>;
     }
 
     //let school_triggers = {followSchool, unfollowSchool};
 
-    if (page_school.description) {
-      linesOfDescription = page_school.description.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
+    if (school.description) {
+      linesOfDescription = school.description.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
     }
 
     return (
       <BaseSchoolPage
         current_user={this.props.current_user}
-        page_school={page_school}
+        page_school={school}
         is_logged_in={this.props.is_logged_in}
       >
         <div className="paper">
           <div className="paper__page content">
             {linesOfDescription}
           </div>
+        </div>
+        <div className="layout__row layout__row-double">
+          <River
+            current_user={this.props.current_user}
+            posts={this.props.posts}
+            river={schoolPosts}
+            triggers={postTriggers}
+            users={this.props.users}
+          />
         </div>
       </BaseSchoolPage>
     )

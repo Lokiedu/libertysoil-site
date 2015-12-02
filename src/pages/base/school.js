@@ -64,16 +64,6 @@ export default class BaseSchoolPage extends React.Component {
                       <PageContentLink
                         activeClassName="tabs__link-active"
                         className="tabs__link"
-                        to={`/s/${page_school.url_name}/posts`}
-                        visible={true}
-                      >
-                        Posts
-                      </PageContentLink>
-                    </div>
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
                         to={`/s/${page_school.url_name}/edit`}
                         visible={true}
                       >
