@@ -20,6 +20,7 @@ import bcrypt from 'bcrypt'
 import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
+import fs from 'fs';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -1069,6 +1070,10 @@ export default class ApiController {
     res.send(follow_status);
   }
 
+  /**
+   * Creates attachments from 'files'.
+   * Important: set the 'name' property of each file input to 'files', not 'files[]' or 'files[0]'
+   */
   async uploadFiles(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -1084,7 +1089,11 @@ export default class ApiController {
 
     try {
       let promises = req.files.map(file => {
-        return Attachment.create(file.originalname, file.buffer, req.session.user)
+        return Attachment.create({
+          name: file.originalname,
+          data: file.buffer,
+          size: file.size
+        }, req.session.user)
       });
 
       let attachments = await Promise.all(promises);

@@ -20,8 +20,9 @@ import Knex from 'knex';
 import Bookshelf from 'bookshelf';
 import uuid from 'uuid'
 import _ from 'lodash'
+import fileType from 'file-type';
 
-import { uploadAttachment, getMetadata } from '../../utils/attachments';
+import { uploadAttachment, getMetadata, generateName } from '../../utils/attachments';
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -221,25 +222,32 @@ export default function initBookshelf(config) {
 
   /**
    * Uploads the file to s3 and creates an attachment.
-   * @param {String} fileName
-   * @param {*} fileData An arbitrarily sized buffer, blob, or stream
+   * @param {Object} fileInfo {name: String, data: Stream, size: Number}
    * @param {String} userId
    * @returns {Attachment}
    */
-  Attachment.create = async function create(fileName, fileData, userId) {
+  Attachment.create = async function create(fileInfo, userId) {
     let attachment = Attachment.forge();
+    let generatedName = generateName(fileInfo.name);
+    let typeInfo = fileType(fileInfo.data);
+
+    if (!typeInfo) {
+      throw new Error('Unrecognized file type');
+    }
 
     // Upload
-    let response = await uploadAttachment(fileName, fileData);
+    let response = await uploadAttachment(generatedName, fileInfo.data, typeInfo.mime);
 
     // Get metadata
-    // TODO: At this point s3.headObject fails with 400 BadRequest. Find a way to get metadata.
-    //let metadata = await getMetadata(fileName);
+    // TODO: At this point s3.headObject fails with 400 BadRequest. Find a way to get s3 metadata.
+    //let metadata = await getMetadata(generatedName);
 
     // Save to the database
     return await attachment.save({
       s3_url: response.Location,
-      user_id: userId
+      user_id: userId,
+      size: fileInfo.size,
+      mime_type: typeInfo.mime
     });
   };
 
