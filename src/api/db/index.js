@@ -21,8 +21,9 @@ import Bookshelf from 'bookshelf';
 import uuid from 'uuid'
 import _ from 'lodash'
 import fileType from 'file-type';
+import mime from 'mime';
 
-import { uploadAttachment, getMetadata, generateName } from '../../utils/attachments';
+import { uploadAttachment, downloadAttachment, getMetadata, generateName } from '../../utils/attachments';
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -217,36 +218,59 @@ export default function initBookshelf(config) {
     },
     original: function() {
       return this.belongsTo(Attachment, 'original_id');
+    },
+    download: async function() {
+      return downloadAttachment(this.attributes.s3_filename);
+    },
+    extension: function() {
+      if (this.attributes.mime_type) {
+        return mime.extension(this.attributes.mime_type);
+      }
+    },
+    reupload: async function(fileName, fileData) {
+      let generatedName = generateName(fileName);
+      let typeInfo = fileType(fileData);
+
+      if (!typeInfo) {
+        throw new Error('Unrecognized file type');
+      }
+
+      let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+
+      return this.save({
+        s3_url: response.Location,
+        s3_filename: generatedName,
+        filename: fileName,
+        size: fileData.length,
+        mime_type: typeInfo.mime
+      });
     }
   });
 
   /**
    * Uploads the file to s3 and creates an attachment.
-   * @param {Object} fileInfo {name: String, data: Stream, size: Number}
-   * @param {String} userId
-   * @returns {Attachment}
+   * @param {String} fileName
+   * @param {Buffer} fileData
+   * @param {Object} attributes - Additional attributes
+   * @returns {Promise}
    */
-  Attachment.create = async function create(fileInfo, userId) {
+  Attachment.create = async function create(fileName, fileData, attributes = {}) {
     let attachment = Attachment.forge();
-    let generatedName = generateName(fileInfo.name);
-    let typeInfo = fileType(fileInfo.data);
+    let generatedName = generateName(fileName);
+    let typeInfo = fileType(fileData);
 
     if (!typeInfo) {
       throw new Error('Unrecognized file type');
     }
 
-    // Upload
-    let response = await uploadAttachment(generatedName, fileInfo.data, typeInfo.mime);
+    let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
 
-    // Get metadata
-    // TODO: At this point s3.headObject fails with 400 BadRequest. Find a way to get s3 metadata.
-    //let metadata = await getMetadata(generatedName);
-
-    // Save to the database
     return await attachment.save({
+      ...attributes,
       s3_url: response.Location,
-      user_id: userId,
-      size: fileInfo.size,
+      s3_filename: generatedName,
+      filename: fileName,
+      size: fileData.length,
       mime_type: typeInfo.mime
     });
   };

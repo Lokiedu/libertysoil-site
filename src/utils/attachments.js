@@ -10,27 +10,27 @@ let s3 = bluebird.promisifyAll(new AWS.S3(config.attachments.s3));
  * Uploads the file to the bucket specified in config.attachments.s3.Bucket.
  * @param {String} fileName
  * @param {*} fileData An arbitrarily sized buffer, blob, or stream
- * @returns {Object} {Location: String, ETag: String}
+ * @param {String} mimeType
+ * @returns {Promise} {Location: String, ETag: String}
  */
 export async function uploadAttachment(fileName, fileData, mimeType) {
-  let typeInfo = fileType(fileData);
-
   let params = {
     Key: fileName,
     Body: fileData,
     ContentType: mimeType
   };
 
-  return await s3.uploadAsync(params);
+  return s3.uploadAsync(params);
 }
 
-/**
- * Gets object's metadata.
- * @param {String} fileName
- * @returns {Object}
- */
 export async function getMetadata(fileName) {
-  return await s3.headObjectAsync({
+  return s3.headObjectAsync({
+    Key: fileName
+  });
+}
+
+export async function downloadAttachment(fileName) {
+  return s3.getObjectAsync({
     Key: fileName
   });
 }

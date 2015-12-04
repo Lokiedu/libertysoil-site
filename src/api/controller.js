@@ -22,6 +22,9 @@ import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import fs from 'fs';
 
+import { processImage } from '../utils/image';
+import config from '../../config';
+
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
 export default class ApiController {
@@ -1089,11 +1092,11 @@ export default class ApiController {
 
     try {
       let promises = req.files.map(file => {
-        return Attachment.create({
-          name: file.originalname,
-          data: file.buffer,
-          size: file.size
-        }, req.session.user)
+        return Attachment.create(
+          file.originalname,
+          file.buffer,
+          {user_id: req.session.user}
+        );
       });
 
       let attachments = await Promise.all(promises);
@@ -1101,7 +1104,97 @@ export default class ApiController {
       res.send({success: true, attachments});
     } catch (e) {
       res.status(500);
-      res.send({error: 'Upload failed'});
+      res.send({error: `Upload failed: ${e.stack}`});
     }
+  }
+
+  /**
+   * Loads the image from s3, transforms it and creates a new attachment with the new image
+   * if derived_id is not specified.
+   * If derived_id is specified then updates the attachment and responds with it.
+   * Body params:
+   *   original_id (required) - Id of the original attachment.
+   *   transforms (required) - Json array with transforms. See utils/image.js processImage
+   *   derived_id - Id of the attachment to reuse
+   */
+  async processImage(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.body.original_id) {
+      res.status(400);
+      res.send({error: '"original_id" parameter is not provided'});
+      return;
+    }
+
+    if (!req.body.transforms) {
+      res.status(400);
+      res.send({error: '"transforms" parameter is not provided'});
+      return;
+    }
+
+    let Attachment = this.bookshelf.model('Attachment');
+
+    try {
+      let result;
+      let transforms = JSON.parse(req.body.transforms);
+
+      // Get the original attachment, checking ownership.
+      let original = await Attachment
+        .forge()
+        .query(qb => {
+          qb
+            .where('id', req.body.original_id)
+            .andWhere('user_id', req.session.user);
+        })
+        .fetch({require: true});
+
+      // Check if the format of the attachment is supported.
+      let { supportedImageFormats } = config.attachments;
+      if (supportedImageFormats.indexOf(original.attributes.mime_type) < 0) {
+        res.status(400);
+        res.send({error: 'Image type is not supported'});
+        return;
+      }
+
+      // Download the original attachment data from s3.
+      let originalData = await original.download();
+
+      // Process the data.
+      let newImage = await processImage(originalData.Body, transforms);
+      let imageBuffer = await newImage.toBufferAsync(original.extension());
+
+      // Update the attachment specified in derived_id or create a new one.
+      if (req.body.derived_id) {
+        let oldAttachment = await Attachment
+          .forge()
+          .query(qb => {
+            qb
+              .where('id', req.body.derived_id)
+              .andWhere('user_id', req.session.user);
+          })
+          .fetch({require: true});
+
+        result = await oldAttachment.reupload(oldAttachment.attributes.filename, imageBuffer);
+      } else {
+        result = await Attachment.create(
+          original.attributes.filename,
+          imageBuffer,
+          {
+            user_id: original.attributes.user_id,
+            original_id: original.id
+          }
+        );
+      }
+
+      res.send({success: true, attachment: result});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Image transformation failed: ${e.message}`});
+    }
+
   }
 }

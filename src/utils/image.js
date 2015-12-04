@@ -12,7 +12,7 @@ let lwip = bluebird.promisifyAll(lwipOld);
  *   {resize: {width: Number, height: Number}}
  * @param {Buffer} buffer
  * @param {Array} transforms - An array of transforms
- * @returns {Image}
+ * @returns {Promise}
  */
 export async function processImage(buffer, transforms) {
   let imageType = fileType(buffer).ext;
@@ -42,7 +42,7 @@ export async function processImage(buffer, transforms) {
       if (err) {
         reject(err);
       } else {
-        resolve(res);
+        resolve(bluebird.promisifyAll(res));
       }
     })
   });

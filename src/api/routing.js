@@ -75,6 +75,7 @@ export function initApi(bookshelf) {
   api.get('/suggestions/initial', wrap(controller.initialSuggestions.bind(controller)));
 
   api.post('/upload', upload.array('files', 8), wrap(controller.uploadFiles.bind(controller)));
+  api.post('/image', wrap(controller.processImage.bind(controller)));
 
   return api;
 }
