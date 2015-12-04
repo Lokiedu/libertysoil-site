@@ -20,6 +20,10 @@ import Knex from 'knex';
 import Bookshelf from 'bookshelf';
 import uuid from 'uuid'
 import _ from 'lodash'
+import fileType from 'file-type';
+import mime from 'mime';
+
+import { uploadAttachment, downloadAttachment, getMetadata, generateName } from '../../utils/attachments';
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -29,7 +33,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School, Country, City;
+  let User, Post, Label, School, Country, City, Attachment;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -212,6 +216,70 @@ export default function initBookshelf(config) {
     }
   });
 
+  Attachment = bookshelf.Model.extend({
+    tableName: 'attachments',
+    user: function() {
+      return this.belongsTo(User);
+    },
+    original: function() {
+      return this.belongsTo(Attachment, 'original_id');
+    },
+    download: async function() {
+      return downloadAttachment(this.attributes.s3_filename);
+    },
+    extension: function() {
+      if (this.attributes.mime_type) {
+        return mime.extension(this.attributes.mime_type);
+      }
+    },
+    reupload: async function(fileName, fileData) {
+      let generatedName = generateName(fileName);
+      let typeInfo = fileType(fileData);
+
+      if (!typeInfo) {
+        throw new Error('Unrecognized file type');
+      }
+
+      let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+
+      return this.save({
+        s3_url: response.Location,
+        s3_filename: generatedName,
+        filename: fileName,
+        size: fileData.length,
+        mime_type: typeInfo.mime
+      });
+    }
+  });
+
+  /**
+   * Uploads the file to s3 and creates an attachment.
+   * @param {String} fileName
+   * @param {Buffer} fileData
+   * @param {Object} attributes - Additional attributes
+   * @returns {Promise}
+   */
+  Attachment.create = async function create(fileName, fileData, attributes = {}) {
+    let attachment = Attachment.forge();
+    let generatedName = generateName(fileName);
+    let typeInfo = fileType(fileData);
+
+    if (!typeInfo) {
+      throw new Error('Unrecognized file type');
+    }
+
+    let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+
+    return await attachment.save({
+      ...attributes,
+      s3_url: response.Location,
+      s3_filename: generatedName,
+      filename: fileName,
+      size: fileData.length,
+      mime_type: typeInfo.mime
+    });
+  };
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -225,6 +293,7 @@ export default function initBookshelf(config) {
   bookshelf.model('School', School);
   bookshelf.model('Country', Country);
   bookshelf.model('City', City);
+  bookshelf.model('Attachment', Attachment);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

@@ -40,11 +40,13 @@ var path = {
     scripts: 'src/scripts/**/.js',
     scriptsDir: 'src/scripts/',
     html: 'src/*.html',
+    images: 'src/images/**/*.*',
     parts: 'src/parts/**/*.html'
   },
   dist: {
     dir: 'public/',
     html: 'public/*.html',
+    images: 'public/images/',
     scripts: 'public/scripts/',
     styles: 'public/styles/',
     fonts: 'public/fonts/'
@@ -114,6 +116,13 @@ gulp.task('fonts', function () {
     .pipe(reload({stream: true}));
 });
 
+// Images
+gulp.task('images', function () {
+  return gulp.src(path.src.images)
+    .pipe(gulp.dest(path.dist.images))
+    .pipe(reload({stream: true}));
+});
+
 // Pages
 gulp.task('html', function () {
   return gulp.src(path.dist.html)
@@ -142,14 +151,15 @@ gulp.task('browser-sync', function () {
 
 // Default task
 gulp.task('default', function (cb) {
-  runSequence(['styles', 'html', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
+  runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
 });
 
 // public task
-gulp.task('build', ['styles', 'html', 'scripts:once', 'fonts']);
+gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
 
 // Watch
 gulp.task('watch', function () {
   gulp.watch(path.src.less, ['styles']);
   gulp.watch(path.dist.html, ['html']);
+  gulp.watch(path.src.images, ['images']);
 });

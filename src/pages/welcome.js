@@ -30,14 +30,14 @@ let Welcome = () => {
         <Header is_logged_in={false} className="header-transparent" />
         <header className="landing__header">
           <h1 className="landing__title">Education change network</h1>
-          <p className="landing__details">Connect with people from around the world to make education more humane.<br></br>No action is too small - it is our world, lets work together to make it better for everyone.</p>
+          <p className="landing__details">Connect with people from around the world to make education better for everyone.<br></br>No action is too small.</p>
           <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
         </header>
       </section>
       <WhatIsLibertySoil />
       <div className="void void-space content content-center skin skin-red">
         <div className="width">
-          <h2>Child Friendly Education</h2>
+          <h2>Help more children reach better education</h2>
           <p>LibertySoil aims to make best schooling practises from around the world visible, accessible and actionable. Emotional and social development of the child are often overlooked in traditional school system. Join our growing community and help more children reach better education.
           </p>
           <p>We encourage people to collect, share and discuss resources on teaching and learning, helping to build a better understanding of the diversity within education. We aim to help families and schools solve problems like bullying, academic pressure, depression, anxiety, professional and social isolation, to name just a few. Needless to say, poor early life experiences negatively affect each person and a society as a whole.</p>
