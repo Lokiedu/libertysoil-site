@@ -23,11 +23,14 @@ import uuid from 'uuid'
 import fs from 'fs';
 import request from 'superagent';
 import crypto from 'crypto'
+import { sendEmail } from '../utils/email';
+import { renderWelcomeTemplate } from '../email-templates/index';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
+
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -642,11 +645,16 @@ export default class ApiController {
     }
 
     let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
+
+    let random = Math.random().toString();
+    let sha1 = crypto.createHash('sha1').update(req.body.email + random).digest('hex');
+
     let obj = new User({
       id: uuid.v4(),
       username: req.body.username,
       hashed_password: hashedPassword,
-      email: req.body.email
+      email: req.body.email,
+      email_check_hash: sha1
     });
 
     let moreData = {};
@@ -669,13 +677,16 @@ export default class ApiController {
         req.session.user = obj.id;
       }
 
+      let html = await renderWelcomeTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/verify/${sha1}`);
+      await sendEmail('Welcome to Libertysoil.org', html, req.body.email);
+
       res.send({success: true, user: obj});
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
         res.send({error: 'User already exists'});
       } else {
-        console.dir(e);
+        console.log(e);
 
         res.status(500);
         res.send({error: e.message});
@@ -722,6 +733,26 @@ export default class ApiController {
     user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send({ success: true, user });
+  }
+
+  async verifyEmail(req, res) {
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email_check_hash: req.params.hash}).fetch({require: true});
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
+    user.set('email_check_hash', '');
+    await user.save(null, {method: 'update'});
+
+    res.redirect('/');
   }
 
   /**
