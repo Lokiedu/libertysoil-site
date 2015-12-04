@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import { Mandrill } from 'mandrill-api/mandrill';
 
 
-function sendEmail(subject, html, to) {
+export function sendEmail(subject, html, to) {
   let mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
 
   let message = {
