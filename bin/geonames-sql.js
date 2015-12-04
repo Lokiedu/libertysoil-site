@@ -99,10 +99,10 @@ function cities() {
 countries()
   .then(() => {
     process.stdout.write("=== COUNTRIES DONE ===\n");
+    
+    cities();
   })
   .catch(e => {
     console.error(e);  // eslint-disable-line no-console
     process.exit(1);
   });
-
-cities();
