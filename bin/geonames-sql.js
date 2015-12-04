@@ -44,6 +44,12 @@ async function countries() {
     return `INSERT INTO geonames_countries VALUES (${row.join(',')});`;
   }).join("\n");
 
+  process.stdout.write("=== TRUNCATING COUNTRIES TABLE ===\n");
+
+  await Knex.raw('TRUNCATE geonames_countries CASCADE');
+
+  process.stdout.write("=== IMPORTING ===\n");
+
   await Knex.raw(q);
 
 }
@@ -83,14 +89,23 @@ function cities() {
       return `INSERT INTO geonames_cities VALUES (${row.join(',')});`;
     }).join("\n");
 
-    Knex.raw(q)
-      .then(() => {
-      process.stdout.write("=== CITIES DONE ===\n");
-      process.exit();
-    }).catch(e => {
-      console.error(e);  // eslint-disable-line no-console
-      process.exit(1);
+    process.stdout.write("=== TRUNCATING CITIES TABLE ===\n");
+
+    Knex.raw('TRUNCATE geonames_cities CASCADE').then(() => {
+
+      process.stdout.write("=== IMPORTING ===\n");
+
+      Knex.raw(q)
+          .then(() => {
+            process.stdout.write("=== CITIES DONE ===\n");
+            process.exit();
+          }).catch(e => {
+        console.error(e);  // eslint-disable-line no-console
+        process.exit(1);
+      });
     });
+
+
   });
 
   request.get('http://download.geonames.org/export/dump/cities1000.zip').pipe(output);
@@ -99,10 +114,10 @@ function cities() {
 countries()
   .then(() => {
     process.stdout.write("=== COUNTRIES DONE ===\n");
+
+    cities();
   })
   .catch(e => {
     console.error(e);  // eslint-disable-line no-console
     process.exit(1);
   });
-
-cities();
