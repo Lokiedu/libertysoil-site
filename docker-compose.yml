@@ -18,6 +18,8 @@ app:
   environment:
     - "VIRTUAL_HOST=alpha.libertysoil.org"
     - "DB_ENV=staging"
+  env_file:
+    - "./secrets.env"
 web:
   image: "jwilder/nginx-proxy"
   ports:
