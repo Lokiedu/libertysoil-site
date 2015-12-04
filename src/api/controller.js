@@ -276,7 +276,10 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({url_name: req.params.url_name}).fetch({withRelated: 'images'});
+      let school = await School
+        .where({url_name: req.params.url_name})
+        .fetch({require: true, withRelated: 'images'});
+
       res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -420,7 +423,7 @@ export default class ApiController {
       let newAttributes = _.pick(req.body, 'name', 'description', 'more');
 
       if (_.isArray(images)) {
-        this.updateImages(images);
+        school.updateImages(images);
       }
 
       await school.save(newAttributes);

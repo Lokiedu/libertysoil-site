@@ -187,7 +187,7 @@ export default function initBookshelf(config) {
       return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id')
     },
     updateImages: async function(imageIds) {
-      let relatedImageIds = await this.related('images').pluck('id');
+      let relatedImageIds = (await this.related('images').fetch()).pluck('id');
       let imagesToDetach = _.difference(relatedImageIds, imageIds);
       let imagesToAttach = _.difference(imageIds, relatedImageIds);
 
