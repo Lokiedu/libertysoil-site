@@ -401,13 +401,31 @@ export default class ApiController {
       res.send({error: '"id" parameter is not given'});
     }
 
+    let images;
+
+    if (req.body.images) {
+      if (!_.isArray(req.body.images)) {
+        res.status(400);
+        res.send({error: `"images" parameter is expected to be an array`});
+        return;
+      }
+
+      images = _.unique(req.body.images);
+    }
+
     let School = this.bookshelf.model('School');
 
     try {
       let school = await School.where({id: req.params.id}).fetch({require: true});
       let newAttributes = _.pick(req.body, 'name', 'description', 'more');
 
-      school = await school.save(newAttributes);
+      if (_.isArray(images)) {
+        this.updateImages(images);
+      }
+
+      await school.save(newAttributes);
+      
+      school = await school.fetch({withRelated: 'images'});
 
       res.send(school);
     } catch (e) {
