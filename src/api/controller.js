@@ -272,7 +272,7 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({url_name: req.params.url_name}).fetch();
+      let school = await School.where({url_name: req.params.url_name}).fetch({withRelated: 'images'});
       res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -283,7 +283,7 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let schools = await School.fetchAll();
+      let schools = await School.fetchAll({withRelated: 'images'});
       res.send(schools.toJSON());
     } catch (e) {
       res.sendStatus(404);

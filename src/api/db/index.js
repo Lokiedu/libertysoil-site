@@ -178,6 +178,9 @@ export default function initBookshelf(config) {
     tableName: 'schools',
     posts: function() {
       return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
+    },
+    images: function() {
+      return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id')
     }
   });
 
