@@ -55,7 +55,10 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={Auth} path="/auth" onEnter={withoutAuth} />
       <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />
       <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />
-      <Route component={TagPage} path="/tag/:tag" onEnter={withoutAuth} />
+      <Route path="/tag">
+        <IndexRoute component={TagCloudPage} />
+        <Route component={TagPage} path=":tag" />
+      </Route>
       <Route path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
         <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
