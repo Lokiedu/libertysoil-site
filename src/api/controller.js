@@ -588,7 +588,7 @@ export default class ApiController {
         moreData[fieldName] = req.body[fieldName];
       }
     }
-    
+
     moreData.first_login = true;
 
     if (!_.isEmpty(moreData)) {
@@ -709,10 +709,6 @@ export default class ApiController {
 
     try {
       user = await new User({email: req.body.email}).fetch({require: true});
-      let random = Math.random().toString();
-      let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
-      // save user
-      // emit event? to send an email
     } catch (e) {
       console.log(`user not found`);
       res.status(401);
@@ -720,6 +716,62 @@ export default class ApiController {
       return;
     }
 
+    let random = Math.random().toString();
+    let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
+
+    if (!user.get('reset_password_hash')) {
+      user.set('reset_password_hash', sha1);
+      await user.save(null, {method: 'update'});
+    }
+
+    let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/newpassword/${sha1}`);
+    await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
+    res.redirect('/');
+  }
+
+  /**
+   * New password form action.
+   * Validates new password form with password/password repeat values.
+   * Saves new password to User model.
+   */
+  async newPassword(req, res) {
+
+    if (req.session && req.session.user) {
+      res.redirect('/');
+    }
+
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email: req.params.hash}).fetch({require: true});
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
+    if (!('password' in req.body) || !('password_repeat' in req.body)) {
+      res.status(400);
+      res.send({error: '"password" or "password_repeat" parameter is not provided'});
+      return;
+    }
+
+    if (req.body.password !== req.body.password_repeat) {
+      res.status(400);
+      res.send({error: '"password" and "password_repeat" do not exact match.'});
+      return;
+    }
+
+    let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
+
+    user.set('hashed_password', hashedPassword);
+
+    await user.save(null, {method: 'update'});
+
+    res.redirect('/');
   }
 
   async logout(req, res) {
