@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { defaultSelector } from '../selectors';
+import { newPassword } from '../triggers';
 
 import Footer from '../components/footer';
 import Header from '../components/header';
@@ -29,7 +30,7 @@ class Form extends React.Component {
 
     let form = event.target;
 
-      /*     this.props.onLoginUser(form.username.value, form.password.value); */
+    newPassword(this.props.routeParams.hash, form.password.value, form.password_repeat.value);
   };
 
   render() {
@@ -47,9 +48,9 @@ class Form extends React.Component {
                       <div className="layout__row">
                         <div className="form__row">
                           <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
-                          <input className="input input-block" id="newPassword" required="required" type="text" name="new_password"/>
+                          <input className="input input-block" id="newPassword" required="required" type="password" name="password"/>
                           <label className="label label-block label-space" htmlFor="newPasswordRepeat">Repeat</label>
-                          <input className="input input-block" id="newPasswordRepeat" required="required" type="text" name="new_password_repeat"/>
+                          <input className="input input-block" id="newPasswordRepeat" required="required" type="password" name="password_repeat"/>
                         </div>
                       </div>
                       <div className="layout__row layout layout-align_vertical layout-align_justify">

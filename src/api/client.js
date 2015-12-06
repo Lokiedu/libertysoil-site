@@ -194,6 +194,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async resetPassword(email) {
+    let response = await this.postJSON(`/api/v1/resetpassword`, {email});
+    return response.body;
+  }
+
+  async newPassword(hash, password, password_repeat) {
+    let response = await this.postJSON(`/api/v1/newpassword/${hash}`, {password, password_repeat});
+    return response.body;
+  }
+
   async unfollow(userName) {
     let response = await this.post(`/api/v1/user/${userName}/unfollow`);
     return response.body;
