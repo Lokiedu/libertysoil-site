@@ -27,7 +27,8 @@ export async function renderResetTemplate(dateObject, username, email, confirmat
 
   return await renderFileAsync(
     `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, username }
+    { confirmationLink, date, email, username },
+    function() {},
   );
 }
 
