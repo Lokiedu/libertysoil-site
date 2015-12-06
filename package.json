@@ -30,7 +30,7 @@
     "crypto": "0.0.3",
     "del": "",
     "dynamic-bem-classnames": "^1.0.2",
-    "ejs": "^2.3.3",
+    "ejs": "^2.3.4",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
     "font-awesome": "",
@@ -48,6 +48,7 @@
     "immutable": "^3.7.5",
     "knex": "^0.9.0",
     "lodash": "^3.10.1",
+    "mandrill-api": "^1.0.45",
     "md5": "^2.0.0",
     "moment": "^2.10.6",
     "multer": "^1.0.3",
@@ -68,9 +69,11 @@
     "vinyl-source-stream": ""
   },
   "devDependencies": {
+    "adm-zip": "^0.4.7",
     "browser-sync": "",
     "csv": "^0.4.6",
     "slug": "^0.9.1",
+    "tmp": "0.0.28",
     "watchify": ""
   }
 }

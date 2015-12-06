@@ -29,7 +29,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School;
+  let User, Post, Label, School, Country, City;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -53,7 +53,7 @@ export default function initBookshelf(config) {
         return md5(this.get('email'));
       }
     },
-    hidden: ['hashed_password', 'email']  // exclude from json-exports
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash']  // exclude from json-exports
   });
 
   Post = bookshelf.Model.extend({
@@ -66,6 +66,12 @@ export default function initBookshelf(config) {
     },
     schools: function() {
       return this.belongsToMany(School, 'posts_schools', 'post_id', 'school_id');
+    },
+    countries: function() {
+      return this.belongsToMany(Country, 'posts_countries', 'post_id', 'country_id');
+    },
+    cities: function() {
+      return this.belongsToMany(City, 'posts_cities', 'post_id', 'city_id');
     },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
@@ -187,6 +193,20 @@ export default function initBookshelf(config) {
     }
   };
 
+  Country = bookshelf.Model.extend({
+    tableName: 'geonames_countries',
+    posts: function() {
+      return this.belongsToMany(Post, 'posts_countries', 'country_id', 'post_id');
+    }
+  });
+
+  City = bookshelf.Model.extend({
+    tableName: 'geonames_cities',
+    posts: function() {
+      return this.belongsToMany(Post, 'posts_cities', 'city_id', 'post_id');
+    }
+  });
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -198,6 +218,8 @@ export default function initBookshelf(config) {
   bookshelf.model('Post', Post);
   bookshelf.model('Label', Label);
   bookshelf.model('School', School);
+  bookshelf.model('Country', Country);
+  bookshelf.model('City', City);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

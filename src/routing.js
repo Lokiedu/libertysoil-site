@@ -34,6 +34,8 @@ import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
+import CityPage from './pages/city';
+import CountryPage from './pages/country';
 
 export function getRoutes(onEnterHandler) {
   return (
@@ -56,6 +58,10 @@ export function getRoutes(onEnterHandler) {
       </Route>
       <Route path="/s/:school_name">
         <IndexRoute component={SchoolPage} onEnter={onEnterHandler} />
+      </Route>
+      <Route path="/l/:country">
+        <IndexRoute component={CountryPage} onEnter={onEnterHandler} />
+        <Route component={CityPage} path="/l/:country/:city" onEnter={onEnterHandler} />
       </Route>
       <Route component={PasswordReset} path="/resetpassword" onEnter={onEnterHandler} />
       <Route component={NewPassword} path="/newpassword" onEnter={onEnterHandler} />

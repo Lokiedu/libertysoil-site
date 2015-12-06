@@ -41,6 +41,8 @@ export default function reducer(state=initialState, action) {
     case a.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_USER_POSTS:
     case a.SET_TAG_POSTS:
+    case a.SET_CITY_POSTS:
+    case a.SET_COUNTRY_POSTS:
     {
       let postsWithoutUsers = _.indexBy(action.posts.map(post => {
         let postCopy = _.cloneDeep(post);

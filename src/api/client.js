@@ -134,6 +134,26 @@ export default class ApiClient
     return response.body;
   }
 
+  async city(city_id) {
+    let response = await this.get(`/api/v1/city/${city_id}`);
+    return response.body;
+  }
+
+  async country(country_code) {
+    let response = await this.get(`/api/v1/country/${country_code}`);
+    return response.body;
+  }
+
+  async cityPosts(city) {
+    let response = await this.get(`/api/v1/city/${city}/posts`);
+    return response.body;
+  }
+
+  async countryPosts(country) {
+    let response = await this.get(`/api/v1/country/${country}/posts`);
+    return response.body;
+  }
+
   async like(postId) {
     let response = await this.post(`/api/v1/post/${postId}/like`);
     return response.body;
