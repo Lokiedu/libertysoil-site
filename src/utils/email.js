@@ -17,6 +17,6 @@ export function sendEmail(subject, html, to) {
   };
 
   return new Promise((resolve, reject) => {
-    mandrillClient.send(message, resolve, reject);
+    mandrillClient.messages.send(message, resolve, reject);
   });
 }

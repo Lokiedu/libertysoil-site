@@ -22,7 +22,7 @@ import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import crypto from 'crypto'
 import { sendEmail } from '../utils/email';
-import { renderWelcomeTemplate } from '../email-templates/index';
+import { renderWelcomeTemplate, renderResetTemplate } from '../email-templates/index';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -745,7 +745,7 @@ export default class ApiController {
     let user;
 
     try {
-      user = await new User({email: req.params.hash}).fetch({require: true});
+      user = await new User({reset_password_hash: req.params.hash}).fetch({require: true});
     } catch (e) {
       console.log(`user not found`);
       res.status(401);
@@ -768,6 +768,7 @@ export default class ApiController {
     let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
 
     user.set('hashed_password', hashedPassword);
+    user.set('reset_password_hash', '');
 
     await user.save(null, {method: 'update'});
 
