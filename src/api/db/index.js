@@ -53,7 +53,7 @@ export default function initBookshelf(config) {
         return md5(this.get('email'));
       }
     },
-    hidden: ['hashed_password', 'email']  // exclude from json-exports
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash']  // exclude from json-exports
   });
 
   Post = bookshelf.Model.extend({

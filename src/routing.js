@@ -21,6 +21,8 @@ import React from 'react';
 import App from './pages/app';
 import Auth from './pages/auth';
 import MaybeList from './pages/maybe_list';
+import NewPassword from './pages/new-password';
+import PasswordReset from './pages/password-reset';
 import PostPage from './pages/post';
 import PostEditPage from './pages/post_edit';
 import UserPage from './pages/user';
@@ -34,7 +36,6 @@ import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
 import CityPage from './pages/city';
 import CountryPage from './pages/country';
-
 
 export function getRoutes(onEnterHandler) {
   return (
@@ -62,6 +63,8 @@ export function getRoutes(onEnterHandler) {
         <IndexRoute component={CountryPage} onEnter={onEnterHandler} />
         <Route component={CityPage} path="/l/:country/:city" onEnter={onEnterHandler} />
       </Route>
+      <Route component={PasswordReset} path="/resetpassword" onEnter={onEnterHandler} />
+      <Route component={NewPassword} path="/newpassword" onEnter={onEnterHandler} />
     </Route>
   );
 }
