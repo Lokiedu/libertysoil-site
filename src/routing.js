@@ -64,7 +64,7 @@ export function getRoutes(onEnterHandler) {
         <Route component={CityPage} path="/l/:country/:city" onEnter={onEnterHandler} />
       </Route>
       <Route component={PasswordReset} path="/resetpassword" onEnter={onEnterHandler} />
-      <Route component={NewPassword} path="/newpassword" onEnter={onEnterHandler} />
+      <Route component={NewPassword} path="/newpassword/:hash" onEnter={onEnterHandler} />
     </Route>
   );
 }

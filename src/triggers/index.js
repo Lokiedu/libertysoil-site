@@ -197,6 +197,24 @@ export async function login(username, password) {
   }
 }
 
+export async function resetPassword(email) {
+
+  try {
+    let result = await client.resetPassword(email);
+  } catch (e) {
+  }
+
+}
+
+export async function newPassword(hash, password, password_repeat) {
+
+  try {
+    let result = await client.newPassword(hash, password, password_repeat);
+  } catch (e) {
+  }
+
+}
+
 export async function registerUser(username, password, email, firstName, lastName) {
   getStore().dispatch(removeAllMessages());
 
