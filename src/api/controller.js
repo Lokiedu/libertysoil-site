@@ -21,6 +21,7 @@ import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import fs from 'fs';
+import request from 'superagent';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
@@ -1277,5 +1278,24 @@ export default class ApiController {
       res.send({error: `Image transformation failed: ${e.message}`});
     }
 
+  }
+
+  async pickpoint(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    try {
+      let response = await request
+        .get(`https://pickpoint.io/api/v1/forward`)
+        .query(Object.assign(req.query, {key: config.pickpoint.key}));
+
+      res.send(response.body);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
   }
 }

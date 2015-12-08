@@ -246,4 +246,9 @@ export default class ApiClient
     let response = await this.postJSON(`/api/v1/school/${uuid}`, data);
     return response.body;
   }
+
+  async pickpoint(options) {
+    let response = await this.get('/api/v1/pickpoint', options);
+    return response.body;
+  }
 }
