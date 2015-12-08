@@ -2,7 +2,10 @@ import bluebird from 'bluebird';
 import lwipOld from 'lwip';
 import fileType from 'file-type';
 
+// taken from https://github.com/nkt/node-lwip-promise/blob/master/index.js
 let lwip = bluebird.promisifyAll(lwipOld);
+bluebird.promisifyAll(require('lwip/lib/Image').prototype);
+bluebird.promisifyAll(require('lwip/lib/Batch').prototype);
 
 
 /**
@@ -36,14 +39,5 @@ export async function processImage(buffer, transforms) {
     }
   }
 
-  // It doesn't work with bluebird for some reason.
-  return new Promise((resolve, reject) => {
-    batch.exec(function (err, res) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(bluebird.promisifyAll(res));
-      }
-    })
-  });
+  return batch.execAsync();
 }
