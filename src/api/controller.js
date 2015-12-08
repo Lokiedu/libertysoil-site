@@ -21,6 +21,7 @@ import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import fs from 'fs';
+import crypto from 'crypto'
 
 import { processImage } from '../utils/image';
 import config from '../../config';
@@ -717,6 +718,49 @@ export default class ApiController {
     user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send({ success: true, user });
+  }
+
+  /**
+   * Looks users record by submitted email, saves user random SHA1 hash.
+   * If user is authorized. Show error message.
+   *
+   * If no user found send status 401.
+   *
+   * When user saved successfully, send message (publich event?) to user with
+   * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
+   */
+  async resetPassword(req, res) {
+
+    if (req.session && req.session.user) {
+      res.status(403);
+      res.send({error: 'Please use profile change password feature.'});
+    }
+
+    for (let fieldName of ['email']) {
+      if (!(fieldName in req.body)) {
+        res.status(400);
+        res.send({error: 'Bad Request'});
+        return;
+      }
+    }
+
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email: req.body.email}).fetch({require: true});
+      let random = Math.random().toString();
+      let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
+      // save user
+      // emit event? to send an email
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
   }
 
   async logout(req, res) {
