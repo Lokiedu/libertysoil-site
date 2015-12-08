@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { resetPassword } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 import Footer from '../components/footer';
@@ -29,10 +30,11 @@ class Form extends React.Component {
 
     let form = event.target;
 
-      /*     this.props.onLoginUser(form.username.value, form.password.value); */
+    resetPassword(form.email.value);
   };
 
   render() {
+
     return (
       <div>
         <Header />
