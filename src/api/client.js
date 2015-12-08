@@ -31,8 +31,10 @@ export default class ApiClient
     return `${this.host}${relativeUrl}`;
   }
 
-  async get(relativeUrl) {
-    let req = request.get(this.apiUrl(relativeUrl));
+  async get(relativeUrl, query = {}) {
+    let req = request
+      .get(this.apiUrl(relativeUrl))
+      .query(query);
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
       req = req.set('Cookie', this.serverReq.headers['cookie']);
