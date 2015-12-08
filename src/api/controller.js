@@ -89,6 +89,28 @@ export default class ApiController {
     res.send(posts);
   }
 
+  async schoolPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts.id', 'posts_schools.post_id')
+          .join('schools', 'posts_schools.school_id', 'schools.id')
+          .where('schools.url_name', req.params.school)
+          .andWhere('posts_schools.visible', true)
+          .orderBy('schools.created_at', 'desc');
+      });
+
+    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    posts = posts.serialize();
+    posts.forEach(post => {
+      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+    });
+
+    res.send(posts);
+  }
+
   async userTags(req, res){
     if (!req.session || !req.session.user) {
       res.status(403)
@@ -254,7 +276,10 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({url_name: req.params.url_name}).fetch();
+      let school = await School
+        .where({url_name: req.params.url_name})
+        .fetch({require: true, withRelated: 'images'});
+
       res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -265,7 +290,7 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let schools = await School.fetchAll();
+      let schools = await School.fetchAll({withRelated: 'images'});
       res.send(schools.toJSON());
     } catch (e) {
       res.sendStatus(404);
@@ -365,6 +390,50 @@ export default class ApiController {
     } catch (e) {
       console.log(e);
       res.sendStatus(404)
+    }
+  }
+
+  async updateSchool(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+    }
+
+    let images;
+
+    if (req.body.images) {
+      if (!_.isArray(req.body.images)) {
+        res.status(400);
+        res.send({error: `"images" parameter is expected to be an array`});
+        return;
+      }
+
+      images = _.unique(req.body.images);
+    }
+
+    let School = this.bookshelf.model('School');
+
+    try {
+      let school = await School.where({id: req.params.id}).fetch({require: true});
+      let newAttributes = _.pick(req.body, 'name', 'description', 'more');
+
+      if (_.isArray(images)) {
+        school.updateImages(images);
+      }
+
+      await school.save(newAttributes);
+      
+      school = await school.fetch({withRelated: 'images'});
+
+      res.send(school);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
     }
   }
 

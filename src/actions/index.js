@@ -26,6 +26,7 @@ export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 export const SET_USER_POSTS = 'SET_USER_POSTS';
 export const SET_USER_TAGS = 'SET_USER_TAGS';
 export const SET_TAG_POSTS = 'SET_TAG_POSTS';
+export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const REMOVE_POST = 'REMOVE_POST';
 
@@ -116,6 +117,14 @@ export function setTagPosts(tag, posts) {
   return {
     type: SET_TAG_POSTS,
     tag,
+    posts
+  }
+}
+
+export function setSchoolPosts(school, posts) {
+  return {
+    type: SET_SCHOOL_POSTS,
+    school,
     posts
   }
 }
