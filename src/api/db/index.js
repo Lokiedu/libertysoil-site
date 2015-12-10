@@ -20,6 +20,10 @@ import Knex from 'knex';
 import Bookshelf from 'bookshelf';
 import uuid from 'uuid'
 import _ from 'lodash'
+import fileType from 'file-type';
+import mime from 'mime';
+
+import { uploadAttachment, downloadAttachment, getMetadata, generateName } from '../../utils/attachments';
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -29,7 +33,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School, Country, City;
+  let User, Post, Label, School, Country, City, Attachment;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -135,14 +139,16 @@ export default function initBookshelf(config) {
      */
     updateSchools: async function(names) {
       let schools = this.schools();
+      let relatedSchools = await this.related('schools').fetch();
 
       let schoolsToDetach = await School.collection().query(qb => {
-        qb.innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
+        qb
+          .innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
           .whereNotIn('schools.name', names)
           .where('posts_schools.post_id', this.id);
       }).fetch();
 
-      let schoolNamesToAdd = _.difference(names, schools.pluck('name'));
+      let schoolNamesToAdd = _.difference(names, relatedSchools.pluck('name'));
 
       await Promise.all([
         schools.detach(schoolsToDetach.pluck('id')),
@@ -176,6 +182,17 @@ export default function initBookshelf(config) {
     tableName: 'schools',
     posts: function() {
       return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
+    },
+    images: function() {
+      return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id')
+    },
+    updateImages: async function(imageIds) {
+      let relatedImageIds = (await this.related('images').fetch()).pluck('id');
+      let imagesToDetach = _.difference(relatedImageIds, imageIds);
+      let imagesToAttach = _.difference(imageIds, relatedImageIds);
+
+      await this.images().detach(imagesToDetach);
+      await this.images().attach(imagesToAttach);
     }
   });
 
@@ -207,6 +224,70 @@ export default function initBookshelf(config) {
     }
   });
 
+  Attachment = bookshelf.Model.extend({
+    tableName: 'attachments',
+    user: function() {
+      return this.belongsTo(User);
+    },
+    original: function() {
+      return this.belongsTo(Attachment, 'original_id');
+    },
+    download: async function() {
+      return downloadAttachment(this.attributes.s3_filename);
+    },
+    extension: function() {
+      if (this.attributes.mime_type) {
+        return mime.extension(this.attributes.mime_type);
+      }
+    },
+    reupload: async function(fileName, fileData) {
+      let generatedName = generateName(fileName);
+      let typeInfo = fileType(fileData);
+
+      if (!typeInfo) {
+        throw new Error('Unrecognized file type');
+      }
+
+      let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+
+      return this.save({
+        s3_url: response.Location,
+        s3_filename: generatedName,
+        filename: fileName,
+        size: fileData.length,
+        mime_type: typeInfo.mime
+      });
+    }
+  });
+
+  /**
+   * Uploads the file to s3 and creates an attachment.
+   * @param {String} fileName
+   * @param {Buffer} fileData
+   * @param {Object} attributes - Additional attributes
+   * @returns {Promise}
+   */
+  Attachment.create = async function create(fileName, fileData, attributes = {}) {
+    let attachment = Attachment.forge();
+    let generatedName = generateName(fileName);
+    let typeInfo = fileType(fileData);
+
+    if (!typeInfo) {
+      throw new Error('Unrecognized file type');
+    }
+
+    let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+
+    return await attachment.save({
+      ...attributes,
+      s3_url: response.Location,
+      s3_filename: generatedName,
+      filename: fileName,
+      size: fileData.length,
+      mime_type: typeInfo.mime
+    });
+  };
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -220,6 +301,7 @@ export default function initBookshelf(config) {
   bookshelf.model('School', School);
   bookshelf.model('Country', Country);
   bookshelf.model('City', City);
+  bookshelf.model('Attachment', Attachment);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

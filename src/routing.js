@@ -28,6 +28,7 @@ import UserLikesPage from './pages/user-likes';
 import UserFavoritesPage from './pages/user-favorites';
 import AboutUserPage from './pages/user-bio';
 import SchoolPage from './pages/school';
+import SchoolEditPage from './pages/school-edit';
 import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
@@ -57,6 +58,7 @@ export function getRoutes(onEnterHandler) {
       </Route>
       <Route path="/s/:school_name">
         <IndexRoute component={SchoolPage} onEnter={onEnterHandler} />
+        <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={onEnterHandler} />
       </Route>
       <Route path="/l/:country">
         <IndexRoute component={CountryPage} onEnter={onEnterHandler} />

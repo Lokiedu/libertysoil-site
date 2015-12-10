@@ -114,6 +114,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async schoolPosts(schoolUrlName) {
+    let response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
+    return response.body;
+  }
+
   async getLikedPosts(username) {
     let response = await this.get(`/api/v1/posts/liked/${username}`)
     return response.body;
@@ -232,6 +237,11 @@ export default class ApiClient
 
   async deletePost(uuid) {
     let response = await this.del(`/api/v1/post/${uuid}`);
+    return response.body;
+  }
+
+  async updateSchool(uuid, data) {
+    let response = await this.postJSON(`/api/v1/school/${uuid}`, data);
     return response.body;
   }
 }

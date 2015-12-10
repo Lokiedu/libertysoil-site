@@ -22,7 +22,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools
+  setUserTags, setSchools, addSchool
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -236,6 +236,17 @@ export async function updatePost(post_uuid, post_fields) {
   try {
     let result = await client.updatePost(post_uuid, post_fields);
     getStore().dispatch(addPost(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function updateSchool(school_uuid, school_fields) {
+  try {
+    let result = await client.updateSchool(school_uuid, school_fields);
+    getStore().dispatch(addSchool(result));
 
     return result;
   } catch (e) {

@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import express from 'express';
+import multer from 'multer';
 
 import ApiController from './controller';
 
+let upload = multer({storage: multer.memoryStorage()});
 
 export function initApi(bookshelf) {
   let controller = new ApiController(bookshelf);
@@ -48,10 +50,12 @@ export function initApi(bookshelf) {
   api.get('/posts/favoured', wrap(controller.userFavouredPosts.bind(controller)));
   api.get('/posts/favoured/:user', wrap(controller.getFavouredPosts.bind(controller)));
   api.get('/posts/tag/:tag', wrap(controller.tagPosts.bind(controller)));
+  api.get('/posts/school/:school', wrap(controller.schoolPosts.bind(controller)));
   api.get('/user/tags', wrap(controller.userTags.bind(controller)));
 
-  api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
+  api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
+  api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
 
   api.get('/countries/', wrap(controller.getCountries.bind(controller)));
   api.get('/country/:code', wrap(controller.getCountry.bind(controller)));
@@ -71,6 +75,9 @@ export function initApi(bookshelf) {
 
   api.get('/suggestions/personalized', wrap(controller.userSuggestions.bind(controller)));
   api.get('/suggestions/initial', wrap(controller.initialSuggestions.bind(controller)));
+
+  api.post('/upload', upload.array('files', 8), wrap(controller.uploadFiles.bind(controller)));
+  api.post('/image', wrap(controller.processImage.bind(controller)));
 
   return api;
 }

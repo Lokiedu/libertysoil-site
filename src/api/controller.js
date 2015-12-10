@@ -20,6 +20,10 @@ import bcrypt from 'bcrypt'
 import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
+import fs from 'fs';
+
+import { processImage } from '../utils/image';
+import config from '../../config';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -80,6 +84,28 @@ export default class ApiController {
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
+    });
+
+    res.send(posts);
+  }
+
+  async schoolPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts.id', 'posts_schools.post_id')
+          .join('schools', 'posts_schools.school_id', 'schools.id')
+          .where('schools.url_name', req.params.school)
+          .andWhere('posts_schools.visible', true)
+          .orderBy('schools.created_at', 'desc');
+      });
+
+    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    posts = posts.serialize();
+    posts.forEach(post => {
+      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
     });
 
     res.send(posts);
@@ -250,7 +276,10 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({url_name: req.params.url_name}).fetch();
+      let school = await School
+        .where({url_name: req.params.url_name})
+        .fetch({require: true, withRelated: 'images'});
+
       res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -261,7 +290,7 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let schools = await School.fetchAll();
+      let schools = await School.fetchAll({withRelated: 'images'});
       res.send(schools.toJSON());
     } catch (e) {
       res.sendStatus(404);
@@ -361,6 +390,50 @@ export default class ApiController {
     } catch (e) {
       console.log(e);
       res.sendStatus(404)
+    }
+  }
+
+  async updateSchool(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+    }
+
+    let images;
+
+    if (req.body.images) {
+      if (!_.isArray(req.body.images)) {
+        res.status(400);
+        res.send({error: `"images" parameter is expected to be an array`});
+        return;
+      }
+
+      images = _.unique(req.body.images);
+    }
+
+    let School = this.bookshelf.model('School');
+
+    try {
+      let school = await School.where({id: req.params.id}).fetch({require: true});
+      let newAttributes = _.pick(req.body, 'name', 'description', 'more');
+
+      if (_.isArray(images)) {
+        school.updateImages(images);
+      }
+
+      await school.save(newAttributes);
+      
+      school = await school.fetch({withRelated: 'images'});
+
+      res.send(school);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
     }
   }
 
@@ -1067,5 +1140,130 @@ export default class ApiController {
     }
 
     res.send(follow_status);
+  }
+
+  /**
+   * Creates attachments from 'files'.
+   * Important: set the 'name' property of each file input to 'files', not 'files[]' or 'files[0]'
+   */
+  async uploadFiles(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
+    if (!req.files.length) {
+      res.status(400);
+      res.send({error: '"files" parameter is not provided'});
+    }
+
+    let Attachment = this.bookshelf.model('Attachment');
+
+    try {
+      let promises = req.files.map(file => {
+        return Attachment.create(
+          file.originalname,
+          file.buffer,
+          {user_id: req.session.user}
+        );
+      });
+
+      let attachments = await Promise.all(promises);
+
+      res.send({success: true, attachments});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Upload failed: ${e.stack}`});
+    }
+  }
+
+  /**
+   * Loads the image from s3, transforms it and creates a new attachment with the new image
+   * if derived_id is not specified.
+   * If derived_id is specified then updates the attachment and responds with it.
+   * Body params:
+   *   original_id (required) - Id of the original attachment.
+   *   transforms (required) - Json array with transforms. See utils/image.js processImage
+   *   derived_id - Id of the attachment to reuse
+   */
+  async processImage(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.body.original_id) {
+      res.status(400);
+      res.send({error: '"original_id" parameter is not provided'});
+      return;
+    }
+
+    if (!req.body.transforms) {
+      res.status(400);
+      res.send({error: '"transforms" parameter is not provided'});
+      return;
+    }
+
+    let Attachment = this.bookshelf.model('Attachment');
+
+    try {
+      let result;
+      let transforms = JSON.parse(req.body.transforms);
+
+      // Get the original attachment, checking ownership.
+      let original = await Attachment
+        .forge()
+        .query(qb => {
+          qb
+            .where('id', req.body.original_id)
+            .andWhere('user_id', req.session.user);
+        })
+        .fetch({require: true});
+
+      // Check if the format of the attachment is supported.
+      let { supportedImageFormats } = config.attachments;
+      if (supportedImageFormats.indexOf(original.attributes.mime_type) < 0) {
+        res.status(400);
+        res.send({error: 'Image type is not supported'});
+        return;
+      }
+
+      // Download the original attachment data from s3.
+      let originalData = await original.download();
+
+      // Process the data.
+      let newImage = await processImage(originalData.Body, transforms);
+      let imageBuffer = await newImage.toBufferAsync(original.extension());
+
+      // Update the attachment specified in derived_id or create a new one.
+      if (req.body.derived_id) {
+        let oldAttachment = await Attachment
+          .forge()
+          .query(qb => {
+            qb
+              .where('id', req.body.derived_id)
+              .andWhere('user_id', req.session.user);
+          })
+          .fetch({require: true});
+
+        result = await oldAttachment.reupload(oldAttachment.attributes.filename, imageBuffer);
+      } else {
+        result = await Attachment.create(
+          original.attributes.filename,
+          imageBuffer,
+          {
+            user_id: original.attributes.user_id,
+            original_id: original.id
+          }
+        );
+      }
+
+      res.send({success: true, attachment: result});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Image transformation failed: ${e.message}`});
+    }
+
   }
 }
