@@ -25,7 +25,16 @@ let upload = multer({storage: multer.memoryStorage()});
 export function initApi(bookshelf) {
   let controller = new ApiController(bookshelf);
 
-  let wrap = fn => (...args) => fn(...args).catch(args[2]);
+  let wrap =
+    (handler) =>
+      (req, res, next) =>
+        handler(req, res, next)
+          .catch((e) => {
+            console.log(`an error was thrown from url-handler of ${req.originalUrl}:\n`, e);
+
+            res.status(500);
+            res.send({error: 'Internal Server Error'});
+          });
 
   let api = express.Router();
 
