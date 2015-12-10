@@ -25,6 +25,7 @@ import { addSchool } from '../actions';
 import { updateSchool } from '../triggers'
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import GeoInput from '../components/geo-input';
 
 class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
@@ -48,7 +49,9 @@ class SchoolEditPage extends React.Component {
       form.id.value,
       {
         name: form.name.value,
-        description: form.description.value
+        description: form.description.value,
+        lat: form.lat.value,
+        lon: form.lon.value
       }
     ).then((result) => {
       this.props.history.pushState(null, getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
@@ -57,6 +60,7 @@ class SchoolEditPage extends React.Component {
 
   render() {
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
+    let initialLocation = {lat: school.lat, lon: school.lon};
 
     return (
       <BaseSchoolPage
@@ -87,6 +91,7 @@ class SchoolEditPage extends React.Component {
                   name="description"
                 />
               </div>
+              <GeoInput initialLocation={initialLocation} />
               <div className="layout__row">
                 <div className="layout layout__grid layout-align_right">
                   <button className="button button-wide button-green" type="submit">Save</button>
