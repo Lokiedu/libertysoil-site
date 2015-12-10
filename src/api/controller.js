@@ -398,11 +398,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('id' in req.params)) {
       res.status(400);
       res.send({error: '"id" parameter is not given'});
+      return;
     }
 
     let images;
@@ -421,15 +423,14 @@ export default class ApiController {
 
     try {
       let school = await School.where({id: req.params.id}).fetch({require: true});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'more');
+      let newAttributes = _.pick(req.body, 'name', 'description', 'more', 'lat', 'lon');
 
       if (_.isArray(images)) {
         school.updateImages(images);
       }
 
-      await school.save(newAttributes);
-      
-      school = await school.fetch({withRelated: 'images'});
+      school.set(newAttributes);
+      await school.save();
 
       res.send(school);
     } catch (e) {
