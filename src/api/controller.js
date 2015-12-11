@@ -760,7 +760,7 @@ export default class ApiController {
           .limit(6);
       });
 
-    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
@@ -781,7 +781,7 @@ export default class ApiController {
           .limit(20)
       })
 
-    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
