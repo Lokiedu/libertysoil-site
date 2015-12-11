@@ -204,10 +204,15 @@ export async function registerUser(username, password, email, firstName, lastNam
   try {
     let result = await client.registerUser({username, password, email, firstName, lastName});
 
-    if ('error' in result) {
+    if (result.success) {
+      let user = result.user;
+
+      getStore().dispatch(setCurrentUser(user));
+
+      return user;
+    } else {
       // FIXME: enable form again
       getStore().dispatch(addError(result.error));
-      return;
     }
   } catch (e) {
     // FIXME: enable form again
@@ -215,16 +220,10 @@ export async function registerUser(username, password, email, firstName, lastNam
     if (e.response && ('error' in e.response.body)) {
       // FIXME: enable form again
       getStore().dispatch(addError(e.response.body.error));
-      return;
     } else {
-      console.log(e)
-      console.log(e.stack)
       getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
-      return;
     }
   }
-
-  getStore().dispatch(addMessage('User is registered successfully'));
 }
 
 export async function deletePost(post_uuid) {
