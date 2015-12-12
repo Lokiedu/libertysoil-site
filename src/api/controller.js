@@ -431,7 +431,7 @@ export default class ApiController {
       }
 
       await school.save(newAttributes);
-      
+
       school = await school.fetch({withRelated: 'images'});
 
       res.send(school);
@@ -783,9 +783,10 @@ export default class ApiController {
     try {
       user = await new User({email: req.body.email}).fetch({require: true});
     } catch (e) {
-      console.log(`user not found`);
-      res.status(401);
-      res.send({success: false});
+      // we do not show any error if we do not have user.
+      // To prevent disclosure information about registered emails.
+      res.status(200);
+      res.send({success: true});
       return;
     }
 
@@ -799,7 +800,8 @@ export default class ApiController {
 
     let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/newpassword/${sha1}`);
     await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
-    res.redirect('/');
+    res.status(200);
+    res.send({success: true});
   }
 
   /**
