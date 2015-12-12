@@ -8,7 +8,7 @@ export function sendEmail(subject, html, to) {
   let message = {
     subject,
     html,
-    from: 'noreply@libertysoil.org',
+    from_email: 'noreply@libertysoil.org',
     to: [{ email: to, type: 'to' }],
     headers: {
       "Reply-To": "vlad@lokieducation.org"
@@ -17,6 +17,6 @@ export function sendEmail(subject, html, to) {
   };
 
   return new Promise((resolve, reject) => {
-    mandrillClient.messages.send(message, resolve, reject);
+    mandrillClient.messages.send({message}, resolve, reject);
   });
 }
