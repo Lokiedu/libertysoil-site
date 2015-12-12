@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Preparing test database...\" && NODE_ENV=test knex migrate:rollback && NODE_ENV=test knex migrate:latest",
+    "test": "echo \"Preparing test database...\" && NODE_ENV=test knex migrate:rollback && NODE_ENV=test knex migrate:latest && mocha  --compilers js:babel/register --recursive test",
     "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js"
   },
@@ -56,8 +56,8 @@
     "immutable": "^3.7.5",
     "knex": "^0.9.0",
     "lodash": "^3.10.1",
-    "mandrill-api": "^1.0.45",
     "lwip": "0.0.8",
+    "mandrill-api": "^1.0.45",
     "md5": "^2.0.0",
     "mime": "^1.3.4",
     "mocha": "^2.3.4",
@@ -75,6 +75,7 @@
     "run-sequence": "",
     "superagent": "^1.3.0",
     "twitter-text": "^1.13.2",
+    "unexpected": "^10.4.0",
     "url-assembler": "^1.2.4",
     "uuid": "^2.0.1",
     "vinyl-source-stream": ""
