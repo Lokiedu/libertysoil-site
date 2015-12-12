@@ -26,7 +26,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { getStore } from '../store';
 import { addUser } from '../actions';
-import { followUser, unfollowUser, doneInduction } from '../triggers'
+import { followUser, unfollowUser, doneInduction, loadInitialSuggestions } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 let InductionDone = () => (
@@ -53,13 +53,13 @@ export default class UserGrid extends React.Component {
     } = this.props;
 
     if (!users) {
-      return false;
+      return null;
     }
 
     return (
       <div className="layout__grids layout__grids-space layout__grid-responsive">
         {users.map((user) => (
-          <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
+          <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={user.id}>
             <div className="layout__row layout__row-small">
               <User
                 user={user}
@@ -85,18 +85,22 @@ export default class UserGrid extends React.Component {
 class InductionPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  static async fetchData(params, props, client) {
-    if (props.get('current_user').get('id') === null) {
+  componentDidMount() {
+    let client = new ApiClient(API_HOST);
+    InductionPage.fetchData({}, getStore().getState(), client);
+  }
+
+  static async fetchData(params, state, client) {
+    if (state.getIn(['current_user', 'id']) === null) {
       return false;
     }
 
     try {
-      let suggestedUsers = await client.initialSuggestions();
-
-      let userInfo = await client.userInfo(props.users[props.current_user.id].username);
-      userInfo.more.suggested_users = suggestedUsers;
+      let currentUserId = state.getIn(['current_user', 'id']);
+      let userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
 
       getStore().dispatch(addUser(userInfo));
+      await loadInitialSuggestions();
     } catch (e) {
       console.log(e.stack)
     }
@@ -107,13 +111,14 @@ class InductionPage extends React.Component {
       current_user,
       is_logged_in,
       i_am_following,
+      suggested_users,
       messages,
       on_complete,
       ...props
     } = this.props;
 
     if (!is_logged_in) {
-      return false;
+      return null;
     }
 
     return (
@@ -126,7 +131,7 @@ class InductionPage extends React.Component {
       >
         <div className="paper__page">
           <h1 className="content__title">Thank you for registering!</h1>
-          <p>In order to help you get started we&#39;ve curated a list of peers you might want to follow, be sure to check them out.</p>
+          <p>To get started, follow a few people below:</p>
         </div>
 
         <div className="paper__page">
@@ -136,7 +141,7 @@ class InductionPage extends React.Component {
               current_user={current_user}
               i_am_following={i_am_following}
               triggers={{followUser, unfollowUser}}
-              users={current_user.more.suggested_users}
+              users={suggested_users}
             />
           </div>
         </div>
