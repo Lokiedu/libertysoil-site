@@ -22,7 +22,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool
+  setUserTags, setSchools, addSchool, setSuggestedUsers
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -204,10 +204,15 @@ export async function registerUser(username, password, email, firstName, lastNam
   try {
     let result = await client.registerUser({username, password, email, firstName, lastName});
 
-    if ('error' in result) {
+    if (result.success) {
+      let user = result.user;
+
+      getStore().dispatch(setCurrentUser(user));
+
+      return user;
+    } else {
       // FIXME: enable form again
       getStore().dispatch(addError(result.error));
-      return;
     }
   } catch (e) {
     // FIXME: enable form again
@@ -215,16 +220,10 @@ export async function registerUser(username, password, email, firstName, lastNam
     if (e.response && ('error' in e.response.body)) {
       // FIXME: enable form again
       getStore().dispatch(addError(e.response.body.error));
-      return;
     } else {
-      console.log(e)
-      console.log(e.stack)
       getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
-      return;
     }
   }
-
-  getStore().dispatch(addMessage('User is registered successfully'));
 }
 
 export async function deletePost(post_uuid) {
@@ -258,6 +257,18 @@ export async function loadSchools() {
   try {
     let result = await client.schools();
     getStore().dispatch(setSchools(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function loadInitialSuggestions() {
+  try {
+    let result = await client.initialSuggestions();
+
+    getStore().dispatch(setSuggestedUsers(result));
 
     return result;
   } catch (e) {

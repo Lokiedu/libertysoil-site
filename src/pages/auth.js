@@ -37,7 +37,7 @@ let FirstLogin = (props) => {
     <div className="area__body">
       <div className="message">
         <div className="message__body">
-          You are logged in. You can proceed to <Link className="link" to="/">the next step</Link>.
+          You are now successfully registered and logged in. You can proceed to <Link className="link" to="/">the next step</Link>.
         </div>
       </div>
     </div>

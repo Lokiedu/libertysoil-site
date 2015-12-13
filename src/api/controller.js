@@ -661,19 +661,21 @@ export default class ApiController {
 
     try {
       await obj.save(null, {method: 'insert'});
-      res.send(obj.toJSON());
-      return
+
+      if (req.session) {
+        req.session.user = obj.id;
+      }
+
+      res.send({success: true, user: obj});
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
         res.send({error: 'User already exists'});
-        return;
       } else {
         console.dir(e);
 
         res.status(500);
         res.send({error: e.message});
-        return;
       }
     }
   }
@@ -758,7 +760,7 @@ export default class ApiController {
           .limit(6);
       });
 
-    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
@@ -779,7 +781,7 @@ export default class ApiController {
           .limit(20)
       })
 
-    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'likes', 'favourites']});
+    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
