@@ -20,6 +20,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {createHistory} from 'history'
 import {Router} from 'react-router';
+import { syncReduxAndRouter } from 'redux-simple-router';
 
 import { getRoutes } from '../routing'
 import { EnterHandler } from '../utils/loader';
@@ -34,6 +35,8 @@ let store = initState(window.state);
 
 let history = createHistory();
 let enterHandler = new EnterHandler(store, new ApiClient(API_HOST));
+
+syncReduxAndRouter(history, store, state => state.get('routing'));
 
 ReactDOM.render(
   <Router history={history}>

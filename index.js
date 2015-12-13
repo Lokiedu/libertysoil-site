@@ -26,6 +26,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { Router, RoutingContext, match } from 'react-router'
+import { syncReduxAndRouter } from 'redux-simple-router';
 
 import { getRoutes } from './src/routing';
 import { EnterHandler } from './src/utils/loader';
@@ -107,6 +108,8 @@ let reactHandler = async (req, res) => {
   let history = createMemoryHistory();
   let location = history.createLocation(req.url);
   let routes = makeRoutes(history);
+
+  syncReduxAndRouter(history, store, state => state.get('routing'));
 
   match({ routes, location }, async (error, redirectLocation, renderProps) => {
     if (redirectLocation) {
