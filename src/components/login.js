@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link }  from 'react-router';
 
 export default class LoginComponent extends React.Component {
   submitHandler = (event) => {
@@ -43,7 +44,7 @@ export default class LoginComponent extends React.Component {
               </div>
             </div>
             <div className="layout__row layout layout-align_vertical layout-align_justify">
-              {false && <a href="#" className="link">Password reminder</a>}
+              <Link to="/resetpassword" className="link">Password reminder</Link>
               <button type="submit" className="button button-wide button-green">Login</button>
             </div>
           </div>

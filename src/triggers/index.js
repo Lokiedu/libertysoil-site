@@ -22,7 +22,8 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers
+  setUserTags, setSchools, addSchool, setSuggestedUsers,
+  submitResetPassword, submitNewPassword
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -195,6 +196,32 @@ export async function login(username, password) {
     getStore().dispatch(setCurrentUser(null));
     getStore().dispatch(addError('Invalid username or password'));
   }
+}
+
+export async function resetPassword(email) {
+
+  try {
+    let result = await client.resetPassword(email);
+    getStore().dispatch(submitResetPassword());
+  } catch (e) {
+    getStore().dispatch(addError('Invalid username or password'));
+  }
+
+}
+
+export async function newPassword(hash, password, password_repeat) {
+
+  try {
+    let result = await client.newPassword(hash, password, password_repeat);
+    getStore().dispatch(submitNewPassword());
+  } catch (e) {
+    if (('body' in e.response) && ('error' in e.response.body)) {
+      getStore().dispatch(addError(e.response.body.error));
+    } else {
+      getStore().dispatch(addError(e.message));
+    }
+  }
+
 }
 
 export async function registerUser(username, password, email, firstName, lastName) {

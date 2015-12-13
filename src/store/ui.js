@@ -15,28 +15,28 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { renderFile } from 'ejs';
-import Promise from 'bluebird';
-import moment from 'moment';
+import i from 'immutable';
+import _ from 'lodash';
 
+import * as a from '../actions';
 
-let renderFileAsync = Promise.promisifyAll(renderFile);
+const initialState = i.Map({
+});
 
-export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+export default function reducer(state=initialState, action) {
 
-  return await renderFileAsync(
-    `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, username },
-    function(error, result) {return result;},
-  );
-}
+  switch (action.type) {
+  case a.SUBMIT_RESET_PASSWORD:
+    {
+      state = state.set('submitResetPassword', true);
+      break;
+    }
+  case a.SUBMIT_NEW_PASSWORD:
+    {
+      state = state.set('submitNewPassword', true);
+      break;
+    }
+  }
 
-export async function renderWelcomeTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
-
-  return await renderFileAsync(
-    `${__dirname}/welcome.ejs`,
-    { confirmationLink, date, email, username }
-  );
+  return state;
 }
