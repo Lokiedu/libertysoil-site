@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Preparing test database...\" && babel-node -e \"import knex from 'knex'; knex.raw('drop database libertysoil_test; create database libertysoil_test');\" && NODE_ENV=test knex migrate:latest && mocha --compilers js:babel/register --recursive test",
+    "test": "echo \"Preparing test database...\" && babel-node test/dropDatabase.js && NODE_ENV=test knex migrate:latest && mocha --compilers js:babel/register test/integration && mocha --compilers js:babel/register test/unit",
     "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js"
   },
