@@ -1,8 +1,13 @@
 import Promise from 'bluebird';
+import { isUndefined } from 'lodash';
 import { Mandrill } from 'mandrill-api/mandrill';
 
 
-export function sendEmail(subject, html, to) {
+export async function sendEmail(subject, html, to) {
+  if (isUndefined(process.env.MANDRILL_KEY)) {
+    throw new Error('MANDRILL_KEY env is not set');
+  }
+
   let mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
 
   let message = {
@@ -16,7 +21,9 @@ export function sendEmail(subject, html, to) {
     auto_text: true
   };
 
-  return new Promise((resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     mandrillClient.messages.send({message}, resolve, reject);
   });
+
+  return await promise;
 }
