@@ -1,33 +1,38 @@
-import bb from 'bluebird';
+/*eslint-env node, mocha */
 import uuid from 'uuid';
+import expect from 'unexpected';
+
 import initBookshelf from '../../src/api/db';
 import db_config from '../../knexfile';
-import expect from 'unexpected';
+
 
 let bookshelf = initBookshelf(db_config['test']);
 
 describe('promise Test', function() {
-
   describe('User.save Promise', function() {
+    let User = bookshelf.model('User');
 
-    it('should not fail on saving users as first test', async function() {
+    beforeEach(async () => {
+      return bookshelf.knex('users').del();
+    });
 
-      let User = bookshelf.model('User');
-      let obj = new User({
+    it('should fail on saving user with existing username', async () => {
+      let user1 = new User({
         id: uuid.v4(),
         username: 'testuser',
         hashed_password: 'test',
         email: 'test@example.com'
       });
 
-      /**
-       * Next statement fails with message: Unexpected token obj. Seems like mocha do not understand async nature of
-       * bookshelf model.
-       */
-      await obj.save(null, {method: 'insert'});
-      expect(true, 'to be ok');
+      let user2 = new User({
+        id: uuid.v4(),
+        username: 'testuser',
+        hashed_password: 'test',
+        email: 'test@example.com'
+      });
+
+      await expect(user1.save(null, {method: 'insert'}), 'to be fulfilled');
+      await expect(user2.save(null, {method: 'insert'}), 'to be rejected');
     });
-
   });
-
 });
