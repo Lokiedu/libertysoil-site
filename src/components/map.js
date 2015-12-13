@@ -23,9 +23,9 @@ export default class Map extends React.Component {
   static displayName = 'Map';
 
   static propTypes = {
+    className: PropTypes.string,
     mapId: PropTypes.string,
-    onMapCreated: PropTypes.func,
-    className: PropTypes.string
+    onMapCreated: PropTypes.func
     // And a lot of mapbox options (see https://www.mapbox.com/mapbox-gl-js/api/)
   };
 
@@ -45,7 +45,7 @@ export default class Map extends React.Component {
         options[k] = props[k];
       }
     }
-    options = Object.assign(config, config.mapbox);
+    options = Object.assign(options, config.mapbox);
 
     let map = L.mapbox.map(this.refs.map, mapId, options);
 
