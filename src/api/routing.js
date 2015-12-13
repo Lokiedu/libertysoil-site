@@ -88,5 +88,7 @@ export function initApi(bookshelf) {
   api.post('/upload', upload.array('files', 8), wrap(controller.uploadFiles.bind(controller)));
   api.post('/image', wrap(controller.processImage.bind(controller)));
 
+  api.get('/pickpoint', wrap(controller.pickpoint.bind(controller)));
+
   return api;
 }
