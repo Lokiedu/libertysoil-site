@@ -47,6 +47,8 @@ export const ADD_COUNTRY = 'ADD_COUNTRY';
 export const ADD_CITY = 'ADD_CITY';
 export const SET_COUNTRY_POSTS = 'SET_COUNTRY_POSTS';
 export const SET_CITY_POSTS = 'SET_CITY_POSTS';
+export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
+export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 
 export function addUser(user) {
   return {
@@ -238,6 +240,18 @@ export function setCountryPosts(countryCode, posts)
     type: SET_COUNTRY_POSTS,
     countryCode,
     posts
+  }
+}
+
+export function submitResetPassword() {
+  return {
+    type: SUBMIT_RESET_PASSWORD
+  }
+}
+
+export function submitNewPassword() {
+  return{
+    type: SUBMIT_NEW_PASSWORD
   }
 }
 
