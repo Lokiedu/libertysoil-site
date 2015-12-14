@@ -732,6 +732,11 @@ export default class ApiController {
   }
 
   async userSuggestions(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
     let following = await this.bookshelf.knex
       .select('followers.following_user_id')
       .from('followers')
@@ -766,6 +771,11 @@ export default class ApiController {
   }
 
   async initialSuggestions(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+    }
+
     let User = this.bookshelf.model('User');
 
     let q = User.forge()
