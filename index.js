@@ -29,7 +29,7 @@ import { Router, RoutingContext, match } from 'react-router'
 import { syncReduxAndRouter } from 'redux-simple-router';
 
 import { getRoutes } from './src/routing';
-import { EnterHandler } from './src/utils/loader';
+import { AuthHandler, FetchHandler } from './src/utils/loader';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
 import {API_HOST} from './src/config';
@@ -97,7 +97,9 @@ let reactHandler = async (req, res) => {
     }
   }
 
-  const Routes = getRoutes();
+  const authHandler = new AuthHandler(store);
+  const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST, req));
+  const Routes = getRoutes(authHandler.handle, fetchHandler.handle);
 
   const makeRoutes = (history) => (
     <Router history={history}>
@@ -119,10 +121,7 @@ let reactHandler = async (req, res) => {
     } else if (renderProps == null) {
       res.status(404).send('Not found')
     } else {
-      const enterHandler = new EnterHandler(store, new ApiClient(API_HOST, req));
-      await enterHandler.handle(renderProps);
-
-      let html = renderToString(<RoutingContext {...renderProps}/>)
+      let html = renderToString(<RoutingContext {...renderProps}/>);
       let state = JSON.stringify(store.getState().toJS());
 
       res.render('index', { state, html });

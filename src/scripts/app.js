@@ -23,7 +23,7 @@ import {Router} from 'react-router';
 import { syncReduxAndRouter } from 'redux-simple-router';
 
 import { getRoutes } from '../routing'
-import { EnterHandler } from '../utils/loader';
+import { AuthHandler, FetchHandler } from '../utils/loader';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { initState } from '../store'
@@ -34,13 +34,14 @@ window.Promise = bluebird;
 let store = initState(window.state);
 
 let history = createHistory();
-let enterHandler = new EnterHandler(store, new ApiClient(API_HOST));
+let authHandler = new AuthHandler(store);
+let fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
 
 syncReduxAndRouter(history, store, state => state.get('routing'));
 
 ReactDOM.render(
   <Router history={history}>
-    {getRoutes(enterHandler.handle)}
+    {getRoutes(authHandler.handle, fetchHandler.handle)}
   </Router>,
   document.getElementById('content')
 );

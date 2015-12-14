@@ -18,9 +18,10 @@
 import {Route, IndexRoute} from 'react-router';
 import React from 'react';
 
+import { combineHandlers } from './utils/loader';
+
 import App from './pages/app';
 import Auth from './pages/auth';
-import MaybeList from './pages/maybe_list';
 import PostPage from './pages/post';
 import PostEditPage from './pages/post_edit';
 import UserPage from './pages/user';
@@ -36,33 +37,41 @@ import TagPage from './pages/tag';
 import CityPage from './pages/city';
 import CountryPage from './pages/country';
 
+import List from './pages/list';
+import Induction from './pages/induction';
+import Welcome from './pages/welcome';
 
-export function getRoutes(onEnterHandler) {
+export function getRoutes(authHandler, fetchHandler) {
+  let withoutAuth = fetchHandler;
+  let withAuth = combineHandlers(authHandler, fetchHandler);
+
   return (
     <Route component={App}>
-      <Route component={MaybeList} path="/" onEnter={onEnterHandler} />
-      <Route component={Auth} path="/auth" onEnter={onEnterHandler} />
-      <Route component={PostPage} path="/post/:uuid" onEnter={onEnterHandler} />
-      <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={onEnterHandler} />
-      <Route component={TagPage} path="/tag/:tag" onEnter={onEnterHandler} />
+      <Route component={List} path="/" onEnter={withAuth} />
+      <Route component={Induction} path="/induction" onEnter={withAuth} />
+      <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />
+      <Route component={Auth} path="/auth" onEnter={withoutAuth} />
+      <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />
+      <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />
+      <Route component={TagPage} path="/tag/:tag" onEnter={withoutAuth} />
       <Route path="/settings">
-        <IndexRoute component={SettingsPage} onEnter={onEnterHandler} />
-        <Route component={SettingsPasswordPage} path="password" onEnter={onEnterHandler} />
-        <Route component={SettingsFollowersPage} path="followers" onEnter={onEnterHandler} />
+        <IndexRoute component={SettingsPage} onEnter={withAuth} />
+        <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
+        <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
       </Route>
       <Route path="/user/:username">
-        <IndexRoute component={UserPage} onEnter={onEnterHandler} />
-        <Route component={UserLikesPage} path="/user/:username/likes" onEnter={onEnterHandler} />
-        <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={onEnterHandler} />
-        <Route component={AboutUserPage} path="/user/:username/bio" onEnter={onEnterHandler} />
+        <IndexRoute component={UserPage} onEnter={withAuth} />
+        <Route component={UserLikesPage} path="/user/:username/likes" onEnter={withAuth} />
+        <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={withAuth} />
+        <Route component={AboutUserPage} path="/user/:username/bio" onEnter={withAuth} />
       </Route>
       <Route path="/s/:school_name">
-        <IndexRoute component={SchoolPage} onEnter={onEnterHandler} />
-        <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={onEnterHandler} />
+        <IndexRoute component={SchoolPage} onEnter={withoutAuth} />
+        <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={withAuth} />
       </Route>
       <Route path="/l/:country">
-        <IndexRoute component={CountryPage} onEnter={onEnterHandler} />
-        <Route component={CityPage} path="/l/:country/:city" onEnter={onEnterHandler} />
+        <IndexRoute component={CountryPage} onEnter={withoutAuth} />
+        <Route component={CityPage} path="/l/:country/:city" onEnter={withAuth} />
       </Route>
     </Route>
   );
