@@ -17,16 +17,22 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
 import BaseInductionPage from './base/induction';
 import User from '../components/user';
 import FollowButton from '../components/follow-button';
+import Footer from '../components/footer';
+import Header from '../components/header';
+import Messages from '../components/messages';
+
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { getStore } from '../store';
 import { addUser } from '../actions';
-import { followUser, unfollowUser, doneInduction, loadInitialSuggestions } from '../triggers'
+import { updateUserInfo, followUser, unfollowUser,
+         doneInduction, loadInitialSuggestions } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 let InductionDone = () => (
@@ -83,18 +89,9 @@ export default class UserGrid extends React.Component {
 };
 
 class InductionPage extends React.Component {
-  static displayName = 'SettingsPasswordPage'
-
-  componentDidMount() {
-    let client = new ApiClient(API_HOST);
-    InductionPage.fetchData({}, getStore().getState(), client);
-  }
+  static displayName = 'InductionPage'
 
   static async fetchData(params, state, client) {
-    if (state.getIn(['current_user', 'id']) === null) {
-      return false;
-    }
-
     try {
       let currentUserId = state.getIn(['current_user', 'id']);
       let userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
@@ -106,6 +103,14 @@ class InductionPage extends React.Component {
     }
   }
 
+  doneInduction = (event) => {
+    updateUserInfo({
+      more: {
+        first_login: false
+      }
+    });
+  };
+
   render() {
     const {
       current_user,
@@ -113,19 +118,26 @@ class InductionPage extends React.Component {
       i_am_following,
       suggested_users,
       messages,
-      on_complete,
       ...props
     } = this.props;
 
-    if (!is_logged_in) {
-      return null;
+    if (!current_user.more.first_login) {
+      return (
+        <div>
+          <Header is_logged_in={is_logged_in} current_user={current_user} />
+          <div className="page__body">
+            <InductionDone />
+          </div>
+          <Footer/>
+        </div>
+      );
     }
 
     return (
       <BaseInductionPage
         current_user={current_user}
         is_logged_in={is_logged_in}
-        onNext={on_complete}
+        onNext={this.doneInduction}
         messages={messages}
         next_caption="Done"
       >
