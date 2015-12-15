@@ -60,10 +60,10 @@ export function getRoutes(authHandler, fetchHandler) {
         <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
       </Route>
       <Route path="/user/:username">
-        <IndexRoute component={UserPage} onEnter={withAuth} />
-        <Route component={UserLikesPage} path="/user/:username/likes" onEnter={withAuth} />
-        <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={withAuth} />
-        <Route component={AboutUserPage} path="/user/:username/bio" onEnter={withAuth} />
+        <IndexRoute component={UserPage} onEnter={withoutAuth} />
+        <Route component={UserLikesPage} path="/user/:username/likes" onEnter={withoutAuth} />
+        <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={withoutAuth} />
+        <Route component={AboutUserPage} path="/user/:username/bio" onEnter={withoutAuth} />
       </Route>
       <Route path="/s/:school_name">
         <IndexRoute component={SchoolPage} onEnter={withoutAuth} />
@@ -71,7 +71,7 @@ export function getRoutes(authHandler, fetchHandler) {
       </Route>
       <Route path="/l/:country">
         <IndexRoute component={CountryPage} onEnter={withoutAuth} />
-        <Route component={CityPage} path="/l/:country/:city" onEnter={withAuth} />
+        <Route component={CityPage} path="/l/:country/:city" onEnter={withoutAuth} />
       </Route>
     </Route>
   );
