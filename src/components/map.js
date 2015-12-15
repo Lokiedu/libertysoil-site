@@ -17,7 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 
-import config from '../../config';
+import { MAPBOX_ACCESS_TOKEN } from '../config';
 
 export default class Map extends React.Component {
   static displayName = 'Map';
@@ -45,11 +45,11 @@ export default class Map extends React.Component {
         options[k] = props[k];
       }
     }
-    options = Object.assign(options, config.mapbox);
+    options.accessToken = MAPBOX_ACCESS_TOKEN;
 
-    let map = L.mapbox.map(this.refs.map, mapId, options);
+    let map = window.L.mapbox.map(this.refs.map, mapId, options);
 
-    this.props.onMapCreated(map, L);
+    this.props.onMapCreated(map, window.L);
   }
 
   render() {
