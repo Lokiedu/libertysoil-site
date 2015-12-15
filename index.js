@@ -146,3 +146,5 @@ app.use(express.static('public', { index: false}));
 app.use(wrap(reactHandler));
 
 app.listen(8000);
+
+export default app;
