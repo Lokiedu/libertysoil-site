@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { replacePath } from 'redux-simple-router'
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -29,30 +30,21 @@ import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import { getStore } from '../store';
 import { addError } from '../actions';
-import { createPost, likePost, unlikePost, favPost, unfavPost, loadSchools } from '../triggers';
+import { createPost, likePost, unlikePost, favPost, unfavPost,
+         loadSchools, loadPostRiver } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
-class Index extends React.Component {
+class List extends React.Component {
+  static displayName = 'List';
 
-  // TODO(voidxnull): EnterHandler doesn't call the fetchData function for the component.
-  componentDidMount() {
-    Index.fetchData(this.props);
-  }
-
-  static async fetchData(props) {
-    if (props.current_user_id === null) {
-      return;
-    }
-
+  static async fetchData(params, state, client) {
     try {
-      if (getStore().getState().get('schools').isEmpty()) {
-        await loadSchools();
-      }
+      await loadSchools();
+      await loadPostRiver();
     } catch (e) {
       getStore().dispatch(addError(e.message));
     }
-
   }
 
   render() {
@@ -79,4 +71,4 @@ class Index extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Index);
+export default connect(defaultSelector)(List);

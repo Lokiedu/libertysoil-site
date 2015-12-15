@@ -22,7 +22,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers
+  setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -269,6 +269,17 @@ export async function loadInitialSuggestions() {
     let result = await client.initialSuggestions();
 
     getStore().dispatch(setSuggestedUsers(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function loadPostRiver() {
+  try {
+    let result = await client.subscriptions();
+    getStore().dispatch(setPostsToRiver(result));
 
     return result;
   } catch (e) {

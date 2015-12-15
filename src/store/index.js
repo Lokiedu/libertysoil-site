@@ -18,6 +18,7 @@
 import i from 'immutable';
 import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutablejs'
+import { routeReducer } from 'redux-simple-router';
 
 import current_user from './current-user';
 import favourites from './favourites';
@@ -40,6 +41,7 @@ import suggested_users from './suggested_users';
 let store;
 
 const theReducer = combineReducers(i.Map({
+  routing: routeReducer,
   current_user,
   favourites,
   favourites_river,
