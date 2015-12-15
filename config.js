@@ -14,9 +14,6 @@ module.exports = {
       'image/gif'
     ]
   },
-  mapbox: {
-    accessToken: process.env.MAPBOX_ACCESS_TOKEN
-  },
   pickpoint: {
     key: process.env.PICKPOINT_API_KEY
   }
