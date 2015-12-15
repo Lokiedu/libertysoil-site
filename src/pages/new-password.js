@@ -19,9 +19,40 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { defaultSelector } from '../selectors';
 import { newPassword } from '../triggers';
+import { Link } from 'react-router';
 
 import Footer from '../components/footer';
 import Header from '../components/header';
+import Messages from '../components/messages';
+
+let SuccessMessage = (props) => {
+
+  return (
+    <div>
+      You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
+    </div>
+  );
+
+};
+
+let PasswordForm = (props) => {
+  return (
+    <form onSubmit={props.submitHandler} action="" method="post">
+      <div className="layout__row">
+        <div className="form__row">
+          <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
+          <input className="input input-block" id="newPassword" required="required" type="password" name="password"/>
+          <label className="label label-block label-space" htmlFor="newPasswordRepeat">Repeat</label>
+          <input className="input input-block" id="newPasswordRepeat" required="required" type="password" name="password_repeat"/>
+        </div>
+      </div>
+      <div className="layout__row layout layout-align_vertical layout-align_justify">
+        <button type="submit" className="button button-wide button-green">Submit</button>
+      </div>
+    </form>
+  );
+};
+
 
 class Form extends React.Component {
 
@@ -34,35 +65,35 @@ class Form extends React.Component {
   };
 
   render() {
+
+    let {
+      messages
+    } = this.props;
+
+    let content = <PasswordForm submitHandler={this.submitHandler} />
+
+    if (this.props.ui.submitNewPassword) {
+      content = <SuccessMessage />;
+    }
+
     return (
       <div>
         <Header />
-        <form onSubmit={this.submitHandler} action="" method="post">
           <div className="page__body">
             <div className="area">
               <div>
+                <Messages messages={messages}/>
                 <div className="area__body layout-align_start">
                 <div className="box box-middle">
                   <header className="box__title">Set new password</header>
                     <div className="box__body">
-                      <div className="layout__row">
-                        <div className="form__row">
-                          <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
-                          <input className="input input-block" id="newPassword" required="required" type="password" name="password"/>
-                          <label className="label label-block label-space" htmlFor="newPasswordRepeat">Repeat</label>
-                          <input className="input input-block" id="newPasswordRepeat" required="required" type="password" name="password_repeat"/>
-                        </div>
-                      </div>
-                      <div className="layout__row layout layout-align_vertical layout-align_justify">
-                        <button type="submit" className="button button-wide button-green">Submit</button>
-                      </div>
+                      {content}
                     </div>
                 </div>
                 </div>
               </div>
             </div>
           </div>
-        </form>
         <Footer/>
       </div>
       );
