@@ -31,8 +31,10 @@ export default class ApiClient
     return `${this.host}${relativeUrl}`;
   }
 
-  async get(relativeUrl) {
-    let req = request.get(this.apiUrl(relativeUrl));
+  async get(relativeUrl, query = {}) {
+    let req = request
+      .get(this.apiUrl(relativeUrl))
+      .query(query);
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
       req = req.set('Cookie', this.serverReq.headers['cookie']);
@@ -242,6 +244,11 @@ export default class ApiClient
 
   async updateSchool(uuid, data) {
     let response = await this.postJSON(`/api/v1/school/${uuid}`, data);
+    return response.body;
+  }
+
+  async pickpoint(options) {
+    let response = await this.get('/api/v1/pickpoint', options);
     return response.body;
   }
 }

@@ -21,6 +21,7 @@ import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import fs from 'fs';
+import request from 'superagent';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
@@ -397,11 +398,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('id' in req.params)) {
       res.status(400);
       res.send({error: '"id" parameter is not given'});
+      return;
     }
 
     let images;
@@ -420,15 +423,14 @@ export default class ApiController {
 
     try {
       let school = await School.where({id: req.params.id}).fetch({require: true});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'more');
+      let newAttributes = _.pick(req.body, 'name', 'description', 'more', 'lat', 'lon');
 
       if (_.isArray(images)) {
         school.updateImages(images);
       }
 
-      await school.save(newAttributes);
-      
-      school = await school.fetch({withRelated: 'images'});
+      school.set(newAttributes);
+      await school.save();
 
       res.send(school);
     } catch (e) {
@@ -1277,5 +1279,24 @@ export default class ApiController {
       res.send({error: `Image transformation failed: ${e.message}`});
     }
 
+  }
+
+  async pickpoint(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    try {
+      let response = await request
+        .get(`https://pickpoint.io/api/v1/forward`)
+        .query(Object.assign(req.query, {key: config.pickpoint.key}));
+
+      res.send(response.body);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
   }
 }

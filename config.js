@@ -13,5 +13,8 @@ module.exports = {
       'image/png',
       'image/gif'
     ]
+  },
+  pickpoint: {
+    key: process.env.PICKPOINT_API_KEY
   }
 };

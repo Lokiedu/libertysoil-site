@@ -1,0 +1,61 @@
+.autosuggest {
+  @width: 300px;
+  @border-color: #aaa;
+  @border-radius: 4px;
+
+  position: relative;
+
+  &__input {
+    width: @width;
+    &[aria-expanded="true"] {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  &__suggestions {
+    box-sizing: border-box;
+    position: absolute;
+    width: @width;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    border: 1px solid @border-color;
+    border-top: none;
+    background-color: #fff;
+    border-bottom-left-radius: @border-radius;
+    border-bottom-right-radius: @border-radius;
+    z-index: 2;
+
+    &_section {
+      &:first-child {
+        .react-autosuggest__suggestions_section_name {
+          border-top: 0;
+        }
+      }
+
+      &_name {
+        padding: 10px 0 0 10px;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #777;
+        border-top: 1px dashed #ccc;
+      }
+
+      &_suggestions {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+    }
+  }
+
+  &__suggestion {
+    cursor: pointer;
+    padding: 10px 20px;
+
+    &-focused {
+      background-color: #ddd;
+    }
+  }
+}
