@@ -28,7 +28,7 @@ export default class FollowButton extends React.Component {
   }
 
   render() {
-    if (_.isUndefined(this.props.active_user)) {
+    if (!this.props.active_user) {
       return <script/>;  // anonymous
     }
 
