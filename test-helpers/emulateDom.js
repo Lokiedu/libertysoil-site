@@ -1,7 +1,7 @@
 
 if (typeof document === 'undefined') {
-
     const jsdom = require('jsdom').jsdom;
+
     global.document = jsdom('');
     global.window = global.document.defaultView;
 
@@ -11,4 +11,6 @@ if (typeof document === 'undefined') {
         }
     }
 
+    require('unexpected');
+    require('unexpected-react');
 }

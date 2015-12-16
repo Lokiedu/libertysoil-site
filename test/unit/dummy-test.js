@@ -1,7 +1,4 @@
 /*eslint-env node, mocha */
-// First require your DOM emulation file (see below)
-require( '../../test-helpers/emulateDom.js');
-
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
 import TestUtils from 'react-addons-test-utils';
