@@ -91,6 +91,7 @@
     "adm-zip": "^0.4.7",
     "browser-sync": "",
     "csv": "^0.4.6",
+    "nodemon": "^1.8.1",
     "slug": "^0.9.1",
     "tmp": "0.0.28",
     "unexpected-express": "^8.0.0",
