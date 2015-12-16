@@ -20,7 +20,7 @@ expect.addAssertion('to redirect', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('to be 200', function (expect, subject, value) {
+expect.addAssertion('to open successfully', function (expect, subject, value) {
   return expect(app, 'to yield exchange', {
     request: subject,
     response: {

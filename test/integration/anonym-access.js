@@ -20,16 +20,14 @@ describe('pages that are available for anonym', function () {
         email: 'john@example.com'
       }).save(null, {method: 'insert'});
 
-      // await bookshelf.knex.raw('BEGIN;');
-
     });
 
     afterEach(async function () {
       await bookshelf.knex.raw('DELETE FROM users WHERE username=\'john\';');
     });
 
-    it('Url /user/john works', async function () {
-      return expect(`/api/v1/user/john`, 'to be 200');
+    it('User profile page works', async function () {
+      return expect(`/api/v1/user/john`, 'to open successfully');
     });
   });
 
