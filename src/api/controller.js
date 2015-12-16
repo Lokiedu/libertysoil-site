@@ -1293,7 +1293,11 @@ export default class ApiController {
         .get(`https://pickpoint.io/api/v1/forward`)
         .query(Object.assign(req.query, {key: config.pickpoint.key}));
 
-      res.send(response.body);
+      // pickpoint answers with wrong content-type, so we do decoding manually
+      let responseText = response.text;
+      let data = JSON.parse(responseText);
+
+      res.send(data);
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
