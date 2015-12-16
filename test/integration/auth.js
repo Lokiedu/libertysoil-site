@@ -11,9 +11,7 @@ let bookshelf = initBookshelf(dbConfig['test']);
 
 // TODO: Implement fixtures or factories.
 // TODO: Use https://github.com/marak/Faker.js to generate data.
-let User = bookshelf.model('User');
 let Post = bookshelf.model('Post');
-let Label = bookshelf.model('Label');
 let School = bookshelf.model('School');
 
 describe('routes that are unavailable for guests', function () {
@@ -39,15 +37,23 @@ describe('routes that are unavailable for guests', function () {
       });
     });
 
-    it('/user/:username redirects to /welcome', async function () {
-      let user = await new User({
-        id: uuid.v4(),
-        username: 'testuser',
-        hashed_password: 'test',
-        email: 'test@example.com'
+    it('/s/:school_name/edit redirects to /welcome', async function () {
+      let school = await new School({
+        name: 'test',
+        url_name: 'test.com'
       }).save(null, {method: 'insert'});
 
-      return expect(`/user/${user.attributes.username}`, 'to redirect');
+      return expect(`/s/${school.attributes.url_name}/edit`, 'to redirect');
+    });
+
+    it('/post/edit/:uuid redirects to /welcome', async function () {
+      let post = await new Post({
+        id: uuid.v4(),
+        text: 'Test',
+        type: 'test'
+      }).save(null, {method: 'insert'});
+
+      return expect(`/post/edit/${post.id}`, 'to redirect');
     });
   });
 });
