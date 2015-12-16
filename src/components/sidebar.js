@@ -56,6 +56,9 @@ class Sidebar extends React.Component {
 
   static async fetchData(props, client) {
     try {
+      if (!props.current_user) {
+        return;
+      }
       let userTags = client.userTags();
 
       getStore().dispatch(setUserTags(await userTags));
@@ -89,7 +92,7 @@ class Sidebar extends React.Component {
 
         <SidebarTagCloud className="layout__row layout__row-double" tags={this.props.current_user_tags} title="Tags" />
       </div>
-    )
+    );
   }
 }
 
