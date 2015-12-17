@@ -10,9 +10,8 @@ RUN /bin/sed -i "s*host: '127.0.0.1'*host: process.env.REDIS_PORT_6379_TCP_ADDR*
 
 RUN /bin/sed -i "s*knex migrate:latest*knex --env staging migrate:latest*" package.json
 
-RUN npm install -g babel gulp knex && \
-  npm install && \
-  gulp build
+RUN npm install && \
+  ./node_modules/.bin/gulp build
 
 RUN apk del make gcc g++ python && \
   rm -rf /tmp/* /root/.npm /root/.node-gyp
