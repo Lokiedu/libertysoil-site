@@ -16,6 +16,7 @@ app:
     - db
     - redis
   environment:
+    - "API_HOST=http://www.libertysoil.org"
     - "VIRTUAL_HOST=www.libertysoil.org,libertysoil.org"
     - "DB_ENV=staging"
   env_file:

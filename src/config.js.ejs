@@ -1,6 +1,6 @@
 // Put here things you want to send to a client.
 
-export const API_HOST = 'http://localhost:8000';
+export const API_HOST = '<%- process.env.API_HOST ? process.env.API_HOST : 'http://localhost:8000' %>';
 export const API_URL_PREFIX = `${API_HOST}/api/v1`;
 
 export const API_URL_NAMES = {
