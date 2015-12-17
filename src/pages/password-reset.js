@@ -29,7 +29,7 @@ let ResetForm = (props) => {
       <div className="layout__row">
         <div className="form__row">
           <label className="label label-block label-space" htmlFor="resetPasswordEmail">Email</label>
-          <input className="input input-block" id="resetPasswordEmail" required="required" type="text" name="email"/>
+          <input className="input input-block" id="resetPasswordEmail" required="required" type="email" name="email"/>
         </div>
       </div>
       <div className="layout__row layout layout-align_vertical layout-align_justify">
