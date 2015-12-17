@@ -41,30 +41,43 @@ export default class PasswordForm extends React.Component {
     }
   }
 
-  _validate() {
-    let errors = {
-      old_password:null,
-      new_password: null,
-      new_password_repeat: null
-    };
-
-    let { old_password, new_password, new_password_repeat } = this.refs.form;
+  _validateOldPassword() {
+    let errors = this.state.errors;
+    let { old_password } = this.refs.form;
 
     if (old_password.value.length === 0) {
       errors.old_password = 'Enter your current password';
+    } else {
+      errors.old_password = null;
     }
+
+    this.setState({errors});
+  }
+
+  _validateNewPassword() {
+    let errors = this.state.errors;
+    let { new_password } = this.refs.form;
 
     if (new_password.value.length < 8) {
       errors.new_password = 'Password must be at least 8 characters';
+    } else {
+      errors.new_password = null;
     }
+
+    this.setState({errors});
+  }
+
+  _validateNewPasswordRepeat() {
+    let errors = this.state.errors;
+    let { new_password, new_password_repeat } = this.refs.form;
 
     if (new_password_repeat.value.length > 0 && new_password.value !== new_password_repeat.value) {
       errors.new_password_repeat = 'Passwords do not match';
+    } else {
+      errors.new_password_repeat = null;
     }
 
-    if (Object.keys(errors).length !== 0) {
-      this.setState({errors});
-    }
+    this.setState({errors});
   }
 
   _handleSubmit(event) {
@@ -90,7 +103,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="old_password"
           name="old_password"
-          onChange={this._validate.bind(this)}
+          onChange={this._validateOldPassword.bind(this)}
           placeholder="secret"
           required
           type="password"
@@ -102,7 +115,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="new_password"
           name="new_password"
-          onChange={this._validate.bind(this)}
+          onChange={this._validateNewPassword.bind(this)}
           placeholder="mystery"
           required
           type="password"
@@ -114,7 +127,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="new_password_repeat"
           name="new_password_repeat"
-          onChange={this._validate.bind(this)}
+          onChange={this._validateNewPasswordRepeat.bind(this)}
           placeholder="mystery"
           required
           type="password"
