@@ -801,7 +801,7 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
     }
 
-    let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/newpassword/${sha1}`);
+    let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/newpassword/${user.get('reset_password_hash')}`);
     await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
     res.status(200);
     res.send({success: true});
@@ -849,8 +849,8 @@ export default class ApiController {
     user.set('reset_password_hash', '');
 
     await user.save(null, {method: 'update'});
+    res.send({success: true});
 
-    res.redirect('/');
   }
 
   async logout(req, res) {

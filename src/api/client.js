@@ -198,6 +198,7 @@ export default class ApiClient
 
   async resetPassword(email) {
     let response = await this.postJSON(`/api/v1/resetpassword`, {email});
+
     return response.body;
   }
 

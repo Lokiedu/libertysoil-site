@@ -19,9 +19,102 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { defaultSelector } from '../selectors';
 import { newPassword } from '../triggers';
+import { Link } from 'react-router';
 
 import Footer from '../components/footer';
 import Header from '../components/header';
+import Messages from '../components/messages';
+
+let SuccessMessage = (props) => {
+
+  return (
+    <div>
+      You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
+    </div>
+  );
+
+};
+
+class PasswordForm extends React.Component {
+  static defaultProps = {
+    onSubmit: () => {}
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      errors: {
+        password: null,
+        password_repeat: null
+      }
+    };
+  }
+
+  _validatePassword() {
+    let errors = this.state.errors;
+    let password = this.refs.form.password;
+
+    if (password.value.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else {
+      errors.password = null;
+    }
+
+    this.setState({errors});
+  }
+
+  _validatePasswordRepeat() {
+    let errors = this.state.errors;
+    let { password, password_repeat } = this.refs.form;
+
+    if (password_repeat.value.length > 0 && password.value !== password_repeat.value) {
+      errors.password_repeat = 'Passwords do not match';
+    } else {
+      errors.password_repeat = null;
+    }
+
+    this.setState({errors});
+  }
+
+  render() {
+    let errors = this.state.errors;
+
+    return (
+      <form ref="form" onSubmit={this.props.onSubmit} action="" method="post">
+        <div className="layout__row">
+          <div className="form__row">
+            <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
+            <input
+              className="input input-block"
+              id="newPassword"
+              name="password"
+              onChange={this._validatePassword.bind(this)}
+              required="required"
+              type="password"
+            />
+            {errors.password && <div className="validation_error">{errors.password}</div>}
+
+            <label className="label label-block label-space" htmlFor="newPasswordRepeat">Repeat</label>
+            <input
+              className="input input-block"
+              id="newPasswordRepeat"
+              name="password_repeat"
+              onChange={this._validatePasswordRepeat.bind(this)}
+              required="required"
+              type="password"
+            />
+            {errors.password_repeat && <div className="validation_error">{errors.password_repeat}</div>}
+          </div>
+        </div>
+        <div className="layout__row layout layout-align_vertical layout-align_justify">
+          <button type="submit" className="button button-wide button-green">Submit</button>
+        </div>
+      </form>
+    );
+  }
+}
+
 
 class Form extends React.Component {
 
@@ -34,35 +127,35 @@ class Form extends React.Component {
   };
 
   render() {
+
+    let {
+      messages
+    } = this.props;
+
+    let content = <PasswordForm onSubmit={this.submitHandler} />
+
+    if (this.props.ui.submitNewPassword) {
+      content = <SuccessMessage />;
+    }
+
     return (
       <div>
         <Header />
-        <form onSubmit={this.submitHandler} action="" method="post">
           <div className="page__body">
             <div className="area">
               <div>
+                <Messages messages={messages}/>
                 <div className="area__body layout-align_start">
                 <div className="box box-middle">
                   <header className="box__title">Set new password</header>
                     <div className="box__body">
-                      <div className="layout__row">
-                        <div className="form__row">
-                          <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
-                          <input className="input input-block" id="newPassword" required="required" type="password" name="password"/>
-                          <label className="label label-block label-space" htmlFor="newPasswordRepeat">Repeat</label>
-                          <input className="input input-block" id="newPasswordRepeat" required="required" type="password" name="password_repeat"/>
-                        </div>
-                      </div>
-                      <div className="layout__row layout layout-align_vertical layout-align_justify">
-                        <button type="submit" className="button button-wide button-green">Submit</button>
-                      </div>
+                      {content}
                     </div>
                 </div>
                 </div>
               </div>
             </div>
           </div>
-        </form>
         <Footer/>
       </div>
       );
