@@ -75,8 +75,8 @@ export function getRoutes(authHandler, fetchHandler) {
         <IndexRoute component={CountryPage} onEnter={withoutAuth} />
         <Route component={CityPage} path="/l/:country/:city" onEnter={withoutAuth} />
       </Route>
-      <Route component={PasswordReset} path="/resetpassword" onEnter={onEnterHandler} />
-      <Route component={NewPassword} path="/newpassword/:hash" onEnter={onEnterHandler} />
+      <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
+      <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
     </Route>
   );
 }
