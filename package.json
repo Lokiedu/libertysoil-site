@@ -74,7 +74,7 @@
     "react-autosuggest": "^2.2.0",
     "react-dom": "^0.14.3",
     "react-gravatar": "^2.2.2",
-    "react-linkify": "0.1.0",
+    "react-linkify": "0.1.1",
     "react-redux": "^4.0.0",
     "react-router": "^1.0.0",
     "redux": "^3.0.4",
