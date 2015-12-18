@@ -16,17 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Provider } from 'react-redux';
 
-import { getStore } from '../store';
 
 export default class App extends React.Component {
   render() {
     return (
       <div className="page">
-        <Provider store={getStore()}>
-          {this.props.children}
-        </Provider>
+        {this.props.children}
       </div>
     )
   }

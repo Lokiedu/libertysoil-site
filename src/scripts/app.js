@@ -18,8 +18,9 @@
 import bluebird from 'bluebird';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {createHistory} from 'history'
-import {Router} from 'react-router';
+import { createHistory } from 'history'
+import { Router } from 'react-router';
+import { Provider } from 'react-redux';
 import { syncReduxAndRouter } from 'redux-simple-router';
 import 'mapbox.js';
 
@@ -41,8 +42,10 @@ let fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
 syncReduxAndRouter(history, store, state => state.get('routing'));
 
 ReactDOM.render(
-  <Router history={history}>
-    {getRoutes(authHandler.handle, fetchHandler.handle)}
-  </Router>,
+  <Provider store={store}>
+    <Router history={history}>
+      {getRoutes(authHandler.handle, fetchHandler.handle)}
+    </Router>
+  </Provider>,
   document.getElementById('content')
 );

@@ -27,6 +27,7 @@ import { renderToString } from 'react-dom/server'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { Router, RoutingContext, match } from 'react-router'
 import { syncReduxAndRouter } from 'redux-simple-router';
+import { Provider } from 'react-redux';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
@@ -121,10 +122,19 @@ let reactHandler = async (req, res) => {
     } else if (renderProps == null) {
       res.status(404).send('Not found')
     } else {
-      let html = renderToString(<RoutingContext {...renderProps}/>);
-      let state = JSON.stringify(store.getState().toJS());
+      try {
+        let html = renderToString(
+          <Provider store={store}>
+            <RoutingContext {...renderProps}/>
+          </Provider>
+        );
+        let state = JSON.stringify(store.getState().toJS());
 
-      res.render('index', { state, html });
+        res.render('index', { state, html });
+      } catch (e) {
+        console.error(e)
+        res.status(500).send(e.message)
+      }
     }
   });
 };
