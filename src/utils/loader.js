@@ -42,14 +42,16 @@ export class AuthHandler {
     this.store = store;
   }
 
-  handle = async (nextState, replaceState) => {
+  handle = async (nextState, replaceState, callback) => {
     let state = this.store.getState();
 
-    if (state.getIn(['current_user', 'id']) === null &&
-        nextState.location.pathname !== '/welcome') {
+    if (state.getIn(['current_user', 'id']) === null
+      && nextState.location.pathname !== '/welcome'
+    ) {
       replaceState(null, '/welcome');
-      return true;
     }
+
+    callback();
   }
 }
 
@@ -60,7 +62,7 @@ export class FetchHandler
     this.apiClient = apiClient;
   }
 
-  handle = async (nextState/*, replaceState, callback*/) => {
+  handle = async (nextState) => {
     let len = nextState.routes.length;
 
     for (let i = len; i--; i >= 0) {
@@ -76,6 +78,12 @@ export class FetchHandler
         }
       }
     }
-  }
+  };
+
+  handleSynchronously = (nextState, replaceState, callback) => {
+    this.handle(nextState)
+      .then(() => { callback(); })
+      .catch((e) => { console.error(e); callback(); });
+  };
 }
 
