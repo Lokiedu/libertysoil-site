@@ -23,7 +23,7 @@ import {
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver,
-  submitResetPassword, submitNewPassword
+  submitResetPassword, submitNewPassword, setTagCloud
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -307,6 +307,17 @@ export async function loadPostRiver() {
   try {
     let result = await client.subscriptions();
     getStore().dispatch(setPostsToRiver(result));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function loadTagCloud() {
+  try {
+    let result = await client.tagCloud();
+    getStore().dispatch(setTagCloud(result));
 
     return result;
   } catch (e) {
