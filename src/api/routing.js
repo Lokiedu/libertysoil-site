@@ -94,5 +94,7 @@ export function initApi(bookshelf) {
 
   api.get('/pickpoint', wrap(controller.pickpoint.bind(controller)));
 
+  api.get('/tag-cloud', wrap(controller.getTagCloud.bind(controller)));
+
   return api;
 }

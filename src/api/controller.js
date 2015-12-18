@@ -1433,4 +1433,32 @@ export default class ApiController {
       res.send({error: e.message});
     }
   }
+
+  /**
+   * Returns 50 most popular labels sorted by post count.
+   * Each label in response contains post_count.
+   */
+  async getTagCloud(req, res) {
+    let Label = this.bookshelf.model('Label');
+
+    try {
+      let labels = await Label
+        .collection()
+        .query(qb => {
+          qb
+            .select('labels.*')
+            .count('labels_posts.* as post_count')
+            .join('labels_posts', 'labels.id', 'labels_posts.label_id')
+            .groupBy('labels.id')
+            .orderBy('post_count', 'DESC')
+            .limit(50);
+        })
+        .fetch({require: true});
+
+      res.send(labels);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
 }
