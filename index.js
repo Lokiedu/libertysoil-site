@@ -99,7 +99,7 @@ let reactHandler = async (req, res) => {
 
   const authHandler = new AuthHandler(store);
   const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST, req));
-  const Routes = getRoutes(authHandler.handle, fetchHandler.handle);
+  const Routes = getRoutes(authHandler.handle, fetchHandler.handleSynchronously);
 
   const makeRoutes = (history) => (
     <Router history={history}>

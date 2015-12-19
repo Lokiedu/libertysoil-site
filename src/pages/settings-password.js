@@ -16,10 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import BaseSettingsPage from './base/settings'
-
+import SettingsPasswordForm from '../components/settings/password-form';
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { getStore } from '../store';
@@ -48,15 +49,20 @@ class SettingsPasswordPage extends React.Component {
   }
 
   onSave = () => {
-    this.refs.submit.click();
-  }
+    let event = document.createEvent("HTMLEvents");
+    event.initEvent('submit', true, true);
+    event.eventType = 'submit';
+
+    this.form.dispatchEvent(event);
+  };
 
   save = (e) => {
     e && e.preventDefault();
 
     let promise = changePassword(
-      this.refs.form.currentPasssword.value,
-      this.refs.form.newPasssword.value, this.refs.form.newPasssword2.value
+      this.form.old_password.value,
+      this.form.new_password.value,
+      this.form.new_password_repeat.value
     );
 
     promise.catch(e => {
@@ -88,20 +94,10 @@ class SettingsPasswordPage extends React.Component {
         following={following}
         followers={followers}
       >
-        <form action="" ref="form" className="paper__page" onSubmit={this.save}>
-          <h2 className="content__sub_title layout__row layout__row">Password</h2>
-
-          <label htmlFor="currentPasssword" className="layout__row layout__row-small">Current password</label>
-          <input name="currentPasssword" id="currentPasssword" className="input input-block layout__row layout__row-small" placeholder="secret" type="password" required />
-
-          <label htmlFor="newPasssword" className="layout__row layout__row-small">New password</label>
-          <input name="newPasssword" id="newPasssword" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
-
-          <label htmlFor="newPasssword2" className="layout__row layout__row-small">Repeat new password...</label>
-          <input name="newPasssword2" id="newPasssword2" className="input input-block layout__row layout__row-small" placeholder="mystery" type="password" required />
-
-          <input ref="submit" type="submit" className="hidden" />
-        </form>
+        <SettingsPasswordForm
+          onSubmit={this.save}
+          ref={c => this.form = ReactDOM.findDOMNode(c)}
+        />
 
         {false && <div className="paper__page">
           <h2 className="content__title">Role</h2>

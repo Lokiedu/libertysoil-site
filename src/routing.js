@@ -22,6 +22,8 @@ import { combineHandlers } from './utils/loader';
 
 import App from './pages/app';
 import Auth from './pages/auth';
+import NewPassword from './pages/new-password';
+import PasswordReset from './pages/password-reset';
 import PostPage from './pages/post';
 import PostEditPage from './pages/post_edit';
 import UserPage from './pages/user';
@@ -73,6 +75,8 @@ export function getRoutes(authHandler, fetchHandler) {
         <IndexRoute component={CountryPage} onEnter={withoutAuth} />
         <Route component={CityPage} path="/l/:country/:city" onEnter={withoutAuth} />
       </Route>
+      <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
+      <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
     </Route>
   );
 }

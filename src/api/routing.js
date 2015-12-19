@@ -79,6 +79,10 @@ export function initApi(bookshelf) {
 
   api.post('/user/', wrap(controller.updateUser.bind(controller)));
   api.post('/user/password', wrap(controller.changePassword.bind(controller)));
+  api.post('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
+
+  api.post('/resetpassword', wrap(controller.resetPassword.bind(controller)));
+  api.post('/newpassword/:hash', wrap(controller.newPassword.bind(controller)));
 
   api.post('/logout', wrap(controller.logout.bind(controller)));
 
@@ -87,6 +91,8 @@ export function initApi(bookshelf) {
 
   api.post('/upload', upload.array('files', 8), wrap(controller.uploadFiles.bind(controller)));
   api.post('/image', wrap(controller.processImage.bind(controller)));
+
+  api.get('/pickpoint', wrap(controller.pickpoint.bind(controller)));
 
   return api;
 }

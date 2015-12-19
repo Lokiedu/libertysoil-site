@@ -4,3 +4,4 @@ build
 public/scripts
 public/styles
 .idea
+/src/config.js

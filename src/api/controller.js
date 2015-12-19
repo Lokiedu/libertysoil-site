@@ -21,11 +21,16 @@ import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import fs from 'fs';
+import request from 'superagent';
+import crypto from 'crypto'
+import { sendEmail } from '../utils/email';
+import { renderWelcomeTemplate, renderResetTemplate } from '../email-templates/index';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
+
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -397,11 +402,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('id' in req.params)) {
       res.status(400);
       res.send({error: '"id" parameter is not given'});
+      return;
     }
 
     let images;
@@ -419,16 +426,15 @@ export default class ApiController {
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({id: req.params.id}).fetch({require: true});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'more');
+      let school = await School.where({id: req.params.id}).fetch({require: true, withRelated: 'images'});
+      let newAttributes = _.pick(req.body, 'name', 'description', 'more', 'lat', 'lon');
 
       if (_.isArray(images)) {
         school.updateImages(images);
       }
 
-      await school.save(newAttributes);
-      
-      school = await school.fetch({withRelated: 'images'});
+      school.set(newAttributes);
+      await school.save();
 
       res.send(school);
     } catch (e) {
@@ -639,11 +645,16 @@ export default class ApiController {
     }
 
     let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
+
+    let random = Math.random().toString();
+    let sha1 = crypto.createHash('sha1').update(req.body.email + random).digest('hex');
+
     let obj = new User({
       id: uuid.v4(),
       username: req.body.username,
       hashed_password: hashedPassword,
-      email: req.body.email
+      email: req.body.email,
+      email_check_hash: sha1
     });
 
     let moreData = {};
@@ -652,7 +663,7 @@ export default class ApiController {
         moreData[fieldName] = req.body[fieldName];
       }
     }
-    
+
     moreData.first_login = true;
 
     if (!_.isEmpty(moreData)) {
@@ -666,13 +677,16 @@ export default class ApiController {
         req.session.user = obj.id;
       }
 
+      let html = await renderWelcomeTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/verify/${sha1}`);
+      await sendEmail('Welcome to Libertysoil.org', html, req.body.email);
+
       res.send({success: true, user: obj});
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
         res.send({error: 'User already exists'});
       } else {
-        console.dir(e);
+        console.log(e);
 
         res.status(500);
         res.send({error: e.message});
@@ -719,6 +733,124 @@ export default class ApiController {
     user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send({ success: true, user });
+  }
+
+  async verifyEmail(req, res) {
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email_check_hash: req.params.hash}).fetch({require: true});
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
+    user.set('email_check_hash', '');
+    await user.save(null, {method: 'update'});
+
+    res.redirect('/');
+  }
+
+  /**
+   * Looks users record by submitted email, saves user random SHA1 hash.
+   * If user is authorized. Show error message.
+   *
+   * If no user found send status 401.
+   *
+   * When user saved successfully, send message (publich event?) to user with
+   * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
+   */
+  async resetPassword(req, res) {
+
+    if (req.session && req.session.user) {
+      res.status(403);
+      res.send({error: 'Please use profile change password feature.'});
+    }
+
+    for (let fieldName of ['email']) {
+      if (!(fieldName in req.body)) {
+        res.status(400);
+        res.send({error: 'Bad Request'});
+        return;
+      }
+    }
+
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({email: req.body.email}).fetch({require: true});
+    } catch (e) {
+      // we do not show any error if we do not have user.
+      // To prevent disclosure information about registered emails.
+      res.status(200);
+      res.send({success: true});
+      return;
+    }
+
+    let random = Math.random().toString();
+    let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
+
+    if (!user.get('reset_password_hash')) {
+      user.set('reset_password_hash', sha1);
+      await user.save(null, {method: 'update'});
+    }
+
+    let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/newpassword/${user.get('reset_password_hash')}`);
+    await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
+    res.status(200);
+    res.send({success: true});
+  }
+
+  /**
+   * New password form action.
+   * Validates new password form with password/password repeat values.
+   * Saves new password to User model.
+   */
+  async newPassword(req, res) {
+
+    if (req.session && req.session.user) {
+      res.redirect('/');
+    }
+
+    let User = this.bookshelf.model('User');
+
+    let user;
+
+    try {
+      user = await new User({reset_password_hash: req.params.hash}).fetch({require: true});
+    } catch (e) {
+      console.log(`user not found`);
+      res.status(401);
+      res.send({success: false});
+      return;
+    }
+
+    if (!('password' in req.body) || !('password_repeat' in req.body)) {
+      res.status(400);
+      res.send({error: '"password" or "password_repeat" parameter is not provided'});
+      return;
+    }
+
+    if (req.body.password !== req.body.password_repeat) {
+      res.status(400);
+      res.send({error: '"password" and "password_repeat" do not exact match.'});
+      return;
+    }
+
+    let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
+
+    user.set('hashed_password', hashedPassword);
+    user.set('reset_password_hash', '');
+
+    await user.save(null, {method: 'update'});
+    res.send({success: true});
+
   }
 
   async logout(req, res) {
@@ -1277,5 +1409,28 @@ export default class ApiController {
       res.send({error: `Image transformation failed: ${e.message}`});
     }
 
+  }
+
+  async pickpoint(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    try {
+      let response = await request
+        .get(`https://pickpoint.io/api/v1/forward`)
+        .query(Object.assign(req.query, {key: config.pickpoint.key}));
+
+      // pickpoint answers with wrong content-type, so we do decoding manually
+      let responseText = response.text;
+      let data = JSON.parse(responseText);
+
+      res.send(data);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
   }
 }

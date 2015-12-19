@@ -37,6 +37,7 @@ import tag_posts from './tag_posts';
 import user_posts from './user_posts';
 import users from './users';
 import suggested_users from './suggested_users';
+import ui from './ui';
 
 let store;
 
@@ -58,7 +59,8 @@ const theReducer = combineReducers(i.Map({
   tag_posts,
   user_posts,
   users,
-  suggested_users
+  suggested_users,
+  ui
 }));
 
 const initialState = i.Map({
