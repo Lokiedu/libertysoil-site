@@ -29,4 +29,16 @@ expect.addAssertion('to open successfully', function (expect, subject, value) {
   });
 });
 
+expect.addAssertion('to body contains', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subject,
+    response: {
+      statusCode: 200
+    }
+  }).then(function (context) {
+    let body = context.httpResponse.body;
+    expect(body, 'to contain', value);
+  });
+});
+
 export default expect;
