@@ -17,9 +17,9 @@ describe('pages that are available for anonym', function () {
       let user = await new User({
         id: uuid.v4(),
         username: 'john',
+        more: '{"lastName": "Smith", "firstName": "John"}',
         email: 'john@example.com'
       }).save(null, {method: 'insert'});
-
     });
 
     afterEach(async function () {
@@ -27,7 +27,7 @@ describe('pages that are available for anonym', function () {
     });
 
     it('User profile page works', async function () {
-      return expect(`/api/v1/user/john`, 'to open successfully');
+      return expect(`/user/john`, 'to body contains', 'John Smith');
     });
   });
 
