@@ -33,8 +33,8 @@ module.exports = {
     client: 'postgresql',
     connection: {
       host     : '127.0.0.1',
-      user     : 'libertysoil',
-      password : 'libertysoil',
+      user     : 'postgres',
+      password : 'postgres',
       database : 'libertysoil_test',
       charset  : 'utf8'
     },
