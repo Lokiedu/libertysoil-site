@@ -1,11 +1,7 @@
 /*eslint-env node, mocha */
-import unexpected from 'unexpected';
-import unexpectedReact from 'unexpected-react';
-import TestUtils from 'react-addons-test-utils';
-import React, {Component} from 'react';
+import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../test-helpers/expect-unit';
+import { Component } from 'react';
 
-const expect = unexpected.clone()
-    .use(unexpectedReact);
 
 class SomeComponent extends Component {
   render() {
