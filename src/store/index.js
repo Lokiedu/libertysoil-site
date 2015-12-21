@@ -38,6 +38,7 @@ import user_posts from './user_posts';
 import users from './users';
 import suggested_users from './suggested_users';
 import ui from './ui';
+import tag_cloud from './tag_cloud';
 
 let store;
 
@@ -60,7 +61,8 @@ const theReducer = combineReducers(i.Map({
   user_posts,
   users,
   suggested_users,
-  ui
+  ui,
+  tag_cloud
 }));
 
 const initialState = i.Map({
@@ -88,7 +90,8 @@ const initialState = i.Map({
   tag_posts: i.Map({}),
   user_posts: i.Map({}),
   users: i.Map({}),
-  suggested_users: i.List([])
+  suggested_users: i.List([]),
+  tag_cloud: i.List([])
 });
 
 export function initState(state=initialState) {

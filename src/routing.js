@@ -36,6 +36,7 @@ import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import TagPage from './pages/tag';
+import TagCloudPage from './pages/tag-cloud';
 import CityPage from './pages/city';
 import CountryPage from './pages/country';
 
@@ -55,7 +56,10 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={Auth} path="/auth" onEnter={withoutAuth} />
       <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />
       <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />
-      <Route component={TagPage} path="/tag/:tag" onEnter={withoutAuth} />
+      <Route path="/tag">
+        <IndexRoute component={TagCloudPage} onEnter={withoutAuth} />
+        <Route component={TagPage} path=":tag" onEnter={withoutAuth} />
+      </Route>
       <Route path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
         <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />

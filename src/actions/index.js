@@ -50,6 +50,8 @@ export const SET_CITY_POSTS = 'SET_CITY_POSTS';
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 
+export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -261,5 +263,12 @@ export function setCityPosts(cityId, posts)
     type: SET_CITY_POSTS,
     cityId,
     posts
+  }
+}
+
+export function setTagCloud(tags) {
+  return {
+    type: SET_TAG_CLOUD,
+    tags
   }
 }

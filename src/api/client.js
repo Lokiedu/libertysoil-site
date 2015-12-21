@@ -262,4 +262,9 @@ export default class ApiClient
     let response = await this.get('/api/v1/pickpoint', options);
     return response.body;
   }
+
+  async tagCloud() {
+    let response = await this.get('/api/v1/tag-cloud');
+    return response.body;
+  }
 }
