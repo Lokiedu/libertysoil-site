@@ -267,4 +267,16 @@ export default class ApiClient
     let response = await this.get('/api/v1/tag-cloud');
     return response.body;
   }
+
+  async followTag(name) {
+    let response = await this.post(`/api/v1/tag/${name}/follow`);
+    return response.body;
+  }
+
+  async unfollowTag(name) {
+    let response = await this.post(`/api/v1/tag/${name}/unfollow`);
+    return response.body;
+  }
+
+
 }
