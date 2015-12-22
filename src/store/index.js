@@ -68,7 +68,8 @@ const theReducer = combineReducers(i.Map({
 const initialState = i.Map({
   current_user: i.Map({
     id: null,
-    tags: i.List([])
+    tags: i.List([]),
+    followed_tags: i.Map({})
   }),
   favourites: i.Map({}),
   favourites_river: i.Map({}),

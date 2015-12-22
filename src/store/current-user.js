@@ -36,8 +36,13 @@ export default function reducer(state=initialState, action) {
         break;
       }
 
-      state = state.set('id', action.user.id);
-      state = state.set('tags', i.List([]));
+      state = state.withMutations(function (state) {
+        state
+          .set('id', action.user.id)
+          .set('tags', i.List([]))
+          .set('followed_tags', i.Map({}));
+      });
+
       break;
     }
 
@@ -48,6 +53,29 @@ export default function reducer(state=initialState, action) {
         state = state.set('tags', i.fromJS(tags));
       else
         state = state.set('tags', i.List([]));
+
+      break;
+    }
+
+    case a.SET_USER_FOLLOWED_TAGS: {
+      let followedTags = action.followed_tags.reduce(function (tags, tag) {
+        tags[tag.name] = tag;
+        return tags;
+      }, {});
+
+      state = state.set('followed_tags', i.fromJS(followedTags));
+
+      break;
+    }
+
+    case a.ADD_USER_FOLLOWED_TAG: {
+      state = state.setIn(['followed_tags', action.tag.name], i.fromJS(action.tag));
+
+      break;
+    }
+
+    case a.REMOVE_USER_FOLLOWED_TAG: {
+      state = state.deleteIn(['followed_tags', action.tag.name]);
 
       break;
     }
