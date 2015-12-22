@@ -28,7 +28,8 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
-import { likePost, unlikePost, favPost, unfavPost } from '../triggers';
+import FollowTagButton from '../components/follow-tag-button';
+import { likePost, unlikePost, favPost, unfavPost, followTag, unfollowTag } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -54,8 +55,11 @@ class TagPage extends Component {
       tag_posts,
       users
     } = this.props;
+
     const triggers = {likePost, unlikePost, favPost, unfavPost};
+    const followTriggers = {followTag, unfollowTag};
     const thisTagPosts = tag_posts[this.props.params.tag] || [];
+    const followedTags = (current_user) ? current_user.followed_tags : [];
 
     return (
       <div>
@@ -67,7 +71,19 @@ class TagPage extends Component {
 
             <div className="page__body_content">
               <div className="tag_header">
-                {this.props.params.tag}
+                <div className="layout__grid">
+                  <div className="layout__grid_item layout__grid_item-wide">
+                    {this.props.params.tag}
+                  </div>
+                  <div className="layout__grid_item layout__grid_item-small">
+                    <FollowTagButton
+                      current_user={current_user}
+                      followed_tags={followedTags}
+                      tag={this.props.params.tag}
+                      triggers={followTriggers}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="page__content page__content-spacing">
