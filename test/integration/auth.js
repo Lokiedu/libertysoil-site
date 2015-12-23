@@ -1,9 +1,8 @@
 /*eslint-env node, mocha */
 /*global $dbConfig */
 import uuid from 'uuid';
-import expect from '../../test-helpers/expect';
-import app from '../../index';
 
+import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 
 

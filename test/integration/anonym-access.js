@@ -1,9 +1,8 @@
 /*eslint-env node, mocha */
 /*global $dbConfig */
 import uuid from 'uuid';
-import expect from '../../test-helpers/expect';
-import app from '../../index';
 
+import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 
 
@@ -14,7 +13,7 @@ describe('pages that are available for anonym', function () {
 
   describe('when user is not logged in', function () {
     beforeEach(async function () {
-      let user = await new User({
+      await new User({
         id: uuid.v4(),
         username: 'john',
         more: '{"lastName": "Smith", "firstName": "John"}',
