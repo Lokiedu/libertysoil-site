@@ -25,6 +25,12 @@ export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 export const SET_USER_POSTS = 'SET_USER_POSTS';
 export const SET_USER_TAGS = 'SET_USER_TAGS';
+export const SET_USER_FOLLOWED_TAGS = 'SET_USER_FOLLOWED_TAGS';
+export const ADD_USER_FOLLOWED_TAG = 'ADD_USER_FOLLOWED_TAG';
+export const REMOVE_USER_FOLLOWED_TAG = 'REMOVE_USER_FOLLOWED_TAG';
+export const SET_USER_FOLLOWED_SCHOOLS = 'SET_USER_FOLLOWED_SCHOOLS';
+export const ADD_USER_FOLLOWED_SCHOOL = 'ADD_USER_FOLLOWED_SCHOOL';
+export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
 export const SET_TAG_POSTS = 'SET_TAG_POSTS';
 export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
@@ -115,6 +121,49 @@ export function setUserTags(tags) {
   return {
     type: SET_USER_TAGS,
     tags
+  }
+}
+
+export function setUserFollowedTags(tags) {
+  return {
+    type: SET_USER_FOLLOWED_TAGS,
+    followed_tags: tags
+  }
+}
+
+export function addUserFollowedTag(tag) {
+  return {
+    type: ADD_USER_FOLLOWED_TAG,
+    tag
+  }
+}
+
+export function removeUserFollowedTag(tag) {
+  return {
+    type: REMOVE_USER_FOLLOWED_TAG,
+    tag
+  }
+}
+
+export function setUserFollowedSchools(schools) {
+  return {
+    type: SET_USER_FOLLOWED_SCHOOLS,
+    followed_schools: schools
+  }
+}
+
+
+export function addUserFollowedSchool(school) {
+  return {
+    type: ADD_USER_FOLLOWED_SCHOOL,
+    school
+  }
+}
+
+export function removeUserFollowedSchool(school) {
+  return {
+    type: REMOVE_USER_FOLLOWED_SCHOOL,
+    school
   }
 }
 

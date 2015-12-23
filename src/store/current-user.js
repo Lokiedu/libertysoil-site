@@ -36,8 +36,13 @@ export default function reducer(state=initialState, action) {
         break;
       }
 
-      state = state.set('id', action.user.id);
-      state = state.set('tags', i.List([]));
+      state = state.withMutations(function (state) {
+        state
+          .set('id', action.user.id)
+          .set('tags', i.List([]))
+          .set('followed_tags', i.Map({}));
+      });
+
       break;
     }
 
@@ -48,6 +53,52 @@ export default function reducer(state=initialState, action) {
         state = state.set('tags', i.fromJS(tags));
       else
         state = state.set('tags', i.List([]));
+
+      break;
+    }
+
+    case a.SET_USER_FOLLOWED_TAGS: {
+      let followedTags = action.followed_tags.reduce(function (tags, tag) {
+        tags[tag.name] = tag;
+        return tags;
+      }, {});
+
+      state = state.set('followed_tags', i.fromJS(followedTags));
+
+      break;
+    }
+
+    case a.ADD_USER_FOLLOWED_TAG: {
+      state = state.setIn(['followed_tags', action.tag.name], i.fromJS(action.tag));
+
+      break;
+    }
+
+    case a.REMOVE_USER_FOLLOWED_TAG: {
+      state = state.deleteIn(['followed_tags', action.tag.name]);
+
+      break;
+    }
+
+    case a.SET_USER_FOLLOWED_SCHOOLS: {
+      let followedSchools = action.followed_schools.reduce(function (schools, school) {
+        schools[school.url_name] = school;
+        return schools;
+      }, {});
+
+      state = state.set('followed_schools', i.fromJS(followedSchools));
+
+      break;
+    }
+
+    case a.ADD_USER_FOLLOWED_SCHOOL: {
+      state = state.setIn(['followed_schools', action.school.url_name], i.fromJS(action.school));
+
+      break;
+    }
+
+    case a.REMOVE_USER_FOLLOWED_SCHOOL: {
+      state = state.deleteIn(['followed_schools', action.school.url_name]);
 
       break;
     }

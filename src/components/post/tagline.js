@@ -45,7 +45,6 @@ export default class TagLine extends React.Component {
     }
 
     let schoolBlocks = schools.map(school => {
-      console.log(school);
       return (
         <Link to={`/s/${school.url_name}`} className='tag school' key={`school-${school.id}`}>
           {school.name}

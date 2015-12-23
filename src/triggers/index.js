@@ -23,7 +23,8 @@ import {
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver,
-  submitResetPassword, submitNewPassword, setTagCloud
+  submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
+  removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool
 } from '../actions';
 
 const client = new ApiClient(API_HOST);
@@ -324,3 +325,49 @@ export async function loadTagCloud() {
     getStore().dispatch(addError(e.message));
   }
 }
+
+export async function followTag(name) {
+  try {
+    let result = await client.followTag(name);
+    getStore().dispatch(addUserFollowedTag(result.tag));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function unfollowTag(name) {
+  try {
+    let result = await client.unfollowTag(name);
+    getStore().dispatch(removeUserFollowedTag(result.tag));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function followSchool(name) {
+  try {
+    let result = await client.followSchool(name);
+    getStore().dispatch(addUserFollowedSchool(result.school));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+export async function unfollowSchool(name) {
+  try {
+    let result = await client.unfollowSchool(name);
+    getStore().dispatch(removeUserFollowedSchool(result.school));
+
+    return result;
+  } catch (e) {
+    getStore().dispatch(addError(e.message));
+  }
+}
+
+

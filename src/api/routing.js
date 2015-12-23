@@ -65,6 +65,8 @@ export function initApi(bookshelf) {
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
+  api.post('/school/:name/follow', wrap(controller.followSchool.bind(controller)));
+  api.post('/school/:name/unfollow', wrap(controller.unfollowSchool.bind(controller)));
 
   api.get('/countries/', wrap(controller.getCountries.bind(controller)));
   api.get('/country/:code', wrap(controller.getCountry.bind(controller)));
@@ -95,6 +97,9 @@ export function initApi(bookshelf) {
   api.get('/pickpoint', wrap(controller.pickpoint.bind(controller)));
 
   api.get('/tag-cloud', wrap(controller.getTagCloud.bind(controller)));
+  api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
+  api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
+
 
   return api;
 }

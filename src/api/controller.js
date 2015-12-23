@@ -1150,7 +1150,16 @@ export default class ApiController {
 
   async getUser(req, res) {
     let User = this.bookshelf.model('User');
-    let u = await User.where({username: req.params.username}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
+    let u = await User
+      .where({username: req.params.username})
+      .fetch({
+        require: true,
+        withRelated: [
+          'following', 'followers', 'liked_posts',
+          'favourited_posts', 'followed_labels',
+          'followed_schools'
+        ]
+      });
 
     res.send(u.toJSON());
   }
@@ -1456,6 +1465,123 @@ export default class ApiController {
         .fetch({require: true});
 
       res.send(labels);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  async followTag(req, res) {
+    let User = this.bookshelf.model('User');
+    let Label = this.bookshelf.model('Label');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.name) {
+      res.status(400);
+      res.send({error: '"name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let label = await Label.forge().where('name', req.params.name).fetch();
+
+      await currentUser.followLabel(label.id);
+
+      res.send({success: true, tag: label});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  async unfollowTag(req, res) {
+    let User = this.bookshelf.model('User');
+    let Label = this.bookshelf.model('Label');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.name) {
+      res.status(400);
+      res.send({error: '"name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let label = await Label.forge().where('name', req.params.name).fetch();
+
+      await currentUser.unfollowLabel(label.id);
+
+      res.send({success: true, tag: label});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  async followSchool(req, res) {
+    let User = this.bookshelf.model('User');
+    let School = this.bookshelf.model('School');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.name) {
+      res.status(400);
+      res.send({error: '"name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let school = await School.forge().where('url_name', req.params.name).fetch({require: true});
+
+      await currentUser.followSchool(school.id);
+
+      res.send({success: true, school});
+    } catch (e) {
+      console.log(e.stack)
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  async unfollowSchool(req, res) {
+    let User = this.bookshelf.model('User');
+    let School = this.bookshelf.model('School');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.name) {
+      res.status(400);
+      res.send({error: '"name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let school = await School.forge().where('url_name', req.params.name).fetch({require: true});
+
+      await currentUser.unfollowSchool(school.id);
+
+      res.send({success: true, school});
     } catch (e) {
       res.status(500);
       res.send({error: e.message});

@@ -31,7 +31,8 @@ export default class BaseSchoolPage extends React.Component {
     let {
       current_user,
       page_school,
-      is_logged_in
+      is_logged_in,
+      followTriggers
     } = this.props;
 
     return (
@@ -46,6 +47,7 @@ export default class BaseSchoolPage extends React.Component {
               <SchoolHeader
                 school={page_school}
                 current_user={current_user}
+                followTriggers={followTriggers}
               />
 
               <div className="page__content page__content-horizontal_space">
