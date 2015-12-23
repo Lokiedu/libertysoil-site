@@ -13,7 +13,8 @@
     "test-old": "echo \"Preparing test database...\" && NODE_ENV=test knex migrate:rollback && NODE_ENV=test knex migrate:latest && mocha test",
     "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "docker-start": "knex migrate:latest && gulp build && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
-    "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js"
+    "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js",
+    "lint": "eslint src"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
@@ -91,8 +92,11 @@
   },
   "devDependencies": {
     "adm-zip": "^0.4.7",
+    "babel-eslint": "^4.1.6",
     "browser-sync": "",
     "csv": "^0.4.6",
+    "eslint": "^1.10.3",
+    "eslint-plugin-react": "^3.12.0",
     "nodemon": "^1.8.1",
     "slug": "^0.9.1",
     "tmp": "0.0.28",
