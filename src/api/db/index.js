@@ -53,7 +53,10 @@ export default function initBookshelf(config) {
       return this.belongsToMany(Post, 'favourites', 'user_id', 'post_id');
     },
     followed_labels: function () {
-      return this.belongsToMany(Label, 'followed_labels_users', 'user_id', 'label_id')
+      return this.belongsToMany(Label, 'followed_labels_users', 'user_id', 'label_id');
+    },
+    followed_schools: function () {
+      return this.belongsToMany(School, 'followed_schools_users', 'user_id', 'school_id');
     },
     virtuals: {
       gravatarHash: function() {
@@ -67,6 +70,13 @@ export default function initBookshelf(config) {
     },
     unfollowLabel: async function(labelId) {
       return this.followed_labels().detach(labelId);
+    },
+    followSchool: async function(schoolId) {
+      await this.followed_schools().detach(schoolId);
+      return this.followed_schools().attach(schoolId);
+    },
+    unfollowSchool: async function(schoolId) {
+      return this.followed_schools().detach(schoolId);
     }
   });
 

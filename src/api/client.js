@@ -278,5 +278,15 @@ export default class ApiClient
     return response.body;
   }
 
+  async followSchool(name) {
+    let response = await this.post(`/api/v1/school/${name}/follow`);
+    return response.body;
+  }
+
+  async unfollowSchool(name) {
+    let response = await this.post(`/api/v1/school/${name}/unfollow`);
+    return response.body;
+  }
+
 
 }
