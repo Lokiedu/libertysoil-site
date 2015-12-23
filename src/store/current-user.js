@@ -79,6 +79,29 @@ export default function reducer(state=initialState, action) {
 
       break;
     }
+
+    case a.SET_USER_FOLLOWED_SCHOOLS: {
+      let followedSchools = action.followed_schools.reduce(function (schools, school) {
+        schools[school.url_name] = school;
+        return schools;
+      }, {});
+
+      state = state.set('followed_schools', i.fromJS(followedSchools));
+
+      break;
+    }
+
+    case a.ADD_USER_FOLLOWED_SCHOOL: {
+      state = state.setIn(['followed_schools', action.school.url_name], i.fromJS(action.school));
+
+      break;
+    }
+
+    case a.REMOVE_USER_FOLLOWED_SCHOOL: {
+      state = state.deleteIn(['followed_schools', action.school.url_name]);
+
+      break;
+    }
   }
 
   return state;

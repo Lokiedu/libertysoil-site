@@ -69,7 +69,8 @@ const initialState = i.Map({
   current_user: i.Map({
     id: null,
     tags: i.List([]),
-    followed_tags: i.Map({})
+    followed_tags: i.Map({}),
+    followed_schools: i.Map({})
   }),
   favourites: i.Map({}),
   favourites_river: i.Map({}),
