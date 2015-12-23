@@ -1,6 +1,7 @@
 /*eslint-env node, mocha */
-import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../test-helpers/expect-unit';
+import { TestUtils, unexpected, expect, React } from '../../test-helpers/expect-unit';
 import FollowButton from '../../src/components/follow-button';
+
 
 describe('Follow button Test', function() {
 
@@ -10,7 +11,5 @@ describe('Follow button Test', function() {
     return expect(component, 'to have rendered',
                   <script></script>
     );
-
-    unexpected(true, 'to be true');
   });
 });

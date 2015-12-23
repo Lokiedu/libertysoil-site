@@ -1,12 +1,12 @@
 /*eslint-env node, mocha */
-import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../test-helpers/expect-unit';
+import { TestUtils, expect, React } from '../../test-helpers/expect-unit';
 import { Component } from 'react';
 
 
 class SomeComponent extends Component {
   render() {
     return (<div id={this.props.id}>Some simple content</div>);
-  };
+  }
 }
 
 describe('First test', function() {

@@ -33,9 +33,30 @@ module.exports = {
     client: 'postgresql',
     connection: {
       host     : '127.0.0.1',
+      user     : 'libertysoil',
+      password : 'libertysoil',
+      database : 'libertysoil_test',
+      charset  : 'utf8'
+    },
+    pool: {
+      min: 2,
+      max: 10,
+      ping: function (conn, cb) {
+        conn.query('SELECT 1', cb);
+      }
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
+  },
+
+  travis: {
+    client: 'postgresql',
+    connection: {
+      host     : '127.0.0.1',
       user     : 'postgres',
       password : 'postgres',
-      database : 'libertysoil_test',
+      database : 'libertysoil',
       charset  : 'utf8'
     },
     pool: {
