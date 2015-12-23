@@ -1,13 +1,13 @@
 /*eslint-env node, mocha */
+/*global $dbConfig */
 import uuid from 'uuid';
 import expect from '../../test-helpers/expect';
 import app from '../../index';
 
 import initBookshelf from '../../src/api/db';
-import dbConfig from '../../knexfile';
 
-let bookshelf = initBookshelf(dbConfig['test']);
 
+let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
 
 describe('pages that are available for anonym', function () {

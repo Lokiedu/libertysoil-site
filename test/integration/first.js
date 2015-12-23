@@ -1,12 +1,12 @@
 /*eslint-env node, mocha */
+/*global $dbConfig */
 import uuid from 'uuid';
 import expect from 'unexpected';
 
 import initBookshelf from '../../src/api/db';
-import db_config from '../../knexfile';
 
 
-let bookshelf = initBookshelf(db_config['test']);
+let bookshelf = initBookshelf($dbConfig);
 
 describe('promise Test', function() {
   describe('User.save Promise', function() {
