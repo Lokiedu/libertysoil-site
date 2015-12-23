@@ -1,7 +1,7 @@
 /* eslint-env node, mocha */
 import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../../test-helpers/expect-unit';
 import { TagPage } from '../../../src/pages/tag';
-
+/*
 describe('TagPage', function () {
   describe('FollowTagButton', function () {
     it('renders "Follow" button when a user doesn\'t follow the tag', function() {
@@ -60,3 +60,4 @@ describe('TagPage', function () {
     });
   });
 });
+*/
