@@ -33,7 +33,7 @@ import { likePost, unlikePost, favPost, unfavPost, followTag, unfollowTag } from
 import { defaultSelector } from '../selectors';
 
 
-class TagPage extends Component {
+export class TagPage extends Component {
   static displayName = 'TagPage'
 
   static async fetchData(params, props, client) {
