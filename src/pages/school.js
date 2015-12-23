@@ -28,7 +28,7 @@ import { addSchool, setSchoolPosts } from '../actions';
 import { likePost, unlikePost, favPost, unfavPost, followSchool, unfollowSchool } from '../triggers'
 import { defaultSelector } from '../selectors';
 
-class SchoolPage extends React.Component {
+export class SchoolPage extends React.Component {
   static async fetchData(params, props, client) {
     try {
       let schoolInfo = await client.schoolInfo(params.school_name);
