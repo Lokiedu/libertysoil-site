@@ -20,6 +20,7 @@ import React from 'react';
 //import FollowButton from './follow-button';
 import { Link } from 'react-router';
 import moment from 'moment';
+import FollowTagButton from './follow-tag-button';
 //import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 export default class SchoolHeader extends React.Component {
@@ -29,6 +30,7 @@ export default class SchoolHeader extends React.Component {
     const { 
       school, 
       current_user,
+      followTriggers
       /*
       i_am_following,
       following,
@@ -94,6 +96,14 @@ export default class SchoolHeader extends React.Component {
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="profile__title">{name}</div>
                 <div className="profile__updated_at">{updated_at}</div>
+              </div>
+              <div className="layout__grid_item layout__grid_item-small">
+                <FollowTagButton
+                  current_user={current_user}
+                  followed_tags={current_user.followed_schools}
+                  tag={school.url_name}
+                  triggers={followTriggers}
+                />
               </div>
               {/*
               <div className="layout__grid_item">

@@ -25,7 +25,7 @@ import River from '../components/river_of_posts';
 
 import { getStore } from '../store';
 import { addSchool, setSchoolPosts } from '../actions';
-import { likePost, unlikePost, favPost, unfavPost } from '../triggers'
+import { likePost, unlikePost, favPost, unfavPost, followSchool, unfollowSchool } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SchoolPage extends React.Component {
@@ -43,6 +43,7 @@ class SchoolPage extends React.Component {
 
   render() {
     let postTriggers = {likePost, unlikePost, favPost, unfavPost};
+    let followTriggers = {followTag: followSchool, unfollowTag: unfollowSchool};
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
     let schoolPosts = this.props.school_posts[school.id];
     let linesOfDescription = <p>No information provided...</p>;
@@ -66,6 +67,7 @@ class SchoolPage extends React.Component {
         current_user={this.props.current_user}
         page_school={school}
         is_logged_in={this.props.is_logged_in}
+        followTriggers={followTriggers}
       >
         <div className="paper">
           <div className="paper__page content">
