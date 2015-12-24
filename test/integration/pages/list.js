@@ -17,6 +17,8 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
+import { jsdom } from 'jsdom';
+
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 import { login } from '../../../test-helpers/api';
@@ -45,8 +47,16 @@ describe('ListPage', () => {
       await user.destroy();
     });
 
-    it('user can open /', async () => {
-      await expect({ url: '/', session: sessionId }, 'to open successfully');
+    it('user can open / and see posting form', async () => {
+      let context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+
+      let document = jsdom(context.httpResponse.body);
+
+      let pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
+      await expect(pageContent, 'to have child', '.box-post');  // posting form
+
+      let postsContainer = pageContent.childNodes[1];
+      await expect(postsContainer, 'to have no children');
     });
   });
 });

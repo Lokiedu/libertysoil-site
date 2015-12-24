@@ -6,6 +6,7 @@ import app from '../index';
 
 
 expect.installPlugin(require('unexpected-express'));
+expect.installPlugin(require('unexpected-dom'));
 
 let subjectToRequest = (subject) => {
   if (isString(subject)) {
