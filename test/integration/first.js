@@ -13,7 +13,11 @@ describe('promise Test', function() {
     let User = bookshelf.model('User');
 
     beforeEach(async () => {
-      return bookshelf.knex('users').del();
+      await bookshelf.knex('users').del();
+    });
+
+    afterEach(async () => {
+      await bookshelf.knex('users').del();
     });
 
     it('should fail on saving user with existing username', async () => {

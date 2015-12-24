@@ -22,8 +22,14 @@ import uuid from 'uuid'
 import _ from 'lodash'
 import fileType from 'file-type';
 import mime from 'mime';
+import bb from 'bluebird';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto'
 
 import { uploadAttachment, downloadAttachment, getMetadata, generateName } from '../../utils/attachments';
+
+
+let bcryptAsync = bb.promisifyAll(bcrypt);
 
 export default function initBookshelf(config) {
   let knex = Knex(config);
@@ -79,6 +85,29 @@ export default function initBookshelf(config) {
       return this.followed_schools().detach(schoolId);
     }
   });
+
+  User.create = async function(username, password, email, moreData) {
+    let hashed_password = await bcryptAsync.hashAsync(password, 10);
+
+    let random = Math.random().toString();
+    let email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
+
+    let obj = new User({
+      id: uuid.v4(),
+      username,
+      hashed_password,
+      email,
+      email_check_hash
+    });
+
+    if (!_.isEmpty(moreData)) {
+      obj.set('more', moreData);
+    }
+
+    await obj.save(null, {method: 'insert'});
+
+    return obj;
+  };
 
   Post = bookshelf.Model.extend({
     tableName: 'posts',

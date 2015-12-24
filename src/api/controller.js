@@ -664,19 +664,6 @@ export default class ApiController {
       }
     }
 
-    let hashedPassword = await bcryptAsync.hashAsync(req.body.password, 10);
-
-    let random = Math.random().toString();
-    let sha1 = crypto.createHash('sha1').update(req.body.email + random).digest('hex');
-
-    let obj = new User({
-      id: uuid.v4(),
-      username: req.body.username,
-      hashed_password: hashedPassword,
-      email: req.body.email,
-      email_check_hash: sha1
-    });
-
     let moreData = {};
     for (let fieldName of optionalFields) {
       if (fieldName in req.body) {
@@ -686,34 +673,28 @@ export default class ApiController {
 
     moreData.first_login = true;
 
-    if (!_.isEmpty(moreData)) {
-      obj.set('more', moreData);
-    }
+    let user;
 
     try {
-      await obj.save(null, {method: 'insert'});
-
-      if (req.session) {
-        req.session.user = obj.id;
-      }
-
-      let html = await renderWelcomeTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/api/verify/${sha1}`);
-      await sendEmail('Welcome to Libertysoil.org', html, req.body.email);
-
-      res.send({success: true, user: obj});
+      user = await User.create(req.body.username, req.body.password, req.body.email, moreData);
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
         res.send({error: 'User already exists'});
         return;
       } else {
-        console.log(e);
-
-        res.status(500);
-        res.send({error: e.message});
-        return;
+        throw e;
       }
     }
+
+    if (req.session) {
+      req.session.user = user.id;
+    }
+
+    let html = await renderWelcomeTemplate(new Date(), user.get('username'), user.get('email'), `http://www.libertysoil.org/api/verify/${user.get('email_check_hash')}`);
+    await sendEmail('Welcome to Libertysoil.org', html, user.get('email'));
+
+    res.send({success: true, user: user});
   }
 
   async login(req, res) {
