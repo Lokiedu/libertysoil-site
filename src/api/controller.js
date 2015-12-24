@@ -120,6 +120,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
+      return;
     }
     let Post = this.bookshelf.model('Post');
 
@@ -150,6 +151,7 @@ export default class ApiController {
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404);
+      return;
     }
   }
 
@@ -157,6 +159,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
+      return;
     }
     let Post = this.bookshelf.model('Post');
 
@@ -180,6 +183,7 @@ export default class ApiController {
     } catch (ex) {
       res.status(500);
       res.send(ex.message);
+      return;
     }
   }
 
@@ -212,6 +216,7 @@ export default class ApiController {
     } catch (ex) {
       res.status(500);
       res.send(ex.message);
+      return;
     }
   }
 
@@ -219,6 +224,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
+      return;
     }
     let Post = this.bookshelf.model('Post');
 
@@ -242,6 +248,7 @@ export default class ApiController {
     } catch (ex) {
       res.status(500);
       res.send(ex.message);
+      return;
     }
   }
 
@@ -274,6 +281,7 @@ export default class ApiController {
     } catch (ex) {
       res.status(500);
       res.send(ex.message);
+      return;
     }
   }
 
@@ -288,6 +296,7 @@ export default class ApiController {
       res.send(school.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -299,6 +308,7 @@ export default class ApiController {
       res.send(schools.toJSON());
     } catch (e) {
       res.sendStatus(404);
+      return;
     }
   }
 
@@ -310,6 +320,7 @@ export default class ApiController {
       res.send(countries.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -321,6 +332,7 @@ export default class ApiController {
       res.send(country.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -358,6 +370,7 @@ export default class ApiController {
       res.send(response.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -369,6 +382,7 @@ export default class ApiController {
       res.send(city.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -395,6 +409,7 @@ export default class ApiController {
     } catch (e) {
       console.log(e);
       res.sendStatus(404)
+      return;
     }
   }
 
@@ -440,6 +455,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -447,6 +463,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let result = { success: false };
@@ -482,6 +499,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
+      return;
     }
 
     let result = { success: false };
@@ -517,6 +535,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let result = { success: false };
@@ -552,6 +571,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let result = { success: false };
@@ -685,11 +705,13 @@ export default class ApiController {
       if (e.code == 23505) {
         res.status(401);
         res.send({error: 'User already exists'});
+        return;
       } else {
         console.log(e);
 
         res.status(500);
         res.send({error: e.message});
+        return;
       }
     }
   }
@@ -769,6 +791,7 @@ export default class ApiController {
     if (req.session && req.session.user) {
       res.status(403);
       res.send({error: 'Please use profile change password feature.'});
+      return;
     }
 
     for (let fieldName of ['email']) {
@@ -867,6 +890,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let following = await this.bookshelf.knex
@@ -906,6 +930,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let User = this.bookshelf.model('User');
@@ -932,6 +957,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('type' in req.body)) {
@@ -1026,6 +1052,7 @@ export default class ApiController {
       console.log(e.stack);
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1033,11 +1060,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('id' in req.params)) {
       res.status(400);
       res.send({error: '"id" parameter is not given'});
+      return;
     }
 
     let Post = this.bookshelf.model('Post');
@@ -1121,6 +1150,7 @@ export default class ApiController {
 
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1128,11 +1158,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!('id' in req.params)) {
       res.status(400);
       res.send({error: '"id" parameter is not given'});
+      return;
     }
 
     let Post = this.bookshelf.model('Post');
@@ -1143,6 +1175,7 @@ export default class ApiController {
     } catch(e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
     res.status(200);
     res.send({success: true});
@@ -1168,6 +1201,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let User = this.bookshelf.model('User');
@@ -1220,6 +1254,7 @@ export default class ApiController {
       console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
+      return;
     }
   }
 
@@ -1261,6 +1296,7 @@ export default class ApiController {
       console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
+      return;
     }
   }
 
@@ -1268,6 +1304,7 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     let User = this.bookshelf.model('User');
@@ -1303,11 +1340,13 @@ export default class ApiController {
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
+      return;
     }
 
     if (!req.files.length) {
       res.status(400);
       res.send({error: '"files" parameter is not provided'});
+      return;
     }
 
     let Attachment = this.bookshelf.model('Attachment');
@@ -1327,6 +1366,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: `Upload failed: ${e.stack}`});
+      return;
     }
   }
 
@@ -1416,6 +1456,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: `Image transformation failed: ${e.message}`});
+      return;
     }
 
   }
@@ -1440,6 +1481,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1468,6 +1510,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1497,6 +1540,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1526,6 +1570,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1556,6 +1601,7 @@ export default class ApiController {
       console.log(e.stack)
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 
@@ -1585,6 +1631,7 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
     }
   }
 }
