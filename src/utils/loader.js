@@ -24,10 +24,10 @@
  * @returns {Function}
  */
 export function combineHandlers(...handlers) {
-  return function (nextState, replaceState) {
+  return function (nextState, replaceState, callback) {
     for (let handler of handlers) {
       if (handler) {
-        let shouldInterrupt = handler(nextState, replaceState);
+        let shouldInterrupt = handler(nextState, replaceState, callback);
 
         if (shouldInterrupt === true) {
           return;
