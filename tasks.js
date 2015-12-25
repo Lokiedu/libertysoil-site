@@ -7,17 +7,26 @@ let queue = kueLib.createQueue(config.kue);
 
 queue.process('register-user-email', async function(job, done) {
   const { username,
-        email,
-        hash } = job.data;
-  let html = await renderWelcomeTemplate(new Date(), username, email, `http://www.libertysoil.org/api/verify/${hash}`);
-  await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
-  done();
+          email,
+          hash } = job.data;
+
+  try {
+    let html = await renderWelcomeTemplate(new Date(), username, email, `http://www.libertysoil.org/api/verify/${hash}`);
+    await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
+    done();
+  } catch (e) {
+    console.log(`Job error: ${e.message}`);
+  }
 });
 
 queue.process('reset-password-email', async function(job, done) {
-  let html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `http://www.libertysoil.org/newpassword/${job.data.hash}`);
-  await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
-  done();
+  try {
+    let html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `http://www.libertysoil.org/newpassword/${job.data.hash}`);
+    await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
+    done();
+  } catch (e) {
+    console.log(`Job error: ${e.message}`);
+  }
 });
 
 console.log('Job service started');
