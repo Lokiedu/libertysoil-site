@@ -24,6 +24,10 @@ import { sendEmail } from './src/utils/email';
 
 let queue = kueLib.createQueue(config.kue);
 
+queue.on('error', (err) => {
+  process.stderr.write(`${err.message}\n`);
+});
+
 queue.process('register-user-email', async function(job, done) {
   const { username,
           email,
@@ -48,4 +52,4 @@ queue.process('reset-password-email', async function(job, done) {
   }
 });
 
-console.log('Job service started');
+process.stdout.write(`Job service started\n`);
