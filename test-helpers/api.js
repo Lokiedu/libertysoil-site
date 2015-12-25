@@ -39,6 +39,10 @@ export async function login(username, password) {
     }
   );
 
+  if (res.status !== 200) {
+    throw new Error(`Server response code: ${res.status}`);
+  }
+
   let cookieLines = res.headers.getAll('set-cookie');
   for (let line of cookieLines) {
     let cookies = parseCookie(line);

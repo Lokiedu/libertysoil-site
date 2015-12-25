@@ -5,6 +5,7 @@ node_js:
 
 services:
   - postgresql
+  - redis-server
 
 env:
   - CXX=g++-4.8 NODE_ENV=development DB_ENV=travis
