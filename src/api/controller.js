@@ -25,6 +25,7 @@ import request from 'superagent';
 import crypto from 'crypto'
 import { sendEmail } from '../utils/email';
 import { renderWelcomeTemplate, renderResetTemplate } from '../email-templates/index';
+import kueLib from 'kue';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
@@ -773,6 +774,7 @@ export default class ApiController {
    * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
    */
   async resetPassword(req, res) {
+    let queue = kueLib.createQueue(config.kue);
 
     if (req.session && req.session.user) {
       res.status(403);
@@ -810,8 +812,11 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
     }
 
+    queue.create('reset-password-email', {}).save();
+
     let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/newpassword/${user.get('reset_password_hash')}`);
     await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
+
     res.status(200);
     res.send({success: true});
   }
