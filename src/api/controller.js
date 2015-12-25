@@ -698,6 +698,13 @@ export default class ApiController {
   }
 
   async login(req, res) {
+    if (!req.session) {
+      res.status(500);
+      res.send({error: 'Internal Server Error'});
+      console.error('Session engine is not available, have you started redis service?');
+      return;
+    }
+
     let requiredFields = ['username', 'password'];
 
     for (let fieldName of requiredFields) {
@@ -729,10 +736,8 @@ export default class ApiController {
       res.send({success: false});
       return
     }
-    if (req.session) {
-      req.session.user = user.id;
-    }
 
+    req.session.user = user.id;
     user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send({ success: true, user });
