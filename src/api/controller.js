@@ -23,14 +23,12 @@ import uuid from 'uuid'
 import fs from 'fs';
 import request from 'superagent';
 import crypto from 'crypto'
-import { sendEmail } from '../utils/email';
-import { renderWelcomeTemplate, renderResetTemplate } from '../email-templates/index';
+import { createJob } from '../utils/queue';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
-
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -691,8 +689,11 @@ export default class ApiController {
       req.session.user = user.id;
     }
 
-    let html = await renderWelcomeTemplate(new Date(), user.get('username'), user.get('email'), `http://www.libertysoil.org/api/verify/${user.get('email_check_hash')}`);
-    await sendEmail('Welcome to Libertysoil.org', html, user.get('email'));
+    createJob('register-user-email', {
+      username: user.get('username'),
+      email: user.get('email'),
+      hash: user.get('email_check_hash')
+    });
 
     res.send({success: true, user: user});
   }
@@ -810,8 +811,12 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
     }
 
-    let html = await renderResetTemplate(new Date(), req.body.username, req.body.email, `http://www.libertysoil.org/newpassword/${user.get('reset_password_hash')}`);
-    await sendEmail('Reset Libertysoil.org Password', html, req.body.email);
+    createJob('reset-password-email', {
+      username: user.get('username'),
+      email: req.body.email,
+      hash: user.get('reset_password_hash')
+    });
+
     res.status(200);
     res.send({success: true});
   }

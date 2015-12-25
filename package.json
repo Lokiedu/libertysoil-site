@@ -9,6 +9,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "tasks": "babel-node tasks.js",
     "test": "echo \"Preparing test database...\" && babel-node test-helpers/dropDatabase.js && knex --env test migrate:latest && DB_ENV=test mocha test",
     "test-old": "echo \"Preparing test database...\" && knex --env test migrate:rollback && knex --env test migrate:latest && DB_ENV=test mocha test",
     "travis": "echo \"Preparing test database...\" && knex --env travis migrate:latest && DB_ENV=travis mocha test",
@@ -60,6 +61,7 @@
     "history": "^1.17.0",
     "immutable": "^3.7.5",
     "knex": "^0.9.0",
+    "kue": "^0.10.4",
     "lodash": "^3.10.1",
     "lwip": "0.0.8",
     "mandrill-api": "^1.0.45",

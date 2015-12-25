@@ -15,27 +15,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { renderFile } from 'ejs';
-import { promisify } from 'bluebird';
-import moment from 'moment';
+import kueLib from 'kue';
+
+import config from '../../config';
 
 
-let renderFileAsync = promisify(renderFile);
+let queue = kueLib.createQueue(config.kue);
 
-export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+export async function createJob(name, data) {
+  let promise = new Promise((resolve, reject) => {
+    queue.create(name, data).save(function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
 
-  return await renderFileAsync(
-    `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, username }
-  );
-}
-
-export async function renderWelcomeTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
-
-  return await renderFileAsync(
-    `${__dirname}/welcome.ejs`,
-    { confirmationLink, date, email, username }
-  );
+  return await promise;
 }
