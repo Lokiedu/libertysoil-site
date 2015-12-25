@@ -15,7 +15,7 @@ queue.process('register-user-email', async function(job, done) {
     await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {
-    console.log(`Job error: ${e.message}`);
+    done(e);
   }
 });
 
@@ -25,7 +25,7 @@ queue.process('reset-password-email', async function(job, done) {
     await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
     done();
   } catch (e) {
-    console.log(`Job error: ${e.message}`);
+    done(e);
   }
 });
 
