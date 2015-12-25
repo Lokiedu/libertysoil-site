@@ -1,5 +1,7 @@
+/*eslint-env node, mocha */
 import kueLib from 'kue';
 import expect from 'unexpected';
+
 
 let queue = kueLib.createQueue();
 
