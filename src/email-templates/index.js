@@ -16,19 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { renderFile } from 'ejs';
-import Promise from 'bluebird';
+import { promisify } from 'bluebird';
 import moment from 'moment';
 
 
-let renderFileAsync = Promise.promisifyAll(renderFile);
+let renderFileAsync = promisify(renderFile);
 
 export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
   let date = moment(dateObject).format('Do [of] MMMM YYYY');
 
   return await renderFileAsync(
     `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, username },
-    function(error, result) {return result;}
+    { confirmationLink, date, email, username }
   );
 }
 
@@ -37,7 +36,6 @@ export async function renderWelcomeTemplate(dateObject, username, email, confirm
 
   return await renderFileAsync(
     `${__dirname}/welcome.ejs`,
-    { confirmationLink, date, email, username },
-    function(error, result) {return result;}
+    { confirmationLink, date, email, username }
   );
 }
