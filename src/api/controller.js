@@ -689,8 +689,11 @@ export default class ApiController {
       req.session.user = user.id;
     }
 
-    let html = await renderWelcomeTemplate(new Date(), user.get('username'), user.get('email'), `http://www.libertysoil.org/api/verify/${user.get('email_check_hash')}`);
-    await sendEmail('Welcome to Libertysoil.org', html, user.get('email'));
+    createJob('register-user-email', {
+      username: user.get('username'),
+      email: user.get('email'),
+      hash: user.get('email_check_hash')
+    });
 
     res.send({success: true, user: user});
   }

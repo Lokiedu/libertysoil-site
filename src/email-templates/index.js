@@ -28,7 +28,7 @@ export async function renderResetTemplate(dateObject, username, email, confirmat
   return await renderFileAsync(
     `${__dirname}/reset.ejs`,
     { confirmationLink, date, email, username },
-    function(error, result) {return result;},
+    function(error, result) {return result;}
   );
 }
 
@@ -37,6 +37,7 @@ export async function renderWelcomeTemplate(dateObject, username, email, confirm
 
   return await renderFileAsync(
     `${__dirname}/welcome.ejs`,
-    { confirmationLink, date, email, username }
+    { confirmationLink, date, email, username },
+    function(error, result) {return result;}
   );
 }
