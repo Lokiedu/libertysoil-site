@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import fetch from 'node-fetch';
-import { parse as parseCookie } from 'cookie';
+import { parse as parseCookie, serialize } from 'cookie';
 
 
 /**
@@ -49,4 +49,37 @@ export async function login(username, password) {
   }
 
   throw new Error('no session-cookie in response');
+}
+
+/**
+ * Create post and return it id
+ *
+ * @param {String} session
+ * @param {String} type
+ * @param {Object} data
+ * @return {String} session-id
+ */
+export async function createPost(session, type, data) {
+  let res = await fetch(
+    'http://127.0.0.1:8000/api/v1/posts',
+    {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cookie': serialize('connect.sid', session) 
+      },
+      body: JSON.stringify({
+        type: 'short_text',
+        text: 'Lorem ipsum dolor sit amet, consectetur adipisicing'
+      })
+    }
+  );
+  try {
+    res = await res.json();
+    return res.id;
+  }
+  catch (e) {
+    throw new Error('Post creating fail: ' + e);
+  }
 }

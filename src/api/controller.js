@@ -25,6 +25,8 @@ import request from 'superagent';
 import crypto from 'crypto'
 import { sendEmail } from '../utils/email';
 import { renderWelcomeTemplate, renderResetTemplate } from '../email-templates/index';
+import graphemeBreaker from 'grapheme-breaker';
+import slug from 'slug';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
@@ -1006,12 +1008,29 @@ export default class ApiController {
       user_id: req.session.user
     });
 
+    let more = {};
+
     if (req.body.type === 'short_text') {
       obj.set('text', req.body.text);
     } else if (req.body.type === 'long_text') {
       obj.set('text', req.body.text);
-      obj.set('more', {title: req.body.title});
+      more.title = req.body.title;
     }
+
+
+    let user = await obj.related('user').fetch();
+
+    let first50GraphemesOfText = graphemeBreaker.break(obj.attributes.text).slice(0, 49).join('');
+
+    first50GraphemesOfText = first50GraphemesOfText.replace(/(\w+)$/u, '').trim();
+
+    more.pageTitle = user.attributes.username + ': ' + first50GraphemesOfText;
+
+    obj.set('more', more);
+
+    let urlName = slug(more.pageTitle) + '-' + obj.id;
+
+    obj.set('url_name', urlName);
 
     try {
       await obj.save(null, {method: 'insert'});
