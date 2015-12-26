@@ -15,34 +15,33 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-let TagCloud = ({tags}) => {
-  if (tags.length == 0) {
-    return <script/>;
+import Tag from './tag';
+import { convertModeldsToTags } from '../utils/tags';
+
+export default class TagCloud extends React.Component {
+  static displayName = 'TagCloud';
+
+  static propTypes = {
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      url_name: PropTypes.string
+    })),
+    tags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    }))
+  };
+
+  render() {
+    let tags = convertModeldsToTags(this.props)
+      .map((tag, index) => <Tag key={index} {...tag} />);
+
+    return (
+      <div className="tags">
+        {tags}
+      </div>
+    );
   }
-
-  let tagBlocks = tags.map(tag => (
-    <Link to={`/tag/${tag.name}`} className="tag tag-blue" key={`tag-${tag.id}`}>
-      {tag.name}
-    </Link>
-  ));
-
-  return (
-    <div className="tags">
-      {tagBlocks}
-    </div>
-  );
-};
-
-TagCloud.displayName = "TagCloud";
-TagCloud.propTypes = {
-  tags: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.string,
-    name: React.PropTypes.string
-  }))
-};
-
-
-export default TagCloud;
+}
