@@ -18,7 +18,7 @@
 import kueLib from 'kue';
 
 import config from './config';
-import { renderWelcomeTemplate, renderResetTemplate } from './src/email-templates/index';
+import { renderVerificationTemplate, renderResetTemplate } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 
 
@@ -34,8 +34,8 @@ queue.process('register-user-email', async function(job, done) {
           hash } = job.data;
 
   try {
-    let html = await renderWelcomeTemplate(new Date(), username, email, `http://www.libertysoil.org/api/verify/${hash}`);
-    await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
+    let html = await renderVerificationTemplate(new Date(), username, email, `http://www.libertysoil.org/api/verify/${hash}`);
+    await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {
     done(e);
@@ -46,6 +46,17 @@ queue.process('reset-password-email', async function(job, done) {
   try {
     let html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `http://www.libertysoil.org/newpassword/${job.data.hash}`);
     await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+queue.process('verify-email', async function(job, done) {
+  try {
+    const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
+
+    await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {
     done(e);

@@ -31,11 +31,20 @@ export async function renderResetTemplate(dateObject, username, email, confirmat
   );
 }
 
-export async function renderWelcomeTemplate(dateObject, username, email, confirmationLink) {
+export async function renderVerificationTemplate(dateObject, username, email, confirmationLink) {
+  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+  return await renderFileAsync(
+    `${__dirname}/verification.ejs`,
+    { confirmationLink, date, email, username }
+  );
+}
+
+export async function renderWelcomeTemplate(dateObject, username, email) {
   let date = moment(dateObject).format('Do [of] MMMM YYYY');
 
   return await renderFileAsync(
     `${__dirname}/welcome.ejs`,
-    { confirmationLink, date, email, username }
+    { date, email, username }
   );
 }

@@ -680,10 +680,6 @@ export default class ApiController {
       throw e;
     }
 
-    if (req.session) {
-      req.session.user = user.id;
-    }
-
     createJob('register-user-email', {
       username: user.get('username'),
       email: user.get('email'),
@@ -733,6 +729,13 @@ export default class ApiController {
       return
     }
 
+    if (user.get('email_check_hash')) {
+      console.log(`user '${req.body.username}' has not validated email`);
+      res.status(401);
+      res.send({success: false, error: 'Please follow the instructions mailed to you during registration.'});
+      return;
+    }
+
     req.session.user = user.id;
     user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
@@ -755,6 +758,11 @@ export default class ApiController {
 
     user.set('email_check_hash', '');
     await user.save(null, {method: 'update'});
+
+    createJob('verify-email', {
+      username: user.get('username'),
+      email: req.body.email
+    });
 
     res.redirect('/');
   }
