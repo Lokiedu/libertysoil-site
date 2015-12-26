@@ -42,7 +42,7 @@ import tag_cloud from './tag_cloud';
 
 let store;
 
-const theReducer = combineReducers(i.Map({
+export const theReducer = combineReducers(i.Map({
   routing: routeReducer,
   current_user,
   favourites,
