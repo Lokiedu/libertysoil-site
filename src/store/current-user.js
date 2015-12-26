@@ -32,7 +32,8 @@ export default function reducer(state=initialState, action) {
     {
       const oldUid = state.get('id');
 
-      if (oldUid === action.user.id) {
+      if (!action.user || oldUid === action.user.id) {
+
         break;
       }
 

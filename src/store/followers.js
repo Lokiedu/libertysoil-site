@@ -28,9 +28,10 @@ export default function reducer(state=initialState, action) {
     case a.ADD_USER:
     case a.SET_CURRENT_USER:
     {
-      if (action.user.followers) {
+      if (action.user && action.user.followers) {
         state = state.set(action.user.id, i.List(action.user.followers.map(user => user.id)));
       }
+
       break;
     }
   }

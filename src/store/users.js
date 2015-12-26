@@ -26,6 +26,11 @@ const initialState = i.Map({});
 const cleanUser = user => {
   let users = {};
 
+  if (!user) {
+
+    return users;
+  }
+
   if (user.following) {
     for (let followed_user of user.following) {
       users[followed_user.id] = followed_user;
@@ -55,6 +60,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_CURRENT_USER:
     {
       state = state.merge(i.fromJS(cleanUser(action.user)));
+
       break;
     }
 
