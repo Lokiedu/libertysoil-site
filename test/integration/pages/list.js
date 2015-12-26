@@ -41,6 +41,7 @@ describe('ListPage', () => {
     beforeEach(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
+      await user.save({'email_check_hash': ''},{require:true});
 
       sessionId = await login('test', 'test');
     });
