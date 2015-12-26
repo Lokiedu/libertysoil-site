@@ -19,6 +19,9 @@ import React from 'react';
 import { Link } from 'react-router';
 import _ from 'lodash';
 
+import Tag from '../tag';
+import { TAG_HASHTAG, TAG_SCHOOL } from '../../utils/tags';
+
 export default class TagLine extends React.Component {
   static displayName = "TagLine"
 
@@ -46,17 +49,13 @@ export default class TagLine extends React.Component {
 
     let schoolBlocks = schools.map(school => {
       return (
-        <Link to={`/s/${school.url_name}`} className='tag school' key={`school-${school.id}`}>
-          {school.name}
-        </Link>
+        <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
       )
     });
 
     let tagBlocks = tags.map(tag => {
       return (
-        <Link to={`/tag/${tag.name}`} className='tag' key={`tag-${tag.id}`}>
-          {tag.name}
-        </Link>
+        <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
       )
     });
 
