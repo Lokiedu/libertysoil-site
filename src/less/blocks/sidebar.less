@@ -15,33 +15,43 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+.sidebar {
+  &__followed_tag {
+    display: flex;
+    padding: 10px;
 
-import Tag from './tag';
-import { convertModeldsToTags } from '../utils/tags';
+    &:hover {
+      background-color: #FAF9F9;
+    }
 
-export default class TagCloud extends React.Component {
-  static displayName = 'TagCloud';
+    &__icon {
+      flex-shrink: 0;
+      display: block;
+      width: 18px;
+      height: 18px;
+      background-color: gray;
+      border-radius: 50%;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 18px;
+      text-align: center;
+    }
 
-  static propTypes = {
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    }))
-  };
+    &__name {
+      display: block;
+      margin-left: 10px;
+    }
+  }
 
-  render() {
-    let tags = convertModeldsToTags(this.props)
-      .map((tag, index) => <Tag key={index} {...tag} />);
+  &__user_tags {
+    margin-left: 10px;
+  }
 
-    return (
-      <div className="tags">
-        {tags}
-      </div>
-    );
+  &__heading {
+    margin-left: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #FF2658;
   }
 }

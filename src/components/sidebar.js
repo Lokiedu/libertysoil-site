@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { Link, IndexLink } from 'react-router';
 
@@ -26,26 +27,8 @@ import { setUserTags } from '../actions';
 import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
+import SidebarFollowedTags from './sidebar-followed-tags';
 import { defaultSelector } from '../selectors';
-
-let SidebarTagCloud = ({ tags, title, ...props }) => {
-  if (tags.length == 0) {
-    return <script/>;
-  }
-
-  return (
-    <div {...props}>
-      <div className="layout__row">
-        <h4 className="head head-sub">{title}</h4>
-      </div>
-      <div className="layout__row">
-        <TagCloud tags={tags}/>
-      </div>
-    </div>
-  );
-};
-
-SidebarTagCloud.displayName = "SidebarTagCloud";
 
 class Sidebar extends React.Component {
   static displayName = 'Sidebar'
@@ -78,6 +61,8 @@ class Sidebar extends React.Component {
 
     let likes_enabled = (current_user.likes && current_user.likes.length > 0);
     let favorites_enabled = (current_user.favourites && current_user.favourites.length > 0);
+    let followedTags = _.values(current_user.followed_tags);
+    let followedSchools = _.values(current_user.followed_schools);
 
     return (
       <div className="page__sidebar font-open_sans">
@@ -90,7 +75,19 @@ class Sidebar extends React.Component {
           <NavigationItem  enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`} icon="star">My Favorites</NavigationItem>
         </div>
 
-        <SidebarTagCloud className="layout__row layout__row-double" tags={this.props.current_user_tags} title="Tags" />
+        <div className="layout__row layout__row-double">
+          <h4 className="sidebar__heading">I follow</h4>
+          <div className="layout__row">
+            <SidebarFollowedTags tags={followedTags} schools={followedSchools} />
+          </div>
+        </div>
+
+        <div className="layout__row layout__row-double">
+          <h4 className="sidebar__heading">I post to</h4>
+          <div className="sidebar__user_tags layout__row">
+            <TagCloud tags={this.props.current_user_tags} schools={[]}/>
+          </div>
+        </div>
       </div>
     );
   }

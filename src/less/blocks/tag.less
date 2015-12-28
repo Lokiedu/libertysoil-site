@@ -16,21 +16,48 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .tag {
-  &:extend(.layout);
-  &:extend(.layout-align_vertical);
-  &.school {
-    border: 1px solid @color__green;
-    color: @color__green;
-  }
-  
-  padding: 3px 10px;
+  @height: 23px;
+  @icon-size: @height;
+
+  display: block;
+  position: relative;
+  height: @height;
+  margin-left: @icon-size / 2;
+  background-color: white;
   border: 1px solid #ccc;
-  border-radius: @space;
+  border-radius: 0 @space @space 0;
+  box-sizing: border-box;
   font-size: @font__size-small;
 
-  &-blue {
-    border: 1px solid @color__blue;
-    color: @color__blue;
-    background: #fff;
+  &__icon {
+    // This fixes the connection between the icon and the tag's border.
+    position: absolute;
+    top: -1px;
+    left: -(@icon-size / 2);
+  }
+
+  &__name {
+    padding: 1px 12px 1px (@icon-size / 2 + 7px);
+    line-height: @height;
+  }
+
+  &-hashtag {
+    border-color: #689ACA;
+  }
+
+  &-school {
+    border-color: #DC3457;
+  }
+
+  &-event {
+    border-color: #98C646;
+  }
+
+  &-mention {
+    border-color: #F8A232;
+  }
+
+  &-location {
+    border-color: #47B8E7;
   }
 }

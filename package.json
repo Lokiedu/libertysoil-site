@@ -49,6 +49,7 @@
     "file-type": "^3.3.0",
     "font-awesome": "",
     "grapheme-breaker": "^0.3.2",
+    "grapheme-utils": "^0.1.0",
     "gulp": "",
     "gulp-autoprefixer": "",
     "gulp-concat": "",
