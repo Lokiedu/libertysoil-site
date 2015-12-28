@@ -19,8 +19,8 @@ module.exports = {
   },
   kue: {
     redis: {
-      // port: 6370,
-      // host: 'localhost',
+      host: '127.0.0.1',
+      port: 6379,
       db: 1 // if provided select a non-default redis db
       // options: {
       //   // see https://github.com/mranney/node_redis#rediscreateclient

@@ -21,6 +21,17 @@ app:
     - "DB_ENV=staging"
   env_file:
     - "./secrets.env"
+queue:
+  image: "quay.io/dipstudio/libertysoil:master"
+  links:
+    - db
+    - redis
+  environment:
+    - "API_HOST=http://www.libertysoil.org"
+    - "DB_ENV=staging"
+  env_file:
+    - "./secrets.env"
+  command: npm run tasks
 web:
   image: "jwilder/nginx-proxy"
   ports:
