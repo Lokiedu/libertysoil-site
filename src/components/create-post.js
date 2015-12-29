@@ -21,6 +21,9 @@ import _ from 'lodash';
 import postTypeConstants from '../consts/postTypeConstants';
 import { EditPost } from './post';
 import TagsEditor from './post/tags-editor';
+import TagIcon from './tag-icon';
+import MoreButton from './more-button';
+import * as TagType from '../utils/tags';
 
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
@@ -31,48 +34,117 @@ export default class CreatePost extends React.Component {
     })
   };
 
-  submitHandler(event) {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      expanded: false,
+      expandedViaMore: false
+    }
+  }
+
+  _handleSubmit = async (event) => {
     event.preventDefault();
 
     let form = event.target;
 
-    this.props.triggers.createPost(
-      'short_text',
-      {
-        text: form.text.value,
-        tags: this.editor.getTags(),
-        schools: this.editor.getSchools()
-      }
-    ).then(() => {
-      form.text.value = '';
+    if (form.text.value.trim().length === 0) {
+      return;
+    }
+
+    // TODO: Add tags
+    await this.props.triggers.createPost('short_text', {
+      text: form.text.value
     });
+
+    form.text.value = '';
+
+  };
+
+  _handleFocus = () => {
+    this.setState({
+      expanded: true
+    });
+  };
+
+  _handleBlur = (event) => {
+    if (event.target.value.trim().length === 0 &&
+        !this.state.expandedViaMore) {
+      this.setState({
+        expanded: false
+      });
+    }
+  };
+
+  _handleClickOnMore = () => {
+    this.setState({
+      expanded: !this.state.expanded,
+      expandedViaMore: !this.state.expanded
+    });
+  };
+
+  /**
+   * Renders a textarea with artificial caret.
+   * @private
+   */
+  _renderTextarea() {
+    return (
+      <div className="create_post__text_input_wrapper">
+        {(!this.state.expanded) ? <div className="create_post__caret"></div> : null}
+        <textarea
+          className="input input-block create_post__text_input"
+          name="text"
+          placeholder="Make a contribution to education change"
+          rows={(this.state.expanded) ? 10 : 1}
+          onBlur={this._handleBlur}
+          onFocus={this._handleFocus}
+        />
+      </div>
+    );
   }
 
-  switchPostType = () => {
-    const postType = this.refs.postType.value;
+  _renderTagButtons() {
+    if (this.state.expanded) {
+      return (
+        <div className="layout layout-rows layout-align_vertical">
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_SCHOOL} />
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} />
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_MENTION} />
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_HASHTAG} />
+        </div>
+      );
+    }
+  }
 
-    console.info('postType', postType);
-  };
+  _renderFooter() {
+    if (this.state.expanded) {
+      return (
+        <div className="layout__row layout layout-align_vertical">
+          <div className="layout__grid_item">
+            <button className="button button-wide button-red" type="submit">Publish</button>
+          </div>
+          <div className="layout__grid_item">
+            <button className="button button-wide button-transparent" type="button">Go full screen</button>
+          </div>
+        </div>
+      );
+    }
+  }
 
   render () {
     return (
-      <div className="box box-post box-space_bottom">
-        <form onSubmit={this.submitHandler.bind(this)}>
+      <div className="box box-post box-space_bottom create_post">
+        <form onSubmit={this._handleSubmit}>
           <div className="box__body">
-            <EditPost />
-            <TagsEditor ref={(editor) => this.editor = editor}
-                        autocompleteSchools={_.values(this.props.schools)} />
-
-            <div className="layout__row layout layout-align_vertical">
+            <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
-                {false && <select ref="postType" className="input input-select" onChange={this.switchPostType}>
-                  <option value={postTypeConstants.SHORT_TEXT}>Short text</option>
-                  <option value={postTypeConstants.LONG_TEXT}>Long text</option>
-                </select>}
+                {this._renderTextarea()}
+                {this._renderFooter()}
               </div>
-
-              <div className="layout__grid_item">
-                <button className="button button-wide button-green" type="submit">Post</button>
+              <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
+                <MoreButton expanded={this.state.expanded} onClick={this._handleClickOnMore} />
+                {this._renderTagButtons()}
               </div>
             </div>
           </div>
