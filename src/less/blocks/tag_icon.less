@@ -16,10 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .tag_icon {
+  display: inline-block;
   width: 23px;
   height: 23px;
   color: white;
-  border-radius: @space;
+  border-radius: 50%;
+  flex-shrink: 0;
   font-weight: bold;
   font-size: 13px;
   line-height: 23px;
@@ -29,6 +31,13 @@
     width: 18px;
     height: 18px;
     line-height: 18px;
+  }
+
+  &-big {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 22px;
   }
 
   &-hashtag {

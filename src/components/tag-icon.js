@@ -23,42 +23,45 @@ export default class TagIcon extends React.Component {
   static displayName = 'TagIcon';
 
   static propTypes = {
+    big: PropTypes.bool,
     className: PropTypes.string,
     small: PropTypes.bool,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL]).isRequired
+    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT]).isRequired
   };
 
   render() {
-    let className = 'tag_icon';
+    let { className, small, big, ...props } = this.props;
 
-    if (this.props.small) {
+    className = `tag_icon ${this.props.className}`;
+
+    if (small) {
       className += ' tag_icon-small';
     }
 
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
+    if (big) {
+      className += ' tag_icon-big';
     }
 
     switch (this.props.type) {
       case TAG_HASHTAG:
         return (
-          <span className={`${className} tag_icon-hashtag`}>#</span>
+          <span className={`${className} tag_icon-hashtag`} {...props}>#</span>
         );
       case TAG_SCHOOL:
         return (
-          <span className={`${className} tag_icon-school micon`}>school</span>
+          <span className={`${className} tag_icon-school micon`} {...props}>school</span>
         );
       case TAG_MENTION:
         return (
-          <span className={`${className} tag_icon-mention`}>@</span>
+          <span className={`${className} tag_icon-mention`} {...props}>@</span>
         );
       case TAG_LOCATION:
         return (
-          <span className={`${className} tag_icon-location micon`}>location</span>
+          <span className={`${className} tag_icon-location micon`} {...props}>location_on</span>
         );
       case TAG_EVENT:
         return (
-          <span className={`${className} tag_icon-event micon`}>calendar</span>
+          <span className={`${className} tag_icon-event micon`} {...props}>event</span>
         );
     }
   }
