@@ -19,9 +19,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { login, registerUser } from '../triggers';
+import ApiClient from '../api/client'
+import { API_HOST } from '../config';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
-
 import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
@@ -91,7 +92,8 @@ class Auth extends React.Component {
   render() {
     let { current_user, is_logged_in, messages } = this.props;
 
-    let triggers = {login, registerUser};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let is_first_login = false;
     if (current_user) {

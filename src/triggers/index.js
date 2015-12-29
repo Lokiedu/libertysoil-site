@@ -15,9 +15,6 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { API_HOST } from '../config'
-import ApiClient from '../api/client'
-import { getStore } from '../store';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
@@ -27,347 +24,347 @@ import {
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool
 } from '../actions';
 
-const client = new ApiClient(API_HOST);
 
-export async function likePost(current_user_id, post_id) {
-  try {
-    let responseBody = await client.like(post_id);
+export class ActionsTrigger {
+  client;
+  dispatch;
 
-    if (responseBody.success) {
-      getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
-      syncLikedPosts(current_user_id);
-    } else {
-      getStore().dispatch(addError('internal server error. please try later'));
+  constructor(client, dispatch) {
+    this.client = client;
+    this.dispatch = dispatch;
+  }
+
+  likePost = async (current_user_id, post_id) => {
+    try {
+      let responseBody = await this.client.like(post_id);
+
+      if (responseBody.success) {
+        this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+        await this.syncLikedPosts(current_user_id);
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
+  };
 
-export async function unlikePost(current_user_id, post_id) {
-  try {
-    let responseBody = await client.unlike(post_id);
+  unlikePost = async (current_user_id, post_id) => {
+    try {
+      let responseBody = await this.client.unlike(post_id);
 
-    if (responseBody.success) {
-      getStore().dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
-      syncLikedPosts(current_user_id);
-    } else {
-      getStore().dispatch(addError('internal server error. please try later'));
+      if (responseBody.success) {
+        this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+        await this.syncLikedPosts(current_user_id);
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
+  };
 
-export async function syncLikedPosts() {
-  try {
-    let likedPosts = client.userLikedPosts();
-    getStore().dispatch(setPostsToLikesRiver(await likedPosts));
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function favPost(current_user_id, post_id) {
-  try {
-    let responseBody = await client.fav(post_id);
-
-    if (responseBody.success) {
-      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
-    } else {
-      getStore().dispatch(addError('internal server error. please try later'));
+  syncLikedPosts = async () => {
+    try {
+      let likedPosts = this.client.userLikedPosts();
+      this.dispatch(setPostsToLikesRiver(await likedPosts));
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
+  };
 
-export async function unfavPost(current_user_id, post_id) {
-  try {
-    let responseBody = await client.unfav(post_id);
+  favPost = async (current_user_id, post_id) => {
+    try {
+      let responseBody = await this.client.fav(post_id);
 
-    if (responseBody.success) {
-      getStore().dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
-    } else {
-      getStore().dispatch(addError('internal server error. please try later'));
+      if (responseBody.success) {
+        this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
+  };
 
-export async function createPost(type, data) {
-  try {
-    let result = await client.createPost(type, data);
-    getStore().dispatch(addPostToRiver(result));
+  unfavPost = async (current_user_id, post_id) => {
+    try {
+      let responseBody = await this.client.unfav(post_id);
 
-    let userTags = client.userTags();
-    getStore().dispatch(setUserTags(await userTags));
-  } catch (e) {
-    console.log(e)
-    console.log(e.stack)
-
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function updateUserInfo(user) {
-  try {
-    let res = await client.updateUser(user);
-
-    if ('user' in res) {
-      getStore().dispatch(addMessage('Saved successfully'));
-      getStore().dispatch(addUser(res.user));
+      if (responseBody.success) {
+        this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
+  };
 
-export async function changePassword(old_password, new_password1, new_password2)
-{
-  if (old_password.trim() == '' || new_password1.trim() == '' || new_password2.trim() == '') {
-    getStore().dispatch(addError('some of the fields are empty'));
-    return;
-  }
+  createPost = async (type, data) => {
+    try {
+      let result = await this.client.createPost(type, data);
+      this.dispatch(addPostToRiver(result));
 
-  if (new_password1 !== new_password2) {
-    getStore().dispatch(addError('passwords do not match'));
-    return;
-  }
-
-  try {
-    let res = await client.changePassword(old_password, new_password1);
-
-    if ('success' in res && res.success === true) {
-      getStore().dispatch(addMessage('Password is changed successfully'));
+      let userTags = this.client.userTags();
+      this.dispatch(setUserTags(await userTags));
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  } catch (e) {
-    if (('body' in e.response) && ('error' in e.response.body)) {
-      getStore().dispatch(addError(e.response.body.error));
-    } else {
-      getStore().dispatch(addError(e.message));
+  };
+
+  updateUserInfo = async (user) => {
+    try {
+      let res = await this.client.updateUser(user);
+
+      if ('user' in res) {
+        this.dispatch(addMessage('Saved successfully'));
+        this.dispatch(addUser(res.user));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  }
-}
+  };
 
-
-export async function followUser(user) {
-  try {
-    let res = await client.follow(user.username);
-
-    if ('user1' in res) {
-      getStore().dispatch(addUser(res.user1));
-      getStore().dispatch(addUser(res.user2));
+  changePassword = async (old_password, new_password1, new_password2) => {
+    if (old_password.trim() == '' || new_password1.trim() == '' || new_password2.trim() == '') {
+      this.dispatch(addError('some of the fields are empty'));
+      return;
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
 
-export async function unfollowUser(user) {
-  try {
-    let res = await client.unfollow(user.username);
-
-    if ('user1' in res) {
-      getStore().dispatch(addUser(res.user1));
-      getStore().dispatch(addUser(res.user2));
+    if (new_password1 !== new_password2) {
+      this.dispatch(addError('passwords do not match'));
+      return;
     }
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
 
-export async function login(username, password) {
-  getStore().dispatch(removeAllMessages());
+    try {
+      let res = await this.client.changePassword(old_password, new_password1);
 
-  try {
-    let result = await client.login({username, password});
-
-    if (result.success) {
-      let user = result.user;
-      getStore().dispatch(setCurrentUser(user));
-      getStore().dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
-      getStore().dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
-    } else {
-      getStore().dispatch(setCurrentUser(null));
-      getStore().dispatch(addError('Invalid username or password'));
+      if ('success' in res && res.success === true) {
+        this.dispatch(addMessage('Password is changed successfully'));
+      }
+    } catch (e) {
+      if (('body' in e.response) && ('error' in e.response.body)) {
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError(e.message));
+      }
     }
-  } catch (e) {
-    getStore().dispatch(setCurrentUser(null));
-    getStore().dispatch(addError('Invalid username or password'));
-  }
-}
+  };
 
-export async function resetPassword(email) {
 
-  try {
-    let result = await client.resetPassword(email);
-    getStore().dispatch(submitResetPassword());
-  } catch (e) {
-    getStore().dispatch(addError('Invalid username or password'));
-  }
+  followUser = async (user) => {
+    try {
+      let res = await this.client.follow(user.username);
 
-}
-
-export async function newPassword(hash, password, password_repeat) {
-
-  try {
-    let result = await client.newPassword(hash, password, password_repeat);
-    getStore().dispatch(submitNewPassword());
-  } catch (e) {
-    if (('body' in e.response) && ('error' in e.response.body)) {
-      getStore().dispatch(addError(e.response.body.error));
-    } else {
-      getStore().dispatch(addError(e.message));
+      if ('user1' in res) {
+        this.dispatch(addUser(res.user1));
+        this.dispatch(addUser(res.user2));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  }
+  };
 
-}
+  unfollowUser = async (user) => {
+    try {
+      let res = await this.client.unfollow(user.username);
 
-export async function registerUser(username, password, email, firstName, lastName) {
-  getStore().dispatch(removeAllMessages());
+      if ('user1' in res) {
+        this.dispatch(addUser(res.user1));
+        this.dispatch(addUser(res.user2));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
 
-  // FIXME: disable form
-  try {
-    let result = await client.registerUser({username, password, email, firstName, lastName});
+  login = async (username, password) => {
+    this.dispatch(removeAllMessages());
 
-    if (result.success) {
-      let user = result.user;
+    try {
+      let result = await this.client.login({username, password});
 
-      getStore().dispatch(setCurrentUser(user));
+      if (result.success) {
+        let user = result.user;
+        this.dispatch(setCurrentUser(user));
+        this.dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
+        this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
+      } else {
+        this.dispatch(setCurrentUser(null));
+        this.dispatch(addError('Invalid username or password'));
+      }
+    } catch (e) {
+      this.dispatch(setCurrentUser(null));
+      this.dispatch(addError('Invalid username or password'));
+    }
+  };
 
-      return user;
-    } else {
+  resetPassword = async (email) => {
+    try {
+      let result = await this.client.resetPassword(email);
+      this.dispatch(submitResetPassword());
+    } catch (e) {
+      this.dispatch(addError('Invalid username or password'));
+    }
+  };
+
+  newPassword = async (hash, password, password_repeat) => {
+    try {
+      let result = await this.client.newPassword(hash, password, password_repeat);
+      this.dispatch(submitNewPassword());
+    } catch (e) {
+      if (('body' in e.response) && ('error' in e.response.body)) {
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError(e.message));
+      }
+    }
+  };
+
+  registerUser = async (username, password, email, firstName, lastName) => {
+    this.dispatch(removeAllMessages());
+
+    // FIXME: disable form
+    try {
+      let result = await this.client.registerUser({username, password, email, firstName, lastName});
+
+      if (result.success) {
+        let user = result.user;
+
+        this.dispatch(setCurrentUser(user));
+
+        return user;
+      } else {
+        // FIXME: enable form again
+        this.dispatch(addError(result.error));
+      }
+    } catch (e) {
       // FIXME: enable form again
-      getStore().dispatch(addError(result.error));
+
+      if (e.response && ('error' in e.response.body)) {
+        // FIXME: enable form again
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError('Server seems to have problems. Retry later, please'));
+      }
     }
-  } catch (e) {
-    // FIXME: enable form again
+  };
 
-    if (e.response && ('error' in e.response.body)) {
-      // FIXME: enable form again
-      getStore().dispatch(addError(e.response.body.error));
-    } else {
-      getStore().dispatch(addError('Server seems to have problems. Retry later, please'));
+  deletePost = async (post_uuid) => {
+    await this.client.deletePost(post_uuid);
+    this.dispatch(removePost(post_uuid));
+  };
+
+  updatePost = async (post_uuid, post_fields) => {
+    try {
+      let result = await this.client.updatePost(post_uuid, post_fields);
+      this.dispatch(addPost(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
-  }
+  };
+
+  updateSchool = async (school_uuid, school_fields) => {
+    try {
+      let result = await this.client.updateSchool(school_uuid, school_fields);
+      this.dispatch(addSchool(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadSchools = async () => {
+    try {
+      let result = await this.client.schools();
+      this.dispatch(setSchools(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadInitialSuggestions = async () => {
+    try {
+      let result = await this.client.initialSuggestions();
+
+      this.dispatch(setSuggestedUsers(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadPostRiver = async () => {
+    try {
+      let result = await this.client.subscriptions();
+      this.dispatch(setPostsToRiver(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadTagCloud = async () => {
+    try {
+      let result = await this.client.tagCloud();
+      this.dispatch(setTagCloud(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  followTag = async (name) => {
+    try {
+      let result = await this.client.followTag(name);
+      this.dispatch(addUserFollowedTag(result.tag));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unfollowTag = async (name) => {
+    try {
+      let result = await this.client.unfollowTag(name);
+      this.dispatch(removeUserFollowedTag(result.tag));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  followSchool = async (name) => {
+    try {
+      let result = await this.client.followSchool(name);
+      this.dispatch(addUserFollowedSchool(result.school));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unfollowSchool = async (name) => {
+    try {
+      let result = await this.client.unfollowSchool(name);
+      this.dispatch(removeUserFollowedSchool(result.school));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
 }
-
-export async function deletePost(post_uuid) {
-  await client.deletePost(post_uuid);
-  getStore().dispatch(removePost(post_uuid));
-}
-
-export async function updatePost(post_uuid, post_fields) {
-  try {
-    let result = await client.updatePost(post_uuid, post_fields);
-    getStore().dispatch(addPost(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function updateSchool(school_uuid, school_fields) {
-  try {
-    let result = await client.updateSchool(school_uuid, school_fields);
-    getStore().dispatch(addSchool(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function loadSchools() {
-  try {
-    let result = await client.schools();
-    getStore().dispatch(setSchools(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function loadInitialSuggestions() {
-  try {
-    let result = await client.initialSuggestions();
-
-    getStore().dispatch(setSuggestedUsers(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function loadPostRiver() {
-  try {
-    let result = await client.subscriptions();
-    getStore().dispatch(setPostsToRiver(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function loadTagCloud() {
-  try {
-    let result = await client.tagCloud();
-    getStore().dispatch(setTagCloud(result));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function followTag(name) {
-  try {
-    let result = await client.followTag(name);
-    getStore().dispatch(addUserFollowedTag(result.tag));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function unfollowTag(name) {
-  try {
-    let result = await client.unfollowTag(name);
-    getStore().dispatch(removeUserFollowedTag(result.tag));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function followSchool(name) {
-  try {
-    let result = await client.followSchool(name);
-    getStore().dispatch(addUserFollowedSchool(result.school));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
-export async function unfollowSchool(name) {
-  try {
-    let result = await client.unfollowSchool(name);
-    getStore().dispatch(removeUserFollowedSchool(result.school));
-
-    return result;
-  } catch (e) {
-    getStore().dispatch(addError(e.message));
-  }
-}
-
 

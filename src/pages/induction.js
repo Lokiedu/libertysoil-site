@@ -24,16 +24,12 @@ import User from '../components/user';
 import FollowButton from '../components/follow-button';
 import Footer from '../components/footer';
 import Header from '../components/header';
-import Messages from '../components/messages';
-
-
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { addUser } from '../actions';
-import { updateUserInfo, followUser, unfollowUser,
-         doneInduction, loadInitialSuggestions } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+
 
 let InductionDone = () => (
   <div className="area">
@@ -86,30 +82,21 @@ export default class UserGrid extends React.Component {
       </div>
     );
   }
-};
+}
 
 class InductionPage extends React.Component {
   static displayName = 'InductionPage'
 
-  static async fetchData(params, state, client) {
-    try {
-      let currentUserId = state.getIn(['current_user', 'id']);
-      let userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
+  static async fetchData(params, store, client) {
+    const state = store.getState();
 
-      getStore().dispatch(addUser(userInfo));
-      await loadInitialSuggestions();
-    } catch (e) {
-      console.log(e.stack)
-    }
+    let currentUserId = state.getIn(['current_user', 'id']);
+    let userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
+    store.dispatch(addUser(userInfo));
+
+    let trigger = new ActionsTrigger(client, store.dispatch);
+    await trigger.loadInitialSuggestions();
   }
-
-  doneInduction = (event) => {
-    updateUserInfo({
-      more: {
-        first_login: false
-      }
-    });
-  };
 
   render() {
     const {
@@ -120,6 +107,17 @@ class InductionPage extends React.Component {
       messages,
       ...props
     } = this.props;
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    const doneInduction = () => {
+      triggers.updateUserInfo({
+        more: {
+          first_login: false
+        }
+      });
+    };
 
     if (!current_user.more.first_login) {
       return (
@@ -137,7 +135,7 @@ class InductionPage extends React.Component {
       <BaseInductionPage
         current_user={current_user}
         is_logged_in={is_logged_in}
-        onNext={this.doneInduction}
+        onNext={doneInduction}
         messages={messages}
         next_caption="Done"
       >
@@ -152,7 +150,7 @@ class InductionPage extends React.Component {
             <UserGrid
               current_user={current_user}
               i_am_following={i_am_following}
-              triggers={{followUser, unfollowUser}}
+              triggers={triggers}
               users={suggested_users}
             />
           </div>

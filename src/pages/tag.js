@@ -20,31 +20,23 @@ import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { setTagPosts } from '../actions';
-
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import FollowTagButton from '../components/follow-tag-button';
-import { likePost, unlikePost, favPost, unfavPost, followTag, unfollowTag } from '../triggers';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 export class TagPage extends Component {
   static displayName = 'TagPage'
 
-  static async fetchData(params, props, client) {
-    try {
-      let tagPosts = client.tagPosts(params.tag);
-
-      getStore().dispatch(setTagPosts(params.tag, await tagPosts));
-    } catch (e) {
-      console.log(e);
-      console.log(e.stack);
-    }
+  static async fetchData(params, store, client) {
+    let tagPosts = client.tagPosts(params.tag);
+    store.dispatch(setTagPosts(params.tag, await tagPosts));
   }
 
   render() {
@@ -56,8 +48,9 @@ export class TagPage extends Component {
       users
     } = this.props;
 
-    const triggers = {likePost, unlikePost, favPost, unfavPost};
-    const followTriggers = {followTag, unfollowTag};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     const thisTagPosts = tag_posts[this.props.params.tag] || [];
     const followedTags = (current_user) ? current_user.followed_tags : [];
 
@@ -80,7 +73,7 @@ export class TagPage extends Component {
                       current_user={current_user}
                       followed_tags={followedTags}
                       tag={this.props.params.tag}
-                      triggers={followTriggers}
+                      triggers={triggers}
                     />
                   </div>
                 </div>

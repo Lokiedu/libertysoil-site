@@ -21,23 +21,17 @@ import _ from 'lodash';
 
 import NotFound from './not-found'
 import BaseUserPage from './base/user'
-
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import { getStore } from '../store';
 import { addUser } from '../actions';
-import {followUser, unfollowUser} from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
-class AboutUserPage extends React.Component {
-  static async fetchData(params, props, client) {
-    try {
-      let userInfo = client.userInfo(params.username);
 
-      getStore().dispatch(addUser(await userInfo));
-    } catch (e) {
-      console.log(e.stack)
-    }
+class AboutUserPage extends React.Component {
+  static async fetchData(params, store, client) {
+    let userInfo = client.userInfo(params.username);
+    store.dispatch(addUser(await userInfo));
   }
 
   render() {
@@ -52,7 +46,8 @@ class AboutUserPage extends React.Component {
       return <NotFound/>
     }
 
-    let user_triggers = {followUser, unfollowUser};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     if (page_user.more) {
       if (page_user.more.bio) {
@@ -60,15 +55,13 @@ class AboutUserPage extends React.Component {
       }
     }
 
-
-
     return (
       <BaseUserPage
         current_user={this.props.current_user}
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
-        triggers={user_triggers}
+        triggers={triggers}
       >
         <div className="paper">
           <div className="paper__page content">

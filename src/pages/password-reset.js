@@ -17,11 +17,14 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { resetPassword } from '../triggers';
-import { defaultSelector } from '../selectors';
 
+import ApiClient from '../api/client'
+import { API_HOST } from '../config';
+import { ActionsTrigger } from '../triggers';
+import { defaultSelector } from '../selectors';
 import Footer from '../components/footer';
 import Header from '../components/header';
+
 
 let ResetForm = (props) => {
   return (
@@ -56,7 +59,10 @@ class Form extends React.Component {
 
     let form = event.target;
 
-    resetPassword(form.email.value);
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.resetPassword(form.email.value);
   };
 
   render() {

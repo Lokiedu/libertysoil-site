@@ -22,27 +22,22 @@ import _ from 'lodash';
 import NotFound from './not-found'
 import BaseUserFavoritesPage from './base/user'
 import River from '../components/river_of_posts';
-
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import { getStore } from '../store';
-import { addUser, setPostsToFavouritesRiver, addError } from '../actions';
-import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from '../triggers'
+import { addUser, setPostsToFavouritesRiver } from '../actions';
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+
 
 class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage'
 
-  static async fetchData(params, props, client) {
-    try {
-      let userInfo = await client.userInfo(params.username);
-      getStore().dispatch(addUser(userInfo));
+  static async fetchData(params, store, client) {
+    let userInfo = await client.userInfo(params.username);
+    store.dispatch(addUser(userInfo));
 
-      let favouredPosts = client.getFavouredPosts(params.username);
-      getStore().dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    let favouredPosts = client.getFavouredPosts(params.username);
+    store.dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
   }
 
   render () {
@@ -62,8 +57,8 @@ class UserFavoritesPage extends React.Component {
 
     //console.info(this.props);
 
-    let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost, favPost, unfavPost};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <BaseUserFavoritesPage
@@ -73,13 +68,13 @@ class UserFavoritesPage extends React.Component {
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
-        triggers={user_triggers}
+        triggers={triggers}
       >
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}
           river={this.props.favourites_river[page_user.id]}
-          triggers={post_triggers}
+          triggers={triggers}
           users={this.props.users}
         />
       </BaseUserFavoritesPage>

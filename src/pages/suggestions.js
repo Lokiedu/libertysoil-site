@@ -25,10 +25,10 @@ import FollowButton from '../components/follow-button';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { addUser } from '../actions';
-import { followUser, unfollowUser, doneSuggestions } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+
 
 export default class UserGrid extends React.Component {
   static displayName = 'UserGrid'
@@ -69,12 +69,13 @@ export default class UserGrid extends React.Component {
       </div>
     );
   }
-};
+}
 
 class SuggestionsPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  static async fetchData(params, props, client) {
+  static async fetchData(params, store, client) {
+    const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
@@ -82,17 +83,12 @@ class SuggestionsPage extends React.Component {
     }
 
     let currentUser = props.get('users').get(currentUserId);
+    let suggestedUsers = await client.userSuggestions();
 
-    try {
-      let suggestedUsers = await client.userSuggestions();
+    let userInfo = client.userInfo(currentUser.get('username'));
+    userInfo.more.suggested_users = suggestedUsers;
 
-      let userInfo = client.userInfo(currentUser.get('username'));
-      userInfo.more.suggested_users = suggestedUsers;
-
-      getStore().dispatch(addUser(userInfo));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    store.dispatch(addUser(userInfo));
   }
 
   render() {
@@ -107,6 +103,9 @@ class SuggestionsPage extends React.Component {
     if (!is_logged_in) {
       return false;
     }
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <BaseSuggestionsPage
@@ -125,7 +124,7 @@ class SuggestionsPage extends React.Component {
             <UserGrid
               current_user={current_user}
               i_am_following={i_am_following}
-              triggers={{followUser, unfollowUser}}
+              triggers={triggers}
               users={current_user.more.suggested_users}
             />
           </div>

@@ -23,26 +23,22 @@ import NotFound from './not-found'
 import BaseUserPage from './base/user'
 import River from '../components/river_of_posts';
 
-import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import { getStore } from '../store';
-import { addUser, setUserPosts, addError } from '../actions';
-import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from '../triggers'
+import ApiClient from '../api/client'
+import { addUser, setUserPosts } from '../actions';
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+
 
 class UserPage extends React.Component {
   static displayName = 'UserPage';
 
-  static async fetchData(params, props, client) {
-    try {
-      let userInfo = await client.userInfo(params.username);
-      let userPosts = client.userPosts(params.username);
+  static async fetchData(params, store, client) {
+    let userInfo = await client.userInfo(params.username);
+    let userPosts = client.userPosts(params.username);
 
-      getStore().dispatch(addUser(userInfo));
-      getStore().dispatch(setUserPosts(userInfo.id, await userPosts));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    store.dispatch(addUser(userInfo));
+    store.dispatch(setUserPosts(userInfo.id, await userPosts));
   }
 
   render () {
@@ -64,8 +60,8 @@ class UserPage extends React.Component {
 
     let user_posts = this.props.user_posts[page_user.id];
 
-    let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost, favPost, unfavPost};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <BaseUserPage
@@ -75,13 +71,13 @@ class UserPage extends React.Component {
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
-        triggers={user_triggers}
+        triggers={triggers}
       >
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}
           river={user_posts}
-          triggers={post_triggers}
+          triggers={triggers}
           users={this.props.users}
         />
       </BaseUserPage>

@@ -17,8 +17,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
-import { replacePath } from 'redux-simple-router'
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -28,27 +26,25 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
-import { getStore } from '../store';
-import { addError } from '../actions';
-import { createPost, likePost, unlikePost, favPost, unfavPost,
-         loadSchools, loadPostRiver } from '../triggers';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class List extends React.Component {
   static displayName = 'List';
 
-  static async fetchData(params, state, client) {
-    try {
-      await loadSchools();
-      await loadPostRiver();
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
-    }
+  static async fetchData(params, store, client) {
+    let trigger = new ActionsTrigger(client, store.dispatch);
+
+    await Promise.all([
+      trigger.loadSchools(),
+      trigger.loadPostRiver()
+    ]);
   }
 
   render() {
-    let triggers = {likePost, unlikePost, favPost, unfavPost};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <div>
@@ -57,7 +53,7 @@ class List extends React.Component {
           <div className="page__body">
             <Sidebar current_user={this.props.current_user} />
             <div className="page__content">
-              <CreatePost triggers={{createPost}} schools={this.props.schools} />
+              <CreatePost triggers={triggers} schools={this.props.schools} />
               <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}

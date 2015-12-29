@@ -18,15 +18,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { API_HOST } from '../config';
-import { getStore } from '../store';
-
 import Header from '../components/header';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
-import { loadTagCloud } from '../triggers';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+
 
 let SidebarTagCloud = ({ tags, title, ...props }) => {
   if (tags.length == 0) {
@@ -48,13 +46,9 @@ let SidebarTagCloud = ({ tags, title, ...props }) => {
 class TagCloudPage extends Component {
   static displayName = 'TagCloudPage'
 
-  static async fetchData(params, state, client) {
-    try {
-      await loadTagCloud();
-    } catch (e) {
-      console.log(e.stack);
-    }
-
+  static async fetchData(params, store, client) {
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    await triggers.loadTagCloud();
   }
 
   render() {
