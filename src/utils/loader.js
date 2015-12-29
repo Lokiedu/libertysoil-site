@@ -25,14 +25,41 @@
  */
 export function combineHandlers(...handlers) {
   return function (nextState, replaceState, callback) {
+    let callbacksTodo = 0;
+
+    let callbackDecreaser = (e) => {
+      callbacksTodo -= 1;
+
+      if (callbacksTodo === 0) {
+        callback();
+        return;
+      }
+
+      if (callbacksTodo < 0) {
+        throw new Error('too many callbacks called');
+      }
+    };
+
     for (let handler of handlers) {
       if (handler) {
-        let shouldInterrupt = handler(nextState, replaceState, callback);
+        if (handler.length >= 3) {
+          callbacksTodo += 1;
 
-        if (shouldInterrupt === true) {
-          return;
+          let shouldInterrupt = handler(nextState, replaceState, callbackDecreaser);
+          if (shouldInterrupt === true) {
+            return;
+          }
+        } else {
+          let shouldInterrupt = handler(nextState, replaceState);
+          if (shouldInterrupt === true) {
+            return;
+          }
         }
       }
+    }
+
+    if (callbacksTodo === 0) {
+      callback();
     }
   }
 }
@@ -42,16 +69,15 @@ export class AuthHandler {
     this.store = store;
   }
 
-  handle = async (nextState, replaceState, callback) => {
+  handle = async (nextState, replaceState) => {
     let state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
       && nextState.location.pathname !== '/welcome'
     ) {
       replaceState(null, '/welcome');
+      return true;  // interrupt
     }
-
-    callback();
   }
 }
 
@@ -69,10 +95,8 @@ export class FetchHandler
       let route = nextState.routes[i];
 
       if ('component' in route && 'fetchData' in route.component) {
-        const props = this.store.getState();
-
         try {
-          await route.component.fetchData(nextState.params, props, this.apiClient);
+          await route.component.fetchData(nextState.params, this.store, this.apiClient);
         } catch (e) {
           console.error(e);
         }
@@ -83,7 +107,7 @@ export class FetchHandler
   handleSynchronously = (nextState, replaceState, callback) => {
     this.handle(nextState)
       .then(() => { callback(); })
-      .catch((e) => { console.error(e); callback(); });
+      .catch((e) => { console.error(e); callback(e); });
   };
 }
 
