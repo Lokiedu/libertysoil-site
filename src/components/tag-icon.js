@@ -25,7 +25,7 @@ export default class TagIcon extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     small: PropTypes.bool,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL]).isRequired
+    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT]).isRequired
   };
 
   render() {
@@ -54,11 +54,11 @@ export default class TagIcon extends React.Component {
         );
       case TAG_LOCATION:
         return (
-          <span className={`${className} tag_icon-location micon`}>location</span>
+          <span className={`${className} tag_icon-location micon`}>location_on</span>
         );
       case TAG_EVENT:
         return (
-          <span className={`${className} tag_icon-event micon`}>calendar</span>
+          <span className={`${className} tag_icon-event micon`}>event</span>
         );
     }
   }
