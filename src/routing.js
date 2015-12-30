@@ -18,7 +18,7 @@
 import {Route, IndexRoute} from 'react-router';
 import React from 'react';
 
-import { combineHandlers } from './utils/loader';
+import { combineHandlers, combineHandlersAsync } from './utils/loader';
 
 import App from './pages/app';
 import Auth from './pages/auth';
@@ -46,7 +46,13 @@ import Welcome from './pages/welcome';
 
 export function getRoutes(authHandler, fetchHandler) {
   let withoutAuth = fetchHandler;
-  let withAuth = combineHandlers(authHandler, fetchHandler);
+  let withAuth;
+
+  if (authHandler.length >= 3 || fetchHandler.length >= 3) {
+    withAuth = combineHandlersAsync(authHandler, fetchHandler);
+  } else {
+    withAuth = combineHandlers(authHandler, fetchHandler);
+  }
 
   return (
     <Route component={App}>

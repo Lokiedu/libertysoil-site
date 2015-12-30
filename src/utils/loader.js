@@ -24,7 +24,20 @@
  * @returns {Function}
  */
 export function combineHandlers(...handlers) {
-  return function (nextState, replaceState, callback) {
+  return async (nextState, replaceState) => {
+    for (let handler of handlers) {
+      if (handler) {
+        let shouldInterrupt = await handler(nextState, replaceState);
+        if (shouldInterrupt === true) {
+          break;
+        }
+      }
+    }
+  }
+}
+
+export function combineHandlersAsync(...handlers) {
+  return async (nextState, replaceState, callback) => {
     let callbacksTodo = 0;
 
     let callbackDecreaser = (e) => {
@@ -45,14 +58,14 @@ export function combineHandlers(...handlers) {
         if (handler.length >= 3) {
           callbacksTodo += 1;
 
-          let shouldInterrupt = handler(nextState, replaceState, callbackDecreaser);
+          let shouldInterrupt = await handler(nextState, replaceState, callbackDecreaser);
           if (shouldInterrupt === true) {
-            return;
+            break;
           }
         } else {
-          let shouldInterrupt = handler(nextState, replaceState);
+          let shouldInterrupt = await handler(nextState, replaceState);
           if (shouldInterrupt === true) {
-            return;
+            break;
           }
         }
       }
@@ -98,7 +111,7 @@ export class FetchHandler
         try {
           await route.component.fetchData(nextState.params, this.store, this.apiClient);
         } catch (e) {
-          console.error(e);
+          //console.error(e);
         }
       }
     }
