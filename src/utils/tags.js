@@ -10,7 +10,7 @@ export const TAG_EVENT = 'TAG_EVENT';
  * @param {Object} params - {tags: [], schools: []}
  * @returns {Array}
  */
-export function convertModeldsToTags(params) {
+export function convertModelsToTags(params = {}) {
   let allTags = [];
 
   if (Array.isArray(params.schools)) {

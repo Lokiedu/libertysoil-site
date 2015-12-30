@@ -26,6 +26,8 @@ import MoreButton from './more-button';
 import * as TagType from '../utils/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
+import AddTagModal from '../components/add-tag-modal';
+
 @ClickOutsideComponentDecorator
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
@@ -36,12 +38,9 @@ export default class CreatePost extends React.Component {
     })
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      expanded: false
-    }
+  state = {
+    expanded: false,
+    isAddTagModalVisible: false
   }
 
   onClickOutside = () => {
@@ -83,6 +82,24 @@ export default class CreatePost extends React.Component {
     });
   };
 
+  _showAddTagModal = () => {
+    this.setState({
+      isAddTagModalVisible: true
+    });
+  };
+
+  _closeAddTagModal = () => {
+    this.setState({
+      isAddTagModalVisible: false
+    });
+  };
+
+  _addTags = () => {
+    this.setState({
+      isAddTagModalVisible: false
+    });
+  };
+
   /**
    * Renders a textarea with artificial caret.
    * @private
@@ -105,7 +122,7 @@ export default class CreatePost extends React.Component {
   _renderTagButtons() {
     if (this.state.expanded) {
       return (
-        <div className="layout layout-rows layout-align_vertical">
+        <div className="layout layout-rows layout-align_vertical" onClick={this._showAddTagModal}>
           <TagIcon className="create_post__tag_button" type={TagType.TAG_SCHOOL} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />
@@ -131,6 +148,17 @@ export default class CreatePost extends React.Component {
     }
   }
 
+  _renderAddtagModal() {
+    if (this.state.isAddTagModalVisible) {
+      return (
+        <AddTagModal
+          onClose={this._closeAddTagModal}
+          onSave={this._addTags}
+        />
+      );
+    }
+  }
+
   render () {
     return (
       <div className="box box-post box-space_bottom create_post">
@@ -148,6 +176,7 @@ export default class CreatePost extends React.Component {
             </div>
           </div>
         </form>
+        {this._renderAddtagModal()}
       </div>
     )
   }

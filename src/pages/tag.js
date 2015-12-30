@@ -30,7 +30,6 @@ import FollowTagButton from '../components/follow-tag-button';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
-
 export class TagPage extends Component {
   static displayName = 'TagPage'
 
@@ -78,7 +77,6 @@ export class TagPage extends Component {
                   </div>
                 </div>
               </div>
-
               <div className="page__content page__content-spacing">
                 <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
                 {/*<Followed/> */}

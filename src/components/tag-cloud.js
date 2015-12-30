@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 
 import Tag from './tag';
-import { convertModeldsToTags } from '../utils/tags';
+import { convertModelsToTags } from '../utils/tags';
 
 
 export default class TagCloud extends React.Component {
@@ -35,7 +35,7 @@ export default class TagCloud extends React.Component {
   };
 
   render() {
-    let tags = convertModeldsToTags(this.props)
+    let tags = convertModelsToTags(this.props)
       .map((tag, index) => <Tag key={index} {...tag} />);
 
     return (

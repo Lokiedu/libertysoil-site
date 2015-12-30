@@ -17,6 +17,7 @@
  */
 .button {
   display: inline-block;
+  box-sizing: border-box;
   border: none;
   padding: 0 @space;
   border-radius: @radius-button;
@@ -73,6 +74,11 @@
 .button-blue {
   &:extend(.button-transparent);
   color: @color__blue;
+}
+
+.button-ligth_blue {
+  background: #5a93ca;
+  color: #fff;
 }
 
 .button__icon {

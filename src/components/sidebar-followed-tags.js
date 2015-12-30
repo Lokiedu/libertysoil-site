@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
 import SidebarFollowedTag from './sidebar-followed-tag';
-import { convertModeldsToTags } from '../utils/tags';
+import { convertModelsToTags } from '../utils/tags';
 
 
 export default class SidebarFollowedTags extends React.Component {
@@ -19,7 +19,7 @@ export default class SidebarFollowedTags extends React.Component {
   };
 
   _collectTags() {
-    let tags = convertModeldsToTags(this.props);
+    let tags = convertModelsToTags(this.props);
 
     return _.sortBy(tags, 'name');
   }
