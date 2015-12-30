@@ -15,42 +15,43 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.sidebar {
-  &__followed_tag {
-    display: flex;
-    padding: 10px;
+.create_post {
+  &__text_input_wrapper {
+    position: relative;
+  }
+
+  &__text_input {
+    background: none;
+    border: none;
+    resize: none;
+  }
+
+  &__caret {
+    position: absolute;
+    width: 2px;
+    height: 32px;
+    background-color: #CCC;
+    top: 0;
+    left: 0;
+    animation: 3s create_post__caret_blink linear infinite;
+  }
+
+  @keyframes create_post__caret_blink {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  &__tag_button {
+    margin-top: 10px;
+    cursor: pointer;
+    opacity: 0.3;
 
     &:hover {
-      background-color: #FAF9F9;
+      opacity: 1;
     }
-
-    &__icon {
-      display: block;
-      width: 18px;
-      height: 18px;
-      background-color: gray;
-      border-radius: 50%;
-      color: white;
-      font-size: 13px;
-      font-weight: bold;
-      line-height: 18px;
-      text-align: center;
-    }
-
-    &__name {
-      display: block;
-      margin-left: 10px;
-    }
-  }
-
-  &__user_tags {
-    margin-left: 10px;
-  }
-
-  &__heading {
-    margin-left: 10px;
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #FF2658;
   }
 }
