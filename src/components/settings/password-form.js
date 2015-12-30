@@ -96,7 +96,7 @@ export default class PasswordForm extends React.Component {
 
     return (
       <form action="" ref="form" className="paper__page" onSubmit={this._handleSubmit.bind(this)}>
-        <h2 className="content__sub_title layout__row layout__row">Password</h2>
+        <h2 className="content__sub_title layout__row">Password</h2>
 
         <label htmlFor="old_password" className="layout__row layout__row-small">Current password</label>
         <input
