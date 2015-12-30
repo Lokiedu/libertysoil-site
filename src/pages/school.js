@@ -19,31 +19,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import NotFound from './not-found'
 import BaseSchoolPage from './base/school'
 import River from '../components/river_of_posts';
-
-import { getStore } from '../store';
 import { addSchool, setSchoolPosts } from '../actions';
-import { likePost, unlikePost, favPost, unfavPost, followSchool, unfollowSchool } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
-export class SchoolPage extends React.Component {
-  static async fetchData(params, props, client) {
-    try {
-      let schoolInfo = await client.schoolInfo(params.school_name);
-      let posts = await client.schoolPosts(params.school_name);
 
-      getStore().dispatch(addSchool(schoolInfo));
-      getStore().dispatch(setSchoolPosts(schoolInfo, posts));
-    } catch (e) {
-      console.log(e.stack)
-    }
-  }
+export class SchoolPage extends React.Component {
+  static async fetchData(params, store, client) {
+    let schoolInfo = await client.schoolInfo(params.school_name);
+    let posts = await client.schoolPosts(params.school_name);
+
+    store.dispatch(addSchool(schoolInfo));
+    store.dispatch(setSchoolPosts(schoolInfo, posts));
+ }
 
   render() {
-    let postTriggers = {likePost, unlikePost, favPost, unfavPost};
-    let followTriggers = {followTag: followSchool, unfollowTag: unfollowSchool};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    let followTriggers = {followTag: triggers.followSchool, unfollowTag: triggers.unfollowSchool};
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
     let schoolPosts = this.props.school_posts[school.id];
     let linesOfDescription = <p>No information provided...</p>;
@@ -79,7 +78,7 @@ export class SchoolPage extends React.Component {
             current_user={this.props.current_user}
             posts={this.props.posts}
             river={schoolPosts}
-            triggers={postTriggers}
+            triggers={triggers}
             users={this.props.users}
           />
         </div>

@@ -17,13 +17,16 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { defaultSelector } from '../selectors';
-import { newPassword } from '../triggers';
-import { Link } from 'react-router';
 
+import ApiClient from '../api/client'
+import { API_HOST } from '../config';
+import { defaultSelector } from '../selectors';
+import { ActionsTrigger } from '../triggers';
+import { Link } from 'react-router';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Messages from '../components/messages';
+
 
 let SuccessMessage = (props) => {
 
@@ -123,7 +126,10 @@ class Form extends React.Component {
 
     let form = event.target;
 
-    newPassword(this.props.routeParams.hash, form.password.value, form.password_repeat.value);
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.newPassword(this.props.routeParams.hash, form.password.value, form.password_repeat.value);
   };
 
   render() {

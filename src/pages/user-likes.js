@@ -25,24 +25,20 @@ import River from '../components/river_of_posts';
 
 import ApiClient from '../api/client'
 import {API_HOST} from '../config';
-import { getStore } from '../store';
-import { addUser, setPostsToLikesRiver, addError } from '../actions';
-import {followUser, unfollowUser, likePost, unlikePost, favPost, unfavPost} from '../triggers'
+import { addUser, setPostsToLikesRiver } from '../actions';
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+
 
 class UserLikesPage extends React.Component {
   static displayName = 'UserLikesPage'
 
-  static async fetchData(params, props, client) {
-    try {
-      let userInfo = await client.userInfo(params.username);
-      getStore().dispatch(addUser(userInfo));
+  static async fetchData(params, store, client) {
+    let userInfo = await client.userInfo(params.username);
+    store.dispatch(addUser(userInfo));
 
-      let likedPosts = client.getLikedPosts(params.username);
-      getStore().dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    let likedPosts = client.getLikedPosts(params.username);
+    store.dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
   }
 
   render () {
@@ -62,8 +58,8 @@ class UserLikesPage extends React.Component {
 
     //console.info(this.props);
 
-    let user_triggers = {followUser, unfollowUser};
-    let post_triggers = {likePost, unlikePost, favPost, unfavPost};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <BaseUserLikesPage
@@ -73,13 +69,13 @@ class UserLikesPage extends React.Component {
         i_am_following={this.props.i_am_following}
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
-        triggers={user_triggers}
+        triggers={triggers}
       >
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}
           river={this.props.likes_river[page_user.id]}
-          triggers={post_triggers}
+          triggers={triggers}
           users={this.props.users}
         />
       </BaseUserLikesPage>

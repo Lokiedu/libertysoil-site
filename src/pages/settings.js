@@ -22,9 +22,8 @@ import BaseSettingsPage from './base/settings'
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { addUser } from '../actions';
-import { updateUserInfo } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 import { RolesManager } from '../components/settings';
@@ -50,7 +49,9 @@ class SettingsPage extends React.Component {
     }
   }
 
-  static async fetchData(params, props, client) {
+  static async fetchData(params, store, client) {
+    const props = store.getState();
+
     const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
@@ -59,12 +60,8 @@ class SettingsPage extends React.Component {
 
     let currentUser = props.get('users').get(currentUserId);
 
-    try {
-      let userInfo = client.userInfo(currentUser.get('username'));
-      getStore().dispatch(addUser(await userInfo));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    let userInfo = client.userInfo(currentUser.get('username'));
+    store.dispatch(addUser(await userInfo));
   }
 
   onChange = () => {
@@ -74,7 +71,10 @@ class SettingsPage extends React.Component {
   onSave = () => {
     let roles = this.state.roles;
 
-    updateUserInfo({
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value,

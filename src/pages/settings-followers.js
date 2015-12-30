@@ -24,9 +24,8 @@ import FollowButton from '../components/follow-button';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { addUser } from '../actions';
-import { followUser, unfollowUser } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
@@ -62,7 +61,8 @@ let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage'
 
-  static async fetchData(params, props, client) {
+  static async fetchData(params, store, client) {
+    const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
 
     if (currentUserId === null) {
@@ -71,12 +71,8 @@ class SettingsFollowersPage extends React.Component {
 
     let currentUser = props.get('users').get(currentUserId);
 
-    try {
-      let userInfo = client.userInfo(currentUser.get('username'));
-      getStore().dispatch(addUser(await userInfo));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    let userInfo = client.userInfo(currentUser.get('username'));
+    store.dispatch(addUser(await userInfo));
   }
 
   render() {
@@ -101,6 +97,9 @@ class SettingsFollowersPage extends React.Component {
     followingUsers = followingUsers.map(user_id => users[user_id]);
     followersUsers = followersUsers.map(user_id => users[user_id]);
 
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     return (
       <BaseSettingsPage
         current_user={current_user}
@@ -121,7 +120,7 @@ class SettingsFollowersPage extends React.Component {
               current_user={current_user}
               empty_msg="You are not following any users"
               i_am_following={i_am_following}
-              triggers={{followUser, unfollowUser}}
+              triggers={triggers}
               users={followingUsers}
             />
           </div>
@@ -134,7 +133,7 @@ class SettingsFollowersPage extends React.Component {
                 current_user={current_user}
                 empty_msg="Noone follows you yet"
                 i_am_following={i_am_following}
-                triggers={{followUser, unfollowUser}}
+                triggers={triggers}
                 users={followersUsers}
               />
             </div>

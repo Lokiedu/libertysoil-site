@@ -17,30 +17,24 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
-import CurrentUser from '../components/current-user';
 import { ShortTextPost, PostWrapper } from '../components/post'
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import { getStore } from '../store';
 import { addPost } from '../actions';
-import {likePost, unlikePost, favPost, unfavPost} from '../triggers';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class PostPage extends React.Component {
-  static async fetchData(params, props, client) {
-    try {
-      let result = await client.postInfo(params.uuid)
-      getStore().dispatch(addPost(result));
-    } catch (e) {
-    }
+  static async fetchData(params, store, client) {
+    let result = await client.postInfo(params.uuid)
+    store.dispatch(addPost(result));
   }
 
   render() {
@@ -58,7 +52,9 @@ class PostPage extends React.Component {
     }
 
     const author = this.props.users[current_post.user_id]
-    let triggers = {likePost, unlikePost, favPost, unfavPost};
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <div>
@@ -73,6 +69,7 @@ class PostPage extends React.Component {
                 <ShortTextPost post={current_post}/>
               </PostWrapper>
             </div>
+
             <SidebarAlt />
           </div>
         </div>

@@ -19,25 +19,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import {API_HOST} from '../config';
+import ApiClient from '../api/client'
 import BaseSchoolPage from './base/school'
-import { getStore } from '../store';
 import { addSchool } from '../actions';
-import { updateSchool } from '../triggers'
+import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import GeoInput from '../components/geo-input';
 
+
 class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
 
-  static async fetchData(params, props, client) {
-    try {
-      let schoolInfo = await client.schoolInfo(params.school_name);
+  static async fetchData(params, store, client) {
+    let schoolInfo = await client.schoolInfo(params.school_name);
 
-      getStore().dispatch(addSchool(schoolInfo));
-    } catch (e) {
-      console.log(e.stack)
-    }
+    store.dispatch(addSchool(schoolInfo));
   }
 
   submitHandler(event) {
@@ -45,7 +43,10 @@ class SchoolEditPage extends React.Component {
 
     let form = event.target;
 
-    updateSchool(
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updateSchool(
       form.id.value,
       {
         name: form.name.value,

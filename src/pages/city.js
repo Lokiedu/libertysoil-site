@@ -20,36 +20,29 @@ import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
-import { getStore } from '../store';
 import { addCountry, addCity, setCityPosts } from '../actions';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
-import { likePost, unlikePost, favPost, unfavPost } from '../triggers';
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class CityPage extends Component {
-  static displayName = 'CityPage'
+  static displayName = 'CityPage';
 
-  static async fetchData(params, props, client) {
-    try {
-      let city = await client.city(params.city);
-      let country = await client.country(params.country);
+  static async fetchData(params, store, client) {
+    let city = await client.city(params.city);
+    let country = await client.country(params.country);
 
-      getStore().dispatch(addCity(city));
-      getStore().dispatch(addCountry(country));
+    store.dispatch(addCity(city));
+    store.dispatch(addCountry(country));
 
-      let cityPosts = client.cityPosts(city.id);
+    let cityPosts = client.cityPosts(city.id);
 
-      getStore().dispatch(setCityPosts(city.id, await cityPosts));
-
-    } catch (e) {
-      console.log(e);
-      console.log(e.stack);
-    }
+    store.dispatch(setCityPosts(city.id, await cityPosts));
   }
 
   render() {
@@ -58,10 +51,12 @@ class CityPage extends Component {
       current_user,
       posts,
       geo,
-      users,
-      } = this.props;
+      users
+    } = this.props;
 
-    const triggers = {likePost, unlikePost, favPost, unfavPost};
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     let thisCityPosts = [];
 
     if(geo && geo.cityPosts && this.props.params.city in geo.cityPosts) {

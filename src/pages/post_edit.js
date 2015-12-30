@@ -22,11 +22,9 @@ import _ from 'lodash';
 import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
-import CurrentUser from '../components/current-user';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import { getStore } from '../store';
-import { addPost, addError } from '../actions';
+import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import {EditPost} from '../components/post'
 import TagsEditor from '../components/post/tags-editor';
@@ -34,7 +32,8 @@ import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 
 import { defaultSelector } from '../selectors';
-import { deletePost, updatePost, loadSchools } from '../triggers';
+import { ActionsTrigger } from '../triggers';
+
 
 class PostEditPage extends React.Component {
   constructor (props) {
@@ -44,16 +43,21 @@ class PostEditPage extends React.Component {
     this.removeHandler = this.removeHandler.bind(this);
   }
 
-  static async fetchData(params, props, client) {
-    try {
-      let result = await client.postInfo(params.uuid);
-      getStore().dispatch(addPost(result));
+  static async fetchData(params, store, client) {
+    let postInfo = client.postInfo(params.uuid);
 
-      if (getStore().getState().get('schools').isEmpty()) {
-        await loadSchools();
-      }
-    } catch (e) {
-      getStore().dispatch(addError(e.message));
+    const noScoolsLoaded = store.getState().get('schools').isEmpty();
+    let schoolsPromise;
+
+    if (noScoolsLoaded) {
+      let trigger = new ActionsTrigger(client, store.dispatch);
+      schoolsPromise = trigger.loadSchools();
+    }
+
+    store.dispatch(addPost(await postInfo));
+
+    if (noScoolsLoaded) {
+      await schoolsPromise;
     }
   }
 
@@ -61,12 +65,14 @@ class PostEditPage extends React.Component {
     event.preventDefault();
 
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
-      deletePost(this.props.params.uuid)
+      const client = new ApiClient(API_HOST);
+      const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+      triggers.deletePost(this.props.params.uuid)
         .then(() => {
           this.props.history.pushState(null, '/');
         }).catch(e => {
-          console.log(e)
-          console.log(e.stack)
+          console.error(e);
         });
     }
   }
@@ -76,16 +82,20 @@ class PostEditPage extends React.Component {
 
     let form = event.target;
 
-    updatePost(
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updatePost(
       this.props.params.uuid,
       {
         text: form.text.value,
         tags: this.editor.getTags(),
         schools: this.editor.getSchools()
       }
-    ).then((result) => {
-      this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
-    });
+    )
+      .then((result) => {
+        this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
+      });
   }
 
   render() {

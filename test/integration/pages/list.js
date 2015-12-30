@@ -18,6 +18,7 @@
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
+import { v4 as uuid4 } from 'uuid';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
@@ -25,6 +26,7 @@ import { login } from '../../../test-helpers/api';
 
 
 let bookshelf = initBookshelf($dbConfig);
+let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 
 describe('ListPage', () => {
@@ -57,6 +59,37 @@ describe('ListPage', () => {
 
       let postsContainer = pageContent.childNodes[1];
       await expect(postsContainer, 'to have no children');
+    });
+
+    describe('when user made a post', () => {
+      let post;
+
+      beforeEach(async () => {
+        // FIXME: extract code from controller into model and reuse here
+        post = new Post({
+          id: uuid4(),
+          type: 'short_text',
+          user_id: user.get('id'),
+          text: 'Lorem ipsum'
+        });
+        await post.save(null, {method: 'insert'});
+      });
+
+      afterEach(async () => {
+        await post.destroy();
+      });
+
+      it('user can open / and see 1 post there', async () => {
+        let context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+
+        let document = jsdom(context.httpResponse.body);
+
+        let pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
+        await expect(pageContent, 'to have child', '.box-post');  // posting form
+
+        let postsContainer = pageContent.childNodes[1];
+        await expect(postsContainer, 'to have children');
+      });
     });
   });
 });
