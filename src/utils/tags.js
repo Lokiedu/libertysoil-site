@@ -13,21 +13,25 @@ export const TAG_EVENT = 'TAG_EVENT';
 export function convertModeldsToTags(params) {
   let allTags = [];
 
-  params.schools.forEach(function (school) {
-    allTags.push({
-      urlId: school.url_name,
-      name: school.name,
-      type: TAG_SCHOOL
+  if (Array.isArray(params.schools)) {
+    params.schools.forEach(function (school) {
+      allTags.push({
+        urlId: school.url_name,
+        name: school.name,
+        type: TAG_SCHOOL
+      });
     });
-  });
+  }
 
-  params.tags.forEach(function (tag) {
-    allTags.push({
-      urlId: tag.name,
-      name: tag.name,
-      type: TAG_HASHTAG
+  if (Array.isArray(params.tags)) {
+    params.tags.forEach(function (tag) {
+      allTags.push({
+        urlId: tag.name,
+        name: tag.name,
+        type: TAG_HASHTAG
+      });
     });
-  });
+  }
 
   return allTags;
 }
