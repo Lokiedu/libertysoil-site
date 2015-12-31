@@ -111,7 +111,7 @@ export class FetchHandler
         try {
           await route.component.fetchData(nextState.params, this.store, this.apiClient);
         } catch (e) {
-          //console.error(e);
+          console.error(e);
         }
       }
     }
