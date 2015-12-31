@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 
 // Statuses for the progress indication.
+const STATUS_NOT_TOUCHED = 'STATUS_NOT_TOUCHED';
 const STATUS_FOLLOWING = 'STATUS_FOLLOWING';
 const STATUS_JUST_FOLLOWED = 'STATUS_JUST_FOLLOWED';
 const STATUS_UNFOLLOWING = 'STATUS_UNFOLLOWING';
@@ -29,11 +30,20 @@ export default class FollowTagButton extends React.Component {
     super(props);
 
     this.state = {
-      status: null
+      status: STATUS_NOT_TOUCHED
     }
   }
 
-  followTag(event) {
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props.tag, nextProps.tag);
+    if (this.props.tag !== nextProps.tag) {
+      this.setState({
+        status: STATUS_NOT_TOUCHED
+      });
+    }
+  }
+
+  _followTag = (event) => {
     event.preventDefault();
 
     this.setState({
@@ -45,9 +55,9 @@ export default class FollowTagButton extends React.Component {
         status: STATUS_JUST_FOLLOWED
       });
     });
-  }
+  };
 
-  unfollowTag(event) {
+  _unfollowTag = (event) => {
     event.preventDefault();
 
     this.setState({
@@ -59,7 +69,7 @@ export default class FollowTagButton extends React.Component {
         status: STATUS_JUST_UNFOLLOWED
       });
     });
-  }
+  };
 
   render() {
     let { current_user, followed_tags } = this.props;
@@ -70,16 +80,16 @@ export default class FollowTagButton extends React.Component {
     }
 
     // If followTag or unfollowTag was performed
-    if (status) {
+    if (status !== STATUS_NOT_TOUCHED) {
       switch (status) {
         case STATUS_FOLLOWING:
-          return <button className="button button-green">Following...</button>;
+          return <button className="button button-green" type="button">Following...</button>;
         case STATUS_UNFOLLOWING:
-          return <button className="button button-green">Unfollowing...</button>;
+          return <button className="button button-green" type="button">Unfollowing...</button>;
         case STATUS_JUST_FOLLOWED:
-          return <button className="button button-yellow" onClick={this.unfollowTag.bind(this)}>Followed!</button>;
+          return <button className="button button-yellow" type="button" onClick={this._unfollowTag}>Followed!</button>;
         case STATUS_JUST_UNFOLLOWED:
-          return <button className="button button-green" onClick={this.followTag.bind(this)}>Unfollowed!</button>;
+          return <button className="button button-green" type="button" onClick={this._followTag}>Unfollowed!</button>;
         default:
           return null;
       }
@@ -87,9 +97,9 @@ export default class FollowTagButton extends React.Component {
       let isFollowed = !!followed_tags[this.props.tag];
 
       if (isFollowed) {
-        return <button className="button button-yellow" onClick={this.unfollowTag.bind(this)}>Following</button>;
+        return <button className="button button-yellow" type="button" onClick={this._unfollowTag}>Following</button>;
       } else {
-        return <button className="button button-green" onClick={this.followTag.bind(this)}>Follow</button>;
+        return <button className="button button-green" type="button" onClick={this._followTag}>Follow</button>;
       }
     }
   }
