@@ -47,7 +47,7 @@ class TagCloudPage extends Component {
   static displayName = 'TagCloudPage'
 
   static async fetchData(params, store, client) {
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const triggers = new ActionsTrigger(client, store.dispatch);
     await triggers.loadTagCloud();
   }
 
