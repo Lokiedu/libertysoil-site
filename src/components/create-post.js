@@ -28,11 +28,17 @@ import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentD
 
 import AddTagModal from '../components/add-tag-modal';
 
+
 @ClickOutsideComponentDecorator
 export default class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
-    schools: React.PropTypes.object,
+    actions: React.PropTypes.shape({
+      resetCreatePostForm: React.PropTypes.func,
+      updateCreatePostForm: React.PropTypes.func
+    }),
+    defaultText: React.PropTypes.string,
+    tags: React.PropTypes.arrayOf(React.PropTypes.string),
     triggers: React.PropTypes.shape({
       createPost: React.PropTypes.func.isRequired
     })
@@ -62,9 +68,9 @@ export default class CreatePost extends React.Component {
       return;
     }
 
-    // TODO: Add tags
     await this.props.triggers.createPost('short_text', {
-      text: form.text.value
+      text: form.text.value,
+      tags: this.props.tags
     });
 
     form.text.value = '';
@@ -94,14 +100,16 @@ export default class CreatePost extends React.Component {
     });
   };
 
-  _addTags = () => {
+  _addTags = (tags) => {
+    this.props.actions.updateCreatePostForm({tags});
+
     this.setState({
       isAddTagModalVisible: false
     });
   };
 
   /**
-   * Renders a textarea with artificial caret.
+   * Renders a textarea with an artificial caret.
    * @private
    */
   _renderTextarea() {
@@ -110,6 +118,7 @@ export default class CreatePost extends React.Component {
         {(!this.state.expanded) ? <div className="create_post__caret"></div> : null}
         <textarea
           className="input input-block create_post__text_input"
+          defaultValue={this.props.defaultText}
           name="text"
           placeholder="Make a contribution to education change"
           rows={(this.state.expanded) ? 10 : 1}
@@ -122,12 +131,12 @@ export default class CreatePost extends React.Component {
   _renderTagButtons() {
     if (this.state.expanded) {
       return (
-        <div className="layout layout-rows layout-align_vertical" onClick={this._showAddTagModal}>
+        <div className="layout layout-rows layout-align_vertical">
           <TagIcon className="create_post__tag_button" type={TagType.TAG_SCHOOL} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_MENTION} />
-          <TagIcon className="create_post__tag_button" type={TagType.TAG_HASHTAG} />
+          <TagIcon className="create_post__tag_button" type={TagType.TAG_HASHTAG} onClick={this._showAddTagModal} />
         </div>
       );
     }
@@ -152,6 +161,7 @@ export default class CreatePost extends React.Component {
     if (this.state.isAddTagModalVisible) {
       return (
         <AddTagModal
+          tags={this.props.tags}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
         />

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import {API_HOST} from '../config';
@@ -28,7 +29,10 @@ import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
-
+import {
+  resetCreatePostForm,
+  updateCreatePostForm
+} from '../actions';
 
 class List extends React.Component {
   static displayName = 'List';
@@ -43,6 +47,8 @@ class List extends React.Component {
   }
 
   render() {
+    const { resetCreatePostForm, updateCreatePostForm } = this.props;
+    const actions = {resetCreatePostForm, updateCreatePostForm};
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -53,7 +59,12 @@ class List extends React.Component {
           <div className="page__body">
             <Sidebar current_user={this.props.current_user} />
             <div className="page__content">
-              <CreatePost triggers={triggers} schools={this.props.schools} />
+              <CreatePost
+                actions={actions}
+                defaultText={this.props.create_post_form.text}
+                triggers={triggers}
+                {...this.props.create_post_form}
+              />
               <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
               {/*<Followed/> */}
               {/*<Tags/>*/}
@@ -67,4 +78,7 @@ class List extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(List);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(List);
