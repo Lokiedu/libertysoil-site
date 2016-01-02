@@ -137,7 +137,7 @@ let reactHandler = async (req, res) => {
 
         res.render('index', { state, html });
       } catch (e) {
-        console.error(e)
+        console.error(e.stack);
         res.status(500).send(e.message)
       }
     }
