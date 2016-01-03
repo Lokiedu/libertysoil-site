@@ -55,6 +55,8 @@ export const SET_COUNTRY_POSTS = 'SET_COUNTRY_POSTS';
 export const SET_CITY_POSTS = 'SET_CITY_POSTS';
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
+export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
+export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 
@@ -320,4 +322,16 @@ export function setTagCloud(tags) {
     type: SET_TAG_CLOUD,
     tags
   }
+}
+
+export function registrationSuccess() {
+  return {
+    type: REGISTRATION_SUCCESS
+  };
+}
+
+export function showRegisterForm() {
+  return {
+    type: SHOW_REGISTER_FORM
+  };
 }

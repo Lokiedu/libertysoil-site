@@ -35,6 +35,16 @@ export default function reducer(state=initialState, action) {
       state = state.set('submitNewPassword', true);
       break;
     }
+  case a.REGISTRATION_SUCCESS:
+    {
+      state = state.set('registrationSuccess', true);
+      break;
+    }
+  case a.SHOW_REGISTER_FORM:
+    {
+      state = state.set('registrationSuccess', false);
+      break;
+    }
   }
 
   return state;

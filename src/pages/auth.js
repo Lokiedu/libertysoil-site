@@ -51,29 +51,31 @@ let AuthForms = (props) => {
     <div>
       <div className="area__body layout-align_start">
         <Login onLoginUser={props.triggers.login} />
-        <Register onRegisterUser={props.triggers.registerUser} />
+        <Register onRegisterUser={props.triggers.registerUser} registration_success={props.registration_success} onShowRegisterForm={props.triggers.showRegisterForm} />
       </div>
     </div>
   </div>
 )};
 
 let AuthContents = (props) => {
+
   let {
     current_user,
     is_logged_in,
     is_first_login,
     triggers,
-    messages
+    messages,
+    registration_success
   } = props;
-  
+
   if(is_logged_in && !is_first_login){
     return <Suggestions/>;
   }
-  
+
   let content = <FirstLogin/>;
 
   if (!is_logged_in) {
-    content = <AuthForms triggers={triggers}/>;
+    content = <AuthForms triggers={triggers} registration_success={registration_success}/>;
   }
 
   return (
@@ -88,16 +90,37 @@ let AuthContents = (props) => {
   );
 };
 
+let RegistrationSuccess = (props) => {
+
+  return (
+  <div className="area">
+    <div className="area__body">
+      <div className="message">
+        <div className="message__body">
+          You are now successfully registered. We have sent you verification email. Please find instructions in your mail box or <Link className="link" to="/auth">click here to show registration form.</Link>
+        </div>
+      </div>
+    </div>
+  </div>
+  );
+};
+
 class Auth extends React.Component {
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  }
+
+
   render() {
-    let { current_user, is_logged_in, messages } = this.props;
+    let { current_user, is_logged_in, messages, ui } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const registration_success = ui.registrationSuccess;
 
     let is_first_login = false;
     if (current_user) {
-
       if (current_user.more) {
         is_first_login = current_user.more.first_login;
       }
@@ -110,6 +133,7 @@ class Auth extends React.Component {
         is_first_login={is_first_login}
         triggers={triggers}
         messages={messages}
+        registration_success={registration_success}
         />
     )
   }

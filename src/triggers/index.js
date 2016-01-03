@@ -22,7 +22,7 @@ import {
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
-  removeMessage
+  removeMessage, registrationSuccess, showRegisterForm
 } from '../actions';
 
 
@@ -238,7 +238,7 @@ export class ActionsTrigger {
       if (result.success) {
         let user = result.user;
 
-        this.dispatch(setCurrentUser(user));
+        this.dispatch(registrationSuccess());
 
         return user;
       }
@@ -381,5 +381,8 @@ export class ActionsTrigger {
     const userTags = this.client.userTags();
     this.dispatch(setUserTags(await userTags));
   }
-}
 
+  showRegisterForm = async () => {
+    this.dispatch(showRegisterForm());
+  }
+}

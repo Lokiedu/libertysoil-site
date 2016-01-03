@@ -15,7 +15,29 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import React, { Component } from 'react'
+
+class SuccessContent extends Component {
+
+  clickHandler = (event) => {
+    event.preventDefault();
+    this.props.onShowRegisterForm();
+  }
+
+  render() {
+    return (
+      <div className="box box-middle">
+        <header className="box__title">Registration success</header>
+          <div className="box__body">
+            <div className="layout__row">
+        <div>Please check your email for further instructions. Or <a href="#" className="link" onClick={this.clickHandler}>display register form.</a></div>
+            </div>
+
+          </div>
+      </div>
+    );
+  }
+}
 
 export default class RegisterComponent extends React.Component {
   submitHandler = (event) => {
@@ -45,6 +67,9 @@ export default class RegisterComponent extends React.Component {
   };
 
   render() {
+    if (this.props.registration_success) {
+      return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
+    }
     return (
     <div className="box box-middle">
       <header className="box__title">Register</header>
