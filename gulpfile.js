@@ -34,6 +34,7 @@ var concat = require('gulp-concat');
 var gulpif = require('gulp-if');
 var ejs = require('ejs');
 var fs = require('fs');
+var envify = require('envify/custom');
 
 var path = {
   src: {
@@ -69,12 +70,15 @@ function buildScript(file, watch) {
     entries: [path.src.scriptsDir + file],
     debug: true,
     cache: {}, packageCache: {}, fullPaths: true, // Requirement of watchify
-    transform: [babelify.configure({
-      stage: 0,
-      compact: true,
-      optional: ['runtime', 'es7.functionBind', 'es7.classProperties', 'es7.decorators'],
-      sourceMaps: true
-    })]
+    transform: [
+      babelify.configure({
+        stage: 0,
+        compact: true,
+        optional: ['runtime', 'es7.functionBind', 'es7.classProperties', 'es7.decorators'],
+        sourceMaps: true
+      }),
+      envify(process.env)
+    ]
   };
 
   // watchify() if watch requested, otherwise run browserify() once
@@ -142,22 +146,6 @@ gulp.task('styles', function () {
     .pipe(reload({stream: true}));
 });
 
-// Builds src/config.js from src/config.js.ejs
-gulp.task('configs', function () {
-  fs.readFile('src/config.js.ejs', function (err, data) {
-    if (err) {
-      throw new Error(err);
-    }
-
-    var rendered = ejs.render(data.toString(), {process});
-    fs.writeFile('src/config.js', rendered, function (err) {
-      if (err) {
-        throw new Error(err);
-      }
-    })
-  });
-});
-
 // Static server
 gulp.task('browser-sync', function () {
   browserSync({
@@ -169,11 +157,11 @@ gulp.task('browser-sync', function () {
 
 // Default task
 gulp.task('default', function (cb) {
-  runSequence(['styles', 'html', 'images', 'scripts', 'fonts', 'configs'], ['watch', 'browser-sync'], cb);
+  runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
 });
 
 // public task
-gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts', 'configs']);
+gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
 
 // Watch
 gulp.task('watch', function () {

@@ -99,6 +99,7 @@
     "browser-sync": "",
     "cookie": "^0.2.3",
     "csv": "^0.4.6",
+    "envify": "^3.4.0",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.12.0",
     "jsdom": "^7.2.1",
