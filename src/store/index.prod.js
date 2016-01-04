@@ -20,50 +20,10 @@ import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutablejs'
 import { routeReducer } from 'redux-simple-router';
 
-import current_user from './current-user';
-import favourites from './favourites';
-import favourites_river from './favourites_river';
-import followers from './followers';
-import following from './following';
-import geo from './geo';
-import likes from './likes';
-import likes_river from './likes_river';
-import messages from './messages';
-import posts from './posts';
-import river from './river';
-import schools from './schools';
-import school_posts from './school_posts';
-import tag_posts from './tag_posts';
-import user_posts from './user_posts';
-import users from './users';
-import suggested_users from './suggested_users';
-import ui from './ui';
-import tag_cloud from './tag_cloud';
+import reducers from '../reducers';
+
 
 let store;
-
-const theReducer = combineReducers(i.Map({
-  routing: routeReducer,
-  current_user,
-  favourites,
-  favourites_river,
-  followers,
-  following,
-  geo,
-  likes,
-  likes_river,
-  messages,
-  posts,
-  river,
-  schools,
-  school_posts,
-  tag_posts,
-  user_posts,
-  users,
-  suggested_users,
-  ui,
-  tag_cloud
-}));
 
 const initialState = i.Map({
   current_user: i.Map({
@@ -97,7 +57,7 @@ const initialState = i.Map({
 });
 
 export function initState(state=initialState) {
-  store = createStore(theReducer, i.fromJS(state));
+  store = createStore(reducers, i.fromJS(state));
   return store;
 }
 
