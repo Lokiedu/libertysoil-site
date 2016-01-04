@@ -34,6 +34,7 @@ var concat = require('gulp-concat');
 var gulpif = require('gulp-if');
 var ejs = require('ejs');
 var fs = require('fs');
+var envify = require('envify/custom');
 
 var path = {
   src: {
@@ -69,12 +70,15 @@ function buildScript(file, watch) {
     entries: [path.src.scriptsDir + file],
     debug: true,
     cache: {}, packageCache: {}, fullPaths: true, // Requirement of watchify
-    transform: [babelify.configure({
-      stage: 0,
-      compact: true,
-      optional: ['runtime', 'es7.functionBind', 'es7.classProperties', 'es7.decorators'],
-      sourceMaps: true
-    })]
+    transform: [
+      babelify.configure({
+        stage: 0,
+        compact: true,
+        optional: ['runtime', 'es7.functionBind', 'es7.classProperties', 'es7.decorators'],
+        sourceMaps: true
+      }),
+      envify(process.env)
+    ]
   };
 
   // watchify() if watch requested, otherwise run browserify() once
