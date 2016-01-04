@@ -43,7 +43,7 @@ export default class ProfileHeader extends React.Component {
       }
     }
 
-    if (following && following[user.id]) {
+    if (following && following[user.id] && following[user.id].length) {
       // if anonym user, then do not show "Manage followers" links next to follow counters
       if (!current_user || (current_user && current_user.id != user.id)) {
         followingCount = (
@@ -63,7 +63,7 @@ export default class ProfileHeader extends React.Component {
 
     }
 
-    if (followers && followers[user.id]) {
+    if (followers && followers[user.id] && followers[user.id].length) {
       // if anonym user, then do not show "Manage followers" too
       if (!current_user || (current_user && current_user.id != user.id)) {
         followersCount = (
