@@ -27,44 +27,70 @@ import { defaultSelector } from '../selectors';
 
 
 class Sidebar extends React.Component {
+  static displayName = 'Sidebar';
+
   render() {
-    if (!this.props.current_user || !this.props.current_user_tags) {
-      return <script/>
+    if (!this.props.current_user) {
+      return null;
     }
 
     let {
-      current_user
+      current_user,
+      current_user_tags
     } = this.props;
 
-    let likes_enabled = (current_user.likes && current_user.likes.length > 0);
-    let favorites_enabled = (current_user.favourites && current_user.favourites.length > 0);
-    let followedTags = _.values(current_user.followed_tags);
-    let followedSchools = _.values(current_user.followed_schools);
+    let followedTags = _.values(this.props.current_user.followed_tags);
+    let followedSchools = _.values(this.props.current_user.followed_schools);
+    let showLikes = (current_user.likes && current_user.likes.length > 0);
+    let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
+    let showFollowedTags = !!followedTags.length || !!followedSchools.length;
+    let showUsedTags = current_user_tags && !!current_user_tags.length;
 
     return (
       <div className="page__sidebar font-open_sans">
         <div className="page__sidebar_user">
           <CurrentUser user={current_user} />
         </div>
+
         <div className="navigation navigation-sidebar">
           <NavigationItem enabled to="/" icon="star" icon="public">News Feed</NavigationItem>
-          <NavigationItem enabled={likes_enabled} to={`/user/${current_user.username}/likes`} icon="favorite">My Likes</NavigationItem>
-          <NavigationItem  enabled={favorites_enabled} to={`/user/${current_user.username}/favorites`} icon="star">My Favorites</NavigationItem>
+          {showLikes &&
+            <NavigationItem
+              enabled
+              icon="favorite"
+              to={`/user/${current_user.username}/likes`}
+            >
+              My Likes
+            </NavigationItem>
+          }
+          {showFavorites &&
+            <NavigationItem
+              enabled
+              icon="star"
+              to={`/user/${current_user.username}/favorites`}
+            >
+              My Favorites
+            </NavigationItem>
+          }
         </div>
 
-        <div className="layout__row layout__row-double">
-          <h4 className="sidebar__heading">I follow</h4>
-          <div className="layout__row">
-            <SidebarFollowedTags tags={followedTags} schools={followedSchools} />
+        {showFollowedTags &&
+          <div className="layout__row layout__row-double">
+            <h4 className="sidebar__heading">I follow</h4>
+            <div className="layout__row">
+              <SidebarFollowedTags tags={followedTags} schools={followedSchools} />
+            </div>
           </div>
-        </div>
+        }
 
-        <div className="layout__row layout__row-double">
-          <h4 className="sidebar__heading">I post to</h4>
-          <div className="sidebar__user_tags layout__row">
-            <TagCloud tags={this.props.current_user_tags} schools={[]}/>
+        {showUsedTags &&
+          <div className="layout__row layout__row-double">
+            <h4 className="sidebar__heading">I post to</h4>
+            <div className="sidebar__user_tags layout__row">
+              <TagCloud tags={this.props.current_user_tags} schools={[]}/>
+            </div>
           </div>
-        </div>
+        }
       </div>
     );
   }
