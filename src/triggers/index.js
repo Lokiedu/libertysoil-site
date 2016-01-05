@@ -65,10 +65,11 @@ export class ActionsTrigger {
     }
   };
 
-  syncLikedPosts = async () => {
+  syncLikedPosts = async (current_user_id) => {
     try {
-      let likedPosts = this.client.userLikedPosts();
-      this.dispatch(setPostsToLikesRiver(await likedPosts));
+      let likedPosts = await this.client.userLikedPosts();
+
+      this.dispatch(setPostsToLikesRiver(current_user_id, likedPosts));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
