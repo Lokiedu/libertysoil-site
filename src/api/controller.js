@@ -71,6 +71,27 @@ export default class ApiController {
     res.send(posts);
   }
 
+  async popularTags(req, res) {
+    let Label = this.bookshelf.model('Label');
+
+    let q = Label.forge()
+      .query(qb => {
+        qb
+          .select('labels.*')
+          .count('labels_posts.label_id as label_count')
+          .from('labels_posts')
+          .groupBy('labels_posts.label_id')
+          .groupBy('labels.id')
+          .orderBy('label_count', 'desc')
+          .limit(50)
+          .innerJoin('labels', 'labels.id', 'labels_posts.label_id')
+      });
+
+    let labels = await q.fetchAll({require: false});
+
+    res.send(labels);
+  }
+
   async tagPosts(req, res) {
     let Post = this.bookshelf.model('Post');
 

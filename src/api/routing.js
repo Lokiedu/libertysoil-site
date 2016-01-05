@@ -75,6 +75,8 @@ export function initApi(bookshelf) {
   api.get('/city/:id', wrap(controller.getCity.bind(controller)));
   api.get('/city/:id/posts', wrap(controller.getCityPosts.bind(controller)));
 
+  api.get('/tag', wrap(controller.popularTags.bind(controller)));
+
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
