@@ -35,7 +35,6 @@ export default class FollowTagButton extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props.tag, nextProps.tag);
     if (this.props.tag !== nextProps.tag) {
       this.setState({
         status: STATUS_NOT_TOUCHED
