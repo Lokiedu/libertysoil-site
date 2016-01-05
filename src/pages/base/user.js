@@ -24,9 +24,14 @@ import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 
+
 export default class BaseUserPage extends React.Component {
-  static displayName = 'BaseUserPage'
-  render () {
+  static displayName = 'BaseUserPage';
+
+  // FIXME: These links won't hide/show properly if following/unfollowing is performed directly on the page.
+  // Something is wrong with the redux state.
+
+  render() {
     let {
       current_user,
       i_am_following,
@@ -36,15 +41,9 @@ export default class BaseUserPage extends React.Component {
       followers
     } = this.props;
 
-    //let likes_visible = (page_user.likes && page_user.likes.length > 0);
-    //let favourites_visible = (page_user.favourites && page_user.favourites.length > 0);
-    let likes_visible = true;
-    let favourites_visible = true;
-    let bio_visible = page_user.more && !!page_user.more.bio;
-
-    let likes_grid_item_class = (likes_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
-    let favourites_grid_item_class = (favourites_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
-    let bio_grid_item_class = (bio_visible)? 'layout__grid_item' : 'layout__grid_item-fill';
+    let showLikesLink = page_user.liked_posts && !!page_user.liked_posts.length;
+    let showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
+    let showBioLink = page_user.more && !!page_user.more.bio;
 
     return (
       <div>
@@ -67,9 +66,42 @@ export default class BaseUserPage extends React.Component {
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
-                    <div className={likes_grid_item_class}><PageContentLink visible={likes_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/likes`}>Likes</PageContentLink></div>
-                    <div className={favourites_grid_item_class}><PageContentLink visible={favourites_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/favorites`}>Favorites</PageContentLink></div>
-                    <div className={bio_grid_item_class}><PageContentLink visible={bio_visible} className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}/bio`}>Bio</PageContentLink></div>
+                    {showLikesLink &&
+                      <div className="layout__grid_item">
+                        <PageContentLink
+                          activeClassName="tabs__link-active"
+                          className="tabs__link"
+                          to={`/user/${page_user.username}/likes`}
+                          visible
+                        >
+                          Likes
+                        </PageContentLink>
+                      </div>
+                    }
+                    {showFavouritesLink &&
+                      <div className="layout__grid_item">
+                        <PageContentLink
+                          activeClassName="tabs__link-active"
+                          className="tabs__link"
+                          to={`/user/${page_user.username}/favorites`}
+                          visible
+                        >
+                          Favorites
+                        </PageContentLink>
+                      </div>
+                    }
+                    {showBioLink &&
+                      <div className="layout__grid_item">
+                        <PageContentLink
+                          activeClassName="tabs__link-active"
+                          className="tabs__link"
+                          to={`/user/${page_user.username}/bio`}
+                          visible
+                        >
+                          Bio
+                        </PageContentLink>
+                      </div>
+                    }
                   </div>
                 </div>
                 <div className="layout__row layout__row-double">
