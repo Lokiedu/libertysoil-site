@@ -146,22 +146,6 @@ gulp.task('styles', function () {
     .pipe(reload({stream: true}));
 });
 
-// Builds src/config.js from src/config.js.ejs
-gulp.task('configs', function () {
-  fs.readFile('src/config.js.ejs', function (err, data) {
-    if (err) {
-      throw new Error(err);
-    }
-
-    var rendered = ejs.render(data.toString(), {process});
-    fs.writeFile('src/config.js', rendered, function (err) {
-      if (err) {
-        throw new Error(err);
-      }
-    })
-  });
-});
-
 // Static server
 gulp.task('browser-sync', function () {
   browserSync({
@@ -173,11 +157,11 @@ gulp.task('browser-sync', function () {
 
 // Default task
 gulp.task('default', function (cb) {
-  runSequence(['styles', 'html', 'images', 'scripts', 'fonts', 'configs'], ['watch', 'browser-sync'], cb);
+  runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
 });
 
 // public task
-gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts', 'configs']);
+gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
 
 // Watch
 gulp.task('watch', function () {

@@ -1,6 +1,6 @@
 // Put here things you want to send to a client.
 
-export const API_HOST = '<%- process.env.API_HOST ? process.env.API_HOST : 'http://localhost:8000' %>';
+export const API_HOST = process.env.API_HOST ? process.env.API_HOST : 'http://localhost:8000';
 export const API_URL_PREFIX = `${API_HOST}/api/v1`;
 
 export const API_URL_NAMES = {
@@ -41,4 +41,4 @@ export const URL = {
   [URL_NAMES.SCHOOL]: '/s/:url_name'
 };
 
-export const MAPBOX_ACCESS_TOKEN = '<%- process.env.MAPBOX_ACCESS_TOKEN %>';
+export const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
