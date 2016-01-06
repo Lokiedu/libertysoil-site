@@ -83,14 +83,18 @@ class SettingsPasswordPage extends React.Component {
       return false;
     }
 
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     return (
       <BaseSettingsPage
         current_user={current_user}
-        is_logged_in={is_logged_in}
-        onSave={this.onSave}
-        messages={messages}
-        following={following}
         followers={followers}
+        following={following}
+        is_logged_in={is_logged_in}
+        messages={messages}
+        triggers={triggers}
+        onSave={this.onSave}
       >
         <SettingsPasswordForm
           onSubmit={this.save}

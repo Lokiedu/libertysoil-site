@@ -17,31 +17,38 @@
  */
 import React, { PropTypes } from 'react';
 
-import Message from './message';
+import bem from '../utils/bemClassNames';
+import messageType from '../consts/messageTypeConstants';
 
 
-export default class Messages extends React.Component {
+export default class Message extends React.Component {
   static propTypes = {
-    messages: PropTypes.arrayOf(PropTypes.shape({
-      message: PropTypes.string.isRequired,
-      type: PropTypes.string
-    })).isRequired,
-    removeMessage: PropTypes.func.isRequired
+    i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    message: PropTypes.string.isRequired,
+    removeMessage: PropTypes.func.isRequired,
+    type: PropTypes.string
+  };
+
+  closeHandler = () => {
+    this.props.removeMessage(this.props.i);
   };
 
   render() {
-    if (this.props.messages.length == 0) {
-      return <script/>;
-    }
+    let {type, message, i} = this.props;
 
-    let msgTags = this.props.messages.map((msg, i) => {
-      let params = { i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
-      return <Message {...params} />;
+    let cn = bem.makeClassName({
+      block: 'message',
+      modifiers: {
+        error: () => (type == messageType.ERROR)
+      }
     });
 
     return (
-      <div className="layout layout__space layout-align_center">
-        <div className="message__group">{msgTags}</div>
+      <div className={cn} key={i}>
+        <span className="message__close action fa fa-times" onClick={this.closeHandler} />
+        <div className="message__body">
+          {message}
+        </div>
       </div>
     );
   }

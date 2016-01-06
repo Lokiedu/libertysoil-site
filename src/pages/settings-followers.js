@@ -103,11 +103,12 @@ class SettingsFollowersPage extends React.Component {
     return (
       <BaseSettingsPage
         current_user={current_user}
-        is_logged_in={is_logged_in}
-        onSave={this.onSave}
-        messages={messages}
-        following={following}
         followers={followers}
+        following={following}
+        is_logged_in={is_logged_in}
+        messages={messages}
+        triggers={triggers}
+        onSave={this.onSave}
       >
         <div className="paper__page">
           <h1 className="content__title">Manage Followers</h1>

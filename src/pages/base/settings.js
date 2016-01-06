@@ -37,7 +37,8 @@ export default class BaseSettingsPage extends React.Component {
       current_user,
       following,
       followers,
-      messages
+      messages,
+      triggers
     } = this.props;
 
     return (
@@ -77,7 +78,7 @@ export default class BaseSettingsPage extends React.Component {
                 <div className="void">
                   <span className="button button-green action" onClick={onSave}>Save changes</span>
                 </div>
-                <Messages messages={this.props.messages}/>
+                <Messages messages={messages} removeMessage={triggers.removeMessage}/>
               </div>
             </div>
           </div>

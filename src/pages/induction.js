@@ -138,6 +138,7 @@ class InductionPage extends React.Component {
         onNext={doneInduction}
         messages={messages}
         next_caption="Done"
+        triggers={triggers}
       >
         <div className="paper__page">
           <h1 className="content__title">Thank you for registering!</h1>

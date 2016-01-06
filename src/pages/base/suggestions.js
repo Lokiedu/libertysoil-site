@@ -30,7 +30,8 @@ export default class BaseSuggestionsPage extends React.Component {
       children,
       is_logged_in,
       current_user,
-      messages
+      messages,
+      triggers
     } = this.props;
 
     return (
@@ -42,7 +43,7 @@ export default class BaseSuggestionsPage extends React.Component {
 
             <div className="page__body_content">
               <div className="page__content page__content-spacing">
-                <Messages messages={this.props.messages}/>
+                <Messages messages={messages} removeMessage={triggers.removeMessage} />
                 <div className="paper layout">
                   <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
                       {children}

@@ -80,7 +80,7 @@ let AuthContents = (props) => {
     <div>
       <Header is_logged_in={is_logged_in} current_user={current_user} />
       <div className="page__body">
-        <Messages messages={messages}/>
+        <Messages messages={messages} removeMessage={triggers.removeMessage} />
         {content}
       </div>
       <Footer/>

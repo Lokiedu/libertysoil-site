@@ -113,6 +113,7 @@ class SuggestionsPage extends React.Component {
         is_logged_in={is_logged_in}
         messages={messages}
         next_caption="Proceed to your feed"
+        triggers={triggers}
       >
         <div className="paper__page">
           <p>You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.</p>

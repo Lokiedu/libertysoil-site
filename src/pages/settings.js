@@ -113,14 +113,18 @@ class SettingsPage extends React.Component {
 
     let roles = this.state.roles;
 
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     return (
       <BaseSettingsPage
         current_user={current_user}
-        is_logged_in={is_logged_in}
-        onSave={this.onSave}
-        messages={messages}
-        following={following}
         followers={followers}
+        following={following}
+        is_logged_in={is_logged_in}
+        messages={messages}
+        triggers={triggers}
+        onSave={this.onSave}
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>

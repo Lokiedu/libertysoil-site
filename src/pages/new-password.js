@@ -120,7 +120,6 @@ class PasswordForm extends React.Component {
 
 
 class Form extends React.Component {
-
   submitHandler = (event) => {
     event.preventDefault();
 
@@ -133,7 +132,6 @@ class Form extends React.Component {
   };
 
   render() {
-
     let {
       messages
     } = this.props;
@@ -144,13 +142,16 @@ class Form extends React.Component {
       content = <SuccessMessage />;
     }
 
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     return (
       <div>
         <Header />
           <div className="page__body">
             <div className="area">
               <div>
-                <Messages messages={messages}/>
+                <Messages messages={messages} removeMessage={triggers.removeMessage} />
                 <div className="area__body layout-align_start">
                 <div className="box box-middle">
                   <header className="box__title">Set new password</header>
@@ -164,7 +165,7 @@ class Form extends React.Component {
           </div>
         <Footer/>
       </div>
-      );
+    );
   }
 }
 

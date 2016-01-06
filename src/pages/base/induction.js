@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Link, IndexLink } from 'react-router';
 
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -32,6 +31,7 @@ export default class BaseInductionPage extends React.Component {
       children,
       is_logged_in,
       current_user,
+      triggers,
       messages
     } = this.props;
 
@@ -52,7 +52,7 @@ export default class BaseInductionPage extends React.Component {
                 <div className="void">
                   <span className="button button-green action" onClick={onNext}>{next_caption}</span>
                 </div>
-                <Messages messages={this.props.messages}/>
+                <Messages messages={messages} removeMessage={triggers.removeMessage} />
               </div>
             </div>
           </div>

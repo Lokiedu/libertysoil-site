@@ -21,7 +21,8 @@ import {
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
-  removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool
+  removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
+  removeMessage
 } from '../actions';
 
 
@@ -366,5 +367,9 @@ export class ActionsTrigger {
       this.dispatch(addError(e.message));
     }
   };
+
+  removeMessage = (id) => {
+    this.dispatch(removeMessage(id))
+  }
 }
 
