@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
-import { createStore } from 'redux';
+import { compose, createStore } from 'redux';
 import { combineReducers } from 'redux-immutablejs'
 import { routeReducer } from 'redux-simple-router';
 
@@ -96,7 +96,13 @@ const initialState = i.Map({
   tag_cloud: i.List([])
 });
 
+const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
+const finalCreateStore = compose(
+   browserHasDevTools ? window.devToolsExtension() : f => f
+)(createStore);
+
+
 export function initState(state=initialState) {
-  store = createStore(theReducer, i.fromJS(state));
+  store = finalCreateStore(theReducer, i.fromJS(state));
   return store;
 }
