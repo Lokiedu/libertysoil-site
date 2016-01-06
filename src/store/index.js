@@ -100,7 +100,3 @@ export function initState(state=initialState) {
   store = createStore(theReducer, i.fromJS(state));
   return store;
 }
-
-export function getStore() {
-  return store;
-}
