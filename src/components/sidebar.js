@@ -18,38 +18,15 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { Link, IndexLink } from 'react-router';
 
-import ApiClient from '../api/client'
-import {API_HOST} from '../config';
-import { getStore } from '../store';
-import { setUserTags } from '../actions';
 import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import SidebarFollowedTags from './sidebar-followed-tags';
 import { defaultSelector } from '../selectors';
 
+
 class Sidebar extends React.Component {
-  static displayName = 'Sidebar'
-
-  componentDidMount() {
-    Sidebar.fetchData(this.props, new ApiClient(API_HOST));
-  }
-
-  static async fetchData(props, client) {
-    try {
-      if (!props.current_user) {
-        return;
-      }
-      let userTags = client.userTags();
-
-      getStore().dispatch(setUserTags(await userTags));
-    } catch (e) {
-      console.log(e.stack)
-    }
-  }
-
   render() {
     if (!this.props.current_user || !this.props.current_user_tags) {
       return <script/>
