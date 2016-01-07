@@ -134,8 +134,8 @@ export default class CreatePost extends React.Component {
         <div className="layout layout-rows layout-align_vertical">
           <TagIcon className="create_post__tag_button" type={TagType.TAG_SCHOOL} />
           <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} />
-          <TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />
-          <TagIcon className="create_post__tag_button" type={TagType.TAG_MENTION} />
+          {/*<TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />*/}
+          {/*<TagIcon className="create_post__tag_button" type={TagType.TAG_MENTION} />*/}
           <TagIcon className="create_post__tag_button" type={TagType.TAG_HASHTAG} onClick={this._showAddTagModal} />
         </div>
       );
