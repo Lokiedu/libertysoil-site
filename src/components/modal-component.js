@@ -76,17 +76,9 @@ class ModalComponent extends Component {
       cn = `${cn} ${className}`;
     }
 
-    if (!hideCloseButton) {
-      pieces.closeButton = <div className="modal__close_area"><div className="micon action" onClick={this.hide}>close</div></div>;
-    }
-
     return (
       <div className={cn} {...props} onClick={this.hide}>
         <div className="modal__section" onClick={this.clickHandler}>
-            <div className="modal__section_head">
-                <div className="modal__title">{title}</div>
-                {pieces.closeButton}
-            </div>
             {children}
         </div>
       </div>
@@ -94,13 +86,25 @@ class ModalComponent extends Component {
   }
 }
 
-ModalComponent.body = ({ children }) => (
+ModalComponent.Head = ({ children }) => (
+  <div className="modal__section_head">
+    {children}
+  </div>
+);
+
+ModalComponent.Title = ({ children }) => (
+  <h4 className="modal__title">
+    {children}
+  </h4>
+);
+
+ModalComponent.Body = ({ children }) => (
   <div className="modal__section_description">
     {children}
   </div>
 );
 
-ModalComponent.actions = ({ children }) => (
+ModalComponent.Actions = ({ children }) => (
   <div className="modal__navigation">
     {children}
   </div>
