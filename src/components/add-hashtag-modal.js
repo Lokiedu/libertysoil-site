@@ -18,20 +18,31 @@
 import React, { PropTypes, Component } from 'react';
 
 import ModalComponent from '../components/modal-component';
-import TabsComponent from '../components/tabs-component';
 import TagCloud from '../components/tag-cloud';
+import TagIcon from '../components/tag-icon';
+import * as TagType from '../utils/tags';
 
 
-export default class AddTagModal extends Component {
+export default class AddHashtagModal extends Component {
   static displayName = 'AddTagModal';
 
   static propTypes = {
+    locations: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
+    tags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
     onClose: PropTypes.func,
-    onSave: PropTypes.func,
-    tags: PropTypes.arrayOf(PropTypes.string)
+    onSave: PropTypes.func
   };
 
   static defaultProps = {
+    locations: [],
+    schools: [],
     tags: [],
     onClose: () => {},
     onSave: () => {}
@@ -54,93 +65,79 @@ export default class AddTagModal extends Component {
     let tags = this.state.tags;
     let tagName = this.refs.input.value.trim();
 
-    let empty = tagName.length == 0;
-    let exists = tags.find(tag => tag == tagName);
+    if (tagName.length == 0) {
+      return;
+    }
 
-    if (empty || exists) {
+    if (tags.find(tag => tag.name === tagName)) {
       return;
     }
 
     this.refs.input.value = '';
 
-    tags.push(tagName);
+    tags.push({name: tagName});
     this.setState({tags});
   };
 
-  _renderAddedTags() {
-    let tagsToDisplay = this.state.tags.map(tag => ({
-      name: tag
-    }));
-
-    if (this.state.tags.length > 0) {
-      return (
-        <div>
-          <div className="layout__row">
-            Added:
-          </div>
-          <div className="layout__row">
-            <TagCloud
-              tags={tagsToDisplay}
-            />
-          </div>
-        </div>
-      );
-    }
-  }
-
   _save = () => {
-    this.props.onSave(this.state.tags);
+    this.props.onSave({tags: this.state.tags});
   };
 
   render () {
-    const {
+    let {
+      locations,
+      schools,
+      tags,
       onClose
     } = this.props;
 
-    const {
-      activeTabIndex
-    } = this.state;
-
-    const tabs = [
-      {
-        title: 'Enter manually',
-        id: 'manual'
-      }
-      //{
-      //  title: 'Used recently',
-      //  id: 'recently'
-      //},
-      //{
-      //  title: 'Popular',
-      //  id: 'popular'
-      //}
-    ];
+    let shouldRenderAddedTags = schools.length > 0 || locations.length > 0 || tags.length > 0;
 
     return (
       <ModalComponent
-        title="Add hashtags to your post"
+        className="add_tag_modal add_tag_modal-hashtag"
         size="normal"
         onHide={onClose}
       >
-        <ModalComponent.body>
-          <TabsComponent activeIndex={activeTabIndex} tabs={tabs} onSelect={this.selectTab} />
+        <ModalComponent.Head>
+          <ModalComponent.Title>Add hashtags to your post</ModalComponent.Title>
+          <TagIcon big type={TagType.TAG_HASHTAG} />
+        </ModalComponent.Head>
+        <ModalComponent.Body>
+          <div className="add_tag_modal__tabs">
+            <div className="add_tag_modal__tab add_tag_modal__tab-active">Enter manually</div>
+          </div>
+
           <div>
-            <div className="layout__row tabs_component__content tabs_component__content-highlight tabs_component__content-expanded">
+            <div className="layout__row add_tag_modal__tab_panel">
               <div className="layout">
                 <div className="layout__grid_item layout__grid_item-wide">
                   <input ref="input" type="text" placeholder="Start typing..." className="input input-block input-transparent input-button_height" />
                 </div>
                 <div className="layout__grid_item">
-                  <span onClick={this._handleAddTag} className="button button-wide button-ligth_blue action">Add</span>
+                  <span onClick={this._handleAddTag} className="button button-wide add_tag_modal__add_button action">Add</span>
                 </div>
               </div>
             </div>
-            {this._renderAddedTags()}
+            {shouldRenderAddedTags &&
+              <div className="layout__row">
+                <div className="layout__row">
+                  Added:
+                </div>
+                <div className="layout__row add_tag_modal__added_tags">
+                  <TagCloud
+                    tags={this.state.tags}
+                  />
+                </div>
+              </div>
+            }
           </div>
-        </ModalComponent.body>
-        <ModalComponent.actions>
-          <div className="button button-wide button-red action" onClick={this._save}>Save</div>
-        </ModalComponent.actions>
+        </ModalComponent.Body>
+        <ModalComponent.Actions>
+          <footer className="add_tag_modal__footer">
+            <div className="button button-wide button-red action" onClick={this._save}>Save</div>
+          </footer>
+        </ModalComponent.Actions>
       </ModalComponent>
     );
   }
