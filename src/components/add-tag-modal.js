@@ -105,15 +105,15 @@ export default class AddTagModal extends Component {
       {
         title: 'Enter manually',
         id: 'manual'
-      },
-      {
-        title: 'Used recently',
-        id: 'recently'
-      },
-      {
-        title: 'Popular',
-        id: 'popular'
       }
+      //{
+      //  title: 'Used recently',
+      //  id: 'recently'
+      //},
+      //{
+      //  title: 'Popular',
+      //  id: 'popular'
+      //}
     ];
 
     return (
