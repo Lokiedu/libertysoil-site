@@ -16,56 +16,46 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
 import ModalComponent from '../components/modal-component';
-import TagCloud from '../components/tag-cloud';
+import TagEditor from './add-tag-modal/tag-editor';
 import TagIcon from '../components/tag-icon';
 import * as TagType from '../utils/tags';
 
 
 export default class AddHashtagModal extends Component {
-  static displayName = 'AddTagModal';
+  static displayName = 'AddHashtagModal';
 
   static propTypes = {
     locations: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    onClose: PropTypes.func,
+    onSave: PropTypes.func,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     tags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    onClose: PropTypes.func,
-    onSave: PropTypes.func
+    visible: PropTypes.bool
   };
 
   static defaultProps = {
     locations: [],
     schools: [],
     tags: [],
+    visible: false,
     onClose: () => {},
     onSave: () => {}
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activeTabIndex: 0,
-      tags: props.tags
-    };
-  }
-
-  selectTab = (index) => {
-    this.setState({ activeTabIndex: index });
-  };
-
   _handleAddTag = () => {
-    let tags = this.state.tags;
+    let tags = this._tagEditor.getTags().tags;
     let tagName = this.refs.input.value.trim();
 
-    if (tagName.length == 0) {
+    if (tagName.length < 3) {
       return;
     }
 
@@ -75,12 +65,11 @@ export default class AddHashtagModal extends Component {
 
     this.refs.input.value = '';
 
-    tags.push({name: tagName});
-    this.setState({tags});
+    this._tagEditor.addTag({name: tagName});
   };
 
   _save = () => {
-    this.props.onSave({tags: this.state.tags});
+    this.props.onSave(_.pick(this.state, 'locations', 'schools', 'tags'));
   };
 
   render () {
@@ -88,10 +77,13 @@ export default class AddHashtagModal extends Component {
       locations,
       schools,
       tags,
+      visible,
       onClose
     } = this.props;
 
-    let shouldRenderAddedTags = schools.length > 0 || locations.length > 0 || tags.length > 0;
+    if (!visible) {
+      return null;
+    }
 
     return (
       <ModalComponent
@@ -112,25 +104,29 @@ export default class AddHashtagModal extends Component {
             <div className="layout__row add_tag_modal__tab_panel">
               <div className="layout">
                 <div className="layout__grid_item layout__grid_item-wide">
-                  <input ref="input" type="text" placeholder="Start typing..." className="input input-block input-transparent input-button_height" />
+                  <input
+                    className="input input-block input-transparent input-button_height"
+                    placeholder="Start typing..."
+                    ref="input"
+                    type="text"
+                  />
                 </div>
                 <div className="layout__grid_item">
-                  <span onClick={this._handleAddTag} className="button button-wide add_tag_modal__add_button action">Add</span>
+                  <span
+                    className="button button-wide add_tag_modal__add_button action"
+                    onClick={this._handleAddTag}
+                  >
+                    Add
+                  </span>
                 </div>
               </div>
             </div>
-            {shouldRenderAddedTags &&
-              <div className="layout__row">
-                <div className="layout__row">
-                  Added:
-                </div>
-                <div className="layout__row add_tag_modal__added_tags">
-                  <TagCloud
-                    tags={this.state.tags}
-                  />
-                </div>
-              </div>
-            }
+            <TagEditor
+              locations={locations}
+              ref={(c) => this._tagEditor = c}
+              schools={schools}
+              tags={tags}
+            />
           </div>
         </ModalComponent.Body>
         <ModalComponent.Actions>
