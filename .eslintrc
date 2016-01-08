@@ -15,6 +15,11 @@
     "modules": true
   },
   "rules": {
+    "consistent-return": 2,
+    "no-else-return": 2,
+    "no-native-reassign": 2,
+    "strict": [2, "never"],
+
     "jsx-quotes": 1,
     "react/display-name": [1, {"acceptTranspilerName": 1}],
     "react/forbid-prop-types": 1,
