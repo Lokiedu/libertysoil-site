@@ -26,8 +26,7 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-import {EditPost} from '../components/post'
-import TagsEditor from '../components/post/tags-editor';
+import {EditPost} from '../components/post';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 
@@ -131,14 +130,6 @@ class PostEditPage extends React.Component {
 
                   <div className="box__body">
                     <EditPost post={current_post}/>
-
-                    <TagsEditor
-                      autocompleteSchools={_.values(this.props.schools)}
-                      autocompleteTags={[{name: 'TestTagOne'}, {name: 'TestTagTwo'}]}
-                      ref={(editor) => this.editor = editor}
-                      schools={current_post.schools}
-                      tags={current_post.labels}
-                    />
 
                     <div className="layout__row">
                       <div className="layout layout__grid layout-align_right">

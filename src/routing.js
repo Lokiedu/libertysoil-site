@@ -25,7 +25,7 @@ import Auth from './pages/auth';
 import NewPassword from './pages/new-password';
 import PasswordReset from './pages/password-reset';
 import PostPage from './pages/post';
-import PostEditPage from './pages/post_edit';
+import PostEditPage from './pages/post-edit';
 import UserPage from './pages/user';
 import UserLikesPage from './pages/user-likes';
 import UserFavoritesPage from './pages/user-favorites';
