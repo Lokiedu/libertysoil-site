@@ -16,17 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, {PropTypes} from 'react';
-import _ from 'lodash';
 
-import postTypeConstants from '../consts/postTypeConstants';
-import { EditPost } from './post';
-import TagsEditor from './post/tags-editor';
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
 import * as TagType from '../utils/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
-
 import AddHashtagModal from './add-hashtag-modal';
+import AddSchoolModal from './add-school-modal';
+import AddLocationModal from './add-location-modal';
 
 
 @ClickOutsideComponentDecorator
@@ -37,6 +34,9 @@ export default class CreatePost extends React.Component {
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
     }),
+    allSchools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
     defaultText: PropTypes.string,
     locations: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
@@ -54,7 +54,9 @@ export default class CreatePost extends React.Component {
 
   state = {
     expanded: false,
-    addTagModalVisible: false
+    addHashtagModalVisible: false,
+    addLocationModalVisible: false,
+    addSchoolModalVisible: false
   };
 
   onClickOutside = () => {
@@ -78,7 +80,8 @@ export default class CreatePost extends React.Component {
 
     await this.props.triggers.createPost('short_text', {
       text: form.text.value,
-      tags: this.props.tags.map(tag => tag.name)
+      tags: this.props.tags.map(tag => tag.name),
+      schools: this.props.schools.map(school => school.name)
     });
 
     form.text.value = '';
@@ -98,46 +101,46 @@ export default class CreatePost extends React.Component {
 
   _showAddHashtagModal = () => {
     this.setState({
-      addTagModalVisible: true,
-      addTagModalType: TagType.TAG_HASHTAG
+      addHashtagModalVisible: true
     });
   };
 
   _showAddSchoolModal = () => {
     this.setState({
-      addTagModalVisible: true,
-      addTagModalType: TagType.TAG_SCHOOL
+      addSchoolModalVisible: true
     });
   };
 
   _showAddLocationModal = () => {
     this.setState({
-      addTagModalVisible: true,
-      addTagModalType: TagType.TAG_LOCATION
+      addLocationModalVisible: true
     });
   };
 
   _closeAddTagModal = () => {
     this.setState({
-      addTagModalVisible: false
+      addHashtagModalVisible: false,
+      addLocationModalVisible: false,
+      addSchoolModalVisible: false
     });
   };
 
   /**
-   * Adds the tags to the redux form state.
-   * Used in the tag modal.
    * @param {Object} tags - {tags: [], schools: [], locations: [], ...}
    */
   _addTags = (tags) => {
     this.props.actions.updateCreatePostForm(tags);
 
-    this.setState({
-      addTagModalVisible: false
-    });
+    this._closeAddTagModal();
   };
 
   render () {
-    let { addTagModalVisible, expanded } = this.state;
+    let {
+      addHashtagModalVisible,
+      addSchoolModalVisible,
+      addLocationModalVisible,
+      expanded
+    } = this.state;
 
     return (
       <div className="box box-post box-space_bottom create_post">
@@ -184,15 +187,31 @@ export default class CreatePost extends React.Component {
             </div>
           </div>
         </form>
-        {addTagModalVisible &&
-          <AddHashtagModal
-            locations={this.props.locations}
-            schools={this.props.schools}
-            tags={this.props.tags}
-            onClose={this._closeAddTagModal}
-            onSave={this._addTags}
-          />
-        }
+        <AddHashtagModal
+          locations={this.props.locations}
+          schools={this.props.schools}
+          tags={this.props.tags}
+          visible={addHashtagModalVisible}
+          onClose={this._closeAddTagModal}
+          onSave={this._addTags}
+        />
+        <AddSchoolModal
+          allSchools={this.props.allSchools}
+          locations={this.props.locations}
+          schools={this.props.schools}
+          tags={this.props.tags}
+          visible={addSchoolModalVisible}
+          onClose={this._closeAddTagModal}
+          onSave={this._addTags}
+        />
+        <AddLocationModal
+          locations={this.props.locations}
+          schools={this.props.schools}
+          tags={this.props.tags}
+          visible={addLocationModalVisible}
+          onClose={this._closeAddTagModal}
+          onSave={this._addTags}
+        />
       </div>
     )
   }

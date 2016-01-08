@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -33,6 +34,7 @@ import {
   resetCreatePostForm,
   updateCreatePostForm
 } from '../actions';
+
 
 class List extends React.Component {
   static displayName = 'List';
@@ -61,6 +63,7 @@ class List extends React.Component {
             <div className="page__content">
               <CreatePost
                 actions={actions}
+                allSchools={_.values(this.props.schools)}
                 defaultText={this.props.create_post_form.text}
                 triggers={triggers}
                 {...this.props.create_post_form}
