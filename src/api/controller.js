@@ -761,7 +761,7 @@ export default class ApiController {
 
     createJob('verify-email', {
       username: user.get('username'),
-      email: req.body.email
+      email: user.get('email')
     });
 
     res.redirect('/');

@@ -18,7 +18,7 @@
 import kueLib from 'kue';
 
 import config from './config';
-import { renderVerificationTemplate, renderResetTemplate } from './src/email-templates/index';
+import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 
 
@@ -34,7 +34,7 @@ queue.process('register-user-email', async function(job, done) {
           hash } = job.data;
 
   try {
-    let html = await renderVerificationTemplate(new Date(), username, email, `http://www.libertysoil.org/api/verify/${hash}`);
+    let html = await renderVerificationTemplate(new Date(), username, email, `http://www.libertysoil.org/api/v1/user/verify/${hash}`);
     await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {
@@ -55,7 +55,6 @@ queue.process('reset-password-email', async function(job, done) {
 queue.process('verify-email', async function(job, done) {
   try {
     const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
-
     await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {

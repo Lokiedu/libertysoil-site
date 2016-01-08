@@ -79,9 +79,9 @@ export function initApi(bookshelf) {
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
 
+  api.get('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
   api.post('/user/', wrap(controller.updateUser.bind(controller)));
   api.post('/user/password', wrap(controller.changePassword.bind(controller)));
-  api.post('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
 
   api.post('/resetpassword', wrap(controller.resetPassword.bind(controller)));
   api.post('/newpassword/:hash', wrap(controller.newPassword.bind(controller)));
