@@ -90,21 +90,6 @@ let AuthContents = (props) => {
   );
 };
 
-let RegistrationSuccess = (props) => {
-
-  return (
-  <div className="area">
-    <div className="area__body">
-      <div className="message">
-        <div className="message__body">
-          You are now successfully registered. We have sent you verification email. Please find instructions in your mail box or <Link className="link" to="/auth">click here to show registration form.</Link>
-        </div>
-      </div>
-    </div>
-  </div>
-  );
-};
-
 class Auth extends React.Component {
 
   contextTypes: {

@@ -730,7 +730,7 @@ export default class ApiController {
     }
 
     if (user.get('email_check_hash')) {
-      console.log(`user '${req.body.username}' has not validated email`);
+      console.warn(`user '${req.body.username}' has not validated email`); // eslint-disable-line no-console
       res.status(401);
       res.send({success: false, error: 'Please follow the instructions mailed to you during registration.'});
       return;
