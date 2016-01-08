@@ -193,12 +193,16 @@ export class ActionsTrigger {
         this.dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
         this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
       } else {
-        this.dispatch(setCurrentUser(null));
         this.dispatch(addError('Invalid username or password'));
+        this.dispatch(setCurrentUser(null));
       }
     } catch (e) {
       this.dispatch(setCurrentUser(null));
-      this.dispatch(addError('Invalid username or password'));
+      if (('body' in e.response) && ('error' in e.response.body)) {
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError('Invalid username or password'));
+      }
     }
   };
 
