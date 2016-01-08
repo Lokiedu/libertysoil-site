@@ -32,7 +32,7 @@ import Messages from '../components/messages';
 import Suggestions from './suggestions';
 
 
-let FirstLogin = (props) => {
+let FirstLogin = () => {
   return (
   <div className="area">
     <div className="area__body">

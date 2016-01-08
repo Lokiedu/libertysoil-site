@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+
 
 export default class FollowButton extends React.Component {
   static displayName = 'FollowButton';

@@ -18,7 +18,6 @@
 import React from 'react';
 
 //import FollowButton from './follow-button';
-import { Link } from 'react-router';
 import moment from 'moment';
 import FollowTagButton from './follow-tag-button';
 //import { getUrl, URL_NAMES } from '../utils/urlGenerator';

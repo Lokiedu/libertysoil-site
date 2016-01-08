@@ -28,14 +28,12 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-let SuccessMessage = (props) => {
-
+let SuccessMessage = () => {
   return (
     <div>
       You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
     </div>
   );
-
 };
 
 class PasswordForm extends React.Component {

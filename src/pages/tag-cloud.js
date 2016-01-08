@@ -26,23 +26,6 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
-let SidebarTagCloud = ({ tags, title, ...props }) => {
-  if (tags.length == 0) {
-    return <script/>;
-  }
-
-  return (
-    <div {...props}>
-      <div className="layout__row">
-        <h4 className="head head-sub">{title}</h4>
-      </div>
-      <div className="layout__row">
-        <TagCloud tags={tags}/>
-      </div>
-    </div>
-  );
-};
-
 class TagCloudPage extends Component {
   static displayName = 'TagCloudPage'
 

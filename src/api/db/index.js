@@ -26,7 +26,7 @@ import bb from 'bluebird';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto'
 
-import { uploadAttachment, downloadAttachment, getMetadata, generateName } from '../../utils/attachments';
+import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 
 
 let bcryptAsync = bb.promisifyAll(bcrypt);

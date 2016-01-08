@@ -102,7 +102,7 @@ export default class TagsEditor extends Component {
     });
   };
 
-  addSchool = (e) => {
+  addSchool = () => {
     let name = this.state.school || '';
     let schools = this.state.schools;
 

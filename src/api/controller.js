@@ -20,13 +20,13 @@ import bcrypt from 'bcrypt'
 import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
-import fs from 'fs';
 import request from 'superagent';
 import crypto from 'crypto'
 import { createJob } from '../utils/queue';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
+
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -335,10 +335,7 @@ export default class ApiController {
   }
 
   async getCountryPosts(req, res) {
-    let Country = this.bookshelf.model('Country');
-
     try {
-
       let country_posts_via_city = await this.bookshelf.knex
         .select('*')
         .from('posts_cities')
@@ -872,9 +869,6 @@ export default class ApiController {
       req.session.destroy();
     }
     res.redirect('/');
-  }
-
-  async whoAmI(req, res) {
   }
 
   async userSuggestions(req, res) {

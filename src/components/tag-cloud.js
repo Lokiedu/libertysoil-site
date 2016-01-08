@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 
 import Tag from './tag';
 import { convertModeldsToTags } from '../utils/tags';
+
 
 export default class TagCloud extends React.Component {
   static displayName = 'TagCloud';

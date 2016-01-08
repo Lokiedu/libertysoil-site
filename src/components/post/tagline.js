@@ -16,11 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Link } from 'react-router';
-import _ from 'lodash';
 
 import Tag from '../tag';
 import { TAG_HASHTAG, TAG_SCHOOL } from '../../utils/tags';
+
 
 export default class TagLine extends React.Component {
   static displayName = "TagLine"

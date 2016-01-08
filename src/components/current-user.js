@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import Gravatar from 'react-gravatar';
 import _ from 'lodash';
 
 import User from './user';
+
 
 export default class CurrentUser extends React.Component {
   render() {

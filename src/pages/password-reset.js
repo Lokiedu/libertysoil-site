@@ -42,14 +42,12 @@ let ResetForm = (props) => {
    );
 };
 
-let SuccessMessage = (props) => {
-
+let SuccessMessage = () => {
   return (
     <div>
       If we found this email in our database, we've just sent you a message with further steps.
     </div>
   );
-
 };
 
 class Form extends React.Component {

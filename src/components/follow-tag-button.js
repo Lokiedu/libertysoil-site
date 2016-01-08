@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+
 
 // Statuses for the progress indication.
 const STATUS_NOT_TOUCHED = 'STATUS_NOT_TOUCHED';

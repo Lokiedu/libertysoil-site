@@ -35,7 +35,7 @@ export default class GeoInput extends React.Component {
   static defaultProps = {
     initialLocation: {lat: null, lon: null},
     // pos - {lat: Number, lon: Number}
-    onSelect: function (pos) {}
+    onSelect: function (/* pos */) {}
   };
 
   constructor(props) {

@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
-import _ from 'lodash';
 
 import * as a from '../actions';
 import messageType from '../consts/messageTypeConstants';

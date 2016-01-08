@@ -40,7 +40,7 @@ export function combineHandlersAsync(...handlers) {
   return async (nextState, replaceState, callback) => {
     let callbacksTodo = 0;
 
-    let callbackDecreaser = (e) => {
+    let callbackDecreaser = () => {
       callbacksTodo -= 1;
 
       if (callbacksTodo === 0) {

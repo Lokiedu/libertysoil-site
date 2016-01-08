@@ -106,12 +106,12 @@ export default class ApiClient
     return response.body;
   }
 
-  async userTags(username) {
+  async userTags() {
     let response = await this.get(`/api/v1/user/tags`);
     return response.body;
   }
 
-  async userLikedPosts(username) {
+  async userLikedPosts() {
     let response = await this.get(`/api/v1/posts/liked`)
     return response.body;
   }
@@ -126,7 +126,7 @@ export default class ApiClient
     return response.body;
   }
 
-  async userFavouredPosts(username) {
+  async userFavouredPosts() {
     let response = await this.get(`/api/v1/posts/favoured`)
     return response.body;
   }

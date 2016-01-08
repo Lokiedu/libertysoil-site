@@ -1,6 +1,6 @@
 import React from 'react';
-import _ from 'lodash';
 import twtxt from 'twitter-text';
+
 
 let Preview = (props) => {
   let text = props.post.text;

@@ -17,9 +17,9 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, IndexLink } from 'react-router';
 
 import { defaultSelector } from '../selectors';
+
 
 class SidebarAlt extends React.Component {
   static displayName = 'SidebarAlt'

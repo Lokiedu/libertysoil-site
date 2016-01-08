@@ -204,7 +204,7 @@ export class ActionsTrigger {
 
   resetPassword = async (email) => {
     try {
-      let result = await this.client.resetPassword(email);
+      await this.client.resetPassword(email);
       this.dispatch(submitResetPassword());
     } catch (e) {
       this.dispatch(addError('Invalid username or password'));
@@ -213,7 +213,7 @@ export class ActionsTrigger {
 
   newPassword = async (hash, password, password_repeat) => {
     try {
-      let result = await this.client.newPassword(hash, password, password_repeat);
+      await this.client.newPassword(hash, password, password_repeat);
       this.dispatch(submitNewPassword());
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
