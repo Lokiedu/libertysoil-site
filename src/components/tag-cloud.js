@@ -25,6 +25,12 @@ export default class TagCloud extends React.Component {
   static displayName = 'TagCloud';
 
   static propTypes = {
+    deletable: PropTypes.bool,
+    locations: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      id: PropTypes.string
+    })),
+    onDelete: () => {},
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string
@@ -36,7 +42,14 @@ export default class TagCloud extends React.Component {
 
   render() {
     let tags = convertModelsToTags(this.props)
-      .map((tag, index) => <Tag key={index} {...tag} />);
+      .map((tag, index) => (
+        <Tag
+          deletable={this.props.deletable}
+          key={index}
+          onDelete={this.props.onDelete}
+          {...tag}
+        />
+      ));
 
     return (
       <div className="tags">

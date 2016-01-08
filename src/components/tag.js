@@ -1,17 +1,26 @@
 import React, { PropTypes } from 'react';
+import _ from 'lodash';
 import { Link } from 'react-router';
 
 import { truncate } from 'grapheme-utils';
 import TagIcon from './tag-icon';
-import { TAG_HASHTAG, TAG_SCHOOL } from '../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../utils/tags';
+
 
 export default class Tag extends React.Component {
   static displayName = 'Tag';
 
   static propTypes = {
+    deletable: PropTypes.bool,
     name: PropTypes.string,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL]),
+    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION]),
     urlId: PropTypes.string
+  };
+
+  _handleDelete = (event) => {
+    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+
+    this.props.onDelete(tag);
   };
 
   render() {
@@ -32,6 +41,12 @@ export default class Tag extends React.Component {
         url = `/s/${urlId}`;
         break;
       }
+
+      case TAG_LOCATION: {
+        className = 'tag-location';
+        url = ``; // FIXME
+        break;
+      }
     }
 
     return (
@@ -40,6 +55,9 @@ export default class Tag extends React.Component {
           <TagIcon className="tag__icon" type={type} />
           <span className="tag__name">{truncatedName}</span>
         </Link>
+        {this.props.deletable &&
+          <span className="micon tag__delete" onClick={this._handleDelete}>close</span>
+        }
       </div>
     );
   }
