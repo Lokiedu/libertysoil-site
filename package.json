@@ -12,7 +12,7 @@
     "tasks": "babel-node tasks.js",
     "test": "echo \"Preparing test database...\" && babel-node test-helpers/dropDatabase.js && knex --env test migrate:latest && DB_ENV=test mocha test",
     "test-old": "echo \"Preparing test database...\" && knex --env test migrate:rollback && knex --env test migrate:latest && DB_ENV=test mocha test",
-    "travis": "echo \"Preparing test database...\" && knex --env travis migrate:latest && DB_ENV=travis mocha test",
+    "travis": "eslint src && echo \"Preparing test database...\" && knex --env travis migrate:latest && DB_ENV=travis mocha test",
     "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "docker-start": "knex migrate:latest && gulp build && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js",
