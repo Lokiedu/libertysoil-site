@@ -30,7 +30,7 @@ export default class WhatIsLibertySoil extends Component {
     this.setState({
       activeSlide: slideId
     });
-  };
+  }
 
   render () {
     var activeSlide = this.state.activeSlide;

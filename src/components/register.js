@@ -26,9 +26,9 @@ export default class RegisterComponent extends React.Component {
     if (form.password.value != form.password_repeat.value) {
       form.password_repeat.setCustomValidity("Passwords don't match");
       return;
-    } else {
-      form.password_repeat.setCustomValidity('');
     }
+
+    form.password_repeat.setCustomValidity('');
 
     if (!form.agree.checked) {
       form.agree.setCustomValidity('You have to agree to Terms before registering');

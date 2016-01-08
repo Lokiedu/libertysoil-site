@@ -94,7 +94,7 @@ export default class Reviews extends Component {
         </div>
       </div>
     </div> ;
-  };
+  }
 }
 
 class ReviewUser extends Component {

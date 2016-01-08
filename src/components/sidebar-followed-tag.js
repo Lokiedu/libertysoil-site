@@ -41,4 +41,4 @@ export default class SidebarFollowedTag extends React.Component {
       </Link>
     );
   }
-};
+}

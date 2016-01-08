@@ -677,9 +677,9 @@ export default class ApiController {
         res.status(401);
         res.send({error: 'User already exists'});
         return;
-      } else {
-        throw e;
       }
+
+      throw e;
     }
 
     if (req.session) {

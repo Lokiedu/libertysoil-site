@@ -237,10 +237,10 @@ export class ActionsTrigger {
         this.dispatch(setCurrentUser(user));
 
         return user;
-      } else {
-        // FIXME: enable form again
-        this.dispatch(addError(result.error));
       }
+
+      // FIXME: enable form again
+      this.dispatch(addError(result.error));
     } catch (e) {
       // FIXME: enable form again
 

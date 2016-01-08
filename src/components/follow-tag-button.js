@@ -97,7 +97,7 @@ export default class FollowTagButton extends React.Component {
 
       if (isFollowed) {
         return <button className="button button-yellow" type="button" onClick={this._unfollowTag}>Following</button>;
-      } else {
+      } else {  // eslint-disable-line no-else-return
         return <button className="button button-green" type="button" onClick={this._followTag}>Follow</button>;
       }
     }

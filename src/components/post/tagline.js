@@ -32,7 +32,7 @@ export default class TagLine extends React.Component {
     schools: React.PropTypes.arrayOf(React.PropTypes.shape({
       id: React.PropTypes.string,
       name: React.PropTypes.string,
-      url_name: React.PropTypes.string,
+      url_name: React.PropTypes.string
     }))
   };
 
