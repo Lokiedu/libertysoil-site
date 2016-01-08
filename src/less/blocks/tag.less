@@ -15,6 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+.tag_wrapper {
+  display: flex;
+}
+
 .tag {
   @height: 23px;
   @icon-size: @height;
@@ -39,6 +43,16 @@
   &__name {
     padding: 1px 12px 1px (@icon-size / 2 + 7px);
     line-height: @height;
+  }
+
+  &__delete {
+    cursor: pointer;
+    line-height: @height;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &-hashtag {
