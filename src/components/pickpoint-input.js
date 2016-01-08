@@ -17,7 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
-import Autosuggest from 'react-autosuggest';
+import Autosuggest from './autosuggest';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -61,16 +61,6 @@ export default class PickpointInput extends React.Component {
       placeholder: 'Enter toponym'
     };
 
-    let theme = {
-      root: 'autosuggest',
-      suggestions: 'autosuggest__suggestions',
-      suggestion: 'autosuggest__suggestion',
-      suggestionIsFocused: 'autosuggest__suggestion-focused',
-      section: 'autosuggest__suggestions_section',
-      sectionName: 'autosuggest__suggestions_section_name',
-      sectionSuggestions: 'autosuggest__suggestions_section_suggestions'
-    };
-
     return (
       <Autosuggest
         cache={false}
@@ -79,7 +69,6 @@ export default class PickpointInput extends React.Component {
         suggestionRenderer={this._suggestionRenderer}
         suggestionValue={this._suggestionValue}
         suggestions={_.debounce(this._getSuggestions, 300)}
-        theme={theme}
       />
     );
   }
