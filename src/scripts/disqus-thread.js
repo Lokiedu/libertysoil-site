@@ -3,6 +3,8 @@ Copyright by Matt Zabriskie
 MIT licensed
 taken from https://github.com/mzabriskie/react-disqus-thread
  */
+/*eslint-env commonjs, browser */
+/*global DISQUS:false, _page:true*/
 var React = require('react');
 var DOM = React.DOM;
 var DISQUS_CONFIG = [
@@ -96,7 +98,7 @@ module.exports = React.createClass({
         var availableProps = {};
 
         DISQUS_CONFIG.forEach(function(prop) {
-            if (!!self.props[prop]) {
+            if (self.props[prop]) {
                 availableProps[prop] = self.props[prop];
             }
         });

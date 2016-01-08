@@ -65,7 +65,8 @@ class SettingsPasswordPage extends React.Component {
     );
 
     promise.catch(e => {
-      console.error(e);
+      // FIXME: this should be reported to developers instead (use Sentry?)
+      console.error(e);  // eslint-disable-line no-console
     })
   };
 

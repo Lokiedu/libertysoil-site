@@ -19,10 +19,6 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 
 export default class EditPostShort extends Component {
-  updateNewPostTags = (tags) => {
-    console.info(tags);
-  }
-
   render () {
     let value = '';
 

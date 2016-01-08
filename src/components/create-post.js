@@ -49,9 +49,8 @@ export default class CreatePost extends React.Component {
   }
 
   switchPostType = () => {
-    const postType = this.refs.postType.value;
-
-    console.info('postType', postType);
+    //const postType = this.refs.postType.value;
+    //console.info('postType', postType);
   };
 
   render () {

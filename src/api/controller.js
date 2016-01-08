@@ -382,7 +382,6 @@ export default class ApiController {
   }
 
   async getCityPosts(req, res) {
-
     try {
       let Post = this.bookshelf.model('Post');
 
@@ -402,7 +401,6 @@ export default class ApiController {
 
       res.send(posts);
     } catch (e) {
-      console.log(e);
       res.sendStatus(404)
       return;
     }
@@ -699,7 +697,7 @@ export default class ApiController {
     if (!req.session) {
       res.status(500);
       res.send({error: 'Internal Server Error'});
-      console.error('Session engine is not available, have you started redis service?');
+      console.error('Session engine is not available, have you started redis service?');  // eslint-disable-line no-console
       return;
     }
 
@@ -720,7 +718,7 @@ export default class ApiController {
     try {
       user = await new User({username: req.body.username}).fetch({require: true});
     } catch (e) {
-      console.log(`user '${req.body.username}' is not found`);
+      console.warn(`Someone tried to log in as '${req.body.username}', but there's no such user`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return
@@ -729,7 +727,7 @@ export default class ApiController {
     let passwordIsValid = await bcryptAsync.compareAsync(req.body.password, user.get('hashed_password'));
 
     if (!passwordIsValid) {
-      console.log(`password for user '${req.body.username}' is not found`);
+      console.warn(`Someone tried to log in as '${req.body.username}', but used wrong pasword`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return
@@ -749,7 +747,7 @@ export default class ApiController {
     try {
       user = await new User({email_check_hash: req.params.hash}).fetch({require: true});
     } catch (e) {
-      console.log(`user not found`);
+      console.warn(`Someone tried to verify email, but used invalid hash`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return;
@@ -836,7 +834,7 @@ export default class ApiController {
     try {
       user = await new User({reset_password_hash: req.params.hash}).fetch({require: true});
     } catch (e) {
-      console.log(`user not found`);
+      console.warn(`Someone tried to reset password using unknown reset-hash`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return;
@@ -1033,8 +1031,6 @@ export default class ApiController {
 
       res.send(obj.toJSON());
     } catch (e) {
-      console.log(e);
-      console.log(e.stack);
       res.status(500);
       res.send({error: e.message});
       return;
@@ -1130,9 +1126,6 @@ export default class ApiController {
 
       res.send(post_object.toJSON());
     } catch (e) {
-      console.log(e);
-      console.log(e.stack);
-
       res.status(500);
       res.send({error: e.message});
       return;
@@ -1235,8 +1228,6 @@ export default class ApiController {
 
       res.send({user});
     } catch(e) {
-      console.log(e);
-      console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
       return;
@@ -1277,8 +1268,6 @@ export default class ApiController {
 
       res.send({success: true});
     } catch(e) {
-      console.log(e);
-      console.log(e.stack);
       res.status(500);
       res.send({error: 'Update failed'});
       return;
@@ -1583,7 +1572,6 @@ export default class ApiController {
 
       res.send({success: true, school});
     } catch (e) {
-      console.log(e.stack)
       res.status(500);
       res.send({error: e.message});
       return;

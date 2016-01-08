@@ -111,7 +111,8 @@ export class FetchHandler
         try {
           await route.component.fetchData(nextState.params, this.store, this.apiClient);
         } catch (e) {
-          console.error(e);
+          // FIXME: handle error in a useful fashion (show "Network error" to user, ask to reload page, etc.)
+          console.error(e);  // eslint-disable-line no-console
         }
       }
     }
@@ -120,7 +121,11 @@ export class FetchHandler
   handleSynchronously = (nextState, replaceState, callback) => {
     this.handle(nextState)
       .then(() => { callback(); })
-      .catch((e) => { console.error(e); callback(e); });
+      .catch((e) => {
+        // FIXME: this should be reported to developers instead (use Sentry?)
+        console.error(e);  // eslint-disable-line no-console
+        callback(e);
+      });
   };
 }
 

@@ -30,7 +30,7 @@ export function initApi(bookshelf) {
       (req, res, next) =>
         handler(req, res, next)
           .catch((e) => {
-            console.log(`an error was thrown from url-handler of ${req.originalUrl}:\n`, e);
+            console.log(`an error was thrown from url-handler of ${req.originalUrl}:\n`, e);  // eslint-disable-line no-console
 
             res.status(500);
             res.send({error: 'Internal Server Error'});

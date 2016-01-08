@@ -72,7 +72,8 @@ class PostEditPage extends React.Component {
         .then(() => {
           this.props.history.pushState(null, '/');
         }).catch(e => {
-          console.error(e);
+          // FIXME: "failed to delete post" should be reported to user
+          console.error(e);  // eslint-disable-line no-console
         });
     }
   }

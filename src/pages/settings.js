@@ -92,8 +92,6 @@ class SettingsPage extends React.Component {
   }
 
   onRolesChange = (roles) => {
-    console.info(roles);
-
     this.setState({ roles });
   }
 
