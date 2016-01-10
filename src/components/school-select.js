@@ -6,14 +6,15 @@ import Autosuggest from './autosuggest';
 export default class SchoolSelect extends Component {
   static displayName = 'SchoolSelect';
   static propTypes = {
-    onSelect: () => {},
+    onSelect: PropTypes.func,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     }))
   };
 
   static defaultProps = {
-    schools: []
+    schools: [],
+    onSelect: () => {}
   };
 
   _getSuggestions = (input, callback) => {
