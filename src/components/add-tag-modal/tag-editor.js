@@ -25,7 +25,7 @@ export default class TagEditor extends React.Component {
   static displayName = 'TagsEditor';
 
   static propTypes = {
-    locations: PropTypes.arrayOf(PropTypes.shape({
+    geotags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       id: PropTypes.string
     })),
@@ -40,7 +40,7 @@ export default class TagEditor extends React.Component {
   };
 
   static defaultProps = {
-    locations: [],
+    geotags: [],
     schools: [],
     tags: [],
     onDelete: () => {}
@@ -50,16 +50,16 @@ export default class TagEditor extends React.Component {
     super(props);
 
     this.state = {
-      locations: props.locations,
+      geotags: props.geotags,
       schools: props.schools,
       tags: props.tags
     };
   }
 
-  addLocation(location) {
-    let state = _.pick(this.state, 'locations');
+  addGeotag(geotag) {
+    let state = _.pick(this.state, 'geotags');
 
-    state.tags.push(location);
+    state.geotags.push(geotag);
 
     this.setState(state);
   }
@@ -89,7 +89,7 @@ export default class TagEditor extends React.Component {
 
     switch (displayTag.type) {
       case TagType.TAG_LOCATION: {
-        // TODO: Locations
+        _.remove(state.geotags, geotag => geotag.id === displayTag.urlId);
 
         break;
       }
@@ -110,14 +110,14 @@ export default class TagEditor extends React.Component {
 
   render() {
     let {
-      locations,
+      geotags,
       schools,
       tags
     } = this.state;
 
-    let tagCloudProps = {locations, schools, tags};
+    let tagCloudProps = {geotags, schools, tags};
 
-    let shouldRender = schools.length > 0 || locations.length > 0 || tags.length > 0;
+    let shouldRender = geotags.length > 0 || schools.length > 0 || tags.length > 0;
 
     if (!shouldRender) {
       return null;

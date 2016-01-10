@@ -28,7 +28,8 @@ export default class AddHashtagModal extends Component {
   static displayName = 'AddHashtagModal';
 
   static propTypes = {
-    locations: PropTypes.arrayOf(PropTypes.shape({
+    geotags: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
       name: PropTypes.string
     })),
     onClose: PropTypes.func,
@@ -43,7 +44,7 @@ export default class AddHashtagModal extends Component {
   };
 
   static defaultProps = {
-    locations: [],
+    geotags: [],
     schools: [],
     tags: [],
     visible: false,
@@ -69,12 +70,12 @@ export default class AddHashtagModal extends Component {
   };
 
   _save = () => {
-    this.props.onSave(_.pick(this.state, 'locations', 'schools', 'tags'));
+    this.props.onSave(_.pick(this.state, 'geotags', 'schools', 'tags'));
   };
 
   render () {
     let {
-      locations,
+      geotags,
       schools,
       tags,
       visible,
@@ -122,7 +123,7 @@ export default class AddHashtagModal extends Component {
               </div>
             </div>
             <TagEditor
-              locations={locations}
+              geotags={geotags}
               ref={(c) => this._tagEditor = c}
               schools={schools}
               tags={tags}

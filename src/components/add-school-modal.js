@@ -32,7 +32,8 @@ export default class AddSchoolModal extends Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    locations: PropTypes.arrayOf(PropTypes.shape({
+    geotags: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
       name: PropTypes.string
     })),
     onClose: PropTypes.func,
@@ -47,7 +48,7 @@ export default class AddSchoolModal extends Component {
   };
 
   static defaultProps = {
-    locations: [],
+    geotags: [],
     schools: [],
     tags: [],
     visible: false,
@@ -79,12 +80,12 @@ export default class AddSchoolModal extends Component {
   };
 
   _save = () => {
-    this.props.onSave(_.pick(this.state, 'locations', 'schools', 'tags'));
+    this.props.onSave(_.pick(this.state, 'geotags', 'schools', 'tags'));
   };
 
   render () {
     let {
-      locations,
+      geotags,
       schools,
       tags,
       visible,
@@ -133,7 +134,7 @@ export default class AddSchoolModal extends Component {
               </div>
             </div>
             <TagEditor
-              locations={locations}
+              geotags={geotags}
               ref={(c) => this._tagEditor = c}
               schools={schools}
               tags={tags}

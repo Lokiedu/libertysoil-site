@@ -26,7 +26,7 @@ export default class TagCloud extends React.Component {
 
   static propTypes = {
     deletable: PropTypes.bool,
-    locations: PropTypes.arrayOf(PropTypes.shape({
+    geotags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       id: PropTypes.string
     })),

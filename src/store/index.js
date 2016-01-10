@@ -76,7 +76,7 @@ const initialState = i.Map({
   }),
   create_post_form: i.fromJS({
     text: '',
-    locations: [],
+    geotags: [],
     schools: [],
     tags: []
   }),

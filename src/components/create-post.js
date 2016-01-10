@@ -23,7 +23,7 @@ import * as TagType from '../utils/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddHashtagModal from './add-hashtag-modal';
 import AddSchoolModal from './add-school-modal';
-import AddLocationModal from './add-location-modal';
+import AddGeotagModal from './add-geotag-modal';
 
 
 @ClickOutsideComponentDecorator
@@ -38,7 +38,8 @@ export default class CreatePost extends React.Component {
       name: PropTypes.string
     })),
     defaultText: PropTypes.string,
-    locations: PropTypes.arrayOf(PropTypes.shape({
+    geotags: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
       name: PropTypes.string
     })),
     schools: PropTypes.arrayOf(PropTypes.shape({
@@ -55,7 +56,7 @@ export default class CreatePost extends React.Component {
   state = {
     expanded: false,
     addHashtagModalVisible: false,
-    addLocationModalVisible: false,
+    addGeotagModalVisible: false,
     addSchoolModalVisible: false
   };
 
@@ -81,7 +82,8 @@ export default class CreatePost extends React.Component {
     await this.props.triggers.createPost('short_text', {
       text: form.text.value,
       tags: this.props.tags.map(tag => tag.name),
-      schools: this.props.schools.map(school => school.name)
+      schools: this.props.schools.map(school => school.name),
+      geotags: this.props.geotags.map(geotag => geotag.id)
     });
 
     form.text.value = '';
@@ -111,22 +113,22 @@ export default class CreatePost extends React.Component {
     });
   };
 
-  _showAddLocationModal = () => {
+  _showAddGeotagModal = () => {
     this.setState({
-      addLocationModalVisible: true
+      addGeotagModalVisible: true
     });
   };
 
   _closeAddTagModal = () => {
     this.setState({
       addHashtagModalVisible: false,
-      addLocationModalVisible: false,
+      addGeotagModalVisible: false,
       addSchoolModalVisible: false
     });
   };
 
   /**
-   * @param {Object} tags - {tags: [], schools: [], locations: [], ...}
+   * @param {Object} tags - {tags: [], schools: [], geotags: [], ...}
    */
   _addTags = (tags) => {
     this.props.actions.updateCreatePostForm(tags);
@@ -138,7 +140,7 @@ export default class CreatePost extends React.Component {
     let {
       addHashtagModalVisible,
       addSchoolModalVisible,
-      addLocationModalVisible,
+      addGeotagModalVisible,
       expanded
     } = this.state;
 
@@ -167,7 +169,7 @@ export default class CreatePost extends React.Component {
                       <button className="button button-wide button-red" type="submit">Publish</button>
                     </div>
                     <div className="layout__grid_item">
-                      <button className="button button-wide button-transparent" type="button">Go full screen</button>
+                      {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
                     </div>
                   </div>
                 }
@@ -177,7 +179,7 @@ export default class CreatePost extends React.Component {
                 {expanded &&
                   <div className="layout layout-rows layout-align_vertical">
                     <TagIcon className="create_post__tag_button" type={TagType.TAG_SCHOOL} onClick={this._showAddSchoolModal} />
-                    <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} onClick={this._showAddLocationModal}  />
+                    <TagIcon className="create_post__tag_button" type={TagType.TAG_LOCATION} onClick={this._showAddGeotagModal}  />
                     {/*<TagIcon className="create_post__tag_button" type={TagType.TAG_EVENT} />*/}
                     {/*<TagIcon className="create_post__tag_button" type={TagType.TAG_MENTION} />*/}
                     <TagIcon className="create_post__tag_button" type={TagType.TAG_HASHTAG} onClick={this._showAddHashtagModal} />
@@ -188,7 +190,7 @@ export default class CreatePost extends React.Component {
           </div>
         </form>
         <AddHashtagModal
-          locations={this.props.locations}
+          geotags={this.props.geotags}
           schools={this.props.schools}
           tags={this.props.tags}
           visible={addHashtagModalVisible}
@@ -197,18 +199,18 @@ export default class CreatePost extends React.Component {
         />
         <AddSchoolModal
           allSchools={this.props.allSchools}
-          locations={this.props.locations}
+          geotags={this.props.geotags}
           schools={this.props.schools}
           tags={this.props.tags}
           visible={addSchoolModalVisible}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
         />
-        <AddLocationModal
-          locations={this.props.locations}
+        <AddGeotagModal
+          geotags={this.props.geotags}
           schools={this.props.schools}
           tags={this.props.tags}
-          visible={addLocationModalVisible}
+          visible={addGeotagModalVisible}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
         />

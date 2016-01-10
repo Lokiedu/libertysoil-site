@@ -23,7 +23,7 @@ import * as a from '../actions';
 
 const initialState = i.fromJS({
   text: '',
-  locations: [],
+  geotags: [],
   schools: [],
   tags: []
 });
