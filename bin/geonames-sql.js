@@ -59,7 +59,7 @@ function cities() {
 
   let output = fs.createWriteStream(tmp_file.name);
 
-  output.on('finish', function () {
+  output.on('finish', async function () {
     let zip = new AdmZip(tmp_file.name);
 
     let content_lines = zip.readAsText("cities1000.txt").split("\n");
@@ -89,26 +89,36 @@ function cities() {
       return `INSERT INTO geonames_cities VALUES (${row.join(',')});`;
     }).join("\n");
 
-    process.stdout.write("=== TRUNCATING CITIES TABLE ===\n");
-
-    Knex.raw('TRUNCATE geonames_cities CASCADE').then(() => {
+    try {
+      process.stdout.write("=== TRUNCATING CITIES TABLE ===\n");
+      await Knex.raw('TRUNCATE geonames_cities CASCADE');
 
       process.stdout.write("=== IMPORTING ===\n");
+      await Knex.raw(q);
+      process.stdout.write("=== CITIES DONE ===\n");
 
-      Knex.raw(q)
-          .then(() => {
-            process.stdout.write("=== CITIES DONE ===\n");
-            process.exit();
-          }).catch(e => {
-        console.error(e);  // eslint-disable-line no-console
-        process.exit(1);
-      });
-    });
+      process.stdout.write("=== TRUNCATING GEOTAGS TABLE ===\n");
+      await Knex.raw('TRUNCATE geotags CASCADE');
 
+      process.stdout.write("=== IMPORTING ===\n");
+      await geotags();
+      process.stdout.write("=== GEOTAGS DONE ===\n");
+    } catch (e) {
+      console.error(e);  // eslint-disable-line no-console
+      process.exit(1);
+    }
 
+    process.exit();
   });
 
   request.get('http://download.geonames.org/export/dump/cities1000.zip').pipe(output);
+}
+
+async function geotags() {
+  return Promise.all([
+    Knex.raw("INSERT INTO geotags (name, place_id, place_type) SELECT name, id, 'geonames_countries' FROM geonames_countries"),
+    Knex.raw("INSERT INTO geotags (name, place_id, place_type) SELECT name, id, 'geonames_cities' FROM geonames_cities")
+  ]);
 }
 
 countries()
