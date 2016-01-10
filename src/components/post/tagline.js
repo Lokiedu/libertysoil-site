@@ -18,13 +18,17 @@
 import React from 'react';
 
 import Tag from '../tag';
-import { TAG_HASHTAG, TAG_SCHOOL } from '../../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../utils/tags';
 
 
 export default class TagLine extends React.Component {
   static displayName = "TagLine"
 
   static propTypes = {
+    geotags: React.PropTypes.arrayOf(React.PropTypes.shape({
+      id: React.PropTypes.string,
+      name: React.PropTypes.string
+    })),
     tags: React.PropTypes.arrayOf(React.PropTypes.shape({
       id: React.PropTypes.string,
       name: React.PropTypes.string
@@ -38,13 +42,20 @@ export default class TagLine extends React.Component {
 
   render () {
     let {
-        tags,
-        schools
-      } = this.props;
+      geotags,
+      tags,
+      schools
+    } = this.props;
 
-    if ((!tags || !schools) || (tags.length == 0 && schools.length == 0)) {
-      return <script/>;
+    if ((geotags && tags && schools) && (!geotags.length && !tags.length && !schools.length)) {
+      return null;
     }
+
+    let geotagBlocks = geotags.map(school => {
+      return (
+        <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name} />
+      )
+    });
 
     let schoolBlocks = schools.map(school => {
       return (
@@ -60,6 +71,7 @@ export default class TagLine extends React.Component {
 
     return (
       <div className="tags">
+        {geotagBlocks}
         {schoolBlocks}
         {tagBlocks}
       </div>
