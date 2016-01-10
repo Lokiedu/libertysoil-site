@@ -1008,6 +1008,18 @@ export default class ApiController {
       schools = _.unique(req.body.schools);
     }
 
+    let geotags;
+
+    if ('geotags' in req.body) {
+      if (!_.isArray(req.body.geotags)) {
+        res.status(400);
+        res.send({error: `"geotags" parameter is expected to be an array`});
+        return;
+      }
+
+      geotags = _.unique(req.body.geotags);
+    }
+
     let Post = this.bookshelf.model('Post');
 
     let obj = new Post({
@@ -1032,6 +1044,10 @@ export default class ApiController {
 
       if (_.isArray(schools)) {
         await obj.attachSchools(schools);
+      }
+
+      if (_.isArray(geotags)) {
+        await obj.attachGeotags(geotags);
       }
 
       await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});
@@ -1102,6 +1118,18 @@ export default class ApiController {
       schools = _.unique(req.body.schools);
     }
 
+    let geotags;
+
+    if ('geotags' in req.body) {
+      if (!_.isArray(req.body.geotags)) {
+        res.status(400);
+        res.send({error: `"geotags" parameter is expected to be an array`});
+        return;
+      }
+
+      geotags = _.unique(req.body.geotags);
+    }
+
     if (type === 'short_text') {
       if ('text' in req.body) {
         post_object.set('text', req.body.text);
@@ -1127,6 +1155,10 @@ export default class ApiController {
 
       if (_.isArray(schools)) {
         await post_object.updateSchools(schools, true);
+      }
+
+      if (_.isArray(geotags)) {
+        await post_object.updateGeotags(geotags);
       }
 
       await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});

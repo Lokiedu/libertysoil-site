@@ -120,11 +120,8 @@ export default function initBookshelf(config) {
     schools: function() {
       return this.belongsToMany(School, 'posts_schools', 'post_id', 'school_id');
     },
-    countries: function() {
-      return this.belongsToMany(Country, 'posts_countries', 'post_id', 'country_id');
-    },
-    cities: function() {
-      return this.belongsToMany(City, 'posts_cities', 'post_id', 'city_id');
+    geotags: function() {
+      return this.belongsToMany(Geotag, 'geotags_posts', 'post_id', 'geotag_id');
     },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
@@ -203,6 +200,25 @@ export default function initBookshelf(config) {
         schools.detach(schoolsToDetach.pluck('id')),
         this.attachSchools(schoolNamesToAdd)
       ]);
+    },
+    /**
+     * Attaches geotags by ids.
+     * @param {Array} geotagIds
+     */
+    attachGeotags: async function(geotagIds) {
+      await this.geotags().attach(geotagIds);
+    },
+    /**
+     * Attaches new geotags and detaches unneeded.
+     * @param {Array} geotagIds
+     */
+    updateGeotags: async function(geotagIds) {
+      let relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
+      let geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
+      let geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
+
+      await this.geotags().detach(geotagsToDetach);
+      await this.geotags().attach(geotagsToAttach);
     }
   });
 
