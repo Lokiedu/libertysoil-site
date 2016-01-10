@@ -16,7 +16,9 @@
     "start": "knex migrate:latest && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "docker-start": "knex migrate:latest && gulp build && babel-node --optional es7.functionBind,es7.classProperties,es7.decorators index.js",
     "watch": "nodemon --watch src --watch index.js --exec babel-node --source-maps --optional es7.functionBind,es7.classProperties,es7.decorators -- index.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "geonames": "babel-node bin/geonames-sql.js",
+    "schools": "babel-node bin/schools.js"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
