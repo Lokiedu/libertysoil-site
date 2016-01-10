@@ -288,5 +288,10 @@ export default class ApiClient
     return response.body;
   }
 
+  async searchGeotags(query) {
+    let response = await this.get(`/api/v1/geotags/search/${query}`);
+    return response.body;
+  }
+
 
 }

@@ -1615,4 +1615,22 @@ export default class ApiController {
       return;
     }
   }
+
+  async searchGeotags(req, res) {
+    let Geotag = this.bookshelf.model('Geotag');
+
+    try {
+      let geotags = await Geotag.collection().query(function (qb) {
+        qb
+          .where('name', 'like',  `${req.params.query}%`)
+          .limit(10);
+      }).fetch(/*{withRelated: 'place'}*/);
+
+      res.send({geotags});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+      return;
+    }
+  }
 }

@@ -100,6 +100,8 @@ export function initApi(bookshelf) {
   api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
   api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
 
+  api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
+
 
   return api;
 }
