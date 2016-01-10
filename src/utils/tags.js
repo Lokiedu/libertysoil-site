@@ -13,6 +13,16 @@ export const TAG_EVENT = 'TAG_EVENT';
 export function convertModelsToTags(params = {}) {
   let allTags = [];
 
+  if (Array.isArray(params.geotags)) {
+    params.geotags.forEach(function (tag) {
+      allTags.push({
+        urlId: tag.id,
+        name: tag.name,
+        type: TAG_LOCATION
+      });
+    });
+  }
+
   if (Array.isArray(params.schools)) {
     params.schools.forEach(function (school) {
       allTags.push({
