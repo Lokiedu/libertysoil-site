@@ -39,7 +39,7 @@ export default function initBookshelf(config) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School, Country, City, Attachment;
+  let User, Post, Label, School, Country, City, Attachment, Geotag;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -263,6 +263,9 @@ export default function initBookshelf(config) {
     tableName: 'geonames_countries',
     posts: function() {
       return this.belongsToMany(Post, 'posts_countries', 'country_id', 'post_id');
+    },
+    geotags: function() {
+      return this.morphMany(Geotag, 'place');
     }
   });
 
@@ -270,6 +273,16 @@ export default function initBookshelf(config) {
     tableName: 'geonames_cities',
     posts: function() {
       return this.belongsToMany(Post, 'posts_cities', 'city_id', 'post_id');
+    },
+    geotags: function() {
+      return this.morphMany(Geotag, 'place');
+    }
+  });
+
+  Geotag = bookshelf.Model.extend({
+    tableName: 'geotags',
+    place: function() {
+      return this.morphTo('place', Country, City);
     }
   });
 
@@ -351,6 +364,7 @@ export default function initBookshelf(config) {
   bookshelf.model('Country', Country);
   bookshelf.model('City', City);
   bookshelf.model('Attachment', Attachment);
+  bookshelf.model('Geotag', Geotag);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
