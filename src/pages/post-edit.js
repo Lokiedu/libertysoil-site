@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import NotFound from './not-found'
 import Header from '../components/header';

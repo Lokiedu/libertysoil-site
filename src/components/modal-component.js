@@ -60,9 +60,6 @@ class ModalComponent extends Component {
       className,
       ...props
     } = this.props;
-    let pieces = {
-      closeButton: false
-    };
     let cn = bem.makeClassName({
       block: 'modal',
       modifiers: {

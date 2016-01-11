@@ -17,7 +17,7 @@ export default class Tag extends React.Component {
     urlId: PropTypes.string
   };
 
-  _handleDelete = (event) => {
+  _handleDelete = () => {
     let tag = _.pick(this.props, 'name', 'type', 'urlId');
 
     this.props.onDelete(tag);
