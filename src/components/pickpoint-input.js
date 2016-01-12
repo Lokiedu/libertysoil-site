@@ -17,10 +17,11 @@
  */
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
-import Autosuggest from './autosuggest';
 
+import Autosuggest from './autosuggest';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
+
 
 export default class PickpointInput extends React.Component {
   static displayName = 'PickpointInput';
@@ -33,42 +34,55 @@ export default class PickpointInput extends React.Component {
     onSelect: function () {}
   };
 
-  async _getSuggestions(input, callback) {
+  state = {
+    suggestions: [],
+    value: ''
+  };
+
+  _getSuggestions = _.throttle(async ({ value }) => {
     let client = new ApiClient(API_HOST);
 
     let response = await client.pickpoint({
-      q: input
+      q: value
     });
 
     if (!response.error) {
-      callback(null, response);
-    } else {
-      callback(new Error("Couldn't get locations"))
+      this.setState({
+        suggestions: response
+      });
     }
-  }
+  }, 300);
 
-  _suggestionValue(suggestion) {
-    return suggestion.display_name;
-  }
+  _getSuggestionValue = (suggestion) => suggestion.display_name;
 
-  _suggestionRenderer(suggestion) {
-    return suggestion.display_name;
-  }
+  _handleChange = (event, { newValue }) => {
+    this.setState({
+      value: newValue
+    });
+  };
+
+  _handleSelect = (event, { suggestion }) => {
+    event.preventDefault();
+
+    this.props.onSelect(suggestion);
+  };
 
   render() {
-    let inputAttributes = {
+    let inputProps = {
       className: 'input autosuggest__input',
-      placeholder: 'Enter toponym'
+      onChange: this._handleChange,
+      placeholder: 'Start typing...',
+      value: this.state.value
     };
 
     return (
       <Autosuggest
-        cache={false}
-        inputAttributes={inputAttributes}
-        onSuggestionSelected={this.props.onSelect}
-        suggestionRenderer={this._suggestionRenderer}
-        suggestionValue={this._suggestionValue}
-        suggestions={_.debounce(this._getSuggestions, 300)}
+        getSuggestionValue={this._getSuggestionValue}
+        inputProps={inputProps}
+        renderSuggestion={this._getSuggestionValue}
+        suggestions={this.state.suggestions}
+        onSuggestionSelected={this._handleSelect}
+        onSuggestionsUpdateRequested={this._getSuggestions}
       />
     );
   }
