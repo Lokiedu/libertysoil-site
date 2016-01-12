@@ -85,7 +85,7 @@ let AuthContents = (props) => {
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
-            className="header-transparent"
+            className="header-transparent header-transparent_border"
           />
         <header className="landing__body">
             <p className="layout__row">Welcome to LibertySoil.org</p>
@@ -102,7 +102,12 @@ let AuthContents = (props) => {
                 </div>
                 <div className="layout__grid_item">
                   <label className="label label-before_input" htmlFor="loginPassword">Password</label>
-                  <input className="input input-big" id="loginPassword" required="required" type="password" name="password" placeholder="Password" />
+                  <div className="input_group">
+                    <div className="input_group__input">
+                      <input className="input input-big" id="loginPassword" required="required" type="password" name="password" placeholder="Password" />
+                    </div>
+                    <Link to="/resetpassword" className="link input_group__after input_group__after-outside_bottom">Forgot your password?</Link>
+                  </div>
                 </div>
                 <div className="layout__grid_item">
                   <button className="button button-big button-red">Log in</button>
