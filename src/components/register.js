@@ -71,8 +71,12 @@ export default class RegisterComponent extends React.Component {
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
     return (
-    <div className="box box-middle">
-      <header className="box__title">Register</header>
+    <div className="div">
+      <header className="content">
+        <p className="layout__row">Create new account</p>
+        <div className="layout__row content__title">Be the change</div>
+        <p className="layout__row">Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
+      </header>
       <form action="" onSubmit={this.submitHandler}>
         <div className="box__body">
           <div className="layout__row">
