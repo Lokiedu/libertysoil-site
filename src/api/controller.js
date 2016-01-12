@@ -1654,7 +1654,7 @@ export default class ApiController {
     try {
       let geotags = await Geotag.collection().query(function (qb) {
         qb
-          .where('name', 'like',  `${req.params.query}%`)
+          .where('name', 'ILIKE',  `${req.params.query}%`)
           .limit(10);
       }).fetch(/*{withRelated: 'place'}*/);
 
