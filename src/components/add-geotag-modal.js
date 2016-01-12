@@ -22,7 +22,8 @@ import ModalComponent from '../components/modal-component';
 import TagEditor from './add-tag-modal/tag-editor';
 import TagIcon from '../components/tag-icon';
 import * as TagType from '../utils/tags';
-import GeotagSelect from './geotag-select';
+import GeotagSelect from './add-tag-modal/geotag-select';
+
 
 export default class AddGeotagModal extends Component {
   static displayName = 'AddGeotagModal';
@@ -53,8 +54,7 @@ export default class AddGeotagModal extends Component {
   };
 
   state = {
-    geotag: {}, // Selected geotag
-    inputValue: '' // Used to reset the autosuggest's value
+    geotag: {} // Selected geotag
   };
 
   _handleAddTag = () => {
@@ -69,9 +69,7 @@ export default class AddGeotagModal extends Component {
       return;
     }
 
-    this.setState({
-      inputValue: ''
-    });
+    this._input.reset();
 
     this._tagEditor.addGeotag(geotag);
   };
@@ -119,7 +117,7 @@ export default class AddGeotagModal extends Component {
                   <form ref="form">
                     <GeotagSelect
                       placeholder="Start typing..."
-                      value={this.state.inputValue}
+                      ref={(c) => this._input = c}
                       onSelect={this._handleSelectTag}
                     />
                   </form>

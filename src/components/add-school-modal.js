@@ -21,7 +21,7 @@ import _ from 'lodash';
 import ModalComponent from './modal-component';
 import TagEditor from './add-tag-modal/tag-editor';
 import TagIcon from './tag-icon';
-import SchoolSelect from './school-select';
+import SchoolSelect from './add-tag-modal/school-select';
 import * as TagType from '../utils/tags';
 
 
@@ -56,10 +56,6 @@ export default class AddSchoolModal extends Component {
     onSave: () => {}
   };
 
-  state = {
-    inputValue: '' // Used to reset the autosuggest's value
-  };
-
   _handleAddTag = () => {
     let schools = this._tagEditor.getTags().schools;
     let schoolName = this.refs.form.school.value.trim();
@@ -72,9 +68,7 @@ export default class AddSchoolModal extends Component {
       return;
     }
 
-    this.setState({
-      inputValue: ''
-    });
+    this._input.reset();
 
     this._tagEditor.addSchool({name: schoolName});
   };
@@ -118,8 +112,8 @@ export default class AddSchoolModal extends Component {
                   <form ref="form">
                     <SchoolSelect
                       placeholder="Start typing..."
+                      ref={(c) => this._input = c}
                       schools={this.props.allSchools}
-                      value={this.state.inputValue}
                     />
                   </form>
                 </div>
