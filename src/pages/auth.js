@@ -110,7 +110,7 @@ let AuthContents = (props) => {
             </div>
           </header>
         </section>
-        <div className="page__body">
+        <div className="page__body page__body-small">
           <Messages messages={messages} removeMessage={triggers.removeMessage} />
           {content}
         </div>

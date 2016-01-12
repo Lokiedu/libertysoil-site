@@ -72,42 +72,44 @@ export default class RegisterComponent extends React.Component {
     }
     return (
     <div className="div">
-      <header className="content">
+      <header className="layout__row layout__row-double">
         <p className="layout__row">Create new account</p>
         <div className="layout__row content__title">Be the change</div>
-        <p className="layout__row">Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
+        <div className="layout__row content">
+          <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
+        </div>
       </header>
-      <form action="" onSubmit={this.submitHandler}>
-        <div className="box__body">
-          <div className="layout__row">
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerUsername">Username</label>
-              <input className="input input-block" type="text" id="registerUsername" name="username" required="required"/>
-            </div>
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerFirstName">First name</label>
-              <input className="input input-block" type="text" id="registerFirstName" name="firstName"/>
-            </div>
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerLastName">Last name</label>
-              <input className="input input-block" type="text" id="registerLastName"name="lastName"/>
-            </div>
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerEmail">Email</label>
-              <input className="input input-block" type="email" id="registerEmail"name="email" required="required"/>
-            </div>
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerPassword">Password</label>
-              <input className="input input-block" type="password" id="registerPassword"name="password" required="required"/>
-            </div>
-            <div className="form__row">
-              <label className="label label-block label-space" htmlFor="registerPasswordRepeat">Repeat password</label>
-              <input className="input input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required"/>
-            </div>
+      <form action="" onSubmit={this.submitHandler} className="layout__row">
+        <div className="layout__row">
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerUsername">User name</label>
+            <input className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" />
           </div>
-          <div className="layout__row layout layout-align_vertical layout-align_justify">
-            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" required="required" /><span>I agree to T&amp;C</span></label>
-            <button className="button button-wide button-yellow">Create account</button>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerPassword">Password</label>
+            <input className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
+            <input className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
+            <input className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
+            <input className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
+            <input className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+          </div>
+        </div>
+        <div className="layout__row layout__row-double">
+          <div className="layout__grid layout__grid-big layout-align_vertical">
+            <button className="button button-big button-green">Sign up</button>
+            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" required="required" /><span>I agree to Terms &amp; Conditions</span></label>
           </div>
         </div>
       </form>
