@@ -79,12 +79,16 @@ export default class CreatePost extends React.Component {
       return;
     }
 
-    await this.props.triggers.createPost('short_text', {
+    let data = {
       text: form.text.value,
       tags: this.props.tags.map(tag => tag.name),
       schools: this.props.schools.map(school => school.name),
       geotags: this.props.geotags.map(geotag => geotag.id)
-    });
+    };
+
+    this.props.actions.resetCreatePostForm();
+
+    await this.props.triggers.createPost('short_text', data);
 
     form.text.value = '';
   };
