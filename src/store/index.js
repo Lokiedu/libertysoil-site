@@ -21,6 +21,7 @@ import { combineReducers } from 'redux-immutablejs'
 import { routeReducer } from 'redux-simple-router';
 
 import current_user from './current-user';
+import create_post_form from './create_post_form';
 import favourites from './favourites';
 import favourites_river from './favourites_river';
 import followers from './followers';
@@ -45,6 +46,7 @@ let store;
 export const theReducer = combineReducers(i.Map({
   routing: routeReducer,
   current_user,
+  create_post_form,
   favourites,
   favourites_river,
   followers,
@@ -71,6 +73,10 @@ const initialState = i.Map({
     tags: i.List([]),
     followed_tags: i.Map({}),
     followed_schools: i.Map({})
+  }),
+  create_post_form: i.fromJS({
+    text: '',
+    tags: []
   }),
   favourites: i.Map({}),
   favourites_river: i.Map({}),

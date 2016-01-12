@@ -60,6 +60,9 @@ export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 
+export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
+export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -334,4 +337,17 @@ export function showRegisterForm() {
   return {
     type: SHOW_REGISTER_FORM
   };
+}
+
+export function resetCreatePostForm() {
+  return {
+    type: RESET_CREATE_POST_FORM
+  }
+}
+
+export function updateCreatePostForm(create_post_form) {
+  return {
+    type: UPDATE_CREATE_POST_FORM,
+    create_post_form
+  }
 }
