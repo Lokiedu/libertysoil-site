@@ -3,13 +3,15 @@ import ReactAutosuggest from 'react-autosuggest';
 
 
 const theme = {
-  root: 'autosuggest',
-  suggestions: 'autosuggest__suggestions',
-  suggestion: 'autosuggest__suggestion',
-  suggestionIsFocused: 'autosuggest__suggestion-focused',
-  section: 'autosuggest__suggestions_section',
-  sectionName: 'autosuggest__suggestions_section_name',
-  sectionSuggestions: 'autosuggest__suggestions_section_suggestions'
+  container:                   'autosuggest__container',
+  containerOpen:               'autosuggest__container-open',
+  input:                       'autosuggest__input',
+  suggestionsContainer:        'autosuggest__suggestions_container',
+  suggestion:                  'autosuggest__suggestion',
+  suggestionFocused:           'autosuggest__suggestion-focused',
+  sectionContainer:            'autosuggest__section_container',
+  sectionTitle:                'autosuggest__section_title',
+  sectionSuggestionsContainer: 'autosuggest__section_suggestions_container'
 };
 
 export default function Autosuggest(props) {

@@ -3,7 +3,9 @@
   @border-color: #aaa;
   @border-radius: 4px;
 
-  position: relative;
+  &__container {
+    position: relative;
+  }
 
   &__input {
     width: @width;
@@ -13,7 +15,7 @@
     }
   }
 
-  &__suggestions {
+  &__suggestions_container {
     box-sizing: border-box;
     position: absolute;
     width: @width;
@@ -26,27 +28,21 @@
     border-bottom-left-radius: @border-radius;
     border-bottom-right-radius: @border-radius;
     z-index: 2;
+  }
 
-    &_section {
-      &:first-child {
-        .react-autosuggest__suggestions_section_name {
-          border-top: 0;
-        }
-      }
+  &__section {
+    &_name {
+      padding: 10px 0 0 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #777;
+      border-top: 1px dashed #ccc;
+    }
 
-      &_name {
-        padding: 10px 0 0 10px;
-        font-size: 12px;
-        text-transform: uppercase;
-        color: #777;
-        border-top: 1px dashed #ccc;
-      }
-
-      &_suggestions {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-      }
+    &_suggestions_container {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
     }
   }
 
