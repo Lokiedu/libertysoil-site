@@ -177,6 +177,8 @@ gulp.task('set-prod-node-env', function() {
     return process.env.NODE_ENV = 'production';
 });
 
+gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
+
 // production task
 gulp.task('production', function (cb) {
   runSequence(['set-prod-node-env'],  ['styles', 'html', 'images', 'scripts:once', 'fonts'], cb);
