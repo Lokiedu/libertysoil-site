@@ -68,10 +68,13 @@ function handleErrors() {
 }
 
 function buildScript(file, watch) {
+  var debugBuild = (process.env.NODE_ENV !== 'production');
+
   var props = {
     entries: [path.src.scriptsDir + file],
-    debug: true,
-    cache: {}, packageCache: {}, fullPaths: true, // Requirement of watchify
+    debug: debugBuild,
+    cache: {}, packageCache: {},
+    fullPaths: debugBuild, // Requirement of watchify
     transform: [
       babelify.configure({
         stage: 0,
@@ -87,23 +90,20 @@ function buildScript(file, watch) {
   var bundler = watch ? watchify(browserify(props)) : browserify(props);
 
   function rebundle() {
-    var stream = bundler.bundle();
+    var stream = bundler
+      .bundle()
+      .on('error', handleErrors)
+      .pipe(source(file));
 
-    if (watch) {
-      return stream
-        .on('error', handleErrors)
-        .pipe(source(file))
-        .pipe(gulp.dest(path.dist.scripts))
-        .pipe(reload({stream: true}));
-    } else {
-      return stream
-        .on('error', handleErrors)
-        .pipe(source(file))
+    if (!watch && !debugBuild) {
+      stream = stream
         .pipe(buffer())
-        .pipe(uglify())
-        .pipe(gulp.dest(path.dist.scripts))
-        .pipe(reload({stream: true}));
+        .pipe(uglify());
     }
+
+    return stream
+      .pipe(gulp.dest(path.dist.scripts))
+      .pipe(reload({stream: true}));
   }
 
   // listen for an update and run rebundle
