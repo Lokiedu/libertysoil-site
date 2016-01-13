@@ -20,10 +20,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import BaseInductionPage from './base/induction';
-import User from '../components/user';
-import FollowButton from '../components/follow-button';
 import Footer from '../components/footer';
 import Header from '../components/header';
+import { UserGrid } from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions';
@@ -42,47 +41,6 @@ let InductionDone = () => (
     </div>
   </div>
 );
-
-export default class UserGrid extends React.Component {
-  static displayName = 'UserGrid'
-
-  render () {
-    const {
-      users,
-      current_user,
-      i_am_following,
-      triggers
-    } = this.props;
-
-    if (!users) {
-      return null;
-    }
-
-    return (
-      <div className="layout__grids layout__grids-space layout__grid-responsive">
-        {users.map((user) => (
-          <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={user.id}>
-            <div className="layout__row layout__row-small">
-              <User
-                user={user}
-                avatarSize="32"
-              />
-            </div>
-
-            <div className="layout__row layout__row-small">
-              <FollowButton
-                active_user={current_user}
-                following={i_am_following}
-                triggers={triggers}
-                user={user}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-}
 
 class InductionPage extends React.Component {
   static displayName = 'InductionPage'
