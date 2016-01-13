@@ -15,30 +15,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var browserify = require('browserify');
-var babelify = require('babelify');
-var watchify = require('watchify');
-var notify = require('gulp-notify');
-var watch = require('gulp-watch');
-var plumber = require('gulp-plumber');
-var autoprefixer = require('gulp-autoprefixer');
-var less = require('gulp-less');
-var del = require('del');
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
-var runSequence = require('run-sequence');
-var concat = require('gulp-concat');
-var gulpif = require('gulp-if');
-var uglify = require('gulp-uglify');
-var ejs = require('ejs');
-var fs = require('fs');
-var envify = require('envify/custom');
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import gulp from 'gulp';
+import gutil from 'gulp-util';
+import browserify from 'browserify';
+import babelify from 'babelify';
+import watchify from 'watchify';
+import notify from 'gulp-notify';
+import plumber from 'gulp-plumber';
+import autoprefixer from 'gulp-autoprefixer';
+import less from 'gulp-less';
+import runSequence from 'run-sequence';
+import concat from 'gulp-concat';
+import uglify from 'gulp-uglify';
+import envify from 'envify/custom';
 
-var path = {
+const path = {
   src: {
     styles: 'src/less/styles.less',
     less: 'src/less/**/*.less',
@@ -67,7 +60,7 @@ function handleErrors() {
   this.emit('end'); // Keep gulp from hanging on this task
 }
 
-function buildScript(file, watch) {
+function buildScript(file, shouldWatch) {
   var debugBuild = (process.env.NODE_ENV !== 'production');
 
   var props = {
@@ -87,7 +80,7 @@ function buildScript(file, watch) {
   };
 
   // watchify() if watch requested, otherwise run browserify() once
-  var bundler = watch ? watchify(browserify(props)) : browserify(props);
+  var bundler = shouldWatch ? watchify(browserify(props)) : browserify(props);
 
   function rebundle() {
     var stream = bundler
@@ -95,19 +88,18 @@ function buildScript(file, watch) {
       .on('error', handleErrors)
       .pipe(source(file));
 
-    if (!watch && !debugBuild) {
+    if (!shouldWatch && !debugBuild) {
       stream = stream
         .pipe(buffer())
         .pipe(uglify());
     }
 
     return stream
-      .pipe(gulp.dest(path.dist.scripts))
-      .pipe(reload({stream: true}));
+      .pipe(gulp.dest(path.dist.scripts));
   }
 
   // listen for an update and run rebundle
-  bundler.on('update', function () {
+  bundler.on('update', () => {
     rebundle();
     gutil.log('Rebundle...');
   });
@@ -117,75 +109,62 @@ function buildScript(file, watch) {
 }
 
 // Scripts one build
-gulp.task('scripts:once', function () {
+gulp.task('scripts:once', () => {
   return buildScript('app.js', false);
 });
 
 // Scripts - watch
-gulp.task('scripts', function () {
+gulp.task('scripts', () => {
   return buildScript('app.js', true);
 });
 
 // Fonts
-gulp.task('fonts', function () {
+gulp.task('fonts', () => {
   return gulp.src([
     'node_modules/font-awesome/fonts/*.*'
   ])
-    .pipe(gulp.dest(path.dist.fonts))
-    .pipe(reload({stream: true}));
+    .pipe(gulp.dest(path.dist.fonts));
 });
 
 // Images
-gulp.task('images', function () {
+gulp.task('images', () => {
   return gulp.src(path.src.images)
-    .pipe(gulp.dest(path.dist.images))
-    .pipe(reload({stream: true}));
+    .pipe(gulp.dest(path.dist.images));
 });
 
 // Pages
-gulp.task('html', function () {
-  return gulp.src(path.dist.html)
-    .pipe(reload({stream: true}));
+gulp.task('html', () => {
+  return gulp.src(path.dist.html);
 });
 
 // Styles
-gulp.task('styles', function () {
+gulp.task('styles', () => {
   return gulp.src(path.src.styles)
     .pipe(plumber())
     .pipe(less())
     .pipe(autoprefixer())
     .pipe(concat('styles.css'))
-    .pipe(gulp.dest(path.dist.styles))
-    .pipe(reload({stream: true}));
-});
-
-// Static server
-gulp.task('browser-sync', function () {
-  browserSync({
-    server: {
-      baseDir: path.dist.dir
-    }
-  });
+    .pipe(gulp.dest(path.dist.styles));
 });
 
 // Default task
-gulp.task('default', function (cb) {
-  runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
+gulp.task('default', (cb) => {
+  runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch'], cb);
 });
 
-gulp.task('set-prod-node-env', function() {
+gulp.task('set-prod-node-env', () => {
     return process.env.NODE_ENV = 'production';
 });
 
 gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
 
 // production task
-gulp.task('production', function (cb) {
+gulp.task('production', (cb) => {
   runSequence(['set-prod-node-env'],  ['styles', 'html', 'images', 'scripts:once', 'fonts'], cb);
 });
 
 // Watch
-gulp.task('watch', function () {
+gulp.task('watch', () => {
   gulp.watch(path.src.less, ['styles']);
   gulp.watch(path.dist.html, ['html']);
   gulp.watch(path.src.images, ['images']);
