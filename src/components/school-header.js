@@ -87,6 +87,12 @@ export default class SchoolHeader extends React.Component {
     */
     name = name.trim();
 
+    let followedSchools = {};
+
+    for (let followedSchool of current_user.followed_schools) {
+      followedSchools[followedSchool.url_name] = followedSchool;
+    }
+
     return (
       <div className="profile">
         <div className="profile__body">
@@ -99,7 +105,7 @@ export default class SchoolHeader extends React.Component {
               <div className="layout__grid_item layout__grid_item-small">
                 <FollowTagButton
                   current_user={current_user}
-                  followed_tags={current_user.followed_schools}
+                  followed_tags={followedSchools}
                   tag={school.url_name}
                   triggers={followTriggers}
                 />
