@@ -52,9 +52,7 @@ export default class GeoInput extends React.Component {
   componentDidMount() {
     // Initialize hidden inputs just in case.
     if (this.props.initialLocation) {
-      let { lat, lon } = this.props.initialLocation;
-
-      this._setLatLonInputs(lat, lon);
+      this._setLatLonInputs(this.props.initialLocation);
     }
   }
 
