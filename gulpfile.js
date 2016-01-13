@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var browserify = require('browserify');
@@ -32,6 +33,7 @@ var reload = browserSync.reload;
 var runSequence = require('run-sequence');
 var concat = require('gulp-concat');
 var gulpif = require('gulp-if');
+var uglify = require('gulp-uglify');
 var ejs = require('ejs');
 var fs = require('fs');
 var envify = require('envify/custom');
@@ -86,11 +88,22 @@ function buildScript(file, watch) {
 
   function rebundle() {
     var stream = bundler.bundle();
-    return stream
-      .on('error', handleErrors)
-      .pipe(source(file))
-      .pipe(gulp.dest(path.dist.scripts))
-      .pipe(reload({stream: true}));
+
+    if (watch) {
+      return stream
+        .on('error', handleErrors)
+        .pipe(source(file))
+        .pipe(gulp.dest(path.dist.scripts))
+        .pipe(reload({stream: true}));
+    } else {
+      return stream
+        .on('error', handleErrors)
+        .pipe(source(file))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(gulp.dest(path.dist.scripts))
+        .pipe(reload({stream: true}));
+    }
   }
 
   // listen for an update and run rebundle
@@ -160,8 +173,14 @@ gulp.task('default', function (cb) {
   runSequence(['styles', 'html', 'images', 'scripts', 'fonts'], ['watch', 'browser-sync'], cb);
 });
 
-// public task
-gulp.task('build', ['styles', 'html', 'images', 'scripts:once', 'fonts']);
+gulp.task('set-prod-node-env', function() {
+    return process.env.NODE_ENV = 'production';
+});
+
+// production task
+gulp.task('production', function (cb) {
+  runSequence(['set-prod-node-env'],  ['styles', 'html', 'images', 'scripts:once', 'fonts'], cb);
+});
 
 // Watch
 gulp.task('watch', function () {
