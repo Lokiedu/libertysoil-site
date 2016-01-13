@@ -24,19 +24,17 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import Footer from '../components/footer';
 import Header from '../components/header';
-
+import Message from '../components/message';
 
 let ResetForm = (props) => {
   return (
-    <form onSubmit={props.submitHandler} action="" method="post">
-      <div className="layout__row">
-        <div className="form__row">
-          <label className="label label-block label-space" htmlFor="resetPasswordEmail">Email</label>
-          <input className="input input-block" id="resetPasswordEmail" required="required" type="email" name="email"/>
-        </div>
+    <form className="layout__grid layout__grid-responsive layout-align_end layout__space-double" onSubmit={props.submitHandler} action="" method="post">
+      <div className="layout__grid_item layout__grid_item-identical">
+        <label className="label label-before_input" htmlFor="resetPasswordEmail">Email</label>
+        <input className="input input-big input-block" id="resetPasswordEmail" required="required" type="email" name="email"/>
       </div>
-      <div className="layout__row layout layout-align_vertical layout-align_justify">
-        <button type="submit" className="button button-wide button-green">Submit</button>
+      <div className="layout__grid_item">
+        <button type="submit" className="button button-big button-green">Submit</button>
       </div>
     </form>
    );
@@ -44,9 +42,9 @@ let ResetForm = (props) => {
 
 let SuccessMessage = () => {
   return (
-    <div>
+    <Message>
       If we found this email in our database, we've just sent you a message with further steps.
-    </div>
+    </Message>
   );
 };
 
@@ -72,18 +70,22 @@ class Form extends React.Component {
     }
 
     return (
-      <div>
-        <Header />
-        <div className="page__body">
-          <div className="area">
-            <div>
-              <div className="area__body layout-align_start">
-                <div className="box box-middle">
-                  <header className="box__title">Reset Password</header>
-                  <div className="box__body">
-                    {content}
-                  </div>
-                </div>
+      <div className="page__container-bg">
+        <section className="landing landing-big landing-bg landing-bg_house">
+          <Header
+            className="header-transparent header-transparent_border"
+          />
+          <header className="landing__body">
+              <p className="layout__row">Welcome to LibertySoil.org</p>
+              <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+          </header>
+        </section>
+        <div className="page__content page__content-spacing">
+          <div className="page__body page__body-block page__body-small">
+            <div className="layout__row">
+              <div className="content__title layout__row">Reset Password</div>
+              <div className="layout__row">
+                {content}
               </div>
             </div>
           </div>

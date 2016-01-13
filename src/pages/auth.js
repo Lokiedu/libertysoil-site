@@ -28,24 +28,14 @@ import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
 import Messages from '../components/messages';
-
 import Suggestions from './suggestions';
+import Message from '../components/message';
 
-
-import Message from '../components/message'; // TODO: temp code
-
-let FirstLogin = () => {
-  return (
-  <div className="area">
-    <div className="area__body">
-      <div className="message">
-        <div className="message__body">
-          You are now successfully registered and logged in. You can proceed to <Link className="link" to="/induction">the next step</Link>.
-        </div>
-      </div>
-    </div>
-  </div>
-)};
+let FirstLogin = () => (
+  <Message>
+    You are now successfully registered and logged in. You can proceed to <Link className="link" to="/induction">the next step</Link>
+  </Message>
+);
 
 let AuthContents = (props) => {
 
@@ -85,30 +75,28 @@ let AuthContents = (props) => {
   }
 
   return (
-    <div>
-      <div className="page__container-bg">
-        <section className="landing landing-big landing-bg landing-bg_house">
-          <Header
-            is_logged_in={is_logged_in}
-            current_user={current_user}
-            className="header-transparent header-transparent_border"
-          />
-          <header className="landing__body">
-              <p className="layout__row">Welcome to LibertySoil.org</p>
-              <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-              {render.headerLogin}
-          </header>
-        </section>
-        {render.messages}
-        <div className="page__content page__content-spacing">
-          <div className="page__body page__body-small">
-            <div className="layout__row">
-              {render.content}
-            </div>
+    <div className="page__container-bg">
+      <section className="landing landing-big landing-bg landing-bg_house">
+        <Header
+          is_logged_in={is_logged_in}
+          current_user={current_user}
+          className="header-transparent header-transparent_border"
+        />
+        <header className="landing__body">
+            <p className="layout__row">Welcome to LibertySoil.org</p>
+            <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+            {render.headerLogin}
+        </header>
+      </section>
+      {render.messages}
+      <div className="page__content page__content-spacing">
+        <div className="page__body page__body-small">
+          <div className="layout__row">
+            {render.content}
           </div>
         </div>
-        <Footer/>
       </div>
+      <Footer/>
     </div>
   );
 };

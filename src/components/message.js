@@ -23,9 +23,9 @@ import messageType from '../consts/messageTypeConstants';
 
 export default class Message extends React.Component {
   static propTypes = {
-    i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    message: PropTypes.string.isRequired,
-    removeMessage: PropTypes.func.isRequired,
+    i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    message: PropTypes.string,
+    removeMessage: PropTypes.func,
     type: PropTypes.string
   };
 
@@ -35,11 +35,14 @@ export default class Message extends React.Component {
 
   render() {
     let {
+      children,
+      removeMessage,
       type,
       message,
       i
     } = this.props;
     let icon = null;
+    let close = null;
 
     let cn = bem.makeClassName({
       block: 'message',
@@ -52,12 +55,16 @@ export default class Message extends React.Component {
       icon = <span className="micon message__icon">error</span>
     }
 
+    if (removeMessage) {
+      close = <span className="message__close action micon" onClick={this.closeHandler}>close</span>;
+    }
+
     return (
       <div className={cn} key={i}>
-        <span className="message__close action micon" onClick={this.closeHandler}>close</span>
+        {close}
         {icon}
         <div className="message__body">
-          {message}
+          {message || children}
         </div>
       </div>
     );
