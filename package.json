@@ -68,6 +68,7 @@
     "react": "~0.14.6",
     "react-addons-test-utils": "~0.14.6",
     "react-autosuggest": "^3.3.1",
+    "react-avatar-editor": "^3.2.0",
     "react-dom": "~0.14.6",
     "react-gravatar": "^2.2.2",
     "react-linkify": "0.1.1",

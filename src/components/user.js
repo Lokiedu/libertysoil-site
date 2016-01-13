@@ -21,13 +21,14 @@ import Gravatar from 'react-gravatar';
 import moment from 'moment';
 
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import ChangeAvatar from './settings/change-avatar';
 
 export default class User extends Component {
   render () {
-    var { user, hideAvatar, hideText, isRound, avatarSize, timestamp, timestampLink, className } = this.props;
+    var { user, hideAvatar, updateAvatarTrigger, editable, hideText, isRound, avatarSize, timestamp, timestampLink, className } = this.props;
     var render = {};
 
-    render.cn = `user_box ${className}`;
+    render.cn = `user_box ${className || ''}`;
 
     let user_url = getUrl(URL_NAMES.USER, { username: user.username })
 
@@ -40,9 +41,16 @@ export default class User extends Component {
 
       render.avatar = (
         <Link to={user_url} className={avatarClassName}>
-          <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
+          {user.more && user.more.avatar ?
+          (<img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />) :
+          (<Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />)
+          }
         </Link>
       );
+    }
+
+    if (editable) {
+      render.changeAvatar = (<ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />);
     }
 
     if (!hideText) {
@@ -75,6 +83,7 @@ export default class User extends Component {
     return (
         <div className={render.cn}>
           {render.avatar}
+          {render.changeAvatar}
           {render.text}
         </div>
     )

@@ -9,3 +9,8 @@ const ROLES = [
 export default {
     ROLES
 };
+
+export const AVATAR_SIZE = {
+  width: 168,
+  height: 168
+};

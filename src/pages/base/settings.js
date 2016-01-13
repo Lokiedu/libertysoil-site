@@ -55,6 +55,8 @@ export default class BaseSettingsPage extends React.Component {
                 current_user={current_user}
                 following={following}
                 followers={followers}
+                editable={true}
+                updateAvatarTrigger={triggers.updateAvatar}
                 />
               <div className="page__content page__content-spacing">
                 <div className="layout__row layout-small">

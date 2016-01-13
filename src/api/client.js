@@ -67,6 +67,25 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
+  /*
+    *post without setting content type
+  */
+  
+  async postMultipart(relativeUrl, data=null) {
+    let req = request.post(this.apiUrl(relativeUrl));
+
+    if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
+      req = req.set('Cookie', this.serverReq.headers['cookie']);
+    }
+
+    if (data !== null) {
+      req = req.send(data);
+    }
+
+
+    return Promise.resolve(req);
+  }
+
   async postJSON(relativeUrl, data=null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
@@ -293,5 +312,18 @@ export default class ApiClient
     return response.body;
   }
 
+  async uploadImage(images) {
+    let data = new FormData;
+    images.forEach((image) => {
+      data.append("files", image);
+    })
+    let response = await this.postMultipart('/api/v1/upload', data);
+    return response.body;
+  }
+
+  async processImage(id, transforms, derived_id=null) {
+    let response = await this.postJSON('/api/v1/image', {original_id: id, transforms: JSON.stringify(transforms), derived_id: derived_id});
+    return response.body;
+  }
 
 }

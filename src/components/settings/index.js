@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import RolesManager from './roles-manager';
+import ChangeAvatar from './change-avatar';
 
 export default {
-  RolesManager
+  RolesManager,
+  ChangeAvatar
 };
