@@ -51,23 +51,36 @@ export default class TagLine extends React.Component {
       return null;
     }
 
-    let geotagBlocks = geotags.map(school => {
-      return (
-        <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name} />
-      )
-    });
+    let geotagBlocks;
 
-    let schoolBlocks = schools.map(school => {
-      return (
-        <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
-      )
-    });
+    if (geotags) {
+      geotagBlocks = geotags.map(school => {
+        return (
+          <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name}/>
+        )
+      });
+    }
 
-    let tagBlocks = tags.map(tag => {
-      return (
-        <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
-      )
-    });
+    let schoolBlocks;
+
+    if (schools) {
+      schoolBlocks = schools.map(school => {
+        return (
+          <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name}/>
+        )
+      });
+    }
+
+    let tagBlocks;
+
+    if (tags) {
+      tagBlocks = tags.map(tag => {
+        return (
+          <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
+        )
+      });
+
+    }
 
     return (
       <div className="tags">
