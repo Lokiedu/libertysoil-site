@@ -120,7 +120,7 @@ let reactHandler = async (req, res) => {
 
   match({ routes, location }, async (error, redirectLocation, renderProps) => {
     if (redirectLocation) {
-      res.redirect(301, redirectLocation.pathname + redirectLocation.search)
+      res.redirect(307, redirectLocation.pathname + redirectLocation.search)
     } else if (error) {
       res.status(500).send(error.message)
     } else if (renderProps == null) {

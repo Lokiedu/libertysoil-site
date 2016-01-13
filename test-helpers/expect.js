@@ -37,7 +37,7 @@ expect.addAssertion('to redirect', function (expect, subject, value) {
   return expect(app, 'to yield exchange', {
     request: subjectToRequest(subject),
     response: {
-      statusCode: 301
+      statusCode: 307
     }
   });
 });
