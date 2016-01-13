@@ -87,9 +87,7 @@ class PostEditPage extends React.Component {
     triggers.updatePost(
       this.props.params.uuid,
       {
-        text: form.text.value,
-        tags: this.editor.getTags(),
-        schools: this.editor.getSchools()
+        text: form.text.value
       }
     )
       .then((result) => {
