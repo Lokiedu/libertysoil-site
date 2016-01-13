@@ -34,7 +34,12 @@ export default class Message extends React.Component {
   };
 
   render() {
-    let {type, message, i} = this.props;
+    let {
+      type,
+      message,
+      i
+    } = this.props;
+    let icon = null;
 
     let cn = bem.makeClassName({
       block: 'message',
@@ -43,9 +48,14 @@ export default class Message extends React.Component {
       }
     });
 
+    if (type == messageType.ERROR) {
+      icon = <span className="micon message__icon">error</span>
+    }
+
     return (
       <div className={cn} key={i}>
-        <span className="message__close action fa fa-times" onClick={this.closeHandler} />
+        <span className="message__close action micon" onClick={this.closeHandler}>close</span>
+        {icon}
         <div className="message__body">
           {message}
         </div>

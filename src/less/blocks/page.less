@@ -34,6 +34,10 @@
 
 }
 
+.page__messages {
+  margin-top: -27px;
+}
+
 .page__sidebar {
   padding: 10px;
   flex: 0 0 100%;
@@ -91,6 +95,10 @@
     width: 600px;
     margin: 0 auto;
 
+    @media @before-normal {
+      width: auto;
+    }
+
     @media @after-base {
       width: 700px;
     }
@@ -119,6 +127,10 @@
 
   &-spacing {
     padding: @space * 3;
+
+    @media @before-normal {
+      padding: @space;
+    }
   }
 
   &-fill {

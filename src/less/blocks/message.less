@@ -16,34 +16,44 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .message {
-  background: #fff;
-  border: 1px solid @color__gray;
+  background: #ffffcc;
   border-radius: @radius;
   position: relative;
+  display: flex;
 
   &__body {
-    padding: @space;
+    padding: 16px 20px 16px 20px;
+    font-size: 16px;
+    line-height: 22px;
+    flex: 1;
 
     .message__close + & {
       margin-right: @doubleSpace;
     }
   }
 
+  &__icon {
+    margin: 9px -5px 9px 15px;
+    font-size: 36px;
+  }
+
   &__close {
     position: absolute;
-    top: 16px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
   }
 
   &__group {
+    flex: 1;
+
     .message + .message {
       margin-top: @space;
     }
   }
 
   &-error {
-    .message__body {
-      color: red;
+    .message__icon {
+      color: #e51c23;
     }
   }
 }

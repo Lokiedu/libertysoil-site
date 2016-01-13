@@ -40,8 +40,8 @@ export default class Messages extends React.Component {
     });
 
     return (
-      <div className="layout layout__space layout-align_center">
-        <div className="message__group">{msgTags}</div>
+      <div className="message__group">
+        {msgTags}
       </div>
     );
   }

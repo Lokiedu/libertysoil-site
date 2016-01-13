@@ -29,28 +29,29 @@ export default class LoginComponent extends React.Component {
 
   render() {
     return (
-      <div className="box box-middle">
-        <header className="box__title">Login?</header>
-        <form onSubmit={this.submitHandler} action="" method="post">
-          <div className="box__body">
-            <div className="layout__row">
-              <div className="form__row">
-                <label className="label label-block label-space" htmlFor="loginUsername">Username</label>
-                <input className="input input-block" id="loginUsername" required="required" type="text" name="username"/>
+      <form onSubmit={this.submitHandler} action="" method="post" className="layout__grid layout__grid-responsive layout-align_end layout__space-double">
+          <div className="layout__grid_item layout__grid_item-identical">
+            <label className="label label-before_input" htmlFor="loginUsername">User name</label>
+            <div className="input_group">
+              <span className="input_group__before input_group__before-outside micon micon-extra">person</span>
+              <div className="input_group__input">
+                <input className="input input-big input-block" id="loginUsername" required="required" type="text" name="username" placeholder="Username" />
               </div>
-              <div className="form__row">
-                <label className="label label-block label-space" htmlFor="loginPassword">Password</label>
-                <input className="input input-block" id="loginPassword" required="required" type="password" name="password"/>
-              </div>
-            </div>
-            <div className="layout__row layout layout-align_vertical layout-align_justify">
-              <Link to="/resetpassword" className="link">Password reminder</Link>
-              <button type="submit" className="button button-wide button-green">Login</button>
             </div>
           </div>
-        </form>
-      </div>
+          <div className="layout__grid_item layout__grid_item-identical">
+            <label className="label label-before_input" htmlFor="loginPassword">Password</label>
+            <div className="input_group">
+              <div className="input_group__input">
+                <input className="input input-big input-block" id="loginPassword" required="required" type="password" name="password" placeholder="Password" />
+              </div>
+              <Link to="/resetpassword" className="link input_group__after input_group__after-outside_bottom">Forgot your password?</Link>
+            </div>
+          </div>
+          <div className="layout__grid_item">
+            <button className="button button-big button-red">Log in</button>
+          </div>
+      </form>
     )
   }
 }
-

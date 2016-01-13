@@ -32,6 +32,8 @@ import Messages from '../components/messages';
 import Suggestions from './suggestions';
 
 
+import Message from '../components/message'; // TODO: temp code
+
 let FirstLogin = () => {
   return (
   <div className="area">
@@ -40,18 +42,6 @@ let FirstLogin = () => {
         <div className="message__body">
           You are now successfully registered and logged in. You can proceed to <Link className="link" to="/induction">the next step</Link>.
         </div>
-      </div>
-    </div>
-  </div>
-)};
-
-let AuthForms = (props) => {
-  return (
-  <div className="area">
-    <div>
-      <div className="area__body layout-align_start">
-        <Login onLoginUser={props.triggers.login} />
-        <Register onRegisterUser={props.triggers.registerUser} registration_success={props.registration_success} onShowRegisterForm={props.triggers.showRegisterForm} />
       </div>
     </div>
   </div>
@@ -67,15 +57,31 @@ let AuthContents = (props) => {
     messages,
     registration_success
   } = props;
+  let render = {};
 
   if(is_logged_in && !is_first_login){
     return <Suggestions/>;
   }
 
-  let content = <FirstLogin/>;
+  if (messages.length) {
+    render.messages = (
+      <div className="page__messages">
+        <div className="page__body page__body-small">
+          <Messages messages={messages} removeMessage={triggers.removeMessage} />
+        </div>
+      </div>
+    );
+  }
+
+  render.content = <FirstLogin/>;
 
   if (!is_logged_in) {
-    content = <AuthForms triggers={triggers} registration_success={registration_success}/>;
+    render.headerLogin = <Login onLoginUser={triggers.login} />;
+    render.content = <Register
+        onRegisterUser={triggers.registerUser}
+        registration_success={registration_success}
+        onShowRegisterForm={triggers.showRegisterForm}
+      />;
   }
 
   return (
@@ -87,37 +93,19 @@ let AuthContents = (props) => {
             current_user={current_user}
             className="header-transparent header-transparent_border"
           />
-        <header className="landing__body">
-            <p className="layout__row">Welcome to LibertySoil.org</p>
-            <h1 className="landing__head landing__head-narrow">Education change network</h1>
-            <div className="layout__grid layout-align_end layout__space-double">
-                <div className="layout__grid_item">
-                  <label className="label label-before_input" htmlFor="loginUsername">User name</label>
-                  <div className="input_group">
-                    <span className="input_group__before input_group__before-outside micon micon-extra">person</span>
-                    <div className="input_group__input">
-                      <input className="input input-big" id="loginUsername" required="required" type="text" name="username" placeholder="Username" />
-                    </div>
-                  </div>
-                </div>
-                <div className="layout__grid_item">
-                  <label className="label label-before_input" htmlFor="loginPassword">Password</label>
-                  <div className="input_group">
-                    <div className="input_group__input">
-                      <input className="input input-big" id="loginPassword" required="required" type="password" name="password" placeholder="Password" />
-                    </div>
-                    <Link to="/resetpassword" className="link input_group__after input_group__after-outside_bottom">Forgot your password?</Link>
-                  </div>
-                </div>
-                <div className="layout__grid_item">
-                  <button className="button button-big button-red">Log in</button>
-                </div>
-            </div>
+          <header className="landing__body">
+              <p className="layout__row">Welcome to LibertySoil.org</p>
+              <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+              {render.headerLogin}
           </header>
         </section>
-        <div className="page__body page__body-small">
-          <Messages messages={messages} removeMessage={triggers.removeMessage} />
-          {content}
+        {render.messages}
+        <div className="page__content page__content-spacing">
+          <div className="page__body page__body-small">
+            <div className="layout__row">
+              {render.content}
+            </div>
+          </div>
         </div>
         <Footer/>
       </div>
