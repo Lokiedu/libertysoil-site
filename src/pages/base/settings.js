@@ -38,7 +38,8 @@ export default class BaseSettingsPage extends React.Component {
       following,
       followers,
       messages,
-      triggers
+      triggers,
+      onAvatarChange
     } = this.props;
 
     return (
@@ -55,6 +56,8 @@ export default class BaseSettingsPage extends React.Component {
                 current_user={current_user}
                 following={following}
                 followers={followers}
+                editable={true}
+                onAvatarChange={onAvatarChange}
                 />
               <div className="page__content page__content-spacing">
                 <div className="layout__row layout-small">

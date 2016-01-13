@@ -27,7 +27,7 @@ export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader'
 
   render () {
-    const { user, current_user, i_am_following, following, followers } = this.props;
+    const { user, current_user, editable, onAvatarChange, i_am_following, following, followers } = this.props;
     let name = user.username;
     let summary = '';
     let followingCount;
@@ -90,7 +90,7 @@ export default class ProfileHeader extends React.Component {
       <div className="profile">
         <div className="profile__body">
           <div className="layout__row">
-            <User user={user} avatarSize="120" isRound={true} hideText={true} />
+            <User user={user} editable={editable} onAvatarChange={onAvatarChange} avatarSize="120" isRound={true} hideText={true} />
           </div>
           <div className="layout__row">
             <div className="layout__grid">

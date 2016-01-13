@@ -17,7 +17,6 @@
  */
 import express from 'express';
 import bodyParser from 'body-parser';
-//import multer from 'multer';
 import _ from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
@@ -153,7 +152,6 @@ app.set('view engine', 'ejs');
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.json());  // for parsing application/json
-//app.use(multer());  // for parsing multipart/form-data
 app.use(corsMiddleware);
 
 app.use('/api/v1', api);

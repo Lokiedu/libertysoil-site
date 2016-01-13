@@ -64,9 +64,38 @@
     }
   }
 
+  &__edit_avatar {
+    margin: 5px 0 0 -73px;
+    overflow: hidden;
+    button {
+      background: none;
+      border: none;
+    }
+    span {
+      font-size: 30px;
+    }
+    &:hover {
+      span {
+        color: #eee;
+      }
+    }
+  }
+
+  &__avatar_modal {
+    &__size_box{
+      margin-bottom: 25px;
+      &__bar {
+        vertical-align: bottom;
+      }
+      &__icon {
+        font-size: 20px;
+        margin: 0 10px;
+      }
+    }
+  }
+
   &__text {
     font-size: @font__size-small;
-
     a {
       border: none;
     }

@@ -15,6 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
@@ -384,5 +385,29 @@ export class ActionsTrigger {
 
   showRegisterForm = async () => {
     this.dispatch(showRegisterForm());
+  }
+
+  updateAvatar = async (image, crop) =>{
+    try {
+      let original = await this.client.uploadImage([image]);
+      original = original.attachments[0].id;
+
+      let cropped = await this.client.processImage(original, [{crop: crop}, { resize: {width: AVATAR_SIZE.width, height: AVATAR_SIZE.height}}]);
+
+      let res = await this.client.updateUser({
+        more: {
+          avatar: {
+            attachment_id: cropped.attachment.id,
+            url: cropped.attachment.s3_url
+          }
+        }
+      });
+      if ('user' in res) {
+        this.dispatch(addMessage('Avatar updated'));
+        this.dispatch(addUser(res.user));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
   }
 }
