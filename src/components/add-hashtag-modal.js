@@ -52,7 +52,9 @@ export default class AddHashtagModal extends Component {
     onSave: () => {}
   };
 
-  _handleAddTag = () => {
+  _handleAddTag = (event) => {
+    event.preventDefault();
+
     let tags = this._tagEditor.getTags().tags;
     let tagName = this.refs.input.value.trim();
 
@@ -105,12 +107,14 @@ export default class AddHashtagModal extends Component {
             <div className="layout__row add_tag_modal__tab_panel">
               <div className="layout">
                 <div className="layout__grid_item layout__grid_item-wide">
-                  <input
-                    className="input input-block input-transparent input-button_height"
-                    placeholder="Start typing..."
-                    ref="input"
-                    type="text"
-                  />
+                  <form onSubmit={this._handleAddTag}>
+                    <input
+                      className="input input-block input-transparent input-button_height"
+                      placeholder="Start typing..."
+                      ref="input"
+                      type="text"
+                    />
+                  </form>
                 </div>
                 <div className="layout__grid_item">
                   <span

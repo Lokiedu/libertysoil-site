@@ -57,7 +57,9 @@ export default class AddGeotagModal extends Component {
     geotag: {} // Selected geotag
   };
 
-  _handleAddTag = () => {
+  _handleAddTag = (event) => {
+    event.preventDefault();
+
     let geotags = this._tagEditor.getTags().geotags;
     let geotag = this.state.geotag;
 
@@ -114,7 +116,7 @@ export default class AddGeotagModal extends Component {
             <div className="layout__row add_tag_modal__tab_panel">
               <div className="layout">
                 <div className="layout__grid_item layout__grid_item-wide">
-                  <form ref="form">
+                  <form ref="form" onSubmit={this._handleAddTag}>
                     <GeotagSelect
                       placeholder="Start typing..."
                       ref={(c) => this._input = c}
