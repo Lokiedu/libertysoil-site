@@ -78,7 +78,8 @@ module.exports = {
       user:     'postgres',
       password: 'Laik7akoh2ai',
       host: process.env.DB_PORT_5432_TCP_ADDR,
-      port: process.env.DB_PORT_5432_TCP_PORT
+      port: process.env.DB_PORT_5432_TCP_PORT,
+      charset  : 'utf8'
     },
     pool: {
       min: 2,

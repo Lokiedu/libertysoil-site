@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import knex from 'knex';
 import { wait as waitForStream } from 'promise-streams'
 import tmp from 'tmp';
+import { chunk } from 'lodash';
 
 
 let exec_env = process.env.DB_ENV || 'development';
@@ -94,13 +95,15 @@ async function cities() {
 
   const q = cities_data.map((row) => {
     return `INSERT INTO geonames_cities VALUES (${row.join(',')});`;
-  }).join("\n");
+  });
 
   process.stdout.write("=== TRUNCATING CITIES TABLE ===\n");
   await Knex.raw('TRUNCATE geonames_cities CASCADE');
 
   process.stdout.write("=== IMPORTING ===\n");
-  await Knex.raw(q);
+  for (let batch of chunk(q, 1000)) {
+    await Knex.raw(batch.join("\n"));
+  }
 }
 
 async function geotags() {
