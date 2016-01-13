@@ -80,12 +80,42 @@ let AuthContents = (props) => {
 
   return (
     <div>
-      <Header is_logged_in={is_logged_in} current_user={current_user} />
-      <div className="page__body">
-        <Messages messages={messages} removeMessage={triggers.removeMessage} />
-        {content}
+      <div className="page__container-bg">
+        <section className="landing landing-big landing-bg landing-bg_house">
+          <Header
+            is_logged_in={is_logged_in}
+            current_user={current_user}
+            className="header-transparent"
+          />
+        <header className="landing__body">
+            <p className="layout__row">Welcome to LibertySoil.org</p>
+            <h1 className="landing__head landing__head-narrow">Education change network</h1>
+            <div className="layout__grid layout-align_end layout__space-double">
+                <div className="layout__grid_item">
+                  <label className="label label-before_input" htmlFor="loginUsername">User name</label>
+                  <div className="input_group">
+                    <span className="input_group__before input_group__before-outside micon micon-extra">person</span>
+                    <div className="input_group__input">
+                      <input className="input input-big" id="loginUsername" required="required" type="text" name="username" placeholder="Username" />
+                    </div>
+                  </div>
+                </div>
+                <div className="layout__grid_item">
+                  <label className="label label-before_input" htmlFor="loginPassword">Password</label>
+                  <input className="input input-big" id="loginPassword" required="required" type="password" name="password" placeholder="Password" />
+                </div>
+                <div className="layout__grid_item">
+                  <button className="button button-big button-red">Log in</button>
+                </div>
+            </div>
+          </header>
+        </section>
+        <div className="page__body">
+          <Messages messages={messages} removeMessage={triggers.removeMessage} />
+          {content}
+        </div>
+        <Footer/>
       </div>
-      <Footer/>
     </div>
   );
 };
