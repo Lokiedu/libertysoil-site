@@ -23,26 +23,25 @@
   @height: 23px;
   @icon-size: @height;
 
-  display: block;
+  &:extend(.font-open_sans);
+  display: flex;
   position: relative;
   height: @height;
-  margin-left: @icon-size / 2;
   background-color: white;
   border: 1px solid #ccc;
-  border-radius: 0 @space @space 0;
+  border-radius: 11px;
   box-sizing: border-box;
-  font-size: @font__size-small;
+  font-size: 13px;
 
   &__icon {
     // This fixes the connection between the icon and the tag's border.
-    position: absolute;
-    top: -1px;
-    left: -(@icon-size / 2);
+    display: none!important;
   }
 
   &__name {
-    padding: 1px 12px 1px (@icon-size / 2 + 7px);
-    line-height: @height;
+    padding: 0 11px;
+    line-height: normal;
+    color: #333;
   }
 
   &__delete {
