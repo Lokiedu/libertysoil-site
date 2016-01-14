@@ -60,6 +60,7 @@ export function initApi(bookshelf) {
   api.get('/posts/favoured/:user', wrap(controller.getFavouredPosts.bind(controller)));
   api.get('/posts/tag/:tag', wrap(controller.tagPosts.bind(controller)));
   api.get('/posts/school/:school', wrap(controller.schoolPosts.bind(controller)));
+  api.get('/posts/geotag/:url_name', wrap(controller.geotagPosts.bind(controller)));
   api.get('/user/tags', wrap(controller.userTags.bind(controller)));
 
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
@@ -98,7 +99,10 @@ export function initApi(bookshelf) {
   api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
   api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
 
+  api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
+  api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));
+  api.post('/geotag/:url_name/unfollow', wrap(controller.unfollowGeotag.bind(controller)));
 
 
   return api;

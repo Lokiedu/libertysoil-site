@@ -64,6 +64,9 @@ export default function initBookshelf(config) {
     followed_schools: function () {
       return this.belongsToMany(School, 'followed_schools_users', 'user_id', 'school_id');
     },
+    followed_geotags: function() {
+      return this.belongsToMany(Geotag, 'followed_geotags_users', 'user_id', 'geotag_id');
+    },
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
@@ -83,6 +86,13 @@ export default function initBookshelf(config) {
     },
     unfollowSchool: async function(schoolId) {
       return this.followed_schools().detach(schoolId);
+    },
+    followGeotag: async function(geotagId) {
+      await this.followed_geotags().detach(geotagId);
+      return this.followed_geotags().attach(geotagId);
+    },
+    unfollowGeotag: async function(geotagId) {
+      return this.followed_geotags().detach(geotagId);
     }
   });
 
@@ -298,10 +308,10 @@ export default function initBookshelf(config) {
   Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
     country: function() {
-      return this.belongsTo(Country);
+      return this.belongsTo(Country, 'country_id');
     },
     city: function() {
-      return this.belongsTo(City);
+      return this.belongsTo(City, 'city_id');
     }
   });
 

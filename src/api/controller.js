@@ -114,6 +114,28 @@ export default class ApiController {
     res.send(posts);
   }
 
+  async geotagPosts(req, res) {
+    let Post = this.bookshelf.model('Post');
+
+    let q = Post.forge()
+      .query(qb => {
+        qb
+          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+          .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+          .where('geotags.url_name', req.params.url_name)
+          .orderBy('posts.created_at', 'desc')
+      });
+
+    let posts = await q.fetchAll({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    posts = posts.serialize();
+    posts.forEach(post => {
+      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+    });
+
+    res.send(posts);
+  }
+
+
   async userTags(req, res){
     if (!req.session || !req.session.user) {
       res.status(403)
@@ -1148,7 +1170,7 @@ export default class ApiController {
         withRelated: [
           'following', 'followers', 'liked_posts',
           'favourited_posts', 'followed_labels',
-          'followed_schools'
+          'followed_schools', 'followed_geotags'
         ]
       });
 
@@ -1584,6 +1606,88 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+      return;
+    }
+  }
+
+  async followGeotag(req, res) {
+    let User = this.bookshelf.model('User');
+    let Geotag = this.bookshelf.model('Geotag');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.url_name) {
+      res.status(400);
+      res.send({error: '"url_name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let geotag = await Geotag.forge().where('url_name', req.params.url_name).fetch();
+
+      await currentUser.followGeotag(geotag.id);
+
+      res.send({success: true, geotag});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+      return;
+    }
+  }
+
+  async unfollowGeotag(req, res) {
+    let User = this.bookshelf.model('User');
+    let Geotag = this.bookshelf.model('Geotag');
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!req.params.url_name) {
+      res.status(400);
+      res.send({error: '"url_name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let currentUser = await User.forge().where('id', req.session.user).fetch();
+      let geotag = await Geotag.forge().where('url_name', req.params.url_name).fetch();
+
+      await currentUser.unfollowGeotag(geotag.id);
+
+      res.send({success: true, geotag});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+      return;
+    }
+  }
+
+  async getGeotag(req, res) {
+    let Geotag = this.bookshelf.model('Geotag');
+
+    if (!req.params.url_name) {
+      res.status(400);
+      res.send({error: '"url_name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let geotag = await Geotag
+        .forge()
+        .where('url_name', req.params.url_name)
+        .fetch({require: true, withRelated: ['country', 'city']});
+
+      res.send(geotag);
+    } catch (e) {
+      res.sendStatus(404);
       return;
     }
   }

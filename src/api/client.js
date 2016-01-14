@@ -160,6 +160,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async geotagPosts(geotagUrlName) {
+    let response = await this.get(`/api/v1/posts/geotag/${geotagUrlName}`);
+    return response.body;
+  }
+
   async city(city_id) {
     let response = await this.get(`/api/v1/city/${city_id}`);
     return response.body;
@@ -294,6 +299,21 @@ export default class ApiClient
 
   async unfollowSchool(name) {
     let response = await this.post(`/api/v1/school/${name}/unfollow`);
+    return response.body;
+  }
+
+  async followGeotag(urlName) {
+    let response = await this.post(`/api/v1/geotag/${urlName}/follow`);
+    return response.body;
+  }
+
+  async unfollowGeotag(urlName) {
+    let response = await this.post(`/api/v1/geotag/${urlName}/unfollow`);
+    return response.body;
+  }
+
+  async getGeotag(urlName) {
+    let response = await this.get(`/api/v1/geotag/${urlName}`);
     return response.body;
   }
 
