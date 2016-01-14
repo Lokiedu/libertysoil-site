@@ -15,9 +15,6 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.tag_wrapper {
-  display: flex;
-}
 
 .tag {
   @height: 23px;
@@ -34,11 +31,27 @@
   box-sizing: border-box;
   font-size: 13px;
 
-  &__icon {
+  &:hover {
+    .tag__delete {
+      opacity: 1;
+    }
+  }
+
+  &__icon_wrapper {
     position: relative;
     left: -1px;
     top: -1px;
     margin-right: -5px;
+    width: 23px;
+    height: 23px;
+  }
+
+  &__icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 23px;
+    height: 23px;
   }
 
   &__name {
@@ -50,30 +63,52 @@
   &__delete {
     cursor: pointer;
     line-height: @height;
-    opacity: 0.5;
-
-    &:hover {
-      opacity: 1;
-    }
+    opacity: 0;
+    z-index: 10;
+    background: #ccc;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 11px;
+    text-align: center;
   }
 
   &-hashtag {
     border-color: #689ACA;
+
+    .tag__delete {
+      background: #689ACA;
+    }
   }
 
   &-school {
     border-color: #DC3457;
+
+    .tag__delete {
+      background: #DC3457;
+    }
   }
 
   &-event {
     border-color: #98C646;
+
+    .tag__delete {
+      background: #98C646;
+    }
   }
 
   &-mention {
     border-color: #F8A232;
+
+    .tag__delete {
+      background: #F8A232;
+    }
   }
 
   &-location {
     border-color: #47B8E7;
+
+    .tag__delete {
+      background: #47B8E7;
+    }
   }
 }

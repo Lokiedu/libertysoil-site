@@ -16,6 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .tags {
-  &:extend(.layout);
-  &:extend(.layout__grid all);
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: -16px;
+  margin-right: -10px;
+
+  > * {
+    margin: 16px 10px 0 0;
+  }
 }

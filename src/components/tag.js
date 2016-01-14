@@ -19,7 +19,8 @@ export default class Tag extends React.Component {
   };
 
   static defaultProps = {
-    truncated: false
+    truncated: false,
+    deletable: false
   };
 
   _handleDelete = () => {
@@ -31,6 +32,8 @@ export default class Tag extends React.Component {
   render() {
     let { urlId, name, type, truncated } = this.props;
     let tagName = name;
+    let tagNameComponent;
+    let tagIcon = <TagIcon className="tag__icon" type={type} />;
     let className;
     let url;
 
@@ -58,16 +61,28 @@ export default class Tag extends React.Component {
       tagName = truncate(name, {length: 16});
     }
 
-    return (
-      <div className="tag_wrapper">
+    tagNameComponent = <div className="tag__name">{tagName}</div>;
+
+    // FIXME: this should be reimplemented as 2 different components
+    if (this.props.deletable) {
+      return (
+        <div className={`tag ${className}`} title={name}>
+          <div className="tag__icon_wrapper">
+            <span className="micon tag__icon tag__delete clickable" onClick={this._handleDelete}>close</span>
+            {tagIcon}
+          </div>
+          {tagNameComponent}
+        </div>
+      );
+    } else {  // eslint-disable-line no-else-return
+      return (
         <Link className={`tag ${className}`} title={name} to={url}>
-          <TagIcon className="tag__icon" type={type} />
-          <span className="tag__name">{tagName}</span>
+          <div className="tag__icon_wrapper">
+            {tagIcon}
+          </div>
+          {tagNameComponent}
         </Link>
-        {this.props.deletable &&
-          <span className="micon tag__delete" onClick={this._handleDelete}>close</span>
-        }
-      </div>
-    );
+      );
+    }
   }
 }
