@@ -20,6 +20,7 @@ import bodyParser from 'body-parser';
 import _ from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
+import knexLogger from 'knex-logger';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server'
@@ -164,6 +165,10 @@ let app = express();
 
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
+
+if (process.env.NODE_ENV == 'development') {
+  app.use(knexLogger(bookshelf.knex));
+}
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
