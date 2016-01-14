@@ -70,7 +70,7 @@ class Form extends React.Component {
     }
 
     return (
-      <div className="page__container-bg">
+      <div className="page__container-bg font-light">
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             className="header-transparent header-transparent_border"
