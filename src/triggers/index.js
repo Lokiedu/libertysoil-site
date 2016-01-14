@@ -20,7 +20,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers, setPostsToRiver,
+  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm
@@ -301,6 +301,18 @@ export class ActionsTrigger {
       let result = await this.client.initialSuggestions();
 
       this.dispatch(setSuggestedUsers(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadPersonalizedSuggestions = async () => {
+    try {
+      let result = await this.client.userSuggestions();
+
+      this.dispatch(setPersonalizedSuggestedUsers(result));
 
       return result;
     } catch (e) {

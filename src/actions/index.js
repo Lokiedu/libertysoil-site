@@ -47,6 +47,7 @@ export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
+export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
 
 export const SET_COUNTRIES = 'SET_COUNTRIES';
 export const ADD_COUNTRY = 'ADD_COUNTRY';
@@ -265,6 +266,13 @@ export function setCurrentUser(user) {
 export function setSuggestedUsers(suggested_users) {
   return {
     type: SET_SUGGESTED_USERS,
+    suggested_users
+  }
+}
+
+export function setPersonalizedSuggestedUsers(suggested_users) {
+  return {
+    type: SET_PERSONALIZED_SUGGESTED_USERS,
     suggested_users
   }
 }

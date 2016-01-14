@@ -26,6 +26,7 @@ const initialState = i.Map({
   tags: i.List([]),
   followed_tags: i.Map({}),
   followed_schools: i.Map({}),
+  suggested_users: i.List([])
 });
 
 export default function reducer(state=initialState, action) {
@@ -43,6 +44,7 @@ export default function reducer(state=initialState, action) {
           .set('tags', i.List([]))
           .set('followed_tags', i.Map({}))
           .set('followed_schools', i.Map({}))
+          .set('suggested_users', i.List([]));
       });
 
       break;
@@ -101,6 +103,12 @@ export default function reducer(state=initialState, action) {
 
     case a.REMOVE_USER_FOLLOWED_SCHOOL: {
       state = state.deleteIn(['followed_schools', action.school.url_name]);
+
+      break;
+    }
+
+    case a.SET_PERSONALIZED_SUGGESTED_USERS: {
+      state = state.set('suggested_users', i.fromJS(action.suggested_users));
 
       break;
     }
