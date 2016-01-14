@@ -27,7 +27,7 @@ export default class ChangeAvatarModal extends Component {
   static propTypes = {
     onClose: PropTypes.func,
     onSave: PropTypes.func,
-    visible: PropTypes.bool,
+    visible: PropTypes.bool
   };
 
   static defaultProps = {
@@ -47,46 +47,46 @@ export default class ChangeAvatarModal extends Component {
   }
 
   onChange = (event) => {
-    console.log('event: ', event);
     let file = event.target.files[0];
     this.setState({
       image: URL.createObjectURL(file),
       avatar: file
     });
-  }
+  };
 
   handleScale = () => {
     this.setState({scale: this.refs.scale.value})
-  }
+  };
 
   close = () => {
     this.setState({image: null});
     this.props.onClose();
-  }
+  };
 
   save = () => {
     this.setState({image: null});
     this.props.onSave(this.state.avatar, this.refs.avatar.getCroppingRect());
-  }
+  };
 
   editor() {
     return this.state.image ? (
             <div>
               <AvatarEditor
-              ref="avatar"
-              image={this.state.image}
-              width={350}
-              height={350}
-              border={50}
-              color={[255, 255, 255, 0.6]} // RGBA
-              scale={this.state.scale} />
+                border={50}
+                color={[255, 255, 255, 0.6]} // RGBA
+                height={350}
+                image={this.state.image}
+                ref="avatar"
+                scale={this.state.scale}
+                width={350}
+              />
               <div className="change_avatar_modal__size_box">
                 <span className="change_avatar_modal__size_box__icon">-</span>
-                <input className="change_avatar_modal__size_box__bar" name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01" defaultValue="1" />
+                <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="1" name="scale" ref="scale" step="0.01" type="range" onChange={this.handleScale} />
                 <span className="change_avatar_modal__size_box__icon">+</span>
               </div>
             </div>
-          ) : (<input type="file" className="change_avatar_modal__input" onChange={this.onChange} />);
+          ) : (<input className="change_avatar_modal__input" type="file" onChange={this.onChange} />);
   }
 
 
