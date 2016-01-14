@@ -23,25 +23,26 @@ import * as a from '../actions';
 
 const initialState = i.Map({
   id: null,
-  tags: i.List([])
+  tags: i.List([]),
+  followed_tags: i.Map({}),
+  followed_schools: i.Map({}),
 });
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.SET_CURRENT_USER:
-    {
+    case a.SET_CURRENT_USER: {
       const oldUid = state.get('id');
 
       if (!action.user || oldUid === action.user.id) {
-
         break;
       }
 
-      state = state.withMutations(function (state) {
+      state = state.withMutations((state) => {
         state
           .set('id', action.user.id)
           .set('tags', i.List([]))
-          .set('followed_tags', i.Map({}));
+          .set('followed_tags', i.Map({}))
+          .set('followed_schools', i.Map({}))
       });
 
       break;
