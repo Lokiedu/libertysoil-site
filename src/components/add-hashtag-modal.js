@@ -113,6 +113,7 @@ export default class AddHashtagModal extends Component {
                       placeholder="Start typing..."
                       ref="input"
                       type="text"
+                      maxLength="72"
                     />
                   </form>
                 </div>
