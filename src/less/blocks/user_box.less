@@ -71,25 +71,12 @@
       background: none;
       border: none;
     }
-    span {
+    .micon {
       font-size: 30px;
     }
     &:hover {
-      span {
+      .micon {
         color: #eee;
-      }
-    }
-  }
-
-  &__avatar_modal {
-    &__size_box{
-      margin-bottom: 25px;
-      &__bar {
-        vertical-align: bottom;
-      }
-      &__icon {
-        font-size: 20px;
-        margin: 0 10px;
       }
     }
   }
@@ -100,4 +87,29 @@
       border: none;
     }
   }
+
 }
+
+.change_avatar_modal {
+  color: #000;
+  text-align: center;
+  &__input {
+    width: 200px;
+  }
+  &__size_box{
+    margin-bottom: 25px;
+    &__bar {
+      vertical-align: bottom;
+    }
+    &__icon {
+      font-size: 20px;
+      margin: 0 10px;
+    }
+  } 
+  &__footer {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+
