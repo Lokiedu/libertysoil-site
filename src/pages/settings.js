@@ -35,7 +35,8 @@ class SettingsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      roles: []
+      roles: [],
+      avatar: null
     };
   }
 
@@ -95,6 +96,34 @@ class SettingsPage extends React.Component {
     this.setState({ roles });
   }
 
+  onAvatarChange = async (image, crop) => {
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    let img = new Image;
+
+    let readImage = new Promise((resolve) => {
+        let reader = new FileReader;
+        img.onload = function() {
+          resolve();
+        }
+        reader.onload = function (e) {
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(image);
+    });
+    await readImage;
+
+    let newCrop = {
+      left: crop.x * img.width,
+      top: crop.y * img.height,
+      right: ((crop.x + crop.width) * img.width),
+      bottom: ((crop.y + crop.height) * img.height)
+    };
+    triggers.updateAvatar(image, newCrop);
+  }
+
   render() {
     const {
       current_user,
@@ -123,6 +152,7 @@ class SettingsPage extends React.Component {
         messages={messages}
         triggers={triggers}
         onSave={this.onSave}
+        onAvatarChange={this.onAvatarChange}
       >
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>

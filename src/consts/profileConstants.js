@@ -6,6 +6,12 @@ const ROLES = [
     'Journalist / Media'
 ];
 
+const AVATAR_SIZE = {
+	width: 168,
+	height: 168
+};
+
 export default {
-    ROLES
+    ROLES,
+    AVATAR_SIZE
 };
