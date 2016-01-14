@@ -15,7 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-// TODO: If needed, implement combineHandlersAsync for handlers with callback.
+import { isPlainObject, isNumber } from 'lodash';
+import { pushPath } from 'redux-simple-router';
+
 /**
  * Combines onEnter handlers into one function.
  * The function calls handlers in specified order and returns early
@@ -94,8 +96,10 @@ export class AuthHandler {
   }
 }
 
-export class FetchHandler
-{
+export class FetchHandler {
+  status = null;
+  redirectTo = null;
+
   constructor(store, apiClient) {
     this.store = store;
     this.apiClient = apiClient;
@@ -109,7 +113,17 @@ export class FetchHandler
 
       if ('component' in route && 'fetchData' in route.component) {
         try {
-          await route.component.fetchData(nextState.params, this.store, this.apiClient);
+          const response = await route.component.fetchData(nextState.params, this.store, this.apiClient);
+
+          if (isPlainObject(response)) {
+            const {status, redirectTo} = response;
+            this.status = status;
+            this.redirectTo = redirectTo;
+
+            this.store.dispatch(pushPath(redirectTo));
+          } else if (isNumber(response)) {
+            this.status = response;
+          }
         } catch (e) {
           // FIXME: handle error in a useful fashion (show "Network error" to user, ask to reload page, etc.)
           console.error(e);  // eslint-disable-line no-console

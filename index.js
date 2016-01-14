@@ -118,27 +118,43 @@ let reactHandler = async (req, res) => {
 
   syncReduxAndRouter(history, store, state => state.get('routing'));
 
-  match({ routes, location }, async (error, redirectLocation, renderProps) => {
+  match({ routes, location }, (error, redirectLocation, renderProps) => {
     if (redirectLocation) {
       res.redirect(307, redirectLocation.pathname + redirectLocation.search)
-    } else if (error) {
-      res.status(500).send(error.message)
-    } else if (renderProps == null) {
-      res.status(404).send('Not found')
-    } else {
-      try {
-        let html = renderToString(
-          <Provider store={store}>
-            <RoutingContext {...renderProps}/>
-          </Provider>
-        );
-        let state = JSON.stringify(store.getState().toJS());
+      return;
+    }
 
-        res.render('index', { state, html });
-      } catch (e) {
-        console.error(e.stack);
-        res.status(500).send(e.message)
+    if (error) {
+      res.status(500).send(error.message)
+      return;
+    }
+
+    if (renderProps == null) {
+      res.status(404).send('Not found')
+      return;
+    }
+
+    if (fetchHandler.redirectTo !== null) {
+      res.redirect(fetchHandler.status, fetchHandler.redirectTo);
+      return;
+    }
+
+    try {
+      let html = renderToString(
+        <Provider store={store}>
+          <RoutingContext {...renderProps}/>
+        </Provider>
+      );
+      let state = JSON.stringify(store.getState().toJS());
+
+      if (fetchHandler.status !== null) {
+        res.status(fetchHandler.status);
       }
+
+      res.render('index', { state, html });
+    } catch (e) {
+      console.error(e.stack);
+      res.status(500).send(e.message)
     }
   });
 };
