@@ -7,6 +7,7 @@ import knex from 'knex';
 import { wait as waitForStream } from 'promise-streams'
 import tmp from 'tmp';
 import { chunk } from 'lodash';
+import slug from 'slug';
 
 
 let exec_env = process.env.DB_ENV || 'development';
@@ -106,15 +107,79 @@ async function cities() {
   }
 }
 
+/**
+ * Populates the geotags table with the data from geonames_countries and geonames_cities.
+ */
 async function geotags() {
+  // An index of url_name to optimize checking for existence.
+  let urlNames = {};
+
+  function geotagExists(urlName) {
+    return urlNames[urlName];
+  }
+
   process.stdout.write("=== TRUNCATING GEOTAGS TABLE ===\n");
   await Knex.raw('TRUNCATE geotags CASCADE');
 
-  process.stdout.write("=== IMPORTING ===\n");
-  await Promise.all([
-    Knex.raw("INSERT INTO geotags (name, place_id, place_type) SELECT name, id, 'geonames_countries' FROM geonames_countries"),
-    Knex.raw("INSERT INTO geotags (name, place_id, place_type) SELECT name, id, 'geonames_cities' FROM geonames_cities")
-  ]);
+  process.stdout.write("=== IMPORTING COUNTRY GEOTAGS ===\n");
+
+  let countries = await Knex
+    .select('id', 'name')
+    .from('geonames_countries');
+
+  let countryAttributes = countries.map(function (country) {
+    let urlName = slug(country.name);
+
+    urlNames[urlName] = true;
+
+    return {name: country.name, country_id: country.id, url_name: urlName};
+  });
+
+  await Knex('geotags').insert(countryAttributes);
+
+  process.stdout.write("=== IMPORTING CITY GEOTAGS ===\n");
+
+  let cities = await Knex
+    .select(
+      'cities.id',
+      'cities.asciiname as name',
+      'cities.population',
+      'countries.id as country_id',
+      'countries.name as country_name'
+    )
+    .from('geonames_cities as cities')
+    .innerJoin('geonames_countries as countries', 'cities.country', 'countries.iso_alpha2')
+    .orderBy('population', 'DESC');
+
+  let cityAttributes = cities.map(function (city) {
+    let justCity = slug(city.name);
+    let cityWithCountry = `${justCity}-${slug(city.country_name)}`;
+    let cityWithIndex = (i) => `${cityWithCountry}-${i}`;
+
+    // Choose nicer url_name: city or city-country or city-country-index.
+    let urlName;
+
+    if (!geotagExists(justCity)) {
+      urlName = justCity;
+    } else if (!geotagExists(cityWithCountry)) {
+      urlName = cityWithCountry;
+    } else {
+      let index = 1;
+
+      do {
+        urlName = cityWithIndex(index);
+        ++index;
+      } while (geotagExists(urlName));
+    }
+
+    urlNames[urlName] = true;
+
+    return {name: city.name, country_id: city.country_id, city_id: city.id, url_name: urlName};
+  });
+
+  for (let batch of chunk(cityAttributes, 1000)) {
+    await Knex('geotags').insert(batch);
+  }
 }
 
 countries()
