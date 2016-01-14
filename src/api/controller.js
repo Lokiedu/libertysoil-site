@@ -888,14 +888,14 @@ export default class ApiController {
       .select('followers.following_user_id')
       .from('followers')
       .where('followers.user_id', '=', req.session.user)
-      .map(row => row.id);
+      .map(row => row.following_user_id);
 
     let User = this.bookshelf.model('User');
 
     let q = User.forge()
       .query(qb => {
         qb
-          .select('active_users.*', 'followers.user_id', 'followers.following_user_id')
+          .select('active_users.*')
           .from(function(){
             this.select('users.*')
               .count('posts.id as post_count')
@@ -912,7 +912,7 @@ export default class ApiController {
           .limit(6);
       });
 
-    let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
+    let suggestions = await q.fetchAll({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
