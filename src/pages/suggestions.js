@@ -23,29 +23,34 @@ import BaseSuggestionsPage from './base/suggestions';
 import { UserGrid } from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { addUser } from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 
+const DiscoverGrid = (props) => {
+  if (props.users.length === 0) {
+    return <script/>;
+  }
+
+  return (
+    <div className="paper__page">
+      <h2 className="content__sub_title layout__row">Discover</h2>
+      <div className="layout__row layout__row-double">
+        <UserGrid
+          current_user={props.current_user}
+          i_am_following={props.i_am_following}
+          triggers={props.triggers}
+          users={props.users}
+        />
+      </div>
+    </div>
+  );
+};
+
 class SuggestionsPage extends React.Component {
-  static displayName = 'SettingsPasswordPage'
-
   static async fetchData(params, store, client) {
-    const props = store.getState();
-    const currentUserId = props.get('current_user').get('id');
-
-    if (currentUserId === null) {
-      return;
-    }
-
-    let currentUser = props.get('users').get(currentUserId);
-    let suggestedUsers = await client.userSuggestions();
-
-    let userInfo = client.userInfo(currentUser.get('username'));
-    userInfo.more.suggested_users = suggestedUsers;
-
-    store.dispatch(addUser(userInfo));
+    let triggers = new ActionsTrigger(client, store.dispatch);
+    await triggers.loadPersonalizedSuggestions();
   }
 
   render() {
@@ -53,8 +58,7 @@ class SuggestionsPage extends React.Component {
       current_user,
       is_logged_in,
       i_am_following,
-      messages,
-      ...props
+      messages
     } = this.props;
 
     if (!is_logged_in) {
@@ -76,17 +80,12 @@ class SuggestionsPage extends React.Component {
           <p>You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.</p>
         </div>
 
-        <div className="paper__page">
-          <h2 className="content__sub_title layout__row">Discover</h2>
-          <div className="layout__row layout__row-double">
-            <UserGrid
-              current_user={current_user}
-              i_am_following={i_am_following}
-              triggers={triggers}
-              users={current_user.more.suggested_users}
-            />
-          </div>
-        </div>
+        <DiscoverGrid
+          current_user={current_user}
+          i_am_following={i_am_following}
+          triggers={triggers}
+          users={current_user.suggested_users}
+        />
       </BaseSuggestionsPage>
     )
   }

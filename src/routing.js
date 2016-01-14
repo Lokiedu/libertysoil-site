@@ -35,6 +35,7 @@ import SchoolEditPage from './pages/school-edit';
 import SettingsPage from './pages/settings';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
+import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
 import TagCloudPage from './pages/tag-cloud';
 import CityPage from './pages/city';
@@ -58,6 +59,7 @@ export function getRoutes(authHandler, fetchHandler) {
     <Route component={App}>
       <Route component={List} path="/" onEnter={withAuth} />
       <Route component={Induction} path="/induction" onEnter={withAuth} />
+      <Route component={SuggestionsPage} path="/suggestions" onEnter={withAuth} />
       <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />
       <Route component={Auth} path="/auth" onEnter={withoutAuth} />
       <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />

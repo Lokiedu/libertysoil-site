@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { pushPath } from 'redux-simple-router';
+
 import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
@@ -185,25 +187,42 @@ export class ActionsTrigger {
   login = async (username, password) => {
     this.dispatch(removeAllMessages());
 
-    try {
-      let result = await this.client.login({username, password});
+    let user = null;
 
-      if (result.success) {
-        let user = result.user;
-        this.dispatch(setCurrentUser(user));
-        this.dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
-        this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
-      } else {
-        this.dispatch(addError('Invalid username or password'));
+    try {
+      const result = await this.client.login({username, password});
+
+      if (!result.success) {
         this.dispatch(setCurrentUser(null));
+        this.dispatch(addError('Invalid username or password'));
+        return;
       }
+
+      user = result.user;
     } catch (e) {
       this.dispatch(setCurrentUser(null));
+
       if (('body' in e.response) && ('error' in e.response.body)) {
         this.dispatch(addError(e.response.body.error));
       } else {
         this.dispatch(addError('Invalid username or password'));
       }
+
+      return;
+    }
+
+    try {
+      this.dispatch(setCurrentUser(user));
+      this.dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
+      this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
+
+      if (!user.more || user.more.first_login) {
+        this.dispatch(pushPath('/induction'));
+      } else {
+        this.dispatch(pushPath('/suggestions'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
   };
 
