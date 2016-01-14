@@ -334,72 +334,12 @@ export default class ApiController {
     }
   }
 
-  async getCountryPosts(req, res) {
-    try {
-      let country_posts_via_city = await this.bookshelf.knex
-        .select('*')
-        .from('posts_cities')
-        .leftJoin('geonames_cities','city_id','geonames_cities.id')
-        .where({
-          'geonames_cities.country': req.params.code
-        })
-        .map(row => row.post_id);
-
-      let country_posts = await this.bookshelf.knex
-        .select('*')
-        .from('posts_countries')
-        .where({
-          country_id: req.params.code
-        })
-        .map(row => row.post_id);
-      let Post = this.bookshelf.model('Post');
-
-      let q = Post.forge()
-        .query(qb => {
-          qb
-            .whereIn('id', _.union(country_posts,country_posts_via_city))
-        });
-
-      let response = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
-
-      res.send(response.toJSON());
-    } catch (e) {
-      res.sendStatus(404)
-      return;
-    }
-  }
-
   async getCity(req, res) {
     let City = this.bookshelf.model('City');
 
     try {
       let city = await City.where({id: req.params.id}).fetch();
       res.send(city.toJSON());
-    } catch (e) {
-      res.sendStatus(404)
-      return;
-    }
-  }
-
-  async getCityPosts(req, res) {
-    try {
-      let Post = this.bookshelf.model('Post');
-
-      let q = Post.forge()
-        .query(qb => {
-          qb
-            .join('posts_cities', 'posts.id', 'posts_cities.post_id')
-            .where('posts_cities.city_id', '=', req.params.id)
-            .orderBy('posts.created_at', 'desc')
-        });
-
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
-      posts = posts.map(post => {
-        post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
-        return post;
-      });
-
-      res.send(posts);
     } catch (e) {
       res.sendStatus(404)
       return;
