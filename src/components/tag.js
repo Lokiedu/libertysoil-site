@@ -12,9 +12,14 @@ export default class Tag extends React.Component {
 
   static propTypes = {
     deletable: PropTypes.bool,
+    truncated: PropTypes.bool,
     name: PropTypes.string,
     type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION]),
     urlId: PropTypes.string
+  };
+
+  static defaultProps = {
+    truncated: false
   };
 
   _handleDelete = () => {
@@ -24,8 +29,8 @@ export default class Tag extends React.Component {
   };
 
   render() {
-    let { urlId, name, type } = this.props;
-    let truncatedName = truncate(name, {length: 16});
+    let { urlId, name, type, truncated } = this.props;
+    let tagName = name;
     let className;
     let url;
 
@@ -49,11 +54,15 @@ export default class Tag extends React.Component {
       }
     }
 
+    if (truncated) {
+      tagName = truncate(name, {length: 16});
+    }
+
     return (
       <div className="tag_wrapper">
         <Link className={`tag ${className}`} title={name} to={url}>
           <TagIcon className="tag__icon" type={type} />
-          <span className="tag__name">{truncatedName}</span>
+          <span className="tag__name">{tagName}</span>
         </Link>
         {this.props.deletable &&
           <span className="micon tag__delete" onClick={this._handleDelete}>close</span>

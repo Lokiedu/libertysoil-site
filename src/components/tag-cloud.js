@@ -25,6 +25,7 @@ export default class TagCloud extends React.Component {
   static displayName = 'TagCloud';
 
   static propTypes = {
+    truncated: PropTypes.bool,
     deletable: PropTypes.bool,
     geotags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
@@ -44,6 +45,7 @@ export default class TagCloud extends React.Component {
     let tags = convertModelsToTags(this.props)
       .map((tag, index) => (
         <Tag
+          truncated={this.props.truncated}
           deletable={this.props.deletable}
           key={index}
           onDelete={this.props.onDelete}

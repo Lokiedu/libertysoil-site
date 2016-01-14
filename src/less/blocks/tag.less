@@ -25,6 +25,7 @@
 
   &:extend(.font-open_sans);
   display: flex;
+  align-items: stretch;
   position: relative;
   height: @height;
   background-color: white;
@@ -34,15 +35,15 @@
   font-size: 13px;
 
   &__icon {
-    // This fixes the connection between the icon and the tag's border.
-    display: none!important;
+    position: relative;
+    left: -1px;
+    top: -1px;
+    margin-right: -5px;
   }
 
   &__name {
     padding: 0 11px;
-    line-height: normal;
-    position: relative;
-    top: 1px;
+    line-height: 21px;
     color: #333;
   }
 

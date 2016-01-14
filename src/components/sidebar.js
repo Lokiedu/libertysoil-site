@@ -87,7 +87,11 @@ class Sidebar extends React.Component {
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I post to</h4>
             <div className="sidebar__user_tags layout__row">
-              <TagCloud tags={this.props.current_user_tags} schools={[]}/>
+              <TagCloud
+                truncated={true}
+                tags={this.props.current_user_tags}
+                schools={[]}
+              />
             </div>
           </div>
         }
