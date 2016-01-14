@@ -25,7 +25,7 @@ import Footer from '../components/footer';
 
 let Welcome = () => {
   return <div>
-    <div className="page__container-bg">
+    <div className="page__container-bg font-open_sans font-light">
       <section className="landing landing-big landing-bg">
         <Header is_logged_in={false} className="header-transparent" />
         <header className="landing__header">

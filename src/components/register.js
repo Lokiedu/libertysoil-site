@@ -73,9 +73,9 @@ export default class RegisterComponent extends React.Component {
     return (
     <div className="div">
       <header className="layout__row layout__row-double">
-        <p className="layout__row">Create new account</p>
-        <div className="layout__row content__title">Be the change</div>
-        <div className="layout__row content">
+        <p className="layout__row content content-small">Create new account</p>
+        <div className="layout__row content__head">Be the change</div>
+        <div className="layout__row content content-small">
           <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
         </div>
       </header>

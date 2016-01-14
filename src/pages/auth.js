@@ -75,7 +75,7 @@ let AuthContents = (props) => {
   }
 
   return (
-    <div className="page__container-bg font-light">
+    <div className="page__container-bg font-open_sans font-light">
       <section className="landing landing-big landing-bg landing-bg_house">
         <Header
           is_logged_in={is_logged_in}
@@ -83,7 +83,7 @@ let AuthContents = (props) => {
           className="header-transparent header-transparent_border"
         />
         <header className="landing__body">
-            <p className="layout__row">Welcome to LibertySoil.org</p>
+            <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
             <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
             {render.headerLogin}
         </header>
