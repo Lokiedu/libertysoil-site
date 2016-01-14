@@ -281,7 +281,7 @@ export default function initBookshelf(config) {
       return this.belongsToMany(Post, 'posts_countries', 'country_id', 'post_id');
     },
     geotags: function() {
-      return this.morphMany(Geotag, 'place');
+      return this.hasMany(Geotag);
     }
   });
 
@@ -291,14 +291,17 @@ export default function initBookshelf(config) {
       return this.belongsToMany(Post, 'posts_cities', 'city_id', 'post_id');
     },
     geotags: function() {
-      return this.morphMany(Geotag, 'place');
+      return this.hasOne(Geotag);
     }
   });
 
   Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
-    place: function() {
-      return this.morphTo('place', Country, City);
+    country: function() {
+      return this.belongsTo(Country);
+    },
+    city: function() {
+      return this.belongsTo(City);
     }
   });
 
