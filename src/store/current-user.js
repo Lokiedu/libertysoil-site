@@ -26,6 +26,7 @@ const initialState = i.Map({
   tags: i.List([]),
   followed_tags: i.Map({}),
   followed_schools: i.Map({}),
+  followed_geotags: i.Map({}),
   suggested_users: i.List([])
 });
 
@@ -46,6 +47,7 @@ export default function reducer(state=initialState, action) {
           .set('tags', i.List([]))
           .set('followed_tags', i.Map({}))
           .set('followed_schools', i.Map({}))
+          .set('followed_geotags', i.Map({}))
           .set('suggested_users', i.List([]));
       });
 

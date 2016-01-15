@@ -77,6 +77,7 @@ const initialState = i.Map({
     tags: i.List([]),
     followed_tags: i.Map({}),
     followed_schools: i.Map({}),
+    followed_geotags: i.Map({}),
     suggested_users: i.List([])
   }),
   create_post_form: i.fromJS({
