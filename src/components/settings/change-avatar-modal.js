@@ -103,10 +103,12 @@ export default class ChangeAvatarModal extends Component {
         onHide={this.close}
       >
         <ModalComponent.Head>
-          <ModalComponent.Title>Change your avatar</ModalComponent.Title>
+          <ModalComponent.Title>Choose your user picture</ModalComponent.Title>
         </ModalComponent.Head>
         <ModalComponent.Body>
-          {this.editor()}
+          <div className="change_avatar_modal__editor">
+            {this.editor()}
+          </div>
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="change_avatar_modal__footer">
