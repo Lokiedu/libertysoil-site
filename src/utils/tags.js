@@ -16,7 +16,7 @@ export function convertModelsToTags(params = {}) {
   if (Array.isArray(params.geotags)) {
     params.geotags.forEach(function (tag) {
       allTags.push({
-        urlId: tag.id,
+        urlId: tag.url_name,
         name: tag.name,
         type: TAG_LOCATION
       });
