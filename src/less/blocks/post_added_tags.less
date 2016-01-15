@@ -15,17 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+.post_added_tags {
+  padding: @doubleSpace;
+  background-color: rgba(255,255,255,0.4);
 
-
-export default class SidebarAlt extends React.Component {
-  static displayName = 'SidebarAlt'
-
-  render() {
-    return (
-      <div className="page__sidebar page__sidebar-alt">
-        {this.props.children}
-      </div>
-    )
+  &__heading {
+    margin-bottom: @space;
   }
 }

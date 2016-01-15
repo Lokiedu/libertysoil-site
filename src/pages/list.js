@@ -28,6 +28,7 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import AddedTags from '../components/post/added-tags';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import {
@@ -72,7 +73,9 @@ class List extends React.Component {
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>
-            <SidebarAlt />
+            <SidebarAlt>
+              <AddedTags {...this.props.create_post_form} />
+            </SidebarAlt>
           </div>
         </div>
         <Footer/>
