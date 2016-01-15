@@ -76,6 +76,14 @@ describe('api version 1', () => {
         await expect(`/api/v1/posts/favoured/${user.id}`, 'to open successfully');
       });
 
+      it('CAN read posts by tag', async () => {
+        await expect(`/api/v1/posts/tag/test`, 'to open successfully');
+      });
+
+      it('CAN read posts by school', async () => {
+        await expect(`/api/v1/posts/school/test`, 'to open successfully');
+      });
+
       it('CAN NOT get post list', async () => {
         await expect({ url: '/api/v1/posts' }, 'not to open');
       });
