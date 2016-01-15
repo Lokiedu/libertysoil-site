@@ -22,6 +22,10 @@ let subjectToRequest = (subject) => {
     };
   }
 
+  if (isPlainObject(subject)) {
+    return subject;
+  }
+
   throw new Error('Unexpected format of test-subject')
 };
 
@@ -60,6 +64,15 @@ expect.addAssertion('to body contains', function (expect, subject, value) {
   }).then(function (context) {
     let body = context.httpResponse.body;
     expect(body, 'to contain', value);
+  });
+});
+
+expect.addAssertion('not to open', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject)
+  }).then(function (context) {
+    const status = context.httpResponse.status;
+    expect(status, 'not to equal', 200);
   });
 });
 
