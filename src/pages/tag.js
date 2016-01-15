@@ -51,7 +51,7 @@ export class TagPage extends Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     const thisTagPosts = tag_posts[this.props.params.tag] || [];
-    const followedTags = (current_user) ? current_user.followed_tags : [];
+    const followedTags = (current_user) ? current_user.followed_tags : {};
 
     return (
       <div>
