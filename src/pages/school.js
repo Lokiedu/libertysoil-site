@@ -31,11 +31,19 @@ import { defaultSelector } from '../selectors';
 
 export class SchoolPage extends React.Component {
   static async fetchData(params, store, client) {
-    let schoolInfo = await client.schoolInfo(params.school_name);
-    let posts = await client.schoolPosts(params.school_name);
+    let school = client.schoolInfo(params.school_name);
+    let posts = client.schoolPosts(params.school_name);
 
-    store.dispatch(addSchool(schoolInfo));
-    store.dispatch(setSchoolPosts(schoolInfo, posts));
+    try {
+      school = await school;
+    } catch (e) {
+      store.dispatch(addSchool({url_name: params.school_name}));
+
+      return 404;
+    }
+
+    store.dispatch(addSchool(school));
+    store.dispatch(setSchoolPosts(school, await posts));
  }
 
   render() {
@@ -44,18 +52,17 @@ export class SchoolPage extends React.Component {
 
     let followTriggers = {followTag: triggers.followSchool, unfollowTag: triggers.unfollowSchool};
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
-    let schoolPosts = this.props.school_posts[school.id];
-    let linesOfDescription = <p>No information provided...</p>;
 
-    if (_.isUndefined(school)) {
-      return <script/>;  // not loaded yet
+    if (!school) {
+      return null; // not loaded yet
     }
 
-    if (false === school) {
+    if (!school.id) {
       return <NotFound/>;
     }
 
-    //let school_triggers = {followSchool, unfollowSchool};
+    let schoolPosts = this.props.school_posts[school.id];
+    let linesOfDescription = <p>No information provided...</p>;
 
     if (school.description) {
       linesOfDescription = school.description.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
