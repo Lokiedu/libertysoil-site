@@ -33,14 +33,16 @@ export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_CURRENT_USER: {
       const oldUid = state.get('id');
+      const newUid = action.user ? action.user.id : null;
 
-      if (!action.user || oldUid === action.user.id) {
+      if (oldUid === newUid) {
         break;
       }
 
+      // UID is changed. means logout or re-login. Do the cleanup
       state = state.withMutations((state) => {
         state
-          .set('id', action.user.id)
+          .set('id', newUid)
           .set('tags', i.List([]))
           .set('followed_tags', i.Map({}))
           .set('followed_schools', i.Map({}))
