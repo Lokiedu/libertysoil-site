@@ -128,11 +128,11 @@ class SettingsPage extends React.Component {
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
           <div className="layout__row">
             <label htmlFor="summary" className="layout__block layout__row layout__row-small">Summary</label>
-            <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.more.summary} />
+            <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.user.more.summary} />
           </div>
           <div className="layout__row">
             <label htmlFor="bio" className="layout__block layout__row layout__row-small">Bio</label>
-            <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.more.bio} />
+            <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.user.more.bio} />
           </div>
         </form>
         <div className="paper__page">

@@ -51,7 +51,7 @@ export default class BaseSettingsPage extends React.Component {
 
             <div className="page__body_content">
               <ProfileHeader
-                user={current_user}
+                user={current_user.user}
                 current_user={current_user}
                 following={following}
                 followers={followers}

@@ -50,7 +50,7 @@ class Sidebar extends React.Component {
     return (
       <div className="page__sidebar font-open_sans">
         <div className="page__sidebar_user">
-          <CurrentUser user={current_user} />
+          <CurrentUser user={current_user.user} />
         </div>
 
         <div className="navigation navigation-sidebar">
@@ -59,7 +59,7 @@ class Sidebar extends React.Component {
             <NavigationItem
               enabled
               icon="favorite"
-              to={`/user/${current_user.username}/likes`}
+              to={`/user/${current_user.user.username}/likes`}
             >
               My Likes
             </NavigationItem>
@@ -68,7 +68,7 @@ class Sidebar extends React.Component {
             <NavigationItem
               enabled
               icon="star"
-              to={`/user/${current_user.username}/favorites`}
+              to={`/user/${current_user.user.username}/favorites`}
             >
               My Favorites
             </NavigationItem>
