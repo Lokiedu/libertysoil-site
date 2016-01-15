@@ -39,7 +39,6 @@ import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
 import TagCloudPage from './pages/tag-cloud';
 import GeotagPage from './pages/geotag';
-import CountryPage from './pages/country';
 
 import List from './pages/list';
 import Induction from './pages/induction';
