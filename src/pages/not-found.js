@@ -18,6 +18,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { defaultSelector } from '../selectors';
+import Header from '../components/header';
+
 
 class NotFound extends React.Component {
   render() {

@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { setGeotagPosts, addGeotag } from '../actions';
+import NotFound from './not-found';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
@@ -38,7 +39,15 @@ export class GeotagPage extends Component {
     let geotag = client.getGeotag(params.url_name);
     let geotagPosts = client.geotagPosts(params.url_name);
 
-    store.dispatch(addGeotag(await geotag));
+    try {
+      geotag = await geotag;
+    } catch (e) {
+      store.dispatch(addGeotag({url_name: params.url_name}));
+
+      return 404;
+    }
+
+    store.dispatch(addGeotag(geotag));
     store.dispatch(setGeotagPosts(params.url_name, await geotagPosts));
   }
 
@@ -56,6 +65,14 @@ export class GeotagPage extends Component {
     let triggers = new ActionsTrigger(client, this.props.dispatch);
     let geotag = geotags[this.props.params.url_name];
     let tagPosts = geotag_posts[this.props.params.url_name] || [];
+
+    if (!geotag) {
+      return null;
+    }
+
+    if (!geotag.id) {
+      return <NotFound/>;
+    }
 
     let followTriggers = {
       followTag: triggers.followGeotag,
