@@ -52,7 +52,7 @@ export default class Tag extends React.Component {
 
       case TAG_LOCATION: {
         className = 'tag-location';
-        url = ``; // FIXME
+        url = `/geo/${urlId}`;
         break;
       }
     }
