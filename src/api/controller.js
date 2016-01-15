@@ -230,7 +230,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
 
       res.send(posts);
     } catch (ex) {
