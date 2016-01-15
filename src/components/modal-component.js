@@ -47,8 +47,8 @@ class ModalComponent extends Component {
     e.stopPropagation();
   }
 
-  hide = () => {
-    this.props.onHide();
+  hide = (e) => {
+    this.props.onHide(e);
   }
 
   render () {
