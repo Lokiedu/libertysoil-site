@@ -18,7 +18,7 @@
 import fetch from 'node-fetch';
 import { parse as parseCookie } from 'cookie';
 
-
+export const POST_DEFAULT_TYPE = 'short_text';
 /**
  * Exchange login/password for session-id
  *
