@@ -25,7 +25,8 @@ import {
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
-  removeMessage, registrationSuccess, showRegisterForm
+  removeMessage, registrationSuccess, showRegisterForm,
+  addUserFollowedGeotag, removeUserFollowedGeotag
 } from '../actions';
 
 
@@ -398,6 +399,28 @@ export class ActionsTrigger {
     try {
       let result = await this.client.unfollowSchool(name);
       this.dispatch(removeUserFollowedSchool(result.school));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  followGeotag = async (urlName) => {
+    try {
+      let result = await this.client.followGeotag(urlName);
+      this.dispatch(addUserFollowedGeotag(result.geotag));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unfollowGeotag = async (urlName) => {
+    try {
+      let result = await this.client.unfollowGeotag(urlName);
+      this.dispatch(removeUserFollowedGeotag(result.geotag));
 
       return result;
     } catch (e) {

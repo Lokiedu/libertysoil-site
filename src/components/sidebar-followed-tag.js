@@ -3,14 +3,14 @@ import { Link } from 'react-router';
 
 import { truncate } from 'grapheme-utils';
 import TagIcon from './tag-icon';
-import { TAG_HASHTAG, TAG_SCHOOL } from '../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../utils/tags';
 
 export default class SidebarFollowedTag extends React.Component {
   static displayName = 'SidebarFollowedTag';
 
   static propTypes = {
     name: PropTypes.string,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL]),
+    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION]),
     urlId: PropTypes.string
   };
 
@@ -21,6 +21,11 @@ export default class SidebarFollowedTag extends React.Component {
     let url;
 
     switch (type) {
+      case TAG_LOCATION: {
+        className = 'sidebar__followed_tag-location';
+        url = `/geo/${urlId}`;
+        break;
+      }
       case TAG_HASHTAG: {
         className = 'sidebar__followed_tag-hashtag';
         url = `/tag/${urlId}`;

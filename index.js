@@ -39,7 +39,7 @@ import ApiClient from './src/api/client'
 import { initState } from './src/store';
 import {
   setCurrentUser, setLikes, setFavourites, setUserFollowedTags,
-  setUserFollowedSchools
+  setUserFollowedSchools, setUserFollowedGeotags
 } from './src/actions';
 
 import db_config from './knexfile';
@@ -79,7 +79,7 @@ let reactHandler = async (req, res) => {
       let user = await bookshelf
         .model('User')
         .where({id: req.session.user})
-        .fetch({require: true, withRelated: ['following', 'followed_labels', 'followed_schools']});
+        .fetch({require: true, withRelated: ['following', 'followed_labels', 'followed_schools', 'followed_geotags']});
 
       let data = user.toJSON();
 
@@ -98,6 +98,7 @@ let reactHandler = async (req, res) => {
       store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
       store.dispatch(setUserFollowedTags(data.followed_labels));
       store.dispatch(setUserFollowedSchools(data.followed_schools));
+      store.dispatch(setUserFollowedGeotags(data.followed_geotags));
     } catch (e) {
       console.log(`dispatch failed: ${e.stack}`);
     }

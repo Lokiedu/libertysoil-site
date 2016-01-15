@@ -9,6 +9,10 @@ export default class SidebarFollowedTags extends React.Component {
   static displayName = 'SidebarFollowedTags';
 
   static propTypes = {
+    geotags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      url_name: PropTypes.string
+    })),
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string
