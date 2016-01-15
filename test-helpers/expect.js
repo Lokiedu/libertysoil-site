@@ -1,5 +1,5 @@
 import expect from 'unexpected';
-import { isString, isPlainObject } from 'lodash';
+import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
 
 import app from '../index';
@@ -13,17 +13,22 @@ let subjectToRequest = (subject) => {
     return subject
   }
 
-  if (isPlainObject(subject) && "url" in subject && "session" in subject) {
-    return {
-      url: subject.url,
-      headers: {
-        "Cookie": serialize('connect.sid', subject.session)
-      }
+  if (isPlainObject(subject) && "url" in subject) {
+    let result = {
+      url: subject.url
     };
-  }
 
-  if (isPlainObject(subject)) {
-    return subject;
+    if ("session" in subject) {
+      result = merge(result, {
+        headers: {
+          "Cookie": serialize('connect.sid', subject.session)
+        }});
+    }
+
+    delete subject["url"];
+    delete subject["session"];
+    result = merge(result, subject);
+    return merge(result, subject);
   }
 
   throw new Error('Unexpected format of test-subject')
@@ -71,7 +76,7 @@ expect.addAssertion('not to open', function (expect, subject, value) {
   return expect(app, 'to yield exchange', {
     request: subjectToRequest(subject)
   }).then(function (context) {
-    const status = context.httpResponse.status;
+    const status = context.httpResponse.statusLine.statusCode;
     expect(status, 'not to equal', 200);
   });
 });
