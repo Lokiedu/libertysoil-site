@@ -40,6 +40,8 @@ import users from './users';
 import suggested_users from './suggested_users';
 import ui from './ui';
 import tag_cloud from './tag_cloud';
+import geotag_posts from './geotag_posts';
+import geotags from './geotags';
 
 let store;
 
@@ -60,6 +62,8 @@ export const theReducer = combineReducers(i.Map({
   schools,
   school_posts,
   tag_posts,
+  geotags,
+  geotag_posts,
   user_posts,
   users,
   suggested_users,
@@ -99,6 +103,8 @@ const initialState = i.Map({
   schools: i.Map({}),
   school_posts: i.Map({}),
   tag_posts: i.Map({}),
+  geotags: i.Map({}),
+  geotag_posts: i.Map({}),
   user_posts: i.Map({}),
   users: i.Map({}),
   suggested_users: i.List([]),

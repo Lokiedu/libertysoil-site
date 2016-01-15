@@ -17,6 +17,7 @@
  */
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
+export const ADD_GEOTAG = 'ADD_GEOTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
@@ -31,9 +32,14 @@ export const REMOVE_USER_FOLLOWED_TAG = 'REMOVE_USER_FOLLOWED_TAG';
 export const SET_USER_FOLLOWED_SCHOOLS = 'SET_USER_FOLLOWED_SCHOOLS';
 export const ADD_USER_FOLLOWED_SCHOOL = 'ADD_USER_FOLLOWED_SCHOOL';
 export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
+export const SET_USER_FOLLOWED_GEOTAGS = 'SET_USER_FOLLOWED_GEOTAGS';
+export const ADD_USER_FOLLOWED_GEOTAG = 'ADD_USER_FOLLOWED_GEOTAG';
+export const REMOVE_USER_FOLLOWED_GEOTAG = 'REMOVE_USER_FOLLOWED_GEOTAG';
 export const SET_TAG_POSTS = 'SET_TAG_POSTS';
 export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
+export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
+export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -82,6 +88,13 @@ export function addPost(post) {
   return {
     type: ADD_POST,
     post
+  }
+}
+
+export function addGeotag(geotag) {
+  return {
+    type: ADD_GEOTAG,
+    geotag
   }
 }
 
@@ -173,6 +186,29 @@ export function removeUserFollowedSchool(school) {
   }
 }
 
+export function setUserFollowedGeotags(geotags) {
+  return {
+    type: SET_USER_FOLLOWED_GEOTAGS,
+    followed_geotags: geotags
+  }
+}
+
+
+export function addUserFollowedGeotag(geotag) {
+  return {
+    type: ADD_USER_FOLLOWED_GEOTAG,
+    geotag
+  }
+}
+
+export function removeUserFollowedGeotag(geotag) {
+  return {
+    type: REMOVE_USER_FOLLOWED_GEOTAG,
+    geotag
+  }
+}
+
+
 export function setTagPosts(tag, posts) {
   return {
     type: SET_TAG_POSTS,
@@ -188,6 +224,15 @@ export function setSchoolPosts(school, posts) {
     posts
   }
 }
+
+export function setGeotagPosts(geotag, posts) {
+  return {
+    type: SET_GEOTAG_POSTS,
+    geotag,
+    posts
+  }
+}
+
 
 export function removePost(id) {
   return {
@@ -220,6 +265,13 @@ export function setSchools(schools) {
   return {
     type: SET_SCHOOLS,
     schools
+  }
+}
+
+export function setGeotags(geotags) {
+  return {
+    type: SET_GEOTAGS,
+    geotags
   }
 }
 

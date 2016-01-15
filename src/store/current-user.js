@@ -114,6 +114,29 @@ export default function reducer(state=initialState, action) {
 
       break;
     }
+
+    case a.SET_USER_FOLLOWED_GEOTAGS: {
+      let followedGeotags = action.followed_geotags.reduce(function (geotags, geotag) {
+        geotags[geotag.url_name] = geotag;
+        return geotags;
+      }, {});
+
+      state = state.set('followed_geotags', i.fromJS(followedGeotags));
+
+      break;
+    }
+
+    case a.ADD_USER_FOLLOWED_GEOTAG: {
+      state = state.setIn(['followed_geotags', action.geotag.url_name], i.fromJS(action.geotag));
+
+      break;
+    }
+
+    case a.REMOVE_USER_FOLLOWED_GEOTAG: {
+      state = state.deleteIn(['followed_geotags', action.geotag.url_name]);
+
+      break;
+    }
   }
 
   return state;
