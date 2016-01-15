@@ -34,7 +34,7 @@ const DiscoverGrid = (props) => {
 
   return (
     <div className="paper__page">
-      <h2 className="content__sub_title layout__row">Discover</h2>
+      <h2 className="content__sub_title layout__row">People to follow</h2>
       <div className="layout__row layout__row-double">
         <UserGrid
           current_user={props.current_user}

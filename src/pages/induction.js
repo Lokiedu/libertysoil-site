@@ -104,7 +104,7 @@ class InductionPage extends React.Component {
         </div>
 
         <div className="paper__page">
-          <h2 className="content__sub_title layout__row">Suggested peers</h2>
+          <h2 className="content__sub_title layout__row">People to follow</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
               current_user={current_user}
