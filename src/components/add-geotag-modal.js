@@ -20,8 +20,6 @@ import _ from 'lodash';
 
 import ModalComponent from '../components/modal-component';
 import TagEditor from './add-tag-modal/tag-editor';
-import TagIcon from '../components/tag-icon';
-import * as TagType from '../utils/tags';
 import GeotagSelect from './add-tag-modal/geotag-select';
 
 
@@ -33,6 +31,7 @@ export default class AddGeotagModal extends Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
+    switcher: PropTypes.element,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     schools: PropTypes.arrayOf(PropTypes.shape({
@@ -90,7 +89,8 @@ export default class AddGeotagModal extends Component {
       schools,
       tags,
       visible,
-      onClose
+      onClose,
+      switcher
       } = this.props;
 
     if (!visible) {
@@ -105,7 +105,7 @@ export default class AddGeotagModal extends Component {
       >
         <ModalComponent.Head>
           <ModalComponent.Title>Add geotags to your post</ModalComponent.Title>
-          <TagIcon big type={TagType.TAG_LOCATION} />
+          {switcher}
         </ModalComponent.Head>
         <ModalComponent.Body>
           <div className="add_tag_modal__tabs">

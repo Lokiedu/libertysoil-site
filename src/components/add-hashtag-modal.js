@@ -20,8 +20,6 @@ import _ from 'lodash';
 
 import ModalComponent from '../components/modal-component';
 import TagEditor from './add-tag-modal/tag-editor';
-import TagIcon from '../components/tag-icon';
-import * as TagType from '../utils/tags';
 
 
 export default class AddHashtagModal extends Component {
@@ -32,6 +30,7 @@ export default class AddHashtagModal extends Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
+    switcher: PropTypes.element,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     schools: PropTypes.arrayOf(PropTypes.shape({
@@ -81,7 +80,8 @@ export default class AddHashtagModal extends Component {
       schools,
       tags,
       visible,
-      onClose
+      onClose,
+      switcher
     } = this.props;
 
     if (!visible) {
@@ -96,7 +96,7 @@ export default class AddHashtagModal extends Component {
       >
         <ModalComponent.Head>
           <ModalComponent.Title>Add hashtags to your post</ModalComponent.Title>
-          <TagIcon big type={TagType.TAG_HASHTAG} />
+          {switcher}
         </ModalComponent.Head>
         <ModalComponent.Body>
           <div className="add_tag_modal__tabs">

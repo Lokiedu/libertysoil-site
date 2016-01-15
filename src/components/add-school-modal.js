@@ -20,9 +20,7 @@ import _ from 'lodash';
 
 import ModalComponent from './modal-component';
 import TagEditor from './add-tag-modal/tag-editor';
-import TagIcon from './tag-icon';
 import SchoolSelect from './add-tag-modal/school-select';
-import * as TagType from '../utils/tags';
 
 
 export default class AddSchoolModal extends Component {
@@ -32,6 +30,7 @@ export default class AddSchoolModal extends Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    switcher: PropTypes.element,
     geotags: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
@@ -85,7 +84,8 @@ export default class AddSchoolModal extends Component {
       schools,
       tags,
       visible,
-      onClose
+      onClose,
+      switcher
     } = this.props;
 
     if (!visible) {
@@ -100,7 +100,7 @@ export default class AddSchoolModal extends Component {
       >
         <ModalComponent.Head>
           <ModalComponent.Title>Add schools to your post</ModalComponent.Title>
-          <TagIcon big type={TagType.TAG_SCHOOL} />
+          {switcher}
         </ModalComponent.Head>
         <ModalComponent.Body>
           <div className="add_tag_modal__tabs">

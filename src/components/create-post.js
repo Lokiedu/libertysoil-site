@@ -25,6 +25,18 @@ import AddHashtagModal from './add-hashtag-modal';
 import AddSchoolModal from './add-school-modal';
 import AddGeotagModal from './add-geotag-modal';
 
+let ModalSwitcher = ({
+  tags,
+  activeTag,
+  onClose
+}) => (
+  <div className="modal_switcher">
+    {tags.map((tag, i) => <div key={i} className="modal_switcher__item">{tag}</div>)}
+    <div className="modal_switcher__item modal_switcher__item-active" onClick={onClose}>
+      {activeTag}
+    </div>
+  </div>
+);
 
 @ClickOutsideComponentDecorator
 export default class CreatePost extends React.Component {
@@ -59,6 +71,11 @@ export default class CreatePost extends React.Component {
     addGeotagModalVisible: false,
     addSchoolModalVisible: false
   };
+
+  _stopPropagation = (e) => {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  }
 
   onClickOutside = () => {
     let form = this.refs.form;
@@ -105,25 +122,39 @@ export default class CreatePost extends React.Component {
     });
   };
 
-  _showAddHashtagModal = () => {
+  _showAddHashtagModal = (e) => {
+    this._stopPropagation(e);
+
     this.setState({
-      addHashtagModalVisible: true
+      addHashtagModalVisible: true,
+      addGeotagModalVisible: false,
+      addSchoolModalVisible: false
     });
   };
 
-  _showAddSchoolModal = () => {
+  _showAddSchoolModal = (e) => {
+    this._stopPropagation(e);
+
     this.setState({
-      addSchoolModalVisible: true
+      addSchoolModalVisible: true,
+      addHashtagModalVisible: false,
+      addGeotagModalVisible: false
     });
   };
 
-  _showAddGeotagModal = () => {
+  _showAddGeotagModal = (e) => {
+    this._stopPropagation(e);
+
     this.setState({
-      addGeotagModalVisible: true
+      addGeotagModalVisible: true,
+      addHashtagModalVisible: false,
+      addSchoolModalVisible: false
     });
   };
 
-  _closeAddTagModal = () => {
+  _closeAddTagModal = (e) => {
+    this._stopPropagation(e);
+
     this.setState({
       addHashtagModalVisible: false,
       addGeotagModalVisible: false,
@@ -147,6 +178,39 @@ export default class CreatePost extends React.Component {
       addGeotagModalVisible,
       expanded
     } = this.state;
+
+    const hashModalSwitcher = (
+      <ModalSwitcher
+        tags={[
+          <TagIcon onClick={this._showAddSchoolModal} type={TagType.TAG_SCHOOL} />,
+          <TagIcon onClick={this._showAddGeotagModal} type={TagType.TAG_LOCATION} />
+        ]}
+        activeTag={<TagIcon big type={TagType.TAG_HASHTAG} />}
+        onClose={this._closeAddTagModal}
+      />
+    );
+
+    const schoolModalSwitcher = (
+      <ModalSwitcher
+        tags={[
+          <TagIcon onClick={this._showAddHashtagModal} type={TagType.TAG_HASHTAG} />,
+          <TagIcon onClick={this._showAddGeotagModal} type={TagType.TAG_LOCATION} />
+        ]}
+        activeTag={<TagIcon big type={TagType.TAG_SCHOOL} />}
+        onClose={this._closeAddTagModal}
+      />
+    );
+
+    const geotagModalSwitcher = (
+      <ModalSwitcher
+        tags={[
+          <TagIcon onClick={this._showAddHashtagModal} type={TagType.TAG_HASHTAG} />,
+          <TagIcon onClick={this._showAddSchoolModal} type={TagType.TAG_SCHOOL} />
+        ]}
+        activeTag={<TagIcon big type={TagType.TAG_LOCATION} />}
+        onClose={this._closeAddTagModal}
+      />
+    );
 
     return (
       <div className="box box-post box-space_bottom create_post">
@@ -194,6 +258,7 @@ export default class CreatePost extends React.Component {
           </div>
         </form>
         <AddHashtagModal
+          switcher={hashModalSwitcher}
           geotags={this.props.geotags}
           schools={this.props.schools}
           tags={this.props.tags}
@@ -202,6 +267,7 @@ export default class CreatePost extends React.Component {
           onSave={this._addTags}
         />
         <AddSchoolModal
+          switcher={schoolModalSwitcher}
           allSchools={this.props.allSchools}
           geotags={this.props.geotags}
           schools={this.props.schools}
@@ -211,6 +277,7 @@ export default class CreatePost extends React.Component {
           onSave={this._addTags}
         />
         <AddGeotagModal
+          switcher={geotagModalSwitcher}
           geotags={this.props.geotags}
           schools={this.props.schools}
           tags={this.props.tags}
