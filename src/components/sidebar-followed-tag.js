@@ -27,22 +27,22 @@ export default class SidebarFollowedTag extends React.Component {
         break;
       }
       case TAG_HASHTAG: {
-        className = 'sidebar__followed_tag-hashtag';
+        className = 'followed_tag-hashtag';
         url = `/tag/${urlId}`;
         break;
       }
 
       case TAG_SCHOOL: {
-        className = 'sidebar__followed_tag-school';
+        className = 'followed_tag-school';
         url = `/s/${urlId}`;
         break;
       }
     }
 
     return (
-      <Link className={`sidebar__followed_tag ${className}`} title={name} to={url}>
-        <TagIcon className="sidebar__followed_tag__icon" small type={type} />
-        <span className="sidebar__followed_tag__name">{truncatedName}</span>
+      <Link className={`followed_tag ${className}`} title={name} to={url}>
+        <TagIcon className="followed_tag__icon" small type={type} />
+        <span className="followed_tag__name">{truncatedName}</span>
       </Link>
     );
   }
