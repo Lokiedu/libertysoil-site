@@ -38,7 +38,7 @@ import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
 import TagCloudPage from './pages/tag-cloud';
-import CityPage from './pages/city';
+import GeotagPage from './pages/geotag';
 import CountryPage from './pages/country';
 
 import List from './pages/list';
@@ -83,10 +83,7 @@ export function getRoutes(authHandler, fetchHandler) {
         <IndexRoute component={SchoolPage} onEnter={withoutAuth} />
         <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={withAuth} />
       </Route>
-      <Route path="/l/:country">
-        <IndexRoute component={CountryPage} onEnter={withoutAuth} />
-        <Route component={CityPage} path="/l/:country/:city" onEnter={withoutAuth} />
-      </Route>
+      <Route component={GeotagPage} path="/geo/:url_name" onEnter={withoutAuth} />
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
     </Route>
