@@ -142,10 +142,6 @@ describe('api version 1', () => {
         await expect({ url: `/api/v1/posts`, session: sessionId, method: 'POST', body: {type: POST_DEFAULT_TYPE, text: ''}}, 'to open successfully');
       });
 
-      it('CAN update own post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'POST' }, 'to open successfully');
-      });
-
       it('CAN delete own post', async () => {
         await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'DELETE' }, 'to open successfully');
       });
