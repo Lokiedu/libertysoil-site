@@ -17,7 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT } from '../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT } from '../consts/tags';
 
 export default class TagIcon extends React.Component {
   static displayName = 'TagIcon';

@@ -19,7 +19,7 @@ import React, {PropTypes} from 'react';
 
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
-import * as TagType from '../utils/tags';
+import * as TagType from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddHashtagModal from './add-hashtag-modal';
 import AddSchoolModal from './add-school-modal';

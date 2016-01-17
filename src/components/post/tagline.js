@@ -18,7 +18,7 @@
 import React from 'react';
 
 import Tag from '../tag';
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../consts/tags';
 
 
 export default class TagLine extends React.Component {

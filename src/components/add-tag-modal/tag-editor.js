@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 
 import TagCloud from './../tag-cloud';
-import * as TagType from '../../utils/tags';
+import * as TagType from '../../consts/tags';
 
 export default class TagEditor extends Component {
   static displayName = 'TagsEditor';

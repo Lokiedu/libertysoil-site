@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 import { truncate } from 'grapheme-utils';
 import TagIcon from './tag-icon';
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../utils/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../consts/tags';
 
 
 export default class Tag extends React.Component {
