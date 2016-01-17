@@ -81,4 +81,22 @@ expect.addAssertion('not to open', function (expect, subject, value) {
   });
 });
 
+expect.addAssertion('to open authorized', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject)
+  }).then(function (context) {
+    const status = context.httpResponse.statusLine.statusCode;
+    expect(status, 'not to equal', 403);
+  });
+});
+
+expect.addAssertion('not to open authorized', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject)
+  }).then(function (context) {
+    const status = context.httpResponse.statusLine.statusCode;
+    expect(status, 'to equal', 403);
+  });
+});
+
 export default expect;

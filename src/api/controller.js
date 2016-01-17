@@ -1319,7 +1319,7 @@ export default class ApiController {
       return;
     }
 
-    if (!req.files.length) {
+    if (!req.files || !req.files.length) {
       res.status(400);
       res.send({error: '"files" parameter is not provided'});
       return;

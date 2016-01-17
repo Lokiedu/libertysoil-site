@@ -27,18 +27,23 @@ import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 let bookshelf = initBookshelf($dbConfig);
 let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
+let School = bookshelf.model('School');
 
-describe('api version 1', () => {
+describe('api v.1', () => {
 
-  describe('Posts', () => {
-    let post, user;
+  describe('Authorization', () => {
+    let post, user, school, unverifiedUser;
 
     beforeEach(async () => {
       await bookshelf.knex('users').del();
       await bookshelf.knex('posts').del();
+      await bookshelf.knex('schools').del();
 
       user = await User.create('test', 'test', 'test@example.com');
       await user.save({'email_check_hash': ''},{require:true});
+
+      unverifiedUser = await User.create('unverif', 'unverif', 'test-unverif@example.com');
+      await unverifiedUser.save(null, {require: true});
 
       post = new Post({
         id: uuid4(),
@@ -47,81 +52,185 @@ describe('api version 1', () => {
       });
       await post.save(null, {method: 'insert'});
 
+      school = new School({
+        id: uuid4(),
+        url_name: 'test_url_name'
+      });
+      await school.save(null, {method: 'insert'});
+
     });
 
     afterEach(async () => {
       await post.destroy();
       await user.destroy();
+      await school.destroy();
+      await unverifiedUser.destroy();
     });
 
     describe('When user not logged it', () => {
 
-      it('CAN read post', async () => {
-        await expect(`/api/v1/post/${post.id}`, 'to open successfully');
+      it('AUTHORIZED TO read post', async () => {
+        await expect(`/api/v1/post/${post.id}`, 'to open authorized');
       });
 
-      it('CAN read all post', async () => {
-        await expect(`/api/v1/posts/all`, 'to open successfully');
+      it('AUTHORIZED TO read all post', async () => {
+        await expect(`/api/v1/posts/all`, 'to open authorized');
       });
 
-      it('CAN read other user posts', async () => {
-        await expect(`/api/v1/posts/user/${user.id}`, 'to open successfully');
+      it('AUTHORIZED TO read other user posts', async () => {
+        await expect(`/api/v1/posts/user/${user.id}`, 'to open authorized');
       });
 
-      it('CAN read other user liked posts', async () => {
-        await expect(`/api/v1/posts/liked/${user.id}`, 'to open successfully');
+      it('AUTHORIZED TO read other user liked posts', async () => {
+        await expect(`/api/v1/posts/liked/${user.id}`, 'to open authorized');
       });
 
-      it('CAN read other user favoured posts', async () => {
-        await expect(`/api/v1/posts/favoured/${user.id}`, 'to open successfully');
+      it('AUTHORIZED TO read other user favoured posts', async () => {
+        await expect(`/api/v1/posts/favoured/${user.id}`, 'to open authorized');
       });
 
-      it('CAN read posts by tag', async () => {
-        await expect(`/api/v1/posts/tag/test`, 'to open successfully');
+      it('AUTHORIZED TO read posts by tag', async () => {
+        await expect(`/api/v1/posts/tag/test`, 'to open authorized');
       });
 
-      it('CAN read posts by school', async () => {
-        await expect(`/api/v1/posts/school/test`, 'to open successfully');
+      it('AUTHORIZED TO read posts by school', async () => {
+        await expect(`/api/v1/posts/school/test`, 'to open authorized');
       });
 
-      it('CAN NOT get post list', async () => {
-        await expect({ url: '/api/v1/posts' }, 'not to open');
+      it('AUTHORIZED TO read schools', async () => {
+        await expect(`/api/v1/schools`, 'to open authorized');
       });
 
-      it('CAN NOT open liked posts page', async () => {
-        await expect({ url: '/api/v1/posts/liked' }, 'not to open');
+      it('AUTHORIZED TO read specific school', async () => {
+        await expect(`/api/v1/school/test_url_name`, 'to open authorized');
       });
 
-      it('CAN NOT open favoured posts page', async () => {
-        await expect({ url: '/api/v1/posts/favoured' }, 'not to open');
+      it('AUTHORIZED TO read countries', async () => {
+        await expect(`/api/v1/countries`, 'to open authorized');
       });
 
-      it('CAN NOT create post', async () => {
-        await expect({ url: '/api/v1/posts', method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO read specific country', async () => {
+        await expect(`/api/v1/country/test`, 'to open authorized');
       });
 
-      it('CAN NOT update post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}`, method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO read specific country posts', async () => {
+        await expect(`/api/v1/country/test/posts`, 'to open authorized');
       });
 
-      it('CAN NOT delete post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}`, method: 'DELETE' }, 'not to open');
+      it('AUTHORIZED TO read specific city', async () => {
+        await expect(`/api/v1/city/test`, 'to open authorized');
       });
 
-      it('CAN NOT like post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}/like`, method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO read specific city posts', async () => {
+        await expect(`/api/v1/city/test/posts`, 'to open authorized');
       });
 
-      it('CAN NOT unlike post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}/unlike`, method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO read specific user', async () => {
+        await expect(`/api/v1/user/test`, 'to open authorized');
       });
 
-      it('CAN NOT fav post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}/fav`, method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO read specific user', async () => {
+        await expect(`/api/v1/user/test`, 'to open authorized');
       });
 
-      it('CAN NOT unfav post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}/unfav`, method: 'POST' }, 'not to open');
+      it('AUTHORIZED TO verify email', async () => {
+        await expect({ url: `/api/v1/user/verify/${unverifiedUser.get('email_check_hash')}` }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO change anonymous change password feature', async () => {
+        await expect({ url: `/api/v1/newpassword/test` }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO use anonymous reset password feature', async () => {
+        await expect({ url: `/api/v1/resetpassword` }, 'to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO open liked posts page', async () => {
+        await expect({ url: '/api/v1/posts/liked' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO open favoured posts page', async () => {
+        await expect({ url: '/api/v1/posts/favoured' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO create post', async () => {
+        await expect({ url: '/api/v1/posts', method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO update post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO delete post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}`, method: 'DELETE' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO like post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}/like`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO unlike post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}/unlike`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO fav post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}/fav`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO unfav post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}/unfav`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO read tags', async () => {
+        await expect({ url: `/api/v1/user/tags` }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO update school', async () => {
+        await expect({ url: `/api/v1/school/${school.id}`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO follow school', async () => {
+        await expect({ url: `/api/v1/school/${school.get('url_name')}/follow`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO unfollow school', async () => {
+        await expect({ url: `/api/v1/school/${school.get('url_name')}/unfollow`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO follow user', async () => {
+        await expect({ url: `/api/v1/user/${user.get('id')}/follow`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO unfollow user', async () => {
+        await expect({ url: `/api/v1/user/${user.get('id')}/unfollow`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO update user', async () => {
+        await expect({ url: `/api/v1/user`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO change password', async () => {
+        await expect({ url: `/api/v1/user/password`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO suggestions', async () => {
+        await expect({ url: `/api/v1/suggestions/personalized` }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO initial suggestions', async () => {
+        await expect({ url: `/api/v1/suggestions/initial` }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO upload files', async () => {
+        await expect({ url: `/api/v1/upload`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO process image', async () => {
+        await expect({ url: `/api/v1/image`, method: 'POST' }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO pickpoint', async () => {
+        await expect({ url: `/api/v1/pickpoint` }, 'not to open authorized');
       });
 
     });
@@ -142,44 +251,97 @@ describe('api version 1', () => {
         otherPost.destroy();
       });
 
-      it('CAN update own post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'POST' }, 'to open successfully');
+      it('AUTHORIZED TO update own post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN create post', async () => {
-        await expect({ url: `/api/v1/posts`, session: sessionId, method: 'POST', body: {type: POST_DEFAULT_TYPE, text: ''}}, 'to open successfully');
+      it('AUTHORIZED TO create post', async () => {
+        await expect({ url: `/api/v1/posts`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN delete own post', async () => {
-        await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'DELETE' }, 'to open successfully');
+      it('AUTHORIZED TO delete own post', async () => {
+        await expect({ url: `/api/v1/post/${post.id}`, session: sessionId, method: 'DELETE' }, 'to open authorized');
       });
 
-      it('CAN like other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}/like`, session: sessionId, method: 'POST' }, 'to open successfully');
+      it('AUTHORIZED TO like other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}/like`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN unlike other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}/unlike`, session: sessionId, method: 'POST' }, 'to open successfully');
+      it('AUTHORIZED TO unlike other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}/unlike`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN fav other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}/fav`, session: sessionId, method: 'POST' }, 'to open successfully');
+      it('AUTHORIZED TO fav other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}/fav`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN unfav other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}/unfav`, session: sessionId, method: 'POST' }, 'to open successfully');
+      it('AUTHORIZED TO unfav other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}/unfav`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('CAN read own liked posts', async () => {
-        await expect({ url: `/api/v1/posts/liked`, session: sessionId }, 'to open successfully');
+      it('AUTHORIZED TO read own liked posts', async () => {
+        await expect({ url: `/api/v1/posts/liked`, session: sessionId }, 'to open authorized');
       });
 
-      it('CAN read own favoured posts', async () => {
-        await expect({ url: `/api/v1/posts/favoured`, session: sessionId }, 'to open successfully');
+      it('AUTHORIZED TO read own favoured posts', async () => {
+        await expect({ url: `/api/v1/posts/favoured`, session: sessionId }, 'to open authorized');
       });
 
-      it('CAN NOT delete other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'not to open');
+      it('AUTHORIZED TO follow school', async () => {
+        await expect({ url: `/api/v1/school/${school.get('url_name')}/follow`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO follow user', async () => {
+        await expect({ url: `/api/v1/user/${unverifiedUser.get('username')}/follow`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO unfollow user', async () => {
+        await expect({ url: `/api/v1/user/${unverifiedUser.get('username')}/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO unfollow school', async () => {
+        await expect({ url: `/api/v1/school/${school.get('url_name')}/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO update his own user record', async () => {
+        await expect({ url: `/api/v1/user`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO update his password', async () => {
+        await expect({ url: `/api/v1/user/password`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO delete other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO logout', async () => {
+        await expect({ url: `/api/v1/logout`, session: sessionId }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO suggestions', async () => {
+        await expect({ url: `/api/v1/suggestions/personalized`, session: sessionId }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO initial suggestions', async () => {
+        await expect({ url: `/api/v1/suggestions/initial`, session: sessionId }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO upload files', async () => {
+        await expect({ url: `/api/v1/upload`, method: 'POST', session: sessionId }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO process image', async () => {
+        await expect({ url: `/api/v1/image`, method: 'POST', session: sessionId }, 'to open authorized');
+      });
+
+      // TODO: in controller http request to pickopint must be isolated in a component
+      // it('AUTHORIZED TO pickpoint', async () => {
+      //   await expect({ url: `/api/v1/pickpoint`, session: sessionId }, 'to open authorized');
+      // });
+
+      it('NOT AUTHORIZED TO use anonymous reset password feature', async () => {
+        await expect({ url: `/api/v1/resetpassword`, session: sessionId, method: 'POST' }, 'not to open authorized');
       });
 
     });
