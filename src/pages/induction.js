@@ -77,7 +77,7 @@ class InductionPage extends React.Component {
       });
     };
 
-    if (!current_user.more.first_login) {
+    if (!current_user.user.more.first_login) {
       return (
         <div>
           <Header is_logged_in={is_logged_in} current_user={current_user} />
