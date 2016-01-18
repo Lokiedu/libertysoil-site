@@ -16,7 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { pushPath } from 'redux-simple-router';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -25,26 +28,23 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-import {EditPost} from '../components/post';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import EditPost from '../components/edit-post';
+import AddedTags from '../components/post/added-tags';
 
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
+import {
+  resetEditPostForm,
+  updateEditPostForm
+} from '../actions';
 
 
 class PostEditPage extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.submitHandler = this.submitHandler.bind(this);
-    this.removeHandler = this.removeHandler.bind(this);
-  }
   static displayName = 'PostEditPage';
 
   static async fetchData(params, store, client) {
-    let postInfo = client.postInfo(params.uuid);
-
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
     let schoolsPromise;
 
@@ -53,66 +53,50 @@ class PostEditPage extends React.Component {
       schoolsPromise = trigger.loadSchools();
     }
 
-    store.dispatch(addPost(await postInfo));
+    try {
+      let post = await client.postInfo(params.uuid);
+      store.dispatch(addPost(post));
+    } catch (e) {
+      store.dispatch(addPost({error: true, id: params.uuid, user: {}}));
+
+      return 404;
+    }
 
     if (noSchoolsLoaded) {
       await schoolsPromise;
     }
   }
 
-  removeHandler(event) {
-    event.preventDefault();
+  _handleSubmit = () => {
+    this.props.dispatch(pushPath(getUrl(URL_NAMES.POST, {uuid: this.props.params.uuid})));
+  };
 
-    if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
-      const client = new ApiClient(API_HOST);
-      const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-      triggers.deletePost(this.props.params.uuid)
-        .then(() => {
-          this.props.history.pushState(null, '/');
-        }).catch(e => {
-          // FIXME: "failed to delete post" should be reported to user
-          console.error(e);  // eslint-disable-line no-console
-        });
-    }
-  }
-
-  submitHandler(event) {
-    event.preventDefault();
-
-    let form = event.target;
-
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    triggers.updatePost(
-      this.props.params.uuid,
-      {
-        text: form.text.value
-      }
-    )
-      .then((result) => {
-        this.props.history.pushState(null, getUrl(URL_NAMES.POST, { uuid: result.id }));
-      });
-  }
+  _handleDelete = () => {
+    this.props.dispatch(pushPath('/'));
+  };
 
   render() {
-    const post_uuid = this.props.params.uuid;
+    let postId = this.props.params.uuid;
 
-    if (!(post_uuid in this.props.posts)) {
+    if (!(postId in this.props.posts)) {
       // not loaded yet
-      return <script/>
+      return null;
     }
 
-    const current_post = this.props.posts[post_uuid];
+    let post = this.props.posts[postId];
 
-    if (current_post === false) {
-      return <NotFound/>
+    if (post.error) {
+      return <NotFound/>;
     }
 
-    if (current_post.user_id != this.props.current_user.id) {
-      return <script/>;
+    if (post.user_id != this.props.current_user.id) {
+      return null;
     }
+
+    let actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
+    let client = new ApiClient(API_HOST);
+    let postTriggers = _.pick(new ActionsTrigger(client, this.props.dispatch), 'updatePost', 'deletePost');
+    let formState = this.props.edit_post_form;
 
     return (
       <div>
@@ -122,25 +106,20 @@ class PostEditPage extends React.Component {
             <Sidebar current_user={this.props.current_user}/>
 
             <div className="page__content">
-              <div className="box box-post box-space_bottom">
-                <form onSubmit={this.submitHandler} action="" method="post">
-                  <input type="hidden" name="id" value={current_post.id} />
-
-                  <div className="box__body">
-                    <EditPost post={current_post}/>
-
-                    <div className="layout__row">
-                      <div className="layout layout__grid layout-align_right">
-                        <button className="button button-red" type="button" onClick={this.removeHandler}><span className="fa fa-trash-o"></span></button>
-                        <button className="button button-wide button-green" type="submit">Save</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
+              <EditPost
+                actions={actions}
+                allSchools={_.values(this.props.schools)}
+                post={post}
+                triggers={postTriggers}
+                onDelete={this._handleDelete}
+                onSubmit={this._handleSubmit}
+                {...formState}
+              />
             </div>
 
-            <SidebarAlt />
+            <SidebarAlt>
+              <AddedTags {...formState} />
+            </SidebarAlt>
           </div>
         </div>
         <Footer/>
@@ -149,4 +128,7 @@ class PostEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(PostEditPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetEditPostForm, updateEditPostForm}, dispatch)
+}))(PostEditPage);
