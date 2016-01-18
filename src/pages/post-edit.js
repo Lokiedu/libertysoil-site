@@ -40,21 +40,22 @@ class PostEditPage extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
   }
+  static displayName = 'PostEditPage';
 
   static async fetchData(params, store, client) {
     let postInfo = client.postInfo(params.uuid);
 
-    const noScoolsLoaded = store.getState().get('schools').isEmpty();
+    const noSchoolsLoaded = store.getState().get('schools').isEmpty();
     let schoolsPromise;
 
-    if (noScoolsLoaded) {
+    if (noSchoolsLoaded) {
       let trigger = new ActionsTrigger(client, store.dispatch);
       schoolsPromise = trigger.loadSchools();
     }
 
     store.dispatch(addPost(await postInfo));
 
-    if (noScoolsLoaded) {
+    if (noSchoolsLoaded) {
       await schoolsPromise;
     }
   }
