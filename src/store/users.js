@@ -76,7 +76,9 @@ export default function reducer(state=initialState, action) {
     case a.SET_POSTS_TO_LIKES_RIVER:
     case a.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_SCHOOL_POSTS:
-    case a.SET_TAG_POSTS: {
+    case a.SET_TAG_POSTS:
+    case a.SET_GEOTAG_POSTS:
+    {
       let users = _.indexBy(_.unique(action.posts.map(post => post.user), 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
     }
