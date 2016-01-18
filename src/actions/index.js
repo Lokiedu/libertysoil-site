@@ -69,6 +69,8 @@ export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 
 export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
+export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
+export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
 export function addUser(user) {
   return {
@@ -409,5 +411,18 @@ export function updateCreatePostForm(create_post_form) {
   return {
     type: UPDATE_CREATE_POST_FORM,
     create_post_form
+  }
+}
+
+export function resetEditPostForm() {
+  return {
+    type: RESET_EDIT_POST_FORM
+  }
+}
+
+export function updateEditPostForm(edit_post_form) {
+  return {
+    type: UPDATE_EDIT_POST_FORM,
+    edit_post_form
   }
 }

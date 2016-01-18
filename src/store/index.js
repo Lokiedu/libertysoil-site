@@ -42,6 +42,7 @@ import ui from './ui';
 import tag_cloud from './tag_cloud';
 import geotag_posts from './geotag_posts';
 import geotags from './geotags';
+import edit_post_form from './edit_post_form';
 
 let store;
 
@@ -49,6 +50,7 @@ export const theReducer = combineReducers(i.Map({
   routing: routeReducer,
   current_user,
   create_post_form,
+  edit_post_form,
   favourites,
   favourites_river,
   followers,
@@ -82,6 +84,12 @@ const initialState = i.Map({
   }),
   create_post_form: i.fromJS({
     text: '',
+    geotags: [],
+    schools: [],
+    tags: []
+  }),
+  edit_post_form: i.fromJS({
+    id: null,
     geotags: [],
     schools: [],
     tags: []
