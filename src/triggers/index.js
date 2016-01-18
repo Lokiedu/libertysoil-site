@@ -279,8 +279,18 @@ export class ActionsTrigger {
   };
 
   deletePost = async (post_uuid) => {
-    await this.client.deletePost(post_uuid);
-    this.dispatch(removePost(post_uuid));
+    try {
+      let result = await this.client.deletePost(post_uuid);
+      this.dispatch(removePost(post_uuid));
+
+      if (result.error) {
+        this.dispatch(addError(result.error));
+      }
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
   };
 
   updatePost = async (post_uuid, post_fields) => {
