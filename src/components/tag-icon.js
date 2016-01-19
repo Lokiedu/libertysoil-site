@@ -25,14 +25,19 @@ export default class TagIcon extends React.Component {
   static propTypes = {
     big: PropTypes.bool,
     className: PropTypes.string,
+    inactive: PropTypes.bool,
     small: PropTypes.bool,
     type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT]).isRequired
   };
 
   render() {
-    let { className, small, big, ...props } = this.props;
+    let { className, small, big, inactive, ...props } = this.props;
 
-    className = `tag_icon ${this.props.className}`;
+    className = 'tag_icon';
+
+    if (this.props.className) {
+      className += ` ${this.props.className}`;
+    }
 
     if (small) {
       className += ' tag_icon-small';
@@ -40,6 +45,10 @@ export default class TagIcon extends React.Component {
 
     if (big) {
       className += ' tag_icon-big';
+    }
+
+    if (inactive) {
+      className += ' tag_icon-inactive';
     }
 
     switch (this.props.type) {
