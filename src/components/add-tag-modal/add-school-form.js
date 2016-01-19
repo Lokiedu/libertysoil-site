@@ -18,6 +18,7 @@
 import React, { PropTypes, Component } from 'react';
 
 import SchoolSelect from './school-select';
+import { preventDefault } from '../../utils/preventDefault';
 
 
 export default class AddSchoolForm extends Component {
@@ -33,15 +34,8 @@ export default class AddSchoolForm extends Component {
     onAddSchool: PropTypes.func.isRequired
   };
 
-  state = {
-    school: {} // Selected geotag
-  };
-
-  _handleAddTag = (event) => {
-    event.preventDefault();
-
+  _addTag = (school) => {
     let { addedSchools } = this.props;
-    let school = this.state.school;
 
     if (addedSchools.find(s => s.name === school.name)) {
       return;
@@ -51,22 +45,10 @@ export default class AddSchoolForm extends Component {
       return;
     }
 
-    this._resetInput();
+    this._input.reset();
 
     this.props.onAddSchool(school);
   };
-
-  _handleSelectTag = (school) => {
-    this.setState({school});
-  };
-
-  _resetInput() {
-    this._input.reset();
-
-    this.setState({
-      school: {}
-    });
-  }
 
   render() {
     return (
@@ -79,19 +61,18 @@ export default class AddSchoolForm extends Component {
           <div className="layout__row add_tag_modal__tab_panel">
             <div className="layout">
               <div className="layout__grid_item layout__grid_item-wide">
-                <form ref="form" onSubmit={this._handleAddTag}>
+                <form ref="form" onSubmit={preventDefault}>
                   <SchoolSelect
                     placeholder="Start typing..."
                     ref={(c) => this._input = c}
                     schools={this.props.allSchools}
-                    onSelect={this._handleSelectTag}
+                    onSelect={this._addTag}
                   />
                 </form>
               </div>
               <div className="layout__grid_item">
                   <span
                     className="button button-wide add_tag_modal__add_button action"
-                    onClick={this._handleAddTag}
                   >
                     Add
                   </span>

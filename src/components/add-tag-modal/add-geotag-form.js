@@ -18,6 +18,7 @@
 import React, { PropTypes, Component } from 'react';
 
 import GeotagSelect from './geotag-select';
+import { preventDefault } from '../../utils/preventDefault';
 
 
 export default class AddGeotagForm extends Component {
@@ -30,17 +31,8 @@ export default class AddGeotagForm extends Component {
     onAddGeotag: PropTypes.func.isRequired
   };
 
-  state = {
-    geotag: {} // Selected geotag
-  };
-
-  _handleAddTag = (event) => {
-    if (event) {
-      event.preventDefault();
-    }
-
+  _addTag = (geotag) => {
     let { addedGeotags } = this.props;
-    let geotag = this.state.geotag;
 
     if (!geotag.id) {
       return;
@@ -50,22 +42,10 @@ export default class AddGeotagForm extends Component {
       return;
     }
 
-    this._resetInput();
+    this._input.reset();
 
     this.props.onAddGeotag(geotag);
   };
-
-  _handleSelectTag = (geotag) => {
-    this.setState({geotag});
-  };
-
-  _resetInput() {
-    this._input.reset();
-
-    this.setState({
-      geotag: {}
-    });
-  }
 
   render() {
     return (
@@ -78,18 +58,17 @@ export default class AddGeotagForm extends Component {
           <div className="layout__row add_tag_modal__tab_panel">
             <div className="layout">
               <div className="layout__grid_item layout__grid_item-wide">
-                <form ref="form" onSubmit={this._handleAddTag}>
+                <form ref="form" onSubmit={preventDefault}>
                   <GeotagSelect
                     placeholder="Start typing..."
                     ref={(c) => this._input = c}
-                    onSelect={this._handleSelectTag}
+                    onSelect={this._addTag}
                   />
                 </form>
               </div>
               <div className="layout__grid_item">
                   <span
                     className="button button-wide add_tag_modal__add_button action"
-                    onClick={this._handleAddTag}
                   >
                     Add
                   </span>
