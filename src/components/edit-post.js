@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, {PropTypes} from 'react';
+import _ from 'lodash';
 
 import TagIcon from './tag-icon';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
@@ -37,6 +38,7 @@ export default class EditPost extends React.Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
+    id: PropTypes.string,
     onDelete: PropTypes.func,
     onSubmit: PropTypes.func,
     post: PropTypes.shape({
@@ -178,15 +180,23 @@ export default class EditPost extends React.Component {
   render () {
     let {
       allSchools,
-      post,
-      geotags,
-      schools,
-      tags
+      post
     } = this.props;
 
     let {
       addTagModalType
     } = this.state;
+
+    let allModalTags = _.pick(this.props, 'geotags', 'schools', 'tags');
+
+    // If edit_post_form is not initialized yet.
+    if (!this.props.id) {
+      allModalTags = {
+        geotags: post.geotags,
+        schools: post.schools,
+        tags: post.labels
+      }
+    }
 
     return (
       <div className="box box-post box-space_bottom create_post">
@@ -230,14 +240,12 @@ export default class EditPost extends React.Component {
         </form>
         <AddTagModal
           allSchools={allSchools}
-          geotags={geotags}
           ref={(c) => this._addTagModal = c}
-          schools={schools}
-          tags={tags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
+          {...allModalTags}
         />
       </div>
     )
