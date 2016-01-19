@@ -45,11 +45,11 @@ export default class ModalSwitcher extends Component {
     return (
       <div className="modal_switcher">
         {inactiveTags.map((tag, i) => (
-          <div className="modal_switcher__item" key={i}>
-            <TagIcon type={tag} onClick={this._handleTypeChange.bind(this, tag)} />
+          <div className="modal_switcher__item" key={i} onClick={this._handleTypeChange.bind(this, tag)}>
+            <TagIcon type={tag} inactive />
           </div>
         ))}
-        <div className="modal_switcher__item modal_switcher__item-active" onClick={onClose}>
+        <div className="modal_switcher__item" onClick={onClose}>
           <TagIcon big type={activeType} />
         </div>
       </div>
