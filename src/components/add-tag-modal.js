@@ -48,6 +48,21 @@ function AddedTags({ addedTags, onDelete }) {
   );
 }
 
+function Heading({ type }) {
+  let text;
+
+  switch (type) {
+    case TAG_HASHTAG:
+      text = 'Add hashtags to your post'; break;
+    case TAG_SCHOOL:
+      text = 'Add schools to your post'; break;
+    case TAG_LOCATION:
+      text = 'Add locations to your post'; break;
+  }
+
+  return <ModalComponent.Title>{text}</ModalComponent.Title>;
+}
+
 export default class AddTagModal extends Component {
   static displayName = 'AddTagModal';
 
@@ -173,7 +188,7 @@ export default class AddTagModal extends Component {
         onHide={this._handleClose}
       >
         <ModalComponent.Head>
-          <ModalComponent.Title>Add schools to your post</ModalComponent.Title>
+          <Heading type={type} />
           <ModalSwitcher
             activeType={type}
             onClose={this._handleClose}
