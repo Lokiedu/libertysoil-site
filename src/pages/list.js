@@ -29,6 +29,7 @@ import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
+import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import {
@@ -45,12 +46,19 @@ class List extends React.Component {
 
     await Promise.all([
       trigger.loadSchools(),
-      trigger.loadPostRiver()
+      trigger.loadPostRiver(),
+      trigger.loadPersonalizedSuggestions()
     ]);
   }
 
   render() {
-    const { resetCreatePostForm, updateCreatePostForm } = this.props;
+    const {
+      current_user,
+      i_am_following,
+      resetCreatePostForm,
+      updateCreatePostForm
+    } = this.props;
+
     const actions = {resetCreatePostForm, updateCreatePostForm};
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -75,6 +83,12 @@ class List extends React.Component {
             </div>
             <SidebarAlt>
               <AddedTags {...this.props.create_post_form} />
+              <SideSuggestedUsers
+                current_user={current_user}
+                i_am_following={i_am_following}
+                triggers={triggers}
+                users={current_user.suggested_users}
+              />
             </SidebarAlt>
           </div>
         </div>
