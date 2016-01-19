@@ -102,10 +102,10 @@ export default class ApiController {
           .join('schools', 'posts_schools.school_id', 'schools.id')
           .where('schools.url_name', req.params.school)
           .andWhere('posts_schools.visible', true)
-          .orderBy('schools.created_at', 'desc');
+          .orderBy('posts.created_at', 'desc');
       });
 
-    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools']});
+    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
