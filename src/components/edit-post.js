@@ -114,6 +114,8 @@ export default class EditPost extends React.Component {
     await this.props.triggers.updatePost(this.props.post.id, data);
 
     this.props.onSubmit(event);
+
+    this.props.actions.resetEditPostForm();
   };
 
   _handleDelete = async (event) => {
@@ -176,7 +178,10 @@ export default class EditPost extends React.Component {
   render () {
     let {
       allSchools,
-      post
+      post,
+      geotags,
+      schools,
+      tags
     } = this.props;
 
     let {
@@ -225,10 +230,10 @@ export default class EditPost extends React.Component {
         </form>
         <AddTagModal
           allSchools={allSchools}
-          geotags={post.geotags}
+          geotags={geotags}
           ref={(c) => this._addTagModal = c}
-          schools={post.schools}
-          tags={post.tags}
+          schools={schools}
+          tags={tags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
