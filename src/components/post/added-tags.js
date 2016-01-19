@@ -43,11 +43,9 @@ export default class AddedTags extends React.Component {
     }
 
     return (
-      <div className="post_added_tags">
-        <h4 className="post_added_tags__heading">Post tags:</h4>
-        <div className="post_added_tags__tags">
-          <TagCloud {...this.props} />
-        </div>
+      <div className="side_block">
+        <h4 className="side_block__heading">Post tags:</h4>
+        <TagCloud {...this.props} />
       </div>
     );
   }
