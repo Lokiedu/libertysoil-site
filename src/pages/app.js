@@ -31,8 +31,10 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    ga('create', 'UA-6450079-12', 'auto');
-    ga('send', 'pageview');
+    if (process.env.GOOGLE_ANALYTICS_ID) {
+      ga('create', process.env.GOOGLE_ANALYTICS_ID, 'auto');
+      ga('send', 'pageview');
+    }
   }
 
   static async fetchData(params, store, client) {
