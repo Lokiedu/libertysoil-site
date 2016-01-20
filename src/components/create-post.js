@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, {PropTypes} from 'react';
+import ga from 'react-google-analytics';
 
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
@@ -92,6 +93,7 @@ export default class CreatePost extends React.Component {
     this.props.actions.resetCreatePostForm();
 
     await this.props.triggers.createPost('short_text', data);
+    ga('send', 'event', 'Post', 'Done', data.tags.join(','));
 
     form.text.value = '';
     this._addTagModal.reset();

@@ -1,4 +1,5 @@
 import React from 'react';
+import ga from 'react-google-analytics';
 
 
 // Statuses for the progress indication.
@@ -53,6 +54,7 @@ export default class FollowTagButton extends React.Component {
       this.setState({
         status: STATUS_JUST_FOLLOWED
       });
+      ga('send', 'event', 'Tags', 'Follow', this.props.tag);
     });
   };
 

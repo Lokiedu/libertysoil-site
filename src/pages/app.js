@@ -17,15 +17,23 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import ga from 'react-google-analytics';
 
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 
 
+const GAInitializer = ga.Initializer;
+
 class App extends React.Component {
   static propTypes = {
     children: PropTypes.element.isRequired
   };
+
+  componentDidMount() {
+    ga('create', 'UA-6450079-12', 'auto');
+    ga('send', 'pageview');
+  }
 
   static async fetchData(params, store, client) {
     const props = store.getState();
@@ -42,6 +50,8 @@ class App extends React.Component {
     return (
       <div className="page">
         {this.props.children}
+
+        <GAInitializer />
       </div>
     )
   }

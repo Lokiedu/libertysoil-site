@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component } from 'react'
+import ga from 'react-google-analytics';
+
 
 class SuccessContent extends Component {
 
@@ -68,6 +70,7 @@ export default class RegisterComponent extends React.Component {
 
   render() {
     if (this.props.registration_success) {
+      ga('send', 'event', 'Reg', 'Done');
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
     return (

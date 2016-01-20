@@ -17,6 +17,8 @@
  */
 import React from 'react';
 import { Link }  from 'react-router';
+import ga from 'react-google-analytics';
+
 
 export default class LoginComponent extends React.Component {
   submitHandler = (event) => {
@@ -24,7 +26,9 @@ export default class LoginComponent extends React.Component {
 
     let form = event.target;
 
-    this.props.onLoginUser(form.username.value, form.password.value);
+    this.props.onLoginUser(form.username.value, form.password.value).then(() => {
+      ga('send', 'event', 'Login', 'Done');
+    });
   };
 
   render() {
