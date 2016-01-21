@@ -56,10 +56,10 @@ let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
       ))}
     </div>
   );
-}
+};
 
 class SettingsFollowersPage extends React.Component {
-  static displayName = 'SettingsPasswordPage'
+  static displayName = 'SettingsPasswordPage';
 
   static async fetchData(params, store, client) {
     const props = store.getState();

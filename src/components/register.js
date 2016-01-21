@@ -24,7 +24,7 @@ class SuccessContent extends Component {
   clickHandler = (event) => {
     event.preventDefault();
     this.props.onShowRegisterForm();
-  }
+  };
 
   render() {
     return (

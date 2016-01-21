@@ -30,7 +30,7 @@ import { RolesManager } from '../components/settings';
 import { ROLES } from '../consts/profileConstants';
 
 class SettingsPage extends React.Component {
-  static displayName = 'SettingsPage'
+  static displayName = 'SettingsPage';
 
   constructor(props) {
     super(props);
@@ -66,7 +66,7 @@ class SettingsPage extends React.Component {
 
   onChange = () => {
 
-  }
+  };
 
   onSave = () => {
     let roles = this.state.roles;
@@ -81,7 +81,7 @@ class SettingsPage extends React.Component {
         roles: roles
       }
     });
-  }
+  };
 
   addRole = () => {
     let roles = this.state.roles;
@@ -89,11 +89,11 @@ class SettingsPage extends React.Component {
     roles.push([ROLES[0], '']);
 
     this.setState({ roles });
-  }
+  };
 
   onRolesChange = (roles) => {
     this.setState({ roles });
-  }
+  };
 
   render() {
     const {

@@ -30,7 +30,7 @@ export default class Reviews extends Component {
     this.setState({
       activeSlideId: slideId
     });
-  }
+  };
 
   render () {
     var activeSlideId = this.state.activeSlideId;
@@ -102,7 +102,7 @@ class ReviewUser extends Component {
     var { onClick, index } = this.props;
 
     onClick(index);
-  }
+  };
 
   render () {
     var { index, activeIndex, avatarUrl } = this.props;

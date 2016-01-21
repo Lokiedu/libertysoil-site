@@ -24,7 +24,7 @@ import { Link } from 'react-router';
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 export default class ProfileHeader extends React.Component {
-  static displayName = 'ProfileHeader'
+  static displayName = 'ProfileHeader';
 
   render () {
     const { user, current_user, editable, updateAvatarTrigger, i_am_following, following, followers } = this.props;

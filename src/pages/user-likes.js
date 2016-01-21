@@ -31,7 +31,7 @@ import { defaultSelector } from '../selectors';
 
 
 class UserLikesPage extends React.Component {
-  static displayName = 'UserLikesPage'
+  static displayName = 'UserLikesPage';
 
   static async fetchData(params, store, client) {
     let userInfo = await client.userInfo(params.username);

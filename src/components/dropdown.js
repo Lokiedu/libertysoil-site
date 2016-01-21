@@ -21,7 +21,7 @@
 
  @ClickOutsideComponentDecorator
  class Dropdown extends Component {
-   static displayName = 'Dropdown'
+   static displayName = 'Dropdown';
 
    constructor (props) {
      super(props);
@@ -33,15 +33,15 @@
 
    onClickOutside = () => {
      this.hide();
-   }
+   };
 
    toggleVisibility = () => {
      this.setState({isVisible: !this.state.isVisible});
-   }
+   };
 
    hide = () => {
      this.setState({isVisible: false});
-   }
+   };
 
    render () {
      const {

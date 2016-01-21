@@ -9,7 +9,7 @@ const SIZES = {
   BIG: 'big',
   NORMAL: 'normal',
   SMALL: 'small'
-}
+};
 
 class ModalComponent extends Component {
   static displayName = 'ModalComponent';
@@ -20,14 +20,14 @@ class ModalComponent extends Component {
     onHide: PropTypes.func,
     title: PropTypes.string.isRequired,
     size: PropTypes.oneOf(_.values(SIZES))
-  }
+  };
 
   static defaultProps = {
     title: '',
     hideCloseButton: false,
     onHide: () => {},
     width: ''
-  }
+  };
 
   componentWillMount () {
     isBrowser && window.addEventListener('keydown', this.keyHandler);
@@ -41,15 +41,15 @@ class ModalComponent extends Component {
     if (e.keyCode ==27) {
       this.hide();
     }
-  }
+  };
 
   clickHandler = (e) => {
     e.stopPropagation();
-  }
+  };
 
   hide = (e) => {
     this.props.onHide(e);
-  }
+  };
 
   render () {
     const {

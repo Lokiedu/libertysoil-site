@@ -23,7 +23,7 @@ import FollowTagButton from './follow-tag-button';
 //import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 export default class SchoolHeader extends React.Component {
-  static displayName = 'SchoolHeader'
+  static displayName = 'SchoolHeader';
 
   render () {
     const { 

@@ -28,7 +28,7 @@ import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
-  static displayName = 'SettingsPasswordPage'
+  static displayName = 'SettingsPasswordPage';
 
   static async fetchData(params, store, client) {
     const props = store.getState();

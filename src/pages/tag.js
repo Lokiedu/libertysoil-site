@@ -31,7 +31,7 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 export class TagPage extends Component {
-  static displayName = 'TagPage'
+  static displayName = 'TagPage';
 
   static async fetchData(params, store, client) {
     let tagPosts = client.tagPosts(params.tag);

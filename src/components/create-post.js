@@ -62,7 +62,7 @@ export default class CreatePost extends React.Component {
       e.stopPropagation();
       e.nativeEvent.stopImmediatePropagation();
     }
-  }
+  };
 
   onClickOutside = () => {
     let form = this.refs.form;

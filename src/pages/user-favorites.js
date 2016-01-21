@@ -30,7 +30,7 @@ import { defaultSelector } from '../selectors';
 
 
 class UserFavoritesPage extends React.Component {
-  static displayName = 'UserFavoritesPage'
+  static displayName = 'UserFavoritesPage';
 
   static async fetchData(params, store, client) {
     let userInfo = await client.userInfo(params.username);

@@ -22,7 +22,7 @@ import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../consts/tags';
 
 
 export default class TagLine extends React.Component {
-  static displayName = "TagLine"
+  static displayName = "TagLine";
 
   static propTypes = {
     geotags: React.PropTypes.arrayOf(React.PropTypes.shape({

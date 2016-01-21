@@ -26,7 +26,7 @@ import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
 
 export default class BaseSchoolPage extends React.Component {
-  static displayName = 'BaseSchoolPage'
+  static displayName = 'BaseSchoolPage';
   render () {
     let {
       current_user,

@@ -440,16 +440,16 @@ export class ActionsTrigger {
 
   removeMessage = (id) => {
     this.dispatch(removeMessage(id))
-  }
+  };
 
   loadUserTags = async () => {
     const userTags = this.client.userTags();
     this.dispatch(setUserTags(await userTags));
-  }
+  };
 
   showRegisterForm = async () => {
     this.dispatch(showRegisterForm());
-  }
+  };
 
   updateAvatar = async (image, crop) =>{
     try {
@@ -473,5 +473,5 @@ export class ActionsTrigger {
     } catch (e) {
       this.dispatch(addError(e.message));
     }
-  }
+  };
 }

@@ -43,7 +43,7 @@ let InductionDone = () => (
 );
 
 class InductionPage extends React.Component {
-  static displayName = 'InductionPage'
+  static displayName = 'InductionPage';
 
   static async fetchData(params, store, client) {
     const state = store.getState();

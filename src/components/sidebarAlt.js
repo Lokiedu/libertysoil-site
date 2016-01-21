@@ -19,7 +19,7 @@ import React from 'react';
 
 
 export default class SidebarAlt extends React.Component {
-  static displayName = 'SidebarAlt'
+  static displayName = 'SidebarAlt';
 
   render() {
     return (

@@ -20,7 +20,7 @@ import React, { PropTypes } from 'react';
 import { ROLES } from '../../consts/profileConstants';
 
 class RolesManager extends React.Component {
-  static displayName = 'RolesManager'
+  static displayName = 'RolesManager';
 
   getRolesFromInputs() {
     const { roles } = this.props;
@@ -43,13 +43,13 @@ class RolesManager extends React.Component {
     roles.splice(i, 1);
 
     onChange(roles);
-  }
+  };
 
   onChange = () => {
     const { onChange } = this.props;
 
     onChange(this.getRolesFromInputs());
-  }
+  };
 
   render() {
     const { roles, onAdd } = this.props;

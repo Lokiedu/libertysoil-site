@@ -27,7 +27,7 @@ import { defaultSelector } from '../selectors';
 
 
 class TagCloudPage extends Component {
-  static displayName = 'TagCloudPage'
+  static displayName = 'TagCloudPage';
 
   static async fetchData(params, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);

@@ -101,7 +101,7 @@ export default class User extends Component {
     hideText: React.PropTypes.bool,
     timestamp: React.PropTypes.string,
     timestampLink: React.PropTypes.string
-  }
+  };
 
   static defaultProps = {
     hideAvatar: false,
