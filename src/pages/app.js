@@ -49,11 +49,16 @@ export class App extends React.Component {
   }
 
   render() {
+    let gaContent = '';
+
+    if (process.env.GOOGLE_ANALYTICS_ID) {
+      gaContent = <GAInitializer />;
+    }
+
     return (
       <div className="page">
         {this.props.children}
-
-        <GAInitializer />
+        {gaContent}
       </div>
     )
   }
