@@ -25,7 +25,7 @@ describe('Auth age with redux', function() {
 
   it('MUST renders with minimal props', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<Auth />);
+    renderer.render(<Auth messages={[]} ui={{}} />);
 
     return expect(renderer, 'to have rendered', <div></div>);
   });
