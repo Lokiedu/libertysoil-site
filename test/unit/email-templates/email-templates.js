@@ -1,6 +1,6 @@
 /*eslint-env node, mocha */
-import { unexpected as expect } from '../../test-helpers/expect-unit';
-import { renderVerificationTemplate, renderWelcomeTemplate }  from '../../src/email-templates/index';
+import { unexpected as expect } from '../../../test-helpers/expect-unit';
+import { renderVerificationTemplate, renderWelcomeTemplate }  from '../../../src/email-templates/index';
 
 
 describe('Email templates:', function() {

@@ -18,8 +18,8 @@
  */
 import i from 'immutable';
 
-import { theReducer } from '../../src/store';
-import { SET_CURRENT_USER } from '../../src/actions';
+import { theReducer } from '../../../src/store';
+import { SET_CURRENT_USER } from '../../../src/actions';
 
 
 describe('combined reducer "theReducer"', function() {

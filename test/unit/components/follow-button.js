@@ -1,6 +1,6 @@
 /*eslint-env node, mocha */
-import { TestUtils, unexpected, expect, React } from '../../test-helpers/expect-unit';
-import FollowButton from '../../src/components/follow-button';
+import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expect-unit';
+import FollowButton from '../../../src/components/follow-button';
 
 
 describe('Follow button Test', function() {

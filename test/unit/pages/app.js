@@ -17,32 +17,31 @@
  */
 /*eslint-env node, mocha */
 import ga from 'react-google-analytics';
-import { TestUtils, unexpected, expect, React } from '../../test-helpers/expect-unit';
+import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expect-unit';
 
-import { App } from '../../src/pages/app';
-import { initState } from '../../src/store';
+import { App } from '../../../src/pages/app';
 
 
 const GAInitializer = ga.Initializer;
 
 describe('App page', function() {
 
-  it('should not render GA when process.env.GOOGLE_ANALYTICS_ID not set', function() {
+  it('SHOULD NOT render GA when process.env.GOOGLE_ANALYTICS_ID not set', function() {
     let renderer = TestUtils.createRenderer();
+
     delete process.env.GOOGLE_ANALYTICS_ID;
+    renderer.render(<App><span>foo</span></App>);
 
-    renderer.render(<App store={initState()}><span>foo</span></App>);
-
-    return expect(renderer, 'not to contain',<GAInitializer />);
+    return expect(renderer, 'not to contain', <GAInitializer />);
   });
 
-  it('should render GA when process.env.GOOGLE_ANALYTICS_ID not set', function() {
+  it('SHOULD render GA when process.env.GOOGLE_ANALYTICS_ID is set', function() {
     let renderer = TestUtils.createRenderer();
+
     process.env.GOOGLE_ANALYTICS_ID = 100;
+    renderer.render(<App><span>foo</span></App>);
 
-    renderer.render(<App store={initState()}><span>foo</span></App>);
-
-    return expect(renderer, 'to contain',<GAInitializer />);
+    return expect(renderer, 'to contain', <GAInitializer />);
   });
 
 });
