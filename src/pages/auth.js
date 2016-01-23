@@ -29,7 +29,7 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-class Auth extends React.Component {
+export class Auth extends React.Component {
   static async fetchData(params, store) {
     const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
