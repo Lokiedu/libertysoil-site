@@ -23,7 +23,7 @@ import { Auth } from '../../../src/pages/auth';
 
 describe('Auth age with redux', function() {
 
-  it('MUST renders with no props', function() {
+  it('MUST renders with minimal props', function() {
     let renderer = TestUtils.createRenderer();
     renderer.render(<Auth />);
 
