@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
@@ -30,6 +30,14 @@ import Messages from '../components/messages';
 
 
 export class Auth extends React.Component {
+
+  static propTypes = {
+    messages: PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    ui: PropTypes.shape({
+      registrationSuccess: PropTypes.bool
+    }).isRequired
+  }
+
   static async fetchData(params, store) {
     const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
