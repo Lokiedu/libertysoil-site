@@ -25,7 +25,7 @@ import { ActionsTrigger } from '../triggers';
 
 const GAInitializer = ga.Initializer;
 
-class App extends React.Component {
+export class App extends React.Component {
   static propTypes = {
     children: PropTypes.element.isRequired
   };
