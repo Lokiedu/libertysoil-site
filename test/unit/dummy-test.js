@@ -11,9 +11,10 @@ class SomeComponent extends Component {
 
 describe('First test', function() {
   it('should have method render', function() {
-    let component = TestUtils.renderIntoDocument(<SomeComponent id={125} />);
+    let renderer = TestUtils.createRenderer();
+    renderer.render(<SomeComponent id={125} />);
 
-    return expect(component, 'to have rendered',
+    return expect(renderer, 'to have rendered',
        <div id={125}>
           Some simple content
        </div>

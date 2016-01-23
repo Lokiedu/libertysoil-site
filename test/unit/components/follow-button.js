@@ -6,9 +6,10 @@ import FollowButton from '../../../src/components/follow-button';
 describe('Follow button Test', function() {
 
   it('is empty for anonym user or when no current_user in props', function() {
-    let component = TestUtils.renderIntoDocument(<FollowButton />);
+    let renderer = TestUtils.createRenderer();
+    renderer.render(<FollowButton />);
 
-    return expect(component, 'to have rendered',
+    return expect(renderer, 'to have rendered',
                   <script></script>
     );
   });
