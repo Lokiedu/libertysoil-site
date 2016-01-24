@@ -36,16 +36,15 @@ export default class SidebarLink extends React.Component {
       to,
       children
     } = this.props;
-    let render = {
-      className: 'navigation__item'
-    };
+
+    let className = 'navigation__item';
 
     if (!enabled) {
-      render.className += ' navigation__item-disabled';
+      className += ' navigation__item-disabled';
     }
 
     return (
-      <Link className={render.className} activeClassName="navigation__item-active" to={to}>
+      <Link activeClassName="navigation__item-active" className={className} to={to}>
         <div className="navigation__icon"><span className="micon">{`${icon}`}</span></div>
         <div className="navigation__title">{children}</div>
         <div className="navigation__badge">{badge}</div>

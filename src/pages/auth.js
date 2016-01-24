@@ -64,10 +64,10 @@ export class Auth extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let render = {};
+    let renderedMessages;
 
     if (messages.length) {
-      render.messages = (
+      renderedMessages = (
         <div className="page__messages">
           <div className="page__body page__body-small">
             <Messages messages={messages} removeMessage={triggers.removeMessage} />
@@ -94,7 +94,7 @@ export class Auth extends React.Component {
           </header>
         </section>
 
-        {render.messages}
+        {renderedMessages}
 
         <div className="page__content page__content-spacing">
           <div className="page__body page__body-small">
