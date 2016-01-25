@@ -15,10 +15,5 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import RolesManager from './roles-manager';
-import ChangeAvatar from './change-avatar';
-
-export default {
-  RolesManager,
-  ChangeAvatar
-};
+export { default as RolesManager } from './roles-manager';
+export { default as ChangeAvatar } from './change-avatar';
