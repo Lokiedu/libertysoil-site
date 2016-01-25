@@ -1,7 +1,8 @@
 // Update with your config settings.
 
 try {
-  require("babel/register")();
+  require('babel-register');
+  require('babel-polyfill');
 } catch(e) {
   // it's ok. might be already enabled
 }
