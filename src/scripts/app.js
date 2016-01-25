@@ -22,7 +22,6 @@ import { createHistory } from 'history'
 import { Router } from 'react-router';
 import { Provider } from 'react-redux';
 import { syncReduxAndRouter } from 'redux-simple-router';
-import 'mapbox.js';
 
 import { getRoutes } from '../routing'
 import { AuthHandler, FetchHandler } from '../utils/loader';

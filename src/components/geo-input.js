@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
 
-import Map from './map';
-import PickpointInput from '../components/pickpoint-input';
+import MapboxMap from './mapbox-map';
+import PickpointInput from './pickpoint-input';
+
 
 export default class GeoInput extends React.Component {
   static displayName = "GeoInput";
@@ -33,57 +33,52 @@ export default class GeoInput extends React.Component {
   };
 
   static defaultProps = {
-    initialLocation: {lat: null, lon: null},
-    // pos - {lat: Number, lon: Number}
-    onSelect: function (/* pos */) {}
+    onSelect: (/* pos */) => {}
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      L: null,
-      map: null,
-      marker: null,
-      selectedLocation: {lat: null, lon: null}
+      selectedLocation: props.initialLocation,
+      viewLocation: props.initialLocation
     };
   }
 
   componentDidMount() {
-    // Initialize hidden inputs just in case.
-    if (this.props.initialLocation) {
-      this._setLatLonInputs(this.props.initialLocation);
+    let { initialLocation } = this.props;
+
+    // Autodetect location
+    if (!initialLocation || !initialLocation.lat || !initialLocation.lon) {
+      this._map.leafletMap.leafletElement.locate();
     }
   }
 
-  componentDidUpdate(oldProps, oldState) {
-    let { map, selectedLocation } = this.state;
+  _handlePickpointSelect = (event) => {
+    let location = {
+      lat: event.lat,
+      lon: event.lon
+    };
 
-    if (map && this._shouldSelectLocation(selectedLocation, oldState.selectedLocation)) {
-      this._selectLocation(selectedLocation);
-    }
-  }
+    this.setState({
+      selectedLocation: location,
+      viewLocation: location
+    });
+  };
 
-  static ZOOM = 9;
+  _handleLocationFound = (event) => {
+    let location = {
+      lat: event.latitude,
+      lon: event.longitude
+    };
 
-  _mapCreatedHandler(map, L) {
-    let initialLocation = this.props.initialLocation;
-    let newState = {map, L};
+    this.setState({
+      selectedLocation: location,
+      viewLocation: location
+    });
+  };
 
-    // Set initial view
-    if (initialLocation.lat && initialLocation.lon) {
-      newState.selectedLocation = initialLocation;
-      map.setView(initialLocation, GeoInput.ZOOM);
-    } else {
-      map.locate({setView: true});
-    }
-
-    this.setState(newState);
-
-    map.on('click', this._mapClickHandler.bind(this));
-  }
-
-  _mapClickHandler(event) {
+  _handleClickOnMap = (event) => {
     let location = {
       lat: event.latlng.lat,
       lon: event.latlng.lng
@@ -92,57 +87,33 @@ export default class GeoInput extends React.Component {
     this.setState({
       selectedLocation: location
     });
-  }
-
-  _pickpointSelectHandler(suggestion) {
-    let location = _.pick(suggestion, 'lat', 'lon');
-
-    this.state.map.panTo(location);
-    this.state.map.setZoom(GeoInput.ZOOM);
-    this.setState({
-      selectedLocation: location
-    });
-  }
-
-  _selectLocation(location) {
-    this._setLatLonInputs(location);
-    this._setMapMarker(location);
-    this.props.onSelect(location);
-  }
-
-  _setLatLonInputs(location) {
-    this.refs.lat.value = location.lat;
-    this.refs.lon.value = location.lon;
-  }
-
-  _setMapMarker(location) {
-    let { L, map, marker } = this.state;
-
-    if (marker) {
-      map.removeLayer(marker);
-    }
-
-    let newMarker = L.marker(location);
-
-    map.addLayer(newMarker);
-
-    this.setState({
-      marker: newMarker
-    });
-  }
-
-  _shouldSelectLocation(newLocation, oldLocation) {
-    return newLocation.lat !== oldLocation.lat || newLocation.lon !== oldLocation.lon;
-  }
+  };
 
   render() {
+    let selectedLocation = {
+      lat: parseFloat(this.state.selectedLocation.lat) || 0,
+      lon: parseFloat(this.state.selectedLocation.lon) || 0
+    };
+
+    let viewLocation = {
+      lat: parseFloat(this.state.viewLocation.lat) || 0,
+      lon: parseFloat(this.state.viewLocation.lon) || 0
+    };
+
     return (
       <div className="geo_input_wrapper">
-        <input name="lat" ref="lat" type="hidden" />
-        <input name="lon" ref="lon" type="hidden" />
-        <Map className="geo_input__map" onMapCreated={this._mapCreatedHandler.bind(this)} />
+        <input name="lat" type="hidden" value={selectedLocation.lat} />
+        <input name="lon" type="hidden" value={selectedLocation.lon} />
+        <MapboxMap
+          className="geo_input__map"
+          ref={c => this._map = c}
+          selectedLocation={selectedLocation}
+          viewLocation={viewLocation}
+          onClick={this._handleClickOnMap}
+          onLocationfound={this._handleLocationFound}
+        />
         <div className="geo_input__pickpoint_wrapper">
-          <PickpointInput onSelect={this._pickpointSelectHandler.bind(this)} />
+          <PickpointInput onSelect={this._handlePickpointSelect} />
         </div>
       </div>
     );
