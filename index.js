@@ -21,6 +21,8 @@ import _ from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 import knexLogger from 'knex-logger';
+import proxy from 'proxy-middleware';
+import url from 'url';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server'
@@ -164,12 +166,19 @@ let reactHandler = async (req, res) => {
 
 let app = express();
 
-app.set('views', './src/views');
-app.set('view engine', 'ejs');
-
 if (process.env.NODE_ENV == 'development') {
+  var webpack = require('webpack');
+  var webpackConfig = require('./webpack.dev.config');
+  var compiler = webpack(webpackConfig);
+
+  app.use(require('webpack-dev-middleware')(compiler, webpackConfig.devMiddleware));
+  app.use(require('webpack-hot-middleware')(compiler));
+
   app.use(knexLogger(bookshelf.knex));
 }
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
@@ -180,6 +189,8 @@ app.use('/api/v1', api);
 app.use(express.static('public', { index: false}));
 app.use(wrap(reactHandler));
 
-app.listen(8000);
+app.listen(8000, function () {
+  console.log(`Listening at 8000`);
+});
 
 export default app;
