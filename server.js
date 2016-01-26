@@ -189,8 +189,4 @@ app.use('/api/v1', api);
 app.use(express.static('public', { index: false}));
 app.use(wrap(reactHandler));
 
-app.listen(8000, function () {
-  console.log(`Listening at 8000`);
-});
-
 export default app;
