@@ -21,8 +21,7 @@ import _ from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 import knexLogger from 'knex-logger';
-import proxy from 'proxy-middleware';
-import url from 'url';
+import chokidar from 'chokidar';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server'
@@ -171,8 +170,39 @@ if (process.env.NODE_ENV == 'development') {
   var webpackConfig = require('./webpack.dev.config');
   var compiler = webpack(webpackConfig);
 
-  app.use(require('webpack-dev-middleware')(compiler, webpackConfig.devMiddleware));
+  app.use(require('webpack-dev-middleware')(compiler, {
+    log: console.log,
+    path: '/__webpack_hmr',
+    publicPath: webpackConfig.output.publicPath,
+    stats: {
+      colors: true
+    }
+  }));
   app.use(require('webpack-hot-middleware')(compiler));
+
+  // Taken from https://github.com/glenjamin/ultimate-hot-reloading-example/blob/master/server.js
+
+  // Do "hot-reloading" of express stuff on the server
+  // Throw away cached modules and re-require next time
+  // Ensure there's no important state in there!
+  var watcher = chokidar.watch('./src/api');
+  watcher.on('ready', function () {
+    watcher.on('all', function () {
+      console.log("Clearing /src/api/ cache from server");
+      Object.keys(require.cache).forEach(function (id) {
+        if (/\/src\/api\//.test(id)) delete require.cache[id];
+      });
+    });
+  });
+
+  // Do "hot-reloading" of react stuff on the server
+  // Throw away the cached client modules and let them be re-required next time
+  compiler.plugin('done', function () {
+    console.log("Clearing /src/ cache from server");
+    Object.keys(require.cache).forEach(function (id) {
+      if (/\/src\//.test(id)) delete require.cache[id];
+    });
+  });
 
   app.use(knexLogger(bookshelf.knex));
 }
