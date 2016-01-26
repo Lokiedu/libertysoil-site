@@ -3,13 +3,11 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 
-const PORT = 8000;
-
 module.exports = {
   cache: true,
 
   entry: [
-    'webpack-hot-middleware/client',
+    'webpack-hot-middleware/client?path=/__webpack_hmr',
     'babel-polyfill',
     './src/scripts/app.js',
     './src/less/styles.less'
@@ -20,9 +18,9 @@ module.exports = {
   },
 
   output: {
-    path: path.join(__dirname, '/public/'),
+    path: path.join(__dirname, '/public/assets'),
     filename: 'app.js',
-    publicPath: `/assets/`,
+    publicPath: `http://localhost:8000/assets/`,
     pathinfo: true
   },
 
@@ -33,6 +31,11 @@ module.exports = {
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
         loader: 'transform/cacheable?brfs'
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'transform?envify'
       }
     ],
     loaders: [
@@ -57,35 +60,17 @@ module.exports = {
           }
         }
       },
-      {
-        test: /\.json$/,
-        loader: 'json'
-      },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
-      },
-      {
-        test: /\.less$/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap!less?sourceMap')
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?limit=10000&minetype=application/font-woff'
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader'
-      }
+      {test: /\.json$/, loader: 'json'},
+      {test: /\.css$/, loader: 'style?sourceMap!css?sourceMap'},
+      {test: /\.less$/, loader: 'style?sourceMap!css?sourceMap!less?sourceMap'},
+      {test: /\.(ttf|eot|woff(2))?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
+      {test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000'}
     ]
   },
 
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new ExtractTextPlugin('styles.css', {
-      allChunks: true
-    }),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEV__: true
@@ -94,17 +79,4 @@ module.exports = {
 
   debug: true,
   devtool: 'cheap-module-inline-source-map',
-
-  devMiddleware: {
-    hot: true,
-    noInfo: false,
-    quiet: false,
-    lazy: false,
-    publicPath: '/assets/',
-    contentBase: '/public/',
-
-    stats: {
-      colors: true
-    }
-  }
 };
