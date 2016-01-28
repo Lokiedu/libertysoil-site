@@ -36,7 +36,7 @@ export class Auth extends React.Component {
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
-  }
+  };
 
   static async fetchData(params, store) {
     const props = store.getState();
