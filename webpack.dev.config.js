@@ -63,7 +63,7 @@ module.exports = {
       {test: /\.json$/, loader: 'json'},
       {test: /\.css$/, loader: 'style?sourceMap!css?sourceMap'},
       {test: /\.less$/, loader: 'style?sourceMap!css?sourceMap!less?sourceMap'},
-      {test: /\.(ttf|eot|woff(2))?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
+      {test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
       {test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000'}
     ]
   },
