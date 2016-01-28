@@ -27,11 +27,6 @@ module.exports = {
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
         loader: 'transform/cacheable?brfs'
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'transform?envify'
       }
     ],
     loaders: [
@@ -60,6 +55,10 @@ module.exports = {
   },
 
   plugins: [
+    // An appropriate alternative to envify.
+    new webpack.EnvironmentPlugin([
+      'NODE_ENV', 'MAPBOX_ACCESS_TOKEN'
+    ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.DedupePlugin(),

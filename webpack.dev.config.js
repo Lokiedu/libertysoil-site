@@ -1,6 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 
 module.exports = {
@@ -31,11 +30,6 @@ module.exports = {
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
         loader: 'transform/cacheable?brfs'
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'transform?envify'
       }
     ],
     loaders: [
@@ -69,6 +63,10 @@ module.exports = {
   },
 
   plugins: [
+    // An appropriate alternative to envify.
+    new webpack.EnvironmentPlugin([
+      'NODE_ENV', 'MAPBOX_ACCESS_TOKEN'
+    ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
@@ -78,5 +76,5 @@ module.exports = {
   ],
 
   debug: true,
-  devtool: 'cheap-module-inline-source-map',
+  devtool: 'cheap-module-inline-source-map'
 };
