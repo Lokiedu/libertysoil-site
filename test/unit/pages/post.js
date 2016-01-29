@@ -19,15 +19,23 @@
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 
 import { PostPage } from '../../../src/pages/post';
+import NotFound from '../../../src/pages/not-found';
 
 
 describe('Post page', function() {
 
-  it('MUST renders as empty script with non existing post uuid', function() {
+  it('MUST renders as empty script when post is not yet fetched', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<PostPage params={{uuid: 'xxx'}} posts={[]} />);
+    renderer.render(<PostPage params={{uuid: 'xxx'}} posts={{}} />);
 
     return expect(renderer, 'to have rendered', <script />);
+  });
+
+  it('MUST renders as <NotFound /> page when post is not exist', function() {
+    let renderer = TestUtils.createRenderer();
+    renderer.render(<PostPage params={{uuid: 'xxx'}} posts={{'xxx': false}} />);
+
+    return expect(renderer, 'to have rendered', <NotFound />);
   });
 
 });
