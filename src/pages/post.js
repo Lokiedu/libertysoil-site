@@ -29,7 +29,6 @@ import ApiClient from '../api/client'
 import { addPost } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
-import { Post } from '../api/db';
 
 
 export class PostPage extends React.Component {
@@ -38,7 +37,7 @@ export class PostPage extends React.Component {
     params: PropTypes.shape({
       uuid: PropTypes.string.isRequired
     }).isRequired,
-    posts: PropTypes.arrayOf(Post).isRequired
+    posts: PropTypes.shape().isRequired
   };
 
   static async fetchData(params, store, client) {
