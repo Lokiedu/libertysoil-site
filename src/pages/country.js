@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
@@ -23,6 +23,7 @@ import { API_HOST } from '../config';
 import { addCountry, setCountryPosts } from '../actions';
 
 import Header from '../components/header';
+import NotFound from '../pages/not-found';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar'
@@ -30,8 +31,17 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
-class CountryPage extends Component {
+export class CountryPage extends Component {
   static displayName = 'CountryPage'
+
+  static propTypes = {
+    geo: PropTypes.shape({
+      countries: PropTypes.shape.isRequired
+    }),
+    params: PropTypes.shape({
+      country: PropTypes.string.isRequired
+    })
+  };
 
   static async fetchData(params, store, client) {
     let country = await client.country(params.country);
@@ -59,6 +69,10 @@ class CountryPage extends Component {
 
     if(this.props.params.country in geo.countries) {
       thisCountry = geo.countries[this.props.params.country];
+    } else {
+      return (
+        <NotFound />
+      );
     }
 
     let thisCountryPosts = [];
