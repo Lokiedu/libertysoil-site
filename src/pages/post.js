@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import NotFound from './not-found'
@@ -29,9 +29,18 @@ import ApiClient from '../api/client'
 import { addPost } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+import { Post } from '../api/db';
 
 
-class PostPage extends React.Component {
+export class PostPage extends React.Component {
+
+  static propTypes = {
+    params: PropTypes.shape({
+      uuid: PropTypes.string.isRequired
+    }).isRequired,
+    posts: PropTypes.arrayOf(Post).isRequired
+  };
+
   static async fetchData(params, store, client) {
     let result = await client.postInfo(params.uuid)
     store.dispatch(addPost(result));
