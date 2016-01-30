@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
@@ -26,7 +26,8 @@ import Footer from '../components/footer';
 import Header from '../components/header';
 import Message from '../components/message';
 
-let ResetForm = (props) => {
+
+export let ResetForm = (props) => {
   return (
     <form className="layout__grid layout__grid-responsive layout-align_end layout__space-double" onSubmit={props.submitHandler} action="" method="post">
       <div className="layout__grid_item layout__grid_item-identical">
@@ -40,15 +41,21 @@ let ResetForm = (props) => {
    );
 };
 
-let SuccessMessage = () => {
+export let SuccessMessage = () => {
   return (
     <Message>
-      If we found this email in our database, we've just sent you a message with further steps.
+      If we found this email in our database, we have just sent you a message with further steps.
     </Message>
   );
 };
 
-class Form extends React.Component {
+export class Form extends React.Component {
+
+  static propTypes = {
+    ui: PropTypes.shape({
+      submitResetPassword: PropTypes.bool
+    }).isRequired
+  };
 
   submitHandler = (event) => {
     event.preventDefault();
@@ -62,7 +69,6 @@ class Form extends React.Component {
   };
 
   render() {
-
     let content = <ResetForm submitHandler={this.submitHandler} />
 
     if (this.props.ui.submitResetPassword) {
