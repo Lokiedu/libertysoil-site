@@ -32,8 +32,6 @@ import { defaultSelector } from '../selectors';
 
 
 export class CountryPage extends Component {
-  static displayName = 'CountryPage'
-
   static propTypes = {
     geo: PropTypes.shape({
       countries: PropTypes.shape.isRequired
