@@ -120,7 +120,7 @@
     "unexpected-express": "~8.0.0",
     "unexpected-react": "~0.5.1",
     "url-loader": "^0.5.7",
-    "webpack": "^2.0.2-beta",
+    "webpack": "^2.0.6-beta",
     "webpack-dev-middleware": "^1.5.1",
     "webpack-hot-middleware": "^2.6.0"
   }
