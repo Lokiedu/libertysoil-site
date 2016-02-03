@@ -23,29 +23,26 @@ import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import SidebarFollowedTags from './sidebar-followed-tags';
-import { defaultSelector } from '../selectors';
+import currentUserSelector from '../selectors/currentUser';
 
 
 class Sidebar extends React.Component {
   static displayName = 'Sidebar';
 
   render() {
-    if (!this.props.current_user) {
+    if (!this.props.is_logged_in) {
       return null;
     }
 
-    let {
-      current_user,
-      current_user_tags
-    } = this.props;
+    let current_user = this.props.current_user.toJS();
 
-    let followedTags = _.values(this.props.current_user.followed_tags);
-    let followedSchools = _.values(this.props.current_user.followed_schools);
-    let followedGeotags = _.values(this.props.current_user.followed_geotags);
+    let followedTags = _.values(current_user.followed_tags);
+    let followedSchools = _.values(current_user.followed_schools);
+    let followedGeotags = _.values(current_user.followed_geotags);
     let showLikes = (current_user.likes && current_user.likes.length > 0);
     let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
     let showFollowedTags = !!followedTags.length || !!followedSchools.length || !!followedGeotags.length;
-    let showUsedTags = current_user_tags && !!current_user_tags.length;
+    let showUsedTags = current_user.tags && !!current_user.tags.length;
 
     return (
       <div className="page__sidebar font-open_sans">
@@ -89,9 +86,9 @@ class Sidebar extends React.Component {
             <h4 className="sidebar__heading">I post to</h4>
             <div className="sidebar__user_tags layout__row">
               <TagCloud
-                truncated={true}
-                tags={this.props.current_user_tags}
                 schools={[]}
+                tags={current_user.tags}
+                truncated
               />
             </div>
           </div>
@@ -101,4 +98,4 @@ class Sidebar extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Sidebar);
+export default connect(currentUserSelector)(Sidebar);
