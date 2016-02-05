@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -30,6 +30,15 @@ import { defaultSelector } from '../selectors';
 
 
 export class SchoolPage extends React.Component {
+
+  static propTypes = {
+    params: PropTypes.shape({
+      school_name: PropTypes.string.isRequired
+    }),
+    school_posts: PropTypes.shape(
+    ).isRequired
+  };
+
   static async fetchData(params, store, client) {
     let school = client.schoolInfo(params.school_name);
     let posts = client.schoolPosts(params.school_name);
@@ -54,7 +63,7 @@ export class SchoolPage extends React.Component {
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
 
     if (!school) {
-      return null; // not loaded yet
+      return <script />; // not loaded yet
     }
 
     if (!school.id) {
