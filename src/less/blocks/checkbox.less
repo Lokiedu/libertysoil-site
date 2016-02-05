@@ -16,5 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .checkbox {
-  margin-right: @halfSpace;
+  display: flex;
+  align-items: center;
+
+  &__label-left {
+    margin-right: @halfSpace;
+  }
+
+  &__label-right {
+    margin-left: @halfSpace;
+  }
 }
+
