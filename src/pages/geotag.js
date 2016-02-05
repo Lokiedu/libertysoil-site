@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import ApiClient from '../api/client';
@@ -34,6 +34,18 @@ import { defaultSelector } from '../selectors';
 
 export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
+
+  static propTypes = {
+    geotag_posts: PropTypes.arrayOf(
+      PropTypes.shape()
+    ).isRequired,
+    geotags: PropTypes.arrayOf(
+      PropTypes.shape()
+    ).isRequired,
+    params: PropTypes.shape({
+      url_name: PropTypes.string.isRequired
+    })
+  };
 
   static async fetchData(params, store, client) {
     let geotag = client.getGeotag(params.url_name);
@@ -67,7 +79,7 @@ export class GeotagPage extends Component {
     let tagPosts = geotag_posts[this.props.params.url_name] || [];
 
     if (!geotag) {
-      return null;
+      return <script />;
     }
 
     if (!geotag.id) {
