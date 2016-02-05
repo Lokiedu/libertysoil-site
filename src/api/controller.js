@@ -1108,6 +1108,9 @@ export default class ApiController {
       }
     }
 
+    // toJSON is important. It translates the date to UTC.
+    post_object.attributes.updated_at = new Date().toJSON();
+
     try {
       await post_object.save(null, {method: 'update'});
 
