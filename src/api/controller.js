@@ -573,9 +573,9 @@ export default class ApiController {
         qb
           .distinct()
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
-          .where('followers.user_id', '=', uid)  // followed posts
-          .orWhere('posts.user_id', '=', uid)    // own posts
-          .orderBy('posts.created_at', 'desc')
+          .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
+          .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
+          .orderBy('posts.fully_published_at', 'desc')
       })
 
     let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
@@ -997,6 +997,11 @@ export default class ApiController {
       obj.set('more', {title: req.body.title});
     }
 
+    if (!req.body.minor_update) {
+      // Show post in the news feed.
+      obj.set('fully_published_at', new Date().toJSON());
+    }
+
     try {
       await obj.save(null, {method: 'insert'});
 
@@ -1110,6 +1115,11 @@ export default class ApiController {
 
     // toJSON is important. It translates the date to UTC.
     post_object.attributes.updated_at = new Date().toJSON();
+
+    if (!req.body.minor_update && !post_object.attributes.fully_published_at) {
+      // Show post in the news feed.
+      post_object.attributes.fully_published_at = new Date().toJSON();
+    }
 
     try {
       await post_object.save(null, {method: 'update'});
