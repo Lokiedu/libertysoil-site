@@ -110,7 +110,8 @@ export default class EditPost extends React.Component {
       text: form.text.value,
       tags: this.props.tags.map(tag => tag.name),
       schools: this.props.schools.map(school => school.name),
-      geotags: this.props.geotags.map(geotag => geotag.id)
+      geotags: this.props.geotags.map(geotag => geotag.id),
+      minor_update: (form.minor_update) ? form.minor_update.checked : null
     };
 
     await this.props.triggers.updatePost(this.props.post.id, data);
@@ -214,17 +215,6 @@ export default class EditPost extends React.Component {
                     rows={10}
                   />
                 </div>
-                <div className="layout__row layout layout-align_vertical">
-                  <div className="layout__row">
-                    <div className="layout layout__grid layout-align_right">
-                      <button className="button button-wide button-red" type="submit">Save</button>
-                      <button className="button button-red" type="button" onClick={this._handleDelete}>
-                        <span className="fa fa-trash-o" />
-                      </button>
-                      {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
-                    </div>
-                  </div>
-                </div>
               </div>
               <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
                 <div className="layout layout-rows layout-align_vertical">
@@ -234,6 +224,27 @@ export default class EditPost extends React.Component {
                   {/*<TagIcon className="create_post__tag_button" type={TAG_MENTION} />*/}
                   <TagIcon className="create_post__tag_button" type={TAG_HASHTAG} onClick={this._showAddHashtagModal} />
                 </div>
+              </div>
+            </div>
+            <div className="layout__row layout layout-align_vertical">
+              <div className="layout layout__grid layout__grid_item-wide">
+                <button className="button button-wide button-red" type="submit">Save</button>
+                <button className="button button-red" type="button" onClick={this._handleDelete}>
+                  <span className="fa fa-trash-o" />
+                </button>
+                {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
+              </div>
+              <div className="layout__grid_item layout__grid_item-small">
+                {!post.fully_published_at &&
+                  <label
+                    className="action checkbox"
+                    title="If you uncheck this option, the post will show up on
+                           your subscribers' feeds as if you've just posted it."
+                  >
+                    <span className="checkbox__label-left">Minor update (?)</span>
+                    <input defaultChecked name="minor_update" type="checkbox" />
+                  </label>
+                }
               </div>
             </div>
           </div>

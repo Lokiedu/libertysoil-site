@@ -87,7 +87,8 @@ export default class CreatePost extends React.Component {
       text: form.text.value,
       tags: this.props.tags.map(tag => tag.name),
       schools: this.props.schools.map(school => school.name),
-      geotags: this.props.geotags.map(geotag => geotag.id)
+      geotags: this.props.geotags.map(geotag => geotag.id),
+      minor_update: form.minor_update.checked
     };
 
     this.props.actions.resetCreatePostForm();
@@ -183,16 +184,6 @@ export default class CreatePost extends React.Component {
                     onFocus={this._handleFocus}
                   />
                 </div>
-                {expanded &&
-                  <div className="layout__row layout layout-align_vertical">
-                    <div className="layout__grid_item">
-                      <button className="button button-wide button-red" type="submit">Publish</button>
-                    </div>
-                    <div className="layout__grid_item">
-                      {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
-                    </div>
-                  </div>
-                }
               </div>
               <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
                 <MoreButton expanded={expanded} onClick={this._handleClickOnMore} />
@@ -207,6 +198,26 @@ export default class CreatePost extends React.Component {
                 }
               </div>
             </div>
+            {expanded &&
+              <div className="layout__row layout layout-align_vertical">
+                <div className="layout__grid_item">
+                  <button className="button button-wide button-red" type="submit">Publish</button>
+                </div>
+                <div className="layout__grid_item layout__grid_item-wide">
+                  {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
+                </div>
+                <div className="layout__grid_item layout__grid_item-small">
+                  <label
+                    className="action checkbox"
+                    title="If you check this option, your subscribers won't see the post
+                           on their feeds but will be able to see it on your page."
+                  >
+                    <span className="checkbox__label-left">Minor update (?)</span>
+                    <input name="minor_update" type="checkbox" />
+                  </label>
+                </div>
+              </div>
+            }
           </div>
         </form>
         <AddTagModal
