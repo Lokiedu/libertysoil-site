@@ -1,16 +1,20 @@
 
 if (typeof document === 'undefined') {
-    const jsdom = require('jsdom').jsdom;
 
-    global.document = jsdom('');
-    global.window = global.document.defaultView;
+  let virtualConsole = require('jsdom').createVirtualConsole();
+  virtualConsole.on("log", function (message) {
+    console.log("console.log called ->", message);
+  });
 
-    for (let key in global.window) {
-        if (!global[key]) {
-            global[key] = global.window[key];
-        }
+  const jsdom = require('jsdom').jsdom;
+
+  global.document = jsdom(undefined, {virtualConsole: virtualConsole});
+  global.window = global.document.defaultView;
+
+  for (let key in global.window) {
+    if (!global[key]) {
+      global[key] = global.window[key];
     }
+  }
 
-    require('unexpected');
-    require('unexpected-react');
 }
