@@ -112,7 +112,10 @@ export default class RegisterComponent extends React.Component {
         <div className="layout__row layout__row-double">
           <div className="layout__grid layout__grid-big layout-align_vertical">
             <button className="button button-big button-green">Sign up</button>
-            <label className="action layout layout-align_vertical"><input type="checkbox" className="checkbox" name="agree" required="required" /><span>I agree to Terms &amp; Conditions</span></label>
+            <label className="action checkbox">
+              <input name="agree" required="required" type="checkbox" />
+              <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
+            </label>
           </div>
         </div>
       </form>
