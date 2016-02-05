@@ -24,9 +24,9 @@ import NotFound from '../../../src/pages/not-found';
 
 describe('GeotagPage', function() {
 
-  it('MUST render <NotFound /> for non existing geotag', function() {
+  it('MUST render <script /> for non existing geotag', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<GeotagPage geotag_posts={[]} geotags={[]} params={{url_name: 'test'}}  />);
+    renderer.render(<GeotagPage geotag_posts={{}} geotags={{}} params={{url_name: 'test'}}  />);
 
     return expect(renderer, 'to have rendered', <script />);
   });

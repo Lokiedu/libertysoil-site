@@ -36,12 +36,8 @@ export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
 
   static propTypes = {
-    geotag_posts: PropTypes.arrayOf(
-      PropTypes.shape()
-    ).isRequired,
-    geotags: PropTypes.arrayOf(
-      PropTypes.shape()
-    ).isRequired,
+    geotag_posts: PropTypes.shape().isRequired,
+    geotags: PropTypes.shape().isRequired,
     params: PropTypes.shape({
       url_name: PropTypes.string.isRequired
     })
