@@ -614,9 +614,15 @@ export default class ApiController {
       return;
     }
 
-
     // 4) P is min. 8 charachters
     // 5) P can contain any combination of ASCII characters
+    if (!req.body.password.match(/^[\x20-\x7E]{8,}$/)) {
+      res.status(400);
+      res.send({error: 'Password is min. 8 characters. Password can only have ascii characters.'});
+      return;
+    }
+
+
     // 6) FN  supports unicode/UTF-8 characters, with a maximum of 60 characters.
     // 7) LN supports unicode/UTF-8 characters, with a maximum of 60 characters.
     // 8) E supports User_Registation_01_mail_validation_01"
