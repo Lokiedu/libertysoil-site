@@ -352,7 +352,7 @@ describe('api v.1', () => {
 
     describe('Registration', () => {
 
-      it('Username max lenght is 31 condition', async () => {
+      it('Username max length is 31 condition', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
           username: 'abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: 'test',
@@ -360,9 +360,17 @@ describe('api v.1', () => {
         }}, 'to validation fail with', "Username maximum length is 31.");
       });
 
-      it('Username can contain only lower case a-z ', async () => {
+      it('Username can not contain Upper case ascii characters', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
           username: 'aaaA', // capital A do not allowed
+          password: 'test',
+          email: 'test'
+        }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
+      });
+
+      it('Username can not contain two or more periods in a row', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+          username: 'a..aa.', // double period (.) is not allowed
           password: 'test',
           email: 'test'
         }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
