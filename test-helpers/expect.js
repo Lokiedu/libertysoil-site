@@ -99,4 +99,16 @@ expect.addAssertion('not to open authorized', function (expect, subject, value) 
   });
 });
 
+expect.addAssertion('to validation fail with', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject),
+    response: {
+      statusCode: 400
+    }
+  }).then(function (context) {
+    let body = context.httpResponse.body;
+    expect(body.error, 'to contain', value);
+  });
+});
+
 export default expect;
