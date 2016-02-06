@@ -599,22 +599,22 @@ export default class ApiController {
       }
     }
 
+    // 1) UN is max. 31 characters
     if (req.body.username.length > 31) { // punycode js can be used for unicode
       res.status(400);
       res.send({error: 'Username maximum length is 31.'});
       return;
     }
 
-    if (!req.body.username.match(/^[a-z0-9\-\_\']+$/)) {
+    // 2) UN can contain letters (a-z), numbers (0-9), dashes (-), underscores (_), apostrophes ('}, and periods (.).
+    // 3) UN can't contain an equal sign (=), brackets (<,>), plus sign (+), a comma (,), or more than one period (.) in a row
+    if (!req.body.username.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/)) {
       res.status(400);
       res.send({error: 'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'});
       return;
     }
 
-    // user input validation
-    // 1) UN is max. 31 characters
-    // 2) UN can contain letters (a-z), numbers (0-9), dashes (-), underscores (_), apostrophes ('}, and periods (.).
-    // 3) UN can't contain an equal sign (=), brackets (<,>), plus sign (+), a comma (,), or more than one period (.) in a row
+
     // 4) P is min. 8 charachters
     // 5) P can contain any combination of ASCII characters
     // 6) FN  supports unicode/UTF-8 characters, with a maximum of 60 characters.
