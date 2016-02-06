@@ -605,6 +605,12 @@ export default class ApiController {
       return;
     }
 
+    if (!req.body.username.match(/^[a-z0-9\-\_\']+$/)) {
+      res.status(400);
+      res.send({error: 'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'});
+      return;
+    }
+
     // user input validation
     // 1) UN is max. 31 characters
     // 2) UN can contain letters (a-z), numbers (0-9), dashes (-), underscores (_), apostrophes ('}, and periods (.).
