@@ -17,6 +17,8 @@
  */
 import React, { PropTypes, Component } from 'react';
 
+import HashtagSelect from './hashtag-select';
+
 
 export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
@@ -28,23 +30,28 @@ export default class AddHashtagForm extends Component {
     onAddHashtag: PropTypes.func.isRequired
   };
 
-  _handleAddTag = (event) => {
+  _handleEnter = (event) => {
     event.preventDefault();
 
+    let tagName = this._input.value.trim();
+
+    this._addTag({name: tagName});
+  };
+
+  _addTag = (tag) => {
     let { addedHashtags } = this.props;
-    let tagName = this.refs.input.value.trim();
 
-    if (tagName.length < 3) {
+    if (tag.name.length < 3) {
       return;
     }
 
-    if (addedHashtags.find(tag => tag.name === tagName)) {
+    if (addedHashtags.find(addedTag => addedTag.name === tag.name)) {
       return;
     }
 
-    this.refs.input.value = '';
+    this._input.reset();
 
-    this.props.onAddHashtag({name: tagName});
+    this.props.onAddHashtag(tag);
   };
 
   render() {
@@ -56,27 +63,22 @@ export default class AddHashtagForm extends Component {
 
         <div>
           <div className="layout__row add_tag_modal__tab_panel">
-            <div className="layout">
-              <div className="layout__grid_item layout__grid_item-wide">
-                <form onSubmit={this._handleAddTag}>
-                  <input
-                    className="input input-block input-transparent input-button_height"
+            <form onSubmit={this._handleEnter}>
+              <div className="layout">
+                <div className="layout__grid_item layout__grid_item-wide">
+                  <HashtagSelect
                     placeholder="Start typing..."
-                    ref="input"
-                    type="text"
-                    maxLength="72"
+                    ref={(c) => this._input = c}
+                    onSelect={this._addTag}
                   />
-                </form>
-              </div>
-              <div className="layout__grid_item">
-                  <span
-                    className="button button-wide add_tag_modal__add_button action"
-                    onClick={this._handleAddTag}
-                  >
+                </div>
+                <div className="layout__grid_item">
+                  <button className="button button-wide add_tag_modal__add_button action">
                     Add
-                  </span>
+                  </button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
