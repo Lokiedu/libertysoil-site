@@ -1709,4 +1709,21 @@ export default class ApiController {
       return;
     }
   }
+
+  async searchTags(req, res) {
+    let Label = this.bookshelf.model('Label');
+
+    try {
+      let tags = await Label.collection().query(function (qb) {
+        qb
+          .where('name', 'ILIKE', `${req.params.query}%`)
+          .limit(10);
+      }).fetch();
+
+      res.send({tags});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
 }
