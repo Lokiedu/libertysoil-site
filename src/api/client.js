@@ -282,6 +282,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async searchTags(query) {
+    let response = await this.get(`/api/v1/tags/search/${query}`);
+    return response.body;
+  }
+
   async followTag(name) {
     let response = await this.post(`/api/v1/tag/${name}/follow`);
     return response.body;
