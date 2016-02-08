@@ -35,3 +35,17 @@ export async function createJob(name, data) {
 
   return await promise;
 }
+
+export async function createDelayedJob(name, data, delay_seconds = 0) {
+  let promise = new Promise((resolve, reject) => {
+    queue.create(name, data).delay(delay_seconds * 1000).save(function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+
+  return await promise;
+}

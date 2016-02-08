@@ -26,5 +26,10 @@ module.exports = {
       //   // see https://github.com/mranney/node_redis#rediscreateclient
       // }
     }
+  },
+  email_digest_schedule: {
+    daily: 24 * 3600,
+    weekly: 7 * 24 * 3600,
+    monthly: 30 * 24 * 3600
   }
 };

@@ -19,7 +19,8 @@ import kueLib from 'kue';
 
 import config from './config';
 import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate } from './src/email-templates/index';
-import { sendEmail } from './src/utils/email';
+import { sendEmail, scheduleEmail } from './src/utils/email';
+import { createDelayedJob } from './src/utils/queue';
 
 
 let queue = kueLib.createQueue(config.kue);
@@ -27,6 +28,48 @@ let queue = kueLib.createQueue(config.kue);
 queue.on('error', (err) => {
   process.stderr.write(`${err.message}\n`);
 });
+
+let email_digest_schedule = config.email_digest_schedule;
+
+for (const interval of Object.keys(email_digest_schedule)) {
+  const seconds = email_digest_schedule[interval];
+  const job_type = `${interval}-digest`;
+
+  kueLib.Job.rangeByType( job_type, 'inactive', 0, 1, 'desc', function( err, jobs ) {
+    if(jobs.length > 0) {
+      return;
+    }
+
+    createDelayedJob(job_type, {
+      title: `${interval} digest scheduled`,
+      to: 'tj@learnboost.com',
+    }, seconds);
+
+
+  });
+
+}
+//for(let [interval, seconds] of schedule) {
+
+
+
+//}
+
+
+/*kueLib.Job.rangeByType( 'weekly-digest', 'inactive', 0, 1, 'desc', function( err, jobs ) {
+  if(jobs.length > 0) {
+    return;
+  }
+
+  queue.create('daily-digest', {
+    title: 'Account renewal required',
+    to: 'tj@learnboost.com',
+    template: 'renewal-email'
+  }).delay(milliseconds)
+      .priority('high')
+      .save();
+
+});*/
 
 queue.process('register-user-email', async function(job, done) {
   const { username,
