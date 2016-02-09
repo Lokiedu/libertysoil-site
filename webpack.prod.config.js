@@ -57,7 +57,7 @@ module.exports = {
   plugins: [
     // An appropriate alternative to envify.
     new webpack.EnvironmentPlugin([
-      'NODE_ENV', 'MAPBOX_ACCESS_TOKEN'
+      'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN'
     ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin(),
