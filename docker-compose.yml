@@ -6,8 +6,10 @@ db:
     - "/mnt/data/postgres:/var/lib/postgresql/data"
   environment:
     - "POSTGRES_PASSWORD=Laik7akoh2ai"
+  restart: always
 redis:
   image: "redis:3.0"
+  restart: always
 app:
   image: "quay.io/dipstudio/libertysoil:1.2.0"
   ports:
@@ -21,6 +23,7 @@ app:
     - "DB_ENV=staging"
   env_file:
     - "./secrets.env"
+  restart: always
 queue:
   image: "quay.io/dipstudio/libertysoil:1.2.0"
   links:
@@ -32,9 +35,11 @@ queue:
   env_file:
     - "./secrets.env"
   command: npm run tasks
+  restart: always
 web:
   image: "jwilder/nginx-proxy"
   ports:
     - "80:80"
   volumes:
     - "/var/run/docker.sock:/tmp/docker.sock:ro"
+  restart: always
