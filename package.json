@@ -13,13 +13,15 @@
     "test": "echo \"Preparing test database...\" && babel-node test-helpers/dropDatabase.js && knex --env test migrate:latest && DB_ENV=test mocha test",
     "test-old": "echo \"Preparing test database...\" && knex --env test migrate:rollback && knex --env test migrate:latest && DB_ENV=test mocha test",
     "travis": "eslint src && echo \"Preparing test database...\" && knex --env travis migrate:latest && DB_ENV=travis mocha test",
-    "start": "knex migrate:latest && NODE_ENV=development babel-node --source-maps -- index.js",
+    "start": "NODE_ENV=development babel-node --source-maps -- index.js",
     "docker-start": "knex migrate:latest && npm run webpack:build:prod && babel-node index.js",
     "lint": "eslint src",
     "geonames": "babel-node bin/geonames-sql.js",
     "schools": "babel-node bin/schools.js",
     "webpack:build:dev": "webpack --config webpack.dev.config.js",
-    "webpack:build:prod": "webpack --config webpack.prod.config.js"
+    "webpack:build:prod": "webpack --config webpack.prod.config.js",
+    "db:migrate": "knex migrate:latest",
+    "db:rollback": "knex migrate:rollback"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
