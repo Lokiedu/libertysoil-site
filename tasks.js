@@ -18,10 +18,10 @@
 import kueLib from 'kue';
 
 import config from './config';
-import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate } from './src/email-templates/index';
+import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate, renderDailyDigestTemplate } from './src/email-templates/index';
 import { sendEmail, scheduleEmail } from './src/utils/email';
 import { createDelayedJob } from './src/utils/queue';
-
+import digestData from './src/utils/digestData';
 
 let queue = kueLib.createQueue(config.kue);
 
@@ -35,41 +35,20 @@ for (const interval of Object.keys(email_digest_schedule)) {
   const seconds = email_digest_schedule[interval];
   const job_type = `${interval}-digest`;
 
-  kueLib.Job.rangeByType( job_type, 'inactive', 0, 1, 'desc', function( err, jobs ) {
-    if(jobs.length > 0) {
+  kueLib.Job.rangeByType( job_type, 'delayed', 0, 1, 'desc', ( err, jobs ) => {
+
+    if (jobs.length > 0) {
       return;
     }
 
     createDelayedJob(job_type, {
-      title: `${interval} digest scheduled`,
-      to: 'tj@learnboost.com',
+      title: `${interval} digest scheduled`
     }, seconds);
 
 
   });
 
 }
-//for(let [interval, seconds] of schedule) {
-
-
-
-//}
-
-
-/*kueLib.Job.rangeByType( 'weekly-digest', 'inactive', 0, 1, 'desc', function( err, jobs ) {
-  if(jobs.length > 0) {
-    return;
-  }
-
-  queue.create('daily-digest', {
-    title: 'Account renewal required',
-    to: 'tj@learnboost.com',
-    template: 'renewal-email'
-  }).delay(milliseconds)
-      .priority('high')
-      .save();
-
-});*/
 
 queue.process('register-user-email', async function(job, done) {
   const { username,
@@ -104,5 +83,38 @@ queue.process('verify-email', async function(job, done) {
     done(e);
   }
 });
+
+queue.process('daily-digest', async function(job, done) {
+  try {
+    const data = await digestData('daily');
+    const html = await renderDailyDigestTemplate({posts: data});
+
+    createDelayedJob(job.type, {
+      title: `daily digest scheduled`
+    }, config.email_digest_schedule.daily);
+
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+queue.process('weekly-digest', async function(job, done) {
+  try {
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+queue.process('monthly-digest', async function(job, done) {
+  try {
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+kueLib.app.listen(3000);
 
 process.stdout.write(`Job service started\n`);

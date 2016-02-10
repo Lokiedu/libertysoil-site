@@ -48,3 +48,11 @@ export async function renderWelcomeTemplate(dateObject, username, email) {
     { date, email, username }
   );
 }
+
+export async function renderDailyDigestTemplate(data) {
+
+  return await renderFileAsync(
+    `${__dirname}/daily-digest.ejs`,
+      data
+  );
+}
