@@ -29,6 +29,7 @@ import config from '../../config';
 
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
+const POST_RELATIONS = ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags'];
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -42,7 +43,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let response = await posts.fetch({require: false, withRelated: POST_RELATIONS});
     response = response.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -62,7 +63,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -83,7 +84,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -105,7 +106,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc');
       });
 
-    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetch({withRelated: POST_RELATIONS});
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
@@ -126,7 +127,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({withRelated: POST_RELATIONS});
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
@@ -166,7 +167,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: POST_RELATIONS});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       res.send(post.toJSON());
     } catch (e) {
@@ -197,7 +198,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -230,7 +231,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -262,7 +263,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -295,7 +296,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -578,7 +579,7 @@ export default class ApiController {
           .orderBy('posts.fully_published_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -1045,7 +1046,7 @@ export default class ApiController {
         await obj.attachGeotags(geotags);
       }
 
-      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});
+      await obj.fetch({require: true, withRelated: POST_RELATIONS});
       obj.relations.schools = obj.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(obj.toJSON());
@@ -1164,7 +1165,7 @@ export default class ApiController {
         await post_object.updateGeotags(geotags);
       }
 
-      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});
+      await post_object.fetch({require: true, withRelated: POST_RELATIONS});
       post_object.relations.schools = post_object.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(post_object.toJSON());
