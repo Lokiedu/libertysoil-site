@@ -25,6 +25,7 @@ import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
 import Tag from '../components/tag';
+import Breadcrumbs from '../components/breadcrumbs';
 
 let Welcome = () => {
   return (
@@ -34,8 +35,21 @@ let Welcome = () => {
           <div className="header__logo">
             <a className="logo" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item breadcrumbs__title">News Feed</div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs className="breadcrumbs-shift" title="News Feed long long title bla bla bla">
+              <Tag type="TAG_HASHTAG" name="All Hashtags" inactive={true} />
+              <Tag type="TAG_HASHTAG" name="AERO 2016" />
+            </Breadcrumbs>
+          </div>
+        </div>
+      </div>
+      <div className="header page__header">
+        <div className="header__body">
+          <div className="header__logo">
+            <a className="logo" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
+          </div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="News Feed"></Breadcrumbs>
           </div>
         </div>
       </div>
@@ -44,9 +58,10 @@ let Welcome = () => {
           <div className="header__logo">
             <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item"><Tag type="TAG_HASHTAG" size="BIG" /></div>
-            <div className="breadcrumbs__item breadcrumbs__title">All Hashtags</div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="All Hashtags">
+              <Tag type="TAG_HASHTAG" size="BIG" />
+            </Breadcrumbs>
           </div>
         </div>
       </div>
@@ -55,9 +70,11 @@ let Welcome = () => {
           <div className="header__logo">
             <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item"><Tag type="TAG_HASHTAG" inactive={true} /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_HASHTAG" name="AERO 2016" /></div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs className="breadcrumbs-shift" title="All Hashtags">
+              <Tag type="TAG_HASHTAG" inactive={true} />
+              <Tag type="TAG_HASHTAG" name="AERO 2016" />
+            </Breadcrumbs>
           </div>
         </div>
       </div>
@@ -66,9 +83,10 @@ let Welcome = () => {
           <div className="header__logo">
             <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" size="BIG" /></div>
-            <div className="breadcrumbs__item breadcrumbs__title">All Locations</div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="All Locations">
+              <Tag type="TAG_LOCATION" size="BIG" />
+            </Breadcrumbs>
           </div>
         </div>
       </div>
@@ -77,9 +95,27 @@ let Welcome = () => {
           <div className="header__logo">
             <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
           </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" inactive={true} collapsed={true} name="All Locations" /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" name="North America" /></div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs className="breadcrumbs-shift">
+              <Tag type="TAG_LOCATION" inactive={true} name="All Locations" />
+              <Tag type="TAG_LOCATION" name="North America" />
+            </Breadcrumbs>
+          </div>
+        </div>
+      </div>
+      <div className="header page__header">
+        <div className="header__body">
+          <div className="header__logo">
+            <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
+          </div>
+          <div className="header__breadcrumbs">
+            <Breadcrumbs className="breadcrumbs-shift">
+              <Tag type="TAG_LOCATION" inactive={true} name="All Locations" />
+              <Tag type="TAG_LOCATION" inactive={true} name="North America" />
+              <Tag type="TAG_LOCATION" inactive={true} name="USA" />
+              <Tag type="TAG_LOCATION" inactive={true} name="Massachusetts" />
+              <Tag type="TAG_LOCATION" name="Boston" />
+            </Breadcrumbs>
           </div>
         </div>
       </div>
