@@ -125,6 +125,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async relatedPosts(postId) {
+    let response = await this.get(`/api/v1/post/${postId}/related-posts`);
+    return response.body;
+  }
+
   async userTags() {
     let response = await this.get(`/api/v1/user/tags`);
     return response.body;
