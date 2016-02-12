@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 import { truncate } from 'grapheme-utils';
 import TagIcon from './tag-icon';
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, SIZE } from '../consts/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_EVENT, TAG_PLANET, TAG_MENTION, SIZE } from '../consts/tags';
 
 
 export default class Tag extends React.Component {
@@ -16,9 +16,18 @@ export default class Tag extends React.Component {
     inactive: PropTypes.bool,
     name: PropTypes.string,
     size: PropTypes.string,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION]),
+    type: PropTypes.oneOf([
+      TAG_HASHTAG,
+      TAG_SCHOOL,
+      TAG_LOCATION,
+      TAG_EVENT,
+      TAG_PLANET,
+      TAG_MENTION
+    ]),
     urlId: PropTypes.string
   };
+
+  // 3 - mention
 
   static defaultProps = {
     truncated: false,
@@ -56,6 +65,24 @@ export default class Tag extends React.Component {
       case TAG_LOCATION: {
         className = 'tag-location';
         url = `/geo/${urlId}`;
+        break;
+      }
+
+      case TAG_EVENT: {
+        className = 'tag-event';
+        url = `/e/${urlId}`;
+        break;
+      }
+
+      case TAG_PLANET: {
+        className = 'tag-planet';
+        url = `/planet`;
+        break;
+      }
+
+      case TAG_MENTION: {
+        className = 'tag-mention';
+        url = `/@/${urlId}`;
         break;
       }
     }
@@ -96,12 +123,12 @@ export default class Tag extends React.Component {
       );
     } else {  // eslint-disable-line no-else-return
       return (
-        <Link className={`tag ${className}`} title={title} to={url}>
-          <div className="tag__icon_wrapper">
+        <div className={`tag ${className}`} title={title}>
+          <Link to={url} className="tag__icon_wrapper">
             {tagIcon}
-          </div>
+          </Link>
           {tagNameComponent}
-        </Link>
+        </div>
       );
     }
   }

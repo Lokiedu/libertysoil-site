@@ -38,7 +38,7 @@ let Welcome = () => {
           <div className="header__breadcrumbs">
             <Breadcrumbs className="breadcrumbs-shift" title="News Feed long long title bla bla bla">
               <Tag type="TAG_HASHTAG" name="All Hashtags" inactive={true} />
-              <Tag type="TAG_HASHTAG" name="AERO 2016" />
+              <Tag type="TAG_EVENT" name="AERO 2016" />
             </Breadcrumbs>
           </div>
         </div>
@@ -85,7 +85,7 @@ let Welcome = () => {
           </div>
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Locations">
-              <Tag type="TAG_LOCATION" size="BIG" />
+              <Tag type="TAG_PLANET" size="BIG" />
             </Breadcrumbs>
           </div>
         </div>
@@ -98,7 +98,7 @@ let Welcome = () => {
           <div className="header__breadcrumbs">
             <Breadcrumbs className="breadcrumbs-shift">
               <Tag type="TAG_LOCATION" inactive={true} name="All Locations" />
-              <Tag type="TAG_LOCATION" name="North America" />
+              <Tag type="TAG_MENTION" name="Leonardo da Vinci" />
             </Breadcrumbs>
           </div>
         </div>
