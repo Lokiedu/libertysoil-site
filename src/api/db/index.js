@@ -55,6 +55,15 @@ export default function initBookshelf(config) {
     liked_posts: function() {
       return this.belongsToMany(Post, 'likes', 'user_id', 'post_id');
     },
+    liked_labels: function() {
+      return this.belongsToMany(Label, 'liked_labels', 'user_id', 'label_id');
+    },
+    liked_schools: function() {
+      return this.belongsToMany(School, 'liked_schools', 'user_id', 'school_id');
+    },
+    liked_geotags: function() {
+      return this.belongsToMany(Geotag, 'liked_geotags', 'user_id', 'geotag_id');
+    },
     favourited_posts: function() {
       return this.belongsToMany(Post, 'favourites', 'user_id', 'post_id');
     },
