@@ -20,10 +20,10 @@ import { promisify } from 'bluebird';
 import moment from 'moment';
 
 
-let renderFileAsync = promisify(renderFile);
+const renderFileAsync = promisify(renderFile);
 
 export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+  const date = moment(dateObject).format('Do [of] MMMM YYYY');
 
   return await renderFileAsync(
     `${__dirname}/reset.ejs`,
@@ -32,7 +32,7 @@ export async function renderResetTemplate(dateObject, username, email, confirmat
 }
 
 export async function renderVerificationTemplate(dateObject, username, email, confirmationLink) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+  const date = moment(dateObject).format('Do [of] MMMM YYYY');
 
   return await renderFileAsync(
     `${__dirname}/verification.ejs`,
@@ -41,7 +41,7 @@ export async function renderVerificationTemplate(dateObject, username, email, co
 }
 
 export async function renderWelcomeTemplate(dateObject, username, email) {
-  let date = moment(dateObject).format('Do [of] MMMM YYYY');
+  const date = moment(dateObject).format('Do [of] MMMM YYYY');
 
   return await renderFileAsync(
     `${__dirname}/welcome.ejs`,
