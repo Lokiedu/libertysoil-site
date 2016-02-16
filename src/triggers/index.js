@@ -203,10 +203,12 @@ export class ActionsTrigger {
     } catch (e) {
       this.dispatch(setCurrentUser(null));
 
-      if (('body' in e.response) && ('error' in e.response.body)) {
+      if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
         this.dispatch(addError(e.response.body.error));
       } else {
-        this.dispatch(addError('Invalid username or password'));
+        // FIXME: this should be reported to developers instead (use Sentry?)
+        console.warn(e);  // eslint-disable-line no-console
+        this.dispatch(addError('Server error: please retry later'));
       }
 
       return;
