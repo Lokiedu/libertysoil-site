@@ -20,6 +20,7 @@ import kueLib from 'kue';
 import config from './config';
 import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
+import { API_HOST, API_URL_PREFIX } from './src/config';
 
 
 let queue = kueLib.createQueue(config.kue);
@@ -34,7 +35,7 @@ queue.process('register-user-email', async function(job, done) {
           hash } = job.data;
 
   try {
-    let html = await renderVerificationTemplate(new Date(), username, email, `http://www.libertysoil.org/api/v1/user/verify/${hash}`);
+    let html = await renderVerificationTemplate(new Date(), username, email, `${API_URL_PREFIX}/user/verify/${hash}`);
     await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
     done();
   } catch (e) {
@@ -44,7 +45,7 @@ queue.process('register-user-email', async function(job, done) {
 
 queue.process('reset-password-email', async function(job, done) {
   try {
-    let html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `http://www.libertysoil.org/newpassword/${job.data.hash}`);
+    let html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
     await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
     done();
   } catch (e) {

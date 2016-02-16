@@ -19,6 +19,8 @@ import { renderFile } from 'ejs';
 import { promisify } from 'bluebird';
 import moment from 'moment';
 
+import { API_HOST } from '../config';
+
 
 const renderFileAsync = promisify(renderFile);
 
@@ -27,7 +29,7 @@ export async function renderResetTemplate(dateObject, username, email, confirmat
 
   return await renderFileAsync(
     `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, username }
+    { confirmationLink, date, email, host: API_HOST, username }
   );
 }
 
@@ -36,7 +38,7 @@ export async function renderVerificationTemplate(dateObject, username, email, co
 
   return await renderFileAsync(
     `${__dirname}/verification.ejs`,
-    { confirmationLink, date, email, username }
+    {confirmationLink, date, email, host: API_HOST, username }
   );
 }
 
@@ -45,6 +47,6 @@ export async function renderWelcomeTemplate(dateObject, username, email) {
 
   return await renderFileAsync(
     `${__dirname}/welcome.ejs`,
-    { date, email, username }
+    { date, email, host: API_HOST, username }
   );
 }
