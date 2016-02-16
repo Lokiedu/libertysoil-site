@@ -18,6 +18,9 @@
 import fetch from 'node-fetch';
 import { parse as parseCookie } from 'cookie';
 
+import { API_URL_PREFIX } from '../src/config'
+
+
 export const POST_DEFAULT_TYPE = 'short_text';
 /**
  * Exchange login/password for session-id
@@ -28,7 +31,7 @@ export const POST_DEFAULT_TYPE = 'short_text';
  */
 export async function login(username, password) {
   let res = await fetch(
-    'http://127.0.0.1:8000/api/v1/session',
+    `${API_URL_PREFIX}/session`,
     {
       method: 'POST',
       headers: {

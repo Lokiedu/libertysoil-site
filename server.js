@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { parse as parseUrl } from 'url';
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import _ from 'lodash';
@@ -34,7 +36,7 @@ import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
-import {API_HOST} from './src/config';
+import { API_HOST } from './src/config';
 import ApiClient from './src/api/client'
 
 import { initState } from './src/store';
@@ -162,6 +164,17 @@ let reactHandler = async (req, res) => {
   });
 };
 
+const domainValidator = (req, res, next) => {
+  const { hostname } = parseUrl(API_HOST);
+
+  if (_.isString(req.hostname) && req.hostname !== hostname) {
+    const newUri = `${API_HOST}${req.originalUrl}`;
+    res.redirect(301, newUri);
+    return;
+  }
+
+  next();
+};
 
 let app = express();
 
@@ -209,6 +222,8 @@ if (process.env.NODE_ENV == 'development') {
 
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
+
+app.use(domainValidator);
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
