@@ -190,6 +190,36 @@ export default class ApiClient
     return response.body;
   }
 
+  async likeHashtag(name) {
+    let response = await this.post(`/api/v1/tag/${name}/like`);
+    return response.body;
+  }
+
+  async unlikeHashtag(name) {
+    let response = await this.post(`/api/v1/tag/${name}/unlike`);
+    return response.body;
+  }
+
+  async likeSchool(urlName) {
+    let response = await this.post(`/api/v1/school/${urlName}/like`);
+    return response.body;
+  }
+
+  async unlikeSchool(urlName) {
+    let response = await this.post(`/api/v1/school/${urlName}/unlike`);
+    return response.body;
+  }
+
+  async likeGeotag(urlName) {
+    let response = await this.post(`/api/v1/geotag/${urlName}/like`);
+    return response.body;
+  }
+
+  async unlikeGeotag(urlName) {
+    let response = await this.post(`/api/v1/geotag/${urlName}/unlike`);
+    return response.body;
+  }
+
   async fav(postId) {
     let response = await this.post(`/api/v1/post/${postId}/fav`);
     return response.body;

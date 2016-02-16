@@ -69,6 +69,8 @@ export function initApi(bookshelf) {
   api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
   api.post('/school/:name/follow', wrap(controller.followSchool.bind(controller)));
   api.post('/school/:name/unfollow', wrap(controller.unfollowSchool.bind(controller)));
+  api.post('/school/:url_name/like', wrap(controller.likeSchool.bind(controller)));
+  api.post('/school/:url_name/unlike', wrap(controller.unlikeSchool.bind(controller)));
 
   api.get('/countries/', wrap(controller.getCountries.bind(controller)));
   api.get('/country/:code', wrap(controller.getCountry.bind(controller)));
@@ -100,11 +102,15 @@ export function initApi(bookshelf) {
   api.get('/tags/search/:query', wrap(controller.searchTags.bind(controller)));
   api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
   api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
+  api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));
+  api.post('/tag/:name/unlike', wrap(controller.unlikeHashtag.bind(controller)));
 
   api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
   api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));
   api.post('/geotag/:url_name/unfollow', wrap(controller.unfollowGeotag.bind(controller)));
+  api.post('/geotag/:url_name/like', wrap(controller.likeGeotag.bind(controller)));
+  api.post('/geotag/:url_name/unlike', wrap(controller.unlikeGeotag.bind(controller)));
 
 
   return api;
