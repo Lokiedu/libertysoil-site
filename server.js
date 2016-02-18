@@ -99,9 +99,6 @@ let reactHandler = async (req, res) => {
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
       store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
-      store.dispatch(setUserFollowedTags(data.followed_labels));
-      store.dispatch(setUserFollowedSchools(data.followed_schools));
-      store.dispatch(setUserFollowedGeotags(data.followed_geotags));
     } catch (e) {
       console.log(`dispatch failed: ${e.stack}`);
     }
