@@ -82,7 +82,18 @@ let reactHandler = async (req, res) => {
       let user = await bookshelf
         .model('User')
         .where({id: req.session.user})
-        .fetch({require: true, withRelated: ['following', 'followed_labels', 'followed_schools', 'followed_geotags']});
+        .fetch({
+          require: true,
+          withRelated: [
+            'following',
+            'followed_labels',
+            'followed_schools',
+            'followed_geotags',
+            'liked_labels',
+            'liked_geotags',
+            'liked_schools'
+          ]
+        });
 
       let data = user.toJSON();
 

@@ -712,7 +712,10 @@ export default class ApiController {
           'favourited_posts',
           'followed_labels',
           'followed_geotags',
-          'followed_schools'
+          'followed_schools',
+          'liked_labels',
+          'liked_geotags',
+          'liked_schools'
         ]
       });
 
