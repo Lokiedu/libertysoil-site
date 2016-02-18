@@ -27,6 +27,9 @@ const initialState = i.Map({
   followed_tags: i.Map({}),
   followed_schools: i.Map({}),
   followed_geotags: i.Map({}),
+  liked_hashtags: i.Map({}),
+  liked_schools: i.Map({}),
+  liked_geotags: i.Map({}),
   suggested_users: i.List([])
 });
 
@@ -45,6 +48,9 @@ export default function reducer(state=initialState, action) {
             .set('followed_tags', i.Map({}))
             .set('followed_schools', i.Map({}))
             .set('followed_geotags', i.Map({}))
+            .set('liked_hashtags', i.Map({}))
+            .set('liked_schools', i.Map({}))
+            .set('liked_geotags', i.Map({}))
             .set('suggested_users', i.List([]));
         });
       }
@@ -53,11 +59,17 @@ export default function reducer(state=initialState, action) {
         let followedTags = _.keyBy(action.user.followed_labels, 'name');
         let followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
         let followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
+        let likedHashtags = _.keyBy(action.user.liked_labels, 'name');
+        let likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
+        let likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
 
         state = state.withMutations(state => {
           state.set('followed_tags', i.fromJS(followedTags));
           state.set('followed_geotags', i.fromJS(followedGeotags));
           state.set('followed_schools', i.fromJS(followedSchools));
+          state.set('liked_hashtags', i.fromJS(likedHashtags));
+          state.set('liked_schools', i.fromJS(likedSchools));
+          state.set('liked_geotags', i.fromJS(likedGeotags));
         });
       }
 
@@ -113,6 +125,42 @@ export default function reducer(state=initialState, action) {
 
     case a.REMOVE_USER_FOLLOWED_GEOTAG: {
       state = state.deleteIn(['followed_geotags', action.geotag.url_name]);
+
+      break;
+    }
+
+    case a.ADD_LIKED_HASHTAG: {
+      state = state.setIn(['liked_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
+
+      break;
+    }
+
+    case a.REMOVE_LIKED_HASHTAG: {
+      state = state.deleteIn(['liked_hashtags', action.hashtag.name]);
+
+      break;
+    }
+
+    case a.ADD_LIKED_SCHOOL: {
+      state = state.setIn(['liked_schools', action.school.url_name], i.fromJS(action.school));
+
+      break;
+    }
+
+    case a.REMOVE_LIKED_SCHOOL: {
+      state = state.deleteIn(['liked_schools', action.school.url_name]);
+
+      break;
+    }
+
+    case a.ADD_LIKED_GEOTAG: {
+      state = state.setIn(['liked_geotags', action.geotag.url_name], i.fromJS(action.geotag));
+
+      break;
+    }
+
+    case a.REMOVE_LIKED_GEOTAG: {
+      state = state.deleteIn(['liked_geotags', action.geotag.url_name]);
 
       break;
     }
