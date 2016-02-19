@@ -266,22 +266,20 @@ export class ActionsTrigger {
         return user;
       }
 
-      // FIXME: enable form again
-      if (result.error.length) {
-        for (let i in result.error) {
-          result.error[i].map((el) => {
-            this.dispatch(addError(el));
-          });
-        }
-      } else {
-        this.dispatch(addError(result.error));
-      }
     } catch (e) {
       // FIXME: enable form again
 
       if (e.response && ('error' in e.response.body)) {
         // FIXME: enable form again
-        this.dispatch(addError(e.response.body.error));
+        let errors = e.response.body.error;
+        let message = '';
+        for (let i in errors) {
+          errors[i].map((el) => {
+            message += `${el}\n`;
+          });
+        }
+
+        this.dispatch(addError(message));
       } else {
         this.dispatch(addError('Server seems to have problems. Retry later, please'));
       }
