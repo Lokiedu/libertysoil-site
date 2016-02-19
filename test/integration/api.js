@@ -352,7 +352,7 @@ describe('api v.1', () => {
 
     describe('Registration Rules', () => {
 
-      it('Must match', async () => {
+      it('FAILS for some base rules', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
           username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: "test",
@@ -361,11 +361,12 @@ describe('api v.1', () => {
           username: ['The username must not exceed 31 characters long',
                      'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
                     ],
-          password: ['Password is min. 8 characters. Password can only have ascii characters.']
+          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
+          email: [ 'The email must be a valid email address' ]
         });
       });
 
-      it('Password can contain only visible ascii characters', async () => {
+      it('FAILS when password contain special(non visible ascii) characters', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
           username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: "testtest\x00",
@@ -374,7 +375,17 @@ describe('api v.1', () => {
           username: ['The username must not exceed 31 characters long',
                      'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
                     ],
-          password: ['Password is min. 8 characters. Password can only have ascii characters.']
+          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
+          email: [ 'The email must be a valid email address' ]
+        });
+      });
+
+      it('FAILS when no required attributes passed', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+        }}, 'to validation fail with', {
+          username: ['The username is required'],
+          password: ['The password is required'],
+          email: ['The email is required']
         });
       });
 
