@@ -16,6 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 let User = {
+  // 6) FN  supports unicode/UTF-8 characters, with a maximum of 60 characters.
+  // 7) LN supports unicode/UTF-8 characters, with a maximum of 60 characters.
+  // 8) E supports User_Registation_01_mail_validation_01"
+
   registration: {
     username: [
       'maxLength:31',

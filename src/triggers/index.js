@@ -267,7 +267,15 @@ export class ActionsTrigger {
       }
 
       // FIXME: enable form again
-      this.dispatch(addError(result.error));
+      if (result.error.length) {
+        for (let i in result.error) {
+          result.error[i].map((el) => {
+            this.dispatch(addError(el));
+          });
+        }
+      } else {
+        this.dispatch(addError(result.error));
+      }
     } catch (e) {
       // FIXME: enable form again
 
