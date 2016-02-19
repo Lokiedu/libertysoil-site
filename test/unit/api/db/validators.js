@@ -67,4 +67,34 @@ describe('UserValidators', function() {
     return expect(true, 'to be ok');
   });
 
+  describe('Email Validation', async function() {
+    let emails = [
+      'test@domain.com',
+      'firstname.lastname@domain.com',
+      'email@subdomain.domain.com',
+      'firstname+lastname@domain.com',
+      'email@123.123.123.123', // temporary invalid
+      // 'email@[123.123.123.123]',
+      '""email""@domain.com',
+      '1234567890@domain.com',
+      'email@domain-one.co',
+      '_______@domain.com',
+      'email@domain.nam',
+      'email@domain.co.jp',
+      'firstname-lastname@domain.com'
+    ];
+    // use only email validators
+    let checkit = new Checkit({ email: UserValidators.registration.email });
+
+    emails.map((email) => {
+      it (`PASS with email ${email}`, function() {
+        let [ err, validated ] = checkit.runSync({ email: email });
+
+        expect(err, 'to be null');
+        expect(validated, 'to be ok');
+      });
+    });
+
+  });
+
 });
