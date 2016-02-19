@@ -350,53 +350,32 @@ describe('api v.1', () => {
 
   describe('Validation', () => {
 
-    describe('Registration', () => {
+    describe('Registration Rules', () => {
 
-      describe('Username', () => {
-        it('CAN NOT be more than 31 character length', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username maximum length is 31.");
+      it('Must match', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          password: "test",
+          email: 'test'
+        }}, 'to validation fail with', {
+          username: ['The username must not exceed 31 characters long',
+                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+                    ],
+          password: ['Password is min. 8 characters. Password can only have ascii characters.']
         });
-
-        it('CAN NOT contain Upper case ascii characters', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaaA', // capital A do not allowed
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
-        });
-
-        it('CAN NOT contain two or more periods in a row', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'a..aa.', // double period (.) is not allowed
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
-        });
-
       });
 
-      describe('Password', () => {
-
-        it('CAN NOT be less than 8 character length ', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaa',
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Password is min. 8 characters. Password can only have ascii characters.");
+      it('Password can contain only visible ascii characters', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          password: "testtest\x00",
+          email: 'test'
+        }}, 'to validation fail with', {
+          username: ['The username must not exceed 31 characters long',
+                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+                    ],
+          password: ['Password is min. 8 characters. Password can only have ascii characters.']
         });
-
-        it('CAN NOT contain not visible or control ascii characters (i.e. "\\x00")', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaa',
-            password: "testblab\x00",
-            email: 'test'
-          }}, 'to validation fail with', "Password is min. 8 characters. Password can only have ascii characters.");
-        });
-
       });
 
     });

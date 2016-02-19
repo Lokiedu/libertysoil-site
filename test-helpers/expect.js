@@ -107,7 +107,7 @@ expect.addAssertion('to validation fail with', function (expect, subject, value)
     }
   }).then(function (context) {
     let body = context.httpResponse.body;
-    expect(body.error, 'to contain', value);
+    expect(body.error, 'to equal', value);
   });
 });
 

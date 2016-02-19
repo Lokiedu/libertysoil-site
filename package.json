@@ -100,6 +100,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "brfs": "^1.4.3",
     "browser-sync": "^2.8.2",
+    "checkit": "^0.6.0",
     "cookie": "^0.2.3",
     "css-loader": "^0.23.1",
     "csv": "^0.4.6",
