@@ -23,10 +23,11 @@ import uuid from 'uuid'
 import request from 'superagent';
 import crypto from 'crypto'
 import { createJob } from '../utils/queue';
+import Checkit from 'checkit';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
-
+import { User as UserValidators } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
@@ -597,6 +598,15 @@ export default class ApiController {
         res.send({error: 'Bad Request'});
         return
       }
+    }
+
+    let checkit = new Checkit(UserValidators.registration);
+    try {
+      await checkit.run(req.body);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
     }
 
     // 1) UN is max. 31 characters
