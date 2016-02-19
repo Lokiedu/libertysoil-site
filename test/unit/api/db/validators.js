@@ -73,7 +73,7 @@ describe('UserValidators', function() {
       'firstname.lastname@domain.com',
       'email@subdomain.domain.com',
       'firstname+lastname@domain.com',
-      'email@123.123.123.123', // temporary invalid
+      'email@123.123.123.123',
       // 'email@[123.123.123.123]',
       '""email""@domain.com',
       '1234567890@domain.com',

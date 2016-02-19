@@ -389,6 +389,37 @@ describe('api v.1', () => {
         });
       });
 
+      describe ('Email validation', async () => {
+        let emails = [
+          'test@domain.com',
+          'firstname.lastname@domain.com',
+          'email@subdomain.domain.com',
+          'firstname+lastname@domain.com',
+          'email@123.123.123.123',
+          '""email""@domain.com',
+          '1234567890@domain.com',
+          'email@domain-one.co',
+          '_______@domain.com',
+          'email@domain.nam',
+          'email@domain.co.jp',
+          'firstname-lastname@domain.com'
+        ];
+
+        emails.map((email) => {
+          it(`PASS email validation with email: ${email}`, async function() {
+
+            // prove that there is no email validation errors
+            await expect({ url: `/api/v1/users`, method: 'POST', body: {
+              email: email
+            }}, 'to validation fail with', {
+              username: ['The username is required'],
+              password: ['The password is required']
+            });
+          });
+        });
+
+      });
+
     });
 
   });
