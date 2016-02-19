@@ -16,10 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 let User = {
-  // 6) FN  supports unicode/UTF-8 characters, with a maximum of 60 characters.
-  // 7) LN supports unicode/UTF-8 characters, with a maximum of 60 characters.
-  // 8) E supports User_Registation_01_mail_validation_01"
-
   registration: {
     username: [
       'required',
@@ -44,7 +40,17 @@ let User = {
     ],
     lastName: [
     ],
-    email: ['email', 'required']
+    // email: ['email', 'required']
+    email: [
+      'required',
+      {
+        rule: function(val) {
+          if (!val.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i)) {
+            throw new Error('The email must be a valid email address');
+          }
+        }
+      }
+    ]
   }
 };
 
