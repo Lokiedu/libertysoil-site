@@ -589,16 +589,7 @@ export default class ApiController {
   }
 
   async registerUser(req, res) {
-    let requiredFields = ['username', 'password', 'email'];
     let optionalFields = ['firstName', 'lastName'];
-
-    for (let fieldName of requiredFields) {
-      if (!(fieldName in req.body)) {
-        res.status(400);
-        res.send({error: 'Bad Request'});
-        return
-      }
-    }
 
     let checkit = new Checkit(UserValidators.registration);
     try {

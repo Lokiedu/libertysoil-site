@@ -22,6 +22,7 @@ let User = {
 
   registration: {
     username: [
+      'required',
       'maxLength:31',
       { rule: function(val) {
         if (!val.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/)) {
@@ -30,6 +31,7 @@ let User = {
       }
       }],
     password: [
+      'required',
       {
         rule: function(val) {
           if (!val.match(/^[\x20-\x7E]{8,}$/)) {
@@ -37,7 +39,12 @@ let User = {
           }
         }
       }
-    ]
+    ],
+    firstName: [
+    ],
+    lastName: [
+    ],
+    email: ['email', 'required']
   }
 };
 
