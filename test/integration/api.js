@@ -69,6 +69,17 @@ describe('api v.1', () => {
 
     describe('When user not logged it', () => {
 
+      it('AUTHORIZED TO login and logins successfully', async () => {
+        await expect(
+          {
+            url: `/api/v1/session`,
+            method: 'POST',
+            body: { username: 'test', password: 'test' }
+          },
+          'to body satisfy', { success: true}
+        );
+      });
+
       it('AUTHORIZED TO read post', async () => {
         await expect(`/api/v1/post/${post.id}`, 'to open authorized');
       });
