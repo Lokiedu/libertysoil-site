@@ -390,7 +390,7 @@ describe('api v.1', () => {
       });
 
       describe ('Email validation', async () => {
-        let emails = [
+        let validEmails = [
           'test@domain.com',
           'firstname.lastname@domain.com',
           'email@subdomain.domain.com',
@@ -405,15 +405,46 @@ describe('api v.1', () => {
           'firstname-lastname@domain.com'
         ];
 
-        emails.map((email) => {
-          it(`PASS email validation with email: ${email}`, async function() {
+        let invalidEmails = [
+          'plainaddress',
+          '#@%^%@$@#$@#.com',
+          '@domain.com',
+          'Joe Smith <email@domain.com>',
+          'email.domain.com',
+          'email@domain@domain.com',
+          '.email@domain.com',
+          'email.@domain.com',
+          'email..email@domain.com',
+          'あいうえお@domain.com',
+          'email@domain.com (Joe Smith)',
+          'email@domain',
+          'email@-domain.com',
+          // 'email@domain.web',
+          // 'email@111.222.333.44444',
+          'email@domain..com'
+        ];
 
+        validEmails.map((email) => {
+          it(`PASS email validation with email: ${email}`, async function() {
             // prove that there is no email validation errors
             await expect({ url: `/api/v1/users`, method: 'POST', body: {
               email: email
             }}, 'to validation fail with', {
               username: ['The username is required'],
               password: ['The password is required']
+            });
+          });
+        });
+
+        invalidEmails.map((email) => {
+          it(`FAIL email validation with email: ${email}`, async function() {
+            // prove that there is no email validation errors
+            await expect({ url: `/api/v1/users`, method: 'POST', body: {
+              email: email
+            }}, 'to validation fail with', {
+              username: ['The username is required'],
+              password: ['The password is required'],
+              email: ['The email must be a valid email address']
             });
           });
         });
