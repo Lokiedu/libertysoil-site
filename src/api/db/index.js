@@ -142,6 +142,15 @@ export default function initBookshelf(config) {
     geotags: function() {
       return this.belongsToMany(Geotag, 'geotags_posts', 'post_id', 'geotag_id');
     },
+    liked_label: function() {
+      return this.belongsTo(Label, 'liked_label_id');
+    },
+    liked_school: function() {
+      return this.belongsTo(School, 'liked_school_id');
+    },
+    liked_geotag: function() {
+      return this.belongsTo(Geotag, 'liked_geotag_id');
+    },
     likers: function() {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
     },
