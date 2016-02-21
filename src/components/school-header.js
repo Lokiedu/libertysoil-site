@@ -15,21 +15,38 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 //import FollowButton from './follow-button';
 import moment from 'moment';
 import FollowTagButton from './follow-tag-button';
+import LikeTagButton from './like-tag-button';
 //import { getUrl, URL_NAMES } from '../utils/urlGenerator';
+
 
 export default class SchoolHeader extends React.Component {
   static displayName = 'SchoolHeader';
+
+  static propTypes = {
+    is_logged_in: PropTypes.bool.isRequired,
+    school: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      url_name: PropTypes.string.isRequired
+    }),
+    triggers: PropTypes.shape({
+      followSchool: PropTypes.func.isRequired,
+      unfollowSchool: PropTypes.func.isRequired,
+      likeSchool: PropTypes.func.isRequired,
+      unlikeSchool: PropTypes.func.isRequired
+    })
+  };
 
   render () {
     const { 
       school, 
       current_user,
-      followTriggers
+      triggers,
+      is_logged_in
       /*
       i_am_following,
       following,
@@ -87,14 +104,32 @@ export default class SchoolHeader extends React.Component {
     */
     name = name.trim();
 
+    let followTriggers = {
+      followTag: triggers.followSchool,
+      unfollowTag: triggers.unfollowSchool
+    };
+
+    let likeTriggers = {
+      likeTag: triggers.likeSchool,
+      unlikeTag: triggers.unlikeSchool
+    };
+
     return (
       <div className="profile">
         <div className="profile__body">
           <div className="layout__row">
-            <div className="layout__grid">
+            <div className="layout__grid_item layout__grid_item-wide">
+              <div className="profile__title">{name}</div>
+              <div className="profile__updated_at">{updated_at}</div>
+            </div>
+            <div className="layout__grid layout-align_vertical">
               <div className="layout__grid_item layout__grid_item-wide">
-                <div className="profile__title">{name}</div>
-                <div className="profile__updated_at">{updated_at}</div>
+                <LikeTagButton
+                  is_logged_in={is_logged_in}
+                  liked_tags={current_user.liked_schools}
+                  tag={school.url_name}
+                  triggers={likeTriggers}
+                />
               </div>
               <div className="layout__grid_item layout__grid_item-small">
                 <FollowTagButton
