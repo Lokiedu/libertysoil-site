@@ -53,7 +53,9 @@ export class SchoolPage extends React.Component {
 
     store.dispatch(addSchool(school));
     store.dispatch(setSchoolPosts(school, await posts));
- }
+
+    return 200;
+  }
 
   render() {
     const client = new ApiClient(API_HOST);

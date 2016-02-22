@@ -57,6 +57,7 @@ export class GeotagPage extends Component {
 
     store.dispatch(addGeotag(geotag));
     store.dispatch(setGeotagPosts(params.url_name, await geotagPosts));
+    return 200;
   }
 
   render() {

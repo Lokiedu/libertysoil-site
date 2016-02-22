@@ -123,10 +123,11 @@ export default class EditPost extends React.Component {
 
   _handleDelete = async (event) => {
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
-      let result = await this.props.triggers.deletePost(this.props.post.id);
-
-      if (result.success) {
+      try {
+        await this.props.triggers.deletePost(this.props.post.id);
         this.props.onDelete(event);
+      } catch (e) {
+        // do nothing. redux already had got an error
       }
     }
   };

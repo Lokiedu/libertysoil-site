@@ -48,6 +48,8 @@ export default class AddTagForm extends Component {
         return <AddHashtagForm addedHashtags={tags} onAddHashtag={onAddHashtag} />;
       case TAG_SCHOOL:
         return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} />;
+      default:
+        return false;
     }
   }
 }

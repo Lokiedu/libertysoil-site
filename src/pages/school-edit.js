@@ -56,6 +56,8 @@ class SchoolEditPage extends React.Component {
       }
     ).then((result) => {
       this.props.history.pushState(null, getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
+    }).catch(() => {
+      // do nothing. redux has an error already
     });
   }
 

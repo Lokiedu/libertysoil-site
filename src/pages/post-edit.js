@@ -65,6 +65,8 @@ class PostEditPage extends React.Component {
     if (noSchoolsLoaded) {
       await schoolsPromise;
     }
+
+    return 200;
   }
 
   _handleSubmit = () => {

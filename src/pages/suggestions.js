@@ -51,9 +51,12 @@ class SuggestionsPage extends React.Component {
   static async fetchData(params, store, client) {
     let triggers = new ActionsTrigger(client, store.dispatch);
     const result = await triggers.loadPersonalizedSuggestions()
-    if(!result) {
+
+    if (!result) {
       return {status: 307, redirectTo: '/'};
     }
+
+    return 200;
   }
 
   render() {

@@ -327,9 +327,11 @@ export default function initBookshelf(config) {
       return downloadAttachment(this.attributes.s3_filename);
     },
     extension: function() {
-      if (this.attributes.mime_type) {
-        return mime.extension(this.attributes.mime_type);
+      if (!this.attributes.mime_type) {
+        return '';
       }
+
+      return mime.extension(this.attributes.mime_type);
     },
     reupload: async function(fileName, fileData) {
       let generatedName = generateName(fileName);

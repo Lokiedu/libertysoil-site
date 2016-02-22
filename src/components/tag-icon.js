@@ -72,6 +72,8 @@ export default class TagIcon extends React.Component {
         return (
           <span className={`${className} tag_icon-event micon`} {...props}>event</span>
         );
+      default:
+        return false;
     }
   }
 }

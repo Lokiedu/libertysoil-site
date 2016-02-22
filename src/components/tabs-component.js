@@ -4,23 +4,23 @@ import bem from '../utils/bemClassNames';
 
 
 export default class TabsComponent extends Component {
-  static displayName = 'TabsComponent'
+  static displayName = 'TabsComponent';
 
   static propTypes = {
     tabs: PropTypes.array,
     activeIndex: PropTypes.number,
     onSelect: PropTypes.func
-  }
+  };
 
   static defaultProps = {
     tabs: [],
     activeIndex: 0,
     onSelect: () => {}
-  }
+  };
 
   toggleVisibility = () => {
     this.setState({isVisible: !this.state.isVisible});
-  }
+  };
 
   render () {
     var { props, tabs, activeIndex, onSelect } = this.props;

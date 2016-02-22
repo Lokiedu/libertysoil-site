@@ -93,6 +93,8 @@ export class AuthHandler {
       replaceState(null, '/welcome');
       return true;  // interrupt
     }
+
+    return false;
   };
 }
 

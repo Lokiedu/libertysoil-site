@@ -259,11 +259,7 @@ export class ActionsTrigger {
       let result = await this.client.registerUser({username, password, email, firstName, lastName});
 
       if (result.success) {
-        let user = result.user;
-
         this.dispatch(registrationSuccess());
-
-        return user;
       }
 
       // FIXME: enable form again
@@ -283,15 +279,15 @@ export class ActionsTrigger {
   deletePost = async (post_uuid) => {
     try {
       let result = await this.client.deletePost(post_uuid);
-      this.dispatch(removePost(post_uuid));
 
       if (result.error) {
-        this.dispatch(addError(result.error));
+        throw new Error(result.error);
       }
 
-      return result;
+      this.dispatch(removePost(post_uuid));
     } catch (e) {
       this.dispatch(addError(e.message));
+      throw e;
     }
   };
 
@@ -299,8 +295,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.updatePost(post_uuid, post_fields);
       this.dispatch(addPost(result));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -314,6 +308,7 @@ export class ActionsTrigger {
       return result;
     } catch (e) {
       this.dispatch(addError(e.message));
+      throw e;
     }
   };
 
@@ -321,8 +316,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.schools();
       this.dispatch(setSchools(result));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -337,6 +330,7 @@ export class ActionsTrigger {
       return result;
     } catch (e) {
       this.dispatch(addError(e.message));
+      return false;
     }
   };
 
@@ -349,6 +343,7 @@ export class ActionsTrigger {
       return result;
     } catch (e) {
       this.dispatch(addError(e.message));
+      return false;
     }
   };
 
@@ -356,8 +351,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.subscriptions();
       this.dispatch(setPostsToRiver(result));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -367,8 +360,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.tagCloud();
       this.dispatch(setTagCloud(result));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -378,8 +369,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.followTag(name);
       this.dispatch(addUserFollowedTag(result.tag));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -389,8 +378,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.unfollowTag(name);
       this.dispatch(removeUserFollowedTag(result.tag));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -400,8 +387,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.followSchool(name);
       this.dispatch(addUserFollowedSchool(result.school));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -411,8 +396,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.unfollowSchool(name);
       this.dispatch(removeUserFollowedSchool(result.school));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -422,8 +405,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.followGeotag(urlName);
       this.dispatch(addUserFollowedGeotag(result.geotag));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -433,8 +414,6 @@ export class ActionsTrigger {
     try {
       let result = await this.client.unfollowGeotag(urlName);
       this.dispatch(removeUserFollowedGeotag(result.geotag));
-
-      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
     }
