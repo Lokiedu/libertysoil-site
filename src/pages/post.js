@@ -23,10 +23,11 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import { ShortTextPost, PostWrapper } from '../components/post'
 import Sidebar from '../components/sidebar';
+import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import { addPost } from '../actions';
+import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -41,8 +42,11 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let result = await client.postInfo(params.uuid)
-    store.dispatch(addPost(result));
+    let post = client.postInfo(params.uuid);
+    let relatedPosts = client.relatedPosts(params.uuid);
+
+    store.dispatch(addPost(await post));
+    store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
   }
 
   render() {
@@ -64,6 +68,11 @@ export class PostPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    let relatedPostIds = this.props.related_posts[current_post.id];
+    let relatedPosts = (relatedPostIds)
+                         ? relatedPostIds.map(id => this.props.posts[id])
+                         : null;
+
     return (
       <div>
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
@@ -78,7 +87,14 @@ export class PostPage extends React.Component {
               </PostWrapper>
             </div>
 
-            <SidebarAlt />
+            <SidebarAlt>
+              <RelatedPosts
+                current_user={this.props.current_user}
+                posts={relatedPosts}
+                triggers={triggers}
+                users={this.props.users}
+              />
+            </SidebarAlt>
           </div>
         </div>
 

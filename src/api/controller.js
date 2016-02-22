@@ -29,6 +29,7 @@ import config from '../../config';
 
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
+const POST_RELATIONS = ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags'];
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -42,7 +43,7 @@ export default class ApiController {
   async allPosts(req, res) {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
-    let response = await posts.fetch({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let response = await posts.fetch({require: false, withRelated: POST_RELATIONS});
     response = response.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -62,7 +63,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -83,7 +84,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -105,7 +106,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc');
       });
 
-    let posts = await q.fetch({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetch({withRelated: POST_RELATIONS});
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
@@ -126,7 +127,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-    let posts = await q.fetchAll({withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({withRelated: POST_RELATIONS});
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
@@ -166,7 +167,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: POST_RELATIONS});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       res.send(post.toJSON());
     } catch (e) {
@@ -197,7 +198,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -230,7 +231,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -262,7 +263,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -295,7 +296,7 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
-      let posts = await q.fetchAll({require: false, withRelated: ['user', 'likers', 'favourers', 'labels', 'geotags']});
+      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
       res.send(posts);
     } catch (ex) {
@@ -578,7 +579,7 @@ export default class ApiController {
           .orderBy('posts.fully_published_at', 'desc')
       })
 
-    let posts = await q.fetchAll({require: false, withRelated: ['user', 'user.followers', 'likers', 'favourers', 'labels', 'schools', 'geotags']});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       return post;
@@ -1045,7 +1046,7 @@ export default class ApiController {
         await obj.attachGeotags(geotags);
       }
 
-      await obj.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});
+      await obj.fetch({require: true, withRelated: POST_RELATIONS});
       obj.relations.schools = obj.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(obj.toJSON());
@@ -1164,7 +1165,7 @@ export default class ApiController {
         await post_object.updateGeotags(geotags);
       }
 
-      await post_object.fetch({require: true, withRelated: ['user', 'labels', 'likers', 'favourers', 'schools', 'geotags']});
+      await post_object.fetch({require: true, withRelated: POST_RELATIONS});
       post_object.relations.schools = post_object.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
 
       res.send(post_object.toJSON());
@@ -1762,6 +1763,76 @@ export default class ApiController {
       }).fetch();
 
       res.send({tags});
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  /**
+   * Gets 3 related posts ordered by a number of matching tags + a random number between 0 and 3.
+   */
+  async getRelatedPosts(req, res) {
+    function formatArray(array) {
+      return `(${array.map(function (e) { return "'" + e + "'"; }).join(',')})`
+    }
+
+    let knex = this.bookshelf.knex;
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let post = await Post
+        .forge()
+        .where('id', req.params.id)
+        .fetch({withRelated: ['labels', 'geotags', 'schools']});
+
+      let labelIds = post.related('labels').pluck('id');
+      let schoolIds = post.related('schools').pluck('id');
+      let geotagIds = post.related('geotags').pluck('id');
+
+      // I've tried `leftJoinRaw`, and `on(knex.raw())`.
+      // Both trow `syntax error at or near "$1"`.
+      let posts = await Post.collection().query(qb => {
+        qb
+          .leftJoin('labels_posts', 'posts.id', 'labels_posts.post_id')
+          .leftJoin('labels', function () {
+            this
+              .on('labels_posts.label_id', 'labels.id')
+              .andOn(knex.raw(`labels.id IN ${formatArray(labelIds)}`));
+          })
+
+          .leftJoin('posts_schools', 'posts.id', 'posts_schools.post_id')
+          .leftJoin('schools', function () {
+            this
+              .on('posts_schools.school_id', 'schools.id')
+              .andOn(knex.raw(`schools.id IN ${formatArray(schoolIds)}`));
+          })
+
+          .leftJoin('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+          .leftJoin('geotags', function () {
+            this
+              .on('geotags_posts.geotag_id', 'geotags.id')
+              .andOn(knex.raw(`geotags.id IN ${formatArray(geotagIds)}`));
+          })
+
+          .whereNot('posts.id', post.id)
+          .groupBy('posts.id')
+          .orderByRaw(`
+            (COUNT(DISTINCT labels.id) +
+             COUNT(DISTINCT schools.id) +
+             COUNT(DISTINCT geotags.id) +
+             random() * 3)
+            DESC,
+            fully_published_at DESC
+          `)
+          .limit(3);
+
+        if (req.session.user) {
+          qb.whereNot('posts.user_id', req.session.user);
+        }
+      }).fetch({withRelated: POST_RELATIONS});
+
+      res.send(posts);
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
