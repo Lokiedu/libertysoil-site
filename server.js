@@ -27,10 +27,10 @@ import chokidar from 'chokidar';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server'
-import createMemoryHistory from 'history/lib/createMemoryHistory'
-import { Router, RoutingContext, match } from 'react-router'
-import { syncReduxAndRouter } from 'redux-simple-router';
+import { createMemoryHistory } from 'history'
 import { Provider } from 'react-redux';
+import { Router, RouterContext, match, useRouterHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
@@ -75,7 +75,7 @@ let bookshelf = initBookshelf(knexConfig);
 let api = initApi(bookshelf)
 
 let reactHandler = async (req, res) => {
-  let store = initState();
+  const store = initState();
 
   if (req.session && req.session.user && _.isString(req.session.user)) {
     try {
@@ -117,13 +117,11 @@ let reactHandler = async (req, res) => {
     </Router>
   );
 
-  let history = createMemoryHistory();
-  let location = history.createLocation(req.url);
+  const memoryHistory = useRouterHistory(createMemoryHistory)();
+  const history = syncHistoryWithStore(memoryHistory, store, { selectLocationState: state => state.get('routing') });
   let routes = makeRoutes(history);
 
-  syncReduxAndRouter(history, store, state => state.get('routing'));
-
-  match({ routes, location }, (error, redirectLocation, renderProps) => {
+  match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
     if (redirectLocation) {
       res.redirect(307, redirectLocation.pathname + redirectLocation.search)
       return;
@@ -147,7 +145,7 @@ let reactHandler = async (req, res) => {
     try {
       let html = renderToString(
         <Provider store={store}>
-          <RoutingContext {...renderProps}/>
+          <RouterContext {...renderProps}/>
         </Provider>
       );
       let state = JSON.stringify(store.getState().toJS());

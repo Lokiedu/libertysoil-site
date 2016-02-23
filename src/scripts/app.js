@@ -18,10 +18,9 @@
 import bluebird from 'bluebird';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createHistory } from 'history'
-import { Router } from 'react-router';
 import { Provider } from 'react-redux';
-import { syncReduxAndRouter } from 'redux-simple-router';
+import { Router, browserHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
 
 import { getRoutes } from '../routing'
 import { AuthHandler, FetchHandler } from '../utils/loader';
@@ -33,12 +32,10 @@ bluebird.longStackTraces();
 window.Promise = bluebird;
 
 let store = initState(window.state);
+const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
 
-let history = createHistory();
 let authHandler = new AuthHandler(store);
 let fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
-
-syncReduxAndRouter(history, store, state => state.get('routing'));
 
 ReactDOM.render(
   <Provider store={store}>

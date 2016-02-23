@@ -18,7 +18,7 @@
 import i from 'immutable';
 import { compose, createStore } from 'redux';
 import { combineReducers } from 'redux-immutablejs'
-import { routeReducer } from 'redux-simple-router';
+import { routerReducer } from 'react-router-redux';
 
 import current_user from './current-user';
 import create_post_form from './create_post_form';
@@ -48,7 +48,7 @@ import related_posts from './related_posts';
 let store;
 
 export const theReducer = combineReducers(i.Map({
-  routing: routeReducer,
+  routing: routerReducer,
   current_user,
   create_post_form,
   edit_post_form,
@@ -106,28 +106,27 @@ const initialState = i.Map({
     countries: i.Map({}),  // index by ISO-code
     countryPosts: i.Map({})
   }),
+  geotags: i.Map({}),
+  geotag_posts: i.Map({}),
   likes: i.Map({}),
   likes_river: i.Map({}),
   messages: i.List([]),
   posts: i.Map({}),
+  related_posts: i.Map({}),
   river: i.List([]),
   schools: i.Map({}),
   school_posts: i.Map({}),
-  tag_posts: i.Map({}),
-  geotags: i.Map({}),
-  geotag_posts: i.Map({}),
-  user_posts: i.Map({}),
-  users: i.Map({}),
   suggested_users: i.List([]),
   tag_cloud: i.List([]),
-  related_posts: i.Map({})
+  tag_posts: i.Map({}),
+  user_posts: i.Map({}),
+  users: i.Map({})
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
 const finalCreateStore = compose(
-   browserHasDevTools ? window.devToolsExtension() : f => f
+  browserHasDevTools ? window.devToolsExtension() : f => f
 )(createStore);
-
 
 export function initState(state=initialState) {
   store = finalCreateStore(theReducer, i.fromJS(state));

@@ -19,7 +19,7 @@ import React from 'react';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { pushPath } from 'redux-simple-router';
+import { browserHistory } from 'react-router';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -70,11 +70,11 @@ class PostEditPage extends React.Component {
   }
 
   _handleSubmit = () => {
-    this.props.dispatch(pushPath(getUrl(URL_NAMES.POST, {uuid: this.props.params.uuid})));
+    browserHistory.push(getUrl(URL_NAMES.POST, {uuid: this.props.params.uuid}));
   };
 
   _handleDelete = () => {
-    this.props.dispatch(pushPath('/'));
+    browserHistory.push('/');
   };
 
   render() {

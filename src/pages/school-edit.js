@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router'
 import _ from 'lodash';
 
 import {API_HOST} from '../config';
@@ -55,7 +56,7 @@ class SchoolEditPage extends React.Component {
         lon: form.lon.value
       }
     ).then((result) => {
-      this.props.history.pushState(null, getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
+      browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
     }).catch(() => {
       // do nothing. redux has an error already
     });

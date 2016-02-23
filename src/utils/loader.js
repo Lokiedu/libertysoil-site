@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { isPlainObject, isNumber } from 'lodash';
-import { pushPath } from 'redux-simple-router';
+import { browserHistory } from 'react-router';
 
 /**
  * Combines onEnter handlers into one function.
@@ -26,10 +26,10 @@ import { pushPath } from 'redux-simple-router';
  * @returns {Function}
  */
 export function combineHandlers(...handlers) {
-  return async (nextState, replaceState) => {
+  return async (nextState, replace) => {
     for (let handler of handlers) {
       if (handler) {
-        let shouldInterrupt = await handler(nextState, replaceState);
+        let shouldInterrupt = await handler(nextState, replace);
         if (shouldInterrupt === true) {
           break;
         }
@@ -39,7 +39,7 @@ export function combineHandlers(...handlers) {
 }
 
 export function combineHandlersAsync(...handlers) {
-  return async (nextState, replaceState, callback) => {
+  return async (nextState, replace, callback) => {
     let callbacksTodo = 0;
 
     let callbackDecreaser = () => {
@@ -60,12 +60,12 @@ export function combineHandlersAsync(...handlers) {
         if (handler.length >= 3) {
           callbacksTodo += 1;
 
-          let shouldInterrupt = await handler(nextState, replaceState, callbackDecreaser);
+          let shouldInterrupt = await handler(nextState, replace, callbackDecreaser);
           if (shouldInterrupt === true) {
             break;
           }
         } else {
-          let shouldInterrupt = await handler(nextState, replaceState);
+          let shouldInterrupt = await handler(nextState, replace);
           if (shouldInterrupt === true) {
             break;
           }
@@ -84,13 +84,13 @@ export class AuthHandler {
     this.store = store;
   }
 
-  handle = async (nextState, replaceState) => {
+  handle = async (nextState, replace) => {
     let state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
       && nextState.location.pathname !== '/welcome'
     ) {
-      replaceState(null, '/welcome');
+      replace('/welcome');
       return true;  // interrupt
     }
 
@@ -122,7 +122,7 @@ export class FetchHandler {
             this.status = status;
             this.redirectTo = redirectTo;
 
-            this.store.dispatch(pushPath(redirectTo));
+            browserHistory.push(redirectTo);
           } else if (isNumber(response)) {
             this.status = response;
           }
@@ -134,7 +134,7 @@ export class FetchHandler {
     }
   };
 
-  handleSynchronously = (nextState, replaceState, callback) => {
+  handleSynchronously = (nextState, replace, callback) => {
     this.handle(nextState)
       .then(() => { callback(); })
       .catch((e) => {

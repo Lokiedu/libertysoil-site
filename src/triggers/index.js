@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { pushPath } from 'redux-simple-router';
+import { browserHistory } from 'react-router';
 
 import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
@@ -220,9 +220,9 @@ export class ActionsTrigger {
       this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
 
       if (!user.more || user.more.first_login) {
-        this.dispatch(pushPath('/induction'));
+        browserHistory.push('/induction');
       } else {
-        this.dispatch(pushPath('/suggestions'));
+        browserHistory.push('/suggestions');
       }
     } catch (e) {
       this.dispatch(addError(e.message));
