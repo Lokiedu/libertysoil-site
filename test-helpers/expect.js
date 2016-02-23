@@ -72,6 +72,15 @@ expect.addAssertion('to body contains', function (expect, subject, value) {
   });
 });
 
+expect.addAssertion('to body satisfy', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject)
+  }).then(function (context) {
+    let body = context.httpResponse.body;
+    expect(body, 'to satisfy', value);
+  });
+});
+
 expect.addAssertion('not to open', function (expect, subject, value) {
   return expect(app, 'to yield exchange', {
     request: subjectToRequest(subject)
@@ -107,7 +116,7 @@ expect.addAssertion('to validation fail with', function (expect, subject, value)
     }
   }).then(function (context) {
     let body = context.httpResponse.body;
-    expect(body.error, 'to contain', value);
+    expect(value, 'to equal', body.error);
   });
 });
 

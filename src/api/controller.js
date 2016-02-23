@@ -23,10 +23,11 @@ import uuid from 'uuid'
 import request from 'superagent';
 import crypto from 'crypto'
 import { createJob } from '../utils/queue';
+import Checkit from 'checkit';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
-
+import { User as UserValidators } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags'];
@@ -589,44 +590,16 @@ export default class ApiController {
   }
 
   async registerUser(req, res) {
-    let requiredFields = ['username', 'password', 'email'];
     let optionalFields = ['firstName', 'lastName'];
 
-    for (let fieldName of requiredFields) {
-      if (!(fieldName in req.body)) {
-        res.status(400);
-        res.send({error: 'Bad Request'});
-        return
-      }
-    }
-
-    // 1) UN is max. 31 characters
-    if (req.body.username.length > 31) { // punycode js can be used for unicode
+    let checkit = new Checkit(UserValidators.registration);
+    try {
+      await checkit.run(req.body);
+    } catch (e) {
       res.status(400);
-      res.send({error: 'Username maximum length is 31.'});
+      res.send({error: e.toJSON()});
       return;
     }
-
-    // 2) UN can contain letters (a-z), numbers (0-9), dashes (-), underscores (_), apostrophes ('}, and periods (.).
-    // 3) UN can't contain an equal sign (=), brackets (<,>), plus sign (+), a comma (,), or more than one period (.) in a row
-    if (!req.body.username.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/)) {
-      res.status(400);
-      res.send({error: 'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'});
-      return;
-    }
-
-    // 4) P is min. 8 charachters
-    // 5) P can contain any combination of ASCII characters
-    if (!req.body.password.match(/^[\x20-\x7E]{8,}$/)) {
-      res.status(400);
-      res.send({error: 'Password is min. 8 characters. Password can only have ascii characters.'});
-      return;
-    }
-
-
-    // 6) FN  supports unicode/UTF-8 characters, with a maximum of 60 characters.
-    // 7) LN supports unicode/UTF-8 characters, with a maximum of 60 characters.
-    // 8) E supports User_Registation_01_mail_validation_01"
 
     let User = this.bookshelf.model('User');
 

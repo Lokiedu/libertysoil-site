@@ -69,6 +69,17 @@ describe('api v.1', () => {
 
     describe('When user not logged it', () => {
 
+      it('AUTHORIZED TO login and logins successfully', async () => {
+        await expect(
+          {
+            url: `/api/v1/session`,
+            method: 'POST',
+            body: { username: 'test', password: 'test' }
+          },
+          'to body satisfy', { success: true}
+        );
+      });
+
       it('AUTHORIZED TO read post', async () => {
         await expect(`/api/v1/post/${post.id}`, 'to open authorized');
       });
@@ -350,51 +361,103 @@ describe('api v.1', () => {
 
   describe('Validation', () => {
 
-    describe('Registration', () => {
+    describe('Registration Rules', () => {
 
-      describe('Username', () => {
-        it('CAN NOT be more than 31 character length', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username maximum length is 31.");
+      it('FAILS for some base rules', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          password: "test",
+          email: 'test'
+        }}, 'to validation fail with', {
+          username: ['The username must not exceed 31 characters long',
+                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+                    ],
+          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
+          email: [ 'The email must be a valid email address' ]
         });
-
-        it('CAN NOT contain Upper case ascii characters', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaaA', // capital A do not allowed
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
-        });
-
-        it('CAN NOT contain two or more periods in a row', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'a..aa.', // double period (.) is not allowed
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
-        });
-
       });
 
-      describe('Password', () => {
+      it('FAILS when password contain special(non visible ascii) characters', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          password: "testtest\x00",
+          email: 'test'
+        }}, 'to validation fail with', {
+          username: ['The username must not exceed 31 characters long',
+                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+                    ],
+          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
+          email: [ 'The email must be a valid email address' ]
+        });
+      });
 
-        it('CAN NOT be less than 8 character length ', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaa',
-            password: 'test',
-            email: 'test'
-          }}, 'to validation fail with', "Password is min. 8 characters. Password can only have ascii characters.");
+      it('FAILS when no required attributes passed', async () => {
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {
+        }}, 'to validation fail with', {
+          username: ['The username is required'],
+          password: ['The password is required'],
+          email: ['The email is required']
+        });
+      });
+
+      describe ('Email validation', async () => {
+        let validEmails = [
+          'test@domain.com',
+          'firstname.lastname@domain.com',
+          'email@subdomain.domain.com',
+          'firstname+lastname@domain.com',
+          'email@123.123.123.123',
+          '""email""@domain.com',
+          '1234567890@domain.com',
+          'email@domain-one.co',
+          '_______@domain.com',
+          'email@domain.nam',
+          'email@domain.co.jp',
+          'firstname-lastname@domain.com'
+        ];
+
+        let invalidEmails = [
+          'plainaddress',
+          '#@%^%@$@#$@#.com',
+          '@domain.com',
+          'Joe Smith <email@domain.com>',
+          'email.domain.com',
+          'email@domain@domain.com',
+          '.email@domain.com',
+          'email.@domain.com',
+          'email..email@domain.com',
+          'あいうえお@domain.com',
+          'email@domain.com (Joe Smith)',
+          'email@domain',
+          'email@-domain.com',
+          // 'email@domain.web',
+          // 'email@111.222.333.44444',
+          'email@domain..com'
+        ];
+
+        validEmails.map((email) => {
+          it(`PASS email validation with email: ${email}`, async function() {
+            // prove that there is no email validation errors
+            await expect({ url: `/api/v1/users`, method: 'POST', body: {
+              email: email
+            }}, 'to validation fail with', {
+              username: ['The username is required'],
+              password: ['The password is required']
+            });
+          });
         });
 
-        it('CAN NOT contain not visible or control ascii characters (i.e. "\\x00")', async () => {
-          await expect({ url: `/api/v1/users`, method: 'POST', body: {
-            username: 'aaa',
-            password: "testblab\x00",
-            email: 'test'
-          }}, 'to validation fail with', "Password is min. 8 characters. Password can only have ascii characters.");
+        invalidEmails.map((email) => {
+          it(`FAIL email validation with email: ${email}`, async function() {
+            // prove that there is no email validation errors
+            await expect({ url: `/api/v1/users`, method: 'POST', body: {
+              email: email
+            }}, 'to validation fail with', {
+              username: ['The username is required'],
+              password: ['The password is required'],
+              email: ['The email must be a valid email address']
+            });
+          });
         });
 
       });
