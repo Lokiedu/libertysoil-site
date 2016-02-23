@@ -205,6 +205,8 @@ export class ActionsTrigger {
 
       if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
         this.dispatch(addError(e.response.body.error));
+      } else if (e.status === 401) {
+        this.dispatch(addError('Invalid username or password'));
       } else {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.warn(e);  // eslint-disable-line no-console
