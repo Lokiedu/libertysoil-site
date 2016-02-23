@@ -11,8 +11,8 @@ export async function up(knex, Promise) {
     table.uuid('user_id');
     table.integer('size');
     table.string('mime_type');
-    table.json('s3_metadata', true);
-    table.json('more', true);
+    table.jsonb('s3_metadata');
+    table.jsonb('more');
     table.timestamp('created_at', true).defaultTo(knex.raw('now()'));
     table.timestamp('updated_at', true).defaultTo(knex.raw('now()'));
   });

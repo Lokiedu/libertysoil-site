@@ -5,7 +5,7 @@ export async function up(knex, Promise) {
     table.integer('id').primary();
     table.text('name');
     table.text('asciiname');
-    table.json('alternatenames', true);
+    table.jsonb('alternatenames');
     table.float('latitude');
     table.float('longitude');
     table.text('fclass');
@@ -50,7 +50,7 @@ export async function down(knex, Promise) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.text('name');
     table.text('asciiname');
-    table.json('alternatenames', true);
+    table.jsonb('alternatenames');
     table.float('latitude');
     table.float('longitude');
     table.text('fclass');

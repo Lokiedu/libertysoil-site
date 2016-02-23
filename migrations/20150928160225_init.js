@@ -9,7 +9,7 @@ exports.up = async function(knex, Promise) {
     table.text('email').unique();
     table.timestamp('created_at', true).defaultTo(knex.raw('now()'));
     table.timestamp('updated_at', true).defaultTo(knex.raw('now()'));
-    table.json('more', true);
+    table.jsonb('more');
   });
 
   await knex.schema.createTable('posts', function(table) {
@@ -19,7 +19,7 @@ exports.up = async function(knex, Promise) {
     table.text('type');
     table.timestamp('created_at', true).defaultTo(knex.raw('now()'));
     table.timestamp('updated_at', true).defaultTo(knex.raw('now()'));
-    table.json('more', true);
+    table.jsonb('more');
   });
 
   return knex.schema.createTable('followers', function(table) {

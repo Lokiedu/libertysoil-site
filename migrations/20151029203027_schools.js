@@ -6,7 +6,7 @@ export async function up(knex, Promise) {
     table.text('description');
     table.timestamp('created_at', true).defaultTo(knex.raw('now()'));
     table.timestamp('updated_at', true).defaultTo(knex.raw('now()'));
-    table.json('more', true);
+    table.jsonb('more');
   });
 
   await knex.schema.createTable('posts_schools', (table) => {

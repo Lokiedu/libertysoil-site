@@ -17,14 +17,14 @@ export async function up(knex, Promise) {
     table.text('postalcode');
     table.text('postalcoderegex');
     table.text('languages');
-    table.json('neighbors', true);
+    table.jsonb('neighbors');
   });
 
   await knex.schema.createTable('geonames_cities', function(table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.text('name');
     table.text('asciiname');
-    table.json('alternatenames', true);
+    table.jsonb('alternatenames');
     table.float('latitude');
     table.float('longitude');
     table.text('fclass');
