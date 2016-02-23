@@ -45,7 +45,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_GEOTAG_POSTS:
     case a.SET_RELATED_POSTS:
     {
-      let postsWithoutUsers = _.indexBy(action.posts.map(post => {
+      let postsWithoutUsers = _.keyBy(action.posts.map(post => {
         let postCopy = _.cloneDeep(post);
         delete postCopy.user;
         return postCopy;

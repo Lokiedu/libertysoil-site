@@ -33,7 +33,7 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_SCHOOLS: {
-      const schools = _.indexBy(action.schools, 'id');
+      const schools = _.keyBy(action.schools, 'id');
       state = i.fromJS(schools);
 
       break;

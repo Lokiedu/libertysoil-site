@@ -30,7 +30,7 @@ const initialState = i.Map({
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_COUNTRIES: {
-      state = state.set('countries', i.fromJS(_.indexBy(action.countries, 'iso_alpha2')));
+      state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'iso_alpha2')));
       break;
     }
 

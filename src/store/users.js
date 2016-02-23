@@ -79,7 +79,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_GEOTAG_POSTS:
     {
-      let users = _.indexBy(_.unique(action.posts.map(post => post.user), 'id'), 'id');
+      let users = _.keyBy(_.uniq(action.posts.map(post => post.user), 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
     }
   }

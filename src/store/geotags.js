@@ -33,7 +33,7 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_GEOTAGS: {
-      const geotags = _.indexBy(action.geotags, 'url_name');
+      const geotags = _.keyBy(action.geotags, 'url_name');
       state = i.fromJS(geotags);
 
       break;

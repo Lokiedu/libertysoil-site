@@ -391,7 +391,7 @@ export default class ApiController {
         return;
       }
 
-      images = _.unique(req.body.images);
+      images = _.uniq(req.body.images);
     }
 
     let School = this.bookshelf.model('School');
@@ -984,7 +984,7 @@ export default class ApiController {
         return;
       }
 
-      tags = _.unique(req.body.tags);
+      tags = _.uniq(req.body.tags);
     }
 
     let schools;
@@ -996,7 +996,7 @@ export default class ApiController {
         return;
       }
 
-      schools = _.unique(req.body.schools);
+      schools = _.uniq(req.body.schools);
     }
 
     let geotags;
@@ -1008,7 +1008,7 @@ export default class ApiController {
         return;
       }
 
-      geotags = _.unique(req.body.geotags);
+      geotags = _.uniq(req.body.geotags);
     }
 
     let Post = this.bookshelf.model('Post');
@@ -1099,7 +1099,7 @@ export default class ApiController {
         return;
       }
 
-      tags = _.unique(req.body.tags);
+      tags = _.uniq(req.body.tags);
     }
 
     let schools;
@@ -1111,7 +1111,7 @@ export default class ApiController {
         return;
       }
 
-      schools = _.unique(req.body.schools);
+      schools = _.uniq(req.body.schools);
     }
 
     let geotags;
@@ -1123,7 +1123,7 @@ export default class ApiController {
         return;
       }
 
-      geotags = _.unique(req.body.geotags);
+      geotags = _.uniq(req.body.geotags);
     }
 
     if (type === 'short_text') {
