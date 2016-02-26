@@ -22,6 +22,7 @@ import { v4 as uuid4 } from 'uuid';
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
+import QueueSingleton from '../../src/utils/queue';
 
 
 let bookshelf = initBookshelf($dbConfig);
@@ -459,9 +460,40 @@ describe('api v.1', () => {
             });
           });
         });
-
       });
+    });
+  });
 
+  describe('Functional', () => {
+    let queue;
+
+    before(() => {
+      queue = new QueueSingleton().handler;
+      queue.testMode.enter();
+    });
+
+    beforeEach(async () => {
+      await bookshelf.knex('users').del();
+    });
+
+    afterEach(() => {
+      queue.testMode.clear();
+    });
+
+    after(() => {
+      queue.testMode.exit();
+    });
+
+    it('and accepting jobs', async () => {
+      await expect({ url: `/api/v1/users`, method: 'POST', body: {
+        username: 'test',
+        password: 'testPass',
+        email: 'test@example.com'
+      }}, 'to open successfully');
+
+      expect(queue.testMode.jobs.length,'to equal', 1);
+      expect(queue.testMode.jobs[0].type, 'to equal', 'register-user-email');
+      expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test', email: 'test@example.com' });
     });
 
   });
