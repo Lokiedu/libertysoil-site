@@ -465,26 +465,29 @@ describe('api v.1', () => {
   });
 
   describe('Functional', () => {
-    let queue;
+    let user, queue;
 
     before(() => {
       queue = new QueueSingleton().handler;
       queue.testMode.enter();
     });
 
-    beforeEach(async () => {
-      await bookshelf.knex('users').del();
-    });
-
-    afterEach(() => {
-      queue.testMode.clear();
-    });
-
     after(() => {
       queue.testMode.exit();
     });
 
-    it('and accepting jobs', async () => {
+    beforeEach(async () => {
+      await bookshelf.knex('users').del();
+      user = await User.create('test2', 'testPassword', 'test2@example.com');
+      await user.save({'email_check_hash': ''},{require:true});
+    });
+
+    afterEach(async () => {
+      await user.destroy();
+      queue.testMode.clear();
+    });
+
+    it('Create new queue job after user registration', async () => {
       await expect({ url: `/api/v1/users`, method: 'POST', body: {
         username: 'test',
         password: 'testPass',
@@ -494,6 +497,16 @@ describe('api v.1', () => {
       expect(queue.testMode.jobs.length,'to equal', 1);
       expect(queue.testMode.jobs[0].type, 'to equal', 'register-user-email');
       expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test', email: 'test@example.com' });
+    });
+
+    it('Create new queue job after user request reset password', async () => {
+      await expect({ url: `/api/v1/resetpassword`, method: 'POST', body: {
+        email: 'test2@example.com'
+      }}, 'to open successfully');
+
+      expect(queue.testMode.jobs.length,'to equal', 1);
+      expect(queue.testMode.jobs[0].type, 'to equal', 'reset-password-email');
+      expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test2', email: 'test2@example.com' });
     });
 
   });
