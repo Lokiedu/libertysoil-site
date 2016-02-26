@@ -20,18 +20,38 @@ import kueLib from 'kue';
 import config from '../../config';
 
 
-let queue = kueLib.createQueue(config.kue);
+let instance = null;
 
-export async function createJob(name, data) {
-  let promise = new Promise((resolve, reject) => {
-    queue.create(name, data).save(function(error) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
+export default class Queue {
+
+  constructor() {
+    if (!instance) {
+      instance = this;
+      this.handler = kueLib.createQueue(config.kue);
+    }
+
+    return instance;
+  }
+
+  setHandler(handler) {
+    this.handler = handler;
+  }
+
+  /**
+   * Creates job in a queuep
+   */
+  createJob = async (name, data) => {
+    let promise = new Promise((resolve, reject) => {
+      this.handler.create(name, data).save(function(error) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
     });
-  });
 
-  return await promise;
+    return await promise;
+  }
+
 }
