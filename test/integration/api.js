@@ -18,6 +18,8 @@
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { v4 as uuid4 } from 'uuid';
+import bcrypt from 'bcrypt'
+import bb from 'bluebird'
 
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
@@ -25,6 +27,7 @@ import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 import QueueSingleton from '../../src/utils/queue';
 
 
+let bcryptAsync = bb.promisifyAll(bcrypt);
 let bookshelf = initBookshelf($dbConfig);
 let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
@@ -465,7 +468,7 @@ describe('api v.1', () => {
   });
 
   describe('Functional', () => {
-    let user, queue;
+    let user, queue, resetPasswordUser;
 
     before(() => {
       queue = new QueueSingleton().handler;
@@ -480,10 +483,14 @@ describe('api v.1', () => {
       await bookshelf.knex('users').del();
       user = await User.create('test2', 'testPassword', 'test2@example.com');
       await user.save({'email_check_hash': ''},{require:true});
+
+      resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
+      await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
     });
 
     afterEach(async () => {
       await user.destroy();
+      await resetPasswordUser.destroy();
       queue.testMode.clear();
     });
 
@@ -507,6 +514,19 @@ describe('api v.1', () => {
       expect(queue.testMode.jobs.length,'to equal', 1);
       expect(queue.testMode.jobs[0].type, 'to equal', 'reset-password-email');
       expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test2', email: 'test2@example.com' });
+    });
+
+    it('New password works', async () => {
+      await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
+        password: 'foo',
+        password_repeat: 'foo'
+      }}, 'to open successfully');
+
+      let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
+      const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
+
+      expect(passwordValid, 'to be true');
+      expect(localUser.get('reset_password_hash'), 'to be empty');
     });
 
   });
