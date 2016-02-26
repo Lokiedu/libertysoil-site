@@ -22,7 +22,7 @@ import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
 import request from 'superagent';
 import crypto from 'crypto'
-import { createJob } from '../utils/queue';
+import QueueSingleton from '../utils/queue';
 import Checkit from 'checkit';
 
 import { processImage } from '../utils/image';
@@ -35,6 +35,7 @@ const POST_RELATIONS = ['user', 'likers', 'favourers', 'labels', 'schools', 'geo
 export default class ApiController {
   constructor (bookshelf) {
     this.bookshelf = bookshelf;
+    this.queue = new QueueSingleton;
   }
 
   async test(req, res) {
@@ -644,7 +645,7 @@ export default class ApiController {
       throw e;
     }
 
-    createJob('register-user-email', {
+    this.queue.createJob('register-user-email', {
       username: user.get('username'),
       email: user.get('email'),
       hash: user.get('email_check_hash')
@@ -723,7 +724,7 @@ export default class ApiController {
     user.set('email_check_hash', '');
     await user.save(null, {method: 'update'});
 
-    createJob('verify-email', {
+    this.queue.createJob('verify-email', {
       username: user.get('username'),
       email: user.get('email')
     });
@@ -778,7 +779,7 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
     }
 
-    createJob('reset-password-email', {
+    this.queue.createJob('reset-password-email', {
       username: user.get('username'),
       email: req.body.email,
       hash: user.get('reset_password_hash')
