@@ -82,7 +82,7 @@ class PasswordForm extends React.Component {
     let errors = this.state.errors;
 
     return (
-      <form ref="form" onSubmit={this.props.onSubmit} action="" method="post">
+      <form className="password-form" ref="form" onSubmit={this.props.onSubmit} action="" method="post">
         <div className="layout__row">
           <div className="form__row">
             <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
