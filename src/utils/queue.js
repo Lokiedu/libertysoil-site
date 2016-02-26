@@ -33,12 +33,8 @@ export default class Queue {
     return instance;
   }
 
-  setHandler(handler) {
-    this.handler = handler;
-  }
-
   /**
-   * Creates job in a queuep
+   * Creates job in a queue
    */
   createJob = async (name, data) => {
     let promise = new Promise((resolve, reject) => {
