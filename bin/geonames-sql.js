@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import AdmZip from 'adm-zip';
 import fetch from 'node-fetch';
-import knex from 'knex';
+import Knex from 'knex';
 import { wait as waitForStream } from 'promise-streams'
 import tmp from 'tmp';
 import { chunk } from 'lodash';
@@ -13,98 +13,142 @@ import slug from 'slug';
 let exec_env = process.env.DB_ENV || 'development';
 let root = fs.realpathSync(`${__dirname}/..`);
 
-let Knex = knex(require(`${root}/knexfile.js`)[exec_env]);
+let knex = Knex(require(`${root}/knexfile.js`)[exec_env]);
+
+/**
+ * @param {string} table
+ * @param {object} condition
+ * @param {object} attributes
+ * @returns {string} - sql query string
+ */
+async function createOrUpdate(table, condition, attributes) {
+  let result = await knex(table).where(condition);
+  let query;
+
+  if (result.length > 0) {
+    query = knex(table)
+      .where(condition)
+      .update(attributes)
+      .toString();
+  } else {
+    query = knex(table)
+      .insert(attributes)
+      .toString();
+  }
+
+  // Knex escapes double quotes that don't need to be escaped (e.g. when using JSON.stringify).
+  return query.replace(/\\\\"/g, '\\"') + ';';
+}
+
+/**
+ * Executes queries in batches.
+ * @param {Array} queries - array of sql queries
+ * @returns {Promise}
+ */
+function executeQueries(queries) {
+  return Promise.all(
+    chunk(queries, 1000).map(batch => {
+      return knex.raw(batch.join('\n'));
+    })
+  );
+}
 
 async function countries() {
   process.stdout.write("=== DOWNLOADING COUNTRIES DATA ===\n");
   const response = await fetch('http://download.geonames.org/export/dump/countryInfo.txt');
 
   process.stdout.write("=== PARSING COUNTRIES DATA ===\n");
-  let content_lines = (await response.text()).split("\n");
-  content_lines.pop();
+  let lines = (await response.text())
+    .split('\n');
 
-  let countries_data = content_lines.slice(51).map((line) => {
-    try {
-      let country_fields = line.split("\t").map((field, index) => {
-        if (index === 15 || index === 17) {
-          return `'${JSON.stringify(field.split(','))}'`;
-        }
+  let countryQueries = [];
 
-        if (!field.match(/^\d+$/)) {
-          field = field.replace(/'/g, "''");
-          return `'${field}'`;
-        }
-
-        return field;
-      });
-
-      country_fields.splice(16, 1);
-      country_fields.pop();
-
-      return country_fields;
-    } catch (ex) {
-      return [];
+  for (let line of lines) {
+    // There can be empty strings and comments. Filter them out.
+    if (!line.length || line[0] == '#') {
+      continue;
     }
-  });
 
-  let q = countries_data.map((row) => {
-    return `INSERT INTO geonames_countries VALUES (${row.join(',')});`;
-  }).join("\n");
+    let attrs = line.split('\t');
 
-  process.stdout.write("=== TRUNCATING COUNTRIES TABLE ===\n");
-  await Knex.raw('TRUNCATE geonames_countries CASCADE');
+    let country = {
+      iso_alpha2: attrs[0],
+      iso_alpha3: attrs[1],
+      iso_numeric: attrs[2],
+      fips_code: attrs[3],
+      name: attrs[4],
+      capital: attrs[5],
+      areainsqkm: attrs[6],
+      population: attrs[7],
+      continent: attrs[8],
+      tld: attrs[9],
+      currencycode: attrs[10],
+      currencyname: attrs[11],
+      phone: attrs[12],
+      postalcode: attrs[13],
+      postalcoderegex: attrs[14],
+      languages: JSON.stringify(attrs[15].split(',')),
+      neighbors: JSON.stringify(attrs[17].split(','))
+    };
 
-  process.stdout.write("=== IMPORTING ===\n");
-  await Knex.raw(q);
+    countryQueries.push(await createOrUpdate('geonames_countries', {iso_alpha2: country.iso_alpha2}, country));
+  }
+
+  process.stdout.write("=== IMPORTING/UPDATING COUNTRIES ===\n");
+  return executeQueries(countryQueries);
 }
 
 async function cities() {
   process.stdout.write("=== DOWNLOADING CITIES DATA ===\n");
-  const tmp_file = tmp.fileSync();
-  const output = fs.createWriteStream(tmp_file.name, {flags: 'w'});
+  let tmpFile = tmp.fileSync();
+  let output = fs.createWriteStream(tmpFile.name, {flags: 'w'});
 
-  const response = await fetch('http://download.geonames.org/export/dump/cities1000.zip');
+  let response = await fetch('http://download.geonames.org/export/dump/cities1000.zip');
   await waitForStream(response.body.pipe(output));
 
   process.stdout.write("=== UNPACKING CITIES DATA ===\n");
-  const zip = new AdmZip(tmp_file.name);
-  const content_lines = zip.readAsText("cities1000.txt").split("\n");
+  let zip = new AdmZip(tmpFile.name);
+  let lines = zip.readAsText("cities1000.txt")
+    .split('\n');
 
-  process.stdout.write("=== PARSING CITIES DATA ===\n");
-  let cities_data = content_lines.map((line) => {
-    try {
-      return line.split("\t").map((originalField, index) => {
-        const field = originalField.replace(/'/g, "''");
 
-        if (index === 3) {
-          return `'${JSON.stringify(field.split(','))}'`;
-        }
+  process.stdout.write("=== IMPORTING/UPDATING CITIES ===\n");
 
-        if (!field.match(/^\d+$/)) {
-          return `'${field}'`;
-        }
+  let cityQueries = [];
 
-        return originalField;
-      });
-    } catch (ex) {
-      console.warn(`ERROR while parsing city-data line`, ex);  // eslint-disable-line no-console
-      return [];
+  for (let line of lines) {
+    if (!line || !line.length) {
+      continue;
     }
-  });
 
-  cities_data.pop();
+    let attrs = line.split('\t');
 
-  const q = cities_data.map((row) => {
-    return `INSERT INTO geonames_cities VALUES (${row.join(',')});`;
-  });
+    let city = {
+      id: attrs[0],
+      name: attrs[1],
+      asciiname: attrs[2],
+      alternatenames: JSON.stringify(attrs[3].split(',')),
+      latitude: attrs[4],
+      longitude: attrs[5],
+      fclass: attrs[6],
+      fcode: attrs[7],
+      country: attrs[8],
+      cc2: attrs[9],
+      admin1: attrs[10],
+      admin2: attrs[11],
+      admin3: attrs[12],
+      admin4: attrs[13],
+      population: attrs[14],
+      elevation: attrs[15],
+      gtopo30: attrs[16],
+      timezone: attrs[17],
+      moddate: attrs[18]
+    };
 
-  process.stdout.write("=== TRUNCATING CITIES TABLE ===\n");
-  await Knex.raw('TRUNCATE geonames_cities CASCADE');
-
-  process.stdout.write("=== IMPORTING ===\n");
-  for (let batch of chunk(q, 1000)) {
-    await Knex.raw(batch.join("\n"));
+    cityQueries.push(await createOrUpdate('geonames_cities', {id: city.id}, city));
   }
+
+  return executeQueries(cityQueries);
 }
 
 /**
@@ -118,28 +162,33 @@ async function geotags() {
     return urlNames[urlName];
   }
 
-  process.stdout.write("=== TRUNCATING GEOTAGS TABLE ===\n");
-  await Knex.raw('TRUNCATE geotags CASCADE');
+  process.stdout.write("=== IMPORTING/UPDATING COUNTRY GEOTAGS ===\n");
 
-  process.stdout.write("=== IMPORTING COUNTRY GEOTAGS ===\n");
-
-  let countries = await Knex
+  let countries = await knex
     .select('id', 'name')
     .from('geonames_countries');
 
-  let countryAttributes = countries.map(function (country) {
+  let countryQueries = [];
+
+  for (let country of countries) {
     let urlName = slug(country.name);
 
     urlNames[urlName] = true;
 
-    return {name: country.name, country_id: country.id, url_name: urlName};
-  });
+    countryQueries.push(
+      await createOrUpdate(
+        'geotags',
+        {country_id: country.id, city_id: null},
+        {name: country.name, country_id: country.id, url_name: urlName}
+      )
+    );
+  }
 
-  await Knex('geotags').insert(countryAttributes);
+  await executeQueries(countryQueries);
 
-  process.stdout.write("=== IMPORTING CITY GEOTAGS ===\n");
+  process.stdout.write("=== IMPORTING/UPDATING CITY GEOTAGS ===\n");
 
-  let cities = await Knex
+  let cities = await knex
     .select(
       'cities.id',
       'cities.asciiname as name',
@@ -151,7 +200,9 @@ async function geotags() {
     .innerJoin('geonames_countries as countries', 'cities.country', 'countries.iso_alpha2')
     .orderBy('population', 'DESC');
 
-  let cityAttributes = cities.map(function (city) {
+  let cityQueries = [];
+
+  for (let city of cities) {
     let justCity = slug(city.name);
     let cityWithCountry = `${justCity}-${slug(city.country_name)}`;
     let cityWithIndex = (i) => `${cityWithCountry}-${i}`;
@@ -174,12 +225,16 @@ async function geotags() {
 
     urlNames[urlName] = true;
 
-    return {name: city.name, country_id: city.country_id, city_id: city.id, url_name: urlName};
-  });
-
-  for (let batch of chunk(cityAttributes, 1000)) {
-    await Knex('geotags').insert(batch);
+    cityQueries.push(
+      await createOrUpdate(
+        'geotags',
+        {city_id: city.id},
+        {name: city.name, country_id: city.country_id, city_id: city.id, url_name: urlName}
+      )
+    );
   }
+
+  await executeQueries(cityQueries);
 }
 
 countries()
