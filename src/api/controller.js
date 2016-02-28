@@ -121,18 +121,40 @@ export default class ApiController {
   }
 
   async geotagPosts(req, res) {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
+    const Geotag = this.bookshelf.model('Geotag');
 
-    let q = Post.forge()
+    const geotag = await Geotag
+      .forge()
+      .where({url_name: req.params.url_name})
+      .fetch();
+
+    let posts = await Post
+      .collection()
       .query(qb => {
         qb
           .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
           .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-          .where('geotags.url_name', req.params.url_name)
           .orderBy('posts.created_at', 'desc')
-      });
+          .distinct();
 
-    let posts = await q.fetchAll({withRelated: POST_RELATIONS});
+        switch (geotag.attributes.type) {
+          case 'Continent':
+            qb.where('geotags.continent', geotag.continent);
+            break;
+          case 'Country':
+            qb.where('geotags.country_id', geotag.attributes.country_id);
+            break;
+          case 'City':
+            qb.where('geotags.id', geotag.id);
+            break;
+          case 'Planet':
+            // There are no planets besides Earth yet.
+            break;
+        }
+      })
+      .fetch({withRelated: POST_RELATIONS});
+
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
