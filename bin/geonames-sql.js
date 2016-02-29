@@ -22,6 +22,7 @@ let knex = Knex(require(`${root}/knexfile.js`)[exec_env]);
  * @returns {string} - sql query string
  */
 async function createOrUpdate(table, condition, attributes) {
+  // TODO: this should be optimized. Per-city select-query in a loop is not a feasible solution
   let result = await knex(table).where(condition);
   let query;
 
@@ -37,6 +38,12 @@ async function createOrUpdate(table, condition, attributes) {
   }
 
   // Knex escapes double quotes that don't need to be escaped (e.g. when using JSON.stringify).
+  // TODO: we should consider switching to raw postgres's prepared statements, avoiding Knex AND escaping at all
+  // TODO: we should use Postgres 9.5's "upsert" capabilities
+  if (knex.VERSION !== '0.10.0') {
+    throw new Error(`The code uses string-escaping hack to avoid error in Knex's code. It is not tested with your version of Knex`);
+  }
+
   return query.replace(/\\\\"/g, '\\"') + ';';
 }
 
