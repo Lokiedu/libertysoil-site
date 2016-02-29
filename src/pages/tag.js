@@ -27,6 +27,7 @@ import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import FollowTagButton from '../components/follow-tag-button';
+import LikeTagButton from '../components/like-tag-button';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -52,6 +53,10 @@ export class TagPage extends Component {
 
     const thisTagPosts = tag_posts[this.props.params.tag] || [];
     const followedTags = (current_user) ? current_user.followed_tags : {};
+    const likeTriggers = {
+      likeTag: triggers.likeHashtag,
+      unlikeTag: triggers.unlikeHashtag
+    };
 
     return (
       <div>
@@ -63,9 +68,17 @@ export class TagPage extends Component {
 
             <div className="page__body_content">
               <div className="tag_header">
-                <div className="layout__grid">
+                <div className="layout__grid_item layout__grid_item-wide">
+                  {this.props.params.tag}
+                </div>
+                <div className="layout__grid layout-align_vertical">
                   <div className="layout__grid_item layout__grid_item-wide">
-                    {this.props.params.tag}
+                    <LikeTagButton
+                      is_logged_in={is_logged_in}
+                      liked_tags={current_user.liked_hashtags}
+                      tag={this.props.params.tag}
+                      triggers={likeTriggers}
+                    />
                   </div>
                   <div className="layout__grid_item layout__grid_item-small">
                     <FollowTagButton

@@ -15,11 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-const SHORT_TEXT = 'short_text'
-const LONG_TEXT = 'long_text'
+export const SHORT_TEXT = 'short_text';
+export const LONG_TEXT = 'long_text';
+export const HASHTAG_LIKE = 'hashtag_like';
+export const SCHOOL_LIKE = 'school_like';
+export const GEOTAG_LIKE = 'geotag_like';
 
 const postType = {
-  SHORT_TEXT, LONG_TEXT
-}
+  SHORT_TEXT,
+  LONG_TEXT,
+  HASHTAG_LIKE,
+  SCHOOL_LIKE,
+  GEOTAG_LIKE
+};
 
-export default postType
+export default postType;

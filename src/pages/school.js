@@ -61,7 +61,6 @@ export class SchoolPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let followTriggers = {followTag: triggers.followSchool, unfollowTag: triggers.unfollowSchool};
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
 
     if (!school) {
@@ -84,7 +83,7 @@ export class SchoolPage extends React.Component {
         current_user={this.props.current_user}
         page_school={school}
         is_logged_in={this.props.is_logged_in}
-        followTriggers={followTriggers}
+        triggers={triggers}
       >
         <div className="paper">
           <div className="paper__page content">

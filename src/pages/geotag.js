@@ -28,6 +28,7 @@ import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import FollowTagButton from '../components/follow-tag-button';
+import LikeTagButton from '../components/like-tag-button';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -73,7 +74,6 @@ export class GeotagPage extends Component {
     let client = new ApiClient(API_HOST);
     let triggers = new ActionsTrigger(client, this.props.dispatch);
     let geotag = geotags[this.props.params.url_name];
-    let tagPosts = geotag_posts[this.props.params.url_name] || [];
 
     if (!geotag) {
       return <script />;
@@ -83,9 +83,16 @@ export class GeotagPage extends Component {
       return <NotFound/>;
     }
 
+    let tagPosts = geotag_posts[this.props.params.url_name] || [];
+
     let followTriggers = {
       followTag: triggers.followGeotag,
       unfollowTag: triggers.unfollowGeotag
+    };
+
+    let likeTriggers = {
+      likeTag: triggers.likeGeotag,
+      unlikeTag: triggers.unlikeGeotag
     };
 
     return (
@@ -98,19 +105,25 @@ export class GeotagPage extends Component {
 
             <div className="page__body_content">
               <div className="tag_header">
-                <div className="layout__grid">
+                <div className="layout__grid_item layout__grid_item-wide">
+                  {(geotag) ? geotag.name : this.props.params.url_name}
+                </div>
+                <div className="layout__grid layout-align_vertical">
                   <div className="layout__grid_item layout__grid_item-wide">
-                    {(geotag) ? geotag.name : this.props.params.url_name}
+                    <LikeTagButton
+                      is_logged_in={is_logged_in}
+                      liked_tags={current_user.liked_geotags}
+                      tag={this.props.params.url_name}
+                      triggers={likeTriggers}
+                    />
                   </div>
                   <div className="layout__grid_item layout__grid_item-small">
-                    {current_user &&
-                      <FollowTagButton
-                        current_user={current_user}
-                        followed_tags={current_user.followed_geotags}
-                        tag={this.props.params.url_name}
-                        triggers={followTriggers}
-                      />
-                    }
+                    <FollowTagButton
+                      current_user={current_user}
+                      followed_tags={current_user.followed_geotags}
+                      tag={this.props.params.url_name}
+                      triggers={followTriggers}
+                    />
                   </div>
                 </div>
               </div>

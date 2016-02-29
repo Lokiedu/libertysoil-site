@@ -52,6 +52,12 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
 export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
+export const ADD_LIKED_HASHTAG = 'ADD_LIKED_HASHTAG';
+export const REMOVE_LIKED_HASHTAG = 'REMOVE_LIKED_HASHTAG';
+export const ADD_LIKED_SCHOOL = 'ADD_LIKED_SCHOOL';
+export const REMOVE_LIKED_SCHOOL = 'REMOVE_LIKED_SCHOOL';
+export const ADD_LIKED_GEOTAG = 'ADD_LIKED_GEOTAG';
+export const REMOVE_LIKED_GEOTAG = 'REMOVE_LIKED_GEOTAG';
 
 export const SET_COUNTRIES = 'SET_COUNTRIES';
 export const ADD_COUNTRY = 'ADD_COUNTRY';
@@ -409,5 +415,47 @@ export function updateEditPostForm(edit_post_form) {
   return {
     type: UPDATE_EDIT_POST_FORM,
     edit_post_form
+  }
+}
+
+export function addLikedHashtag(hashtag) {
+  return {
+    type: ADD_LIKED_HASHTAG,
+    hashtag
+  }
+}
+
+export function removeLikedHashtag(hashtag) {
+  return {
+    type: REMOVE_LIKED_HASHTAG,
+    hashtag
+  }
+}
+
+export function addLikedSchool(school) {
+  return {
+    type: ADD_LIKED_SCHOOL,
+    school
+  }
+}
+
+export function removeLikedSchool(school) {
+  return {
+    type: REMOVE_LIKED_SCHOOL,
+    school
+  }
+}
+
+export function addLikedGeotag(geotag) {
+  return {
+    type: ADD_LIKED_GEOTAG,
+    geotag
+  }
+}
+
+export function removeLikedGeotag(geotag) {
+  return {
+    type: REMOVE_LIKED_GEOTAG,
+    geotag
   }
 }

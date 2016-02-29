@@ -26,7 +26,9 @@ import {
   submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
-  addUserFollowedGeotag, removeUserFollowedGeotag
+  addUserFollowedGeotag, removeUserFollowedGeotag,
+  addLikedHashtag, addLikedSchool, addLikedGeotag,
+  removeLikedHashtag, removeLikedSchool, removeLikedGeotag
 } from '../actions';
 
 
@@ -61,6 +63,90 @@ export class ActionsTrigger {
       if (responseBody.success) {
         this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
         await this.syncLikedPosts(current_user_id);
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  likeHashtag = async (name) => {
+    try {
+      let response = await this.client.likeHashtag(name);
+
+      if (response.success) {
+        this.dispatch(addLikedHashtag(response.label));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unlikeHashtag = async (name) => {
+    try {
+      let response = await this.client.unlikeHashtag(name);
+
+      if (response.success) {
+        this.dispatch(removeLikedHashtag(response.label));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  likeSchool = async (url_name) => {
+    try {
+      let response = await this.client.likeSchool(url_name);
+
+      if (response.success) {
+        this.dispatch(addLikedSchool(response.school));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unlikeSchool = async (url_name) => {
+    try {
+      let response = await this.client.unlikeSchool(url_name);
+
+      if (response.success) {
+        this.dispatch(removeLikedSchool(response.school));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  likeGeotag = async (url_name) => {
+    try {
+      let response = await this.client.likeGeotag(url_name);
+
+      if (response.success) {
+        this.dispatch(addLikedGeotag(response.geotag));
+      } else {
+        this.dispatch(addError('internal server error. please try later'));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  unlikeGeotag = async (url_name) => {
+    try {
+      let response = await this.client.unlikeGeotag(url_name);
+
+      if (response.success) {
+        this.dispatch(removeLikedGeotag(response.geotag));
       } else {
         this.dispatch(addError('internal server error. please try later'));
       }

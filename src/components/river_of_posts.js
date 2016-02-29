@@ -18,7 +18,10 @@
 import React from 'react'
 import _ from 'lodash'
 
-import { ShortTextPost, PostWrapper } from './post'
+import * as PostTypes  from '../consts/postTypeConstants';
+import { ShortTextPost, PostWrapper } from './post';
+import TagLikePost from './tag-like-post';
+
 
 export default class RiverOfPostsComponent extends React.Component {
   render() {
@@ -30,18 +33,36 @@ export default class RiverOfPostsComponent extends React.Component {
 
     return (
       <div>
-          {posts.map((post) => (
-            <PostWrapper
-              author={this.props.users[post.user_id]}
-              current_user={this.props.current_user}
-              key={post.id}
-              post={post}
-              showComments={false}
-              triggers={this.props.triggers}
-            >
-              <ShortTextPost post={post}/>
-            </PostWrapper>
-          ))}
+        {posts.map((post) => {
+          switch (post.type) {
+            case PostTypes.HASHTAG_LIKE:
+            case PostTypes.SCHOOL_LIKE:
+            case PostTypes.GEOTAG_LIKE:
+              return (
+                <TagLikePost
+                  author={this.props.users[post.user_id]}
+                  key={post.id}
+                  post={post}
+                />
+              );
+            case PostTypes.SHORT_TEXT:
+            case PostTypes.LONG_TEXT:
+              return (
+                <PostWrapper
+                  author={this.props.users[post.user_id]}
+                  current_user={this.props.current_user}
+                  key={post.id}
+                  post={post}
+                  showComments={false}
+                  triggers={this.props.triggers}
+                >
+                  <ShortTextPost post={post}/>
+                </PostWrapper>
+              );
+            default:
+              return null;
+          }
+        })}
       </div>
     )
   }

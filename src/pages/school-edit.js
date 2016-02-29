@@ -63,6 +63,9 @@ class SchoolEditPage extends React.Component {
   }
 
   render() {
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
     let initialLocation = {lat: school.lat, lon: school.lon};
 
@@ -71,6 +74,7 @@ class SchoolEditPage extends React.Component {
         current_user={this.props.current_user}
         is_logged_in={this.props.is_logged_in}
         page_school={school}
+        triggers={triggers}
       >
         <div className="paper">
           <div className="paper__page">

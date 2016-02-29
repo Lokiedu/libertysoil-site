@@ -30,7 +30,10 @@ import config from '../../config';
 import { User as UserValidators } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
-const POST_RELATIONS = ['user', 'likers', 'favourers', 'labels', 'schools', 'geotags'];
+const POST_RELATIONS = [
+  'user', 'likers', 'favourers', 'labels', 'schools',
+  'geotags', 'liked_label', 'liked_school', 'liked_geotag'
+];
 
 export default class ApiController {
   constructor (bookshelf) {
@@ -712,7 +715,10 @@ export default class ApiController {
           'favourited_posts',
           'followed_labels',
           'followed_geotags',
-          'followed_schools'
+          'followed_schools',
+          'liked_labels',
+          'liked_geotags',
+          'liked_schools'
         ]
       });
 
@@ -1822,6 +1828,198 @@ export default class ApiController {
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
+    }
+  }
+
+  async likeHashtag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let Label = this.bookshelf.model('Label');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let label = await Label.where({name: req.params.name}).fetch({require: true});
+
+      await user.liked_labels().detach(label);
+      await user.liked_labels().attach(label);
+
+      await new Post({
+        id: uuid.v4(),
+        type: 'hashtag_like',
+        liked_label_id: label.id,
+        user_id: user.id
+      }).save(null, {method: 'insert'});
+
+      res.send({success: true, label});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't like the tag: ${e.message}`});
+    }
+  }
+
+
+  async unlikeHashtag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let Label = this.bookshelf.model('Label');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let label = await Label.where({name: req.params.name}).fetch({require: true});
+
+      await user.liked_labels().detach(label);
+
+      await Post
+        .where({
+          user_id: user.id,
+          liked_label_id: label.id
+        })
+        .destroy();
+
+      res.send({success: true, label});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't unlike the tag: ${e.message}`});
+    }
+  }
+
+  async likeSchool(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let School = this.bookshelf.model('School');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let school = await School.where({url_name: req.params.url_name}).fetch({require: true});
+
+      await user.liked_schools().detach(school);
+      await user.liked_schools().attach(school);
+
+      await new Post({
+        id: uuid.v4(),
+        type: 'school_like',
+        liked_school_id: school.id,
+        user_id: user.id
+      }).save(null, {method: 'insert'});
+
+      res.send({success: true, school});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't like the school: ${e.message}`});
+    }
+  }
+
+
+  async unlikeSchool(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let School = this.bookshelf.model('School');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let school = await School.where({url_name: req.params.url_name}).fetch({require: true});
+
+      await user.liked_schools().detach(school);
+
+      await Post
+        .where({
+          user_id: user.id,
+          liked_school_id: school.id
+        })
+        .destroy();
+
+      res.send({success: true, school});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't unlike the school: ${e.message}`});
+    }
+  }
+
+  async likeGeotag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let Geotag = this.bookshelf.model('Geotag');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let geotag = await Geotag.where({url_name: req.params.url_name}).fetch({require: true});
+
+      await user.liked_geotags().detach(geotag);
+      await user.liked_geotags().attach(geotag);
+
+      await new Post({
+        id: uuid.v4(),
+        type: 'geotag_like',
+        liked_geotag_id: geotag.id,
+        user_id: user.id
+      }).save(null, {method: 'insert'});
+
+      res.send({success: true, geotag});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't like the geotag: ${e.message}`});
+    }
+  }
+
+
+  async unlikeGeotag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    let Geotag = this.bookshelf.model('Geotag');
+    let Post = this.bookshelf.model('Post');
+
+    try {
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let geotag = await Geotag.where({url_name: req.params.url_name}).fetch({require: true});
+
+      await user.liked_geotags().detach(geotag);
+
+      await Post
+        .where({
+          user_id: user.id,
+          liked_geotag_id: geotag.id
+        })
+        .destroy();
+
+      res.send({success: true, geotag});
+    } catch (e) {
+      res.status(500);
+      res.send({error: `Couldn't unlike the geotag: ${e.message}`});
     }
   }
 }
