@@ -7,6 +7,7 @@ import app from '../index';
 
 expect.installPlugin(require('unexpected-express'));
 expect.installPlugin(require('unexpected-dom'));
+expect.installPlugin(require('unexpected-immutable'));
 
 let subjectToRequest = (subject) => {
   if (isString(subject)) {

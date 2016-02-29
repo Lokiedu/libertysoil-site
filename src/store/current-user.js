@@ -36,20 +36,30 @@ export default function reducer(state=initialState, action) {
       const oldUid = state.get('id');
       const newUid = action.user ? action.user.id : null;
 
-      if (oldUid === newUid) {
-        break;
+      // UID is changed. means logout or re-login. Do the cleanup
+      if (oldUid !== newUid) {
+        state = state.withMutations((state) => {
+          state
+            .set('id', newUid)
+            .set('tags', i.List([]))
+            .set('followed_tags', i.Map({}))
+            .set('followed_schools', i.Map({}))
+            .set('followed_geotags', i.Map({}))
+            .set('suggested_users', i.List([]));
+        });
       }
 
-      // UID is changed. means logout or re-login. Do the cleanup
-      state = state.withMutations((state) => {
-        state
-          .set('id', newUid)
-          .set('tags', i.List([]))
-          .set('followed_tags', i.Map({}))
-          .set('followed_schools', i.Map({}))
-          .set('followed_geotags', i.Map({}))
-          .set('suggested_users', i.List([]));
-      });
+      if (newUid) {
+        let followedTags = _.keyBy(action.user.followed_labels, 'name');
+        let followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
+        let followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
+
+        state = state.withMutations(state => {
+          state.set('followed_tags', i.fromJS(followedTags));
+          state.set('followed_geotags', i.fromJS(followedGeotags));
+          state.set('followed_schools', i.fromJS(followedSchools));
+        });
+      }
 
       break;
     }
@@ -65,17 +75,6 @@ export default function reducer(state=initialState, action) {
       break;
     }
 
-    case a.SET_USER_FOLLOWED_TAGS: {
-      let followedTags = action.followed_tags.reduce(function (tags, tag) {
-        tags[tag.name] = tag;
-        return tags;
-      }, {});
-
-      state = state.set('followed_tags', i.fromJS(followedTags));
-
-      break;
-    }
-
     case a.ADD_USER_FOLLOWED_TAG: {
       state = state.setIn(['followed_tags', action.tag.name], i.fromJS(action.tag));
 
@@ -84,17 +83,6 @@ export default function reducer(state=initialState, action) {
 
     case a.REMOVE_USER_FOLLOWED_TAG: {
       state = state.deleteIn(['followed_tags', action.tag.name]);
-
-      break;
-    }
-
-    case a.SET_USER_FOLLOWED_SCHOOLS: {
-      let followedSchools = action.followed_schools.reduce(function (schools, school) {
-        schools[school.url_name] = school;
-        return schools;
-      }, {});
-
-      state = state.set('followed_schools', i.fromJS(followedSchools));
 
       break;
     }
@@ -113,17 +101,6 @@ export default function reducer(state=initialState, action) {
 
     case a.SET_PERSONALIZED_SUGGESTED_USERS: {
       state = state.set('suggested_users', i.fromJS(action.suggested_users));
-
-      break;
-    }
-
-    case a.SET_USER_FOLLOWED_GEOTAGS: {
-      let followedGeotags = action.followed_geotags.reduce(function (geotags, geotag) {
-        geotags[geotag.url_name] = geotag;
-        return geotags;
-      }, {});
-
-      state = state.set('followed_geotags', i.fromJS(followedGeotags));
 
       break;
     }
