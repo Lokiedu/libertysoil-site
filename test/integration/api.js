@@ -71,7 +71,7 @@ describe('api v.1', () => {
       await unverifiedUser.destroy();
     });
 
-    describe('When user not logged it', () => {
+    describe('When user is not logged in', () => {
 
       it('AUTHORIZED TO login and logins successfully', async () => {
         await expect(
@@ -158,6 +158,10 @@ describe('api v.1', () => {
 
       it('AUTHORIZED TO use anonymous reset password feature', async () => {
         await expect({ url: `/api/v1/resetpassword` }, 'to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO read subscriptions', async () => {
+        await expect({ url: '/api/v1/posts' }, 'not to open authorized');
       });
 
       it('NOT AUTHORIZED TO open liked posts page', async () => {
@@ -292,6 +296,10 @@ describe('api v.1', () => {
 
       it('AUTHORIZED TO unfav other post', async () => {
         await expect({ url: `/api/v1/post/${otherPost.id}/unfav`, session: sessionId, method: 'POST' }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO read subscriptions', async () => {
+        await expect({ url: `/api/v1/posts`, session: sessionId }, 'to open authorized');
       });
 
       it('AUTHORIZED TO read own liked posts', async () => {
