@@ -326,8 +326,8 @@ describe('api v.1', () => {
         await expect({ url: `/api/v1/user/password`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('AUTHORIZED TO delete other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'to open authorized');
+      it('NOT AUTHORIZED TO delete other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'not to open authorized');
       });
 
       it('AUTHORIZED TO logout', async () => {

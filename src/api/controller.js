@@ -1185,7 +1185,14 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true});
+      let post_object = await Post.where({ id: req.params.id }).fetch({require: true});
+
+      if (post_object.get('user_id') != req.session.user) {
+        res.status(403);
+        res.send({error: 'You are not authorized'});
+        return;
+      }
+
       post_object.destroy();
     } catch(e) {
       res.status(500);
