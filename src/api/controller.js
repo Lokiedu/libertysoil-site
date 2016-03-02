@@ -574,6 +574,8 @@ export default class ApiController {
     let uid = req.session.user;
     let Post = this.bookshelf.model('Post');
 
+    const offset = ('offset' in req.query) ? parseInt(req.query.offset, 10) : 0;
+
     let q = Post.forge()
       .query(qb => {
         qb
@@ -582,7 +584,9 @@ export default class ApiController {
           .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
           .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
           .orderBy('posts.fully_published_at', 'desc')
-      })
+          .limit(5)
+          .offset(offset)
+      });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     posts = posts.map(post => {
