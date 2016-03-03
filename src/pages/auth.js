@@ -136,8 +136,9 @@ export class Auth extends React.Component {
             </div>
           </div>
         </div>
-
-        <Footer/>
+        <div className="layout__row-group page__content-cloudy">
+          <Footer/>
+        </div>
       </div>
     );
   }
