@@ -35,7 +35,8 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import {
   resetCreatePostForm,
-  updateCreatePostForm
+  updateCreatePostForm,
+  clearRiver
 } from '../actions';
 
 
@@ -44,6 +45,8 @@ class List extends React.Component {
 
   static async fetchData(params, store, client) {
     let trigger = new ActionsTrigger(client, store.dispatch);
+
+    store.dispatch(clearRiver());
 
     await Promise.all([
       trigger.loadSchools(),

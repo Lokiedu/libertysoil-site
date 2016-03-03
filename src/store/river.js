@@ -24,6 +24,12 @@ const initialState = i.List([]);
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
+    case a.CLEAR_RIVER: {
+      state = i.List([]);
+
+      break;
+    }
+
     case a.ADD_POST_TO_RIVER: {
       state = state.unshift(action.post.id);
 
