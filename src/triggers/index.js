@@ -28,7 +28,8 @@ import {
   removeMessage, registrationSuccess, showRegisterForm,
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
-  removeLikedHashtag, removeLikedSchool, removeLikedGeotag
+  removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
+  setUIProgress
 } from '../actions';
 
 
@@ -441,12 +442,16 @@ export class ActionsTrigger {
     }
   };
 
-  loadPostRiver = async () => {
+  loadPostRiver = async (offset) => {
+    this.dispatch(setUIProgress('loadRiverInProgress', true));
+
     try {
-      let result = await this.client.subscriptions();
+      let result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
+      this.dispatch(setUIProgress('loadRiverInProgress', false));
     } catch (e) {
       this.dispatch(addError(e.message));
+      this.dispatch(setUIProgress('loadRiverInProgress', false));
     }
   };
 

@@ -20,11 +20,17 @@ import i from 'immutable';
 import * as a from '../actions';
 
 const initialState = i.Map({
+  progress: i.Map({})
 });
 
 export default function reducer(state=initialState, action) {
 
   switch (action.type) {
+  case a.UI__SET_PROGRESS:
+    {
+      state = state.setIn(['progress', action.progress], action.value);
+      break;
+    }
   case a.SUBMIT_RESET_PASSWORD:
     {
       state = state.set('submitResetPassword', true);

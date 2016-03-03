@@ -76,6 +76,8 @@ export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
+export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -457,5 +459,13 @@ export function removeLikedGeotag(geotag) {
   return {
     type: REMOVE_LIKED_GEOTAG,
     geotag
+  }
+}
+
+export function setUIProgress(progress, value) {
+  return {
+    type: UI__SET_PROGRESS,
+    progress,
+    value
   }
 }

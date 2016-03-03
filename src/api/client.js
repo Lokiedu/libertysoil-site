@@ -70,7 +70,7 @@ export default class ApiClient
   /*
     *post without setting content type
   */
-  
+
   async postMultipart(relativeUrl, data=null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
@@ -100,8 +100,8 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
-  async subscriptions() {
-    let response = await this.get('/api/v1/posts');
+  async subscriptions(offset = 0) {
+    let response = await this.get(`/api/v1/posts?offset=${offset}`);
     return response.body;
   }
 

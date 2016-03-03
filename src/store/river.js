@@ -26,15 +26,19 @@ export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_POST_TO_RIVER: {
       state = state.unshift(action.post.id);
+
       break;
     }
 
     case a.SET_POSTS_TO_RIVER: {
-      let posts = i.List(action.posts.map(post => post.id));
+      let posts = action.posts.map(post => post.id);
+      let stateArray = state.toJS();
 
-      if (!i.is(state, posts)) {
-        state = posts;
-      }
+      posts.forEach(postID => {
+        if (!stateArray.includes(postID)) {
+          state = state.push(postID);
+        }
+      });
 
       break;
     }
