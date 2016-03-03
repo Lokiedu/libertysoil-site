@@ -32,10 +32,9 @@ export default function reducer(state=initialState, action) {
 
     case a.SET_POSTS_TO_RIVER: {
       let posts = action.posts.map(post => post.id);
-      let stateArray = state.toJS();
 
       posts.forEach(postID => {
-        if (!stateArray.includes(postID)) {
+        if (!state.includes(postID)) {
           state = state.push(postID);
         }
       });
