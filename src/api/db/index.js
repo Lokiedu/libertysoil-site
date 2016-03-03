@@ -31,8 +31,7 @@ import { uploadAttachment, downloadAttachment, generateName } from '../../utils/
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 
-export default function initBookshelf(config) {
-  let knex = Knex(config);
+export function initBookshelfFromKnex(knex) {
   let bookshelf = Bookshelf(knex);
 
   bookshelf.plugin('registry');
@@ -417,4 +416,9 @@ export default function initBookshelf(config) {
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
+}
+
+export default function initBookshelf(config) {
+  const knex = Knex(config);
+  return initBookshelfFromKnex(knex);
 }
