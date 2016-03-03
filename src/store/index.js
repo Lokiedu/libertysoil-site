@@ -123,7 +123,10 @@ const initialState = i.Map({
   tag_cloud: i.List([]),
   tag_posts: i.Map({}),
   user_posts: i.Map({}),
-  users: i.Map({})
+  users: i.Map({}),
+  ui: i.Map({
+    progress: i.Map({})
+  })
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';

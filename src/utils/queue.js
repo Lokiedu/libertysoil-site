@@ -48,6 +48,6 @@ export default class Queue {
     });
 
     return await promise;
-  }
+  };
 
 }

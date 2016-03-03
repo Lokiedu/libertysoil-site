@@ -29,6 +29,7 @@ import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
+import Button from '../components/button';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -56,7 +57,9 @@ class List extends React.Component {
       current_user,
       i_am_following,
       resetCreatePostForm,
-      updateCreatePostForm
+      updateCreatePostForm,
+      ui,
+      river
     } = this.props;
 
     const actions = {resetCreatePostForm, updateCreatePostForm};
@@ -77,7 +80,10 @@ class List extends React.Component {
                 triggers={triggers}
                 {...this.props.create_post_form}
               />
-              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+            <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+            <div className="layout layout-align_center layout__space layout__space-double">
+              <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
+            </div>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>
