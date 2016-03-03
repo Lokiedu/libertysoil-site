@@ -22,14 +22,14 @@ import uuid from 'uuid'
 import _ from 'lodash'
 import fileType from 'file-type';
 import mime from 'mime';
-import bb from 'bluebird';
-import bcrypt from 'bcrypt';
+import { promisify, promisifyAll } from 'bluebird';
+import { hash as bcryptHash } from 'bcrypt';
 import crypto from 'crypto'
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 
 
-let bcryptAsync = bb.promisifyAll(bcrypt);
+const bcryptHashAsync = promisify(bcryptHash);
 
 export function initBookshelfFromKnex(knex) {
   let bookshelf = Bookshelf(knex);
@@ -105,7 +105,7 @@ export function initBookshelfFromKnex(knex) {
   });
 
   User.create = async function(username, password, email, moreData) {
-    let hashed_password = await bcryptAsync.hashAsync(password, 10);
+    let hashed_password = await bcryptHashAsync(password, 10);
 
     let random = Math.random().toString();
     let email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
