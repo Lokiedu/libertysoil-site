@@ -21,6 +21,7 @@ export const ADD_GEOTAG = 'ADD_GEOTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
+export const CLEAR_RIVER = 'CLEAR_RIVER';
 export const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
@@ -117,6 +118,12 @@ export function setPostsToRiver(posts) {
   return {
     type: SET_POSTS_TO_RIVER,
     posts
+  }
+}
+
+export function clearRiver() {
+  return {
+    type: CLEAR_RIVER
   }
 }
 
