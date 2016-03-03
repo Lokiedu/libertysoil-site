@@ -33,6 +33,8 @@ let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 let School = bookshelf.model('School');
 
+const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
+
 describe('api v.1', () => {
 
   describe('Authorization', () => {
@@ -563,6 +565,53 @@ describe('api v.1', () => {
 
         expect(passwordValid, 'to be true');
         expect(localUser.get('reset_password_hash'), 'to be empty');
+      });
+    });
+
+    describe('Posts', () => {
+      describe('Subscriptions', () => {
+        let user;
+        let posts;
+        let sessionId;
+
+        beforeEach(async () => {
+          await bookshelf.knex('users').del();
+          await bookshelf.knex('posts').del();
+
+          user = await User.create('mary', 'secret', 'mary@example.com');
+          await user.save({email_check_hash: ''}, {require: true});
+
+          posts = await Promise.all(range(1, 10).map(i => {
+            const post = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              user_id: user.get('id'),
+              text: `This is a Post #${i}`
+            });
+            return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
+          }));
+
+          sessionId = await login('mary', 'secret');
+        });
+
+        afterEach(async () => {
+          await Promise.all(posts.map(post => post.destroy()));
+          await user.destroy();
+        });
+
+        it('First page of subscriptions should return by-default', async () => {
+          await expect(
+            { url: `/api/v1/posts`, session: sessionId },
+            'to body satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
+          );
+        });
+
+        it('Other pages of subscriptions should work', async () => {
+          await expect(
+            { url: `/api/v1/posts?offset=4`, session: sessionId },
+            'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
+          );
+        });
       });
     });
   });
