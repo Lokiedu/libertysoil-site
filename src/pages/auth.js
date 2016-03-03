@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import ApiClient from '../api/client'
@@ -30,6 +31,11 @@ import Messages from '../components/messages';
 
 
 export class Auth extends React.Component {
+
+  constructor() {
+    super();
+    this.state = { registerClicked: false };
+  }
 
   static propTypes = {
     messages: PropTypes.arrayOf(React.PropTypes.object).isRequired,
@@ -58,6 +64,26 @@ export class Auth extends React.Component {
     return {status: 307, redirectTo: '/'};
   }
 
+  componentDidMount() {
+
+  }
+
+  hideLogin() {
+    const header = ReactDOM.findDOMNode();
+    const content = ReactDOM.findDOMNode();
+
+
+
+    return this;
+  }
+
+  registerClickHandler = (event) => {
+    if (this.state.registerClicked) return;
+
+    this.hideLogin()
+        .setState({ registerClicked: true });
+  };
+
   render() {
     let { current_user, is_logged_in, messages, ui } = this.props;
 
@@ -78,28 +104,31 @@ export class Auth extends React.Component {
 
     const registration_success = ui.registrationSuccess;
 
+
+    // also classes: parallax parallax__layer-pseudo parallax__layer-bg_pseudo
+
     return (
-      <div className="page__container-bg font-open_sans font-light">
-        <section className="landing landing-big landing-bg landing-bg_house">
+      <div className="page__container-bg font-open_sans font-light ">
+        <section className="landing landing-big landing-bg landing-bg_house landing-bg_fixed layout__row-group layout__row-full">
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
-            className="header-transparent header-transparent_border"
+            className="header-transparent header-transparent_border landing__header-fixed"
           />
-
-          <header className="landing__body">
+          <header className="landing__body landing__body-fixed">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
             <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-            <Login onLoginUser={triggers.login} />
+              <Login onLoginUser={triggers.login} />
           </header>
         </section>
 
         {renderedMessages}
 
-        <div className="page__content page__content-spacing">
+        <div className="page__content page__content-spacing page__content-cloudy layout__row-group">
           <div className="page__body page__body-small">
             <div className="layout__row">
               <Register
+                onClick={this.registerClickHandler}
                 registration_success={registration_success}
                 onShowRegisterForm={triggers.showRegisterForm}
                 onRegisterUser={triggers.registerUser}

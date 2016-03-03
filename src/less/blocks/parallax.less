@@ -15,47 +15,36 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.header {
-  padding: @space;
-  background: @color__block_background;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+.parallax {
+  perspective: 1px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  
+  &__layer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
-  &-transparent {
-    background: none;
+    &-bg {
+      transform: translateZ(-1px) scale(2);
+    }
+
+    &-bg_pseudo::before {
+      transform: translateZ(-1px) scale(2);
+    }
+
+    &-front {
+      transform: translateZ(0);
+    }
   }
 
-  &-transparent_border {
-    border-color: transparent;
+  &__layer-pseudo::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
-
-  &-fixed {
-    position: fixed;
-  }
-}
-
-.header__body {
-  &:extend(.layout);
-  &:extend(.layout__grid all);
-  max-width: @siteWidth - @space*2;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-.header__toolbar {
-  &:extend(.layout);
-  &:extend(.layout-align_right);
-  &:extend(.layout-align_vertical);
-  &:extend(.layout__grid_item-wide);
-  margin-top: 0;
-  margin-right: 0;
-}
-
-.header__logo {
-  margin-top: 0;
-}
-
-.header__toolbar_item {
-  &:extend(.layout__grid_item all);
-  &:extend(.layout);
-  &:extend(.layout-align_vertical);
 }

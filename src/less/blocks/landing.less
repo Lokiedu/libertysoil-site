@@ -50,6 +50,9 @@
         opacity: .55;
       }
     }
+    &_fixed::before {
+      background-attachment: fixed;
+    }
   }
 
   &-big {
@@ -74,6 +77,12 @@
     text-align: center;
     font-size: 22px;
     padding: @doubleSpace;
+
+    &-fixed {
+      left: 0;
+      right: 0;
+      position: fixed;
+    }
   }
 
   &__body {
@@ -95,6 +104,13 @@
     @media @after-wide {
       padding-top: 12vw;
       padding-bottom: 16vw;
+    }
+
+    &-fixed { // probably should be renamed
+      position: fixed;
+      z-index: 9;
+      top: 15%;
+      left: 25%;
     }
   }
 
