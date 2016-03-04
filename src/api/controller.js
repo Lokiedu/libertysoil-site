@@ -170,24 +170,20 @@ export default class ApiController {
       res.send({error: 'You are not authorized'})
       return;
     }
-    let Post = this.bookshelf.model('Post');
+    let Hashtag = this.bookshelf.model('Hashtag');
 
-    let q = Post.forge()
+    let hashtags = await Hashtag
+      .collection()
       .query(qb => {
         qb
-          .where({user_id: req.session.user})
-          .orderBy('posts.created_at', 'desc')
-      });
+          .join('hashtags_posts', 'hashtags_posts.hashtag_id', 'hashtags.id')
+          .join('posts', 'hashtags_posts.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .distinct()
+      })
+      .fetch();
 
-    let posts = await q.fetchAll({require: false, withRelated: ['labels']})
-
-    let label_lists = posts
-      .map(row => row.relations.labels.toJSON())
-      .filter(labels => labels.length > 0);
-
-    let labels = _.uniq(_.flatten(label_lists), 'id')
-
-    res.send(labels);
+    res.send(hashtags);
   }
 
   async getPost(req, res) {
