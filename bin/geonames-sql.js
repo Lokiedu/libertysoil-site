@@ -164,15 +164,67 @@ async function cities() {
 async function geotags() {
   // An index of url_name to optimize checking for existence.
   let urlNames = {};
+  // Country id => continent code
+  let countryContinents = {};
 
   function geotagExists(urlName) {
     return urlNames[urlName];
   }
 
+  // Add the Earth geotag.
+  await knex.raw(
+    await createOrUpdate(
+      'geotags',
+      {
+        country_id: null,
+        city_id: null,
+        name: 'Earth'
+      },
+      {
+        name: 'Earth',
+        type: 'Planet',
+        url_name: 'Earth'
+      }
+    )
+  );
+  urlNames['Earth'] = true;
+
+  process.stdout.write("=== IMPORTING/UPDATING CONTINENT GEOTAGS ===\n");
+
+  let continents = [
+    {code: 'AF', name: 'Africa'},
+    {code: 'AS', name: 'Asia'},
+    {code: 'EU', name: 'Europe'},
+    {code: 'NA', name: 'North America'},
+    {code: 'OC', name: 'Oceania'},
+    {code: 'SA', name: 'South America'},
+    {code: 'AN', name: 'Antarctica'}
+  ];
+
+  for (let continent of continents) {
+    urlNames[continent.name] = true;
+
+    await knex.raw(
+      await createOrUpdate(
+        'geotags',
+        {
+          continent: continent.code,
+          type: 'Continent'
+        },
+        {
+          continent: continent.code,
+          name: continent.name,
+          type: 'Continent',
+          url_name: slug(continent.name)
+        }
+      )
+    );
+  }
+
   process.stdout.write("=== IMPORTING/UPDATING COUNTRY GEOTAGS ===\n");
 
   let countries = await knex
-    .select('id', 'name')
+    .select('id', 'name', 'continent', 'iso_alpha2')
     .from('geonames_countries');
 
   let countryQueries = [];
@@ -181,12 +233,19 @@ async function geotags() {
     let urlName = slug(country.name);
 
     urlNames[urlName] = true;
+    countryContinents[country.iso_alpha2] = country.continent;
 
     countryQueries.push(
       await createOrUpdate(
         'geotags',
         {country_id: country.id, city_id: null},
-        {name: country.name, country_id: country.id, url_name: urlName}
+        {
+          continent: country.continent,
+          country_id: country.id,
+          name: country.name,
+          type: 'Country',
+          url_name: urlName
+        }
       )
     );
   }
@@ -200,6 +259,7 @@ async function geotags() {
       'cities.id',
       'cities.asciiname as name',
       'cities.population',
+      'cities.country',
       'countries.id as country_id',
       'countries.name as country_name'
     )
@@ -236,7 +296,14 @@ async function geotags() {
       await createOrUpdate(
         'geotags',
         {city_id: city.id},
-        {name: city.name, country_id: city.country_id, city_id: city.id, url_name: urlName}
+        {
+          continent: countryContinents[city.country],
+          country_id: city.country_id,
+          city_id: city.id,
+          name: city.name,
+          type: 'City',
+          url_name: urlName
+        }
       )
     );
   }
