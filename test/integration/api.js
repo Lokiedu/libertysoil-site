@@ -45,7 +45,7 @@ describe('api v.1', () => {
   describe('Authorization', () => {
     let post, user, school, unverifiedUser;
 
-    beforeEach(async () => {
+    before(async () => {
       await bookshelf.knex('users').del();
       await bookshelf.knex('posts').del();
       await bookshelf.knex('schools').del();
@@ -71,7 +71,7 @@ describe('api v.1', () => {
 
     });
 
-    afterEach(async () => {
+    after(async () => {
       await post.destroy();
       await user.destroy();
       await school.destroy();
@@ -264,7 +264,7 @@ describe('api v.1', () => {
     describe('When user logged in it', () => {
       let sessionId, otherPost;
 
-      beforeEach(async () => {
+      before(async () => {
         otherPost = new Post({
           id: uuid4(),
           type: POST_DEFAULT_TYPE
@@ -273,7 +273,7 @@ describe('api v.1', () => {
         sessionId = await login('test', 'test');
       });
 
-      afterEach(async () => {
+      after(async () => {
         otherPost.destroy();
       });
 
@@ -545,77 +545,206 @@ describe('api v.1', () => {
       })
     });
 
-    describe('Change password', () => {
-      let resetPasswordUser;
+    describe('Authenticated user', () => {
+      let user,
+          sessionId;
 
-      beforeEach(async () => {
+      before(async () => {
         await bookshelf.knex('users').del();
+        user = await User.create('mary', 'secret', 'mary@example.com');
+        await user.save({email_check_hash: ''}, {require: true});
 
-        resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
-        await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'}, {require: true});
+        sessionId = await login('mary', 'secret');
       });
 
-      afterEach(async () => {
-        await resetPasswordUser.destroy();
+      after(async () => {
+        await user.destroy();
       });
 
-      it('New password works', async () => {
-        await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
-          password: 'foo',
-          password_repeat: 'foo'
-        }}, 'to open successfully');
+      describe('User settings', () => {
+        it('bio update works', async () => {
+          await expect(
+            { url: `/api/v1/user`, session: sessionId, method: 'POST', body: {more: {bio: 'foo'}} }
+            , 'to open successfully');
 
-        let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
-        const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
+          let localUser = await User.where({id: user.id}).fetch({require: true});
 
-        expect(passwordValid, 'to be true');
-        expect(localUser.get('reset_password_hash'), 'to be empty');
+          expect(localUser.get('more').bio, 'to equal', 'foo');
+        });
       });
-    });
 
-    describe('Posts', () => {
-      describe('Subscriptions', () => {
-        let user;
-        let posts;
-        let sessionId;
+      describe('Posts', () => {
+        describe('Subscriptions', () => {
+          let posts;
 
-        beforeEach(async () => {
-          await bookshelf.knex('users').del();
-          await bookshelf.knex('posts').del();
+          beforeEach(async () => {
+            await bookshelf.knex('posts').del();
 
-          user = await User.create('mary', 'secret', 'mary@example.com');
-          await user.save({email_check_hash: ''}, {require: true});
+            posts = await Promise.all(range(1, 10).map(i => {
+              const post = new Post({
+                id: uuid4(),
+                type: POST_DEFAULT_TYPE,
+                user_id: user.get('id'),
+                text: `This is a Post #${i}`
+              });
+              return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
+            }));
 
-          posts = await Promise.all(range(1, 10).map(i => {
-            const post = new Post({
+          });
+
+          afterEach(async () => {
+            await Promise.all(posts.map(post => post.destroy()));
+          });
+
+          it('First page of subscriptions should return by-default', async () => {
+            await expect(
+              { url: `/api/v1/posts`, session: sessionId },
+              'to body satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
+            );
+          });
+
+          it('Other pages of subscriptions should work', async () => {
+            await expect(
+              { url: `/api/v1/posts?offset=4`, session: sessionId },
+              'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
+            );
+          });
+        });
+
+        describe('Favourites', () => {
+          let post;
+
+          beforeEach(async () => {
+            await bookshelf.knex('posts').del();
+
+            post = new Post({
               id: uuid4(),
               type: POST_DEFAULT_TYPE,
-              user_id: user.get('id'),
-              text: `This is a Post #${i}`
+              text: `This is clean post`
             });
-            return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
-          }));
+            await post.save({}, {method: 'insert'});
+          });
 
-          sessionId = await login('mary', 'secret');
+          afterEach(async () => {
+            await post.destroy();
+          });
+
+          it('CAN fav post', async () => {
+            await expect(
+              { url: `/api/v1/post/${post.id}/fav`, session: sessionId, method: 'POST' },
+              'to open successfully'
+            );
+            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['favourited_posts']});
+
+            expect(localUser.related('favourited_posts').length, 'to equal', 1);
+            expect(localUser.related('favourited_posts').models[0].get('text'), 'to equal', 'This is clean post');
+          });
+
+          it('CAN unfav post', async () => {
+            await user.favourited_posts().attach(post);
+            await expect(
+              { url: `/api/v1/post/${post.id}/unfav`, session: sessionId, method: 'POST' },
+              'to open successfully'
+            );
+            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['favourited_posts']});
+
+            expect(localUser.related('favourited_posts').models, 'to be empty');
+          });
         });
 
-        afterEach(async () => {
-          await Promise.all(posts.map(post => post.destroy()));
-          await user.destroy();
+        describe('Likes', () => {
+          let post;
+
+          beforeEach(async () => {
+            await bookshelf.knex('posts').del();
+
+            post = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              text: `This is clean post`
+            });
+            await post.save({}, {method: 'insert'});
+          });
+
+          afterEach(async () => {
+            await post.destroy();
+          });
+
+          it('CAN like post', async () => {
+            await expect(
+              { url: `/api/v1/post/${post.id}/like`, session: sessionId, method: 'POST' },
+              'to open successfully'
+            );
+            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['liked_posts']});
+
+            expect(localUser.related('liked_posts').length, 'to equal', 1);
+            expect(localUser.related('liked_posts').models[0].get('text'), 'to equal', 'This is clean post');
+          });
+
+          it('CAN unlike post', async () => {
+            await user.liked_posts().attach(post);
+            await expect(
+              { url: `/api/v1/post/${post.id}/unlike`, session: sessionId, method: 'POST' },
+              'to open successfully'
+            );
+            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['liked_posts']});
+
+            expect(localUser.related('liked_posts').models, 'to be empty');
+          });
         });
 
-        it('First page of subscriptions should return by-default', async () => {
-          await expect(
-            { url: `/api/v1/posts`, session: sessionId },
-            'to body satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
-          );
+        describe('Favoured page', () => {
+          let post;
+
+          beforeEach(async () => {
+            await bookshelf.knex('posts').del();
+
+            post = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              text: `This is favoured post`
+            });
+            await post.save({}, {method: 'insert'});
+            await user.favourited_posts().attach(post);
+          });
+
+          afterEach(async () => {
+            await post.destroy();
+          });
+
+          it('should work', async () => {
+            await expect(
+              { url: `/api/v1/posts/favoured`, session: sessionId },
+              'to body satisfy', [{text: 'This is favoured post'}]
+            );
+          });
         });
 
-        it('Other pages of subscriptions should work', async () => {
-          await expect(
-            { url: `/api/v1/posts?offset=4`, session: sessionId },
-            'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
-          );
+        describe('Liked posts page', () => {
+          let post;
+
+          beforeEach(async () => {
+            await bookshelf.knex('posts').del();
+
+            post = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              text: `This is liked post`
+            });
+            await post.save({}, {method: 'insert'});
+            await user.liked_posts().attach(post);
+          });
+
+          afterEach(async () => {
+            await post.destroy();
+          });
+
+          it('should work', async () => {
+            await expect(
+              { url: `/api/v1/posts/liked`, session: sessionId },
+              'to body satisfy', [{text: 'This is liked post'}]
+            );
+          });
         });
       });
     });
@@ -638,30 +767,102 @@ describe('api v.1', () => {
       });
     });
 
-    describe('User settings', () => {
-      let user, sessionId;
 
-      beforeEach(async () => {
-        await bookshelf.knex('users').del();
+    describe('Not authenticated user', () => {
+      describe('Change password', () => {
+        let resetPasswordUser;
 
-        user = await User.create('mary', 'secret', 'mary@example.com');
-        await user.save({email_check_hash: ''}, {require: true});
+        before(async () => {
+          await bookshelf.knex('users').del();
 
-        sessionId = await login('mary', 'secret');
+          resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
+          await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'}, {require: true});
+        });
+
+        after(async () => {
+          await resetPasswordUser.destroy();
+        });
+
+        it('New password works', async () => {
+          await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
+            password: 'foo',
+            password_repeat: 'foo'
+          }}, 'to open successfully');
+
+          let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
+          const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
+
+          expect(passwordValid, 'to be true');
+          expect(localUser.get('reset_password_hash'), 'to be empty');
+        });
       });
 
-      afterEach(async () => {
-        await user.destroy();
-      });
+      describe('Posts', () => {
+        let post;
+        beforeEach(async () => {
+          await bookshelf.knex('posts').del();
 
-      it('bio update works', async () => {
-        await expect(
-          { url: `/api/v1/user`, session: sessionId, method: 'POST', body: {more: {bio: 'foo'}} }
-          , 'to open successfully');
+          post = new Post({
+            id: uuid4(),
+            type: POST_DEFAULT_TYPE,
+            text: `This is a test Post`
+          });
+          await post.save({}, {method: 'insert'});
+        });
 
-        let localUser = await User.where({id: user.id}).fetch({require: true});
+        afterEach(async () => {
+          await post.destroy();
+        });
 
-        expect(localUser.get('more').bio, 'to equal', 'foo');
+        it('Tag page should work', async () => {
+          await post.attachHashtags(['foo']);
+          await expect(
+            { url: `/api/v1/posts/tag/foo` },
+            'to body satisfy', [{text: post.get('text')}]
+          );
+        });
+
+        describe('Favorites', () => {
+          let user;
+
+          beforeEach(async () => {
+            await bookshelf.knex('users').del();
+            user = await User.create('mary', 'secret', 'mary@example.com');
+          });
+
+          afterEach(async () => {
+            await user.destroy();
+          });
+
+          it('Favoured posts for user should work', async () => {
+            await user.favourited_posts().attach(post);
+            await expect(
+              { url: `/api/v1/posts/favoured/${user.get('username')}` },
+              'to body satisfy', [{text: post.get('text')}]
+            );
+          });
+        });
+
+        describe('Likes', () => {
+          let user;
+
+          beforeEach(async () => {
+            await bookshelf.knex('users').del();
+            user = await User.create('mary', 'secret', 'mary@example.com');
+          });
+
+          afterEach(async () => {
+            await user.destroy();
+          });
+
+          it('Liked posts for user should work', async () => {
+            await user.liked_posts().attach(post);
+            await expect(
+              { url: `/api/v1/posts/liked/${user.get('username')}` },
+              'to body satisfy', [{text: post.get('text')}]
+            );
+          });
+        });
       });
     });
   });
