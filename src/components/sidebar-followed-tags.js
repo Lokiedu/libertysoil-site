@@ -17,7 +17,7 @@ export default class SidebarFollowedTags extends React.Component {
       name: PropTypes.string,
       url_name: PropTypes.string
     })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     }))
   };

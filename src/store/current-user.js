@@ -23,8 +23,8 @@ import * as a from '../actions';
 
 const initialState = i.Map({
   id: null,
-  tags: i.List([]),
-  followed_tags: i.Map({}),
+  hashtags: i.List([]),
+  followed_hashtags: i.Map({}),
   followed_schools: i.Map({}),
   followed_geotags: i.Map({}),
   liked_hashtags: i.Map({}),
@@ -44,8 +44,8 @@ export default function reducer(state=initialState, action) {
         state = state.withMutations((state) => {
           state
             .set('id', newUid)
-            .set('tags', i.List([]))
-            .set('followed_tags', i.Map({}))
+            .set('hashtags', i.List([]))
+            .set('followed_hashtags', i.Map({}))
             .set('followed_schools', i.Map({}))
             .set('followed_geotags', i.Map({}))
             .set('liked_hashtags', i.Map({}))
@@ -56,15 +56,15 @@ export default function reducer(state=initialState, action) {
       }
 
       if (newUid) {
-        let followedTags = _.keyBy(action.user.followed_labels, 'name');
+        let followedTags = _.keyBy(action.user.followed_hashtags, 'name');
         let followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
         let followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
-        let likedHashtags = _.keyBy(action.user.liked_labels, 'name');
+        let likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
         let likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
         let likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
 
         state = state.withMutations(state => {
-          state.set('followed_tags', i.fromJS(followedTags));
+          state.set('followed_hashtags', i.fromJS(followedTags));
           state.set('followed_geotags', i.fromJS(followedGeotags));
           state.set('followed_schools', i.fromJS(followedSchools));
           state.set('liked_hashtags', i.fromJS(likedHashtags));
@@ -77,24 +77,24 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_USER_TAGS: {
-      let tags = _.take(action.tags, 10);
+      let tags = _.take(action.hashtags, 10);
 
       if (tags)
-        state = state.set('tags', i.fromJS(tags));
+        state = state.set('hashtags', i.fromJS(tags));
       else
-        state = state.set('tags', i.List([]));
+        state = state.set('hashtags', i.List([]));
 
       break;
     }
 
     case a.ADD_USER_FOLLOWED_TAG: {
-      state = state.setIn(['followed_tags', action.tag.name], i.fromJS(action.tag));
+      state = state.setIn(['followed_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
 
       break;
     }
 
     case a.REMOVE_USER_FOLLOWED_TAG: {
-      state = state.deleteIn(['followed_tags', action.tag.name]);
+      state = state.deleteIn(['followed_hashtags', action.hashtag.name]);
 
       break;
     }

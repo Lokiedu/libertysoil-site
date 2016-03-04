@@ -30,15 +30,15 @@ export default class AddedTags extends React.Component {
       name: PropTypes.string.isRequired,
       url_name: PropTypes.string.isRequired
     })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     }))
   };
 
   render() {
-    let { geotags, schools, tags } = this.props;
+    let { geotags, schools, hashtags } = this.props;
 
-    if (!geotags.length && !schools.length && !tags.length) {
+    if (!geotags.length && !schools.length && !hashtags.length) {
       return null;
     }
 

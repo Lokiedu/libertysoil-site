@@ -29,7 +29,7 @@ export default class TagLine extends React.Component {
       id: React.PropTypes.string,
       name: React.PropTypes.string
     })),
-    tags: React.PropTypes.arrayOf(React.PropTypes.shape({
+    hashtags: React.PropTypes.arrayOf(React.PropTypes.shape({
       id: React.PropTypes.string,
       name: React.PropTypes.string
     })),
@@ -43,11 +43,11 @@ export default class TagLine extends React.Component {
   render () {
     let {
       geotags,
-      tags,
+      hashtags,
       schools
     } = this.props;
 
-    if ((geotags && tags && schools) && (!geotags.length && !tags.length && !schools.length)) {
+    if ((geotags && hashtags && schools) && (!geotags.length && !hashtags.length && !schools.length)) {
       return null;
     }
 
@@ -73,8 +73,8 @@ export default class TagLine extends React.Component {
 
     let tagBlocks;
 
-    if (tags) {
-      tagBlocks = tags.map(tag => {
+    if (hashtags) {
+      tagBlocks = hashtags.map(tag => {
         return (
           <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
         )

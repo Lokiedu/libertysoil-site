@@ -51,14 +51,14 @@ export default class EditPost extends React.Component {
       schools: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
       })),
-      labels: PropTypes.arrayOf(PropTypes.shape({
+      hashtags: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
       }))
     }),
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     triggers: PropTypes.shape({
@@ -80,7 +80,7 @@ export default class EditPost extends React.Component {
       id: this.props.post.id,
       geotags: this.props.post.geotags,
       schools: this.props.post.schools,
-      tags: this.props.post.labels
+      hashtags: this.props.post.hashtags
     };
 
     this.props.actions.updateEditPostForm(newFormState);
@@ -108,7 +108,7 @@ export default class EditPost extends React.Component {
 
     let data = {
       text: form.text.value,
-      tags: this.props.tags.map(tag => tag.name),
+      hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
       geotags: this.props.geotags.map(geotag => geotag.id),
       minor_update: (form.minor_update) ? form.minor_update.checked : null
@@ -171,7 +171,7 @@ export default class EditPost extends React.Component {
   };
 
   /**
-   * @param {Object} tags - {tags: [], schools: [], geotags: [], ...}
+   * @param {Object} tags - {hashtags: [], schools: [], geotags: [], ...}
    */
   _addTags = (tags) => {
     this.props.actions.updateEditPostForm(tags);
@@ -189,14 +189,14 @@ export default class EditPost extends React.Component {
       addTagModalType
     } = this.state;
 
-    let allModalTags = _.pick(this.props, 'geotags', 'schools', 'tags');
+    let allModalTags = _.pick(this.props, 'geotags', 'schools', 'hashtags');
 
     // If edit_post_form is not initialized yet.
     if (!this.props.id) {
       allModalTags = {
         geotags: post.geotags,
         schools: post.schools,
-        tags: post.labels
+        hashtags: post.hashtags
       }
     }
 

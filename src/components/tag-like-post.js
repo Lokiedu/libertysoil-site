@@ -27,7 +27,7 @@ export default class TagLikePost extends React.Component {
   static propTypes = {
     author: PropTypes.shape(),
     post: PropTypes.shape({
-      liked_label: PropTypes.shape({
+      liked_hashtag: PropTypes.shape({
         name: PropTypes.string
       }),
       liked_school: PropTypes.shape({

@@ -28,7 +28,7 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../cons
 function AddedTags({ addedTags, onDelete }) {
   if (!addedTags.geotags.length &&
       !addedTags.schools.length &&
-      !addedTags.tags.length) {
+      !addedTags.hashtags.length) {
     return <noscript />;
   }
 
@@ -80,7 +80,7 @@ export default class AddTagModal extends Component {
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     type: PropTypes.oneOf(IMPLEMENTED_TAGS)
@@ -89,7 +89,7 @@ export default class AddTagModal extends Component {
   static defaultProps = {
     geotags: [],
     schools: [],
-    tags: [],
+    hashtags: [],
     onClose: () => {},
     onSave: () => {}
   };
@@ -102,7 +102,7 @@ export default class AddTagModal extends Component {
     this.state = {
       geotags: _.clone(props.geotags),
       schools: _.clone(props.schools),
-      tags: _.clone(props.tags)
+      hashtags: _.clone(props.hashtags)
     };
   }
 
@@ -110,12 +110,12 @@ export default class AddTagModal extends Component {
     this.setState({
       geotags: _.clone(this.props.geotags),
       schools: _.clone(this.props.schools),
-      tags: _.clone(this.props.tags)
+      hashtags: _.clone(this.props.hashtags)
     });
   };
 
   _save = () => {
-    this.props.onSave(_.pick(this.state, 'geotags', 'schools', 'tags'));
+    this.props.onSave(_.pick(this.state, 'geotags', 'schools', 'hashtags'));
   };
 
   _addGeotag = (geotag) => {
@@ -135,9 +135,9 @@ export default class AddTagModal extends Component {
   };
 
   _addHashtag = (tag) => {
-    let state = _.pick(this.state, 'tags');
+    let state = _.pick(this.state, 'hashtags');
 
-    state.tags.push(tag);
+    state.hashtags.push(tag);
 
     this.setState(state);
   };
@@ -157,7 +157,7 @@ export default class AddTagModal extends Component {
         break;
       }
       case TAG_HASHTAG: {
-        _.remove(state.tags, tag => tag.name === displayTag.urlId);
+        _.remove(state.hashtags, hashtag => hashtag.name === displayTag.urlId);
 
         break;
       }

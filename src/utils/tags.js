@@ -4,7 +4,7 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 /**
  * Converts hashtags(labels), schools, and other tags to the same format.
  * { urlId, name, type }
- * @param {Object} params - {tags: [], schools: []}
+ * @param {Object} params - {hashtags: [], schools: [], geotags: []}
  * @returns {Array}
  */
 export function convertModelsToTags(params = {}) {
@@ -30,8 +30,8 @@ export function convertModelsToTags(params = {}) {
     });
   }
 
-  if (Array.isArray(params.tags)) {
-    params.tags.forEach(function (tag) {
+  if (Array.isArray(params.hashtags)) {
+    params.hashtags.forEach(function (tag) {
       allTags.push({
         urlId: tag.name,
         name: tag.name,

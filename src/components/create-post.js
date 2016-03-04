@@ -44,7 +44,7 @@ export default class CreatePost extends React.Component {
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    tags: PropTypes.arrayOf(PropTypes.shape({
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     triggers: PropTypes.shape({
@@ -85,7 +85,7 @@ export default class CreatePost extends React.Component {
 
     let data = {
       text: form.text.value,
-      tags: this.props.tags.map(tag => tag.name),
+      hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
       geotags: this.props.geotags.map(geotag => geotag.id),
       minor_update: form.minor_update.checked
@@ -94,7 +94,7 @@ export default class CreatePost extends React.Component {
     this.props.actions.resetCreatePostForm();
 
     await this.props.triggers.createPost('short_text', data);
-    ga('send', 'event', 'Post', 'Done', data.tags.join(','));
+    ga('send', 'event', 'Post', 'Done', data.hashtags.join(','));
 
     form.text.value = '';
     this._addTagModal.reset();
@@ -151,7 +151,7 @@ export default class CreatePost extends React.Component {
   };
 
   /**
-   * @param {Object} tags - {tags: [], schools: [], geotags: [], ...}
+   * @param {Object} tags - {hashtags: [], schools: [], geotags: [], ...}
    */
   _addTags = (tags) => {
     this.props.actions.updateCreatePostForm(tags);
@@ -223,9 +223,9 @@ export default class CreatePost extends React.Component {
         <AddTagModal
           allSchools={this.props.allSchools}
           geotags={this.props.geotags}
+          hashtags={this.props.hashtags}
           ref={(c) => this._addTagModal = c}
           schools={this.props.schools}
-          tags={this.props.tags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
