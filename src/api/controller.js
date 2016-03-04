@@ -608,7 +608,7 @@ export default class ApiController {
 
     // 2) UN can contain letters (a-z), numbers (0-9), dashes (-), underscores (_), apostrophes ('}, and periods (.).
     // 3) UN can't contain an equal sign (=), brackets (<,>), plus sign (+), a comma (,), or more than one period (.) in a row
-    if (!req.body.username.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/)) {
+    if (!req.body.username.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
       res.status(400);
       res.send({error: 'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'});
       return;
@@ -627,10 +627,12 @@ export default class ApiController {
     // 7) LN supports unicode/UTF-8 characters, with a maximum of 60 characters.
     // 8) E supports User_Registation_01_mail_validation_01"
 
+    const username = req.body.username.toLowerCase();
+
     let User = this.bookshelf.model('User');
 
     {
-      let check = await User.where({username: req.body.username}).fetch({require: false});
+      let check = await User.where({ username }).fetch({require: false});
       if (check) {
         res.status(409);
         res.send({error: 'User with this username is already registered'});
@@ -659,7 +661,7 @@ export default class ApiController {
     let user;
 
     try {
-      user = await User.create(req.body.username, req.body.password, req.body.email, moreData);
+      user = await User.create(username, req.body.password, req.body.email, moreData);
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
