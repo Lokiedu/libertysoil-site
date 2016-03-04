@@ -88,16 +88,20 @@ export class Auth extends React.Component {
     const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
     const header = document.querySelector('.landing__header-fixed');
     const login = ReactDOM.findDOMNode(this.refs.login);
-
+    const heightBefore = landing.getBoundingClientRect().bottom;
 
     landingBody.classList.add('landing__body-shortened');
     landingBody.classList.remove('landing__body-fixed');
     landing.classList.remove('layout__row-full');
     header.classList.remove('landing__header-fixed');
     header.classList.add('landing__header-abs');
+    landingBody.classList.add('landing__body-no_transition');
     login.style.display = 'none';
-    window.scrollBy(0, -300); // TODO: set real value
 
+    const heightAfter = landing.getBoundingClientRect().bottom;
+    window.scrollBy(0, -1 * (heightBefore - heightAfter));
+    landingBody.classList.remove('landing__body-no_transition');
+    
     return this;
   }
 
@@ -140,7 +144,7 @@ export class Auth extends React.Component {
           />
           <header ref="landingBody" className="landing__body landing__body-fixed">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
-            <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+            <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
               <Login ref="login" onLoginUser={triggers.login} />
           </header>
         </section>
