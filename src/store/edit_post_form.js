@@ -24,7 +24,7 @@ const initialState = i.fromJS({
   id: null,
   geotags: [],
   schools: [],
-  tags: []
+  hashtags: []
 });
 
 export default function reducer(state = initialState, action) {
@@ -33,7 +33,7 @@ export default function reducer(state = initialState, action) {
       state.set(action.post_id, {
         geotags: [],
         schools: [],
-        tags: []
+        hashtags: []
       });
 
       break;

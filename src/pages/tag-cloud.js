@@ -53,7 +53,7 @@ class TagCloudPage extends Component {
                   <div className="head">Tag cloud</div>
                 </div>
                 <div className="layout__row">
-                  <TagCloud tags={this.props.tag_cloud}/>
+                  <TagCloud hashtags={this.props.tag_cloud}/>
                 </div>
               </div>
             </div>

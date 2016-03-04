@@ -34,7 +34,7 @@ let PostFooter = ({author, current_user, post, triggers}) => {
       </div>
 
       <footer className="card__footer">
-        <TagLine geotags={post.geotags} schools={post.schools} tags={post.labels} />
+        <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
 
         <div className="card__toolbars">
           <Toolbar current_user={current_user} post={post} triggers={triggers} />

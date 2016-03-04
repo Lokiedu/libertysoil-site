@@ -25,7 +25,7 @@ const initialState = i.Map({});
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_TAG_POSTS: {
-      state = state.set(action.tag, i.List(action.posts.map(post => post.id)));
+      state = state.set(action.hashtag, i.List(action.posts.map(post => post.id)));
       break;
     }
   }

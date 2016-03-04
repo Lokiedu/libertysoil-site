@@ -31,8 +31,8 @@ import { User as UserValidators } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = [
-  'user', 'likers', 'favourers', 'labels', 'schools',
-  'geotags', 'liked_label', 'liked_school', 'liked_geotag'
+  'user', 'likers', 'favourers', 'hashtags', 'schools',
+  'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag'
 ];
 
 export default class ApiController {
@@ -83,9 +83,9 @@ export default class ApiController {
     let q = Post.forge()
       .query(qb => {
         qb
-          .join('labels_posts', 'posts.id', 'labels_posts.post_id')
-          .join('labels', 'labels_posts.label_id', 'labels.id')
-          .where('labels.name', '=', req.params.tag)
+          .join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
+          .join('hashtags', 'hashtags_posts.hashtag_id', 'hashtags.id')
+          .where('hashtags.name', '=', req.params.tag)
           .orderBy('posts.created_at', 'desc')
       });
 
@@ -740,10 +740,10 @@ export default class ApiController {
           'followers',
           'liked_posts',
           'favourited_posts',
-          'followed_labels',
+          'followed_hashtags',
           'followed_geotags',
           'followed_schools',
-          'liked_labels',
+          'liked_hashtags',
           'liked_geotags',
           'liked_schools'
         ]
@@ -988,22 +988,22 @@ export default class ApiController {
       }
     }
 
-    let tags;
+    let hashtags;
 
-    if ('tags' in req.body) {
-      if (!_.isArray(req.body.tags)) {
+    if ('hashtags' in req.body) {
+      if (!_.isArray(req.body.hashtags)) {
         res.status(400);
-        res.send({error: `"tags" parameter is expected to be an array`});
+        res.send({error: `"hashtags" parameter is expected to be an array`});
         return;
       }
 
-      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+      if (req.body.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
         res.status(400);
         res.send({error: `each of tags should be at least 3 characters wide`});
         return;
       }
 
-      tags = _.uniq(req.body.tags);
+      hashtags = _.uniq(req.body.hashtags);
     }
 
     let schools;
@@ -1053,8 +1053,8 @@ export default class ApiController {
     try {
       await obj.save(null, {method: 'insert'});
 
-      if (_.isArray(tags)) {
-        await obj.attachLabels(tags);
+      if (_.isArray(hashtags)) {
+        await obj.attachHashtags(hashtags);
       }
 
       if (_.isArray(schools)) {
@@ -1094,7 +1094,7 @@ export default class ApiController {
     let post_object;
 
     try {
-      post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true, withRelated: ['labels']});
+      post_object = await Post.where({ id: req.params.id, user_id: req.session.user }).fetch({require: true, withRelated: ['hashtags']});
     } catch(e) {
       res.status(500);
       res.send({error: e.message});
@@ -1103,22 +1103,22 @@ export default class ApiController {
 
     let type = post_object.get('type');
 
-    let tags;
+    let hashtags;
 
-    if ('tags' in req.body) {
-      if (!_.isArray(req.body.tags)) {
+    if ('hashtags' in req.body) {
+      if (!_.isArray(req.body.hashtags)) {
         res.status(400);
-        res.send({error: `"tags" parameter is expected to be an array`});
+        res.send({error: `"hashtags" parameter is expected to be an array`});
         return;
       }
 
-      if (req.body.tags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+      if (req.body.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
         res.status(400);
         res.send({error: `each of tags should be at least 3 characters wide`});
         return;
       }
 
-      tags = _.uniq(req.body.tags);
+      hashtags = _.uniq(req.body.hashtags);
     }
 
     let schools;
@@ -1172,8 +1172,8 @@ export default class ApiController {
     try {
       await post_object.save(null, {method: 'update'});
 
-      if (_.isArray(tags)) {
-        await post_object.attachLabels(tags, true);
+      if (_.isArray(hashtags)) {
+        await post_object.attachHashtags(hashtags, true);
       }
 
       if (_.isArray(schools)) {
@@ -1237,7 +1237,7 @@ export default class ApiController {
         require: true,
         withRelated: [
           'following', 'followers', 'liked_posts',
-          'favourited_posts', 'followed_labels',
+          'favourited_posts', 'followed_hashtags',
           'followed_schools', 'followed_geotags'
         ]
       });
@@ -1530,27 +1530,27 @@ export default class ApiController {
   }
 
   /**
-   * Returns 50 most popular labels sorted by post count.
-   * Each label in response contains post_count.
+   * Returns 50 most popular hashtags sorted by post count.
+   * Each hashtag in response contains post_count.
    */
   async getTagCloud(req, res) {
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
 
     try {
-      let labels = await Label
+      let hashtags = await Hashtag
         .collection()
         .query(qb => {
           qb
-            .select('labels.*')
-            .count('labels_posts.* as post_count')
-            .join('labels_posts', 'labels.id', 'labels_posts.label_id')
-            .groupBy('labels.id')
+            .select('hashtags.*')
+            .count('hashtags_posts.* as post_count')
+            .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
+            .groupBy('hashtags.id')
             .orderBy('post_count', 'DESC')
             .limit(50);
         })
         .fetch({require: true});
 
-      res.send(labels);
+      res.send(hashtags);
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
@@ -1560,7 +1560,7 @@ export default class ApiController {
 
   async followTag(req, res) {
     let User = this.bookshelf.model('User');
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
 
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -1576,11 +1576,11 @@ export default class ApiController {
 
     try {
       let currentUser = await User.forge().where('id', req.session.user).fetch();
-      let label = await Label.forge().where('name', req.params.name).fetch();
+      let hashtag = await Hashtag.forge().where('name', req.params.name).fetch();
 
-      await currentUser.followLabel(label.id);
+      await currentUser.followHashtag(hashtag.id);
 
-      res.send({success: true, tag: label});
+      res.send({success: true, hashtag});
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
@@ -1590,7 +1590,7 @@ export default class ApiController {
 
   async unfollowTag(req, res) {
     let User = this.bookshelf.model('User');
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
 
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -1606,11 +1606,11 @@ export default class ApiController {
 
     try {
       let currentUser = await User.forge().where('id', req.session.user).fetch();
-      let label = await Label.forge().where('name', req.params.name).fetch();
+      let hashtag = await Hashtag.forge().where('name', req.params.name).fetch();
 
-      await currentUser.unfollowLabel(label.id);
+      await currentUser.unfollowHashtag(hashtag.id);
 
-      res.send({success: true, tag: label});
+      res.send({success: true, hashtag});
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
@@ -1779,16 +1779,16 @@ export default class ApiController {
   }
 
   async searchTags(req, res) {
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
 
     try {
-      let tags = await Label.collection().query(function (qb) {
+      let hashtags = await Hashtag.collection().query(function (qb) {
         qb
           .where('name', 'ILIKE', `${req.params.query}%`)
           .limit(10);
       }).fetch();
 
-      res.send({tags});
+      res.send({hashtags});
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
@@ -1810,9 +1810,9 @@ export default class ApiController {
       let post = await Post
         .forge()
         .where('id', req.params.id)
-        .fetch({withRelated: ['labels', 'geotags', 'schools']});
+        .fetch({withRelated: ['hashtags', 'geotags', 'schools']});
 
-      let labelIds = post.related('labels').pluck('id');
+      let hashtagIds = post.related('hashtags').pluck('id');
       let schoolIds = post.related('schools').pluck('id');
       let geotagIds = post.related('geotags').pluck('id');
 
@@ -1820,11 +1820,11 @@ export default class ApiController {
       // Both trow `syntax error at or near "$1"`.
       let posts = await Post.collection().query(qb => {
         qb
-          .leftJoin('labels_posts', 'posts.id', 'labels_posts.post_id')
-          .leftJoin('labels', function () {
+          .leftJoin('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
+          .leftJoin('hashtags', function () {
             this
-              .on('labels_posts.label_id', 'labels.id')
-              .andOn(knex.raw(`labels.id IN ${formatArray(labelIds)}`));
+              .on('hashtags_posts.hashtag_id', 'hashtags.id')
+              .andOn(knex.raw(`hashtags.id IN ${formatArray(hashtagIds)}`));
           })
 
           .leftJoin('posts_schools', 'posts.id', 'posts_schools.post_id')
@@ -1844,7 +1844,7 @@ export default class ApiController {
           .whereNot('posts.id', post.id)
           .groupBy('posts.id')
           .orderByRaw(`
-            (COUNT(DISTINCT labels.id) +
+            (COUNT(DISTINCT hashtags.id) +
              COUNT(DISTINCT schools.id) +
              COUNT(DISTINCT geotags.id) +
              random() * 3)
@@ -1873,24 +1873,24 @@ export default class ApiController {
     }
 
     let User = this.bookshelf.model('User');
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
-      let label = await Label.where({name: req.params.name}).fetch({require: true});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
+      let hashtag = await Hashtag.where({name: req.params.name}).fetch({require: true});
 
-      await user.liked_labels().detach(label);
-      await user.liked_labels().attach(label);
+      await user.liked_hashtags().detach(hashtag);
+      await user.liked_hashtags().attach(hashtag);
 
       await new Post({
         id: uuid.v4(),
         type: 'hashtag_like',
-        liked_label_id: label.id,
+        liked_hashtag_id: hashtag.id,
         user_id: user.id
       }).save(null, {method: 'insert'});
 
-      res.send({success: true, label});
+      res.send({success: true, hashtag});
     } catch (e) {
       res.status(500);
       res.send({error: `Couldn't like the tag: ${e.message}`});
@@ -1906,23 +1906,23 @@ export default class ApiController {
     }
 
     let User = this.bookshelf.model('User');
-    let Label = this.bookshelf.model('Label');
+    let Hashtag = this.bookshelf.model('Hashtag');
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
-      let label = await Label.where({name: req.params.name}).fetch({require: true});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
+      let hashtag = await Hashtag.where({name: req.params.name}).fetch({require: true});
 
-      await user.liked_labels().detach(label);
+      await user.liked_hashtags().detach(hashtag);
 
       await Post
         .where({
           user_id: user.id,
-          liked_label_id: label.id
+          liked_hashtag_id: hashtag.id
         })
         .destroy();
 
-      res.send({success: true, label});
+      res.send({success: true, hashtag});
     } catch (e) {
       res.status(500);
       res.send({error: `Couldn't unlike the tag: ${e.message}`});
@@ -1941,7 +1941,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
       let school = await School.where({url_name: req.params.url_name}).fetch({require: true});
 
       await user.liked_schools().detach(school);
@@ -1974,7 +1974,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
       let school = await School.where({url_name: req.params.url_name}).fetch({require: true});
 
       await user.liked_schools().detach(school);
@@ -2005,7 +2005,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
       let geotag = await Geotag.where({url_name: req.params.url_name}).fetch({require: true});
 
       await user.liked_geotags().detach(geotag);
@@ -2038,7 +2038,7 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_labels']});
+      let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_hashtags']});
       let geotag = await Geotag.where({url_name: req.params.url_name}).fetch({require: true});
 
       await user.liked_geotags().detach(geotag);

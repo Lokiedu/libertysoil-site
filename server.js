@@ -86,10 +86,10 @@ let reactHandler = async (req, res) => {
           require: true,
           withRelated: [
             'following',
-            'followed_labels',
+            'followed_hashtags',
             'followed_schools',
             'followed_geotags',
-            'liked_labels',
+            'liked_hashtags',
             'liked_geotags',
             'liked_schools'
           ]

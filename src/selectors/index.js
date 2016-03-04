@@ -23,7 +23,7 @@ export function defaultSelector(state) {
   if (data.is_logged_in) {
     let current_user_id = data.current_user.id;
 
-    data.current_user_tags = data.current_user.tags;
+    data.current_user_tags = data.current_user.hashtags;
     data.current_user.user = data.users[current_user_id];
     data.current_user.likes = data.likes[current_user_id] || [];
     data.current_user.favourites = data.favourites[current_user_id] || [];

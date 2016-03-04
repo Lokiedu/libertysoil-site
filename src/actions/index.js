@@ -150,24 +150,24 @@ export function setUserPosts(user_id, posts) {
   }
 }
 
-export function setUserTags(tags) {
+export function setUserTags(hashtags) {
   return {
     type: SET_USER_TAGS,
-    tags
+    hashtags
   }
 }
 
-export function addUserFollowedTag(tag) {
+export function addUserFollowedTag(hashtag) {
   return {
     type: ADD_USER_FOLLOWED_TAG,
-    tag
+    hashtag
   }
 }
 
-export function removeUserFollowedTag(tag) {
+export function removeUserFollowedTag(hashtag) {
   return {
     type: REMOVE_USER_FOLLOWED_TAG,
-    tag
+    hashtag
   }
 }
 
@@ -202,10 +202,10 @@ export function removeUserFollowedGeotag(geotag) {
 }
 
 
-export function setTagPosts(tag, posts) {
+export function setTagPosts(hashtag, posts) {
   return {
     type: SET_TAG_POSTS,
-    tag,
+    hashtag,
     posts
   }
 }
@@ -373,10 +373,10 @@ export function setCityPosts(cityId, posts)
   }
 }
 
-export function setTagCloud(tags) {
+export function setTagCloud(hashtags) {
   return {
     type: SET_TAG_CLOUD,
-    tags
+    hashtags
   }
 }
 

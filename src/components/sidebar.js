@@ -36,13 +36,13 @@ class Sidebar extends React.Component {
 
     let current_user = this.props.current_user.toJS();
 
-    let followedTags = _.values(current_user.followed_tags);
+    let followedTags = _.values(current_user.followed_hashtags);
     let followedSchools = _.values(current_user.followed_schools);
     let followedGeotags = _.values(current_user.followed_geotags);
     let showLikes = (current_user.likes && current_user.likes.length > 0);
     let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
     let showFollowedTags = !!followedTags.length || !!followedSchools.length || !!followedGeotags.length;
-    let showUsedTags = current_user.tags && !!current_user.tags.length;
+    let showUsedTags = current_user.hashtags && !!current_user.hashtags.length;
 
     return (
       <div className="page__sidebar font-open_sans">
@@ -76,7 +76,7 @@ class Sidebar extends React.Component {
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I follow</h4>
             <div className="layout__row">
-              <SidebarFollowedTags geotags={followedGeotags} schools={followedSchools} tags={followedTags} />
+              <SidebarFollowedTags geotags={followedGeotags} hashtags={followedTags} schools={followedSchools} />
             </div>
           </div>
         }
@@ -86,8 +86,8 @@ class Sidebar extends React.Component {
             <h4 className="sidebar__heading">I post to</h4>
             <div className="sidebar__user_tags layout__row">
               <TagCloud
+                hashtags={current_user.hashtags}
                 schools={[]}
-                tags={current_user.tags}
                 truncated
               />
             </div>
