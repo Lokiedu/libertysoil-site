@@ -33,6 +33,8 @@ let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 let School = bookshelf.model('School');
 
+const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
+
 describe('api v.1', () => {
 
   describe('Authorization', () => {
@@ -71,7 +73,7 @@ describe('api v.1', () => {
       await unverifiedUser.destroy();
     });
 
-    describe('When user not logged it', () => {
+    describe('When user is not logged in', () => {
 
       it('AUTHORIZED TO login and logins successfully', async () => {
         await expect(
@@ -158,6 +160,10 @@ describe('api v.1', () => {
 
       it('AUTHORIZED TO use anonymous reset password feature', async () => {
         await expect({ url: `/api/v1/resetpassword` }, 'to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO read subscriptions', async () => {
+        await expect({ url: '/api/v1/posts' }, 'not to open authorized');
       });
 
       it('NOT AUTHORIZED TO open liked posts page', async () => {
@@ -294,6 +300,10 @@ describe('api v.1', () => {
         await expect({ url: `/api/v1/post/${otherPost.id}/unfav`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
+      it('AUTHORIZED TO read subscriptions', async () => {
+        await expect({ url: `/api/v1/posts`, session: sessionId }, 'to open authorized');
+      });
+
       it('AUTHORIZED TO read own liked posts', async () => {
         await expect({ url: `/api/v1/posts/liked`, session: sessionId }, 'to open authorized');
       });
@@ -326,8 +336,8 @@ describe('api v.1', () => {
         await expect({ url: `/api/v1/user/password`, session: sessionId, method: 'POST' }, 'to open authorized');
       });
 
-      it('AUTHORIZED TO delete other post', async () => {
-        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'to open authorized');
+      it('NOT AUTHORIZED TO delete other post', async () => {
+        await expect({ url: `/api/v1/post/${otherPost.id}`, session: sessionId, method: 'DELETE' }, 'not to open authorized');
       });
 
       it('AUTHORIZED TO logout', async () => {
@@ -468,67 +478,141 @@ describe('api v.1', () => {
   });
 
   describe('Functional', () => {
-    let user, queue, resetPasswordUser;
+    describe('Kue', () => {
+      let queue;
 
-    before(() => {
-      queue = new QueueSingleton().handler;
-      queue.testMode.enter();
+      before(() => {
+        queue = new QueueSingleton().handler;
+        queue.testMode.enter();
+      });
+
+      after(() => {
+        queue.testMode.exit();
+      });
+
+      describe('when user does not exist', () => {
+        beforeEach(async () => {
+          await bookshelf.knex('users').del();
+        });
+
+        afterEach(async () => {
+          await bookshelf.knex('users').del();
+          queue.testMode.clear();
+        });
+
+        it('Create new queue job after user registration', async () => {
+          await expect({ url: `/api/v1/users`, method: 'POST', body: {
+            username: 'test',
+            password: 'testPass',
+            email: 'test@example.com'
+          }}, 'to open successfully');
+
+          expect(queue.testMode.jobs.length,'to equal', 1);
+          expect(queue.testMode.jobs[0].type, 'to equal', 'register-user-email');
+          expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test', email: 'test@example.com' });
+        });
+      });
+
+      describe('when user exists', () => {
+        let user;
+
+        beforeEach(async () => {
+          await bookshelf.knex('users').del();
+
+          user = await User.create('test2', 'testPassword', 'test2@example.com');
+          await user.save({'email_check_hash': ''},{require:true});
+        });
+
+        afterEach(async () => {
+          await user.destroy();
+          queue.testMode.clear();
+        });
+
+        it('Create new queue job after user request reset password', async () => {
+          await expect({ url: `/api/v1/resetpassword`, method: 'POST', body: {
+            email: 'test2@example.com'
+          }}, 'to open successfully');
+
+          expect(queue.testMode.jobs.length,'to equal', 1);
+          expect(queue.testMode.jobs[0].type, 'to equal', 'reset-password-email');
+          expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test2', email: 'test2@example.com' });
+        });
+      })
     });
 
-    after(() => {
-      queue.testMode.exit();
+    describe('Change password', () => {
+      let resetPasswordUser;
+
+      beforeEach(async () => {
+        await bookshelf.knex('users').del();
+
+        resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
+        await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'}, {require: true});
+      });
+
+      afterEach(async () => {
+        await resetPasswordUser.destroy();
+      });
+
+      it('New password works', async () => {
+        await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
+          password: 'foo',
+          password_repeat: 'foo'
+        }}, 'to open successfully');
+
+        let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
+        const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
+
+        expect(passwordValid, 'to be true');
+        expect(localUser.get('reset_password_hash'), 'to be empty');
+      });
     });
 
-    beforeEach(async () => {
-      await bookshelf.knex('users').del();
-      user = await User.create('test2', 'testPassword', 'test2@example.com');
-      await user.save({'email_check_hash': ''},{require:true});
+    describe('Posts', () => {
+      describe('Subscriptions', () => {
+        let user;
+        let posts;
+        let sessionId;
 
-      resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
-      await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
+        beforeEach(async () => {
+          await bookshelf.knex('users').del();
+          await bookshelf.knex('posts').del();
+
+          user = await User.create('mary', 'secret', 'mary@example.com');
+          await user.save({email_check_hash: ''}, {require: true});
+
+          posts = await Promise.all(range(1, 10).map(i => {
+            const post = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              user_id: user.get('id'),
+              text: `This is a Post #${i}`
+            });
+            return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
+          }));
+
+          sessionId = await login('mary', 'secret');
+        });
+
+        afterEach(async () => {
+          await Promise.all(posts.map(post => post.destroy()));
+          await user.destroy();
+        });
+
+        it('First page of subscriptions should return by-default', async () => {
+          await expect(
+            { url: `/api/v1/posts`, session: sessionId },
+            'to body satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
+          );
+        });
+
+        it('Other pages of subscriptions should work', async () => {
+          await expect(
+            { url: `/api/v1/posts?offset=4`, session: sessionId },
+            'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
+          );
+        });
+      });
     });
-
-    afterEach(async () => {
-      await user.destroy();
-      await resetPasswordUser.destroy();
-      queue.testMode.clear();
-    });
-
-    it('Create new queue job after user registration', async () => {
-      await expect({ url: `/api/v1/users`, method: 'POST', body: {
-        username: 'test',
-        password: 'testPass',
-        email: 'test@example.com'
-      }}, 'to open successfully');
-
-      expect(queue.testMode.jobs.length,'to equal', 1);
-      expect(queue.testMode.jobs[0].type, 'to equal', 'register-user-email');
-      expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test', email: 'test@example.com' });
-    });
-
-    it('Create new queue job after user request reset password', async () => {
-      await expect({ url: `/api/v1/resetpassword`, method: 'POST', body: {
-        email: 'test2@example.com'
-      }}, 'to open successfully');
-
-      expect(queue.testMode.jobs.length,'to equal', 1);
-      expect(queue.testMode.jobs[0].type, 'to equal', 'reset-password-email');
-      expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test2', email: 'test2@example.com' });
-    });
-
-    it('New password works', async () => {
-      await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
-        password: 'foo',
-        password_repeat: 'foo'
-      }}, 'to open successfully');
-
-      let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
-      const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
-
-      expect(passwordValid, 'to be true');
-      expect(localUser.get('reset_password_hash'), 'to be empty');
-    });
-
   });
-
 });
