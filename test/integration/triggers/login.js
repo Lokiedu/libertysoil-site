@@ -27,7 +27,7 @@ import { ActionsTrigger } from '../../../src/triggers';
 import ApiClient from '../../../src/api/client'
 import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
-import LabelFactory from '../../../test-helpers/factories/label';
+import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import SchoolFactory from '../../../test-helpers/factories/school';
 import GeotagFactory from '../../../test-helpers/factories/geotag';
 
@@ -43,13 +43,13 @@ describe('"login" trigger', () => {
     let userAttrs = UserFactory.build();
     let user = await new User(_.omit(userAttrs, 'password')).save(null, {method: 'insert'});
 
-    user.followed_labels().create(LabelFactory.build());
+    user.followed_hashtags().create(HashtagFactory.build());
     user.followed_schools().create(SchoolFactory.build());
     user.followed_geotags().create(GeotagFactory.build());
 
     await triggers.login(userAttrs.username, userAttrs.password);
 
-    expect(store.getState().getIn(['current_user', 'followed_tags']).toJS(), 'not to be empty');
+    expect(store.getState().getIn(['current_user', 'followed_hashtags']).toJS(), 'not to be empty');
     expect(store.getState().getIn(['current_user', 'followed_schools']).toJS(), 'not to be empty');
     expect(store.getState().getIn(['current_user', 'followed_geotags']).toJS(), 'not to be empty');
   });
