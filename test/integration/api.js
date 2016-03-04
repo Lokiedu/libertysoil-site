@@ -637,5 +637,32 @@ describe('api v.1', () => {
         await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to yield an array of length', 1);
       });
     });
+
+    describe('User settings', () => {
+      let user, sessionId;
+
+      beforeEach(async () => {
+        await bookshelf.knex('users').del();
+
+        user = await User.create('mary', 'secret', 'mary@example.com');
+        await user.save({email_check_hash: ''}, {require: true});
+
+        sessionId = await login('mary', 'secret');
+      });
+
+      afterEach(async () => {
+        await user.destroy();
+      });
+
+      it('bio update works', async () => {
+        await expect(
+          { url: `/api/v1/user`, session: sessionId, method: 'POST', body: {more: {bio: 'foo'}} }
+          , 'to open successfully');
+
+        let localUser = await User.where({id: user.id}).fetch({require: true});
+
+        expect(localUser.get('more').bio, 'to equal', 'foo');
+      });
+    });
   });
 });
