@@ -32,11 +32,6 @@ import Messages from '../components/messages';
 
 export class Auth extends React.Component {
 
-  constructor() {
-    super();
-    this.state = { registerClicked: false };
-  }
-
   static propTypes = {
     messages: PropTypes.arrayOf(React.PropTypes.object).isRequired,
     ui: PropTypes.shape({
@@ -64,25 +59,47 @@ export class Auth extends React.Component {
     return {status: 307, redirectTo: '/'};
   }
 
-  componentDidMount() {
-
+  constructor() {
+    super();
+    this.state = {
+      registerClicked: false,
+      headerHidden: false
+    };
   }
 
-  hideLogin() {
-    const header = ReactDOM.findDOMNode();
-    const content = ReactDOM.findDOMNode();
+  componentDidMount() {
+    window.addEventListener('scroll', this.scrollHandler);
+  }
+
+  scrollHandler = () => {
+    if (this.state.registerClicked) return;
+
+  };
+
+  registerClickHandler = () => {
+    if (this.state.registerClicked) return;
+
+    this.setState({ registerClicked: true }); // TODO: description
+    this.cropLanding();
+  };
+
+  cropLanding() {
+    const landing = ReactDOM.findDOMNode(this.refs.landing);
+    const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
+    const header = document.querySelector('.landing__header-fixed');
+    const login = ReactDOM.findDOMNode(this.refs.login);
 
 
+    landingBody.classList.add('landing__body-shortened');
+    landingBody.classList.remove('landing__body-fixed');
+    landing.classList.remove('layout__row-full');
+    header.classList.remove('landing__header-fixed');
+    header.classList.add('landing__header-abs');
+    login.style.display = 'none';
+    window.scrollBy(0, -300); // TODO: set real value
 
     return this;
   }
-
-  registerClickHandler = (event) => {
-    if (this.state.registerClicked) return;
-
-    this.hideLogin()
-        .setState({ registerClicked: true });
-  };
 
   render() {
     let { current_user, is_logged_in, messages, ui } = this.props;
@@ -104,21 +121,27 @@ export class Auth extends React.Component {
 
     const registration_success = ui.registrationSuccess;
 
-
     // also classes: parallax parallax__layer-pseudo parallax__layer-bg_pseudo
+
+    /*
+      <header ref="landingClone" className="landing__body landing__body-shortened hidden">
+        <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
+        <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+      </header>
+    */
 
     return (
       <div className="page__container-bg font-open_sans font-light ">
-        <section className="landing landing-big landing-bg landing-bg_house landing-bg_fixed layout__row-group layout__row-full">
+        <section ref="landing" className="landing landing-big landing-bg landing-bg_house landing-bg_fixed layout__row-group layout__row-full">
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
             className="header-transparent header-transparent_border landing__header-fixed"
           />
-          <header className="landing__body landing__body-fixed">
+          <header ref="landingBody" className="landing__body landing__body-fixed">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
-            <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-              <Login onLoginUser={triggers.login} />
+            <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+              <Login ref="login" onLoginUser={triggers.login} />
           </header>
         </section>
 

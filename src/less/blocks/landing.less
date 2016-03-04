@@ -83,6 +83,12 @@
       right: 0;
       position: fixed;
     }
+
+    &-abs {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
   }
 
   &__body {
@@ -109,8 +115,35 @@
     &-fixed { // probably should be renamed
       position: fixed;
       z-index: 9;
-      top: 15%;
-      left: 25%;
+      top: 10%;
+      
+      @media @after-small {
+        left: 5%;
+      }
+
+      @media @after-normal {
+        left: 15%;
+      }
+  
+      @media @after-base {
+        top: 15%;
+        left: 10%
+      }
+
+      @media @after-wide {
+        top: 10%;
+        left: 25%
+      }
+    }
+
+    &-shortened {
+      padding-top: 3vw;
+      padding-bottom: 2vw;
+
+      @media @before-normal {
+        padding-top: 5vw;
+        padding-bottom: 3vw;
+      }
     }
   }
 
