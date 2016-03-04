@@ -33,13 +33,13 @@ describe('NewPassword page', () => {
   describe('when user is logged in', () => {
     let user;
 
-    beforeEach(async () => {
+    before(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
       await user.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
     });
 
-    afterEach(async () => {
+    after(async () => {
       await user.destroy();
     });
 
