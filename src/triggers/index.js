@@ -215,7 +215,11 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      if (('body' in e.response) && ('error' in e.response.body)) {
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError(e.message));
+      }
     }
   };
 

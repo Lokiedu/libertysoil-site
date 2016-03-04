@@ -1282,13 +1282,28 @@ export default class ApiController {
 
     let User = this.bookshelf.model('User');
 
+    let checkit = new Checkit(UserValidators.settings.more);
+    try {
+      await checkit.run(req.body.more);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
+    }
+
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true});
 
-      if(!_.isEmpty(req.body.more)) {
-        let properties = _.extend(user.get('more'), req.body.more);
-        user.set('more', properties);
+      let properties = {};
+
+      for (let fieldName in UserValidators.settings.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
       }
+
+      properties = _.extend(user.get('more'), properties);
+      user.set('more', properties);
 
       await user.save(null, {method: 'update'});
 

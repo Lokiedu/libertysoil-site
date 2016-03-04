@@ -51,6 +51,16 @@ let User = {
         }
       }
     ]
+  },
+
+  settings: {
+    base: {
+    },
+    more: {
+      summary: ['string'],
+      bio: ['string'],
+      roles: ['array']
+    }
   }
 };
 
