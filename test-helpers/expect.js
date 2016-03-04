@@ -42,6 +42,16 @@ expect.addAssertion('to yield a response of', function (expect, subject, value) 
   });
 });
 
+expect.addAssertion('to yield an array of length', function (expect, subject, value) {
+  return expect(app, 'to yield exchange', {
+    request: subjectToRequest(subject)
+  }).then(function (context) {
+    var body = context.httpResponse.body;
+
+    expect(body, 'to have length', value);
+  });
+});
+
 // TODO: Expect to yield a redirect to a specific path.
 expect.addAssertion('to redirect', function (expect, subject, value) {
   return expect(app, 'to yield exchange', {

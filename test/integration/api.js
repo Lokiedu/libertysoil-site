@@ -20,11 +20,15 @@
 import { v4 as uuid4 } from 'uuid';
 import bcrypt from 'bcrypt'
 import bb from 'bluebird'
+import _ from 'lodash';
 
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 import QueueSingleton from '../../src/utils/queue';
+import UserFactory from '../../test-helpers/factories/user';
+import HashtagFactory from '../../test-helpers/factories/hashtag';
+import PostFactory from '../../test-helpers/factories/post';
 
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
@@ -32,6 +36,7 @@ let bookshelf = initBookshelf($dbConfig);
 let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 let School = bookshelf.model('School');
+let Hashtag = bookshelf.model('Hashtag');
 
 const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
 
@@ -612,6 +617,24 @@ describe('api v.1', () => {
             'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
           );
         });
+      });
+    });
+
+    describe('userTags', () => {
+      it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
+        let userAttrs = UserFactory.build();
+        let user = await new User(_.omit(userAttrs, 'password')).save(null, {method: 'insert'});
+
+        let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
+
+        let post1 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+        post1.hashtags().attach(hashtag);
+        let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+        post2.hashtags().attach(hashtag);
+
+        let sessionId = await login(userAttrs.username, userAttrs.password);
+
+        await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to yield an array of length', 1);
       });
     });
   });
