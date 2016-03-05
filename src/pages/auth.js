@@ -108,25 +108,22 @@ export class Auth extends React.Component {
   cropLanding() {
     const landing = ReactDOM.findDOMNode(this.refs.landing);
     const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
-    const header = document.querySelector('.landing__header-fixed');
     const heightBefore = landing.getBoundingClientRect().bottom;
     const login = ReactDOM.findDOMNode(this.refs.login);
 
-    if (landing.getBoundingClientRect().bottom < 0) {
+    if (landing.getBoundingClientRect().bottom < 0) { // if we don't see landing
       landingBody.classList.add('landing__body-no_transition');
     }
     window.removeEventListener('scroll', this.scrollHandler);
     landingBody.classList.add('landing__body-shortened');
     landingBody.classList.remove('landing__body-fixed');
     landing.classList.remove('layout__row-full');
-    header.classList.remove('landing__header-fixed');
-    header.classList.add('landing__header-abs');
     login.classList.add('hidden');
 
     const heightAfter = landing.getBoundingClientRect().bottom;
     window.scrollBy(0, -1 * (heightBefore - heightAfter));
     landingBody.classList.remove('landing__body-no_transition');
-    this.setState({ loginVisible: false }); // because changes must be immediate
+    this.setState({ loginVisible: false }); // because changes must be momentary
 
     return this;
   }
@@ -137,6 +134,8 @@ export class Auth extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const login = this.state.loginVisible ? (<Login ref="login" onLoginUser={triggers.login} />) : '';
+    const classToHeader = "header-transparent header-transparent_border " +
+      (this.state.loginVisible ? "landing__header-fixed" : "landing__header-abs");
 
     let renderedMessages;
 
@@ -167,7 +166,7 @@ export class Auth extends React.Component {
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
-            className="header-transparent header-transparent_border landing__header-fixed"
+            className={classToHeader}
           />
           <header ref="landingBody" className="landing__body landing__body-fixed">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
