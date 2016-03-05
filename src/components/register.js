@@ -15,7 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import ga from 'react-google-analytics';
 
 
@@ -42,6 +43,16 @@ class SuccessContent extends Component {
 }
 
 export default class RegisterComponent extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      first: '',
+      last: '',
+      username: '',
+      usernameManuallyChanged: false
+    };
+  }
+
   submitHandler = (event) => {
     event.preventDefault();
 
@@ -68,11 +79,33 @@ export default class RegisterComponent extends React.Component {
     );
   };
 
+  inputHandler = (event) => {
+    const field = event.target;
+    const result = field.value.replace(/\W|\d/g, '');
+
+    if (field.getAttribute('name') === 'firstName') {
+      this.setState({ first: result });
+    } else if (field.getAttribute('name') === 'lastName') {
+      this.setState({ last: result });
+    }
+
+    if (!this.state.usernameManuallyChanged) {
+      this.setState({ username: this.state.first + this.state.last });
+    }
+  };
+
+  usernameInputHandler = (event) => {
+    const result = event.target.value.replace(/\s|\W/g, '');
+
+    this.setState({ username: result, usernameManuallyChanged: true });
+  };
+
   render() {
     if (this.props.registration_success) {
       ga('send', 'event', 'Reg', 'Done');
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
+
     return (
     <div className="div">
       <header className="layout__row layout__row-double">
@@ -83,11 +116,22 @@ export default class RegisterComponent extends React.Component {
         </div>
       </header>
       <form action="" onSubmit={this.submitHandler} className="layout__row">
-        <div className="layout__row">
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerUsername">User name</label>
-            <input className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" />
+          
+          <div className="layout__row"><div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
+            <input ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
+
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
+            <input ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+          </div>
+
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerUsername">Username</label>
+            <input ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
+          </div>
+
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
             <input className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
@@ -95,14 +139,6 @@ export default class RegisterComponent extends React.Component {
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
             <input className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
