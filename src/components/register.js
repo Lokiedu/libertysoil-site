@@ -82,7 +82,7 @@ export default class RegisterComponent extends React.Component {
           <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
         </div>
       </header>
-      <form action="" onSubmit={this.submitHandler} onClick={this.props.onClick} className="layout__row">
+      <form action="" onSubmit={this.submitHandler} className="layout__row">
         <div className="layout__row">
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">User name</label>

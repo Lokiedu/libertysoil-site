@@ -63,6 +63,8 @@ export class Auth extends React.Component {
     super();
     this.state = {
       registerClicked: false,
+      loginVisible: true,
+      contentYTop: '',
       headerHidden: false
     };
   }
@@ -72,14 +74,34 @@ export class Auth extends React.Component {
   }
 
   scrollHandler = () => {
-    if (this.state.registerClicked) return;
+    // const subtitle = ReactDOM.findDOMNode(this.refs.subtitle);
+    // const content = ReactDOM.findDOMNode(this.refs.content);
+    // const landing = ReactDOM.findDOMNode(this.refs.landing);
+    // const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
+    // //const header = document.querySelector('.landing__header-fixed');
 
+    // //console.log(subtitle.getBoundingClientRect().bottom, content.getBoundingClientRect().top);
+
+    // if (subtitle.getBoundingClientRect().bottom <= content.getBoundingClientRect().top) {
+      
+    //   this.setState({ contentYTop: content.getBoundingClientRect().top });
+      
+    //   if (subtitle.getBoundingClientRect().top >= 0) {
+
+    //   } else {
+
+    //   }
+
+    // } else {
+
+    // }
   };
 
   registerClickHandler = () => {
-    if (this.state.registerClicked) return;
+    if (this.state.registerClicked)
+      return;
 
-    this.setState({ registerClicked: true }); // TODO: description
+    this.setState({ registerClicked: true });
     this.cropLanding();
   };
 
@@ -87,21 +109,25 @@ export class Auth extends React.Component {
     const landing = ReactDOM.findDOMNode(this.refs.landing);
     const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
     const header = document.querySelector('.landing__header-fixed');
-    const login = ReactDOM.findDOMNode(this.refs.login);
     const heightBefore = landing.getBoundingClientRect().bottom;
+    const login = ReactDOM.findDOMNode(this.refs.login);
 
+    if (landing.getBoundingClientRect().bottom < 0) {
+      landingBody.classList.add('landing__body-no_transition');
+    }
+    window.removeEventListener('scroll', this.scrollHandler);
     landingBody.classList.add('landing__body-shortened');
     landingBody.classList.remove('landing__body-fixed');
     landing.classList.remove('layout__row-full');
     header.classList.remove('landing__header-fixed');
     header.classList.add('landing__header-abs');
-    landingBody.classList.add('landing__body-no_transition');
-    login.style.display = 'none';
+    login.classList.add('hidden');
 
     const heightAfter = landing.getBoundingClientRect().bottom;
     window.scrollBy(0, -1 * (heightBefore - heightAfter));
     landingBody.classList.remove('landing__body-no_transition');
-    
+    this.setState({ loginVisible: false }); // because changes must be immediate
+
     return this;
   }
 
@@ -110,6 +136,7 @@ export class Auth extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const login = this.state.loginVisible ? (<Login ref="login" onLoginUser={triggers.login} />) : '';
 
     let renderedMessages;
 
@@ -144,18 +171,17 @@ export class Auth extends React.Component {
           />
           <header ref="landingBody" className="landing__body landing__body-fixed">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
-            <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-              <Login ref="login" onLoginUser={triggers.login} />
+            <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+            { login }
           </header>
         </section>
 
         {renderedMessages}
 
-        <div className="page__content page__content-spacing page__content-cloudy layout__row-group">
+        <div ref="content" className="page__content page__content-spacing page__content-cloudy layout__row-group">
           <div className="page__body page__body-small">
-            <div className="layout__row">
+            <div onClick={this.registerClickHandler} className="layout__row">
               <Register
-                onClick={this.registerClickHandler}
                 registration_success={registration_success}
                 onShowRegisterForm={triggers.showRegisterForm}
                 onRegisterUser={triggers.registerUser}
