@@ -141,7 +141,7 @@ export class Auth extends React.Component {
 
     if (messages.length) {
       renderedMessages = (
-        <div className="page__messages">
+        <div className="page__messages page__messages-modal">
           <div className="page__body page__body-small">
             <Messages messages={messages} removeMessage={triggers.removeMessage} />
           </div>
