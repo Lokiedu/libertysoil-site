@@ -20,6 +20,7 @@ import {Link} from 'react-router';
 import Helmet from 'react-helmet';
 
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
 import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
@@ -119,24 +120,12 @@ let Welcome = () => {
           </div>
         </div>
       </div>
-      <div className="header page__header">
-        <div className="header__body">
-          <div className="header__logo">
-            <a className="logo logo-size_small" title="Liberty Soil" href="/"><span className="logo__title">Liberty Soil</span></a>
-          </div>
-          <div className="header__breadcrumbs breadcrumbs">
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" inactive={true} collapsed={true} name="All Locations" /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" inactive={true} collapsed={true} name="North America" /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" inactive={true} name="USA" /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" inactive={true} name="Massachusetts" /></div>
-            <div className="breadcrumbs__item"><Tag type="TAG_LOCATION" name="Boston" /></div>
-          </div>
-        </div>
-      </div>
       <Helmet title="Welcome to " />
       <div className="page__container-bg font-open_sans font-light">
         <section className="landing landing-big landing-bg">
-          <Header is_logged_in={false} className="header-transparent" />
+          <Header is_logged_in={false} className="header-transparent">
+            <HeaderLogo big />
+          </Header>
           <header className="landing__header">
             <h1 className="landing__title">Education change network</h1>
             <p className="landing__details">Connect with people from around the world to make education better for everyone.<br></br>No action is too small.</p>

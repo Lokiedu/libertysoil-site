@@ -20,6 +20,7 @@ import { Link }  from 'react-router';
 
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
+import HeaderLogo from './header-logo';
 import User from './user';
 import { API_HOST } from '../config'
 
@@ -56,14 +57,19 @@ let AuthBlock = (props) => {
 export default class HeaderComponent extends React.Component {
 
   render() {
+    let {
+      children
+    } = this.props;
+
     let classNames = 'header page__header ' + this.props.className;
 
     return (
       <div {...this.props} className={classNames}>
         <div className="header__body">
-          <div className="header__logo">
-            <Link to="/" className="logo" title="Liberty Soil"><span className="logo__title">Liberty Soil</span></Link>
-          </div>
+          {!React.Children.count(children) &&
+            <HeaderLogo small />
+          }
+          {children}
           <AuthBlock is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}/>
         </div>
       </div>
