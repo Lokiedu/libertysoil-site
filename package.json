@@ -124,6 +124,7 @@
     "unexpected": "~10.8.2",
     "unexpected-dom": "~3.0.2",
     "unexpected-express": "~8.1.0",
+    "unexpected-http": "^5.2.0",
     "unexpected-immutable": "0.0.2",
     "unexpected-react": "~0.5.1",
     "url-loader": "^0.5.7",
