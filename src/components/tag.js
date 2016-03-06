@@ -40,6 +40,12 @@ export default class Tag extends React.Component {
     this.props.onDelete(tag);
   };
 
+  _handleClick = () => {
+    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+
+    this.props.onClick(tag);
+  }
+
   render() {
     let { urlId, name, type, truncated, size, inactive, collapsed, ...props } = this.props;
     let tagName = name;
@@ -124,6 +130,15 @@ export default class Tag extends React.Component {
         <div className={`tag ${className}`} title={name}>
           <div className="tag__icon_wrapper">
             <span className="micon tag__icon tag__delete clickable" onClick={this._handleDelete}>close</span>
+            {tagIcon}
+          </div>
+          {tagNameComponent}
+        </div>
+      );
+    } else if (this.props.onClick) {
+      return (
+        <div className={`tag tag-clickable ${className}`} title={name} onClick={this._handleClick}>
+          <div className="tag__icon_wrapper">
             {tagIcon}
           </div>
           {tagNameComponent}
