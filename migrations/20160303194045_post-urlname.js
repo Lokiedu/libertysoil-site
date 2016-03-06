@@ -17,7 +17,7 @@ export async function up(knex, Promise) {
   const result = await posts.fetch({withRelated: ['user']});
 
   for (const post of result.models) {
-    const title = await Post.titleFromText(post.get('text'), post.related('user').get('username'))
+    const title = await Post.titleFromText(post.get('text'), post.related('user').get('fullName'));
     const urlName = `${slug(title)}-${post.get('id')}`;
 
     const more = {...post.get('more'), pageTitle: title};

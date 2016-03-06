@@ -81,9 +81,18 @@ export function initBookshelfFromKnex(knex) {
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
+      },
+      fullName: function() {
+        const more = this.get('more');
+
+        if (more && 'firstName' in more && 'lastName' in more) {
+          return `${more.firstName} ${more.lastName}`;
+        }
+
+        return this.get('username');
       }
     },
-    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash'],  // exclude from json-exports
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName'],  // exclude from json-exports
     followHashtag: async function(hashtagId) {
       await this.followed_hashtags().detach(hashtagId);
       return this.followed_hashtags().attach(hashtagId);
@@ -257,7 +266,7 @@ export function initBookshelfFromKnex(knex) {
       const first50GraphemesOfText = breakGraphemes(text).slice(0, 51);
 
       if (first50GraphemesOfText.length < 50) {
-        return first50GraphemesOfText.join('');
+        return first50GraphemesOfText.join('').trim();
       }
 
       const spaceRegex = new OnigRegExp('\\s');

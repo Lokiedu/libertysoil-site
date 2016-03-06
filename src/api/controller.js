@@ -1050,7 +1050,7 @@ export default class ApiController {
     }
 
     const author = await obj.related('user').fetch();
-    more.pageTitle = Post.titleFromText(req.body.text, author.attributes.username)
+    more.pageTitle = await Post.titleFromText(req.body.text, author.get('fullName'));
 
     obj.set('more', more);
 
