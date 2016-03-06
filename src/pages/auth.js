@@ -27,6 +27,7 @@ import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
 
@@ -87,7 +88,9 @@ export class Auth extends React.Component {
             is_logged_in={is_logged_in}
             current_user={current_user}
             className="header-transparent header-transparent_border"
-          />
+          >
+            <HeaderLogo />
+          </Header>
 
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
