@@ -27,12 +27,14 @@ import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import CreatePost from '../components/create-post'
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
 import Button from '../components/button';
+import Breadcrumbs from '../components/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -96,7 +98,12 @@ class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+          <HeaderLogo />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="News Feed" />
+          </div>
+        </Header>
         <div className="page__container">
           <div className="page__body">
             <Sidebar current_user={this.props.current_user} />
