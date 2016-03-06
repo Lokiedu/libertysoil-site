@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import Helmet from 'react-helmet';
 
 import NotFound from './not-found'
 import BaseUserFavoritesPage from './base/user'
@@ -70,6 +71,7 @@ class UserFavoritesPage extends React.Component {
         page_user={page_user}
         triggers={triggers}
       >
+        <Helmet title={`Favorites of ${page_user.fullName} on `} />
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}

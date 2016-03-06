@@ -31,6 +31,8 @@ import { createMemoryHistory } from 'history'
 import { Provider } from 'react-redux';
 import { Router, RouterContext, match, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux';
+import Helmet from 'react-helmet';
+import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
@@ -162,7 +164,9 @@ let reactHandler = async (req, res) => {
         res.status(fetchHandler.status);
       }
 
-      res.render('index', { state, html });
+      const metadata = ExecutionEnvironment.canUseDOM ? Helmet.peek() : Helmet.rewind();
+
+      res.render('index', { html, state, metadata });
     } catch (e) {
       console.error(e.stack);
       res.status(500).send(e.message)

@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
@@ -145,6 +146,7 @@ class Form extends React.Component {
 
     return (
       <div>
+        <Helmet title="Set New Password for " />
         <Header />
 
         <div className="page__body">

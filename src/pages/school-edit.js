@@ -19,6 +19,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router'
 import _ from 'lodash';
+import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -76,6 +77,7 @@ class SchoolEditPage extends React.Component {
         page_school={school}
         triggers={triggers}
       >
+        <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
             <form onSubmit={this.submitHandler.bind(this)}>

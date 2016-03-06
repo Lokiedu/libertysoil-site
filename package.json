@@ -73,6 +73,7 @@
     "react-dom": "~0.14.6",
     "react-google-analytics": "^0.2.0",
     "react-gravatar": "^2.2.2",
+    "react-helmet": "^2.3.1",
     "react-leaflet": "^0.10.0",
     "react-linkify": "0.1.1",
     "react-redux": "^4.0.0",

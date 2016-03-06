@@ -19,6 +19,7 @@ import React from 'react';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -71,6 +72,7 @@ class List extends React.Component {
 
     return (
       <div>
+        <Helmet title="News Feed of " />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
         <div className="page__container">
           <div className="page__body">

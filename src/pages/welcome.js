@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import {Link} from 'react-router';
+import Helmet from 'react-helmet';
 
 import Header from '../components/header';
 import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
@@ -26,6 +27,7 @@ import Footer from '../components/footer';
 let Welcome = () => {
   return (
     <div>
+      <Helmet title="Welcome to " />
       <div className="page__container-bg font-open_sans font-light">
         <section className="landing landing-big landing-bg">
           <Header is_logged_in={false} className="header-transparent" />

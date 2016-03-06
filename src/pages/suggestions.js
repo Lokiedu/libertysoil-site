@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import Helmet from 'react-helmet';
 
 import BaseSuggestionsPage from './base/suggestions';
 import { UserGrid } from '../components/user-grid';
@@ -82,6 +83,7 @@ class SuggestionsPage extends React.Component {
         next_caption="Proceed to your feed"
         triggers={triggers}
       >
+        <Helmet title="Suggested users at " />
         <div className="paper__page">
           <p>You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.</p>
         </div>

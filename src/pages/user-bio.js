@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import Helmet from 'react-helmet';
 
 import NotFound from './not-found'
 import BaseUserPage from './base/user'
@@ -63,6 +64,7 @@ class AboutUserPage extends React.Component {
         page_user={page_user}
         triggers={triggers}
       >
+        <Helmet title={`${page_user.fullName} on `} />
         <div className="paper">
           <div className="paper__page content">
             {linesOfBio}

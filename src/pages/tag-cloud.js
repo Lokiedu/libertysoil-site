@@ -17,6 +17,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -42,6 +43,7 @@ class TagCloudPage extends Component {
 
     return (
       <div>
+        <Helmet title="Tags of " />
         <Header is_logged_in={is_logged_in} current_user={current_user} />
 
         <div className="page__container">

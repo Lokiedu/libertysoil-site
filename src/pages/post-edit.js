@@ -20,6 +20,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import Helmet from 'react-helmet';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -102,6 +103,7 @@ class PostEditPage extends React.Component {
 
     return (
       <div>
+        <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
         <div className="page__container">
           <div className="page__body">
