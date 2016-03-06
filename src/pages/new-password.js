@@ -146,21 +146,23 @@ class Form extends React.Component {
     return (
       <div>
         <Header />
-          <div className="page__body">
-            <div className="area">
-              <div>
-                <Messages messages={messages} removeMessage={triggers.removeMessage} />
-                <div className="area__body layout-align_start">
-                <div className="box box-middle">
-                  <header className="box__title">Set new password</header>
-                    <div className="box__body">
-                      {content}
-                    </div>
-                </div>
-                </div>
+
+        <div className="page__body">
+          <div className="area">
+            <div>
+              <Messages messages={messages} removeMessage={triggers.removeMessage} />
+              <div className="area__body layout-align_start">
+              <div className="box box-middle">
+                <header className="box__title">Set new password</header>
+                  <div className="box__body">
+                    {content}
+                  </div>
+              </div>
               </div>
             </div>
           </div>
+        </div>
+
         <Footer/>
       </div>
     );
