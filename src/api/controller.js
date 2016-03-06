@@ -20,6 +20,7 @@ import bcrypt from 'bcrypt'
 import bb from 'bluebird'
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid'
+import slug from 'slug';
 import request from 'superagent';
 import crypto from 'crypto'
 import QueueSingleton from '../utils/queue';
@@ -1034,17 +1035,27 @@ export default class ApiController {
       user_id: req.session.user
     });
 
+    const more = {};
+
     if (req.body.type === 'short_text') {
       obj.set('text', req.body.text);
     } else if (req.body.type === 'long_text') {
       obj.set('text', req.body.text);
-      obj.set('more', {title: req.body.title});
+      more.title = req.body.title;
     }
 
     if (!req.body.minor_update) {
       // Show post in the news feed.
       obj.set('fully_published_at', new Date().toJSON());
     }
+
+    const author = await obj.related('user').fetch();
+    more.pageTitle = Post.titleFromText(req.body.text, author.attributes.username)
+
+    obj.set('more', more);
+
+    const urlName = `${slug(more.pageTitle)}-${obj.id}`;
+    obj.set('url_name', urlName);
 
     try {
       await obj.save(null, {method: 'insert'});

@@ -25,11 +25,14 @@ import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
 import crypto from 'crypto'
+import { break as breakGraphemes } from 'grapheme-breaker';
+import { OnigRegExp } from 'oniguruma';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 
 
 const bcryptHashAsync = promisify(bcryptHash);
+promisifyAll(OnigRegExp.prototype)
 
 export function initBookshelfFromKnex(knex) {
   let bookshelf = Bookshelf(knex);
@@ -248,6 +251,37 @@ export function initBookshelfFromKnex(knex) {
       await this.geotags().attach(geotagsToAttach);
     }
   });
+
+  Post.titleFromText = async (text, authorName) => {
+    const get50 = async (text) => {
+      const first50GraphemesOfText = breakGraphemes(text).slice(0, 51);
+
+      if (first50GraphemesOfText.length < 50) {
+        return first50GraphemesOfText.join('');
+      }
+
+      const spaceRegex = new OnigRegExp('\\s');
+
+      if (await spaceRegex.testAsync(first50GraphemesOfText[50])) {
+        return first50GraphemesOfText.join('').trim();
+      }
+
+      const first50GraphemesOfTextString = first50GraphemesOfText.join('');
+
+      const lastWordRegex = new OnigRegExp('\\W\\w+$');
+      const match = await lastWordRegex.searchAsync(first50GraphemesOfTextString);
+
+      if (match === null) {
+        throw new Error('unhandled case');
+      }
+
+      return first50GraphemesOfText.slice(0, match[0].start).join('').trim();
+    };
+
+    const first50GraphemesOfText = await get50(text);
+
+    return `${authorName}: ${first50GraphemesOfText}`;
+  };
 
   Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
