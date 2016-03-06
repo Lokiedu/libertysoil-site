@@ -53,9 +53,9 @@ export default class TagLikePost extends React.Component {
       case PostTypes.HASHTAG_LIKE:
         tag = (
           <Tag
-            name={post.liked_label.name}
+            name={post.liked_hashtag.name}
             type={TagTypes.TAG_HASHTAG}
-            urlId={post.liked_label.name}
+            urlId={post.liked_hashtag.name}
           />
         );
         break;
