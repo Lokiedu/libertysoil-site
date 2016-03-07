@@ -105,6 +105,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async checkUserExists(username) {
+    let response = await this.head(`/api/v1/user/${username}`);
+    return response.status == 200;
+  }
+
   async userInfo(username) {
     let response = await this.get(`/api/v1/user/${username}`);
     return response.body;
