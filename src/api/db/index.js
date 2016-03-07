@@ -281,7 +281,7 @@ export function initBookshelfFromKnex(knex) {
       const match = await lastWordRegex.searchAsync(first50GraphemesOfTextString);
 
       if (match === null) {
-        throw new Error('unhandled case');
+        return '- no title -';
       }
 
       return first50GraphemesOfText.slice(0, match[0].start).join('').trim();
