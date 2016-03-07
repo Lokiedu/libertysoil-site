@@ -43,6 +43,18 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
+  async head(relativeUrl, query = {}) {
+    let req = request
+      .head(this.apiUrl(relativeUrl))
+      .query(query);
+
+    if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
+      req = req.set('Cookie', this.serverReq.headers['cookie']);
+    }
+
+    return Promise.resolve(req);
+  }
+
   async del(relativeUrl) {
     let req = request.del(this.apiUrl(relativeUrl));
 
@@ -103,6 +115,16 @@ export default class ApiClient
   async subscriptions(offset = 0) {
     let response = await this.get(`/api/v1/posts?offset=${offset}`);
     return response.body;
+  }
+
+  async checkUserExists(username) {
+    try {
+      await this.head(`/api/v1/user/${username}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
   }
 
   async userInfo(username) {
