@@ -21,6 +21,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import VisibilitySensor from 'react-visibility-sensor';
+
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import CreatePost from '../components/create-post'
@@ -40,9 +42,14 @@ import {
   clearRiver
 } from '../actions';
 
+const client = new ApiClient(API_HOST);
 
 class List extends React.Component {
   static displayName = 'List';
+
+  state = {
+    downloadAttemptsCount: 0
+  };
 
   static async fetchData(params, store, client) {
     let trigger = new ActionsTrigger(client, store.dispatch);
@@ -56,6 +63,23 @@ class List extends React.Component {
     ]);
   }
 
+  loadMore = (isVisible) => {
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    if (isVisible && !this.props.ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+      this.setState({
+        downloadAttemptsCount: this.state.downloadAttemptsCount + 1
+      });
+      triggers.loadPostRiver(this.props.river.length);
+    }
+
+    if (!isVisible) {
+      this.setState({
+        downloadAttemptsCount: 0
+      });
+    }
+  }
+
   render() {
     const {
       current_user,
@@ -67,7 +91,6 @@ class List extends React.Component {
     } = this.props;
 
     const actions = {resetCreatePostForm, updateCreatePostForm};
-    const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
@@ -87,7 +110,9 @@ class List extends React.Component {
               />
             <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
             <div className="layout layout-align_center layout__space layout__space-double">
-              <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
+              <VisibilitySensor onChange={this.loadMore}>
+                <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
+              </VisibilitySensor>
             </div>
               {/*<Followed/> */}
               {/*<Tags/>*/}
