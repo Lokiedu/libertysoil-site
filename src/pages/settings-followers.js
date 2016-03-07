@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import BaseSettingsPage from './base/settings';
 import User from '../components/user';
@@ -110,6 +111,7 @@ class SettingsFollowersPage extends React.Component {
         triggers={triggers}
         onSave={this.onSave}
       >
+        <Helmet title="Manage Followers on " />
         <div className="paper__page">
           <h1 className="content__title">Manage Followers</h1>
         </div>

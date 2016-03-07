@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import Helmet from 'react-helmet';
 
 import BaseInductionPage from './base/induction';
 import Footer from '../components/footer';
@@ -104,6 +105,7 @@ class InductionPage extends React.Component {
         next_caption="Done"
         triggers={triggers}
       >
+        <Helmet title="Suggested users at " />
         <div className="paper__page">
           <h1 className="content__title">Thank you for registering!</h1>
           <p>To get started, follow a few people below:</p>

@@ -17,6 +17,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -97,6 +98,7 @@ export class GeotagPage extends Component {
 
     return (
       <div>
+        <Helmet title={`${geotag.name} posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user} />
 
         <div className="page__container">

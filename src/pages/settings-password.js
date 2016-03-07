@@ -18,6 +18,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import BaseSettingsPage from './base/settings'
 import SettingsPasswordForm from '../components/settings/password-form';
@@ -97,6 +98,7 @@ class SettingsPasswordPage extends React.Component {
         triggers={triggers}
         onSave={this.onSave}
       >
+        <Helmet title="Change Password for " />
         <SettingsPasswordForm
           onSubmit={this.save}
           ref={c => this.form = ReactDOM.findDOMNode(c)}

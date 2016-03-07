@@ -22,17 +22,19 @@ import uuid from 'uuid'
 import _ from 'lodash'
 import fileType from 'file-type';
 import mime from 'mime';
-import bb from 'bluebird';
-import bcrypt from 'bcrypt';
+import { promisify, promisifyAll } from 'bluebird';
+import { hash as bcryptHash } from 'bcrypt';
 import crypto from 'crypto'
+import { break as breakGraphemes } from 'grapheme-breaker';
+import { OnigRegExp } from 'oniguruma';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 
 
-let bcryptAsync = bb.promisifyAll(bcrypt);
+const bcryptHashAsync = promisify(bcryptHash);
+promisifyAll(OnigRegExp.prototype)
 
-export default function initBookshelf(config) {
-  let knex = Knex(config);
+export function initBookshelfFromKnex(knex) {
   let bookshelf = Bookshelf(knex);
 
   bookshelf.plugin('registry');
@@ -79,9 +81,18 @@ export default function initBookshelf(config) {
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
+      },
+      fullName: function() {
+        const more = this.get('more');
+
+        if (more && 'firstName' in more && 'lastName' in more) {
+          return `${more.firstName} ${more.lastName}`;
+        }
+
+        return this.get('username');
       }
     },
-    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash'],  // exclude from json-exports
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName'],  // exclude from json-exports
     followHashtag: async function(hashtagId) {
       await this.followed_hashtags().detach(hashtagId);
       return this.followed_hashtags().attach(hashtagId);
@@ -106,7 +117,7 @@ export default function initBookshelf(config) {
   });
 
   User.create = async function(username, password, email, moreData) {
-    let hashed_password = await bcryptAsync.hashAsync(password, 10);
+    let hashed_password = await bcryptHashAsync(password, 10);
 
     let random = Math.random().toString();
     let email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
@@ -249,6 +260,37 @@ export default function initBookshelf(config) {
       await this.geotags().attach(geotagsToAttach);
     }
   });
+
+  Post.titleFromText = async (text, authorName) => {
+    const get50 = async (text) => {
+      const first50GraphemesOfText = breakGraphemes(text).slice(0, 51);
+
+      if (first50GraphemesOfText.length < 50) {
+        return first50GraphemesOfText.join('').trim();
+      }
+
+      const spaceRegex = new OnigRegExp('\\s');
+
+      if (await spaceRegex.testAsync(first50GraphemesOfText[50])) {
+        return first50GraphemesOfText.join('').trim();
+      }
+
+      const first50GraphemesOfTextString = first50GraphemesOfText.join('');
+
+      const lastWordRegex = new OnigRegExp('\\W\\w+$');
+      const match = await lastWordRegex.searchAsync(first50GraphemesOfTextString);
+
+      if (match === null) {
+        throw new Error('unhandled case');
+      }
+
+      return first50GraphemesOfText.slice(0, match[0].start).join('').trim();
+    };
+
+    const first50GraphemesOfText = await get50(text);
+
+    return `${authorName}: ${first50GraphemesOfText}`;
+  };
 
   Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
@@ -417,4 +459,9 @@ export default function initBookshelf(config) {
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
+}
+
+export default function initBookshelf(config) {
+  const knex = Knex(config);
+  return initBookshelfFromKnex(knex);
 }

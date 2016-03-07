@@ -17,6 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import NotFound from './not-found'
 import Header from '../components/header';
@@ -75,6 +76,7 @@ export class PostPage extends React.Component {
 
     return (
       <div>
+        <Helmet title={`${current_post.more.pageTitle} on `} />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
 
         <div className="page__container">

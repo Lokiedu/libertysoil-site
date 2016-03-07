@@ -18,6 +18,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import Helmet from 'react-helmet';
 
 import NotFound from './not-found'
 import BaseUserPage from './base/user'
@@ -73,6 +74,7 @@ class UserPage extends React.Component {
         page_user={page_user}
         triggers={triggers}
       >
+        <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River
           current_user={this.props.current_user}
           posts={this.props.posts}

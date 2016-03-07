@@ -16,6 +16,7 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+    - unicode-data
   postgresql: "9.4"
 
 before_script:

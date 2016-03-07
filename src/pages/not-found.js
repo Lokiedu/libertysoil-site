@@ -17,6 +17,8 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
+
 import { defaultSelector } from '../selectors';
 import Header from '../components/header';
 
@@ -25,6 +27,7 @@ class NotFound extends React.Component {
   render() {
     return (
       <div>
+        <Helmet title="Page not found at " />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
 
         <div className="page__container">

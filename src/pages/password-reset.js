@@ -17,6 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
@@ -77,6 +78,7 @@ export class Form extends React.Component {
 
     return (
       <div className="page__container-bg font-open_sans font-light">
+        <Helmet title="Reset Password for " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             className="header-transparent header-transparent_border"
