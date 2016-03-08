@@ -146,6 +146,8 @@ export default class RegisterComponent extends React.Component {
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
 
+    const blur = ((e) => e.target.setCustomValidity(''));
+
     return (
     <div className="div">
       <header className="layout__row layout__row-double">
@@ -158,27 +160,27 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={blur} ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={blur} ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">Username</label>
-            <input ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
+            <input onBlur={blur} ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
+            <input onBlur={blur} className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
+            <input onBlur={blur} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+            <input onBlur={blur} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
           </div>
         </div>
         <div className="layout__row layout__row-double">
