@@ -127,6 +127,11 @@ export default class ApiClient
     return true;
   }
 
+  async getAvailableUsername(username) {
+    let response = await this.get(`/api/v1/user/available-username/${username}`);
+    return response.body.username;
+  }
+
   async userInfo(username) {
     let response = await this.get(`/api/v1/user/${username}`);
     return response.body;
