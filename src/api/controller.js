@@ -628,10 +628,11 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
+    const username = req.body.username.toLowerCase();
 
     {
-      let check = await User.where({username: req.body.username}).fetch({require: false});
+      const check = await User.where({ username }).fetch({require: false});
       if (check) {
         res.status(409);
         res.send({error: 'User with this username is already registered'});
@@ -660,7 +661,7 @@ export default class ApiController {
     let user;
 
     try {
-      user = await User.create(req.body.username, req.body.password, req.body.email, moreData);
+      user = await User.create(username, req.body.password, req.body.email, moreData);
     } catch (e) {
       if (e.code == 23505) {
         res.status(401);
@@ -677,7 +678,7 @@ export default class ApiController {
       hash: user.get('email_check_hash')
     });
 
-    res.send({success: true, user: user});
+    res.send({ success: true, user });
   }
 
   async login(req, res) {

@@ -8,7 +8,7 @@ describe('UserValidators', function() {
 
   it('FAILS for specific attributes', async function() {
     let attributes = {
-      username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+      username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
       password: 'test',
       email: 'test',
       firstName: 'test',

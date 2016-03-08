@@ -384,7 +384,7 @@ describe('api v.1', () => {
 
       it('FAILS for some base rules', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
-          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: "test",
           email: 'test'
         }}, 'to validation fail with', {
@@ -398,15 +398,11 @@ describe('api v.1', () => {
 
       it('FAILS when password contain special(non visible ascii) characters', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
-          username: 'Abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+          username: 'user',
           password: "testtest\x00",
-          email: 'test'
+          email: 'test@example.com'
         }}, 'to validation fail with', {
-          username: ['The username must not exceed 31 characters long',
-                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
-                    ],
-          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
-          email: [ 'The email must be a valid email address' ]
+          password: ['Password is min. 8 characters. Password can only have ascii characters.']
         });
       });
 

@@ -21,7 +21,7 @@ let User = {
       'required',
       'maxLength:31',
       { rule: function(val) {
-        if (!val.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/)) {
+        if (!val.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
           throw new Error("Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
         }
       }
