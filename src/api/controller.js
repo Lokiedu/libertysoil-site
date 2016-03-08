@@ -700,13 +700,14 @@ export default class ApiController {
     }
 
     let User = this.bookshelf.model('User');
+    const username = req.body.username.toLowerCase();
 
     let user;
 
     try {
-      user = await new User({username: req.body.username}).fetch({require: true});
+      user = await new User({ username }).fetch({require: true});
     } catch (e) {
-      console.warn(`Someone tried to log in as '${req.body.username}', but there's no such user`);  // eslint-disable-line no-console
+      console.warn(`Someone tried to log in as '${username}', but there's no such user`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return
@@ -715,14 +716,14 @@ export default class ApiController {
     let passwordIsValid = await bcryptAsync.compareAsync(req.body.password, user.get('hashed_password'));
 
     if (!passwordIsValid) {
-      console.warn(`Someone tried to log in as '${req.body.username}', but used wrong pasword`);  // eslint-disable-line no-console
+      console.warn(`Someone tried to log in as '${username}', but used wrong pasword`);  // eslint-disable-line no-console
       res.status(401);
       res.send({success: false});
       return
     }
 
     if (user.get('email_check_hash')) {
-      console.warn(`user '${req.body.username}' has not validated email`); // eslint-disable-line no-console
+      console.warn(`user '${username}' has not validated email`); // eslint-disable-line no-console
       res.status(401);
       res.send({success: false, error: 'Please follow the instructions mailed to you during registration.'});
       return;
