@@ -74,7 +74,7 @@ export default class RegisterComponent extends React.Component {
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
     return (
-    <div className="div">
+    <div id="register" className="div">
       <header className="layout__row layout__row-double">
         <p className="layout__row content content-small">Create new account</p>
         <div className="layout__row content__head">Be the change</div>
