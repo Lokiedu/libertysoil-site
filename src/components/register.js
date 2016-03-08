@@ -117,8 +117,14 @@ export default class RegisterComponent extends React.Component {
       this.last = input;
     }
     
+    const result = this.first + this.last;
+    if (!result) {
+      this.setState({ username: result });
+      return;
+    }
+
     try {
-      this.setState({ username: await this.getAvailableUsername(this.first + this.last) });
+      this.setState({ username: await this.getAvailableUsername(result) });
       this.unavailable = false;
       this.error = false;
     } catch (e) {
