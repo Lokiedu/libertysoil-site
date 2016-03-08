@@ -18,6 +18,8 @@
 import React, { Component } from 'react';
 import ga from 'react-google-analytics';
 
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 
 class SuccessContent extends Component {
 
@@ -48,10 +50,13 @@ export default class RegisterComponent extends React.Component {
     this.first = '';
     this.last = '';
     this.usernameManuallyChanged = false;
+    this.unavailable = false;
+    this.error = false;
     this.state = {
       username: ''
     };
   }
+
 
   submitHandler = (event) => {
     event.preventDefault();
@@ -60,6 +65,16 @@ export default class RegisterComponent extends React.Component {
 
     if (form.password.value != form.password_repeat.value) {
       form.password_repeat.setCustomValidity("Passwords don't match");
+      return;
+    }
+
+    if (form.username.value && this.unavailable) {
+      form.username.setCustomValidity('Username is busy');
+      return;
+    }
+
+    if (this.error) {
+      form.username.setCustomValidity('Internal server error');
       return;
     }
 
@@ -79,26 +94,50 @@ export default class RegisterComponent extends React.Component {
     );
   };
 
-  inputHandler = (event) => {
+  async getAvailableUsername(username) {
+    const client = new ApiClient(API_HOST);
+    return await client.getAvailableUsername(username);
+  }
+
+  async checkUserExists(username) {
+    const client = new ApiClient(API_HOST);
+    return await client.checkUserExists(username);
+  }
+
+  inputHandler = async (event) => {
+    if (this.usernameManuallyChanged)
+      return;
+
     const field = event.target;
-    const result = field.value.replace(/\W|\d/g, '');
+    const input = field.value.replace(/\W|\d/g, '');
 
     if (field.getAttribute('name') === 'firstName') {
-      this.first = result;
+      this.first = input;
     } else if (field.getAttribute('name') === 'lastName') {
-      this.last = result;
+      this.last = input;
     }
-
-    if (!this.usernameManuallyChanged) {
-      this.setState({ username: this.first + this.last });
+    
+    try {
+      this.setState({ username: await this.getAvailableUsername(this.first + this.last) });
+      this.unavailable = false;
+      this.error = false;
+    } catch (e) {
+      this.error = true;
     }
   };
 
-  usernameInputHandler = (event) => {
+  usernameInputHandler = async (event) => {
     const result = event.target.value.replace(/\s|\W/g, '');
 
     this.setState({ username: result });
     this.usernameManuallyChanged = true;
+    
+    try {
+      this.unavailable = await this.checkUserExists(result);
+      this.error = false;
+    } catch (e) {
+      this.error = true;
+    }
   };
 
   render() {
