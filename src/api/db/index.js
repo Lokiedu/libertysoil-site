@@ -117,6 +117,7 @@ export function initBookshelfFromKnex(knex) {
   });
 
   User.create = async function(username, password, email, moreData) {
+    username = username.toLowerCase();
     let hashed_password = await bcryptHashAsync(password, 10);
 
     let random = Math.random().toString();

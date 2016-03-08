@@ -747,8 +747,11 @@ describe('api v.1', () => {
 
     describe('userTags', () => {
       it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
-        let userAttrs = UserFactory.build();
-        let user = await new User(_.omit(userAttrs, 'password')).save(null, {method: 'insert'});
+        const userAttrs = UserFactory.build();
+        const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+
+        user.set('email_check_hash', null);
+        await user.save(null, {method: 'update'});
 
         let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
 
