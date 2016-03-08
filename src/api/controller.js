@@ -631,6 +631,32 @@ export default class ApiController {
     }
   }
 
+  async getAvailableUsername(req, res) {
+    let User = this.bookshelf.model('User');
+
+    async function checkUserExists(username) {
+      let user = await User
+        .forge()
+        .where('username', username)
+        .fetch();
+
+      return !!user;
+    }
+
+    try {
+      let username = req.params.username;
+
+      for (let i = 1; await checkUserExists(username); ++i) {
+        username = `${req.params.username}${i}`;
+      }
+
+      res.send({username});
+    } catch (e) {
+      res.status(404);
+      res.send({error: e.message});
+    }
+  }
+
   async registerUser(req, res) {
     let optionalFields = ['firstName', 'lastName'];
 
