@@ -122,35 +122,37 @@ export default class SchoolHeader extends React.Component {
               <div className="profile__title">{name}</div>
               <div className="profile__updated_at">{updated_at}</div>
             </div>
-            <div className="layout__grid layout-align_vertical">
-              <div className="layout__grid_item layout__grid_item-wide">
-                <LikeTagButton
-                  is_logged_in={is_logged_in}
-                  liked_tags={current_user.liked_schools}
-                  tag={school.url_name}
-                  triggers={likeTriggers}
-                />
+            {is_logged_in &&
+              <div className="layout__grid layout-align_vertical">
+                <div className="layout__grid_item layout__grid_item-wide">
+                  <LikeTagButton
+                    is_logged_in={is_logged_in}
+                    liked_tags={current_user.liked_schools}
+                    tag={school.url_name}
+                    triggers={likeTriggers}
+                  />
+                </div>
+                <div className="layout__grid_item layout__grid_item-small">
+                  <FollowTagButton
+                    current_user={current_user}
+                    followed_tags={current_user ? current_user.followed_schools : {}}
+                    tag={school.url_name}
+                    triggers={followTriggers}
+                  />
+                </div>
+                {/*
+                <div className="layout__grid_item">
+                  {followingCount}
+                </div>
+                <div className="layout__grid_item">
+                  {followersCount}
+                </div>
+                <div className="layout__grid_item">
+                  <FollowButton active_school={current_user} school={school} following={i_am_following} triggers={this.props.triggers} />
+                </div>
+                */}
               </div>
-              <div className="layout__grid_item layout__grid_item-small">
-                <FollowTagButton
-                  current_user={current_user}
-                  followed_tags={current_user ? current_user.followed_schools : {}}
-                  tag={school.url_name}
-                  triggers={followTriggers}
-                />
-              </div>
-              {/*
-              <div className="layout__grid_item">
-                {followingCount}
-              </div>
-              <div className="layout__grid_item">
-                {followersCount}
-              </div>
-              <div className="layout__grid_item">
-                <FollowButton active_school={current_user} school={school} following={i_am_following} triggers={this.props.triggers} />
-              </div>
-              */}
-            </div>
+            }
           </div>
         </div>
       </div>

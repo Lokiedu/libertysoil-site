@@ -110,24 +110,26 @@ export class GeotagPage extends Component {
                 <div className="layout__grid_item layout__grid_item-wide">
                   {(geotag) ? geotag.name : this.props.params.url_name}
                 </div>
-                <div className="layout__grid layout-align_vertical">
-                  <div className="layout__grid_item layout__grid_item-wide">
-                    <LikeTagButton
-                      is_logged_in={is_logged_in}
-                      liked_tags={current_user.liked_geotags}
-                      tag={this.props.params.url_name}
-                      triggers={likeTriggers}
-                    />
+                {is_logged_in &&
+                  <div className="layout__grid layout-align_vertical">
+                    <div className="layout__grid_item layout__grid_item-wide">
+                      <LikeTagButton
+                        is_logged_in={is_logged_in}
+                        liked_tags={current_user.liked_geotags}
+                        tag={this.props.params.url_name}
+                        triggers={likeTriggers}
+                      />
+                    </div>
+                    <div className="layout__grid_item layout__grid_item-small">
+                      <FollowTagButton
+                        current_user={current_user}
+                        followed_tags={current_user.followed_geotags}
+                        tag={this.props.params.url_name}
+                        triggers={followTriggers}
+                      />
+                    </div>
                   </div>
-                  <div className="layout__grid_item layout__grid_item-small">
-                    <FollowTagButton
-                      current_user={current_user}
-                      followed_tags={current_user.followed_geotags}
-                      tag={this.props.params.url_name}
-                      triggers={followTriggers}
-                    />
-                  </div>
-                </div>
+                }
               </div>
               <div className="page__content page__content-spacing">
                 <River river={tagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
