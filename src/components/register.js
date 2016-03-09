@@ -68,10 +68,10 @@ export default class RegisterComponent extends React.Component {
       return;
     }
 
-    if (form.username.value && this.unavailable) {
-      form.username.setCustomValidity('Username is busy');
-      return;
-    }
+    // if (form.username.value && this.unavailable) {
+    //   form.username.setCustomValidity('Username is busy');
+    //   return;
+    // }
 
     if (this.error) {
       form.username.setCustomValidity('Internal server error');
@@ -144,6 +144,22 @@ export default class RegisterComponent extends React.Component {
     } catch (e) {
       this.error = true;
     }
+
+    const username = document.getElementById('registerUsername');
+    this.unavailable ? username.setCustomValidity('Username is busy') : username.setCustomValidity('');
+  };
+
+  passwordValidation = () => {
+    const pass = document.getElementById('registerPassword');
+    const passRepeat = document.getElementById('registerPasswordRepeat');
+
+    if (!passRepeat.value || pass.value === passRepeat.value) {
+      pass.setCustomValidity('');
+      passRepeat.setCustomValidity('');
+    } else {
+      pass.setCustomValidity("Passwords don't match");
+      passRepeat.setCustomValidity("Passwords don't match");
+    }
   };
 
   render() {
@@ -152,7 +168,7 @@ export default class RegisterComponent extends React.Component {
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
 
-    const blur = ((e) => e.target.setCustomValidity(''));
+    const reset = ((e) => e.target.setCustomValidity(''));
 
     return (
     <div className="div">
@@ -166,23 +182,23 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input onBlur={blur} ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={reset} ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input onBlur={blur} ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={reset} ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">Username</label>
-            <input onBlur={blur} ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
+            <input ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input onBlur={blur} className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
+            <input onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input onBlur={blur} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
+            <input onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
