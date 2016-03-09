@@ -368,11 +368,20 @@ export function initBookshelfFromKnex(knex) {
 
   Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
+    geonames_country: function() {
+      return this.belongsTo(Country, 'geonames_country_id');
+    },
+    geonames_city: function() {
+      return this.belongsTo(City, 'geonames_city_id');
+    },
     country: function() {
-      return this.belongsTo(Country, 'country_id');
+      return this.belongsTo(Geotag, 'country_id');
     },
     city: function() {
-      return this.belongsTo(City, 'city_id');
+      return this.belongsTo(Geotag, 'city_id');
+    },
+    continent: function() {
+      return this.belongsTo(Geotag, 'continent_id');
     }
   });
 

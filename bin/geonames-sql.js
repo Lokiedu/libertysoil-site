@@ -164,6 +164,10 @@ async function cities() {
 async function geotags() {
   // An index of url_name to optimize checking for existence.
   let urlNames = {};
+  // Continent code => continent attributes (including id)
+  let continentsByCodes = {};
+  // geoname country id => geotag country id
+  let countriesByGeonameCountryIds = {};
   // Country id => continent code
   let countryContinents = {};
 
@@ -176,8 +180,7 @@ async function geotags() {
     await createOrUpdate(
       'geotags',
       {
-        country_id: null,
-        city_id: null,
+        type: 'Planet',
         name: 'Earth'
       },
       {
@@ -191,7 +194,7 @@ async function geotags() {
 
   process.stdout.write("=== IMPORTING/UPDATING CONTINENT GEOTAGS ===\n");
 
-  let continents = [
+  let continentAttributes = [
     {code: 'AF', name: 'Africa'},
     {code: 'AS', name: 'Asia'},
     {code: 'EU', name: 'Europe'},
@@ -201,24 +204,30 @@ async function geotags() {
     {code: 'AN', name: 'Antarctica'}
   ];
 
-  for (let continent of continents) {
+  for (let continent of continentAttributes) {
     urlNames[continent.name] = true;
 
     await knex.raw(
       await createOrUpdate(
         'geotags',
         {
-          continent: continent.code,
+          continent_code: continent.code,
           type: 'Continent'
         },
         {
-          continent: continent.code,
+          continent_code: continent.code,
           name: continent.name,
           type: 'Continent',
           url_name: slug(continent.name)
         }
       )
     );
+  }
+
+  // Index continent geotags by codes.
+  let continents = await knex('geotags').where({type: 'Continent'});
+  for (let continent of continents) {
+    continentsByCodes[continent.continent_code] = continent;
   }
 
   process.stdout.write("=== IMPORTING/UPDATING COUNTRY GEOTAGS ===\n");
@@ -238,10 +247,11 @@ async function geotags() {
     countryQueries.push(
       await createOrUpdate(
         'geotags',
-        {country_id: country.id, city_id: null},
+        {geonames_country_id: country.id, geonames_city_id: null},
         {
-          continent: country.continent,
-          country_id: country.id,
+          continent_code: country.continent,
+          continent_id: continentsByCodes[country.continent].id,
+          geonames_country_id: country.id,
           name: country.name,
           type: 'Country',
           url_name: urlName
@@ -251,6 +261,12 @@ async function geotags() {
   }
 
   await executeQueries(countryQueries);
+
+  // Index country geotags by geonames_country.id
+  let countryGeotags = await knex('geotags').where({type: 'Country'});
+  for (let country of countryGeotags) {
+    countriesByGeonameCountryIds[country.geonames_country_id] = country;
+  }
 
   process.stdout.write("=== IMPORTING/UPDATING CITY GEOTAGS ===\n");
 
@@ -295,11 +311,13 @@ async function geotags() {
     cityQueries.push(
       await createOrUpdate(
         'geotags',
-        {city_id: city.id},
+        {geonames_city_id: city.id},
         {
-          continent: countryContinents[city.country],
-          country_id: city.country_id,
-          city_id: city.id,
+          continent_code: countryContinents[city.country],
+          continent_id: continentsByCodes[countryContinents[city.country]].id,
+          country_id: countriesByGeonameCountryIds[city.country_id].id,
+          geonames_country_id: city.country_id,
+          geonames_city_id: city.id,
           name: city.name,
           type: 'City',
           url_name: urlName
