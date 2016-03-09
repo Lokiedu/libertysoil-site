@@ -68,7 +68,6 @@ export default class RegisterComponent extends React.Component {
     }
 
     if (this.unavailable) {
-      form.username.setCustomValidity(this.error);
       return;
     }
 
@@ -144,7 +143,7 @@ export default class RegisterComponent extends React.Component {
       this.error = e.message;
     }
 
-    this.unavailable ? this.username.setCustomValidity('Username is busy') : this.username.setCustomValidity('');
+    this.unavailable ? this.username.setCustomValidity('Username is taken') : this.username.setCustomValidity('');
   };
 
   passwordValidation = () => {
@@ -180,11 +179,11 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input ref={(c) => this.firstName = c} onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input ref={(c) => this.lastName = c} onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">Username</label>
