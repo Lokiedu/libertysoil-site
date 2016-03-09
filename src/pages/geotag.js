@@ -18,20 +18,27 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { Link } from 'react-router';
+import { isEmpty } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { setGeotagPosts, addGeotag } from '../actions';
 import NotFound from './not-found';
+import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import Tag from '../components/tag';
+import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
 import LikeTagButton from '../components/like-tag-button';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+import { TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 
 
 export class GeotagPage extends Component {
@@ -99,7 +106,33 @@ export class GeotagPage extends Component {
     return (
       <div>
         <Helmet title={`${geotag.name} posts on `} />
-        <Header is_logged_in={is_logged_in} current_user={current_user} />
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs>
+              <Link title="All Geotags" to="/geotag">
+                <TagIcon inactive type={TAG_PLANET} />
+              </Link>
+              {!isEmpty(geotag.continent) &&
+                <Tag
+                  inactive={geotag.type != 'Continent'}
+                  name={geotag.continent.name}
+                  type={TAG_LOCATION}
+                  urlId={geotag.continent.url_name}
+                />
+              }
+              {!isEmpty(geotag.country) &&
+                <Tag
+                  inactive={geotag.type != 'Country'}
+                  name={geotag.country.name}
+                  type={TAG_LOCATION}
+                  urlId={geotag.country.url_name}
+                />
+              }
+              <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">

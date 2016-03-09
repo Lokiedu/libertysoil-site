@@ -1816,12 +1816,12 @@ export default class ApiController {
       let geotag = await Geotag
         .forge()
         .where('url_name', req.params.url_name)
-        .fetch({require: true, withRelated: ['country', 'city']});
+        .fetch({require: true, withRelated: ['country', 'city', 'continent']});
 
       res.send(geotag);
     } catch (e) {
-      res.sendStatus(404);
-      return;
+      res.status(404);
+      res.send({error: e.message});
     }
   }
 
