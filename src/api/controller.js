@@ -141,10 +141,10 @@ export default class ApiController {
 
         switch (geotag.attributes.type) {
           case 'Continent':
-            qb.where('geotags.continent', geotag.continent);
+            qb.where('geotags.continent_code', geotag.attributes.continent_code);
             break;
           case 'Country':
-            qb.where('geotags.country_id', geotag.attributes.country_id);
+            qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
             break;
           case 'City':
             qb.where('geotags.id', geotag.id);
