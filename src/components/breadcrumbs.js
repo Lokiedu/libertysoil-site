@@ -15,8 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { PropTypes, cloneElement, Component } from 'react';
-import { throttle, isArray } from 'lodash';
+import React, { cloneElement, Component } from 'react';
+import { throttle, isArray, compact } from 'lodash';
 
 export default class Breadcrumbs extends Component {
   static displayName = 'Breadcrumbs';
@@ -39,6 +39,10 @@ export default class Breadcrumbs extends Component {
     document.removeEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
   }
 
+  componentWillReceiveProps () {
+    this.resetVisibleCrumbs();
+  }
+
   resetVisibleCrumbs = throttle(() => {
     const { children } = this.props;
     let childrenCount = 0;
@@ -53,19 +57,8 @@ export default class Breadcrumbs extends Component {
   }, 100);
 
   updateVisibleCrumbs = () => {
-    const { children } = this.props;
-    let childrenCount = 0;
-    let breadcrumbsWidth = 0;
-    let bodyWidth = 0;
-
-    try {
-      breadcrumbsWidth = this.refs.breadcrumbs.offsetWidth;
-      bodyWidth = this.refs.body.offsetWidth;
-    } catch (err) {}
-
-    if (children) {
-      childrenCount = children.length;
-    }
+    let breadcrumbsWidth = this.refs.breadcrumbs.offsetWidth;
+    let bodyWidth = this.refs.body.offsetWidth;
 
     if (bodyWidth >= breadcrumbsWidth) {
       if (this.state.visibleCrumbs > 0) {
@@ -84,9 +77,9 @@ export default class Breadcrumbs extends Component {
       crumbs = [crumbs];
     }
 
-    isCollapsed = crumbs.map((crumb, i) => ((visibleCrumbs-- <= 0))).reverse();
+    isCollapsed = crumbs.map(() => ((visibleCrumbs-- <= 0))).reverse();
 
-    return crumbs.map((crumb, i) => (
+    return compact(crumbs).map((crumb, i) => (
       <div key={i} className="breadcrumbs__item">
         {cloneElement(crumb, {
           collapsed: isCollapsed[i]
