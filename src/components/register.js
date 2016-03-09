@@ -49,32 +49,31 @@ export default class RegisterComponent extends React.Component {
 
     this.first = '';
     this.last = '';
-    this.usernameManuallyChanged = false;
+    this.error = '';
     this.unavailable = false;
-    this.error = false;
+    this.usernameManuallyChanged = false;
     this.state = {
       username: ''
     };
   }
-
 
   submitHandler = (event) => {
     event.preventDefault();
 
     let form = event.target;
 
-    if (form.password.value != form.password_repeat.value) {
-      form.password_repeat.setCustomValidity("Passwords don't match");
+    if (this.error) {
+      form.username.setCustomValidity(this.error);
       return;
     }
 
-    // if (form.username.value && this.unavailable) {
-    //   form.username.setCustomValidity('Username is busy');
-    //   return;
-    // }
+    if (this.unavailable) {
+      form.username.setCustomValidity(this.error);
+      return;
+    }
 
-    if (this.error) {
-      form.username.setCustomValidity('Internal server error');
+    if (form.password.value != form.password_repeat.value) {
+      form.password_repeat.setCustomValidity("Passwords don't match");
       return;
     }
 
@@ -126,9 +125,9 @@ export default class RegisterComponent extends React.Component {
     try {
       this.setState({ username: await this.getAvailableUsername(result) });
       this.unavailable = false;
-      this.error = false;
+      this.error = '';
     } catch (e) {
-      this.error = true;
+      this.error = e.message;
     }
   };
 
@@ -140,18 +139,17 @@ export default class RegisterComponent extends React.Component {
     
     try {
       this.unavailable = await this.checkUserExists(result);
-      this.error = false;
+      this.error = '';
     } catch (e) {
-      this.error = true;
+      this.error = e.message;
     }
 
-    const username = document.getElementById('registerUsername');
-    this.unavailable ? username.setCustomValidity('Username is busy') : username.setCustomValidity('');
+    this.unavailable ? this.username.setCustomValidity('Username is busy') : this.username.setCustomValidity('');
   };
 
   passwordValidation = () => {
-    const pass = document.getElementById('registerPassword');
-    const passRepeat = document.getElementById('registerPasswordRepeat');
+    const pass = this.password;
+    const passRepeat = this.passwordRepeat;
 
     if (!passRepeat.value || pass.value === passRepeat.value) {
       pass.setCustomValidity('');
@@ -182,11 +180,11 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input onBlur={reset} ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input ref={(c) => this.firstName = c} onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input onBlur={reset} ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input ref={(c) => this.lastName = c} onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">Username</label>
@@ -194,15 +192,15 @@ export default class RegisterComponent extends React.Component {
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" />
+            <input ref={(c) => this.password = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" />
+            <input ref={(c) => this.passwordRepeat = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input onBlur={blur} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+            <input onBlur={reset} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
           </div>
         </div>
         <div className="layout__row layout__row-double">
