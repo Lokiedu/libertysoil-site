@@ -18,6 +18,8 @@
 import React, { Component } from 'react';
 import ga from 'react-google-analytics';
 
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 
 class SuccessContent extends Component {
 
@@ -47,6 +49,8 @@ export default class RegisterComponent extends React.Component {
 
     this.first = '';
     this.last = '';
+    this.error = '';
+    this.unavailable = false;
     this.usernameManuallyChanged = false;
     this.state = {
       username: ''
@@ -57,6 +61,15 @@ export default class RegisterComponent extends React.Component {
     event.preventDefault();
 
     let form = event.target;
+
+    if (this.error) {
+      form.username.setCustomValidity(this.error);
+      return;
+    }
+
+    if (this.unavailable) {
+      return;
+    }
 
     if (form.password.value != form.password_repeat.value) {
       form.password_repeat.setCustomValidity("Passwords don't match");
@@ -79,26 +92,71 @@ export default class RegisterComponent extends React.Component {
     );
   };
 
-  inputHandler = (event) => {
+  async getAvailableUsername(username) {
+    const client = new ApiClient(API_HOST);
+    return await client.getAvailableUsername(username);
+  }
+
+  async checkUserExists(username) {
+    const client = new ApiClient(API_HOST);
+    return await client.checkUserExists(username);
+  }
+
+  inputHandler = async (event) => {
+    if (this.usernameManuallyChanged)
+      return;
+
     const field = event.target;
-    const result = field.value.replace(/\W|\d/g, '');
+    const input = field.value.replace(/\W|\d/g, '');
 
     if (field.getAttribute('name') === 'firstName') {
-      this.first = result;
+      this.first = input;
     } else if (field.getAttribute('name') === 'lastName') {
-      this.last = result;
+      this.last = input;
+    }
+    
+    const result = this.first + this.last;
+    if (!result) {
+      this.setState({ username: result });
+      return;
     }
 
-    if (!this.usernameManuallyChanged) {
-      this.setState({ username: this.first + this.last });
+    try {
+      this.setState({ username: await this.getAvailableUsername(result) });
+      this.unavailable = false;
+      this.error = '';
+    } catch (e) {
+      this.error = e.message;
     }
   };
 
-  usernameInputHandler = (event) => {
+  usernameInputHandler = async (event) => {
     const result = event.target.value.replace(/\s|\W/g, '');
 
     this.setState({ username: result });
     this.usernameManuallyChanged = true;
+    
+    try {
+      this.unavailable = await this.checkUserExists(result);
+      this.error = '';
+    } catch (e) {
+      this.error = e.message;
+    }
+
+    this.unavailable ? this.username.setCustomValidity('Username is taken') : this.username.setCustomValidity('');
+  };
+
+  passwordValidation = () => {
+    const pass = this.password;
+    const passRepeat = this.passwordRepeat;
+
+    if (!passRepeat.value || pass.value === passRepeat.value) {
+      pass.setCustomValidity('');
+      passRepeat.setCustomValidity('');
+    } else {
+      pass.setCustomValidity("Passwords don't match");
+      passRepeat.setCustomValidity("Passwords don't match");
+    }
   };
 
   render() {
@@ -106,6 +164,8 @@ export default class RegisterComponent extends React.Component {
       ga('send', 'event', 'Reg', 'Done');
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
+
+    const reset = ((e) => e.target.setCustomValidity(''));
 
     return (
     <div className="div">
@@ -119,11 +179,11 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input ref={(c) => this.firstName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input ref={(c) => this.lastName = c} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerUsername">Username</label>
@@ -131,15 +191,15 @@ export default class RegisterComponent extends React.Component {
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input className="input input-gray input-big input-block" type="password" id="registerPassword"name="password" required="required" />
+            <input ref={(c) => this.password = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat"name="password_repeat" required="required" />
+            <input ref={(c) => this.passwordRepeat = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+            <input onBlur={reset} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
           </div>
         </div>
         <div className="layout__row layout__row-double">
