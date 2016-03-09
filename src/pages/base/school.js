@@ -16,14 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { IndexLink } from 'react-router';
+import { Link, IndexLink } from 'react-router';
 
 import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
+import Breadcrumbs from '../../components/breadcrumbs';
+import Tag from '../../components/tag';
+import TagIcon from '../../components/tag-icon';
 import Footer from '../../components/footer';
 import PageContentLink from '../../components/page-content-link';
 import SchoolHeader from '../../components/school-header';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
+import { TAG_SCHOOL } from '../../consts/tags';
+
 
 export default class BaseSchoolPage extends React.Component {
   static displayName = 'BaseSchoolPage';
@@ -37,7 +43,17 @@ export default class BaseSchoolPage extends React.Component {
 
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}/>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs>
+              <Link to="/school" title="All Schools">
+                <TagIcon inactive type={TAG_SCHOOL} />
+              </Link>
+              <Tag name={page_school.name} type={TAG_SCHOOL} urlId={page_school.url_name} />
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">
