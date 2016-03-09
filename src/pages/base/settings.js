@@ -17,14 +17,16 @@
  */
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
+import Gravatar from 'react-gravatar';
 
-import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
-
+import Breadcrumbs from '../../components/breadcrumbs';
 import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
+import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -41,9 +43,26 @@ export default class BaseSettingsPage extends React.Component {
       triggers
     } = this.props;
 
+    const user = current_user.user;
+
+    let name = current_user.username;
+
+    if (user.more && (user.more.firstName || user.more.lastName)) {
+      name = `${user.more.firstName} ${user.more.lastName}`;
+    }
+
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}/>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title={name}>
+              <div className="user_box__avatar user_box__avatar-round">
+                <Gravatar default="retro" md5={user.gravatarHash} size={36} />
+              </div>
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">
