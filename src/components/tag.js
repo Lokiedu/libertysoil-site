@@ -130,19 +130,20 @@ export default class Tag extends React.Component {
         </div>
       );
     } else {  // eslint-disable-line no-else-return
-      if (false) { // TODO: refactor to correct server rendering (location.pathname == url)
-        return(
-          <div className={`tag ${className}`} title={title}>
-            {tagBody}
-          </div>
-        );
-      } else {
-        return (
-          <Link to={url} className={`tag ${className}`} title={title}>
-            {tagBody}
-          </Link>
-        );
-      }
+      // TODO: refactor to correct server rendering (location.pathname == url)
+      //if (false) {
+      //  return(
+      //    <div className={`tag ${className}`} title={title}>
+      //      {tagBody}
+      //    </div>
+      //  );
+      //} else {
+      return (
+        <Link to={url} className={`tag ${className}`} title={title}>
+          {tagBody}
+        </Link>
+      );
+      //}
     }
   }
 }
