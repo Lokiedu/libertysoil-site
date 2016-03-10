@@ -63,11 +63,10 @@ export class Auth extends React.Component {
     super();
     this.counter = 0;
     this.titleBottomInitial;
+    this.breakpoint;
     this.state = {
       isMobile: false,
-      registerClicked: false,
-      headerHidden: false, // check necessarity
-      loginVisible: true // above
+      registerClicked: false
     };
   }
 
@@ -78,11 +77,6 @@ export class Auth extends React.Component {
     if (!isMobile) {
       window.addEventListener('scroll', this.scrollHandler);
       this.reg.addEventListener('click', this.registerClickHandler);
-
-      const title = ReactDOM.findDOMNode(this.title);
-      title.style.top = '0px'; // todo
-      title.style.transition = 'top 0.1s'; 
-      title.style.position = 'relative';
     }
   }
 
@@ -92,43 +86,57 @@ export class Auth extends React.Component {
       this.titleBottomInitial = title.getBoundingClientRect().bottom;
     }
 
-    // console.log(this.titleBottomInitial);
     const titleStyleTop = parseFloat(title.style.top);
     const titleTop = title.getBoundingClientRect().top;
     const titleBottom = title.getBoundingClientRect().bottom;
     const content = ReactDOM.findDOMNode(this.content);
     const contentTop = content.getBoundingClientRect().top;
-    // console.log(titleTop, titleBottom, contentTop);
 
     if (contentTop > this.titleBottomInitial) {
       title.style.top = '0px';
+      this.setState({ headerTop: false });
       return;
     }
-    if (titleTop <= 50) {
+    if (titleTop <= 60) {
       this.setState({ headerTop: true });
+      
+      if (!this.breakpoint) {
+        this.breakpoint = window.pageYOffset;
+      }
       return;
     }
-    this.setState({ headerTop: false });
+    if (this.state.headerTop && (window.pageYOffset >= this.breakpoint)) {
+      this.setState({ headerTop: false });
+      return;
+    }
 
-    if ((this.titleBottomInitial > contentTop - 20)) { // 20, 30 - needs fix
+    if ((this.titleBottomInitial > contentTop - 20)) {
       title.style.top = contentTop - 30 - this.titleBottomInitial + 'px';
-      // console.log(title.style.top);
     } else if (titleBottom < contentTop - 30) {
       title.style.top = titleStyleTop + contentTop - 30 - titleBottom + 'px';
     }
   };
 
   registerClickHandler = () => {
-    if (this.state.registerClicked)
+    if (this.state.headerTop) {
       return;
-
-    this.setState({ registerClicked: true });
+    }
     this.cropLanding();
   };
 
   cropLanding() {
-    // animated scroll goes here
-    window.scrollBy(0, 500); // todo
+    const startY = window.pageYOffset;
+    const offsetY = this.reg.getBoundingClientRect().top + document.documentElement.scrollTop;
+    const start = new Date().getTime();
+    const time = 750;
+    
+    let timer = setInterval(() => {
+      let step = Math.min(1, (new Date().getTime() - start) / time);
+      let newY = (step * offsetY > startY) ? step * offsetY : startY;
+      window.scrollTo(0, newY);
+      if (step == 1) clearInterval(timer);
+    }, 10);
+
   }
 
   render() {
@@ -137,26 +145,27 @@ export class Auth extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     
-    let classToHeader = 'header-transparent header-transparent_border';
-    let classToLanding = 'landing landing-big landing-bg landing-bg_fixed landing-bg_house layout__row-group';
-    let classToLandingClone = classToLanding + ' landing-fixed_sticky';
+
+    let classToLanding = 'landing landing-big landing-bg landing-bg_house layout__row-group';
+    let classToLandingClone = '';
     let classToLandingBody = 'landing__body';
-    let login = '';
+    let classToHeader = 'header-transparent header-transparent_border';
+    let classToTitle = 'layout__row';
 
     if (!this.state.isMobile) {
-      classToLanding += ' landing-full';
+      classToLandingClone += classToLanding + ' landing-bg_fixed landing-fixed_sticky';
+      classToLanding += ' landing-full landing-bg_fixed';
       classToLandingBody += ' landing__body-fixed';
-
-      if (this.state.loginVisible) {
-        classToHeader += ' landing__header-fixed';
-        login = (<Login ref="login" onLoginUser={triggers.login} />);
-      } else {
-        classToHeader += ' landing__header-abs';
-      }
+      classToTitle += ' landing__title-animated';
+      classToHeader += ' landing__header-fixed';
 
       if (!this.state.headerTop) {
-        classToLandingClone += ' hidden';
+        classToLandingClone += ' hidden landing__body-transparent';
+      } else {
+        classToLandingBody += ' landing__body-transparent'
       }
+    } else {
+      classToLandingClone += ' hidden';
     }
 
     let renderedMessages;
@@ -171,21 +180,20 @@ export class Auth extends React.Component {
     }
 
     const registration_success = ui.registrationSuccess;
-    // TODO: remove unnecessary refs
     return (
       <div className="page__container-bg font-open_sans font-light">
-        <section ref={c => this.landing = c} className={classToLanding}>
+        <section className={classToLanding}>
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
             className={classToHeader}
           />
-          <header ref={c => this.landingBody = c} className={classToLandingBody}>
-            <div ref={c => this.title = c} className="layout__row">
+          <header className={classToLandingBody}>
+            <div ref={c => this.title = c} className={classToTitle}>
               <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
               <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
             </div>
-            { login }
+            <Login onLoginUser={triggers.login} />
           </header>
         </section>
 
@@ -206,7 +214,7 @@ export class Auth extends React.Component {
           <Footer/>
         </div>
 
-        <section ref={c => this.landingClone = c} className={classToLandingClone}>
+        <section className={classToLandingClone}>
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
