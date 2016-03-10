@@ -48,6 +48,7 @@ export default class Tag extends React.Component {
     let className;
     let title = name;
     let url;
+    let tagBody;
 
     switch (type) {
       case TAG_HASHTAG: {
@@ -103,12 +104,19 @@ export default class Tag extends React.Component {
     }
 
     if (!collapsed && tagName) {
-      tagNameComponent = <div className="tag__name">{tagName}</div>;
+      tagNameComponent = <div key="name" className="tag__name">{tagName}</div>;
     }
 
     if (!title) {
       title = this.props.title;
     }
+
+    tagBody = [
+      <div key="icon" className="tag__icon_wrapper">
+        {tagIcon}
+      </div>,
+      tagNameComponent
+    ];
 
     // FIXME: this should be reimplemented as 2 different components
     if (this.props.deletable) {
@@ -122,14 +130,19 @@ export default class Tag extends React.Component {
         </div>
       );
     } else {  // eslint-disable-line no-else-return
-      return (
-        <Link to={url} className={`tag ${className}`} title={title}>
-          <div className="tag__icon_wrapper">
-            {tagIcon}
+      if (location.pathname == url) {
+        return(
+          <div className={`tag ${className}`} title={title}>
+            {tagBody}
           </div>
-          {tagNameComponent}
-        </Link>
-      );
+        );
+      } else {
+        return (
+          <Link to={url} className={`tag ${className}`} title={title}>
+            {tagBody}
+          </Link>
+        );
+      }
     }
   }
 }
