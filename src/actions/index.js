@@ -21,6 +21,7 @@ export const ADD_GEOTAG = 'ADD_GEOTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
+export const CLEAR_RIVER = 'CLEAR_RIVER';
 export const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
@@ -76,6 +77,8 @@ export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
+export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -118,6 +121,12 @@ export function setPostsToRiver(posts) {
   }
 }
 
+export function clearRiver() {
+  return {
+    type: CLEAR_RIVER
+  }
+}
+
 export function setPostsToLikesRiver(user_id, posts) {
   return {
     type: SET_POSTS_TO_LIKES_RIVER,
@@ -150,24 +159,24 @@ export function setUserPosts(user_id, posts) {
   }
 }
 
-export function setUserTags(tags) {
+export function setUserTags(hashtags) {
   return {
     type: SET_USER_TAGS,
-    tags
+    hashtags
   }
 }
 
-export function addUserFollowedTag(tag) {
+export function addUserFollowedTag(hashtag) {
   return {
     type: ADD_USER_FOLLOWED_TAG,
-    tag
+    hashtag
   }
 }
 
-export function removeUserFollowedTag(tag) {
+export function removeUserFollowedTag(hashtag) {
   return {
     type: REMOVE_USER_FOLLOWED_TAG,
-    tag
+    hashtag
   }
 }
 
@@ -202,10 +211,10 @@ export function removeUserFollowedGeotag(geotag) {
 }
 
 
-export function setTagPosts(tag, posts) {
+export function setTagPosts(hashtag, posts) {
   return {
     type: SET_TAG_POSTS,
-    tag,
+    hashtag,
     posts
   }
 }
@@ -373,10 +382,10 @@ export function setCityPosts(cityId, posts)
   }
 }
 
-export function setTagCloud(tags) {
+export function setTagCloud(hashtags) {
   return {
     type: SET_TAG_CLOUD,
-    tags
+    hashtags
   }
 }
 
@@ -457,5 +466,13 @@ export function removeLikedGeotag(geotag) {
   return {
     type: REMOVE_LIKED_GEOTAG,
     geotag
+  }
+}
+
+export function setUIProgress(progress, value) {
+  return {
+    type: UI__SET_PROGRESS,
+    progress,
+    value
   }
 }

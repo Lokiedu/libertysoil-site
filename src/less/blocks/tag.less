@@ -20,6 +20,9 @@
   @height: 23px;
   @icon-size: @height;
 
+  @heightBig: 37px;
+  @icon-sizeBig: @heightBig;
+
   &:extend(.font-open_sans);
   display: flex;
   align-items: stretch;
@@ -35,6 +38,36 @@
   &:hover {
     .tag__delete {
       opacity: 1;
+    }
+  }
+
+  &-size_big {
+    height: @heightBig;
+    min-width: @heightBig;
+    border-radius: 17px;
+    border: none;
+
+    .tag__icon_wrapper {
+      width: @heightBig;
+      height: @heightBig;
+      margin: 0;
+      top: 0;
+      left: 0;
+    }
+
+    .tag__icon {
+      width: @heightBig;
+      height: @heightBig;
+      line-height: @heightBig;
+      font-size: 18px;
+    }
+  }
+
+  &-inactive {
+    border-color: #d0d0d0!important;
+
+    .tag_icon {
+      background: #d0d0d0!important;
     }
   }
 

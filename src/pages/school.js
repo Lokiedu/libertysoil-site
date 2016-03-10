@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -85,6 +86,7 @@ export class SchoolPage extends React.Component {
         is_logged_in={this.props.is_logged_in}
         triggers={triggers}
       >
+        <Helmet title={`Posts about ${school.name} on `} />
         <div className="paper">
           <div className="paper__page content">
             {linesOfDescription}

@@ -15,20 +15,26 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import i from 'immutable';
+import React from 'react';
+import { Link } from 'react-router';
 
-import * as a from '../actions';
 
+export default function HeaderLogo({ small }) {
+  let className = 'logo';
 
-const initialState = i.Map({});
-
-export default function reducer(state=initialState, action) {
-  switch (action.type) {
-    case a.SET_TAG_POSTS: {
-      state = state.set(action.hashtag, i.List(action.posts.map(post => post.id)));
-      break;
-    }
+  if (small) {
+    className += ' logo-size_small';
   }
 
-  return state;
+  return (
+    <div className="header__logo">
+      <Link
+        className={className}
+        title="Liberty Soil"
+        to="/"
+      >
+        <span className="logo__title">Liberty Soil</span>
+      </Link>
+    </div>
+  );
 }

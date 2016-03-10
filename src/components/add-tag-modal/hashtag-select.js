@@ -57,7 +57,7 @@ export default class HashtagSelect extends Component {
     let client = new ApiClient(API_HOST);
     let response = await client.searchTags(value);
 
-    this.setState({suggestions: response.tags});
+    this.setState({suggestions: response.hashtags});
   }, 300);
 
   _getSuggestionValue = (tag) => tag.name;

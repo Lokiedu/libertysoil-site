@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
@@ -27,6 +28,7 @@ import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
 
@@ -182,17 +184,22 @@ export class Auth extends React.Component {
     const registration_success = ui.registrationSuccess;
     return (
       <div className="page__container-bg font-open_sans font-light">
+        <Helmet title="Login to " />
         <section className={classToLanding}>
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
             className={classToHeader}
-          />
+          >
+            <HeaderLogo />
+          </Header>
+
           <header className={classToLandingBody}>
             <div ref={c => this.title = c} className={classToTitle}>
               <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
               <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
             </div>
+
             <Login onLoginUser={triggers.login} />
           </header>
         </section>

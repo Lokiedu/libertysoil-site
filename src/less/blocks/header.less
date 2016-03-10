@@ -33,12 +33,19 @@
   }
 }
 
+.header__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .header__body {
   &:extend(.layout);
   &:extend(.layout__grid all);
   max-width: @siteWidth - @space*2;
   margin: 0 auto;
   box-sizing: border-box;
+  flex-wrap: nowrap;
 }
 
 .header__toolbar {
@@ -50,6 +57,13 @@
   margin-right: 0;
 }
 
+.header__breadcrumbs {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.header__breadcrumbs,
 .header__logo {
   margin-top: 0;
 }

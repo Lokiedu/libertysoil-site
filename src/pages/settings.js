@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import BaseSettingsPage from './base/settings'
 
@@ -124,6 +125,7 @@ class SettingsPage extends React.Component {
         triggers={triggers}
         onSave={this.onSave}
       >
+        <Helmet title="Your Profile Settings on " />
         <form ref="form" className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
           <div className="layout__row">

@@ -18,7 +18,7 @@ export default class AddTagForm extends Component {
       schools: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
       })),
-      tags: PropTypes.arrayOf(PropTypes.shape({
+      hashtags: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
       }))
     }),
@@ -33,7 +33,7 @@ export default class AddTagForm extends Component {
 
   render() {
     let {
-      addedTags: { geotags, schools, tags },
+      addedTags: { geotags, schools, hashtags },
       allSchools,
       onAddGeotag,
       onAddHashtag,
@@ -45,7 +45,7 @@ export default class AddTagForm extends Component {
       case TAG_LOCATION:
         return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} />;
       case TAG_HASHTAG:
-        return <AddHashtagForm addedHashtags={tags} onAddHashtag={onAddHashtag} />;
+        return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} />;
       case TAG_SCHOOL:
         return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} />;
       default:

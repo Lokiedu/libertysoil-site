@@ -17,13 +17,18 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
+import Breadcrumbs from '../components/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
+import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+import { TAG_HASHTAG } from '../consts/tags';
 
 
 class TagCloudPage extends Component {
@@ -42,7 +47,15 @@ class TagCloudPage extends Component {
 
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user} />
+        <Helmet title="Tags of " />
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="All Hashtags">
+              <TagIcon big type={TAG_HASHTAG} />
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">
@@ -53,7 +66,7 @@ class TagCloudPage extends Component {
                   <div className="head">Tag cloud</div>
                 </div>
                 <div className="layout__row">
-                  <TagCloud tags={this.props.tag_cloud}/>
+                  <TagCloud hashtags={this.props.tag_cloud}/>
                 </div>
               </div>
             </div>

@@ -22,24 +22,26 @@ import uuid from 'uuid'
 import _ from 'lodash'
 import fileType from 'file-type';
 import mime from 'mime';
-import bb from 'bluebird';
-import bcrypt from 'bcrypt';
+import { promisify, promisifyAll } from 'bluebird';
+import { hash as bcryptHash } from 'bcrypt';
 import crypto from 'crypto'
+import { break as breakGraphemes } from 'grapheme-breaker';
+import { OnigRegExp } from 'oniguruma';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 
 
-let bcryptAsync = bb.promisifyAll(bcrypt);
+const bcryptHashAsync = promisify(bcryptHash);
+promisifyAll(OnigRegExp.prototype)
 
-export default function initBookshelf(config) {
-  let knex = Knex(config);
+export function initBookshelfFromKnex(knex) {
   let bookshelf = Bookshelf(knex);
 
   bookshelf.plugin('registry');
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Label, School, Country, City, Attachment, Geotag;
+  let User, Post, Hashtag, School, Country, City, Attachment, Geotag;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -55,8 +57,8 @@ export default function initBookshelf(config) {
     liked_posts: function() {
       return this.belongsToMany(Post, 'likes', 'user_id', 'post_id');
     },
-    liked_labels: function() {
-      return this.belongsToMany(Label, 'liked_labels', 'user_id', 'label_id');
+    liked_hashtags: function() {
+      return this.belongsToMany(Hashtag, 'liked_hashtags', 'user_id', 'hashtag_id');
     },
     liked_schools: function() {
       return this.belongsToMany(School, 'liked_schools', 'user_id', 'school_id');
@@ -67,8 +69,8 @@ export default function initBookshelf(config) {
     favourited_posts: function() {
       return this.belongsToMany(Post, 'favourites', 'user_id', 'post_id');
     },
-    followed_labels: function () {
-      return this.belongsToMany(Label, 'followed_labels_users', 'user_id', 'label_id');
+    followed_hashtags: function () {
+      return this.belongsToMany(Hashtag, 'followed_hashtags_users', 'user_id', 'hashtag_id');
     },
     followed_schools: function () {
       return this.belongsToMany(School, 'followed_schools_users', 'user_id', 'school_id');
@@ -79,15 +81,24 @@ export default function initBookshelf(config) {
     virtuals: {
       gravatarHash: function() {
         return md5(this.get('email'));
+      },
+      fullName: function() {
+        const more = this.get('more');
+
+        if (more && 'firstName' in more && 'lastName' in more) {
+          return `${more.firstName} ${more.lastName}`;
+        }
+
+        return this.get('username');
       }
     },
-    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash'],  // exclude from json-exports
-    followLabel: async function(labelId) {
-      await this.followed_labels().detach(labelId);
-      return this.followed_labels().attach(labelId);
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName'],  // exclude from json-exports
+    followHashtag: async function(hashtagId) {
+      await this.followed_hashtags().detach(hashtagId);
+      return this.followed_hashtags().attach(hashtagId);
     },
-    unfollowLabel: async function(labelId) {
-      return this.followed_labels().detach(labelId);
+    unfollowHashtag: async function(hashtagId) {
+      return this.followed_hashtags().detach(hashtagId);
     },
     followSchool: async function(schoolId) {
       await this.followed_schools().detach(schoolId);
@@ -106,7 +117,8 @@ export default function initBookshelf(config) {
   });
 
   User.create = async function(username, password, email, moreData) {
-    let hashed_password = await bcryptAsync.hashAsync(password, 10);
+    username = username.toLowerCase();
+    let hashed_password = await bcryptHashAsync(password, 10);
 
     let random = Math.random().toString();
     let email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
@@ -133,8 +145,8 @@ export default function initBookshelf(config) {
     user: function() {
       return this.belongsTo(User, 'user_id');
     },
-    labels: function() {
-      return this.belongsToMany(Label, 'labels_posts', 'post_id', 'label_id');
+    hashtags: function() {
+      return this.belongsToMany(Hashtag, 'hashtags_posts', 'post_id', 'hashtag_id');
     },
     schools: function() {
       return this.belongsToMany(School, 'posts_schools', 'post_id', 'school_id');
@@ -142,8 +154,8 @@ export default function initBookshelf(config) {
     geotags: function() {
       return this.belongsToMany(Geotag, 'geotags_posts', 'post_id', 'geotag_id');
     },
-    liked_label: function() {
-      return this.belongsTo(Label, 'liked_label_id');
+    liked_hashtag: function() {
+      return this.belongsTo(Hashtag, 'liked_hashtag_id');
     },
     liked_school: function() {
       return this.belongsTo(School, 'liked_school_id');
@@ -157,37 +169,37 @@ export default function initBookshelf(config) {
     favourers: function() {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
     },
-    attachLabels: async function(names, removeUnused=false) {
-      let labels = this.labels();
+    attachHashtags: async function(names, removeUnused=false) {
+      let hashtags = this.hashtags();
 
-      let labelsToRemove = [];
-      let labelNamesToKeep = [];
+      let hashtagsToRemove = [];
+      let hashtagNamesToKeep = [];
 
-      (await labels.fetch()).map(label => {
-        let name = label.get('name');
+      (await hashtags.fetch()).map(hashtag => {
+        let name = hashtag.get('name');
 
         if (names.indexOf(name) == -1) {
-          labelsToRemove.push(label);
+          hashtagsToRemove.push(hashtag);
         } else {
-          labelNamesToKeep.push(name);
+          hashtagNamesToKeep.push(name);
         }
       });
 
-      let labelNamesToAdd = [];
+      let hashtagNamesToAdd = [];
       for (let name of names) {
-        if (labelNamesToKeep.indexOf(name) == -1) {
-          labelNamesToAdd.push(name);
+        if (hashtagNamesToKeep.indexOf(name) == -1) {
+          hashtagNamesToAdd.push(name);
         }
       }
 
-      let tags = await Promise.all(labelNamesToAdd.map(tag_name => Label.createOrSelect(tag_name)));
+      let tags = await Promise.all(hashtagNamesToAdd.map(tag_name => Hashtag.createOrSelect(tag_name)));
       let promises = tags.map(async (tag) => {
-        await labels.attach(tag)
+        await hashtags.attach(tag)
       });
 
       if (removeUnused) {
-        let morePromises = labelsToRemove.map(async (tag) => {
-          await labels.detach(tag);
+        let morePromises = hashtagsToRemove.map(async (tag) => {
+          await hashtags.detach(tag);
         });
 
         promises = [...promises, ...morePromises];
@@ -250,24 +262,55 @@ export default function initBookshelf(config) {
     }
   });
 
-  Label = bookshelf.Model.extend({
-    tableName: 'labels',
+  Post.titleFromText = async (text, authorName) => {
+    const get50 = async (text) => {
+      const first50GraphemesOfText = breakGraphemes(text).slice(0, 51);
+
+      if (first50GraphemesOfText.length < 50) {
+        return first50GraphemesOfText.join('').trim();
+      }
+
+      const spaceRegex = new OnigRegExp('\\s');
+
+      if (await spaceRegex.testAsync(first50GraphemesOfText[50])) {
+        return first50GraphemesOfText.join('').trim();
+      }
+
+      const first50GraphemesOfTextString = first50GraphemesOfText.join('');
+
+      const lastWordRegex = new OnigRegExp('\\W\\w+$');
+      const match = await lastWordRegex.searchAsync(first50GraphemesOfTextString);
+
+      if (match === null) {
+        return '- no title -';
+      }
+
+      return first50GraphemesOfText.slice(0, match[0].start).join('').trim();
+    };
+
+    const first50GraphemesOfText = await get50(text);
+
+    return `${authorName}: ${first50GraphemesOfText}`;
+  };
+
+  Hashtag = bookshelf.Model.extend({
+    tableName: 'hashtags',
     posts: function() {
-      return this.belongsToMany(Post, 'labels_posts', 'label_id', 'post_id');
+      return this.belongsToMany(Post, 'hashtags_posts', 'hashtag_id', 'post_id');
     }
   });
 
-  Label.createOrSelect = async (name) => {
+  Hashtag.createOrSelect = async (name) => {
     try {
-      return await Label.where({ name }).fetch({require: true});
+      return await Hashtag.where({ name }).fetch({require: true});
     } catch (e) {
-      let label = new Label({
+      let hashtag = new Hashtag({
         id: uuid.v4(),
         name
       });
 
-      await label.save(null, {method: 'insert'});
-      return label
+      await hashtag.save(null, {method: 'insert'});
+      return hashtag
     }
   };
 
@@ -325,11 +368,20 @@ export default function initBookshelf(config) {
 
   Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
+    geonames_country: function() {
+      return this.belongsTo(Country, 'geonames_country_id');
+    },
+    geonames_city: function() {
+      return this.belongsTo(City, 'geonames_city_id');
+    },
     country: function() {
-      return this.belongsTo(Country, 'country_id');
+      return this.belongsTo(Geotag, 'country_id');
     },
     city: function() {
-      return this.belongsTo(City, 'city_id');
+      return this.belongsTo(Geotag, 'city_id');
+    },
+    continent: function() {
+      return this.belongsTo(Geotag, 'continent_id');
     }
   });
 
@@ -408,7 +460,7 @@ export default function initBookshelf(config) {
   // adding to registry
   bookshelf.model('User', User);
   bookshelf.model('Post', Post);
-  bookshelf.model('Label', Label);
+  bookshelf.model('Hashtag', Hashtag);
   bookshelf.model('School', School);
   bookshelf.model('Country', Country);
   bookshelf.model('City', City);
@@ -417,4 +469,9 @@ export default function initBookshelf(config) {
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
+}
+
+export default function initBookshelf(config) {
+  const knex = Knex(config);
+  return initBookshelfFromKnex(knex);
 }

@@ -38,7 +38,7 @@ describe('ListPage', () => {
     let user;
     let sessionId;
 
-    beforeEach(async () => {
+    before(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
       await user.save({'email_check_hash': ''},{require:true});
@@ -46,7 +46,7 @@ describe('ListPage', () => {
       sessionId = await login('test', 'test');
     });
 
-    afterEach(async () => {
+    after(async () => {
       await user.destroy();
     });
 
@@ -65,7 +65,7 @@ describe('ListPage', () => {
     describe('when user made a post', () => {
       let post;
 
-      beforeEach(async () => {
+      before(async () => {
         // FIXME: extract code from controller into model and reuse here
         post = new Post({
           id: uuid4(),
@@ -76,7 +76,7 @@ describe('ListPage', () => {
         await post.save(null, {method: 'insert'});
       });
 
-      afterEach(async () => {
+      after(async () => {
         await post.destroy();
       });
 

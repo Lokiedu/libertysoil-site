@@ -19,30 +19,44 @@ import React from 'react';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
+
+import VisibilitySensor from 'react-visibility-sensor';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import CreatePost from '../components/create-post'
 import Header from '../components/header';
+import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
+import Button from '../components/button';
+import Breadcrumbs from '../components/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import {
   resetCreatePostForm,
-  updateCreatePostForm
+  updateCreatePostForm,
+  clearRiver
 } from '../actions';
 
+const client = new ApiClient(API_HOST);
 
 class List extends React.Component {
   static displayName = 'List';
 
+  state = {
+    downloadAttemptsCount: 0
+  };
+
   static async fetchData(params, store, client) {
     let trigger = new ActionsTrigger(client, store.dispatch);
+
+    store.dispatch(clearRiver());
 
     await Promise.all([
       trigger.loadSchools(),
@@ -51,21 +65,45 @@ class List extends React.Component {
     ]);
   }
 
+  loadMore = (isVisible) => {
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    if (isVisible && !this.props.ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+      this.setState({
+        downloadAttemptsCount: this.state.downloadAttemptsCount + 1
+      });
+      triggers.loadPostRiver(this.props.river.length);
+    }
+
+    if (!isVisible) {
+      this.setState({
+        downloadAttemptsCount: 0
+      });
+    }
+  }
+
   render() {
     const {
       current_user,
       i_am_following,
       resetCreatePostForm,
-      updateCreatePostForm
+      updateCreatePostForm,
+      ui,
+      river
     } = this.props;
 
     const actions = {resetCreatePostForm, updateCreatePostForm};
-    const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <div>
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
+        <Helmet title="News Feed of " />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+          <HeaderLogo />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title="News Feed" />
+          </div>
+        </Header>
         <div className="page__container">
           <div className="page__body">
             <Sidebar current_user={this.props.current_user} />
@@ -77,7 +115,12 @@ class List extends React.Component {
                 triggers={triggers}
                 {...this.props.create_post_form}
               />
-              <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+            <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+            <div className="layout layout-align_center layout__space layout__space-double">
+              <VisibilitySensor onChange={this.loadMore}>
+                <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
+              </VisibilitySensor>
+            </div>
               {/*<Followed/> */}
               {/*<Tags/>*/}
             </div>

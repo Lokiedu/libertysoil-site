@@ -28,17 +28,17 @@ describe('current_user reducer', () => {
   it('should handle logout properly', () => {
     const dirtyState = i.Map({
       id: '00000000-dead-beef-0000-000000000000',
-      tags: i.List(['hello', 'world']),
-      followed_tags: i.Map({'chicken': 'good'}),
+      hashtags: i.List(['hello', 'world']),
+      followed_hashtags: i.Map({'chicken': 'good'}),
       followed_schools: i.Map({'we': 'teach'}),
       suggested_users: i.List(['mike', 'bob'])
     });
 
     const resultState = userReducer(dirtyState, setCurrentUser(null)).toJS();
     expect(resultState.id, 'to be', null);
-    expect(resultState.tags, 'to have length', 0);
+    expect(resultState.hashtags, 'to have length', 0);
     expect(resultState.suggested_users, 'to have length', 0);
-    expect(Object.keys(resultState.followed_tags), 'to have length', 0);
+    expect(Object.keys(resultState.followed_hashtags), 'to have length', 0);
     expect(Object.keys(resultState.followed_schools), 'to have length', 0);
   });
 });

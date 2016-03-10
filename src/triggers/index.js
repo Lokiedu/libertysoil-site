@@ -28,7 +28,8 @@ import {
   removeMessage, registrationSuccess, showRegisterForm,
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
-  removeLikedHashtag, removeLikedSchool, removeLikedGeotag
+  removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
+  setUIProgress
 } from '../actions';
 
 
@@ -76,7 +77,7 @@ export class ActionsTrigger {
       let response = await this.client.likeHashtag(name);
 
       if (response.success) {
-        this.dispatch(addLikedHashtag(response.label));
+        this.dispatch(addLikedHashtag(response.hashtag));
       } else {
         this.dispatch(addError('internal server error. please try later'));
       }
@@ -90,7 +91,7 @@ export class ActionsTrigger {
       let response = await this.client.unlikeHashtag(name);
 
       if (response.success) {
-        this.dispatch(removeLikedHashtag(response.label));
+        this.dispatch(removeLikedHashtag(response.hashtag));
       } else {
         this.dispatch(addError('internal server error. please try later'));
       }
@@ -214,7 +215,11 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      if (('body' in e.response) && ('error' in e.response.body)) {
+        this.dispatch(addError(e.response.body.error));
+      } else {
+        this.dispatch(addError(e.message));
+      }
     }
   };
 
@@ -441,12 +446,16 @@ export class ActionsTrigger {
     }
   };
 
-  loadPostRiver = async () => {
+  loadPostRiver = async (offset) => {
+    this.dispatch(setUIProgress('loadRiverInProgress', true));
+
     try {
-      let result = await this.client.subscriptions();
+      let result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
+      this.dispatch(setUIProgress('loadRiverInProgress', false));
     } catch (e) {
       this.dispatch(addError(e.message));
+      this.dispatch(setUIProgress('loadRiverInProgress', false));
     }
   };
 
@@ -462,7 +471,7 @@ export class ActionsTrigger {
   followTag = async (name) => {
     try {
       let result = await this.client.followTag(name);
-      this.dispatch(addUserFollowedTag(result.tag));
+      this.dispatch(addUserFollowedTag(result.hashtag));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -471,7 +480,7 @@ export class ActionsTrigger {
   unfollowTag = async (name) => {
     try {
       let result = await this.client.unfollowTag(name);
-      this.dispatch(removeUserFollowedTag(result.tag));
+      this.dispatch(removeUserFollowedTag(result.hashtag));
     } catch (e) {
       this.dispatch(addError(e.message));
     }

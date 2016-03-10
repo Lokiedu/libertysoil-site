@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ga from 'react-google-analytics';
+import Helmet from 'react-helmet';
 
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
@@ -57,6 +58,7 @@ export class App extends React.Component {
 
     return (
       <div className="page">
+        <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {this.props.children}
         {gaContent}
       </div>

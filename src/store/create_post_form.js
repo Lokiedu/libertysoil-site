@@ -24,7 +24,7 @@ const initialState = i.fromJS({
   text: '',
   geotags: [],
   schools: [],
-  tags: []
+  hashtags: []
 });
 
 export default function reducer(state=initialState, action) {
