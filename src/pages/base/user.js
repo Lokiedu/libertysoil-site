@@ -17,8 +17,11 @@
  */
 import React from 'react';
 import { IndexLink } from 'react-router';
+import Gravatar from 'react-gravatar';
 
+import Breadcrumbs from '../../components/breadcrumbs';
 import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
 import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
@@ -45,9 +48,24 @@ export default class BaseUserPage extends React.Component {
     let showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
     let showBioLink = page_user.more && !!page_user.more.bio;
 
+    let name = page_user.username;
+
+    if (page_user.more && (page_user.more.firstName || page_user.more.lastName)) {
+      name = `${page_user.more.firstName} ${page_user.more.lastName}`;
+    }
+
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}/>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title={name}>
+              <div className="user_box__avatar user_box__avatar-round">
+                <Gravatar default="retro" md5={page_user.gravatarHash} size={36} />
+              </div>
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">

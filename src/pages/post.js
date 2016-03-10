@@ -18,7 +18,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import Gravatar from 'react-gravatar';
+import { truncate } from 'grapheme-utils';
+import { Link } from 'react-router';
 
+import Breadcrumbs from '../components/breadcrumbs';
+import HeaderLogo from '../components/header-logo';
 import NotFound from './not-found'
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -31,6 +36,7 @@ import ApiClient from '../api/client'
 import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 
 export class PostPage extends React.Component {
@@ -74,10 +80,30 @@ export class PostPage extends React.Component {
                          ? relatedPostIds.map(id => this.props.posts[id])
                          : null;
 
+    const authorUrl = getUrl(URL_NAMES.USER, {username: author.username});
+    let authorName = author.username;
+
+    if (author.more && (author.more.firstName || author.more.lastName)) {
+      authorName = `${author.more.firstName} ${author.more.lastName}`;
+    }
+
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
+        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+          <HeaderLogo small />
+          <div className="header__breadcrumbs">
+            <Breadcrumbs title={truncate(current_post.text, {length: 16})}>
+              <Link
+                className="user_box__avatar user_box__avatar-round"
+                title={authorName}
+                to={authorUrl}
+              >
+                <Gravatar default="retro" md5={author.gravatarHash} size={23} />
+              </Link>
+            </Breadcrumbs>
+          </div>
+        </Header>
 
         <div className="page__container">
           <div className="page__body">

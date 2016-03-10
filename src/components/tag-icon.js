@@ -17,7 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT } from '../consts/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET } from '../consts/tags';
 
 export default class TagIcon extends React.Component {
   static displayName = 'TagIcon';
@@ -27,7 +27,7 @@ export default class TagIcon extends React.Component {
     className: PropTypes.string,
     inactive: PropTypes.bool,
     small: PropTypes.bool,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT]).isRequired
+    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET]).isRequired
   };
 
   render() {
@@ -71,6 +71,10 @@ export default class TagIcon extends React.Component {
       case TAG_EVENT:
         return (
           <span className={`${className} tag_icon-event micon`} {...props}>event</span>
+        );
+      case TAG_PLANET:
+        return (
+          <span className={`${className} tag_icon-planet micon`} {...props}>public</span>
         );
       default:
         return false;

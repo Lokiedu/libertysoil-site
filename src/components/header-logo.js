@@ -15,56 +15,26 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.tag_icon {
-  display: inline-block;
-  width: 23px;
-  height: 23px;
-  color: white;
-  border-radius: 50%;
-  flex-shrink: 0;
-  font-size: 13px;
-  line-height: 23px;
-  text-align: center;
+import React from 'react';
+import { Link } from 'react-router';
 
-  &-small {
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
+
+export default function HeaderLogo({ small }) {
+  let className = 'logo';
+
+  if (small) {
+    className += ' logo-size_small';
   }
 
-  &-big {
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 22px;
-  }
-
-  &-hashtag {
-    background-color: #689ACA;
-  }
-
-  &-school {
-    background-color: #DC3457;
-  }
-
-  &-event {
-    background-color: #98C646;
-  }
-
-  &-mention {
-    background-color: #F8A232;
-  }
-
-  &-location {
-    background-color: #47B8E7;
-  }
-
-  &-planet {
-    background-color: #47B8E7;
-  }
-
-  &-inactive {
-    background-color: #d0d0d0;
-  }
-
+  return (
+    <div className="header__logo">
+      <Link
+        className={className}
+        title="Liberty Soil"
+        to="/"
+      >
+        <span className="logo__title">Liberty Soil</span>
+      </Link>
+    </div>
+  );
 }
