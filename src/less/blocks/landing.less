@@ -55,12 +55,36 @@
     }
   }
 
+
+  &-fixed_sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    min-height: 15%;
+  }
+
   &-big {
     .landing__header {
       @media @after-normal {
         padding: 100px @space;
       }
     }
+  }
+
+  &-full {
+    padding: 4vw @space 10vw @space;
+    min-height: 50vw;
+    
+    @media @before-small {
+      min-height: 150vw;
+    }
+
+    @media @after-small {
+      min-height: 80vh;
+    }
+
   }
 
   &__underbutton {
@@ -126,7 +150,7 @@
       }
 
       @media @after-normal {
-        left: 15%;
+        left: 13%;
       }
   
       @media @after-base {
@@ -141,8 +165,8 @@
     }
 
     &-shortened {
-      padding-top: 3vw;
-      padding-bottom: 2vw;
+      padding-top: 2vw;
+      padding-bottom: 4vw;
 
       @media @before-normal {
         padding-top: 5vw;

@@ -61,40 +61,61 @@ export class Auth extends React.Component {
 
   constructor() {
     super();
+    this.counter = 0;
+    this.titleBottomInitial;
     this.state = {
+      isMobile: false,
       registerClicked: false,
-      loginVisible: true,
-      contentYTop: '',
-      headerHidden: false
+      headerHidden: false, // check necessarity
+      loginVisible: true // above
     };
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.scrollHandler);
+    const isMobile = window.innerWidth < 680;
+    this.setState({ isMobile: isMobile });
+
+    if (!isMobile) {
+      window.addEventListener('scroll', this.scrollHandler);
+      this.reg.addEventListener('click', this.registerClickHandler);
+
+      const title = ReactDOM.findDOMNode(this.title);
+      title.style.top = '0px'; // todo
+      title.style.transition = 'top 0.1s'; 
+      title.style.position = 'relative';
+    }
   }
 
   scrollHandler = () => {
-    // const subtitle = ReactDOM.findDOMNode(this.refs.subtitle);
-    // const content = ReactDOM.findDOMNode(this.refs.content);
-    // const landing = ReactDOM.findDOMNode(this.refs.landing);
-    // const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
-    // //const header = document.querySelector('.landing__header-fixed');
+    const title = ReactDOM.findDOMNode(this.title);
+    if (this.counter++ < 10) {
+      this.titleBottomInitial = title.getBoundingClientRect().bottom;
+    }
 
-    // //console.log(subtitle.getBoundingClientRect().bottom, content.getBoundingClientRect().top);
+    // console.log(this.titleBottomInitial);
+    const titleStyleTop = parseFloat(title.style.top);
+    const titleTop = title.getBoundingClientRect().top;
+    const titleBottom = title.getBoundingClientRect().bottom;
+    const content = ReactDOM.findDOMNode(this.content);
+    const contentTop = content.getBoundingClientRect().top;
+    // console.log(titleTop, titleBottom, contentTop);
 
-    // if (subtitle.getBoundingClientRect().bottom <= content.getBoundingClientRect().top) {
-      
-    //   this.setState({ contentYTop: content.getBoundingClientRect().top });
-      
-    //   if (subtitle.getBoundingClientRect().top >= 0) {
+    if (contentTop > this.titleBottomInitial) {
+      title.style.top = '0px';
+      return;
+    }
+    if (titleTop <= 50) {
+      this.setState({ headerTop: true });
+      return;
+    }
+    this.setState({ headerTop: false });
 
-    //   } else {
-
-    //   }
-
-    // } else {
-
-    // }
+    if ((this.titleBottomInitial > contentTop - 20)) { // 20, 30 - needs fix
+      title.style.top = contentTop - 30 - this.titleBottomInitial + 'px';
+      // console.log(title.style.top);
+    } else if (titleBottom < contentTop - 30) {
+      title.style.top = titleStyleTop + contentTop - 30 - titleBottom + 'px';
+    }
   };
 
   registerClickHandler = () => {
@@ -106,26 +127,8 @@ export class Auth extends React.Component {
   };
 
   cropLanding() {
-    const landing = ReactDOM.findDOMNode(this.refs.landing);
-    const landingBody = ReactDOM.findDOMNode(this.refs.landingBody);
-    const heightBefore = landing.getBoundingClientRect().bottom;
-    const login = ReactDOM.findDOMNode(this.refs.login);
-
-    if (landing.getBoundingClientRect().bottom < 0) { // if we don't see landing
-      landingBody.classList.add('landing__body-no_transition');
-    }
-    window.removeEventListener('scroll', this.scrollHandler);
-    landingBody.classList.add('landing__body-shortened');
-    landingBody.classList.remove('landing__body-fixed');
-    landing.classList.remove('layout__row-full');
-    login.classList.add('hidden');
-
-    const heightAfter = landing.getBoundingClientRect().bottom;
-    window.scrollBy(0, -1 * (heightBefore - heightAfter));
-    landingBody.classList.remove('landing__body-no_transition');
-    this.setState({ loginVisible: false }); // because changes must be momentary
-
-    return this;
+    // animated scroll goes here
+    window.scrollBy(0, 500); // todo
   }
 
   render() {
@@ -133,12 +136,30 @@ export class Auth extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const login = this.state.loginVisible ? (<Login ref="login" onLoginUser={triggers.login} />) : '';
-    const classToHeader = "header-transparent header-transparent_border " +
-      (this.state.loginVisible ? "landing__header-fixed" : "landing__header-abs");
+    
+    let classToHeader = 'header-transparent header-transparent_border';
+    let classToLanding = 'landing landing-big landing-bg landing-bg_fixed landing-bg_house layout__row-group';
+    let classToLandingClone = classToLanding + ' landing-fixed_sticky';
+    let classToLandingBody = 'landing__body';
+    let login = '';
+
+    if (!this.state.isMobile) {
+      classToLanding += ' landing-full';
+      classToLandingBody += ' landing__body-fixed';
+
+      if (this.state.loginVisible) {
+        classToHeader += ' landing__header-fixed';
+        login = (<Login ref="login" onLoginUser={triggers.login} />);
+      } else {
+        classToHeader += ' landing__header-abs';
+      }
+
+      if (!this.state.headerTop) {
+        classToLandingClone += ' hidden';
+      }
+    }
 
     let renderedMessages;
-
     if (messages.length) {
       renderedMessages = (
         <div className="page__messages page__messages-modal">
@@ -150,36 +171,29 @@ export class Auth extends React.Component {
     }
 
     const registration_success = ui.registrationSuccess;
-
-    // also classes: parallax parallax__layer-pseudo parallax__layer-bg_pseudo
-
-    /*
-      <header ref="landingClone" className="landing__body landing__body-shortened hidden">
-        <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
-        <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-      </header>
-    */
-
+    // TODO: remove unnecessary refs
     return (
-      <div className="page__container-bg font-open_sans font-light ">
-        <section ref="landing" className="landing landing-big landing-bg landing-bg_house landing-bg_fixed layout__row-group layout__row-full">
+      <div className="page__container-bg font-open_sans font-light">
+        <section ref={c => this.landing = c} className={classToLanding}>
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
             className={classToHeader}
           />
-          <header ref="landingBody" className="landing__body landing__body-fixed">
-            <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
-            <h1 ref="subtitle" className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+          <header ref={c => this.landingBody = c} className={classToLandingBody}>
+            <div ref={c => this.title = c} className="layout__row">
+              <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
+              <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+            </div>
             { login }
           </header>
         </section>
 
         {renderedMessages}
 
-        <div ref="content" className="page__content page__content-spacing page__content-cloudy layout__row-group">
+        <div ref={c => this.content = c} className="page__content page__content-spacing page__content-cloudy layout__row-group">
           <div className="page__body page__body-small">
-            <div onClick={this.registerClickHandler} className="layout__row">
+            <div ref={c => this.reg = c} className="layout__row">
               <Register
                 registration_success={registration_success}
                 onShowRegisterForm={triggers.showRegisterForm}
@@ -191,6 +205,20 @@ export class Auth extends React.Component {
         <div className="layout__row-group page__content-cloudy">
           <Footer/>
         </div>
+
+        <section ref={c => this.landingClone = c} className={classToLandingClone}>
+          <Header
+            is_logged_in={is_logged_in}
+            current_user={current_user}
+            className='header-transparent header-transparent_border landing__header-abs'
+          />
+          <header className='landing__body landing__body-shortened'>
+            <div className="layout__row" style={{ position: 'relative', top: 20 }}>
+              <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
+              <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
+            </div>
+          </header>
+        </section>
       </div>
     );
   }
