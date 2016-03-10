@@ -61,7 +61,10 @@ export default class HeaderComponent extends React.Component {
       children
     } = this.props;
 
-    let classNames = 'header page__header ' + this.props.className;
+    let classNames = 'header page__header header-top';
+    if (this.props.className) {
+      classNames += ' ' + this.props.className;
+    }
 
     return (
       <div {...this.props} className={classNames}>
