@@ -50,6 +50,19 @@
         opacity: .55;
       }
     }
+    &_fixed::before {
+      background-attachment: fixed;
+    }
+  }
+
+
+  &-fixed_sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    min-height: 15%;
   }
 
   &-big {
@@ -58,6 +71,36 @@
         padding: 100px @space;
       }
     }
+  }
+
+  &-full {
+    padding: 4vw @space 10vw @space;
+    min-height: 50vw;
+    
+    @media @before-small {
+      min-height: 150vw;
+    }
+
+    @media @after-small {
+      min-height: 75vh;
+    }
+
+    @media @after-normal {
+      min-height: 50vh;
+    }
+
+    @media @after-base {
+      min-height: 75vh;
+    }
+
+    @media @after-wide {
+      min-height: 75vh;
+    }
+
+    @media @after-extrawide {
+      min-height: 50vh;
+    }
+
   }
 
   &__underbutton {
@@ -74,6 +117,18 @@
     text-align: center;
     font-size: 22px;
     padding: @doubleSpace;
+
+    &-fixed {
+      left: 0;
+      right: 0;
+      position: fixed;
+    }
+
+    &-abs {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
   }
 
   &__body {
@@ -95,6 +150,52 @@
     @media @after-wide {
       padding-top: 12vw;
       padding-bottom: 16vw;
+    }
+    
+    &-no_transition {
+      transition: none;
+    }
+
+    &-fixed { // probably should be renamed
+      position: fixed;
+      z-index: 9;
+      top: 10%;
+      
+      @media @after-small {
+        left: 5%;
+      }
+
+      @media @after-normal {
+        left: 13%;
+      }
+  
+      @media @after-base {
+        top: 15%;
+        left: 15%;
+      }
+
+      @media @after-wide {
+        top: 10%;
+        left: 25%;
+      }
+
+      @media @after-extrawide {
+        left: 35%;
+      }
+    }
+
+    &-shortened {
+      padding-top: 2vw;
+      padding-bottom: 4vw;
+
+      @media @before-normal {
+        padding-top: 5vw;
+        padding-bottom: 3vw;
+      }
+    }
+
+    &-transparent {
+      opacity: 0;
     }
   }
 
@@ -149,5 +250,13 @@
 
   &__details {
     margin: 0 0  @doubleSpace;
+  }
+
+  &__title {
+    &-animated {
+        position: relative;
+        top: 0;
+        transition: top 0.1s;
+      }
   }
 }
