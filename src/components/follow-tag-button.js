@@ -73,7 +73,11 @@ export default class FollowTagButton extends React.Component {
   };
 
   render() {
-    let { current_user, followed_tags } = this.props;
+    let {
+      className = '',
+      current_user,
+      followed_tags
+    } = this.props;
     let status = this.state.status;
 
     if (!current_user) {
@@ -84,13 +88,13 @@ export default class FollowTagButton extends React.Component {
     if (status !== STATUS_NOT_TOUCHED) {
       switch (status) {
         case STATUS_FOLLOWING:
-          return <button className="button button-green" type="button">Following...</button>;
+          return <button className={`button button-green ${className}`} type="button">Following...</button>;
         case STATUS_UNFOLLOWING:
-          return <button className="button button-green" type="button">Unfollowing...</button>;
+          return <button className={`button button-green ${className}`} type="button">Unfollowing...</button>;
         case STATUS_JUST_FOLLOWED:
-          return <button className="button button-yellow" type="button" onClick={this._unfollowTag}>Followed!</button>;
+          return <button className={`button button-yellow ${className}`} type="button" onClick={this._unfollowTag}>Followed!</button>;
         case STATUS_JUST_UNFOLLOWED:
-          return <button className="button button-green" type="button" onClick={this._followTag}>Unfollowed!</button>;
+          return <button className={`button button-green ${className}`} type="button" onClick={this._followTag}>Unfollowed!</button>;
         default:
           return null;
       }
@@ -98,9 +102,9 @@ export default class FollowTagButton extends React.Component {
       let isFollowed = !!followed_tags[this.props.tag];
 
       if (isFollowed) {
-        return <button className="button button-yellow" type="button" onClick={this._unfollowTag}>Following</button>;
+        return <button className={`button button-yellow ${className}`} type="button" onClick={this._unfollowTag}>Following</button>;
       } else {  // eslint-disable-line no-else-return
-        return <button className="button button-green" type="button" onClick={this._followTag}>Follow</button>;
+        return <button className={`button button-red ${className}`} type="button" onClick={this._followTag}>Follow</button>;
       }
     }
   }

@@ -39,13 +39,22 @@ export default class LikeTagButton extends React.Component {
   }
 
   render() {
+    const {
+      className = ''
+    } = this.props;
+    let likedClassName = 'fa-heart color-red';
+
     if (!this.props.is_logged_in) {
       return null;
     }
 
+    if (!this._isLiked()) {
+      likedClassName = 'fa-heart-o';
+    }
+
     return (
       <span
-        className={`action icon fa ${(this._isLiked()) ? 'fa-heart color-red' : 'fa-heart-o'}`}
+        className={`action icon fa ${className} ${likedClassName}`}
         onClick={this._toggleLike}
       />
     );
