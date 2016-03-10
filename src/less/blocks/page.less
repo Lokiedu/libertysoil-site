@@ -30,6 +30,31 @@
   font-size: 40px;
 }
 
+.page__caption {
+  text-align: center;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+  &:extend(.font-open_sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1em;
+  display: block;
+  padding: 3.3vw 5vw;
+}
+
+.page__caption_highlight {
+  color: #a0a0a0;
+}
+
+.page__hero {
+  height: 280px;
+  background: #ddd;
+  margin: 0 0 -52px 0;
+  position: relative;
+  z-index: 0;
+}
+
 .page__header {
 
 }
@@ -49,6 +74,8 @@
   min-width: 190px;
   box-sizing: border-box;
   order: 20;
+  background: #f3f2f1;
+  margin-right: 10px;
 
   @media @after-small {
     order: 0;
@@ -80,9 +107,11 @@
 .page__body {
   display: flex;
   max-width: @siteWidth;
-  overflow: hidden;
+  //overflow: hidden; TODO: need test on mobile devices
   margin: auto;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 
   &-block {
     display: block;
@@ -118,7 +147,6 @@
   &:extend(.layout);
   &:extend(.layout-rows);
   flex: 1;
-  margin-left: 10px;
 }
 
 .page__footer {
