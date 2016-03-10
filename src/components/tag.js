@@ -123,12 +123,12 @@ export default class Tag extends React.Component {
       );
     } else {  // eslint-disable-line no-else-return
       return (
-        <div className={`tag ${className}`} title={title}>
-          <Link to={url} className="tag__icon_wrapper">
+        <Link to={url} className={`tag ${className}`} title={title}>
+          <div className="tag__icon_wrapper">
             {tagIcon}
-          </Link>
+          </div>
           {tagNameComponent}
-        </div>
+        </Link>
       );
     }
   }
