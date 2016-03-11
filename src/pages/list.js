@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -46,8 +46,23 @@ import {
 
 const client = new ApiClient(API_HOST);
 
-class List extends React.Component {
+export class List extends React.Component {
   static displayName = 'List';
+
+  static propTypes = {
+    create_post_form: PropTypes.shape({
+      text: PropTypes.string.isRequired
+    }),
+    ui: PropTypes.shape({
+      progress: PropTypes.shape({
+        loadRiverInProgress: PropTypes.boolean
+      })
+    }).isRequired,
+    river: PropTypes.arrayOf(PropTypes.string).isRequired,
+    current_user: PropTypes.shape({
+
+    }).isRequired
+  };
 
   state = {
     downloadAttemptsCount: 0
