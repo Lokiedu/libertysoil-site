@@ -26,7 +26,7 @@ export default class Messages extends React.Component {
       message: PropTypes.string.isRequired,
       type: PropTypes.string
     })).isRequired,
-    removeMessage: PropTypes.func.isRequired
+    removeMessage: PropTypes.func
   };
 
   render() {
