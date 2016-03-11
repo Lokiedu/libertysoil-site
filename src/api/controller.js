@@ -1623,6 +1623,30 @@ export default class ApiController {
     }
   }
 
+  async getSchoolCloud(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      let schools = await School
+        .collection()
+        .query(qb => {
+          qb
+            .select('schools.*')
+            .count('posts_schools.* as post_count')
+            .join('posts_schools', 'schools.id', 'posts_schools.school_id')
+            .groupBy('schools.id')
+            .orderBy('post_count', 'DESC')
+            .limit(50);
+        })
+        .fetch({require: true});
+
+      res.send(schools);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
   async followTag(req, res) {
     let User = this.bookshelf.model('User');
     let Hashtag = this.bookshelf.model('Hashtag');
