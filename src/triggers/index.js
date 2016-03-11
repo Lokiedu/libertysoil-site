@@ -23,7 +23,7 @@ import {
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
-  submitResetPassword, submitNewPassword, setTagCloud, addUserFollowedTag,
+  submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
   addUserFollowedGeotag, removeUserFollowedGeotag,
@@ -463,6 +463,16 @@ export class ActionsTrigger {
     try {
       let result = await this.client.tagCloud();
       this.dispatch(setTagCloud(result));
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadSchoolCloud = async () => {
+    try {
+      let result = await this.client.schoolCloud();
+      this.dispatch(setSchools(result));
+      this.dispatch(setSchoolCloud(result));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
