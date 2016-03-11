@@ -38,6 +38,7 @@ import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
 import TagCloudPage from './pages/tag-cloud';
+import SchoolCloudPage from './pages/school-cloud';
 import GeotagPage from './pages/geotag';
 
 import List from './pages/list';
@@ -78,9 +79,12 @@ export function getRoutes(authHandler, fetchHandler) {
         <Route component={UserFavoritesPage} path="/user/:username/favorites" onEnter={withoutAuth} />
         <Route component={AboutUserPage} path="/user/:username/bio" onEnter={withoutAuth} />
       </Route>
-      <Route path="/s/:school_name">
-        <IndexRoute component={SchoolPage} onEnter={withoutAuth} />
-        <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={withAuth} />
+      <Route path="/s">
+        <IndexRoute component={SchoolCloudPage} onEnter={withoutAuth} />
+        <Route path="/s/:school_name">
+          <IndexRoute component={SchoolPage} onEnter={withoutAuth} />
+          <Route component={SchoolEditPage} path="/s/:school_name/edit" onEnter={withAuth} />
+        </Route>
       </Route>
       <Route component={GeotagPage} path="/geo/:url_name" onEnter={withoutAuth} />
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />

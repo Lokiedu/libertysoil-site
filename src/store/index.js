@@ -40,6 +40,7 @@ import users from './users';
 import suggested_users from './suggested_users';
 import ui from './ui';
 import tag_cloud from './tag_cloud';
+import school_cloud from './school_cloud';
 import geotag_posts from './geotag_posts';
 import geotags from './geotags';
 import edit_post_form from './edit_post_form';
@@ -72,6 +73,7 @@ export const theReducer = combineReducers(i.Map({
   suggested_users,
   ui,
   tag_cloud,
+  school_cloud,
   related_posts
 }));
 
@@ -121,6 +123,7 @@ const initialState = i.Map({
   school_posts: i.Map({}),
   suggested_users: i.List([]),
   tag_cloud: i.List([]),
+  school_cloud: i.List([]),
   tag_posts: i.Map({}),
   user_posts: i.Map({}),
   users: i.Map({}),

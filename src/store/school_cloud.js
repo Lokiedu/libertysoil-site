@@ -21,21 +21,12 @@ import _ from 'lodash';
 import * as a from '../actions';
 
 
-const initialState = i.Map({});
+const initialState = i.List([]);
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.ADD_SCHOOL: {
-      const school = action.school;
-      state = state.set(school.id, i.fromJS(school));
-
-      break;
-    }
-
-    case a.SET_SCHOOLS: {
-      const schools = _.keyBy(action.schools, 'id');
-      state = state.merge(i.fromJS(schools));
-
+    case a.SET_SCHOOL_CLOUD: {
+      state = i.fromJS(_.map(action.schools, 'id'));
       break;
     }
   }

@@ -71,6 +71,7 @@ export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
+export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 
 export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
@@ -386,6 +387,14 @@ export function setTagCloud(hashtags) {
   return {
     type: SET_TAG_CLOUD,
     hashtags
+  }
+}
+
+
+export function setSchoolCloud(schools) {
+  return {
+    type: SET_SCHOOL_CLOUD,
+    schools
   }
 }
 
