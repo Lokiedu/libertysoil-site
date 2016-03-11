@@ -17,6 +17,10 @@ export async function up(knex, Promise) {
   const result = await posts.fetch({withRelated: ['user']});
 
   for (const post of result.models) {
+    if (Post.typesWithoutPages.includes(post.get('type'))) {
+      continue;
+    }
+
     const title = await Post.titleFromText(post.get('text'), post.related('user').get('fullName'));
     const urlName = `${slug(title)}-${post.get('id')}`;
 

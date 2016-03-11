@@ -262,6 +262,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  Post.typesWithoutPages = ['geotag_like', 'school_like', 'hashtag_like'];
   Post.titleFromText = async (text, authorName) => {
     const get50 = async (text) => {
       const first50GraphemesOfText = breakGraphemes(text).slice(0, 51);
