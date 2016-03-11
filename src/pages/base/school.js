@@ -47,7 +47,7 @@ export default class BaseSchoolPage extends React.Component {
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs>
-              <Link to="/school" title="All Schools">
+              <Link to="/s" title="All Schools">
                 <TagIcon inactive type={TAG_SCHOOL} />
               </Link>
               <Tag name={page_school.name} type={TAG_SCHOOL} urlId={page_school.url_name} />
