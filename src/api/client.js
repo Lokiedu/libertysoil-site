@@ -359,6 +359,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async schoolCloud() {
+    let response = await this.get('/api/v1/school-cloud');
+    return response.body;
+  }
+
   async followSchool(name) {
     let response = await this.post(`/api/v1/school/${name}/follow`);
     return response.body;

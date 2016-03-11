@@ -64,6 +64,7 @@ export function initApi(bookshelf) {
   api.get('/posts/geotag/:url_name', wrap(controller.geotagPosts.bind(controller)));
   api.get('/user/tags', wrap(controller.userTags.bind(controller)));
 
+  api.get('/school-cloud', wrap(controller.getSchoolCloud.bind(controller)));
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
