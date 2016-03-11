@@ -1092,13 +1092,15 @@ export default class ApiController {
       obj.set('fully_published_at', new Date().toJSON());
     }
 
-    const author = await obj.related('user').fetch();
-    more.pageTitle = await Post.titleFromText(req.body.text, author.get('fullName'));
+    if (!Post.typesWithoutPages.includes(obj.get('type'))) {
+      const author = await obj.related('user').fetch();
+      more.pageTitle = await Post.titleFromText(req.body.text, author.get('fullName'));
+
+      const urlName = `${slug(more.pageTitle)}-${obj.id}`;
+      obj.set('url_name', urlName);
+    }
 
     obj.set('more', more);
-
-    const urlName = `${slug(more.pageTitle)}-${obj.id}`;
-    obj.set('url_name', urlName);
 
     try {
       await obj.save(null, {method: 'insert'});
