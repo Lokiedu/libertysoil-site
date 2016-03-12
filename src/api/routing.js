@@ -78,6 +78,9 @@ export function initApi(bookshelf) {
   //api.get('/cities/', wrap(controller.getCities.bind(controller)));
   api.get('/city/:id', wrap(controller.getCity.bind(controller)));
 
+  api.get('/user/recent-hashtags', wrap(controller.getUserRecentHashtags.bind(controller)));
+  api.get('/user/recent-schools', wrap(controller.getUserRecentSchools.bind(controller)));
+  api.get('/user/recent-geotags', wrap(controller.getUserRecentGeotags.bind(controller)));
   api.head('/user/:username', wrap(controller.checkUserExists.bind(controller)));
   api.get('/user/available-username/:username', wrap(controller.getAvailableUsername.bind(controller)));
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));

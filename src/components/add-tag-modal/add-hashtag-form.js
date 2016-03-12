@@ -18,7 +18,8 @@
 import React, { PropTypes, Component } from 'react';
 
 import HashtagSelect from './hashtag-select';
-
+import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
+import TagCloud from '../tag-cloud';
 
 export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
@@ -55,32 +56,57 @@ export default class AddHashtagForm extends Component {
   };
 
   render() {
+    const hashtags = ['first', 'second', 'third', 'fourth', 'fifth'];
+    const popularHashtags = ['first', 'second', 'third'];
+
     return (
       <div className="add_tag_modal add_tag_modal-hashtag">
-        <div className="add_tag_modal__tabs">
-          <div className="add_tag_modal__tab add_tag_modal__tab-active">Enter manually</div>
-        </div>
 
-        <div>
-          <div className="layout__row add_tag_modal__tab_panel">
-            <form onSubmit={this._handleEnter}>
-              <div className="layout">
-                <div className="layout__grid_item layout__grid_item-wide">
-                  <HashtagSelect
-                    placeholder="Start typing..."
-                    ref={(c) => this._input = c}
-                    onSelect={this._addTag}
-                  />
+        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs" panelClassName="layout__row add_tag_modal__tab_panel">
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Enter manually
+            </TabTitle>
+            <TabContent>
+              <form onSubmit={this._handleEnter}>
+                <div className="layout">
+                  <div className="layout__grid_item layout__grid_item-wide">
+                    <HashtagSelect
+                      placeholder="Start typing..."
+                      ref={(c) => this._input = c}
+                      onSelect={this._addTag}
+                    />
+                  </div>
+                  <div className="layout__grid_item">
+                    <button className="button button-wide add_tag_modal__add_button action">
+                      Add
+                    </button>
+                  </div>
                 </div>
-                <div className="layout__grid_item">
-                  <button className="button button-wide add_tag_modal__add_button action">
-                    Add
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
+              </form>
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Used recently
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                hashtags={hashtags}
+              />
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Popular
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                hashtags={popularHashtags}
+              />
+            </TabContent>
+          </Tab>
+        </Tabs>
       </div>
     );
   }
