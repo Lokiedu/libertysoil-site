@@ -23,7 +23,6 @@ export class TabTitle extends React.Component {
     if (this.props.className) {
       className += ' ' + this.props.className;
     }
-
     return <li onClick={this.props.onClick} className={className}>{this.props.children}</li>;
   }
 }
@@ -45,13 +44,11 @@ export class Tab extends React.Component {
     }
 
     let content;
-    for (let idx in this.props.children) {
-      const child = this.props.children[idx];
-
+    React.Children.forEach(this.props.children, child => {
       if ((typeof child === 'object') && (child.type.displayName === 'TabContent')) {
         content = child;
       }
-    }
+    })
 
     return (
       <div className={className}>{content}</div>
@@ -95,9 +92,7 @@ export class Tabs extends React.Component {
       let titleClassName = '';
       let content;
       
-      for (let idx in children) {
-        const child = children[idx];
-        
+      React.Children.forEach(children, child => {
         if ((typeof child === 'object') && (child.type.displayName === 'TabTitle')) {
           if (child.props.className) {
             titleClassName += ' ' + child.props.className;
@@ -106,9 +101,10 @@ export class Tabs extends React.Component {
             titleClassName += ' ' + child.props.classNameActive;
           }
           content = child.props.children;
-          break;
+          return;
         }
-      }
+      })
+
       return (
         <TabTitle className={titleClassName} onClick={this.clickHandler.bind(null, i)} key={i}>
           {content}
