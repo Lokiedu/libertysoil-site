@@ -1649,6 +1649,84 @@ export default class ApiController {
     }
   }
 
+  async getUserRecentHashtags(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let Hashtag = this.bookshelf.model('Hashtag');
+
+    let hashtags = await Hashtag
+      .collection()
+      .query(qb => {
+        qb
+          .select('hashtags.*')
+          .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
+          .join('posts', 'hashtags_posts.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .groupBy('hashtags.id', 'posts.created_at')
+          .orderBy('posts.created_at', 'DESC')
+          .limit(5);
+      })
+      .fetch();
+
+    res.send(hashtags);
+  }
+
+  async getUserRecentSchools(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let School = this.bookshelf.model('School');
+
+    let schools = await School
+      .collection()
+      .query(qb => {
+        qb
+          .select('schools.*')
+          .join('posts_schools', 'schools.id', 'posts_schools.school_id')
+          .join('posts', 'posts_schools.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .groupBy('schools.id', 'posts.created_at')
+          .orderBy('posts.created_at', 'DESC')
+          .limit(5);
+      })
+      .fetch();
+
+    res.send(schools);
+  }
+
+  async getUserRecentGeotags(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let Geotag = this.bookshelf.model('Geotag');
+
+    let geotags = await Geotag
+      .collection()
+      .query(qb => {
+        qb
+          .select('geotags.*')
+          .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
+          .join('posts', 'geotags_posts.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .groupBy('geotags.id', 'posts.created_at')
+          .orderBy('posts.created_at', 'DESC')
+          .limit(5);
+      })
+      .fetch();
+
+    res.send(geotags);
+  }
+
   async followTag(req, res) {
     let User = this.bookshelf.model('User');
     let Hashtag = this.bookshelf.model('Hashtag');
