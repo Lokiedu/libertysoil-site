@@ -303,6 +303,21 @@ export default class ApiClient
     return response.body;
   }
 
+  async userRecentHashtags() {
+    let response = await this.get('/api/v1/user/recent-hashtags');
+    return response.body;
+  }
+
+  async userRecentSchools() {
+    let response = await this.get('/api/v1/user/recent-schools');
+    return response.body;
+  }
+
+  async userRecentGeotags() {
+    let response = await this.get('/api/v1/user/recent-geotags');
+    return response.body;
+  }
+
   async initialSuggestions() {
     let response = await this.get(`/api/v1/suggestions/initial`);
     return response.body;
