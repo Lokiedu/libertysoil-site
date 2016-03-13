@@ -16,7 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
 import HashtagSelect from './hashtag-select';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
 import TagCloud from '../tag-cloud';
@@ -25,11 +28,49 @@ export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
 
   static propTypes = {
-    addedHashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })).isRequired,
     onAddHashtag: PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.addedHashtags = [];
+    this.state = {
+      recentHashtags: [],
+      selectedHashtags: []
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.addedHashtags) {
+      this.addedHashtags = _.clone(this.props.addedHashtags);
+    }
+    this.getRecentHashtags();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.addedHashtags.length > nextProps.addedHashtags.length) {
+      let removed = _.difference(this.addedHashtags, nextProps.addedHashtags);
+
+      removed.forEach(tag => {
+        const index = _.findIndex(this.state.recentHashtags, t => tag.name === t.name);
+        let selectedHashtags = _.clone(this.state.selectedHashtags);
+        _.remove(selectedHashtags, i => index === i);
+        this.setState({ selectedHashtags: selectedHashtags });
+      });
+    }
+    this.addedHashtags = _.clone(nextProps.addedHashtags);
+  }
+
+  async getRecentHashtags() {
+    const client = new ApiClient(API_HOST);
+    try {
+      const hashtags = await client.userRecentHashtags();
+      this.setState({ recentHashtags: hashtags });
+      return hashtags;
+    } catch (e) {
+      return e.message;
+    }
+  }
 
   _handleEnter = (event) => {
     event.preventDefault();
@@ -37,6 +78,15 @@ export default class AddHashtagForm extends Component {
     let tagName = this._input.value.trim();
 
     this._addTag({name: tagName});
+  };
+
+  _selectHashtag = (tag) => {
+    const index = _.findIndex(this.state.recentHashtags, t => t.name === tag.name);
+    let selectedHashtags = _.clone(this.state.selectedHashtags);
+    selectedHashtags.push(index);
+    this.setState({ selectedHashtags: selectedHashtags });
+
+    this._addTag(tag);
   };
 
   _addTag = (tag) => {
@@ -56,8 +106,11 @@ export default class AddHashtagForm extends Component {
   };
 
   render() {
-    const hashtags = ['first', 'second', 'third', 'fourth', 'fifth'];
-    const popularHashtags = ['first', 'second', 'third'];
+    let recentHashtags = [];
+    if (Array.isArray(this.state.recentHashtags)) {
+      recentHashtags = _.clone(this.state.recentHashtags).filter((tag, i) => this.state.selectedHashtags.indexOf(i) === -1);
+    }
+    const popularHashtags = [];
 
     return (
       <div className="add_tag_modal add_tag_modal-hashtag">
@@ -92,7 +145,8 @@ export default class AddHashtagForm extends Component {
             </TabTitle>
             <TabContent>
               <TagCloud
-                hashtags={hashtags}
+                hashtags={recentHashtags}
+                onClick={this._selectHashtag}
               />
             </TabContent>
           </Tab>

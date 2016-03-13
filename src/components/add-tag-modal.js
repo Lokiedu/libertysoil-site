@@ -143,16 +143,16 @@ export default class AddTagModal extends Component {
   };
 
   _deleteTag = (displayTag) => {
-    let state = this.state;
+    let state = _.clone(this.state);
 
     switch (displayTag.type) {
       case TAG_LOCATION: {
-        _.remove(state.geotags, geotag => geotag.url_name === displayTag.urlId);
+        _.remove(state.geotags, geotag => (geotag.urlId || geotag.url_name) === displayTag.urlId);
 
         break;
       }
       case TAG_SCHOOL: {
-        _.remove(state.schools, school => school.url_name === displayTag.urlId);
+        _.remove(state.schools, school => (school.urlId || school.url_name) === displayTag.urlId);
 
         break;
       }

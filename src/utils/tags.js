@@ -13,7 +13,7 @@ export function convertModelsToTags(params = {}) {
   if (Array.isArray(params.geotags)) {
     params.geotags.forEach(function (tag) {
       allTags.push({
-        urlId: tag.url_name,
+        urlId: tag.url_name || tag.urlId,
         name: tag.name,
         type: TAG_LOCATION
       });
@@ -23,7 +23,7 @@ export function convertModelsToTags(params = {}) {
   if (Array.isArray(params.schools)) {
     params.schools.forEach(function (school) {
       allTags.push({
-        urlId: school.url_name,
+        urlId: school.url_name || school.urlId,
         name: school.name,
         type: TAG_SCHOOL
       });
