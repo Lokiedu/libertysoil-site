@@ -66,10 +66,22 @@ export default class AddHashtagForm extends Component {
     try {
       const hashtags = await client.userRecentHashtags();
       this.setState({ recentHashtags: hashtags });
+      
+      this.removeSelected();
       return hashtags;
     } catch (e) {
       return e.message;
     }
+  }
+
+  removeSelected() {
+    const selectedHashtags = this.state.recentHashtags.map((tag, index) => {
+      if (_.findIndex(this.addedHashtags, t => t.name === tag.name) != -1) {
+        return index;
+      }
+      return undefined;
+    }).filter(v => v !== undefined);
+    this.setState({ selectedHashtags: selectedHashtags });
   }
 
   _handleEnter = (event) => {

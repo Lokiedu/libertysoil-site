@@ -74,10 +74,22 @@ export default class AddSchoolForm extends Component {
     try {
       const schools = await client.userRecentSchools();
       this.setState({ recentSchools: schools });
+
+      this.removeSelected();
       return schools;
     } catch (e) {
       return e.message;
     }
+  }
+
+  removeSelected() {
+    const selectedSchools = this.state.recentSchools.map((school, index) => {
+      if (_.findIndex(this.addedSchools, s => s.name === school.name) != -1) {
+        return index;
+      }
+      return undefined;
+    }).filter(v => v !== undefined);
+    this.setState({ selectedSchools: selectedSchools });
   }
 
   _selectSchool = (tag) => {

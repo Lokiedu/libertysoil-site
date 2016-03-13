@@ -71,10 +71,22 @@ export default class AddGeotagForm extends Component {
     try {
       const geotags = await client.userRecentGeotags();
       this.setState({ recentGeotags: geotags });
+
+      this.removeSelected();
       return geotags;
     } catch (e) {
       return e.message;
     }
+  }
+
+  removeSelected() {
+    const selectedGeotags = this.state.recentGeotags.map((tag, index) => {
+      if (_.findIndex(this.addedGeotags, t => (t.url_name || t.urlId) === tag.url_name) != -1) {
+        return index;
+      }
+      return undefined;
+    }).filter(v => v !== undefined);
+    this.setState({ selectedGeotags: selectedGeotags });
   }
 
   _selectGeotag = (tag) => {
