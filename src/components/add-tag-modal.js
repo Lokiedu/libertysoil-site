@@ -143,7 +143,7 @@ export default class AddTagModal extends Component {
   };
 
   _deleteTag = (displayTag) => {
-    let state = this.state;
+    let state = _.clone(this.state);
 
     switch (displayTag.type) {
       case TAG_LOCATION: {

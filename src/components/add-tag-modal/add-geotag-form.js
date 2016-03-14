@@ -16,9 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
 import GeotagSelect from './geotag-select';
 import { preventDefault } from '../../utils/preventDefault';
+import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
+import TagCloud from '../tag-cloud';
 
 
 export default class AddGeotagForm extends Component {
@@ -29,6 +34,68 @@ export default class AddGeotagForm extends Component {
       id: PropTypes.string
     })).isRequired,
     onAddGeotag: PropTypes.func.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    this.addedGeotags = [];
+    this.state = {
+      recentGeotags: [],
+      selectedGeotags: []
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.addedGeotags) {
+      this.addedGeotags = _.clone(this.props.addedGeotags);
+    }
+    this.getRecentGeotags();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.addedGeotags.length > nextProps.addedGeotags.length) {
+      let removed = _.difference(this.addedGeotags, nextProps.addedGeotags);
+      
+      removed.forEach(tag => {
+        const index = _.findIndex(this.state.recentGeotags, t => t.id === tag.id);
+        let selectedGeotags = _.clone(this.state.selectedGeotags);
+        _.remove(selectedGeotags, i => index === i);
+        this.setState({ selectedGeotags: selectedGeotags });
+      });
+    }
+    this.addedGeotags = _.clone(nextProps.addedGeotags);
+  }
+
+  async getRecentGeotags() {
+    const client = new ApiClient(API_HOST);
+    try {
+      const geotags = await client.userRecentGeotags();
+      this.setState({ recentGeotags: geotags });
+
+      this.removeSelected();
+      return geotags;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  removeSelected() {
+    const selectedGeotags = this.state.recentGeotags.map((tag, index) => {
+      if (_.findIndex(this.addedGeotags, t => t.id === tag.id) != -1) {
+        return index;
+      }
+      return undefined;
+    }).filter(v => v !== undefined);
+    this.setState({ selectedGeotags: selectedGeotags });
+  }
+
+  _selectRecentlyUsedGeotag = (tag) => {
+    const index = _.findIndex(this.state.recentGeotags, t => t.url_name === tag.urlId);
+    let selectedGeotags = _.clone(this.state.selectedGeotags);
+    selectedGeotags.push(index);
+    this.setState({ selectedGeotags: selectedGeotags });
+
+    this._addTag(this.state.recentGeotags[index]);
   };
 
   _addTag = (geotag) => {
@@ -48,34 +115,61 @@ export default class AddGeotagForm extends Component {
   };
 
   render() {
+    let recentGeotags = [];
+    if (Array.isArray(this.state.recentGeotags)) {
+      recentGeotags = _.clone(this.state.recentGeotags).filter((tag, i) => this.state.selectedGeotags.indexOf(i) === -1);
+    }
+    const popularGeotags = [];
+
     return (
       <div className="add_tag_modal add_tag_modal-location">
-        <div className="add_tag_modal__tabs">
-          <div className="add_tag_modal__tab add_tag_modal__tab-active">Enter manually</div>
-        </div>
 
-        <div>
-          <div className="layout__row add_tag_modal__tab_panel">
-            <div className="layout">
-              <div className="layout__grid_item layout__grid_item-wide">
-                <form ref="form" onSubmit={preventDefault}>
-                  <GeotagSelect
-                    placeholder="Start typing..."
-                    ref={(c) => this._input = c}
-                    onSelect={this._addTag}
-                  />
-                </form>
-              </div>
-              <div className="layout__grid_item">
-                  <span
-                    className="button button-wide add_tag_modal__add_button action"
-                  >
+        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs" panelClassName="layout__row add_tag_modal__tab_panel">
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Enter manually
+            </TabTitle>
+            <TabContent>
+              <div className="layout">
+                <div className="layout__grid_item layout__grid_item-wide">
+                  <form ref="form" onSubmit={preventDefault}>
+                    <GeotagSelect
+                      placeholder="Start typing..."
+                      ref={(c) => this._input = c}
+                      onSelect={this._addTag}
+                    />
+                  </form>
+                </div>
+                <div className="layout__grid_item">
+                  <span className="button button-wide add_tag_modal__add_button action">
                     Add
                   </span>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Used recently
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                geotags={recentGeotags}
+                onClick={this._selectRecentlyUsedGeotag}
+              />
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Popular
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                geotags={popularGeotags}
+              />
+            </TabContent>
+          </Tab>
+        </Tabs>
       </div>
     );
   }
