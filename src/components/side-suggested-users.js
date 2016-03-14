@@ -49,6 +49,12 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
+  ignoreUser(user) {
+    // animation of disappearing goes here
+
+    this.props.trigger.ignoreUser(user);
+  }
+
   render() {
     const {
       current_user,
@@ -64,7 +70,7 @@ export default class SideSuggestedUsers extends React.Component {
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        {_.take(users, 3).map((user) => (
+        { _.take(users, 3).map((user) => (
           <div className="layout__row" key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User
@@ -82,7 +88,7 @@ export default class SideSuggestedUsers extends React.Component {
               />
               <IgnoreButton
                 active_user={current_user}
-                triggers={triggers}
+                triggers={ { ignoreUser: this.ignoreUser } }
                 user={user}
               />
             </div>
