@@ -92,13 +92,13 @@ export default class AddHashtagForm extends Component {
     this._addTag({name: tagName});
   };
 
-  _selectHashtag = (tag) => {
+  _selectRecentlyUsedHashtag = (tag) => {
     const index = _.findIndex(this.state.recentHashtags, t => t.name === tag.name);
     let selectedHashtags = _.clone(this.state.selectedHashtags);
     selectedHashtags.push(index);
     this.setState({ selectedHashtags: selectedHashtags });
 
-    this._addTag(tag);
+    this._addTag(this.state.recentHashtags[index]);
   };
 
   _addTag = (tag) => {
@@ -158,7 +158,7 @@ export default class AddHashtagForm extends Component {
             <TabContent>
               <TagCloud
                 hashtags={recentHashtags}
-                onClick={this._selectHashtag}
+                onClick={this._selectRecentlyUsedHashtag}
               />
             </TabContent>
           </Tab>

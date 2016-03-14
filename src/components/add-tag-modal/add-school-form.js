@@ -58,9 +58,9 @@ export default class AddSchoolForm extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.addedSchools.length > nextProps.addedSchools.length) {
       let removed = _.difference(this.addedSchools, nextProps.addedSchools);
-
+      
       removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentSchools, t => tag.name === t.name);
+        const index = _.findIndex(this.state.recentSchools, t => tag.url_name === t.url_name);
         let selectedSchools = _.clone(this.state.selectedSchools);
         _.remove(selectedSchools, i => index === i);
         this.setState({ selectedSchools: selectedSchools });
@@ -84,7 +84,7 @@ export default class AddSchoolForm extends Component {
 
   removeSelected() {
     const selectedSchools = this.state.recentSchools.map((school, index) => {
-      if (_.findIndex(this.addedSchools, s => s.name === school.name) != -1) {
+      if (_.findIndex(this.addedSchools, s => s.url_name === school.url_name) != -1) {
         return index;
       }
       return undefined;
@@ -92,13 +92,13 @@ export default class AddSchoolForm extends Component {
     this.setState({ selectedSchools: selectedSchools });
   }
 
-  _selectSchool = (tag) => {
+  _selectRecentlyUsedSchool = (tag) => {
     const index = _.findIndex(this.state.recentSchools, t => t.url_name === tag.urlId);
     let selectedSchools = _.clone(this.state.selectedSchools);
     selectedSchools.push(index);
     this.setState({ selectedSchools: selectedSchools });
 
-    this._addTag(tag);
+    this._addTag(this.state.recentSchools[index]);
   };
 
   _addTag = (school) => {
@@ -159,7 +159,7 @@ export default class AddSchoolForm extends Component {
             <TabContent>
               <TagCloud
                 schools={recentSchools}
-                onClick={this._selectSchool}
+                onClick={this._selectRecentlyUsedSchool}
               />
             </TabContent>
           </Tab>

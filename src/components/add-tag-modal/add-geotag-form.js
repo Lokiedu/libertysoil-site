@@ -55,9 +55,9 @@ export default class AddGeotagForm extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.addedGeotags.length > nextProps.addedGeotags.length) {
       let removed = _.difference(this.addedGeotags, nextProps.addedGeotags);
-
+      
       removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentGeotags, t => t.url_name === tag.urlId);
+        const index = _.findIndex(this.state.recentGeotags, t => t.id === tag.id);
         let selectedGeotags = _.clone(this.state.selectedGeotags);
         _.remove(selectedGeotags, i => index === i);
         this.setState({ selectedGeotags: selectedGeotags });
@@ -81,7 +81,7 @@ export default class AddGeotagForm extends Component {
 
   removeSelected() {
     const selectedGeotags = this.state.recentGeotags.map((tag, index) => {
-      if (_.findIndex(this.addedGeotags, t => (t.url_name || t.urlId) === tag.url_name) != -1) {
+      if (_.findIndex(this.addedGeotags, t => t.id === tag.id) != -1) {
         return index;
       }
       return undefined;
@@ -89,23 +89,23 @@ export default class AddGeotagForm extends Component {
     this.setState({ selectedGeotags: selectedGeotags });
   }
 
-  _selectGeotag = (tag) => {
+  _selectRecentlyUsedGeotag = (tag) => {
     const index = _.findIndex(this.state.recentGeotags, t => t.url_name === tag.urlId);
     let selectedGeotags = _.clone(this.state.selectedGeotags);
     selectedGeotags.push(index);
     this.setState({ selectedGeotags: selectedGeotags });
 
-    this._addTag(tag);
+    this._addTag(this.state.recentGeotags[index]);
   };
 
   _addTag = (geotag) => {
     let { addedGeotags } = this.props;
 
-    if (!geotag.urlId && !geotag.url_name) {
+    if (!geotag.id) {
       return;
     }
 
-    if (addedGeotags.find(g => g.urlId === (geotag.urlId || geotag.url_name))) {
+    if (addedGeotags.find(g => g.id === geotag.id)) {
       return;
     }
 
@@ -155,7 +155,7 @@ export default class AddGeotagForm extends Component {
             <TabContent>
               <TagCloud
                 geotags={recentGeotags}
-                onClick={this._selectGeotag}
+                onClick={this._selectRecentlyUsedGeotag}
               />
             </TabContent>
           </Tab>
