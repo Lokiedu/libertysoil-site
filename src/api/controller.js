@@ -2324,5 +2324,31 @@ export default class ApiController {
       res.send({error: 'You are not authorized'});
       return;
     }
+
+    if (!('id' in req.params) || !('comment_id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let Comment = this.bookshelf.model('Comment');
+
+    try {
+      let comment_object = await Comment.where({ id: req.params.id }).fetch({require: true});
+
+      if (comment_object.get('user_id') != req.session.user) {
+        res.status(403);
+        res.send({error: 'You are not authorized'});
+        return;
+      }
+
+      comment_object.destroy();
+    } catch(e) {
+      res.status(500);
+      res.send({error: e.message});
+      return;
+    }
+    res.status(200);
+    res.send({success: true});
   }
 }
