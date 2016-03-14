@@ -32,6 +32,7 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import Panel from '../components/panel';
 import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
@@ -82,6 +83,10 @@ export class GeotagPage extends Component {
     let client = new ApiClient(API_HOST);
     let triggers = new ActionsTrigger(client, this.props.dispatch);
     let geotag = geotags[this.props.params.url_name];
+    const title = geotag ? geotag.name : this.props.params.url_name;
+
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
 
     if (!geotag) {
       return <script />;
@@ -102,6 +107,32 @@ export class GeotagPage extends Component {
       likeTag: triggers.likeGeotag,
       unlikeTag: triggers.unlikeGeotag
     };
+
+    if (is_logged_in) {
+      toolbarSecondary = [
+        <LikeTagButton
+          is_logged_in={is_logged_in}
+          liked_tags={current_user.liked_geotags}
+          tag={this.props.params.url_name}
+          triggers={likeTriggers}
+          className="icon-midi"
+        />
+      ];
+
+      toolbarPrimary = [
+        <div className="panel__toolbar_item-text">
+          {tagPosts.length} posts
+        </div>,
+        <button className="button button-midi button-ligth_blue" type="button">New</button>,
+        <FollowTagButton
+          current_user={current_user}
+          followed_tags={current_user.followed_geotags}
+          tag={this.props.params.url_name}
+          triggers={followTriggers}
+          className="button-midi"
+        />
+      ];
+    }
 
     return (
       <div>
@@ -136,57 +167,18 @@ export class GeotagPage extends Component {
 
         <div className="page__container">
           <div className="page__caption">
-            {(geotag) ? geotag.name : this.props.params.url_name} <span className="page__caption_highlight">Education</span>
+            {title} <span className="page__caption_highlight">Education</span>
           </div>
           <div className="page__hero"></div>
           <div className="page__body">
-            <div className="panel">
-              <div className="panel__body">
-                <div className="panel__icon">
-                  <Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />
-                </div>
-                <div className="panel__content">
-                  <div className="panel__title">
-                    {(geotag) ? geotag.name : this.props.params.url_name}
-                  </div>
-                  <div className="panel__text">
-                    Short wikipedia description about this location will be displayed here soon.
-                  </div>
-                </div>
-              </div>
-              {is_logged_in &&
-                <div className="panel__toolbar">
-                  <div className="panel__toolbar_left">
-                    <div className="panel__toolbar_item">
-                      <LikeTagButton
-                        is_logged_in={is_logged_in}
-                        liked_tags={current_user.liked_geotags}
-                        tag={this.props.params.url_name}
-                        triggers={likeTriggers}
-                        className="icon-midi"
-                      />
-                    </div>
-                  </div>
-                  <div className="panel__toolbar_right">
-                    <div className="panel__toolbar_item panel__toolbar_item-text">
-                      {tagPosts.length} posts
-                    </div>
-                    <div className="panel__toolbar_item">
-                      <button className="button button-midi button-ligth_blue" type="button">New</button>
-                    </div>
-                    <div className="panel__toolbar_item">
-                      <FollowTagButton
-                        current_user={current_user}
-                        followed_tags={current_user.followed_geotags}
-                        tag={this.props.params.url_name}
-                        triggers={followTriggers}
-                        className="button-midi"
-                      />
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
+            <Panel
+              title={title}
+              icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
+              toolbarPrimary={toolbarPrimary}
+              toolbarSecondary={toolbarSecondary}
+            >
+              Short wikipedia description about this location will be displayed here soon.
+            </Panel>
           </div>
           <div className="page__body">
             <Sidebar current_user={current_user} />
