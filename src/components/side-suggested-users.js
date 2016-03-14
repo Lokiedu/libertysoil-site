@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
 import FollowButton from './follow-button';
+import IgnoreButton from './ignore-button';
 import User from './user';
 
 
@@ -32,7 +33,8 @@ export default class SideSuggestedUsers extends React.Component {
     i_am_following: PropTypes.arrayOf(PropTypes.string.isRequired),
     triggers:  PropTypes.shape({
       followUser: PropTypes.func.isRequired,
-      unfollowUser: PropTypes.func.isRequired
+      unfollowUser: PropTypes.func.isRequired,
+      ignoreUser: React.PropTypes.func.isRequired
     }),
     users: PropTypes.arrayOf(PropTypes.shape({
       avatar: PropTypes.shape({
@@ -75,6 +77,11 @@ export default class SideSuggestedUsers extends React.Component {
               <FollowButton
                 active_user={current_user}
                 following={i_am_following}
+                triggers={triggers}
+                user={user}
+              />
+              <IgnoreButton
+                active_user={current_user}
                 triggers={triggers}
                 user={user}
               />
