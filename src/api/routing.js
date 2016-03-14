@@ -53,6 +53,7 @@ export function initApi(bookshelf) {
   api.post('/post/:id/unfav', wrap(controller.unfavPost.bind(controller)));
   api.get('/post/:id/related-posts', wrap(controller.getRelatedPosts.bind(controller)));
 
+  api.get('/post/:id/comments', wrap(controller.getPostComments.bind(controller)));
   api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
   api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
   api.get('/posts/liked', wrap(controller.userLikedPosts.bind(controller)));

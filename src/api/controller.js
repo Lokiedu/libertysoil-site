@@ -2222,4 +2222,18 @@ export default class ApiController {
       res.send({error: `Couldn't unlike the geotag: ${e.message}`});
     }
   }
+
+  async getPostComments(req, res) {
+    let Comment = this.bookshelf.model('Comment');
+    let q = Comment.forge()
+      .query(qb => {
+        qb
+          .where('post_id', '=', req.params.id)
+          .orderBy('created_at', 'asc')
+      });
+
+    let comments = await q.fetchAll({require: false, withRelated: ['user']});
+
+    res.send(comments);
+  }
 }
