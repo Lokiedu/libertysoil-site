@@ -29,16 +29,16 @@ export default ({
         }
       </div>
     </div>
-    {((toolbarPrimary && toolbarPrimary.length) || (toolbarSecondary && toolbarSecondary.length)) &&
+    {!!((toolbarPrimary && toolbarPrimary.length) || (toolbarSecondary && toolbarSecondary.length)) &&
       <div className="panel__toolbar">
         {!!(toolbarSecondary && toolbarSecondary.length) &&
           <div className="panel__toolbar_left">
-            {toolbarSecondary.map(item => <div className="panel__toolbar_item">{item}</div>)}
+            {toolbarSecondary.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
           </div>
         }
         {!!(toolbarPrimary && toolbarPrimary.length) &&
           <div className="panel__toolbar_left">
-            {toolbarPrimary.map(item => <div className="panel__toolbar_item">{item}</div>)}
+            {toolbarPrimary.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
           </div>
         }
       </div>

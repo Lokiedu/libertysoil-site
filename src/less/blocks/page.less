@@ -48,11 +48,32 @@
 }
 
 .page__hero {
-  height: 280px;
+  width: 100%;
   background: #ddd;
-  margin: 0 0 -52px 0;
+  margin: 0 auto -52px;
   position: relative;
   z-index: 0;
+
+  @media @after-wide {
+    width: 83.3%;
+  }
+}
+
+.page__hero_body {
+  padding-top: 56.25%;
+}
+
+.page__hero_content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+
+  > * {
+    width: 100%;
+  }
 }
 
 .page__header {
