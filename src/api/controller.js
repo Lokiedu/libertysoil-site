@@ -2238,10 +2238,44 @@ export default class ApiController {
   }
 
   async postComment(req, res) {
+    let Comment = this.bookshelf.model('Comment');
+    let Post = this.bookshelf.model('Post');
+
+
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
       return;
+    }
+
+    try {
+      await Post.where({id: req.params.id}).fetch({require: true});
+    } catch (e) {
+      res.sendStatus(404);
+      return;
+    }
+
+    if(!('text' in req.body)) {
+      res.status(400);
+      res.send({error: 'Comment text cannot be empty'});
+      return;
+    }
+
+    let comment_text = req.body.text.trim();
+
+    let comment_object = new Comment({
+      id: uuid.v4(),
+      post_id: req.params.id,
+      user_id: req.session.user,
+      text: comment_text
+    });
+
+    try {
+      await comment_object.save(null, {method: 'insert'});
+      await this.getPostComments(req, res);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
     }
   }
 
