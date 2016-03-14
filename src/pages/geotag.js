@@ -36,6 +36,7 @@ import Panel from '../components/panel';
 import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
+import Icon from '../components/icon';
 import LikeTagButton from '../components/like-tag-button';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -116,7 +117,9 @@ export class GeotagPage extends Component {
           tag={this.props.params.url_name}
           triggers={likeTriggers}
           className="icon-midi"
-        />
+        />,
+        <Icon icon="favorite" />,
+        <Icon icon="favorite_border" outline={true} />
       ];
 
       toolbarPrimary = [
