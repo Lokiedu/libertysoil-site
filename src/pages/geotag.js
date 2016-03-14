@@ -116,10 +116,8 @@ export class GeotagPage extends Component {
           liked_tags={current_user.liked_geotags}
           tag={this.props.params.url_name}
           triggers={likeTriggers}
-          className="icon-midi"
-        />,
-        <Icon icon="favorite" />,
-        <Icon icon="favorite_border" outline={true} />
+          outline={true}
+        />
       ];
 
       toolbarPrimary = [

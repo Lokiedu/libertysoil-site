@@ -41,10 +41,11 @@ export default class LikeTagButton extends React.Component {
 
   render() {
     const {
-      className = ''
+      className = '',
+      ...props
     } = this.props;
     let icon = 'favorite';
-    let likedClassName = 'fa-heart color-red';
+    let color = 'red';
 
     if (!this.props.is_logged_in) {
       return null;
@@ -52,13 +53,16 @@ export default class LikeTagButton extends React.Component {
 
     if (!this._isLiked()) {
       icon = 'favorite_border';
+      color = false;
     }
 
     return (
       <Icon
+        {...props}
         className={`action ${className}`}
         onClick={this._toggleLike}
         icon={icon}
+        color={color}
       />
     );
   }

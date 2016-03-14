@@ -19,8 +19,6 @@ export default ({
   color && classnameIconPic.push(`color-${color}`);
   size && classnameIconPic.push(`micon-${size}`);
 
-  console.info('classnameIcon', classnameIcon);
-
   return (
     <div {...props} className={classnameIcon.join(' ')}>
       <div className={classnameIconPic.join(' ')}>{icon}</div>
