@@ -2,6 +2,34 @@ import React, {
   Component
 } from 'react';
 
+const PanelToolbarArea = (position, items) => {
+  if (items && items.length) {
+    return (
+      <div className={`panel__toolbar_${position}`}>
+        {items.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
+      </div>
+    );
+  } else {
+    return false;
+  }
+}
+
+const PanelToolbar = (toolbarPrimary, toolbarSecondary) => {
+  const primaryToolbar = PanelToolbarArea('right', toolbarPrimary);
+  const secondaryToolbar = PanelToolbarArea('left', toolbarSecondary);
+
+  if (!primaryToolbar && !secondaryToolbar) {
+    return false;
+  }
+
+  return (
+    <div className="panel__toolbar">
+      {secondaryToolbar}
+      {primaryToolbar}
+    </div>
+  );
+}
+
 export default ({
   children,
   title,
@@ -29,19 +57,6 @@ export default ({
         }
       </div>
     </div>
-    {!!((toolbarPrimary && toolbarPrimary.length) || (toolbarSecondary && toolbarSecondary.length)) &&
-      <div className="panel__toolbar">
-        {!!(toolbarSecondary && toolbarSecondary.length) &&
-          <div className="panel__toolbar_left">
-            {toolbarSecondary.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
-          </div>
-        }
-        {!!(toolbarPrimary && toolbarPrimary.length) &&
-          <div className="panel__toolbar_left">
-            {toolbarPrimary.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
-          </div>
-        }
-      </div>
-    }
+    {PanelToolbar(toolbarPrimary, toolbarSecondary)}
   </div>
 )
