@@ -1369,6 +1369,23 @@ export default class ApiController {
     res.send(follow_status);
   }
 
+  async ignoreUser(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    
+    let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['ignored_users']});
+    let userToIgnore = await User.where({username: req.params.username}).fetch({require: true});
+
+    await user.ignoreUser(userToIgnore.id);
+
+    res.send({success: true});
+  }
+
   async updateUser(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
