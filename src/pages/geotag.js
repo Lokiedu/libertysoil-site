@@ -44,7 +44,6 @@ import Panel from '../components/panel';
 import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
-import Icon from '../components/icon';
 import LikeTagButton from '../components/like-tag-button';
 
 import { ActionsTrigger } from '../triggers';
