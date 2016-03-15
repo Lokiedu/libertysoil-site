@@ -9,12 +9,12 @@ const PanelToolbarArea = (position, items) => {
         {items.map((item, i) => <div key={i} className="panel__toolbar_item">{item}</div>)}
       </div>
     );
-  } else {
-    return false;
   }
+
+  return false;
 }
 
-const PanelToolbar = (toolbarPrimary, toolbarSecondary) => {
+const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
   const primaryToolbar = PanelToolbarArea('right', toolbarPrimary);
   const secondaryToolbar = PanelToolbarArea('left', toolbarSecondary);
 
@@ -57,6 +57,6 @@ export default ({
         }
       </div>
     </div>
-    {PanelToolbar(toolbarPrimary, toolbarSecondary)}
+    <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} ) />
   </div>
 )
