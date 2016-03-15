@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from 'react';
+import React from 'react';
 
 const Page = ({ children }) => (
   <div className="page__container">

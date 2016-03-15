@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from 'react';
+import React from 'react';
 
 const PanelToolbarArea = (position, items) => {
   if (items && items.length) {
@@ -57,6 +55,6 @@ export default ({
         }
       </div>
     </div>
-    <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} ) />
+    <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} />
   </div>
 )
