@@ -32,15 +32,13 @@
 @transition__time: 0.3s;
 @transition__function: ease;
 
-
-@before-small: ~"(max-width: 480px)";
 @after-small: ~"(min-width: 480px)";
-@before-normal: ~"(max-width: 768px)";
 @after-normal: ~"(min-width: 768px)";
-@before-base: ~"(max-width: 960px)";
+@before-small: ~"(max-width: 480px)";
+@before-normal: ~"(max-width: 768px)";
 @after-base: ~"(min-width: 960px)";
+
 @after-wide: ~"(min-width: 1280px)";
-@after-extrawide: ~"(min-width: 1920px)";
 
 html {
   color: @color__text;
@@ -113,7 +111,6 @@ html {
 @import 'blocks/modal_switcher';
 @import 'blocks/post_added_tags';
 @import 'blocks/side_block';
-@import 'blocks/parallax';
 @import 'blocks/breadcrumbs';
 @import 'blocks/panel';
 @import 'blocks/icon';
