@@ -24,8 +24,8 @@ const PageHero = ({ children }) => (
   </div>
 );
 
-const PageBody = ({ children }) => (
-  <div className="page__body">
+const PageBody = ({ children, className, ...props }) => (
+  <div className={`page__body ${className}`} {...props}>
     {children}
   </div>
 );

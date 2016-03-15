@@ -182,7 +182,7 @@ export class GeotagPage extends Component {
           <PageHero>
             <img src="/images/hero/welcome.jpg" />
           </PageHero>
-          <PageBody>
+          <PageBody className="page__body-up">
             <Panel
               title={title}
               icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
