@@ -974,15 +974,17 @@ export default class ApiController {
       return;
     }
 
-    let following = await this.bookshelf.knex
-      .select('followers.following_user_id')
-      .from('followers')
-      .where('followers.user_id', '=', req.session.user)
-      .map(row => row.following_user_id);
+    const User = this.bookshelf.model('User');
 
-    let User = this.bookshelf.model('User');
+    const user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['ignored_users', 'following']});
 
-    let q = User.forge()
+    const ignoredIds = user.related('ignored_users').pluck('id');
+    const followingIds = user.related('following').pluck('id');
+
+    const usersToIgnore = _.uniq(_.concat(ignoredIds, followingIds));
+
+    const suggestions = await User
+      .collection()
       .query(qb => {
         qb
           .select('active_users.*')
@@ -995,14 +997,11 @@ export default class ApiController {
               .groupBy('users.id')
               .as('active_users');
           })
-          .leftJoin('followers', 'active_users.id', 'followers.following_user_id')
-          .whereNull('followers.user_id')
-          .orWhereNotIn('active_users.id', following)
+          .whereNotIn('active_users.id', usersToIgnore)
           .orderBy('post_count', 'desc')
           .limit(6);
-      });
-
-    let suggestions = await q.fetchAll({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
+      })
+      .fetch({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
