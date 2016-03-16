@@ -204,8 +204,12 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: POST_RELATIONS});
+      let relations = POST_RELATIONS;
+      relations.push('post_comments');
+
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post.relations.post_comments.length;
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404);
