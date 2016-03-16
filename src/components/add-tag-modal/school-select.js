@@ -47,8 +47,8 @@ export default class SchoolSelect extends Component {
   }
 
   _getSuggestions = ({ value }) => {
-    let regex = new RegExp('^' + value, 'i');
-    let suggestions = this.props.schools.filter(school => regex.test(school.name));
+    let regex = new RegExp('^' + value.trim(), 'i');
+    let suggestions = this.props.schools.filter(school => regex.test(school.name)).slice(0, 5);
 
     this.setState({suggestions});
   };

@@ -95,7 +95,7 @@ export class List extends React.Component {
         downloadAttemptsCount: 0
       });
     }
-  }
+  };
 
   render() {
     const {
