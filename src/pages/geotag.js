@@ -170,6 +170,14 @@ export class GeotagPage extends Component {
                 urlId={geotag.country.url_name}
               />
             }
+            {!isEmpty(geotag.admin1) &&
+              <Tag
+                inactive={geotag.type != 'AdminDivision1'}
+                name={geotag.admin1.name}
+                type={TAG_LOCATION}
+                urlId={geotag.admin1.url_name}
+              />
+            }
             <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
           </Breadcrumbs>
         </Header>
