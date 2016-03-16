@@ -16,19 +16,73 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
 import HashtagSelect from './hashtag-select';
-
+import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
+import TagCloud from '../tag-cloud';
 
 export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
 
   static propTypes = {
-    addedHashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })).isRequired,
     onAddHashtag: PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.addedHashtags = [];
+    this.state = {
+      recentHashtags: [],
+      selectedHashtags: []
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.addedHashtags) {
+      this.addedHashtags = _.clone(this.props.addedHashtags);
+    }
+    this.getRecentHashtags();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.addedHashtags.length > nextProps.addedHashtags.length) {
+      let removed = _.difference(this.addedHashtags, nextProps.addedHashtags);
+
+      removed.forEach(tag => {
+        const index = _.findIndex(this.state.recentHashtags, t => tag.name === t.name);
+        let selectedHashtags = _.clone(this.state.selectedHashtags);
+        _.remove(selectedHashtags, i => index === i);
+        this.setState({ selectedHashtags: selectedHashtags });
+      });
+    }
+    this.addedHashtags = _.clone(nextProps.addedHashtags);
+  }
+
+  async getRecentHashtags() {
+    const client = new ApiClient(API_HOST);
+    try {
+      const hashtags = await client.userRecentHashtags();
+      this.setState({ recentHashtags: hashtags });
+      
+      this.removeSelected();
+      return hashtags;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  removeSelected() {
+    const selectedHashtags = this.state.recentHashtags.map((tag, index) => {
+      if (_.findIndex(this.addedHashtags, t => t.name === tag.name) != -1) {
+        return index;
+      }
+      return undefined;
+    }).filter(v => v !== undefined);
+    this.setState({ selectedHashtags: selectedHashtags });
+  }
 
   _handleEnter = (event) => {
     event.preventDefault();
@@ -36,6 +90,15 @@ export default class AddHashtagForm extends Component {
     let tagName = this._input.value.trim();
 
     this._addTag({name: tagName});
+  };
+
+  _selectRecentlyUsedHashtag = (tag) => {
+    const index = _.findIndex(this.state.recentHashtags, t => t.name === tag.name);
+    let selectedHashtags = _.clone(this.state.selectedHashtags);
+    selectedHashtags.push(index);
+    this.setState({ selectedHashtags: selectedHashtags });
+
+    this._addTag(this.state.recentHashtags[index]);
   };
 
   _addTag = (tag) => {
@@ -55,32 +118,61 @@ export default class AddHashtagForm extends Component {
   };
 
   render() {
+    let recentHashtags = [];
+    if (Array.isArray(this.state.recentHashtags)) {
+      recentHashtags = _.clone(this.state.recentHashtags).filter((tag, i) => this.state.selectedHashtags.indexOf(i) === -1);
+    }
+    const popularHashtags = [];
+
     return (
       <div className="add_tag_modal add_tag_modal-hashtag">
-        <div className="add_tag_modal__tabs">
-          <div className="add_tag_modal__tab add_tag_modal__tab-active">Enter manually</div>
-        </div>
 
-        <div>
-          <div className="layout__row add_tag_modal__tab_panel">
-            <form onSubmit={this._handleEnter}>
-              <div className="layout">
-                <div className="layout__grid_item layout__grid_item-wide">
-                  <HashtagSelect
-                    placeholder="Start typing..."
-                    ref={(c) => this._input = c}
-                    onSelect={this._addTag}
-                  />
+        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs" panelClassName="layout__row add_tag_modal__tab_panel">
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Enter manually
+            </TabTitle>
+            <TabContent>
+              <form onSubmit={this._handleEnter}>
+                <div className="layout">
+                  <div className="layout__grid_item layout__grid_item-wide">
+                    <HashtagSelect
+                      placeholder="Start typing..."
+                      ref={(c) => this._input = c}
+                      onSelect={this._addTag}
+                    />
+                  </div>
+                  <div className="layout__grid_item">
+                    <button className="button button-wide add_tag_modal__add_button action">
+                      Add
+                    </button>
+                  </div>
                 </div>
-                <div className="layout__grid_item">
-                  <button className="button button-wide add_tag_modal__add_button action">
-                    Add
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
+              </form>
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Used recently
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                hashtags={recentHashtags}
+                onClick={this._selectRecentlyUsedHashtag}
+              />
+            </TabContent>
+          </Tab>
+          <Tab>
+            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+              Popular
+            </TabTitle>
+            <TabContent>
+              <TagCloud
+                hashtags={popularHashtags}
+              />
+            </TabContent>
+          </Tab>
+        </Tabs>
       </div>
     );
   }

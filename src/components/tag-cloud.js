@@ -32,6 +32,7 @@ export default class TagCloud extends React.Component {
       id: PropTypes.string
     })),
     onDelete: () => {},
+    onClick: () => {},
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string
@@ -49,6 +50,7 @@ export default class TagCloud extends React.Component {
           deletable={this.props.deletable}
           key={index}
           onDelete={this.props.onDelete}
+          onClick={this.props.onClick}
           {...tag}
         />
       ));
