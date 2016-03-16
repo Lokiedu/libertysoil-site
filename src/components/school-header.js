@@ -47,7 +47,7 @@ export default class SchoolHeader extends React.Component {
     const {
       school,
       current_user,
-      triggers,
+      triggers = {},
       is_logged_in
     } = this.props;
 
