@@ -69,9 +69,14 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
+
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+
+    let post_comments_count = await this.countComments(posts);
+    
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -91,8 +96,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+
+    let post_comments_count = await this.countComments(posts);
+
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -113,9 +122,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetch({withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
+
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+      post.attributes.comments = post_comments_count[post.get('id')];
     });
 
     res.send(posts);
@@ -155,10 +167,11 @@ export default class ApiController {
         }
       })
       .fetch({withRelated: POST_RELATIONS});
-
+    let post_comments_count = await this.countComments(posts);
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+      post.attributes.comments = post_comments_count[post.get('id')];
     });
 
     res.send(posts);
@@ -223,7 +236,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -256,7 +273,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -288,7 +309,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -321,7 +346,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -608,8 +637,10 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -2023,7 +2054,11 @@ export default class ApiController {
           qb.whereNot('posts.user_id', req.session.user);
         }
       }).fetch({withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (e) {
       res.status(500);
