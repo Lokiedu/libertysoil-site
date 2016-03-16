@@ -115,7 +115,7 @@ export default class Toolbar extends React.Component {
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
           <span className="icon fa fa-comment-o"></span>
-          <span className="card__toolbar_item_value disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+          <span className="card__toolbar_item_value">{this.props.post.comments}</span>
         </Link>
       </div>
     )
