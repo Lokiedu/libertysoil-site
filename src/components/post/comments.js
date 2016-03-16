@@ -15,19 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
-import ReactDisqusThread from '../../scripts/disqus-thread';
 
-let Comments = (props) => (
-  <div className="card__comments">
-    <ReactDisqusThread
-      categoryId={props.post.type}
-      identifier={props.post.id}
-      shortname="lstest"
-      title="Post"
-      url={`http://alpha.libertysoil.org/post/${props.post.id}`}
-    />
-  </div>
-);
+let Comments = () => {};
 
 export default Comments;
