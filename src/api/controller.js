@@ -2351,4 +2351,34 @@ export default class ApiController {
     res.status(200);
     res.send({success: true});
   }
+
+  async countComments(posts) {
+    let ids = posts.map(post => {
+      return post.get('id');
+    });
+
+    if(ids.length < 1) {
+      return {};
+    }
+    let Comment = this.bookshelf.model('Comment');
+    let q = Comment.forge()
+        .query(qb => {
+          qb
+              .select('post_id')
+              .count('id as comment_count')
+              .where('post_id', 'IN', ids)
+              .groupBy('post_id');
+        });
+
+    let raw_counts = await q.fetchAll();
+
+    let mapped_counts = _.mapValues(_.keyBy(raw_counts.toJSON(), 'post_id'), (item => {
+      return parseInt(item.comment_count);
+    }));
+
+    let missing = _.difference(ids, _.keys(mapped_counts));
+
+    let zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
+    return _.merge(_.zipObject(missing, zeroes), mapped_counts)
+  }
 }
