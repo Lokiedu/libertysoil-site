@@ -41,7 +41,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Hashtag, School, Country, City, Attachment, Geotag, Comment;
+  let User, Post, Hashtag, School, Country, AdminDivision1, City, Attachment, Geotag, Comment;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -360,6 +360,13 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  AdminDivision1 = bookshelf.Model.extend({
+    tableName: 'geonames_admin1',
+    geotags: function() {
+      return this.hasMany(Geotag);
+    }
+  });
+
   City = bookshelf.Model.extend({
     tableName: 'geonames_cities',
     posts: function() {
@@ -375,11 +382,17 @@ export function initBookshelfFromKnex(knex) {
     geonames_country: function() {
       return this.belongsTo(Country, 'geonames_country_id');
     },
+    geonames_admin1: function() {
+      return this.belongsTo(AdminDivision1, 'geonames_admin1_id');
+    },
     geonames_city: function() {
       return this.belongsTo(City, 'geonames_city_id');
     },
     country: function() {
       return this.belongsTo(Geotag, 'country_id');
+    },
+    admin1: function() {
+      return this.belongsTo(Geotag, 'admin1_id');
     },
     city: function() {
       return this.belongsTo(Geotag, 'city_id');
@@ -477,6 +490,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Hashtag', Hashtag);
   bookshelf.model('School', School);
   bookshelf.model('Country', Country);
+  bookshelf.model('AdminDivision1', AdminDivision1);
   bookshelf.model('City', City);
   bookshelf.model('Attachment', Attachment);
   bookshelf.model('Geotag', Geotag);
