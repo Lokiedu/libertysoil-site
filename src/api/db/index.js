@@ -41,7 +41,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Hashtag, School, Country, City, Attachment, Geotag;
+  let User, Post, Hashtag, School, Country, City, Attachment, Geotag, Comment;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -168,6 +168,9 @@ export function initBookshelfFromKnex(knex) {
     },
     favourers: function() {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
+    },
+    post_comments: function() {
+      return this.hasMany(Comment);
     },
     attachHashtags: async function(names, removeUnused=false) {
       let hashtags = this.hashtags();
@@ -452,6 +455,16 @@ export function initBookshelfFromKnex(knex) {
     });
   };
 
+  Comment = bookshelf.Model.extend({
+    tableName: 'comments',
+    user: function() {
+      return this.belongsTo(User);
+    },
+    post: function() {
+      return this.belongsTo(Post);
+    }
+  });
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -467,6 +480,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('City', City);
   bookshelf.model('Attachment', Attachment);
   bookshelf.model('Geotag', Geotag);
+  bookshelf.model('Comment', Comment);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

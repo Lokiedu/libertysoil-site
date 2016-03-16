@@ -69,9 +69,14 @@ export default class ApiController {
           .orderBy('posts.created_at', 'desc')
       });
 
+
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+
+    let post_comments_count = await this.countComments(posts);
+    
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -91,8 +96,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+
+    let post_comments_count = await this.countComments(posts);
+
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -113,9 +122,12 @@ export default class ApiController {
       });
 
     let posts = await q.fetch({withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
+
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+      post.attributes.comments = post_comments_count[post.get('id')];
     });
 
     res.send(posts);
@@ -155,10 +167,11 @@ export default class ApiController {
         }
       })
       .fetch({withRelated: POST_RELATIONS});
-
+    let post_comments_count = await this.countComments(posts);
     posts = posts.serialize();
     posts.forEach(post => {
       post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+      post.attributes.comments = post_comments_count[post.get('id')];
     });
 
     res.send(posts);
@@ -191,8 +204,12 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: POST_RELATIONS});
+      let relations = POST_RELATIONS;
+      relations.push('post_comments');
+
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post.relations.post_comments.length;
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404);
@@ -223,7 +240,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -256,7 +277,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -288,7 +313,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -321,7 +350,11 @@ export default class ApiController {
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (ex) {
       res.status(500);
@@ -608,8 +641,10 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+      post.attributes.comments = post_comments_count[post.get('id')];
       return post;
     });
 
@@ -2023,7 +2058,11 @@ export default class ApiController {
           qb.whereNot('posts.user_id', req.session.user);
         }
       }).fetch({withRelated: POST_RELATIONS});
-
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.map(post => {
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
       res.send(posts);
     } catch (e) {
       res.status(500);
@@ -2221,5 +2260,164 @@ export default class ApiController {
       res.status(500);
       res.send({error: `Couldn't unlike the geotag: ${e.message}`});
     }
+  }
+
+  async getPostComments(req, res) {
+    let Comment = this.bookshelf.model('Comment');
+    let q = Comment.forge()
+      .query(qb => {
+        qb
+          .where('post_id', '=', req.params.id)
+          .orderBy('created_at', 'asc')
+      });
+
+    let comments = await q.fetchAll({require: false, withRelated: ['user']});
+
+    res.send(comments);
+  }
+
+  async postComment(req, res) {
+    let Comment = this.bookshelf.model('Comment');
+    let Post = this.bookshelf.model('Post');
+
+
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    try {
+      await Post.where({id: req.params.id}).fetch({require: true});
+    } catch (e) {
+      res.sendStatus(404);
+      return;
+    }
+
+    if(!('text' in req.body)) {
+      res.status(400);
+      res.send({error: 'Comment text cannot be empty'});
+      return;
+    }
+
+    let comment_text = req.body.text.trim();
+
+    let comment_object = new Comment({
+      id: uuid.v4(),
+      post_id: req.params.id,
+      user_id: req.session.user,
+      text: comment_text
+    });
+
+    try {
+      await comment_object.save(null, {method: 'insert'});
+      await this.getPostComments(req, res);
+    } catch (e) {
+      res.status(500);
+      res.send({error: e.message});
+    }
+  }
+
+  async editComment(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let Comment = this.bookshelf.model('Comment');
+
+    let comment_object;
+
+    try {
+      comment_object = await Comment.where({ id: req.params.comment_id,post_id: req.params.id }).fetch({require: true});
+    } catch(e) {
+      res.status(404);
+      res.send({error: e.message});
+      return
+    }
+
+    if(comment_object.get('user_id') != req.session.user)  {
+      res.status(403);
+    }
+
+    let comment_text;
+
+    if(!('text' in req.body) || req.body.text.trim().length === 0) {
+      res.status(400);
+      res.send({error: 'Comment text cannot be empty'});
+      return;
+    }
+
+    comment_text = req.body.text.trim();
+
+    comment_object.set('text', comment_text);
+
+    await comment_object.save(null, {method: 'update'});
+    await this.getPostComments(req, res);
+  }
+
+  async removeComment(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!('id' in req.params) || !('comment_id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let Comment = this.bookshelf.model('Comment');
+
+    try {
+      let comment_object = await Comment.where({ id: req.params.id }).fetch({require: true});
+
+      if (comment_object.get('user_id') != req.session.user) {
+        res.status(403);
+        res.send({error: 'You are not authorized'});
+        return;
+      }
+
+      comment_object.destroy();
+    } catch(e) {
+      res.status(500);
+      res.send({error: e.message});
+      return;
+    }
+    res.status(200);
+    res.send({success: true});
+  }
+
+  async countComments(posts) {
+    let ids = posts.map(post => {
+      return post.get('id');
+    });
+
+    if(ids.length < 1) {
+      return {};
+    }
+    let Comment = this.bookshelf.model('Comment');
+    let q = Comment.forge()
+        .query(qb => {
+          qb
+              .select('post_id')
+              .count('id as comment_count')
+              .where('post_id', 'IN', ids)
+              .groupBy('post_id');
+        });
+
+    let raw_counts = await q.fetchAll();
+
+    let mapped_counts = _.mapValues(_.keyBy(raw_counts.toJSON(), 'post_id'), (item => {
+      return parseInt(item.comment_count);
+    }));
+
+    let missing = _.difference(ids, _.keys(mapped_counts));
+
+    let zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
+    return _.merge(_.zipObject(missing, zeroes), mapped_counts)
   }
 }
