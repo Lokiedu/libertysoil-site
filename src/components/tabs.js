@@ -18,6 +18,8 @@
 import React from 'react';
 
 export class TabTitle extends React.Component {
+  static displayName = 'TabTitle';
+
   render() {
     let className = 'tabs__title';
     if (this.props.className) {
@@ -28,12 +30,16 @@ export class TabTitle extends React.Component {
 }
 
 export class TabContent extends React.Component {
+  static displayName = 'TabContent';
+
   render() {
     return <div className={this.props.className}>{this.props.children}</div>;
   }
 }
 
 export class Tab extends React.Component {
+  static displayName = 'Tab';
+
   render() {
     let className = 'tabs__tab';
     if (this.props.className) {
@@ -57,6 +63,8 @@ export class Tab extends React.Component {
 }
 
 export class Tabs extends React.Component {
+  static displayName = 'Tabs';
+
   constructor(props) {
     super(props);
     this.state = {
