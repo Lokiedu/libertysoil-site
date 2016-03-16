@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
+import Icon from './icon';
 
 /**
  * Universal component to use in the TagPage, SchoolPage, GeotagPage components.
@@ -40,22 +41,28 @@ export default class LikeTagButton extends React.Component {
 
   render() {
     const {
-      className = ''
+      className = '',
+      ...props
     } = this.props;
-    let likedClassName = 'fa-heart color-red';
+    let icon = 'favorite';
+    let color = 'red';
 
     if (!this.props.is_logged_in) {
       return null;
     }
 
     if (!this._isLiked()) {
-      likedClassName = 'fa-heart-o';
+      icon = 'favorite_border';
+      color = false;
     }
 
     return (
-      <span
-        className={`action icon fa ${className} ${likedClassName}`}
+      <Icon
+        {...props}
+        className={`action ${className}`}
         onClick={this._toggleLike}
+        icon={icon}
+        color={color}
       />
     );
   }

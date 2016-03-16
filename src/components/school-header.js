@@ -17,10 +17,12 @@
  */
 import React, { PropTypes } from 'react';
 
-//import FollowButton from './follow-button';
+import Panel from './panel';
 import moment from 'moment';
 import FollowTagButton from './follow-tag-button';
+import Tag from './tag';
 import LikeTagButton from './like-tag-button';
+import { TAG_SCHOOL }   from '../consts/tags';
 //import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 
@@ -42,67 +44,29 @@ export default class SchoolHeader extends React.Component {
   };
 
   render () {
-    const { 
-      school, 
+    const {
+      school,
       current_user,
-      triggers,
+      triggers = {},
       is_logged_in
-      /*
-      i_am_following,
-      following,
-      followers 
-      */
     } = this.props;
-    
+
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
+
     let name = school.url_name;
     let updated_at = moment(school.updated_at).format('MMMM D, HH:MM');
-    /*
-    let followingCount;
-    let followersCount;
-    */
+    let linesOfDescription = <p>No information provided...</p>;
+
     if (school.name) {
       name = school.name;
     }
 
-    /*
-    if (following && following[school.id]) {
-      if (current_user.id != school.id) {
-        followingCount = (
-          <div>
-            {following[school.id].length}<br />
-            Following
-          </div>
-        );
-      } else {
-        followingCount = (
-          <div>
-            {following[school.id].length}<br />
-            <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Following</Link>
-          </div>
-        );
-      }
-    }
-    if (followers && followers[school.id]) {
-      if (current_user.id != school.id) {
-        followersCount = (
-          <div>
-            {followers[school.id].length}<br />
-            Followers
-          </div>
-        );
-      } else {
-        followersCount = (
-          <div>
-            {followers[school.id].length}<br />
-
-            <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Followers</Link>
-          </div>
-        );
-      }
-
-    }
-    */
     name = name.trim();
+
+    if (school.description) {
+      linesOfDescription = school.description.split("\n").map((line, i) => <p key={`school-${i}`}>{line}</p>);
+    }
 
     let followTriggers = {
       followTag: triggers.followSchool,
@@ -114,48 +78,42 @@ export default class SchoolHeader extends React.Component {
       unlikeTag: triggers.unlikeSchool
     };
 
+    if (is_logged_in) {
+      toolbarSecondary = [
+        <LikeTagButton
+          is_logged_in={is_logged_in}
+          liked_tags={current_user.liked_schools}
+          tag={school.url_name}
+          triggers={likeTriggers}
+          outline={true}
+        />
+      ];
+
+      toolbarPrimary = [
+        /*<div key="posts" className="panel__toolbar_item-text">
+          {tagPosts.length} posts
+        </div>,*/
+        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <FollowTagButton
+          current_user={current_user}
+          followed_tags={current_user ? current_user.followed_schools : {}}
+          tag={school.url_name}
+          triggers={followTriggers}
+          className="button-midi"
+        />
+      ];
+    }
+
     return (
-      <div className="profile">
-        <div className="profile__body">
-          <div className="layout__row">
-            <div className="layout__grid_item layout__grid_item-wide">
-              <div className="profile__title">{name}</div>
-              <div className="profile__updated_at">{updated_at}</div>
-            </div>
-            {is_logged_in &&
-              <div className="layout__grid layout-align_vertical">
-                <div className="layout__grid_item layout__grid_item-wide">
-                  <LikeTagButton
-                    is_logged_in={is_logged_in}
-                    liked_tags={current_user.liked_schools}
-                    tag={school.url_name}
-                    triggers={likeTriggers}
-                  />
-                </div>
-                <div className="layout__grid_item layout__grid_item-small">
-                  <FollowTagButton
-                    current_user={current_user}
-                    followed_tags={current_user ? current_user.followed_schools : {}}
-                    tag={school.url_name}
-                    triggers={followTriggers}
-                  />
-                </div>
-                {/*
-                <div className="layout__grid_item">
-                  {followingCount}
-                </div>
-                <div className="layout__grid_item">
-                  {followersCount}
-                </div>
-                <div className="layout__grid_item">
-                  <FollowButton active_school={current_user} school={school} following={i_am_following} triggers={this.props.triggers} />
-                </div>
-                */}
-              </div>
-            }
-          </div>
-        </div>
-      </div>
+      <Panel
+        title={name}
+        icon={<Tag size="BIG" type={TAG_SCHOOL} urlId={name} />}
+        toolbarPrimary={toolbarPrimary}
+        toolbarSecondary={toolbarSecondary}
+      >
+        {linesOfDescription}
+        <p>{updated_at}</p>
+      </Panel>
     )
   }
 }

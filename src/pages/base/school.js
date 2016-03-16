@@ -18,17 +18,24 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 
-import Header from '../../components/header';
-import HeaderLogo from '../../components/header-logo';
-import Breadcrumbs from '../../components/breadcrumbs';
-import Tag from '../../components/tag';
-import TagIcon from '../../components/tag-icon';
-import Footer from '../../components/footer';
-import PageContentLink from '../../components/page-content-link';
-import SchoolHeader from '../../components/school-header';
-import Sidebar from '../../components/sidebar';
-import SidebarAlt from '../../components/sidebarAlt';
-import { TAG_SCHOOL } from '../../consts/tags';
+import {
+  Page,
+  PageCaption,
+  PageHero,
+  PageBody,
+  PageCenter
+}                       from '../../components/page';
+import Header           from '../../components/header';
+import HeaderLogo       from '../../components/header-logo';
+import Breadcrumbs      from '../../components/breadcrumbs';
+import Tag              from '../../components/tag';
+import TagIcon          from '../../components/tag-icon';
+import Footer           from '../../components/footer';
+import PageContentLink  from '../../components/page-content-link';
+import SchoolHeader     from '../../components/school-header';
+import Sidebar          from '../../components/sidebar';
+import SidebarAlt       from '../../components/sidebarAlt';
+import { TAG_SCHOOL }   from '../../consts/tags';
 
 
 export default class BaseSchoolPage extends React.Component {
@@ -45,60 +52,62 @@ export default class BaseSchoolPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs>
-              <Link to="/s" title="All Schools">
-                <TagIcon inactive type={TAG_SCHOOL} />
-              </Link>
-              <Tag name={page_school.name} type={TAG_SCHOOL} urlId={page_school.url_name} />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs className="header__breadcrumbs">
+            <Link to="/s" title="All Schools">
+              <TagIcon inactive type={TAG_SCHOOL} />
+            </Link>
+            <Tag name={page_school.name} type={TAG_SCHOOL} urlId={page_school.url_name} />
+          </Breadcrumbs>
         </Header>
 
-        <div className="page__container">
-          <div className="page__body">
+        <Page>
+          <PageCaption>
+            {page_school.name}
+          </PageCaption>
+          <PageHero>
+            <img src="/images/hero/welcome.jpg" />
+          </PageHero>
+          <PageBody className="page__body-up">
+            <SchoolHeader
+              is_logged_in={is_logged_in}
+              school={page_school}
+              current_user={current_user}
+              triggers={triggers}
+            />
+          </PageBody>
+          <PageBody>
             <Sidebar current_user={current_user}/>
-
-            <div className="page__content page__content-fill">
-              <SchoolHeader
-                is_logged_in={is_logged_in}
-                school={page_school}
-                current_user={current_user}
-                triggers={triggers}
-              />
-
-              <div className="page__content page__content-horizontal_space">
-                <div className="layout__space-double">
-                  <div className="layout__grid tabs">
-                    <div className="layout__grid_item">
-                      <IndexLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/s/${page_school.url_name}`}
-                      >
-                        About
-                      </IndexLink>
-                    </div>
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/s/${page_school.url_name}/edit`}
-                        visible={true}
-                      >
-                        Edit
-                      </PageContentLink>
-                    </div>
+            <PageCenter>
+              <div className="layout__space-double">
+                <div className="layout__grid tabs">
+                  <div className="layout__grid_item">
+                    <IndexLink
+                      activeClassName="tabs__link-active"
+                      className="tabs__link"
+                      to={`/s/${page_school.url_name}`}
+                    >
+                      About
+                    </IndexLink>
+                  </div>
+                  <div className="layout__grid_item">
+                    <PageContentLink
+                      activeClassName="tabs__link-active"
+                      className="tabs__link"
+                      to={`/s/${page_school.url_name}/edit`}
+                      visible={true}
+                    >
+                      Edit
+                    </PageContentLink>
                   </div>
                 </div>
-                <div className="layout__row layout__row-double">
-                  {this.props.children}
-                </div>
               </div>
-            </div>
+              <div className="layout__row">
+                {this.props.children}
+              </div>
+            </PageCenter>
             <SidebarAlt />
-          </div>
-        </div>
+          </PageBody>
+        </Page>
 
         <Footer/>
       </div>

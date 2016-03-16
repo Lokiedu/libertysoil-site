@@ -73,11 +73,6 @@ export class SchoolPage extends React.Component {
     }
 
     let schoolPosts = this.props.school_posts[school.id];
-    let linesOfDescription = <p>No information provided...</p>;
-
-    if (school.description) {
-      linesOfDescription = school.description.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
-    }
 
     return (
       <BaseSchoolPage
@@ -87,20 +82,13 @@ export class SchoolPage extends React.Component {
         triggers={triggers}
       >
         <Helmet title={`Posts about ${school.name} on `} />
-        <div className="paper">
-          <div className="paper__page content">
-            {linesOfDescription}
-          </div>
-        </div>
-        <div className="layout__row layout__row-double">
-          <River
-            current_user={this.props.current_user}
-            posts={this.props.posts}
-            river={schoolPosts}
-            triggers={triggers}
-            users={this.props.users}
-          />
-        </div>
+        <River
+          current_user={this.props.current_user}
+          posts={this.props.posts}
+          river={schoolPosts}
+          triggers={triggers}
+          users={this.props.users}
+        />
       </BaseSchoolPage>
     )
   }

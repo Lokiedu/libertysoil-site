@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { TestUtils, expect, React, PropTypes } from '../../../test-helpers/expect-unit';
 
 import { SchoolPage } from '../../../src/pages/school';
+import SchoolHeader from '../../../src/components/school-header';
 import NotFound from '../../../src/pages/not-found';
 
 
@@ -40,14 +41,14 @@ describe('School page', function() {
 
   it('MUST renders default school description if no description provided', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolPage params={{school_name: 'test'}} schools={[{url_name: 'test', id: "1"}]} school_posts={{}} />);
+    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", name: "test"}} />);
 
     return expect(renderer, 'to contain', "No information provided...");
   });
 
   it('MUST renders school description', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolPage params={{school_name: 'test'}} schools={[{url_name: 'test', id: "1", description: 'test description'}]} school_posts={{}} />);
+    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", description: 'test description'}} />);
 
     return expect(renderer, 'to contain', "test description");
   });

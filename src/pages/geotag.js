@@ -25,6 +25,14 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { setGeotagPosts, addGeotag } from '../actions';
 import NotFound from './not-found';
+
+import {
+  Page,
+  PageCaption,
+  PageHero,
+  PageBody,
+  PageCenter
+} from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
@@ -32,10 +40,12 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import Panel from '../components/panel';
 import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
 import LikeTagButton from '../components/like-tag-button';
+
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { TAG_LOCATION, TAG_PLANET } from '../consts/tags';
@@ -82,6 +92,10 @@ export class GeotagPage extends Component {
     let client = new ApiClient(API_HOST);
     let triggers = new ActionsTrigger(client, this.props.dispatch);
     let geotag = geotags[this.props.params.url_name];
+    const title = geotag ? geotag.name : this.props.params.url_name;
+
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
 
     if (!geotag) {
       return <script />;
@@ -103,103 +117,90 @@ export class GeotagPage extends Component {
       unlikeTag: triggers.unlikeGeotag
     };
 
+    if (is_logged_in) {
+      toolbarSecondary = [
+        <LikeTagButton
+          key="like"
+          is_logged_in={is_logged_in}
+          liked_tags={current_user.liked_geotags}
+          tag={this.props.params.url_name}
+          triggers={likeTriggers}
+          outline={true}
+        />
+      ];
+
+      toolbarPrimary = [
+        <div key="posts" className="panel__toolbar_item-text">
+          {tagPosts.length} posts
+        </div>,
+        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <FollowTagButton
+          key="follow"
+          current_user={current_user}
+          followed_tags={current_user.followed_geotags}
+          tag={this.props.params.url_name}
+          triggers={followTriggers}
+          className="button-midi"
+        />
+      ];
+    }
+
     return (
       <div>
         <Helmet title={`${geotag.name} posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs>
-              <Link title="All Geotags" to="/geotag">
-                <TagIcon inactive type={TAG_PLANET} />
-              </Link>
-              {!isEmpty(geotag.continent) &&
-                <Tag
-                  inactive={geotag.type != 'Continent'}
-                  name={geotag.continent.name}
-                  type={TAG_LOCATION}
-                  urlId={geotag.continent.url_name}
-                />
-              }
-              {!isEmpty(geotag.country) &&
-                <Tag
-                  inactive={geotag.type != 'Country'}
-                  name={geotag.country.name}
-                  type={TAG_LOCATION}
-                  urlId={geotag.country.url_name}
-                />
-              }
-              <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs className="header__breadcrumbs">
+            <Link title="All Geotags" to="/geotag">
+              <TagIcon inactive type={TAG_PLANET} />
+            </Link>
+            {!isEmpty(geotag.continent) &&
+              <Tag
+                inactive={geotag.type != 'Continent'}
+                name={geotag.continent.name}
+                type={TAG_LOCATION}
+                urlId={geotag.continent.url_name}
+              />
+            }
+            {!isEmpty(geotag.country) &&
+              <Tag
+                inactive={geotag.type != 'Country'}
+                name={geotag.country.name}
+                type={TAG_LOCATION}
+                urlId={geotag.country.url_name}
+              />
+            }
+            <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
+          </Breadcrumbs>
         </Header>
 
-        <div className="page__container">
-          <div className="page__caption">
-            {(geotag) ? geotag.name : this.props.params.url_name} <span className="page__caption_highlight">Education</span>
-          </div>
-          <div className="page__hero"></div>
-          <div className="page__body">
-            <div className="panel">
-              <div className="panel__body">
-                <div className="panel__icon">
-                  <Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />
-                </div>
-                <div className="panel__content">
-                  <div className="panel__title">
-                    {(geotag) ? geotag.name : this.props.params.url_name}
-                  </div>
-                  <div className="panel__text">
-                    Short wikipedia description about this location will be displayed here soon.
-                  </div>
-                </div>
-              </div>
-              {is_logged_in &&
-                <div className="panel__toolbar">
-                  <div className="panel__toolbar_left">
-                    <div className="panel__toolbar_item">
-                      <LikeTagButton
-                        is_logged_in={is_logged_in}
-                        liked_tags={current_user.liked_geotags}
-                        tag={this.props.params.url_name}
-                        triggers={likeTriggers}
-                        className="icon-midi"
-                      />
-                    </div>
-                  </div>
-                  <div className="panel__toolbar_right">
-                    <div className="panel__toolbar_item panel__toolbar_item-text">
-                      {tagPosts.length} posts
-                    </div>
-                    <div className="panel__toolbar_item">
-                      <button className="button button-midi button-ligth_blue" type="button">New</button>
-                    </div>
-                    <div className="panel__toolbar_item">
-                      <FollowTagButton
-                        current_user={current_user}
-                        followed_tags={current_user.followed_geotags}
-                        tag={this.props.params.url_name}
-                        triggers={followTriggers}
-                        className="button-midi"
-                      />
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-          <div className="page__body">
+        <Page>
+          <PageCaption>
+            {title} <span className="page__caption_highlight">Education</span>
+          </PageCaption>
+          <PageHero>
+            <img src="/images/hero/welcome.jpg" />
+          </PageHero>
+          <PageBody className="page__body-up">
+            <Panel
+              title={title}
+              icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
+              toolbarPrimary={toolbarPrimary}
+              toolbarSecondary={toolbarSecondary}
+            >
+              Short wikipedia description about this location will be displayed here soon.
+            </Panel>
+          </PageBody>
+          <PageBody>
             <Sidebar current_user={current_user} />
-
-            <div className="page__body_content">
+            <PageCenter>
               <div className="page__content">
                 <River river={tagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
               </div>
-            </div>
-
+            </PageCenter>
             <SidebarAlt />
-          </div>
-        </div>
+          </PageBody>
+        </Page>
         <Footer/>
       </div>
     )
