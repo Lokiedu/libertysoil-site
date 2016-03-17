@@ -124,6 +124,9 @@ export class TagPage extends Component {
           </div>
         </Header>
         <Page>
+          <PageMain>
+            
+          </PageMain>
           <PageCaption>
             {tag}
           </PageCaption>

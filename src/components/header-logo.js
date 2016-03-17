@@ -16,10 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Link } from 'react-router';
+import { connect } from 'react-redux';
+import { toggleUISidebar } from '../actions';
+import { defaultSelector } from '../selectors';
 
-
-export default function HeaderLogo({ small }) {
+function HeaderLogo({ small, dispatch }) {
   let className = 'logo';
 
   if (small) {
@@ -27,14 +28,15 @@ export default function HeaderLogo({ small }) {
   }
 
   return (
-    <div className="header__logo">
-      <Link
-        className={className}
-        title="Liberty Soil"
-        to="/"
-      >
+    <div
+      onClick={() => dispatch(toggleUISidebar())}
+      className="header__logo action"
+    >
+      <div className={className}>
         <span className="logo__title">Liberty Soil</span>
-      </Link>
+      </div>
     </div>
   );
 }
+
+export default connect(defaultSelector)(HeaderLogo);

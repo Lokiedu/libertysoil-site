@@ -20,38 +20,56 @@ import i from 'immutable';
 import * as a from '../actions';
 
 const initialState = i.Map({
+  sidebarIsVisible: true,
   progress: i.Map({})
 });
 
-export default function reducer(state=initialState, action) {
+function reducer (state=initialState, action) {
 
   switch (action.type) {
-  case a.UI__SET_PROGRESS:
-    {
-      state = state.setIn(['progress', action.progress], action.value);
-      break;
-    }
-  case a.SUBMIT_RESET_PASSWORD:
-    {
-      state = state.set('submitResetPassword', true);
-      break;
-    }
-  case a.SUBMIT_NEW_PASSWORD:
-    {
-      state = state.set('submitNewPassword', true);
-      break;
-    }
-  case a.REGISTRATION_SUCCESS:
-    {
-      state = state.set('registrationSuccess', true);
-      break;
-    }
-  case a.SHOW_REGISTER_FORM:
-    {
-      state = state.set('registrationSuccess', false);
-      break;
-    }
+    case a.UI__TOGGLE_SIDEBAR:
+      {
+        let isVisible = !state.get('sidebarIsVisible');
+
+        if (action.isVisible != undefined) {
+          isVisible = action.isVisible;
+        }
+
+        state = state.set('sidebarIsVisible', isVisible);
+
+        break;
+      }
+    case a.UI__SET_PROGRESS:
+      {
+        state = state.setIn(['progress', action.progress], action.value);
+        break;
+      }
+    case a.SUBMIT_RESET_PASSWORD:
+      {
+        state = state.set('submitResetPassword', true);
+        break;
+      }
+    case a.SUBMIT_NEW_PASSWORD:
+      {
+        state = state.set('submitNewPassword', true);
+        break;
+      }
+    case a.REGISTRATION_SUCCESS:
+      {
+        state = state.set('registrationSuccess', true);
+        break;
+      }
+    case a.SHOW_REGISTER_FORM:
+      {
+        state = state.set('registrationSuccess', false);
+        break;
+      }
   }
 
   return state;
 }
+
+export {
+  initialState,
+  reducer
+};

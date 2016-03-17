@@ -193,16 +193,18 @@ export class GeotagPage extends Component {
               <img src="/images/hero/welcome.jpg" />
             </PageHero>
             <PageBody className="page__body-up">
-              <Panel
-                title={title}
-                icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
-                toolbarPrimary={toolbarPrimary}
-                toolbarSecondary={toolbarSecondary}
-              >
-                Short wikipedia description about this location will be displayed here soon.
-              </Panel>
+              <PageContent>
+                <Panel
+                  title={title}
+                  icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
+                  toolbarPrimary={toolbarPrimary}
+                  toolbarSecondary={toolbarSecondary}
+                >
+                  Short wikipedia description about this location will be displayed here soon.
+                </Panel>
+              </PageContent>
             </PageBody>
-            <PageBody className="page__body-up">
+            <PageBody className="page__body-up layout__space_alt">
               <PageContent>
                 <River
                   river={tagPosts}

@@ -25,6 +25,15 @@ import VisibilitySensor from 'react-visibility-sensor';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
+
+import {
+  Page,
+  PageMain,
+  PageCaption,
+  PageHero,
+  PageBody,
+  PageContent
+} from '../components/page';
 import CreatePost from '../components/create-post'
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
@@ -119,37 +128,38 @@ export class List extends React.Component {
             <Breadcrumbs title="News Feed" />
           </div>
         </Header>
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={this.props.current_user} />
-            <div className="page__content">
-              <CreatePost
-                actions={actions}
-                allSchools={_.values(this.props.schools)}
-                defaultText={this.props.create_post_form.text}
-                triggers={triggers}
-                {...this.props.create_post_form}
-              />
-            <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
-            <div className="layout layout-align_center layout__space layout__space-double">
-              <VisibilitySensor onChange={this.loadMore}>
-                <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
-              </VisibilitySensor>
-            </div>
-              {/*<Followed/> */}
-              {/*<Tags/>*/}
-            </div>
-            <SidebarAlt>
-              <AddedTags {...this.props.create_post_form} />
-              <SideSuggestedUsers
-                current_user={current_user}
-                i_am_following={i_am_following}
-                triggers={triggers}
-                users={current_user.suggested_users}
-              />
-            </SidebarAlt>
-          </div>
-        </div>
+
+        <Page>
+          <Sidebar current_user={this.props.current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <CreatePost
+                  actions={actions}
+                  allSchools={_.values(this.props.schools)}
+                  defaultText={this.props.create_post_form.text}
+                  triggers={triggers}
+                  {...this.props.create_post_form}
+                />
+                <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+                <div className="layout layout-align_center layout__space layout__space-double">
+                  <VisibilitySensor onChange={this.loadMore}>
+                    <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
+                  </VisibilitySensor>
+                </div>
+              </PageContent>
+              <SidebarAlt>
+                <AddedTags {...this.props.create_post_form} />
+                <SideSuggestedUsers
+                  current_user={current_user}
+                  i_am_following={i_am_following}
+                  triggers={triggers}
+                  users={current_user.suggested_users}
+                />
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
         <Footer/>
       </div>
     )
