@@ -71,6 +71,7 @@ export function initApi(bookshelf) {
 
   api.get('/school-cloud', wrap(controller.getSchoolCloud.bind(controller)));
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
+  api.head('/school/:name', wrap(controller.checkSchoolExists.bind(controller)));
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
   api.post('/school/:name/follow', wrap(controller.followSchool.bind(controller)));
