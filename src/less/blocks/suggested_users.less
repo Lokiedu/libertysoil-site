@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,24 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+.suggested_users {
+  transition: opacity 0.5s ease-out; 
 
-export default class IgnoreButton extends React.Component {
-  static displayName = 'IgnoreButton';
-
-  static propTypes = {
-    onClick: React.PropTypes.func.isRequired,
-    user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired
-    })
-  };
-
-  clickHandler = (e) => {
-    e.preventDefault();
-    this.props.onClick(this.props.user);
-  };
-
-  render() {
-    return <button className="button" onClick={this.clickHandler}>Ignore</button>;
+  &-loading {
+    opacity: 0;
   }
 }

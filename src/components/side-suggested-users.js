@@ -36,7 +36,6 @@ export default class SideSuggestedUsers extends React.Component {
       unfollowUser: PropTypes.func.isRequired,
       ignoreUser: React.PropTypes.func.isRequired
     }),
-    ignoreUser: PropTypes.func.isRequired,
     users: PropTypes.arrayOf(PropTypes.shape({
       avatar: PropTypes.shape({
         url: PropTypes.string.isRequired
@@ -50,9 +49,15 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
-  ignoreUser = (user) => {
-    this.props.ignoreUser(user);
+  state = {
+    loading: false
   };
+
+  ignoreUser = async (user) => {
+    this.setState({loading: true});
+    await this.props.triggers.ignoreUser(user);
+    this.setState({loading: false});
+  }
 
   render() {
     const {
@@ -66,11 +71,16 @@ export default class SideSuggestedUsers extends React.Component {
       return null;
     }
 
+    let className = 'layout__row suggested_users';
+    if (this.state.loading) {
+      className += ' suggested_users-loading'
+    }
+
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
         { _.take(users, 3).map((user) => (
-          <div className="layout__row" key={`user-${user.id}`}>
+          <div className={className} key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User
                 avatarSize="32"
@@ -87,7 +97,7 @@ export default class SideSuggestedUsers extends React.Component {
               />
               <IgnoreButton
                 active_user={current_user}
-                ignoreUser={this.ignoreUser}
+                onClick={this.ignoreUser}
                 user={user}
               />
             </div>
