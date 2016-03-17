@@ -63,7 +63,7 @@ export default class User extends Component {
       name = name.trim();
 
       if (timestamp.length > 0 && timestampLink.length > 0) {
-        let timestamp_string = moment(timestamp).format('MMMM D, HH:MM');
+        let timestamp_string = moment(timestamp).format('MMMM D, HH:mm');
 
         render.timestamp =
           <p className="user_box__text">
