@@ -71,6 +71,7 @@ export function initApi(bookshelf) {
 
   api.get('/school-cloud', wrap(controller.getSchoolCloud.bind(controller)));
   api.get('/schools', wrap(controller.getSchools.bind(controller)));
+  api.head('/school/:name', wrap(controller.checkSchoolExists.bind(controller)));
   api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
   api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
   api.post('/school/:name/follow', wrap(controller.followSchool.bind(controller)));
@@ -118,6 +119,7 @@ export function initApi(bookshelf) {
   api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));
   api.post('/tag/:name/unlike', wrap(controller.unlikeHashtag.bind(controller)));
 
+  api.head('/geotag/:name', wrap(controller.checkGeotagExists.bind(controller)));
   api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
   api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));

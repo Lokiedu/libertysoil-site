@@ -393,6 +393,18 @@ export default class ApiController {
     }
   }
 
+  async checkSchoolExists(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      await School.where('name', req.params.name).fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
+    }
+  }
+
   async getSchool(req, res) {
     let School = this.bookshelf.model('School');
 
@@ -1997,6 +2009,18 @@ export default class ApiController {
       res.status(500);
       res.send({error: e.message});
       return;
+    }
+  }
+
+  async checkGeotagExists(req, res) {
+    let Geotag = this.bookshelf.model('Geotag');
+
+    try {
+      await Geotag.where('name', req.params.name).fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
     }
   }
 

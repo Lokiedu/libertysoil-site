@@ -147,6 +147,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async checkSchoolExists(name) {
+    try {
+      await this.head(`/api/v1/school/${name}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
   async schoolInfo(school_name) {
     let response = await this.get(`/api/v1/school/${school_name}`)
     return response.body;
@@ -412,6 +422,16 @@ export default class ApiClient
   async unfollowGeotag(urlName) {
     let response = await this.post(`/api/v1/geotag/${urlName}/unfollow`);
     return response.body;
+  }
+
+  async checkGeotagExists(name) {
+    try {
+      await this.head(`/api/v1/geotag/${name}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
   }
 
   async getGeotag(urlName) {
