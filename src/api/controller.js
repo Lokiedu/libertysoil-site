@@ -1951,6 +1951,18 @@ export default class ApiController {
     }
   }
 
+  async checkGeotagExists(req, res) {
+    let Geotag = this.bookshelf.model('Geotag');
+
+    try {
+      await Geotag.where('name', req.params.name).fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
+    }
+  }
+
   async getGeotag(req, res) {
     let Geotag = this.bookshelf.model('Geotag');
 
