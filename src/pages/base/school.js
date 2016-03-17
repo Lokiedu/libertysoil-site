@@ -75,7 +75,7 @@ export default class BaseSchoolPage extends React.Component {
               triggers={triggers}
             />
           </PageBody>
-          <PageBody>
+          <PageBody className="page__body-up">
             <Sidebar current_user={current_user}/>
             <PageCenter>
               <div className="layout__space-double">
