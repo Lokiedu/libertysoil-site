@@ -424,6 +424,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async checkGeotagExists(name) {
+    try {
+      await this.head(`/api/v1/geotag/${name}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
   async getGeotag(urlName) {
     let response = await this.get(`/api/v1/geotag/${urlName}`);
     return response.body;
