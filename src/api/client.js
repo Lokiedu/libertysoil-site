@@ -137,6 +137,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async checkSchoolExists(name) {
+    try {
+      await this.head(`/api/v1/school/${name}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
   async schoolInfo(school_name) {
     let response = await this.get(`/api/v1/school/${school_name}`)
     return response.body;

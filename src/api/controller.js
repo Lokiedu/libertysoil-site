@@ -363,6 +363,18 @@ export default class ApiController {
     }
   }
 
+  async checkSchoolExists(req, res) {
+    let School = this.bookshelf.model('School');
+
+    try {
+      await School.where('name', req.params.name).fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
+    }
+  }
+
   async getSchool(req, res) {
     let School = this.bookshelf.model('School');
 
