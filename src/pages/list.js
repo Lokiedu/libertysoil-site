@@ -116,6 +116,12 @@ export class List extends React.Component {
     }
   };
 
+  ignoreUser = (user) => {
+    const triggers = new ActionsTrigger(client, this.props.dispatch)
+
+    triggers.ignoreUser(user);
+  }
+
   render() {
     const {
       current_user,
@@ -171,6 +177,7 @@ export class List extends React.Component {
                   current_user={current_user}
                   i_am_following={i_am_following}
                   triggers={triggers}
+                  ignoreUser={this.ignoreUser}
                   users={current_user.suggested_users}
                 />
               </SidebarAlt>

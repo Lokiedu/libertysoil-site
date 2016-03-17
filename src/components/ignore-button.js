@@ -19,21 +19,20 @@ import React from 'react';
 
 export default class IgnoreButton extends React.Component {
   static displayName = 'IgnoreButton';
+
   static propTypes = {
-    triggers: React.PropTypes.shape({
-      ignoreUser: React.PropTypes.func.isRequired
-    }),
+    ignoreUser: React.PropTypes.func.isRequired,
     user: React.PropTypes.shape({
       id: React.PropTypes.string.isRequired
     })
   };
 
-  ignoreUser = (e) => {
+  clickHandler = (e) => {
     e.preventDefault();
-    this.props.triggers.ignoreUser(this.props.user);
+    this.props.ignoreUser(this.props.user);
   };
 
   render() {
-    return <button className="button button-grey" onClick={this.ignoreUser}>Ignore</button>;
+    return <button className="button" onClick={this.clickHandler}>Ignore</button>;
   }
 }

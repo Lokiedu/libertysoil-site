@@ -36,6 +36,7 @@ export default class SideSuggestedUsers extends React.Component {
       unfollowUser: PropTypes.func.isRequired,
       ignoreUser: React.PropTypes.func.isRequired
     }),
+    ignoreUser: PropTypes.func.isRequired,
     users: PropTypes.arrayOf(PropTypes.shape({
       avatar: PropTypes.shape({
         url: PropTypes.string.isRequired
@@ -49,11 +50,9 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
-  ignoreUser(user) {
-    // animation of disappearing goes here
-
-    this.props.trigger.ignoreUser(user);
-  }
+  ignoreUser = (user) => {
+    this.props.ignoreUser(user);
+  };
 
   render() {
     const {
@@ -79,7 +78,7 @@ export default class SideSuggestedUsers extends React.Component {
               />
             </div>
 
-            <div className="layout__row layout__row-small">
+            <div className="layout__row layout__grid layout__row-small">
               <FollowButton
                 active_user={current_user}
                 following={i_am_following}
@@ -88,7 +87,7 @@ export default class SideSuggestedUsers extends React.Component {
               />
               <IgnoreButton
                 active_user={current_user}
-                triggers={ { ignoreUser: this.ignoreUser } }
+                ignoreUser={this.ignoreUser}
                 user={user}
               />
             </div>
