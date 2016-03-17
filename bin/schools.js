@@ -26,8 +26,8 @@ async function action() {
   let data = await asyncParse(csvText);
 
   spinner.text = 'preprocessing data';
-  const headers = data[1];
-  data.splice(0, 2);
+  const headers = data[0];
+  data.splice(0, 1);
 
   const assocData = data.map(row => {
     const obj = _.zipObject(headers, row);
