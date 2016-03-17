@@ -4,27 +4,33 @@ import fs from 'fs';
 
 import Promise from 'bluebird';
 import { parse } from 'csv';
-import _ from 'lodash';
 import knex from 'knex';
+import _ from 'lodash';
+import ora from 'ora';
 import slug from 'slug';
 
+import knexConfig from '../knexfile';
 
-let asyncParse = Promise.promisify(parse);
+
+const exec_env = process.env.DB_ENV || 'development';
+const asyncParse = Promise.promisify(parse);
 
 async function action() {
-  let exec_env = process.env.DB_ENV || 'development';
+  const spinner = ora('reading data');
+  spinner.start();
 
-  let root = await fs.realpathSync(`${__dirname}/..`);
-  let csvText = fs.readFileSync(`${root}/schools.csv`);
+  const root = await fs.realpathSync(`${__dirname}/..`);
+  const csvText = fs.readFileSync(`${root}/schools.csv`);
 
+  spinner.text = 'parsing data';
   let data = await asyncParse(csvText);
 
-  let headers = data[1];
-
+  spinner.text = 'preprocessing data';
+  const headers = data[1];
   data.splice(0, 2);
 
-  let assocData = data.map(row => {
-    let obj = _.zipObject(headers, row);
+  const assocData = data.map(row => {
+    const obj = _.zipObject(headers, row);
 
     delete obj[''];
     delete obj['-'];
@@ -32,7 +38,7 @@ async function action() {
     return obj;
   });
 
-  let insertData = _.uniq(assocData.map(obj => {
+  const insertData = _.uniq(assocData.map(obj => {
     const name = obj['School full official name'].trim();
 
     return {
@@ -41,9 +47,11 @@ async function action() {
     }
   }), 'url_name');
 
-  let Knex = knex(require(`${root}/knexfile.js`)[exec_env]);
+  spinner.text = 'connecting to DB';
+  const Knex = knex(knexConfig[exec_env]);
 
-  for (let rowData of insertData) {
+  spinner.text = 'executing DB queries';
+  for (const rowData of insertData) {
     try {
       await Knex('schools').insert(rowData);
     } catch (e) {
@@ -52,11 +60,12 @@ async function action() {
         .update({ name: rowData.name });
     }
   }
+
+  spinner.stop();
 }
 
 action()
   .then(() => {
-    process.stdout.write("=== DONE ===\n");
     process.exit();
   })
   .catch(e => {
