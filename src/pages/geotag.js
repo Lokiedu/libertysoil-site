@@ -28,10 +28,11 @@ import NotFound from './not-found';
 
 import {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 } from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
@@ -183,31 +184,37 @@ export class GeotagPage extends Component {
         </Header>
 
         <Page>
-          <PageCaption>
-            {title} <span className="page__caption_highlight">Education</span>
-          </PageCaption>
-          <PageHero>
-            <img src="/images/hero/welcome.jpg" />
-          </PageHero>
-          <PageBody className="page__body-up">
-            <Panel
-              title={title}
-              icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
-              toolbarPrimary={toolbarPrimary}
-              toolbarSecondary={toolbarSecondary}
-            >
-              Short wikipedia description about this location will be displayed here soon.
-            </Panel>
-          </PageBody>
-          <PageBody className="page__body-up">
-            <Sidebar current_user={current_user} />
-            <PageCenter>
-              <div className="page__content">
-                <River river={tagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
-              </div>
-            </PageCenter>
-            <SidebarAlt />
-          </PageBody>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageCaption>
+              {title} <span className="page__caption_highlight">Education</span>
+            </PageCaption>
+            <PageHero>
+              <img src="/images/hero/welcome.jpg" />
+            </PageHero>
+            <PageBody className="page__body-up">
+              <Panel
+                title={title}
+                icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
+                toolbarPrimary={toolbarPrimary}
+                toolbarSecondary={toolbarSecondary}
+              >
+                Short wikipedia description about this location will be displayed here soon.
+              </Panel>
+            </PageBody>
+            <PageBody className="page__body-up">
+              <PageContent>
+                <River
+                  river={tagPosts}
+                  posts={posts}
+                  users={users}
+                  current_user={current_user}
+                  triggers={triggers}
+                />
+              </PageContent>
+              <SidebarAlt />
+            </PageBody>
+          </PageMain>
         </Page>
         <Footer/>
       </div>

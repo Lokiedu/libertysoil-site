@@ -107,9 +107,15 @@
   }
 }
 
+.page__main {
+  flex: 1;
+  padding: @space;
+}
+
 .page__container {
   background: #f3f2f1;
   order: 10;
+  display: flex;
 
 // this needs to be changed @agat
 // min page height should be set instead
@@ -174,20 +180,12 @@
 }
 
 .page__content {
-  padding: 10px;
+  padding: @space 0;
   flex: 1;
 
   &-horizontal_space {
     padding-top: 0;
     padding-bottom: 0;
-  }
-
-  &-spacing {
-    padding: @space * 3;
-
-    @media @before-normal {
-      padding: @space;
-    }
   }
 
   &-fill {

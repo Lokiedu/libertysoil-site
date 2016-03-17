@@ -22,22 +22,31 @@ const PageHero = ({ children }) => (
   </div>
 );
 
-const PageBody = ({ children, className, ...props }) => (
+const PageMain = ({ children, className = '', ...props }) => (
+  <div className={`page__main ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+const PageBody = ({ children, className = '', ...props }) => (
   <div className={`page__body ${className}`} {...props}>
     {children}
   </div>
 );
 
-const PageCenter = ({ children }) => (
+const PageContent = ({ children }) => (
   <div className="page__body_content">
-    {children}
+    <div className="page__content">
+      {children}
+    </div>
   </div>
 );
 
 export {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 }

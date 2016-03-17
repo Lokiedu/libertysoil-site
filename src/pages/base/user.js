@@ -80,7 +80,7 @@ export default class BaseUserPage extends React.Component {
                 followers={followers}
                 triggers={this.props.triggers} />
 
-              <div className="page__content page__content-horizontal_space">
+              <div className="page__content">
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
