@@ -199,7 +199,7 @@ export class GeotagPage extends Component {
               Short wikipedia description about this location will be displayed here soon.
             </Panel>
           </PageBody>
-          <PageBody>
+          <PageBody className="page__body-up">
             <Sidebar current_user={current_user} />
             <PageCenter>
               <div className="page__content">
