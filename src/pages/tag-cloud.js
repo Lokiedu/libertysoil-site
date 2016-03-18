@@ -19,6 +19,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  Page,
+  PageMain,
+  PageCaption,
+  PageBody,
+  PageContent
+} from '../components/page';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs';
@@ -55,21 +62,19 @@ class TagCloudPage extends Component {
           </Breadcrumbs>
         </Header>
 
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={current_user} />
-            <div className="page__body_content">
-              <div className="page__content page__content-spacing">
-                <div className="layout__row">
-                  <div className="head">Tag cloud</div>
-                </div>
+        <Page>
+          <Sidebar current_user={this.props.current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
                   <TagCloud hashtags={this.props.tag_cloud}/>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>
