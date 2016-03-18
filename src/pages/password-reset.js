@@ -81,7 +81,7 @@ export class Form extends React.Component {
         <Helmet title="Reset Password for " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
-            className="header-transparent header-transparent_border"
+            className="header-transparent"
           />
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
