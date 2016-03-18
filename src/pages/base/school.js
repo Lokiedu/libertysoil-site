@@ -20,10 +20,11 @@ import { Link, IndexLink } from 'react-router';
 
 import {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 }                       from '../../components/page';
 import Header           from '../../components/header';
 import HeaderLogo       from '../../components/header-logo';
@@ -61,52 +62,54 @@ export default class BaseSchoolPage extends React.Component {
         </Header>
 
         <Page>
-          <PageCaption>
-            {page_school.name}
-          </PageCaption>
-          <PageHero>
-            <img src="/images/hero/welcome.jpg" />
-          </PageHero>
-          <PageBody className="page__body-up">
-            <SchoolHeader
-              is_logged_in={is_logged_in}
-              school={page_school}
-              current_user={current_user}
-              triggers={triggers}
-            />
-          </PageBody>
-          <PageBody className="page__body-up">
-            <Sidebar current_user={current_user}/>
-            <PageCenter>
-              <div className="layout__space-double">
-                <div className="layout__grid tabs">
-                  <div className="layout__grid_item">
-                    <IndexLink
-                      activeClassName="tabs__link-active"
-                      className="tabs__link"
-                      to={`/s/${page_school.url_name}`}
-                    >
-                      About
-                    </IndexLink>
-                  </div>
-                  <div className="layout__grid_item">
-                    <PageContentLink
-                      activeClassName="tabs__link-active"
-                      className="tabs__link"
-                      to={`/s/${page_school.url_name}/edit`}
-                      visible={true}
-                    >
-                      Edit
-                    </PageContentLink>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageCaption>
+              {page_school.name}
+            </PageCaption>
+            <PageHero>
+              <img src="/images/hero/welcome.jpg" />
+            </PageHero>
+            <PageBody className="page__body-up">
+              <SchoolHeader
+                is_logged_in={is_logged_in}
+                school={page_school}
+                current_user={current_user}
+                triggers={triggers}
+              />
+            </PageBody>
+            <PageBody className="page__body-up">
+              <PageContent>
+                <div className="layout__space-double">
+                  <div className="layout__grid tabs">
+                    <div className="layout__grid_item">
+                      <IndexLink
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${page_school.url_name}`}
+                      >
+                        About
+                      </IndexLink>
+                    </div>
+                    <div className="layout__grid_item">
+                      <Link
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${page_school.url_name}/edit`}
+                        visible={true}
+                      >
+                        Edit
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="layout__row">
-                {this.props.children}
-              </div>
-            </PageCenter>
-            <SidebarAlt />
-          </PageBody>
+                <div className="layout__row">
+                  {this.props.children}
+                </div>
+              </PageContent>
+              <SidebarAlt />
+            </PageBody>
+          </PageMain>
         </Page>
 
         <Footer/>
