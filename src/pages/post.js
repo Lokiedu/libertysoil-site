@@ -39,7 +39,7 @@ import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import { addPost, setRelatedPosts } from '../actions';
+import { addPost, setRelatedPosts, setPostComments } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
@@ -55,10 +55,10 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let post = client.postInfo(params.uuid);
+    let post = await client.postInfo(params.uuid);
     let relatedPosts = client.relatedPosts(params.uuid);
-
-    store.dispatch(addPost(await post));
+    store.dispatch(addPost(post));
+    store.dispatch(setPostComments(post.id, post.post_comments));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
   }
 
@@ -92,7 +92,7 @@ export class PostPage extends React.Component {
     if (author.more && (author.more.firstName || author.more.lastName)) {
       authorName = `${author.more.firstName} ${author.more.lastName}`;
     }
-
+    console.log('post page comments', this.props.comments);
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />

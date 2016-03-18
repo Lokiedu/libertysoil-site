@@ -15,32 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import i from 'immutable';
 
-import bem from '../../utils/bemClassNames';
-import PostFooter from './footer';
-import Preview from './preview';
+import * as a from '../actions';
 
-let PostWrapper = (props) => {
-  let cardClassName = bem.makeClassName({
-    block: 'card',
-    modifiers: {
-      full: props.showComments
+
+const initialState = i.Map({});
+
+export default function reducer(state=initialState, action) {
+  console.log(action);
+  switch (action.type) {
+    case a.SET_POST_COMMENTS: {
+      state = state.set(action.post_id, i.fromJS(action.comments));
+      break;
     }
-  });
+  }
 
-  return (
-    <section className={cardClassName}>
-      <Preview post={props.post}/>
-
-      <div className="card__content">
-        {props.children}
-      </div>
-
-      <PostFooter author={props.author} current_user={props.current_user} post={props.post} triggers={props.triggers}/>
-
-    </section>
-  );
-};
-
-export default PostWrapper;
+  return state;
+}
