@@ -121,6 +121,17 @@ export default class EditPost extends React.Component {
     this.props.actions.resetEditPostForm();
   };
 
+  _handleKeydown = (e) => {
+    const ENTER = 13;
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === ENTER) {
+        const submit = new Event('submit');
+        this.refs.form.dispatchEvent(submit);
+      }
+    }
+  };
+
   _handleDelete = async (event) => {
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
       try {
@@ -202,7 +213,7 @@ export default class EditPost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit}>
+        <form ref="form" onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <input type="hidden" name="id" value={post.id} />
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
