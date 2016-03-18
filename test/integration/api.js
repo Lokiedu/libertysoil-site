@@ -167,6 +167,10 @@ describe('api v.1', () => {
         await expect({ url: `/api/v1/resetpassword` }, 'to open authorized');
       });
 
+      it('AUTHORIZED TO read posts by geotag', async () => {
+        await expect(`/api/v1/posts/geotag/foo`, 'to open authorized');
+      });
+
       it('NOT AUTHORIZED TO read subscriptions', async () => {
         await expect({ url: '/api/v1/posts' }, 'not to open authorized');
       });
@@ -257,6 +261,10 @@ describe('api v.1', () => {
 
       it('NOT AUTHORIZED TO pickpoint', async () => {
         await expect({ url: `/api/v1/pickpoint` }, 'not to open authorized');
+      });
+
+      it('NOT AUTHORIZED TO get recent geotags', async () => {
+        await expect({ url: `/api/v1/user/recent-geotags` }, 'not to open authorized');
       });
 
     });
@@ -363,6 +371,10 @@ describe('api v.1', () => {
 
       it('AUTHORIZED TO process image', async () => {
         await expect({ url: `/api/v1/image`, method: 'POST', session: sessionId }, 'to open authorized');
+      });
+
+      it('AUTHORIZED TO get recent geotags', async () => {
+        await expect({ url: `/api/v1/user/recent-geotags`, session: sessionId }, 'to open authorized');
       });
 
       // TODO: in controller http request to pickopint must be isolated in a component
@@ -862,7 +874,19 @@ describe('api v.1', () => {
             );
           });
         });
+
+        describe('Geotags', () => {
+
+          it('Non existing geotag page should answer "Not found"', async () => {
+            await expect(
+              { url: `/api/v1/posts/geotag/non-existing-geotag` } ,
+              'to open not found'
+            );
+          });
+
+        });
       });
+
     });
   });
 });
