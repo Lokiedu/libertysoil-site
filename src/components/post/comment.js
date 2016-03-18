@@ -17,24 +17,13 @@
  */
 
 import React from 'react';
-import _ from 'lodash';
-import Comment from './comment';
 
-let Comments = (props) => {
-
+let Comment = (props) => {
     return (
-        <div className="card__comments">
-            {
-                _.values(props.comments).map(comment => {
-                    return (
-                        <Comment {...comment} />
-                    )
-                })
-            }
-
+        <div className="card__comment">
+            {props.text}
         </div>
     );
 
 };
-
-export default Comments;
+export default Comment;

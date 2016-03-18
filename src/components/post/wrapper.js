@@ -20,6 +20,8 @@ import React from 'react';
 import bem from '../../utils/bemClassNames';
 import PostFooter from './footer';
 import Preview from './preview';
+import Comments from './comments';
+
 
 let PostWrapper = (props) => {
   let cardClassName = bem.makeClassName({
@@ -38,6 +40,7 @@ let PostWrapper = (props) => {
       </div>
 
       <PostFooter author={props.author} current_user={props.current_user} post={props.post} triggers={props.triggers}/>
+      <Comments comments={props.comments}/>
 
     </section>
   );

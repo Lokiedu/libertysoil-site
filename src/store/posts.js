@@ -77,6 +77,13 @@ export default function reducer(state=initialState, action) {
       }
       break;
     }
+
+    case a.SET_POST_COMMENTS: {
+      if (action.post_id && action.comments) {
+        state = state.setIn([action.post_id, 'comments'], action.comments.length);
+      }
+      break;
+    }
   }
 
   return state;

@@ -92,7 +92,9 @@ export class PostPage extends React.Component {
     if (author.more && (author.more.firstName || author.more.lastName)) {
       authorName = `${author.more.firstName} ${author.more.lastName}`;
     }
-    console.log('post page comments', this.props.comments);
+
+    let current_post_comments = this.props.comments[current_post.id];
+
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />
@@ -118,6 +120,7 @@ export class PostPage extends React.Component {
                   author={author}
                   current_user={this.props.current_user}
                   post={current_post}
+                  comments={current_post_comments}
                   showComments={true}
                   triggers={triggers}
                 >
