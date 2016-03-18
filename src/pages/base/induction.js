@@ -61,18 +61,7 @@ export default class BaseInductionPage extends React.Component {
             </PageBody>
           </PageMain>
         </Page>
-
-        <div className="page__container">
-          <div className="page__body">
-
-            <div className="page__body_content">
-              <div className="page__content page__content-spacing">
-
-              </div>
-            </div>
-          </div>
-        </div>
-
+        
         <Footer/>
       </div>
     );

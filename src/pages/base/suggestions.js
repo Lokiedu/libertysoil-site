@@ -17,6 +17,13 @@
  */
 import React from 'react';
 
+import {
+  Page,
+  PageMain,
+  PageCaption,
+  PageBody,
+  PageContent
+} from '../../components/page';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Messages from '../../components/messages';
@@ -37,26 +44,18 @@ export default class BaseSuggestionsPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}/>
 
-        <div className="page__container">
-          <div className="page__body">
-
-            <div className="page__body_content">
-              <div className="page__content page__content-spacing">
+        <Page className="page__container-no_sidebar">
+          <PageMain>
+            <PageBody>
+              <PageContent>
                 <Messages messages={messages} removeMessage={triggers.removeMessage} />
-                <div className="paper layout">
-                  <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                      {children}
-                  </div>
+                <div className="paper">
+                  {children}
                 </div>
-                {/*
-                <div className="void">
-                  <span className="button button-green action" onClick={onNext}>{next_caption}</span>
-                </div>
-                */}
-              </div>
-            </div>
-          </div>
-        </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>
