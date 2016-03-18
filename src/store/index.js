@@ -130,8 +130,6 @@ const initialState = i.Map({
   ui: ui.initialState
 });
 
-console.info('ui.initialState', ui.initialState);
-
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
 const finalCreateStore = compose(
   browserHasDevTools ? window.devToolsExtension() : f => f

@@ -19,6 +19,14 @@ import React from 'react';
 import { IndexLink } from 'react-router';
 import Gravatar from 'react-gravatar';
 
+import {
+  Page,
+  PageMain,
+  PageCaption,
+  PageHero,
+  PageBody,
+  PageContent
+} from '../../components/page';
 import Breadcrumbs from '../../components/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
@@ -67,20 +75,19 @@ export default class BaseUserPage extends React.Component {
           </div>
         </Header>
 
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={current_user}/>
-
-            <div className="page__body_content">
-              <ProfileHeader
-                user={page_user}
-                current_user={current_user}
-                i_am_following={i_am_following}
-                following={following}
-                followers={followers}
-                triggers={this.props.triggers} />
-
-              <div className="page__content">
+        <Page>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <ProfileHeader
+                  user={page_user}
+                  current_user={current_user}
+                  i_am_following={i_am_following}
+                  following={following}
+                  followers={followers}
+                  triggers={this.props.triggers}
+                />
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
@@ -125,11 +132,10 @@ export default class BaseUserPage extends React.Component {
                 <div className="layout__row layout__row-double">
                   {this.props.children}
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
         <Footer/>
       </div>
     );
