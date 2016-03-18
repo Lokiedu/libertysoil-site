@@ -48,7 +48,7 @@ describe('Auth page with redux', function() {
 
     return expect(
       renderer,
-      'to have rendered',
+      'to contain',
       <div>
         <Messages messages={[{message: 'Im foo message'}]} />
       </div>
