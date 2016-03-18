@@ -19,26 +19,48 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import { defaultSelector } from '../selectors';
 import Header from '../components/header';
+import Sidebar from '../components/sidebar';
 
 
 class NotFound extends React.Component {
   render() {
+    const {
+      is_logged_in,
+      current_user
+    } = this.props;
+    let pageClassName = null;
+
+    if (!is_logged_in) {
+      pageClassName = 'page__container-no_sidebar';
+    }
+
     return (
       <div>
         <Helmet title="Page not found at " />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
 
-        <div className="page__container">
-          <div className="page__body">
-            <section className="card">
-              <div className="card__content">
-                <p><strong>Page Not Found</strong></p>
-              </div>
-            </section>
-          </div>
-        </div>
+          <Page className={pageClassName}>
+            <Sidebar current_user={current_user} />
+            <PageMain>
+              <PageBody>
+                <PageContent>
+                  <section className="box">
+                    <div className="box__title">
+                      <p><strong>Page Not Found</strong></p>
+                    </div>
+                  </section>
+                </PageContent>
+              </PageBody>
+            </PageMain>
+          </Page>
       </div>
     )
   }
