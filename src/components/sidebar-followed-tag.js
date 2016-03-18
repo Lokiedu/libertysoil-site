@@ -40,7 +40,12 @@ export default class SidebarFollowedTag extends React.Component {
     }
 
     return (
-      <Link className={`followed_tag ${className}`} title={name} to={url}>
+      <Link
+        className={`followed_tag ${className}`}
+        activeClassName="followed_tag-active"
+        title={name}
+        to={url}
+      >
         <TagIcon className="followed_tag__icon" small type={type} />
         <span className="followed_tag__name">{truncatedName}</span>
       </Link>

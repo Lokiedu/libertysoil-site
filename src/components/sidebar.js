@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 
 import { toggleUISidebar } from '../actions';
 
+import Navigation from './navigation';
 import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
@@ -113,12 +114,11 @@ class Sidebar extends React.Component {
 
     return (
       <div className={sidebarClassName.join(' ')}>
-        <div className="sidebar__user">
-          <CurrentUser user={current_user.user} />
-        </div>
-
-        <div className="navigation navigation-sidebar">
-          <NavigationItem enabled to="/" icon="star" icon="public">News Feed</NavigationItem>
+        <Navigation className="navigation-first">
+          <NavigationItem enabled to="/" icon="public">News Feed</NavigationItem>
+          <div className="navigation__item sidebar__user">
+            <CurrentUser user={current_user.user} />
+          </div>
           {showLikes &&
             <NavigationItem
               enabled
@@ -137,21 +137,21 @@ class Sidebar extends React.Component {
               My Favorites
             </NavigationItem>
           }
-        </div>
+        </Navigation>
 
         {showFollowedTags &&
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I follow</h4>
-            <div className="layout__row">
+            <Navigation>
               <SidebarFollowedTags geotags={followedGeotags} hashtags={followedTags} schools={followedSchools} />
-            </div>
+            </Navigation>
           </div>
         }
 
         {showUsedTags &&
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I post to</h4>
-            <div className="sidebar__user_tags layout__row">
+            <div className="sidebar__user_tags">
               <TagCloud
                 hashtags={current_user.hashtags}
                 schools={[]}
