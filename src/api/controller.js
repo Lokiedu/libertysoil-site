@@ -73,7 +73,7 @@ export default class ApiController {
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
     let post_comments_count = await this.countComments(posts);
-    
+
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       post.attributes.comments = post_comments_count[post.get('id')];
@@ -137,47 +137,49 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const Geotag = this.bookshelf.model('Geotag');
 
-    const geotag = await Geotag
-      .forge()
-      .where({url_name: req.params.url_name})
-      .fetch();
+    try {
+      const geotag = await Geotag
+        .forge()
+        .where({url_name: req.params.url_name})
+        .fetch({require: true});
 
-    let posts = await Post
-      .collection()
-      .query(qb => {
-        qb
-          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-          .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-          .orderBy('posts.created_at', 'desc')
-          .distinct();
+      let posts = await Post
+        .collection()
+        .query(qb => {
+          qb
+             .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+             .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+             .orderBy('posts.created_at', 'desc')
+             .distinct();
 
-        switch (geotag.attributes.type) {
-          case 'Continent':
-            qb.where('geotags.continent_code', geotag.attributes.continent_code);
-            break;
-          case 'Country':
-            qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
-            break;
-          case 'AdminDivision1':
-            qb.where('geotags.geonames_admin1_id', geotag.attributes.geonames_admin1_id);
-            break;
-          case 'City':
-            qb.where('geotags.id', geotag.id);
-            break;
-          case 'Planet':
-            // There are no planets besides Earth yet.
-            break;
-        }
-      })
-      .fetch({withRelated: POST_RELATIONS});
-    let post_comments_count = await this.countComments(posts);
-    posts = posts.serialize();
-    posts.forEach(post => {
-      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
-      post.attributes.comments = post_comments_count[post.get('id')];
-    });
+           switch (geotag.attributes.type) {
+           case 'Continent':
+             qb.where('geotags.continent_code', geotag.attributes.continent_code);
+             break;
+           case 'Country':
+             qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
+             break;
+           case 'City':
+             qb.where('geotags.id', geotag.id);
+             break;
+           case 'Planet':
+             // There are no planets besides Earth yet.
+             break;
+           }
+         })
+         .fetch({withRelated: POST_RELATIONS});
+      let post_comments_count = await this.countComments(posts);
+      posts = posts.serialize();
+      posts.forEach(post => {
+        post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+        post.attributes.comments = post_comments_count[post.get('id')];
+      });
 
-    res.send(posts);
+      res.send(posts);
+    } catch (e) {
+      res.sendStatus(404);
+      return;
+    }
   }
 
 
@@ -653,7 +655,7 @@ export default class ApiController {
 
     res.send(posts);
   }
-  
+
   async checkUserExists(req, res) {
     let User = this.bookshelf.model('User');
 
