@@ -493,6 +493,26 @@ export class ActionsTrigger {
     }
   };
 
+  checkSchoolExists = async (name) => {
+    try {
+      let result = await this.client.checkSchoolExists(name);
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  checkGeotagExists = async (name) => {
+    try {
+      let result = await this.client.checkGeotagExists(name);
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
   loadSchoolCloud = async () => {
     try {
       let result = await this.client.schoolCloud();

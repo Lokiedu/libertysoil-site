@@ -32,13 +32,28 @@ export default class AddGeotagForm extends Component {
       id: PropTypes.string
     })).isRequired,
     onAddGeotag: PropTypes.func.isRequired,
-    userRecentGeotags: PropTypes.array.isRequired
+    userRecentGeotags: PropTypes.array.isRequired,
+    triggers: PropTypes.shape({
+      checkGeotagExists: PropTypes.func.isRequired
+    })
   };
 
   _selectRecentlyUsedGeotag = (tag) => {
     const index = _.findIndex(this.props.userRecentGeotags, t => t.url_name === tag.urlId);
     this._addTag(this.props.userRecentGeotags[index]);
   };
+
+  submitHandler = async (e) => {
+    e.preventDefault();
+
+    const name = this._input.getValue();
+    const exists = await this.props.triggers.checkGeotagExists(name);
+
+    if (exists) {
+      const model = this._input.getFirstOverlapModel();
+      this._addTag(model);
+    }
+  }
 
   _addTag = (geotag) => {
     let { addedGeotags } = this.props;
@@ -68,22 +83,20 @@ export default class AddGeotagForm extends Component {
               Enter manually
             </TabTitle>
             <TabContent>
-              <div className="layout">
-                <div className="layout__grid_item layout__grid_item-wide">
-                  <form ref="form" onSubmit={preventDefault}>
+              <form onSubmit={this.submitHandler}>
+                <div className="layout">
+                  <div className="layout__grid_item layout__grid_item-wide">
                     <GeotagSelect
                       placeholder="Start typing..."
                       ref={(c) => this._input = c}
                       onSelect={this._addTag}
                     />
-                  </form>
+                  </div>
+                  <div className="layout__grid_item">
+                    <input type="submit" value="Add" className="button button-wide add_tag_modal__add_button action" />
+                  </div>
                 </div>
-                <div className="layout__grid_item">
-                  <span className="button button-wide add_tag_modal__add_button action">
-                    Add
-                  </span>
-                </div>
-              </div>
+              </form>
             </TabContent>
           </Tab>
           <Tab>
