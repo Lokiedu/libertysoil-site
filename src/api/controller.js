@@ -1972,7 +1972,7 @@ export default class ApiController {
         qb
           .where('name', 'ILIKE',  `${req.params.query}%`)
           .limit(10);
-      }).fetch(/*{withRelated: 'place'}*/);
+      }).fetch({withRelated: ['country', 'admin1']});
 
       res.send({geotags});
     } catch (e) {
