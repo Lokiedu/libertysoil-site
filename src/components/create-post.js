@@ -65,7 +65,7 @@ export default class CreatePost extends React.Component {
   };
 
   onClickOutside = () => {
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       this.setState({
@@ -77,7 +77,7 @@ export default class CreatePost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
@@ -118,7 +118,7 @@ export default class CreatePost extends React.Component {
     if (e.ctrlKey || e.metaKey) {
       if (e.keyCode === ENTER) {
         const submit = new Event('submit');
-        this.refs.form.dispatchEvent(submit);
+        this.form.dispatchEvent(submit);
       }
     }
   };
@@ -178,7 +178,7 @@ export default class CreatePost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
+        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">

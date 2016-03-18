@@ -100,7 +100,7 @@ export default class EditPost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
@@ -119,6 +119,17 @@ export default class EditPost extends React.Component {
     this.props.onSubmit(event);
 
     this.props.actions.resetEditPostForm();
+  };
+
+  _handleKeydown = (e) => {
+    const ENTER = 13;
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === ENTER) {
+        const submit = new Event('submit');
+        this.form.dispatchEvent(submit);
+      }
+    }
   };
 
   _handleDelete = async (event) => {
@@ -202,7 +213,7 @@ export default class EditPost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit}>
+        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <input type="hidden" name="id" value={post.id} />
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
