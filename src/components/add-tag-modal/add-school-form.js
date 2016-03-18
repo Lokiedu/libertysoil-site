@@ -19,7 +19,6 @@ import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
 import SchoolSelect from './school-select';
-import { preventDefault } from '../../utils/preventDefault';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
 import TagCloud from '../tag-cloud';
 
@@ -44,6 +43,18 @@ export default class AddSchoolForm extends Component {
   _selectRecentlyUsedSchool = (tag) => {
     const index = _.findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
     this._addTag(this.props.userRecentSchools[index]);
+  };
+
+  submitHandler = async (e) => {
+    e.preventDefault();
+
+    const name = this._input.getValue();
+    const exists = await this.props.triggers.checkSchoolExists(name);
+
+    if (exists) {
+      const model = this._input.getFirstOverlapModel();
+      this._addTag(model);
+    }
   };
 
   _addTag = (school) => {
@@ -74,7 +85,7 @@ export default class AddSchoolForm extends Component {
               Enter manually
             </TabTitle>
             <TabContent>
-              <form onSubmit={preventDefault}>
+              <form onSubmit={this.submitHandler}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
                     <SchoolSelect
@@ -85,9 +96,7 @@ export default class AddSchoolForm extends Component {
                     />
                   </div>
                   <div className="layout__grid_item">
-                    <button className="button button-wide add_tag_modal__add_button action">
-                      Add
-                    </button>
+                    <input type="submit" value="Add" className="button button-wide add_tag_modal__add_button action" />
                   </div>
                 </div>
               </form>

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 
 import Autosuggest from './../autosuggest';
 
@@ -44,6 +45,14 @@ export default class SchoolSelect extends Component {
     this.setState({
       value: ''
     });
+  }
+
+  getValue() {
+    return this.state.value;
+  }
+
+  getFirstOverlapModel() {
+    return _.find(this.state.suggestions, s => s.name === this.state.value);
   }
 
   _getSuggestions = ({ value }) => {
