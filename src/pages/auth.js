@@ -127,14 +127,6 @@ export class Auth extends React.Component {
           </PageMain>
         </Page>
 
-
-
-        <div className="page__content page__content-spacing">
-          <div className="page__body page__body-small">
-
-          </div>
-        </div>
-
         <Footer/>
       </div>
     );
