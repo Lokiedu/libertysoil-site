@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Page = ({ children }) => (
-  <div className="page__container">
+const Page = ({ children, className = '' }) => (
+  <div className={`page__container ${className}`}>
     {children}
   </div>
 );
