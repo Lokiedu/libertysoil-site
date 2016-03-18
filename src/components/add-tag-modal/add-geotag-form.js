@@ -19,7 +19,6 @@ import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
 import GeotagSelect from './geotag-select';
-import { preventDefault } from '../../utils/preventDefault';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
 import TagCloud from '../tag-cloud';
 

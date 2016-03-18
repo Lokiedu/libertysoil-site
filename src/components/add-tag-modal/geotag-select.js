@@ -45,7 +45,7 @@ export default class GeotagSelect extends Component {
   }
 
   getFirstOverlapModel() {
-    return _.find(this.state.suggestions, (s) => s.name === this.state.value);
+    return _.find(this.state.suggestions, s => s.name === this.state.value);
   }
 
   reset() {
@@ -62,7 +62,6 @@ export default class GeotagSelect extends Component {
 
     let client = new ApiClient(API_HOST);
     let response = await client.searchGeotags(value.trim());
-    console.log(response);
 
     this.setState({suggestions: response.geotags.slice(0, 5)});
   }, 300);
