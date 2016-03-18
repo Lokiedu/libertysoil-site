@@ -26,12 +26,14 @@ import initBookshelf from '../../../src/api/db';
 
 let bookshelf = initBookshelf($dbConfig);
 let Post = bookshelf.model('Post');
+let School = bookshelf.model('School');
 
-describe('Tag Cloud page', () => {
-  let post;
+describe('School Cloud page', () => {
+  let post, school;
 
   before(async () => {
     await bookshelf.knex('posts').del();
+    await bookshelf.knex('schools').del();
 
     post = new Post({
       id: uuid4(),
@@ -39,23 +41,30 @@ describe('Tag Cloud page', () => {
       text: 'Lorem ipsum'
     });
 
+    school = new School({
+      id: uuid4(),
+      name: 'foo-school'
+    });
+
     await post.save(null, {method: 'insert'});
-    await post.attachHashtags(['foo-hashtag-name']);
+    await school.save(null, {method: 'insert'});
+    await post.attachSchools(['foo-school']);
   });
 
   after(async () => {
     await post.destroy();
+    await school.destroy();
   });
 
-  it('can open tag page and see cloud', async () => {
-    let context = await expect({ url: '/tag' }, 'to open successfully');
+  it('can open school page and see cloud', async () => {
+    let context = await expect({ url: '/s' }, 'to open successfully');
 
     let document = jsdom(context.httpResponse.body);
     let tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
-    await expect(tagsContent, 'to have child', '.tag__name');  // posting form
+    await expect(tagsContent, 'to have child', '.tag__name');
 
     let tag = await expect(tagsContent, 'queried for first', '.tag__name');
-    await expect(tag, 'to have text', 'foo-hashtag-name');
+    await expect(tag, 'to have text', 'foo-school');
 
   });
 
