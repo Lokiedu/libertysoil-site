@@ -104,6 +104,14 @@ expect.addAssertion('not to open authorized', function (expect, subject, value) 
   });
 });
 
+expect.addAssertion('to open not found', function (expect, subject, value) {
+  return expect(subjectToRequest(subject), 'to yield response', {})
+    .then(function (context) {
+    const status = context.httpResponse.statusLine.statusCode;
+    expect(status, 'to equal', 404);
+  });
+});
+
 expect.addAssertion('to validation fail with', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
     statusCode: 400
