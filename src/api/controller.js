@@ -158,6 +158,9 @@ export default class ApiController {
           case 'Country':
             qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
             break;
+          case 'AdminDivision1':
+            qb.where('geotags.geonames_admin1_id', geotag.attributes.geonames_admin1_id);
+            break;
           case 'City':
             qb.where('geotags.id', geotag.id);
             break;
@@ -1952,7 +1955,7 @@ export default class ApiController {
       let geotag = await Geotag
         .forge()
         .where('url_name', req.params.url_name)
-        .fetch({require: true, withRelated: ['country', 'city', 'continent']});
+        .fetch({require: true, withRelated: ['country', 'admin1', 'city', 'continent']});
 
       res.send(geotag);
     } catch (e) {
