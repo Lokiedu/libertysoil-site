@@ -1,63 +1,62 @@
-/* eslint-env node, mocha */
-import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../../test-helpers/expect-unit';
-import { TagPage } from '../../../src/pages/tag';
 /*
-describe('TagPage', function () {
-  describe('FollowTagButton', function () {
-    it('renders "Follow" button when a user doesn\'t follow the tag', function() {
-      let user = {
-        email: 'test@test.test',
-        followed_tags: {}
-      };
+ This file is a part of libertysoil.org website
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
-      let params = {
-        tag: 'TestTag1'
-      };
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-      let component = TestUtils.renderIntoDocument(
-        <TagPage
-          current_user={user}
-          params={params}
-          posts={[]}
-          tag_posts={[]}
-          users={[]}
-        />
-      );
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
 
-      expect(component, 'to have rendered',
-        <button className="button button-green">Follow</button>
-      );
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* eslint-env node, mocha */
+/* global $dbConfig */
+import { jsdom } from 'jsdom';
+import { v4 as uuid4 } from 'uuid';
+
+import expect from '../../../test-helpers/expect';
+import initBookshelf from '../../../src/api/db';
+
+
+let bookshelf = initBookshelf($dbConfig);
+let Post = bookshelf.model('Post');
+
+describe('Tag Cloud page', () => {
+  let post;
+
+  before(async () => {
+    await bookshelf.knex('posts').del();
+
+    post = new Post({
+      id: uuid4(),
+      type: 'short_text',
+      text: 'Lorem ipsum'
     });
 
-    it('renders "Following" button when a user follows the tag', function() {
-      let user = {
-        email: 'test@test.test',
-        followed_tags: {
-          TestTag: {
-            name: 'TestTag'
-          }
-        }
-      };
-
-      let params = {
-        tag: 'TestTag'
-      };
-
-      let component = TestUtils.renderIntoDocument(
-        <TagPage
-          current_user={user}
-          is_logged_in
-          params={params}
-          posts={[]}
-          tag_posts={[]}
-          users={[]}
-        />
-      );
-
-      expect(component, 'to have rendered',
-        <button className="button button-yellow">Following</button>
-      );
-    });
+    await post.save(null, {method: 'insert'});
+    await post.attachHashtags(['foo-hashtag-name']);
   });
+
+  after(async () => {
+    await post.destroy();
+  });
+
+  it('can open tag page and see cloud', async () => {
+    let context = await expect({ url: '/tag' }, 'to open successfully');
+
+    let document = jsdom(context.httpResponse.body);
+    let tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
+    await expect(tagsContent, 'to have child', '.tag__name');  // posting form
+
+    let tag = await expect(tagsContent, 'queried for first', '.tag__name');
+    await expect(tag, 'to have text', 'foo-hashtag-name');
+
+  });
+
 });
-*/
