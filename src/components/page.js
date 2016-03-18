@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Page = ({ children }) => (
-  <div className="page__container">
+const Page = ({ children, className = '' }) => (
+  <div className={`page__container ${className}`}>
     {children}
   </div>
 );
@@ -22,22 +22,29 @@ const PageHero = ({ children }) => (
   </div>
 );
 
-const PageBody = ({ children, className, ...props }) => (
+const PageMain = ({ children, className = '', ...props }) => (
+  <div className={`page__main ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+const PageBody = ({ children, className = '', ...props }) => (
   <div className={`page__body ${className}`} {...props}>
     {children}
   </div>
 );
 
-const PageCenter = ({ children }) => (
-  <div className="page__body_content">
+const PageContent = ({ children, className = '' }) => (
+  <div className={`page__content ${className}`}>
     {children}
   </div>
 );
 
 export {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 }

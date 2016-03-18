@@ -15,26 +15,69 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, {
+  Component
+} from 'react';
 import { Link } from 'react-router';
+import { connect } from 'react-redux';
 
+import { toggleUISidebar } from '../actions';
+import currentUserSelector from '../selectors/currentUser';
+import createSelector from '../selectors/createSelector';
 
-export default function HeaderLogo({ small }) {
-  let className = 'logo';
+class HeaderLogo extends Component {
+  toggleSidebar = () => {
+    const {
+      dispatch
+    } = this.props;
 
-  if (small) {
-    className += ' logo-size_small';
-  }
+    dispatch(toggleUISidebar());
+  };
 
-  return (
-    <div className="header__logo">
-      <Link
-        className={className}
-        title="Liberty Soil"
-        to="/"
-      >
+  render() {
+    const {
+      current_user,
+      small
+    } = this.props;
+    let className = ['logo'];
+    let logoBody = null;
+
+    if (small) {
+      className.push('logo-size_small');
+    }
+
+    logoBody = (
+      <div className={className.join(' ')}>
         <span className="logo__title">Liberty Soil</span>
+      </div>
+    );
+
+    if (current_user.get('id')) {
+      return (
+        <div
+          onClick={this.toggleSidebar}
+          className="header__logo action"
+        >
+          {logoBody}
+        </div>
+      );
+    }
+
+    return (
+      <Link to="/" className="header__logo action">
+        {logoBody}
       </Link>
-    </div>
-  );
+    );
+  }
 }
+
+const selector = createSelector(
+  state => state.get('ui'),
+  currentUserSelector,
+  (ui, current_user) => ({
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(HeaderLogo);

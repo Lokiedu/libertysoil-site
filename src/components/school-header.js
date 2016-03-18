@@ -86,6 +86,7 @@ export default class SchoolHeader extends React.Component {
           tag={school.url_name}
           triggers={likeTriggers}
           outline={true}
+          size="midl"
         />
       ];
 

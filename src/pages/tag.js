@@ -23,20 +23,30 @@ import Helmet from 'react-helmet';
 import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { setTagPosts } from '../actions';
-import Breadcrumbs from '../components/breadcrumbs';
-import Header from '../components/header';
-import HeaderLogo from '../components/header-logo';
-import Footer from '../components/footer';
-import River from '../components/river_of_posts';
-import Sidebar from '../components/sidebar';
-import SidebarAlt from '../components/sidebarAlt';
-import Tag from '../components/tag';
-import TagIcon from '../components/tag-icon';
-import FollowTagButton from '../components/follow-tag-button';
-import LikeTagButton from '../components/like-tag-button';
-import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
-import { TAG_HASHTAG } from '../consts/tags';
+
+import {
+  Page,
+  PageMain,
+  PageCaption,
+  PageHero,
+  PageBody,
+  PageContent
+}                           from '../components/page';
+import Breadcrumbs          from '../components/breadcrumbs';
+import Header               from '../components/header';
+import HeaderLogo           from '../components/header-logo';
+import Panel                from '../components/panel';
+import Footer               from '../components/footer';
+import River                from '../components/river_of_posts';
+import Sidebar              from '../components/sidebar';
+import SidebarAlt           from '../components/sidebarAlt';
+import Tag                  from '../components/tag';
+import TagIcon              from '../components/tag-icon';
+import FollowTagButton      from '../components/follow-tag-button';
+import LikeTagButton        from '../components/like-tag-button';
+import { ActionsTrigger }   from '../triggers';
+import { defaultSelector }  from '../selectors';
+import { TAG_HASHTAG }      from '../consts/tags';
 
 
 export class TagPage extends Component {
@@ -53,8 +63,14 @@ export class TagPage extends Component {
       current_user,
       posts,
       tag_posts,
-      users
+      users,
+      params
     } = this.props;
+
+    const tag = params.tag;
+
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -66,61 +82,71 @@ export class TagPage extends Component {
       unlikeTag: triggers.unlikeHashtag
     };
 
+    if (is_logged_in) {
+      toolbarSecondary = [
+        <LikeTagButton
+          key="like"
+          is_logged_in={is_logged_in}
+          liked_tags={current_user.liked_hashtags}
+          tag={tag}
+          triggers={likeTriggers}
+          outline={true}
+        />
+      ];
+
+      toolbarPrimary = [
+        <div key="posts" className="panel__toolbar_item-text">
+          {thisTagPosts.length} posts
+        </div>,
+        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <FollowTagButton
+          key="follow"
+          current_user={current_user}
+          followed_tags={followedTags}
+          tag={tag}
+          triggers={triggers}
+          className="button-midi"
+        />
+      ];
+    }
+
     return (
       <div>
-        <Helmet title={`"${this.props.params.tag}" posts on `} />
+        <Helmet title={`"${tag}" posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs>
-              <Link to="/tag" title="All Hashtags">
-                <TagIcon inactive type={TAG_HASHTAG} />
-              </Link>
-              <Tag name={this.props.params.tag} type={TAG_HASHTAG} urlId={this.props.params.tag} />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs>
+            <Link to="/tag" title="All Hashtags">
+              <TagIcon inactive type={TAG_HASHTAG} />
+            </Link>
+            <Tag name={this.props.params.tag} type={TAG_HASHTAG} urlId={this.props.params.tag} />
+          </Breadcrumbs>
         </Header>
-
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={current_user} />
-
-            <div className="page__body_content">
-              <div className="tag_header">
-                <div className="layout__grid_item layout__grid_item-wide">
-                  {this.props.params.tag}
-                </div>
-                {is_logged_in &&
-                  <div className="layout__grid layout-align_vertical">
-                    <div className="layout__grid_item layout__grid_item-wide">
-                      <LikeTagButton
-                        is_logged_in={is_logged_in}
-                        liked_tags={current_user.liked_hashtags}
-                        tag={this.props.params.tag}
-                        triggers={likeTriggers}
-                      />
-                    </div>
-                    <div className="layout__grid_item layout__grid_item-small">
-                      <FollowTagButton
-                        current_user={current_user}
-                        followed_tags={followedTags}
-                        tag={this.props.params.tag}
-                        triggers={triggers}
-                      />
-                    </div>
-                  </div>
-                }
-              </div>
-              <div className="page__content page__content-spacing">
+        <Page>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageCaption>
+              {tag}
+            </PageCaption>
+            <PageHero>
+              <img src="/images/hero/welcome.jpg" />
+            </PageHero>
+            <PageBody className="page__body-up">
+              <Panel
+                title={tag}
+                icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag} />}
+                toolbarPrimary={toolbarPrimary}
+                toolbarSecondary={toolbarSecondary}
+              ></Panel>
+            </PageBody>
+            <PageBody className="page__body-up layout__space_alt">
+              <PageContent>
                 <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
-                {/*<Followed/> */}
-                {/*<Tags/>*/}
-              </div>
-            </div>
-            <SidebarAlt />
-          </div>
-        </div>
-
+              </PageContent>
+              <SidebarAlt />
+            </PageBody>
+          </PageMain>
+        </Page>
         <Footer/>
       </div>
     )

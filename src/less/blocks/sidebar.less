@@ -16,14 +16,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .sidebar {
-  &__user_tags {
-    margin-left: 10px;
-  }
+  &:extend(.font-open_sans);
+  padding: @space;
+  width: @sidebarWidth;
+  box-sizing: border-box;
+  background: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  top: @headerHeight;
+  overflow: auto;
+  transform: translateX(-110%);
+  //transition: transform @transition__time @transition__function;
 
   &__heading {
-    margin-left: 10px;
     margin-bottom: 15px;
     font-size: 14px;
     color: #FF2658;
+  }
+
+  &-visible {
+    transform: translateX(0);
+  }
+
+  @media @before-base {
+    box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.09);
+    z-index: 100;
+  }
+}
+
+.sidebar__user {
+  padding: 7px;
+
+  .link {
+    border: none;
   }
 }

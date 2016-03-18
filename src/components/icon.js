@@ -1,5 +1,17 @@
 import React from 'react';
 
+import favorite from 'react-icons/lib/md/favorite';
+import favorite_border from 'react-icons/lib/md/favorite-border';
+import _public from 'react-icons/lib/md/public';
+import star from 'react-icons/lib/md/star';
+
+const icons = {
+  favorite,
+  favorite_border,
+  public: _public,
+  star
+};
+
 export default ({
   color,
   outline,
@@ -8,6 +20,7 @@ export default ({
   className,
   ...props
 }) => {
+  let Icon = icons[icon];
   let classnameIcon = ['icon'];
   let classnameIconPic = ['micon'];
 
@@ -15,11 +28,19 @@ export default ({
   outline && classnameIcon.push('icon-outline');
 
   color && classnameIconPic.push(`color-${color}`);
-  size && classnameIconPic.push(`micon-${size}`);
+
+  if (!Icon) {
+    return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
+  }
+
+  if (size) {
+    classnameIcon.push(`icon-${size}`);
+    classnameIconPic.push(`micon-${size}`);
+  }
 
   return (
     <div {...props} className={classnameIcon.join(' ')}>
-      <div className={classnameIconPic.join(' ')}>{icon}</div>
+      <Icon className={classnameIconPic.join(' ')} />
     </div>
   );
 }

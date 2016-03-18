@@ -22,6 +22,12 @@ import Gravatar from 'react-gravatar';
 import { truncate } from 'grapheme-utils';
 import { Link } from 'react-router';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs';
 import HeaderLogo from '../components/header-logo';
 import NotFound from './not-found'
@@ -92,39 +98,43 @@ export class PostPage extends React.Component {
         <Helmet title={`${current_post.more.pageTitle} on `} />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
           <HeaderLogo small />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs title={truncate(current_post.text, {length: 16})}>
-              <Link
-                className="user_box__avatar user_box__avatar-round"
-                title={authorName}
-                to={authorUrl}
-              >
-                <Gravatar default="retro" md5={author.gravatarHash} size={23} />
-              </Link>
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs title={truncate(current_post.text, {length: 16})}>
+            <Link
+              className="user_box__avatar user_box__avatar-round"
+              title={authorName}
+              to={authorUrl}
+            >
+              <Gravatar default="retro" md5={author.gravatarHash} size={23} />
+            </Link>
+          </Breadcrumbs>
         </Header>
 
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={this.props.current_user}/>
-
-            <div className="page__content">
-              <PostWrapper author={author} current_user={this.props.current_user} post={current_post} showComments={true} triggers={triggers}>
-                <ShortTextPost post={current_post}/>
-              </PostWrapper>
-            </div>
-
-            <SidebarAlt>
-              <RelatedPosts
-                current_user={this.props.current_user}
-                posts={relatedPosts}
-                triggers={triggers}
-                users={this.props.users}
-              />
-            </SidebarAlt>
-          </div>
-        </div>
+        <Page>
+          <Sidebar current_user={this.props.current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <PostWrapper
+                  author={author}
+                  current_user={this.props.current_user}
+                  post={current_post}
+                  showComments={true}
+                  triggers={triggers}
+                >
+                  <ShortTextPost post={current_post}/>
+                </PostWrapper>
+              </PageContent>
+              <SidebarAlt>
+                <RelatedPosts
+                  current_user={this.props.current_user}
+                  posts={relatedPosts}
+                  triggers={triggers}
+                  users={this.props.users}
+                />
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>

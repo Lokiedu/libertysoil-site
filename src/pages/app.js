@@ -50,14 +50,23 @@ export class App extends React.Component {
   }
 
   render() {
+    const {
+      ui
+    } = this.props;
+
     let gaContent = '';
+    let pageClassName = ['page'];
 
     if (process.env.GOOGLE_ANALYTICS_ID) {
       gaContent = <GAInitializer />;
     }
 
+    if (ui.sidebarIsVisible) {
+      pageClassName.push('page-with_sidebar');
+    }
+
     return (
-      <div className="page">
+      <div className={pageClassName.join(' ')}>
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {this.props.children}
         {gaContent}

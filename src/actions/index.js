@@ -79,6 +79,7 @@ export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
 export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
+export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
 
 export function addUser(user) {
   return {
@@ -483,5 +484,12 @@ export function setUIProgress(progress, value) {
     type: UI__SET_PROGRESS,
     progress,
     value
+  }
+}
+
+export function toggleUISidebar(isVisible) {
+  return {
+    type: UI__TOGGLE_SIDEBAR,
+    isVisible
   }
 }

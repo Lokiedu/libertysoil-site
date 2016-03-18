@@ -1,34 +1,18 @@
 .navigation {
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
+  margin: 0 -10px;
 
-  &-sidebar {
-    margin-right: -10px;
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    padding: 11px 0 11px 5px;
-
-    &-active {
-      background: #fff;
-    }
-
-    &-disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
+  &-first {
+    margin-top: -10px;
   }
 
   &__icon {
-    width: 24px;
-    margin: 0 5px 0 0;
-    color: #000;
-    opacity: 0.4;
+    margin: 0 7px 0 -1px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #999;
 
     .micon {
       font-size: 20px;
@@ -42,7 +26,6 @@
     display: block;
     white-space: nowrap;
     position: relative;
-    top: -1px;
   }
 
   &__badge {
@@ -50,5 +33,34 @@
     font-size: 12px;
     position: relative;
     top: -1px;
+  }
+}
+
+.navigation__item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+
+  &-active {
+    background: @color__red;
+    color: #fff;
+
+    .navigation__icon {
+      color: #fff;
+    }
+  }
+
+  &-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: @color__dark_gray;
+    color: #fff;
+
+    .navigation__icon {
+      color: #fff;
+    }
   }
 }
