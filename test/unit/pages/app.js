@@ -23,7 +23,7 @@ import { App } from '../../../src/pages/app';
 
 const props = {
   ui: {
-    sidebarIsVisible
+    sidebarIsVisible: false
   }
 }
 
