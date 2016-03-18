@@ -69,7 +69,9 @@ export default class EditPost extends React.Component {
     triggers: PropTypes.shape({
       updatePost: PropTypes.func.isRequired,
       deletePost: PropTypes.func.isRequired,
-      loadUserRecentTags: PropTypes.func.isRequired
+      loadUserRecentTags: PropTypes.func.isRequired,
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
     })
   };
 
@@ -276,6 +278,7 @@ export default class EditPost extends React.Component {
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
+          triggers={this.props.triggers}
           {...allModalTags}
         />
       </div>
