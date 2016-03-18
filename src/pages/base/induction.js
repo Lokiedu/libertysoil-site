@@ -20,7 +20,6 @@ import React from 'react';
 import {
   Page,
   PageMain,
-  PageCaption,
   PageBody,
   PageContent
 } from '../../components/page';
@@ -61,7 +60,7 @@ export default class BaseInductionPage extends React.Component {
             </PageBody>
           </PageMain>
         </Page>
-        
+
         <Footer/>
       </div>
     );
