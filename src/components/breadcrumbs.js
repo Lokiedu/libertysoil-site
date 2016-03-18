@@ -107,7 +107,7 @@ export default class Breadcrumbs extends Component {
     } = this.props;
 
     return (
-      <div ref="breadcrumbs" className={`breadcrumbs ${className}`} {...props}>
+      <div ref="breadcrumbs" className={`breadcrumbs header__breadcrumbs ${className}`} {...props}>
         <div ref="body" className="breadcrumbs__body">
           {this.renderCrumbs(children)}
           {this.renderTitle(title)}

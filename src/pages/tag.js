@@ -115,14 +115,12 @@ export class TagPage extends Component {
         <Helmet title={`"${tag}" posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs>
-              <Link to="/tag" title="All Hashtags">
-                <TagIcon inactive type={TAG_HASHTAG} />
-              </Link>
-              <Tag name={this.props.params.tag} type={TAG_HASHTAG} urlId={this.props.params.tag} />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs>
+            <Link to="/tag" title="All Hashtags">
+              <TagIcon inactive type={TAG_HASHTAG} />
+            </Link>
+            <Tag name={this.props.params.tag} type={TAG_HASHTAG} urlId={this.props.params.tag} />
+          </Breadcrumbs>
         </Header>
         <Page>
           <Sidebar current_user={current_user} />

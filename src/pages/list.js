@@ -124,9 +124,7 @@ export class List extends React.Component {
         <Helmet title="News Feed of " />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
           <HeaderLogo />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs title="News Feed" />
-          </div>
+          <Breadcrumbs title="News Feed" />
         </Header>
 
         <Page>

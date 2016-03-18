@@ -22,7 +22,15 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import NotFound from './not-found'
+import HeaderLogo from '../components/header-logo';
+import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import {API_HOST} from '../config';
@@ -104,28 +112,34 @@ class PostEditPage extends React.Component {
     return (
       <div>
         <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={this.props.current_user}/>
-
-            <div className="page__content">
-              <EditPost
-                actions={actions}
-                allSchools={_.values(this.props.schools)}
-                post={post}
-                triggers={postTriggers}
-                onDelete={this._handleDelete}
-                onSubmit={this._handleSubmit}
-                {...formState}
-              />
-            </div>
-
-            <SidebarAlt>
-              <AddedTags {...formState} />
-            </SidebarAlt>
-          </div>
-        </div>
+        <Header
+          is_logged_in={this.props.is_logged_in}
+          current_user={this.props.current_user}
+        >
+          <HeaderLogo small />
+          <Breadcrumbs title="Edit post" />
+        </Header>
+        <Page>
+          <Sidebar current_user={this.props.current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <EditPost
+                  actions={actions}
+                  allSchools={_.values(this.props.schools)}
+                  post={post}
+                  triggers={postTriggers}
+                  onDelete={this._handleDelete}
+                  onSubmit={this._handleSubmit}
+                  {...formState}
+                />
+              </PageContent>
+              <SidebarAlt>
+                <AddedTags {...formState} />
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
         <Footer/>
       </div>
     )

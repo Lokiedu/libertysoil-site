@@ -151,7 +151,7 @@ export class GeotagPage extends Component {
         <Helmet title={`${geotag.name} posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <Breadcrumbs className="header__breadcrumbs">
+          <Breadcrumbs>
             <Link title="All Geotags" to="/geotag">
               <TagIcon inactive type={TAG_PLANET} />
             </Link>

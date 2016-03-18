@@ -53,7 +53,7 @@ export default class BaseSchoolPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <Breadcrumbs className="header__breadcrumbs">
+          <Breadcrumbs>
             <Link to="/s" title="All Schools">
               <TagIcon inactive type={TAG_SCHOOL} />
             </Link>
