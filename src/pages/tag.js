@@ -26,10 +26,11 @@ import { setTagPosts } from '../actions';
 
 import {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 }                           from '../components/page';
 import Breadcrumbs          from '../components/breadcrumbs';
 import Header               from '../components/header';
@@ -124,29 +125,29 @@ export class TagPage extends Component {
           </div>
         </Header>
         <Page>
+          <Sidebar current_user={current_user} />
           <PageMain>
-            
-          </PageMain>
-          <PageCaption>
-            {tag}
-          </PageCaption>
-          <PageBody>
-            <Panel
-              title={tag}
-              icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag} />}
-              toolbarPrimary={toolbarPrimary}
-              toolbarSecondary={toolbarSecondary}
-            ></Panel>
-          </PageBody>
-          <PageBody>
-            <Sidebar current_user={current_user} />
-            <PageCenter>
-              <div className="page__content">
+            <PageCaption>
+              {tag}
+            </PageCaption>
+            <PageHero>
+              <img src="/images/hero/welcome.jpg" />
+            </PageHero>
+            <PageBody className="page__body-up">
+              <Panel
+                title={tag}
+                icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag} />}
+                toolbarPrimary={toolbarPrimary}
+                toolbarSecondary={toolbarSecondary}
+              ></Panel>
+            </PageBody>
+            <PageBody className="page__body-up layout__space_alt">
+              <PageContent>
                 <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
-              </div>
-            </PageCenter>
-            <SidebarAlt />
-          </PageBody>
+              </PageContent>
+              <SidebarAlt />
+            </PageBody>
+          </PageMain>
         </Page>
         <Footer/>
       </div>
