@@ -112,6 +112,17 @@ export default class CreatePost extends React.Component {
     });
   };
 
+  _handleKeydown = (e) => {
+    const ENTER = 13;
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === ENTER) {
+        const submit = new Event('submit');
+        this.refs.form.dispatchEvent(submit);
+      }
+    }
+  };
+
   _showAddHashtagModal = (e) => {
     this._stopPropagation(e);
 
@@ -167,7 +178,7 @@ export default class CreatePost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit}>
+        <form ref="form" onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
