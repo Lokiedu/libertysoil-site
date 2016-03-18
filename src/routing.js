@@ -43,7 +43,6 @@ import TagPage from './pages/tag';
 import TagCloudPage from './pages/tag-cloud';
 import SchoolCloudPage from './pages/school-cloud';
 import GeotagPage from './pages/geotag';
-import NotFoundPage from './pages/not-found';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -93,7 +92,6 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={GeotagPage} path="/geo/:url_name" onEnter={withoutAuth} />
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
-      
     </Route>
   );
 }

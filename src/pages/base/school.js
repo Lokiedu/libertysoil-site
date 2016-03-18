@@ -32,7 +32,6 @@ import Breadcrumbs      from '../../components/breadcrumbs';
 import Tag              from '../../components/tag';
 import TagIcon          from '../../components/tag-icon';
 import Footer           from '../../components/footer';
-import PageContentLink  from '../../components/page-content-link';
 import SchoolHeader     from '../../components/school-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';

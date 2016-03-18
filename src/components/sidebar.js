@@ -39,14 +39,6 @@ class Sidebar extends React.Component {
     clientWidth: 0
   };
 
-  constructor (props) {
-    super(props);
-
-    if (typeof document != 'undefined') {
-
-    }
-  }
-
   componentDidMount () {
     window.addEventListener('resize', this.toggleVisible);
     document.addEventListener('DOMContentLoaded', this.toggleVisible);

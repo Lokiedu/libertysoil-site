@@ -61,13 +61,13 @@ class HeaderLogo extends Component {
           {logoBody}
         </div>
       );
-    } else {
-      return (
-        <Link to="/" className="header__logo action">
-          {logoBody}
-        </Link>
-      );
     }
+
+    return (
+      <Link to="/" className="header__logo action">
+        {logoBody}
+      </Link>
+    );
   }
 }
 

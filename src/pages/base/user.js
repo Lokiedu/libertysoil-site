@@ -22,7 +22,6 @@ import Gravatar from 'react-gravatar';
 import {
   Page,
   PageMain,
-  PageCaption,
   PageBody,
   PageContent
 } from '../../components/page';

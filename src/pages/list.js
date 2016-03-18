@@ -29,8 +29,6 @@ import ApiClient from '../api/client'
 import {
   Page,
   PageMain,
-  PageCaption,
-  PageHero,
   PageBody,
   PageContent
 } from '../components/page';
@@ -158,7 +156,7 @@ export class List extends React.Component {
             </PageBody>
           </PageMain>
         </Page>
-        
+
         <Footer/>
       </div>
     )
