@@ -30,7 +30,7 @@ export default function reducer(state=initialState, action) {
     {
       let postCopy = _.cloneDeep(action.post);
       delete postCopy.user;
-
+      postCopy.post_comments = _.map(postCopy.post_comments, 'id');
       state = state.set(postCopy.id, i.fromJS(postCopy));
 
       break;

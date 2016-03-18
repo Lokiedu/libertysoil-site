@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
+import _ from 'lodash';
 
 import * as a from '../actions';
 
@@ -23,10 +24,9 @@ import * as a from '../actions';
 const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
-  console.log(action);
   switch (action.type) {
     case a.SET_POST_COMMENTS: {
-      state = state.set(action.post_id, i.fromJS(action.comments));
+      state = state.set(action.post_id, i.fromJS(_.keyBy(action.comments, 'id')));
       break;
     }
   }

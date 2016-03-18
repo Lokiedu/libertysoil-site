@@ -57,8 +57,8 @@ export class PostPage extends React.Component {
   static async fetchData(params, store, client) {
     let post = await client.postInfo(params.uuid);
     let relatedPosts = client.relatedPosts(params.uuid);
-    store.dispatch(addPost(post));
     store.dispatch(setPostComments(post.id, post.post_comments));
+    store.dispatch(addPost(post));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
   }
 
