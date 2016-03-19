@@ -314,6 +314,14 @@ describe('api v.1', () => {
 
             expect(localUser.related('favourited_posts').models, 'to be empty');
           });
+
+          it('Favoured list should work', async () => {
+            await user.favourited_posts().attach(post);
+            await expect(
+              { url: `/api/v1/posts/favoured`, session: sessionId },
+              'to body satisfy', [{text: 'This is clean post'}]
+            );
+          });
         });
 
         describe('Likes', () => {
@@ -346,37 +354,9 @@ describe('api v.1', () => {
 
             expect(localUser.related('liked_posts').models, 'to be empty');
           });
-        });
 
-        describe('Favoured page', () => {
-
-          beforeEach(async () => {
-            await user.favourited_posts().attach(post);
-          });
-
-          afterEach(async () => {
-            await user.favourited_posts().detach(post);
-          });
-
-          it('should work', async () => {
-            await expect(
-              { url: `/api/v1/posts/favoured`, session: sessionId },
-              'to body satisfy', [{text: 'This is clean post'}]
-            );
-          });
-        });
-
-        describe('Liked posts page', () => {
-
-          beforeEach(async () => {
+          it('Liked list should work', async () => {
             await user.liked_posts().attach(post);
-          });
-
-          afterEach(async () => {
-            await user.liked_posts().detach(post);
-          });
-
-          it('should work', async () => {
             await expect(
               { url: `/api/v1/posts/liked`, session: sessionId },
               'to body satisfy', [{text: 'This is clean post'}]
