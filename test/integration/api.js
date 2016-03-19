@@ -384,27 +384,22 @@ describe('api v.1', () => {
           });
         });
       });
-    });
 
-    describe('userTags', () => {
-      it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
-        const userAttrs = UserFactory.build();
-        const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+      describe('Hastags', () => {
 
-        user.set('email_check_hash', null);
-        await user.save(null, {method: 'update'});
+        it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
+          let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
 
-        let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
+          let post1 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+          post1.hashtags().attach(hashtag);
+          let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+          post2.hashtags().attach(hashtag);
 
-        let post1 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
-        post1.hashtags().attach(hashtag);
-        let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
-        post2.hashtags().attach(hashtag);
+          await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to body have array length', 1);
+        });
 
-        let sessionId = await login(userAttrs.username, userAttrs.password);
-
-        await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to yield an array of length', 1);
       });
+
     });
 
 
