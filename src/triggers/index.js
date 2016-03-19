@@ -29,7 +29,7 @@ import {
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress
+  setUIProgress, setUserRecentTags
 } from '../actions';
 
 
@@ -387,6 +387,18 @@ export class ActionsTrigger {
     } catch (e) {
       this.dispatch(addError(e.message));
       throw e;
+    }
+  };
+
+  loadUserRecentTags = async () => {
+    try {
+      let geotags = await this.client.userRecentGeotags();
+      let schools = await this.client.userRecentSchools();
+      let hashtags = await this.client.userRecentHashtags();
+
+      this.dispatch(setUserRecentTags({ geotags, schools, hashtags }));
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
   };
 

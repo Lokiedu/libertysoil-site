@@ -74,6 +74,11 @@ export default class AddTagModal extends Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
@@ -182,6 +187,14 @@ export default class AddTagModal extends Component {
       return null;
     }
 
+    const recentGeotags = _.differenceWith(
+      this.props.userRecentTags.geotags, this.state.geotags, (a, b) => a.name === b.name);
+    const recentSchools = _.differenceWith(
+      this.props.userRecentTags.schools, this.state.schools, (a, b) => a.name === b.name);
+    const recentHashtags = _.differenceWith(
+      this.props.userRecentTags.hashtags, this.state.hashtags, (a, b) => a.name === b.name);
+    const userRecentTags = { geotags: recentGeotags, schools: recentSchools, hashtags: recentHashtags };
+
     return (
       <ModalComponent
         size="normal"
@@ -199,6 +212,7 @@ export default class AddTagModal extends Component {
           <AddTagForm
             addedTags={this.state}
             allSchools={allSchools}
+            userRecentTags={userRecentTags}
             type={type}
             onAddGeotag={this._addGeotag}
             onAddHashtag={this._addHashtag}

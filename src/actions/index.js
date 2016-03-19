@@ -70,6 +70,7 @@ export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
+export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 
@@ -212,6 +213,12 @@ export function removeUserFollowedGeotag(geotag) {
   }
 }
 
+export function setUserRecentTags(user_recent_tags) {
+  return {
+    type: SET_USER_RECENT_TAGS,
+    user_recent_tags
+  }
+}
 
 export function setTagPosts(hashtag, posts) {
   return {

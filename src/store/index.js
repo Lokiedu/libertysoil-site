@@ -45,6 +45,7 @@ import geotag_posts from './geotag_posts';
 import geotags from './geotags';
 import edit_post_form from './edit_post_form';
 import related_posts from './related_posts';
+import user_recent_tags from './user_recent_tags';
 
 let store;
 
@@ -74,7 +75,8 @@ export const theReducer = combineReducers(i.Map({
   ui: ui.reducer,
   tag_cloud,
   school_cloud,
-  related_posts
+  related_posts,
+  user_recent_tags
 }));
 
 const initialState = i.Map({

@@ -18,8 +18,6 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
 import SchoolSelect from './school-select';
 import { preventDefault } from '../../utils/preventDefault';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
@@ -36,69 +34,13 @@ export default class AddSchoolForm extends Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })).isRequired,
-    onAddSchool: PropTypes.func.isRequired
+    onAddSchool: PropTypes.func.isRequired,
+    userRecentSchools: PropTypes.array.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.addedSchools = [];
-    this.state = {
-      recentSchools: [],
-      selectedSchools: []
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.addedSchools) {
-      this.addedSchools = _.clone(this.props.addedSchools);
-    }
-    this.getRecentSchools();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.addedSchools.length > nextProps.addedSchools.length) {
-      let removed = _.difference(this.addedSchools, nextProps.addedSchools);
-      
-      removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentSchools, t => tag.url_name === t.url_name);
-        let selectedSchools = _.clone(this.state.selectedSchools);
-        _.remove(selectedSchools, i => index === i);
-        this.setState({ selectedSchools: selectedSchools });
-      });
-    }
-    this.addedSchools = _.clone(nextProps.addedSchools);
-  }
-
-  async getRecentSchools() {
-    const client = new ApiClient(API_HOST);
-    try {
-      const schools = await client.userRecentSchools();
-      this.setState({ recentSchools: schools });
-
-      this.removeSelected();
-      return schools;
-    } catch (e) {
-      return e.message;
-    }
-  }
-
-  removeSelected() {
-    const selectedSchools = this.state.recentSchools.map((school, index) => {
-      if (_.findIndex(this.addedSchools, s => s.url_name === school.url_name) != -1) {
-        return index;
-      }
-      return undefined;
-    }).filter(v => v !== undefined);
-    this.setState({ selectedSchools: selectedSchools });
-  }
-
   _selectRecentlyUsedSchool = (tag) => {
-    const index = _.findIndex(this.state.recentSchools, t => t.url_name === tag.urlId);
-    let selectedSchools = _.clone(this.state.selectedSchools);
-    selectedSchools.push(index);
-    this.setState({ selectedSchools: selectedSchools });
-
-    this._addTag(this.state.recentSchools[index]);
+    const index = _.findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
+    this._addTag(this.props.userRecentSchools[index]);
   };
 
   _addTag = (school) => {
@@ -118,10 +60,6 @@ export default class AddSchoolForm extends Component {
   };
 
   render() {
-    let recentSchools = [];
-    if (Array.isArray(this.state.recentSchools)) {
-      recentSchools = _.clone(this.state.recentSchools).filter((tag, i) => this.state.selectedSchools.indexOf(i) === -1);
-    }
     const popularSchools = [];
 
     return (
@@ -158,7 +96,7 @@ export default class AddSchoolForm extends Component {
             </TabTitle>
             <TabContent>
               <TagCloud
-                schools={recentSchools}
+                schools={this.props.userRecentSchools}
                 onClick={this._selectRecentlyUsedSchool}
               />
             </TabContent>
