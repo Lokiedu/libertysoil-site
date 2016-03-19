@@ -453,7 +453,7 @@ describe('api v.1', () => {
         let geotag;
 
         beforeEach(async () => {
-          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          await user.refresh({require: true, withRelated: ['liked_geotags', 'followed_geotags']});
           await bookshelf.knex('geotags').del();
 
           geotag = new Geotag({
@@ -467,7 +467,7 @@ describe('api v.1', () => {
           await geotag.destroy();
         });
 
-        it('CAN like geohashtag', async () => {
+        it('CAN like geotag', async () => {
           expect(user.related('liked_geotags').length, 'to equal', 0);
 
           await expect(
@@ -481,8 +481,7 @@ describe('api v.1', () => {
 
         it('CAN unlike geotag', async () => {
           expect(user.related('liked_geotags').length, 'to equal', 0);
-          await user.liked_geotags().attach(geotag);
-          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          await user.related('liked_geotags').attach(geotag);
           expect(user.related('liked_geotags').length, 'to equal', 1);
 
           await expect(
@@ -507,8 +506,7 @@ describe('api v.1', () => {
         });
 
         it('CAN unfollow geotag', async () => {
-          await user.followed_geotags().attach(geotag);
-          await user.refresh({require: true, withRelated: ['followed_geotags']});
+          await user.related('followed_geotags').attach(geotag);
           expect(user.related('followed_geotags').length, 'to equal', 1);
 
           await expect(
