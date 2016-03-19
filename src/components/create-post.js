@@ -101,6 +101,7 @@ export default class CreatePost extends React.Component {
 
     await this.props.triggers.createPost('short_text', data);
     ga('send', 'event', 'Post', 'Done', data.hashtags.join(','));
+    await this.props.triggers.loadUserRecentTags();
 
     form.text.value = '';
     this._addTagModal.reset();

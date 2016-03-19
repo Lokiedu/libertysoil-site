@@ -34,6 +34,11 @@ export default class EditPost extends React.Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
     geotags: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
@@ -63,7 +68,8 @@ export default class EditPost extends React.Component {
     })),
     triggers: PropTypes.shape({
       updatePost: PropTypes.func.isRequired,
-      deletePost: PropTypes.func.isRequired
+      deletePost: PropTypes.func.isRequired,
+      loadUserRecentTags: PropTypes.func.isRequired
     })
   };
 
@@ -115,6 +121,7 @@ export default class EditPost extends React.Component {
     };
 
     await this.props.triggers.updatePost(this.props.post.id, data);
+    await this.props.triggers.loadUserRecentTags();
 
     this.props.onSubmit(event);
 
@@ -251,8 +258,9 @@ export default class EditPost extends React.Component {
           </div>
         </form>
         <AddTagModal
-          allSchools={allSchools}
           ref={(c) => this._addTagModal = c}
+          allSchools={allSchools}
+          userRecentTags={this.props.userRecentTags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}

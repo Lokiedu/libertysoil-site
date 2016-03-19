@@ -55,10 +55,10 @@ class PostEditPage extends React.Component {
 
   static async fetchData(params, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
+    let trigger = new ActionsTrigger(client, store.dispatch);
     let schoolsPromise;
 
     if (noSchoolsLoaded) {
-      let trigger = new ActionsTrigger(client, store.dispatch);
       schoolsPromise = trigger.loadSchools();
     }
 
@@ -75,6 +75,10 @@ class PostEditPage extends React.Component {
       await schoolsPromise;
     }
 
+    await Promise.all([
+      trigger.loadUserRecentTags()
+    ]);
+
     return 200;
   }
 
@@ -87,6 +91,9 @@ class PostEditPage extends React.Component {
   };
 
   render() {
+    let {
+      user_recent_tags
+    } = this.props;
     let postId = this.props.params.uuid;
 
     if (!(postId in this.props.posts)) {
@@ -106,7 +113,7 @@ class PostEditPage extends React.Component {
 
     let actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
     let client = new ApiClient(API_HOST);
-    let postTriggers = _.pick(new ActionsTrigger(client, this.props.dispatch), 'updatePost', 'deletePost');
+    let triggers = new ActionsTrigger(client, this.props.dispatch);
     let formState = this.props.edit_post_form;
 
     return (
@@ -127,8 +134,9 @@ class PostEditPage extends React.Component {
                 <EditPost
                   actions={actions}
                   allSchools={_.values(this.props.schools)}
+                  userRecentTags={user_recent_tags}
                   post={post}
-                  triggers={postTriggers}
+                  triggers={triggers}
                   onDelete={this._handleDelete}
                   onSubmit={this._handleSubmit}
                   {...formState}
