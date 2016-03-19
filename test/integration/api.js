@@ -34,6 +34,7 @@ let bookshelf = initBookshelf($dbConfig);
 let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 let Hashtag = bookshelf.model('Hashtag');
+let Geotag = bookshelf.model('Geotag');
 
 const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
 
@@ -448,6 +449,77 @@ describe('api v.1', () => {
 
       });
 
+      describe('Geotags', () => {
+        let geotag;
+
+        beforeEach(async () => {
+          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          await bookshelf.knex('geotags').del();
+
+          geotag = new Geotag({
+            id: uuid4(),
+            url_name: 'foo_geotag'
+          });
+          await geotag.save({}, {method: 'insert'});
+        });
+
+        afterEach(async () => {
+          await geotag.destroy();
+        });
+
+        it('CAN like geohashtag', async () => {
+          expect(user.related('liked_geotags').length, 'to equal', 0);
+
+          await expect(
+            { url: `/api/v1/geotag/${geotag.get('url_name')}/like`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+          await user.refresh({require: true, withRelated: ['liked_geotags']});
+
+          expect(user.related('liked_geotags').length, 'to equal', 1);
+        });
+
+        it('CAN unlike geotag', async () => {
+          expect(user.related('liked_geotags').length, 'to equal', 0);
+          await user.liked_geotags().attach(geotag);
+          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          expect(user.related('liked_geotags').length, 'to equal', 1);
+
+          await expect(
+            { url: `/api/v1/geotag/${geotag.get('url_name')}/unlike`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+          await user.refresh({require: true, withRelated: ['liked_geotags']});
+
+          expect(user.related('liked_geotags').models, 'to be empty');
+        });
+
+        it('CAN follow geotag', async () => {
+          expect(user.related('followed_hashtags').length, 'to equal', 0);
+
+          await expect(
+            { url: `/api/v1/geotag/${geotag.get('url_name')}/follow`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+
+          await user.refresh({withRelated: ['followed_geotags']});
+          expect(user.related('followed_geotags').length, 'to equal', 1);
+        });
+
+        it('CAN unfollow geotag', async () => {
+          await user.followed_geotags().attach(geotag);
+          await user.refresh({require: true, withRelated: ['followed_geotags']});
+          expect(user.related('followed_geotags').length, 'to equal', 1);
+
+          await expect(
+            { url: `/api/v1/geotag/${geotag.get('url_name')}/unfollow`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+
+          await user.refresh({withRelated: ['followed_geotags']});
+          expect(user.related('followed_geotags').length, 'to equal', 0);
+        });
+      });
     });
 
 
