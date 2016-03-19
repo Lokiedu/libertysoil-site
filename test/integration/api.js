@@ -365,7 +365,23 @@ describe('api v.1', () => {
         });
       });
 
-      describe('Hastags', () => {
+      describe('Hashtags', () => {
+        let tag;
+
+        beforeEach(async () => {
+          await bookshelf.knex('hashtags').del();
+          await user.refresh({require: true, withRelated: ['liked_hashtags', 'followed_hashtags']});
+
+          tag = new Hashtag({
+            id: uuid4(),
+            name: 'footag'
+          });
+          await tag.save({}, {method: 'insert'});
+        });
+
+        afterEach(async () => {
+          await tag.destroy();
+        });
 
         it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
           let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
@@ -376,6 +392,58 @@ describe('api v.1', () => {
           post2.hashtags().attach(hashtag);
 
           await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to body have array length', 1);
+        });
+
+        it('CAN like hashtag', async () => {
+          expect(user.related('liked_hashtags').length, 'to equal', 0);
+
+          await expect(
+            { url: `/api/v1/tag/${tag.get('name')}/like`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+          await user.refresh({require: true, withRelated: ['liked_hashtags']});
+
+          expect(user.related('liked_hashtags').length, 'to equal', 1);
+          expect(user.related('liked_hashtags').models[0].get('name'), 'to equal', 'footag');
+        });
+
+        it('CAN unlike hashtag', async () => {
+          await user.related('liked_hashtags').attach(tag);
+          expect(user.related('liked_hashtags').length, 'to equal', 1);
+
+          await expect(
+            { url: `/api/v1/tag/${tag.get('name')}/unlike`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+          await user.refresh({require: true, withRelated: ['liked_hashtags']});
+
+          expect(user.related('liked_hashtags').models, 'to be empty');
+        });
+
+        it('CAN follow hashtag', async () => {
+          expect(user.related('followed_hashtags').length, 'to equal', 0);
+
+          await expect(
+            { url: `/api/v1/tag/${tag.get('name')}/follow`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+
+          await user.refresh({withRelated: ['followed_hashtags']});
+          expect(user.related('followed_hashtags').length, 'to equal', 1);
+          expect(user.related('followed_hashtags').models[0].get('name'), 'to equal', 'footag');
+        });
+
+        it('CAN unfollow hashtag', async () => {
+          await user.related('followed_hashtags').attach(tag);
+          expect(user.related('followed_hashtags').length, 'to equal', 1);
+
+          await expect(
+            { url: `/api/v1/tag/${tag.get('name')}/unfollow`, session: sessionId, method: 'POST' },
+            'to open successfully'
+          );
+
+          await user.refresh({withRelated: ['followed_hashtags']});
+          expect(user.related('followed_hashtags').length, 'to equal', 0);
         });
 
       });
