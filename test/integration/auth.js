@@ -292,7 +292,35 @@ describe('api v1', async () => {
         });
 
         it('AUTHORIZED TO search tag', async () => {
-          await expect({ url: `/api/v1/search/foo-tag` }, 'to open authorized');
+          await expect({ url: `/api/v1/tags/search/foo-tag` }, 'to open authorized');
+        });
+
+      });
+
+      describe('Geotags', async () => {
+
+        it('NOT AUTHORIZED TO get recent geotags', async () => {
+          await expect({ url: `/api/v1/user/recent-geotags` }, 'not to open authorized');
+        });
+
+        it('NOT AUTHORIZED TO like geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/like`, method: 'POST' }, 'not to open authorized');
+        });
+
+        it('NOT AUTHORIZED TO unlike geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/unlike`, method: 'POST' }, 'not to open authorized');
+        });
+
+        it('NOT AUTHORIZED TO follow geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/follow`, method: 'POST' }, 'not to open authorized');
+        });
+
+        it('NOT AUTHORIZED TO unfollow geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/unfollow`, method: 'POST' }, 'not to open authorized');
+        });
+
+        it('AUTHORIZED TO search geotag', async () => {
+          await expect({ url: `/api/v1/geotags/search/foo-tag` }, 'to open authorized');
         });
 
       });
@@ -422,6 +450,25 @@ describe('api v1', async () => {
 
         it('AUTHORIZED TO unfollow tag', async () => {
           await expect({ url: `/api/v1/tag/foo/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
+        });
+
+      });
+
+      describe('Geotags', async () => {
+        it('AUTHORIZED TO like geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/like`, session: sessionId, method: 'POST' }, 'to open authorized');
+        });
+
+        it('AUTHORIZED TO unlike geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/unlike`, session: sessionId, method: 'POST' }, 'to open authorized');
+        });
+
+        it('AUTHORIZED TO follow geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/follow`, session: sessionId, method: 'POST' }, 'to open authorized');
+        });
+
+        it('AUTHORIZED TO unfollow geotag', async () => {
+          await expect({ url: `/api/v1/geotag/foo/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
         });
 
       });
