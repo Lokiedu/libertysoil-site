@@ -127,6 +127,11 @@ export default class ApiClient
     return true;
   }
 
+  async checkEmailTaken(email) {
+    let response = await this.get(`/api/v1/user/email/${email}`);
+    return response.body.taken;
+  }
+
   async getAvailableUsername(username) {
     let response = await this.get(`/api/v1/user/available-username/${username}`);
     return response.body.username;
