@@ -95,10 +95,13 @@ export class List extends React.Component {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      let posts = await triggers.loadPostRiver(this.props.river.length);
+      let res = await triggers.loadPostRiver(this.props.river.length);
 
       let displayLoadMore = false;
-      if (posts.length) {
+      if (res === false) { // bad response
+        displayLoadMore = true;
+      }
+      if (res.length) { // no more posts
         displayLoadMore = true;
       }
       this.setState({

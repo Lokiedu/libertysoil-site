@@ -457,7 +457,7 @@ export class ActionsTrigger {
     } catch (e) {
       this.dispatch(addError(e.message));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
-      return [];
+      return false;
     }
   };
 
