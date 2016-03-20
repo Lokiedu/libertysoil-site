@@ -109,7 +109,6 @@ class SettingsFollowersPage extends React.Component {
         is_logged_in={is_logged_in}
         messages={messages}
         triggers={triggers}
-        onSave={this.onSave}
       >
         <Helmet title="Manage Followers on " />
         <div className="paper__page">

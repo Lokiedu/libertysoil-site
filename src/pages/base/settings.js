@@ -37,6 +37,10 @@ import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
 
+  props = {
+    onSave: false
+  };
+
   render () {
     const {
       onSave,
@@ -55,6 +59,15 @@ export default class BaseSettingsPage extends React.Component {
 
     if (user.more && (user.more.firstName || user.more.lastName)) {
       name = `${user.more.firstName} ${user.more.lastName}`;
+    }
+
+    let saveButton;
+    if (this.props.onSave) {
+      saveButton = (
+        <div className="void">
+          <span className="button button-green action" onClick={onSave}>Save changes</span>
+        </div>
+      );
     }
 
     return (
@@ -102,9 +115,7 @@ export default class BaseSettingsPage extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className="void">
-                      <span className="button button-green action" onClick={onSave}>Save changes</span>
-                    </div>
+                    {saveButton}
                     <Messages messages={messages} removeMessage={triggers.removeMessage}/>
                   </div>
                 </PageContent>
