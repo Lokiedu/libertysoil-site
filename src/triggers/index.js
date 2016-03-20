@@ -199,8 +199,8 @@ export class ActionsTrigger {
       let result = await this.client.createPost(type, data);
       this.dispatch(addPostToRiver(result));
 
-      let userTags = this.client.userTags();
-      this.dispatch(setUserTags(await userTags));
+      let userTags = await this.client.userTags();
+      this.dispatch(setUserTags(userTags));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
