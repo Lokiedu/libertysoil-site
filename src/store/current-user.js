@@ -80,23 +80,26 @@ export default function reducer(state=initialState, action) {
 
     case a.SET_USER_TAGS: {
       const hashtags = _.take(action.hashtags, 10);
+      const schools = _.take(action.schools, 10);
       const geotags = _.take(action.geotags, 10);
-      const schools = _.take(action.schools, 10); 
 
-      if (hashtags)
+      if (hashtags) {
         state = state.set('hashtags', i.fromJS(hashtags));
-      else
+      } else {
         state = state.set('hashtags', i.List([]));
+      }
 
-      if (geotags)
-        state = state.set('geotags', i.fromJS(geotags));
-      else
-        state = state.set('geotags', i.List([]));
-      
-      if (schools)
+      if (schools) {
         state = state.set('schools', i.fromJS(schools));
-      else
+      } else {
         state = state.set('schools', i.List([]));
+      }
+
+      if (geotags) {
+        state = state.set('geotags', i.fromJS(geotags));
+      } else {
+        state = state.set('geotags', i.List([]));
+      }
 
       break;
     }

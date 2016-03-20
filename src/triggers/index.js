@@ -539,8 +539,8 @@ export class ActionsTrigger {
   };
 
   loadUserTags = async () => {
-    const userTags = this.client.userTags();
-    this.dispatch(setUserTags(await userTags));
+    const userTags = await this.client.userTags();
+    this.dispatch(setUserTags(userTags));
   };
 
   showRegisterForm = async () => {

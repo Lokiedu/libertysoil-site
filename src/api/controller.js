@@ -190,7 +190,6 @@ export default class ApiController {
       return;
     }
     let Hashtag = this.bookshelf.model('Hashtag');
-
     let hashtags = await Hashtag
       .collection()
       .query(qb => {
@@ -202,7 +201,31 @@ export default class ApiController {
       })
       .fetch();
 
-    res.send(hashtags);
+    let School = this.bookshelf.model('School');
+    let schools = await School
+      .collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts_schools.school_id', 'schools.id')
+          .join('posts', 'posts_schools.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .distinct()
+      })
+      .fetch();
+
+    let Geotag = this.bookshelf.model('Geotag');
+    let geotags = await Geotag
+      .collection()
+      .query(qb => {
+        qb
+          .join('geotags_posts', 'geotags_posts.geotag_id', 'geotags.id')
+          .join('posts', 'geotags_posts.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .distinct()
+      })
+      .fetch();
+
+    res.send({ hashtags, schools, geotags });
   }
 
   async getPost(req, res) {
