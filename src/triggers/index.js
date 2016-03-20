@@ -453,9 +453,11 @@ export class ActionsTrigger {
       let result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
+      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
+      return [];
     }
   };
 

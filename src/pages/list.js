@@ -72,7 +72,8 @@ export class List extends React.Component {
   };
 
   state = {
-    downloadAttemptsCount: 0
+    downloadAttemptsCount: 0,
+    displayLoadMore: true
   };
 
   static async fetchData(params, store, client) {
@@ -87,14 +88,22 @@ export class List extends React.Component {
     ]);
   }
 
-  loadMore = (isVisible) => {
+  loadMore = async (isVisible) => {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     if (isVisible && !this.props.ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      triggers.loadPostRiver(this.props.river.length);
+      let posts = await triggers.loadPostRiver(this.props.river.length);
+
+      let displayLoadMore = false;
+      if (posts.length) {
+        displayLoadMore = true;
+      }
+      this.setState({
+        displayLoadMore: displayLoadMore
+      });
     }
 
     if (!isVisible) {
@@ -117,6 +126,19 @@ export class List extends React.Component {
     const actions = {resetCreatePostForm, updateCreatePostForm};
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    let loadMore;
+    if (this.state.displayLoadMore) {
+      loadMore = (
+        <div className="layout layout-align_center layout__space layout__space-double">
+          <VisibilitySensor onChange={this.loadMore}>
+            <Button
+              title="Load more..." waiting={ui.progress.loadRiverInProgress}
+              onClick={triggers.loadPostRiver.bind(null, river.length)} />
+          </VisibilitySensor>
+        </div>
+      );
+    }
+
     return (
       <div>
         <Helmet title="News Feed of " />
@@ -138,11 +160,7 @@ export class List extends React.Component {
                   {...this.props.create_post_form}
                 />
                 <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
-                <div className="layout layout-align_center layout__space layout__space-double">
-                  <VisibilitySensor onChange={this.loadMore}>
-                    <Button title="Load more..." waiting={ui.progress.loadRiverInProgress} onClick={triggers.loadPostRiver.bind(null, river.length)} />
-                  </VisibilitySensor>
-                </div>
+                {loadMore}
               </PageContent>
               <SidebarAlt>
                 <AddedTags {...this.props.create_post_form} />
