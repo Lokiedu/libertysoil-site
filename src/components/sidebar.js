@@ -146,8 +146,8 @@ class Sidebar extends React.Component {
             <div className="sidebar__user_tags">
               <TagCloud
                 hashtags={current_user.hashtags}
-                schools={[]}
-                geotags={[]}
+                schools={current_user.schools}
+                geotags={current_user.geotags}
                 truncated
               />
             </div>
