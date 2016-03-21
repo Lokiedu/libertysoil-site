@@ -276,6 +276,17 @@ export class ActionsTrigger {
     }
   };
 
+  ignoreUser = async (user) => {
+    try {
+      await this.client.ignoreUser(user.username);
+      let result = await this.client.userSuggestions();
+      
+      this.dispatch(setPersonalizedSuggestedUsers(result));
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
   login = async (username, password) => {
     this.dispatch(removeAllMessages());
 
