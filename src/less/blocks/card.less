@@ -19,13 +19,14 @@
   background: #fff;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 
   & + & {
-    margin-top: @doubleSpace;
+    margin-top: @space;
   }
 
   &__comments {
-    padding: 20px @doubleSpace;
+    padding: 20px;
   }
 
   &-full {
@@ -40,7 +41,7 @@
   }
 
   &-padded {
-    padding: @doubleSpace;
+    padding: 20px;
   }
 
   &__link {
@@ -66,7 +67,7 @@
 }
 
 .card__content {
-  padding: @doubleSpace @doubleSpace 0 @doubleSpace;
+  padding: 20px 20px 0 20px;
   line-height: 1.4;
 
   a {
@@ -79,7 +80,7 @@
 }
 
 .card__owner {
-  padding: 20px @doubleSpace;
+  padding: 20px;
 }
 
 .card__read_link {
@@ -87,18 +88,15 @@
 }
 
 .card__footer {
-  padding: 20px @doubleSpace;
+  padding: 20px;
   background: #f9f8f8;
   position: relative;
-
-  .tags {
-    margin-bottom: 15px;
-  }
+  border-top: 1px solid @color__gray;
 }
 
 .card__toolbar {
-  &:extend(.layout);
-  &:extend(.layout__grid_item-wide);
+  display: flex;
+  flex: 1;
 
   &:first-child {
     margin-top: 0;
@@ -106,24 +104,31 @@
 
   &-right {
     flex: none!important;
-  }
+    margin-left: @space;
+    border-left: 1px solid @color__gray;
+    padding-left: 5px;
 
-  &_item {
-    color: #aeaeae;
-
-    &:extend(.layout__grid_item all);
-    &:extend(.layout);
-    &:extend(.layout-align_vertical);
-
-    &:hover {
-      .icon {
-        color: #000;
-      }
+    .card__toolbar_item {
+      margin-right: 0;
+      margin-left: @space;
     }
   }
 
   &_item_value {
     font-size: 13px;
-    margin-left: 3px;
+    margin-left: 4px;
+  }
+}
+
+.card__toolbar_item {
+  color: #aeaeae;
+  display: flex;
+  margin-right: @space;
+  align-items: center;
+
+  &:hover {
+    .icon {
+      color: #000;
+    }
   }
 }

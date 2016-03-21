@@ -18,6 +18,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import Icon from '../icon';
+
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 let EditPostButton = (props) => {
@@ -29,7 +31,9 @@ let EditPostButton = (props) => {
 
   return (
     <div className="card__toolbar_item">
-      <Link to={post_edit_url}><span className="fa fa-pencil-square-o"></span></Link>
+      <Link to={post_edit_url}>
+        <Icon icon="edit" size="small" />
+      </Link>
     </div>
   );
 };

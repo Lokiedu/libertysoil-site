@@ -18,6 +18,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import Icon from '../icon';
 import EditPostButton from './edit-post-button'
 import TagLine from './tagline'
 import Toolbar from './toolbar'
@@ -35,14 +36,17 @@ let PostFooter = ({author, current_user, post, triggers}) => {
 
       <footer className="card__footer">
         <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
+      </footer>
 
+      <footer className="card__footer">
         <div className="card__toolbars">
           <Toolbar current_user={current_user} post={post} triggers={triggers} />
 
           <div className="card__toolbar card__toolbar-right">
             <EditPostButton current_user={current_user} post={post} />
-
-            <div className="card__toolbar_item"><Link to={post_url}><span className="fa fa-link"></span></Link></div>
+            <Link to={post_url} className="card__toolbar_item">
+              <Icon icon="link" size="small" />
+            </Link>
           </div>
         </div>
       </footer>
