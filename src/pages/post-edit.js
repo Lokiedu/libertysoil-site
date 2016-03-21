@@ -75,9 +75,7 @@ class PostEditPage extends React.Component {
       await schoolsPromise;
     }
 
-    await Promise.all([
-      trigger.loadUserRecentTags()
-    ]);
+    await trigger.loadUserRecentTags();
 
     return 200;
   }
@@ -92,7 +90,7 @@ class PostEditPage extends React.Component {
 
   render() {
     let {
-      user_recent_tags
+      current_user
     } = this.props;
     let postId = this.props.params.uuid;
 
@@ -134,7 +132,7 @@ class PostEditPage extends React.Component {
                 <EditPost
                   actions={actions}
                   allSchools={_.values(this.props.schools)}
-                  userRecentTags={user_recent_tags}
+                  userRecentTags={current_user.recent_tags}
                   post={post}
                   triggers={triggers}
                   onDelete={this._handleDelete}

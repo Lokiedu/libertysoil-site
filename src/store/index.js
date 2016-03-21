@@ -45,7 +45,6 @@ import geotag_posts from './geotag_posts';
 import geotags from './geotags';
 import edit_post_form from './edit_post_form';
 import related_posts from './related_posts';
-import user_recent_tags from './user_recent_tags';
 
 let store;
 
@@ -75,8 +74,7 @@ export const theReducer = combineReducers(i.Map({
   ui: ui.reducer,
   tag_cloud,
   school_cloud,
-  related_posts,
-  user_recent_tags
+  related_posts
 }));
 
 const initialState = i.Map({
@@ -89,7 +87,12 @@ const initialState = i.Map({
     liked_hashtags: i.Map({}),
     liked_schools: i.Map({}),
     liked_geotags: i.Map({}),
-    suggested_users: i.List([])
+    suggested_users: i.List([]),
+    recent_tags: i.Map({
+      hashtags: i.List([]),
+      schools: i.List([]),
+      geotags: i.List([])
+    })
   }),
   create_post_form: i.fromJS({
     text: '',

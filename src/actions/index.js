@@ -213,10 +213,10 @@ export function removeUserFollowedGeotag(geotag) {
   }
 }
 
-export function setUserRecentTags(user_recent_tags) {
+export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
-    user_recent_tags
+    recent_tags
   }
 }
 
