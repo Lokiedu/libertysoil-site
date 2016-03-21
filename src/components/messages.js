@@ -33,15 +33,15 @@ export default class Messages extends React.Component {
     if (this.props.messages.length == 0) {
       return <script/>;
     }
-
-    let msgTags = this.props.messages.map((msg, i) => {
-      let params = { i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
+    
+    const messages = this.props.messages.map((msg, i) => {
+      let params = { i, key: i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
       return <Message {...params} />;
-    });
+    })
 
     return (
       <div className="message__group">
-        {msgTags}
+        {messages}
       </div>
     );
   }
