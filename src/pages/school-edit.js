@@ -35,7 +35,7 @@ import Message from '../components/message';
 
 const fields = ['name', 'description'];
 const validate = values => {
-  const { name, description } = values;
+  const { name } = values;
   const errors = {};
 
   if (!name) {
@@ -70,10 +70,6 @@ class SchoolEditPage extends React.Component {
   }
 
   submitHandler(event) {
-    const {
-      fields
-    } = this.props;
-
     form.forceValidate();
 
     event.preventDefault();
