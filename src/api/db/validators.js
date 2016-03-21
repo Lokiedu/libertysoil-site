@@ -59,7 +59,8 @@ let User = {
     more: {
       summary: ['string'],
       bio: ['string'],
-      roles: ['array']
+      roles: ['array'],
+      first_login: ['boolean']
     }
   }
 };
