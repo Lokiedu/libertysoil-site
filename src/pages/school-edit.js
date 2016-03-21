@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router'
 import _ from 'lodash';
 import Helmet from 'react-helmet';
+import { form } from 'react-inform';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
@@ -29,8 +30,25 @@ import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import GeoInput from '../components/geo-input';
+import Message from '../components/message';
 
 
+const fields = ['name', 'description'];
+const validate = values => {
+  const { name, description } = values;
+  const errors = {};
+
+  if (!name) {
+    errors.name = 'Name is required';
+  }
+
+  return errors;
+}
+
+@form({
+	fields,
+  validate
+})
 class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
 
@@ -40,8 +58,29 @@ class SchoolEditPage extends React.Component {
     store.dispatch(addSchool(schoolInfo));
   }
 
+  componentDidMount () {
+    const {
+      form,
+      schools,
+      params
+    } = this.props;
+
+    const school = _.find(schools, {url_name: params.school_name});
+    form.onValues(school);
+  }
+
   submitHandler(event) {
+    const {
+      fields
+    } = this.props;
+
+    form.forceValidate();
+
     event.preventDefault();
+
+    if (!this.props.form.isValid()) {
+      return;
+    }
 
     let form = event.target;
 
@@ -64,6 +103,10 @@ class SchoolEditPage extends React.Component {
   }
 
   render() {
+    const {
+      form,
+      fields
+    } = this.props;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -88,9 +131,12 @@ class SchoolEditPage extends React.Component {
                 <input
                   className="input input-block content layout__row layout__row-small"
                   defaultValue={school.name}
-                  name="name"
                   type="text"
+                  {...fields.name}
                 />
+                {fields.name.error &&
+                  <Message message={fields.name.error} />
+                }
               </div>
 
               <div className="layout__row">
@@ -98,13 +144,19 @@ class SchoolEditPage extends React.Component {
                 <textarea
                   className="input input-block input-textarea content layout__row layout__row-small"
                   defaultValue={school.description}
-                  name="description"
+                  {...fields.description}
                 />
               </div>
               <GeoInput initialLocation={initialLocation} />
               <div className="layout__row">
                 <div className="layout layout__grid layout-align_right">
-                  <button className="button button-wide button-green" type="submit">Save</button>
+                  <button
+                    disabled={!form.isValid()}
+                    className="button button-wide button-green"
+                    type="submit"
+                  >
+                    Save
+                  </button>
                 </div>
               </div>
             </form>

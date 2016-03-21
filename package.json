@@ -75,6 +75,7 @@
     "react-gravatar": "^2.2.2",
     "react-helmet": "^2.3.1",
     "react-icons": "^1.0.3",
+    "react-inform": "0.0.5",
     "react-leaflet": "^0.10.0",
     "react-linkify": "0.1.1",
     "react-redux": "^4.0.0",
