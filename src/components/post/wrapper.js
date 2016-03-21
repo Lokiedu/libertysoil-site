@@ -41,7 +41,7 @@ let PostWrapper = (props) => {
 
       <PostFooter author={props.author} current_user={props.current_user} post={props.post} triggers={props.triggers} />
       {props.showComments &&
-        <Comments comments={props.comments} />
+        <Comments comments={props.comments} postID={props.post.id} author={props.author} triggers={props.triggers} />
       }
 
     </section>

@@ -94,7 +94,7 @@ export default class SchoolHeader extends React.Component {
         /*<div key="posts" className="panel__toolbar_item-text">
           {tagPosts.length} posts
         </div>,*/
-        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <button key="new" className="button button-midi button-light_blue" type="button">New</button>,
         <FollowTagButton
           current_user={current_user}
           followed_tags={current_user ? current_user.followed_schools : {}}

@@ -19,21 +19,33 @@
 import React from 'react';
 import _ from 'lodash';
 import Comment from './comment';
+import CreateComment from './create-comment';
 
 let Comments = (props) => {
+  const {
+    author,
+    comments,
+    triggers,
+    postID
+  } = props;
 
-    return (
-        <div className="card__comments">
-            {
-                _.values(props.comments).map(comment => {
-                    return (
-                        <Comment {...comment} />
-                    )
-                })
-            }
+  /*console.info('props', props);
+  console.info('comments', comments);*/
 
-        </div>
-    );
+  return (
+    <div>
+      <div className="card__comments">
+        {
+          _.values(props.comments).map(comment => {
+            return (
+              <Comment {...comment} />
+            )
+          })
+        }
+      </div>
+      <CreateComment author={author} className="card__footer" postID={postID} triggers={triggers} />
+    </div>
+  );
 
 };
 
