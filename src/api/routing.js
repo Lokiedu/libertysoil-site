@@ -91,6 +91,7 @@ export function initApi(bookshelf) {
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
+  api.post('/user/:username/ignore', wrap(controller.ignoreUser.bind(controller)));
 
   api.get('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
   api.post('/user/', wrap(controller.updateUser.bind(controller)));

@@ -54,6 +54,9 @@ export function initBookshelfFromKnex(knex) {
     followers: function() {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
+    ignored_users: function() {
+      return this.belongsToMany(User, 'ignored_users', 'user_id', 'ignored_user_id');
+    },
     liked_posts: function() {
       return this.belongsToMany(Post, 'likes', 'user_id', 'post_id');
     },
@@ -93,6 +96,16 @@ export function initBookshelfFromKnex(knex) {
       }
     },
     hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName'],  // exclude from json-exports
+    ignoreUser: async function(userId) {
+      // `this` must have ignored_users fetched. Use `fetch({withRelated: ['ignored_users']})`.
+
+      if (
+        this.id != userId &&
+        _.isUndefined(this.related('ignored_users').find({id: userId}))
+      ) {
+        await this.ignored_users().attach(userId);
+      }
+    },
     followHashtag: async function(hashtagId) {
       await this.followed_hashtags().detach(hashtagId);
       return this.followed_hashtags().attach(hashtagId);

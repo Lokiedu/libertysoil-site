@@ -262,6 +262,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async ignoreUser(userName) {
+    let response = await this.post(`/api/v1/user${userName}/ignore`);
+    return response.body;
+  }
+
   async updateUser(user) {
     let response = await this.postJSON(`/api/v1/user`, user);
     return response.body;
