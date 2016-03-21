@@ -128,8 +128,13 @@ export default class ApiClient
   }
 
   async checkEmailTaken(email) {
-    let response = await this.get(`/api/v1/user/email/${email}`);
-    return response.body.taken;
+    try {
+      await this.head(`/api/v1/user/email/${email}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
   }
 
   async getAvailableUsername(username) {

@@ -680,9 +680,9 @@ export default class ApiController {
         .where('email', req.params.email)
         .fetch({require: true});
 
-      res.send({taken: true});
+      res.end();
     } catch (e) {
-      res.send({taken: false});
+      res.status(404).end();
     }
   }
 
