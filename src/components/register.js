@@ -148,7 +148,11 @@ export default class RegisterComponent extends React.Component {
       this.error = e.message;
     }
 
-    this.unavailable ? this.username.setCustomValidity('Username is taken') : this.username.setCustomValidity('');
+    if (this.unavailable) {
+      this.username.setCustomValidity('Username is taken');
+    } else {
+      this.username.setCustomValidity('');
+    }
   };
 
   emailValidation = async (event) => {
@@ -161,7 +165,12 @@ export default class RegisterComponent extends React.Component {
     } catch (e) {
       this.error = e.message;
     }
-    unavailable ? this.email.setCustomValidity('Email is taken') : this.email.setCustomValidity('');
+
+    if (unavailable) {
+      this.email.setCustomValidity('Email is taken');
+    } else {
+      this.email.setCustomValidity('');
+    }
   }
 
   passwordValidation = () => {
