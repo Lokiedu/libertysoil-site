@@ -10,12 +10,15 @@ bluebird.promisifyAll(require('lwip/lib/Batch').prototype);
 
 /**
  * Applies transforms to the image.
- * Available transforms (add as needed):
- *   {crop: {left: Number, top: Number, right: Number, bottom: Number}}
+ * See: https://github.com/EyalAr/lwip
+ * Available transforms (add in as needed):
+ *   {crop: {left: Number, top: Number, right: Number, bottom: Number}} - Rectangle with coordinates from the top left corner.
+ *   {crop: {width: Number, height: Number}} - A rectangle at the center of the image.
+ *   {crop: {size: Number}} - A square at the center of the image.
  *   {resize: {width: Number, height: Number}}
  * @param {Buffer} buffer
- * @param {Array} transforms - An array of transforms
- * @returns {Promise}
+ * @param {Array} transforms - An array of transforms.
+ * @returns {Promise<Image>}
  */
 export async function processImage(buffer, transforms) {
   let imageType = fileType(buffer).ext;
@@ -29,7 +32,16 @@ export async function processImage(buffer, transforms) {
 
     switch (type) {
       case 'crop': {
-        batch.crop(params.left, params.top, params.right, params.bottom);
+        let { left, top, right, bottom, width, height, size } = params;
+
+        if (size) {
+          batch.crop(size);
+        } else if (width && height) {
+          batch.crop(width, height);
+        } else {
+          batch.crop(left, top, right, bottom);
+        }
+
         break;
       }
       case 'resize': {
