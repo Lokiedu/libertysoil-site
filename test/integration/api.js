@@ -392,7 +392,13 @@ describe('api v.1', () => {
           let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
           post2.hashtags().attach(hashtag);
 
-          await expect({url: `/api/v1/user/tags`, session: sessionId}, 'to body have array length', 1);
+          await expect(
+            {url: `/api/v1/user/tags`, session: sessionId},
+            'to body satisfy',
+            body => {
+              expect(body.hashtags, 'to have length', 1);
+            }
+          );
         });
 
         it('CAN like hashtag', async () => {
