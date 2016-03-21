@@ -26,7 +26,16 @@ const initialState = i.Map({});
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_POST_COMMENTS: {
-      state = state.set(action.post_id, i.fromJS(_.keyBy(action.comments, 'id')));
+      let comments = action.comments.map(comment => {
+        let _comment = {
+          ...comment
+        };
+        delete _comment.user;
+
+        return _comment;
+      });
+
+      state = state.set(action.post_id, i.fromJS(_.keyBy(comments, 'id')));
       break;
     }
   }
