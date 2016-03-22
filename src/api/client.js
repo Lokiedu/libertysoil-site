@@ -273,7 +273,7 @@ export default class ApiClient
   }
 
   async ignoreUser(userName) {
-    let response = await this.post(`/api/v1/user${userName}/ignore`);
+    let response = await this.post(`/api/v1/user/${userName}/ignore`);
     return response.body;
   }
 

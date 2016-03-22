@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
 import FollowButton from './follow-button';
+import IgnoreButton from './ignore-button';
 import User from './user';
 
 
@@ -32,7 +33,8 @@ export default class SideSuggestedUsers extends React.Component {
     i_am_following: PropTypes.arrayOf(PropTypes.string.isRequired),
     triggers:  PropTypes.shape({
       followUser: PropTypes.func.isRequired,
-      unfollowUser: PropTypes.func.isRequired
+      unfollowUser: PropTypes.func.isRequired,
+      ignoreUser: React.PropTypes.func.isRequired
     }),
     users: PropTypes.arrayOf(PropTypes.shape({
       avatar: PropTypes.shape({
@@ -47,6 +49,16 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
+  state = {
+    loading: false
+  };
+
+  ignoreUser = async (user) => {
+    this.setState({loading: true});
+    await this.props.triggers.ignoreUser(user);
+    this.setState({loading: false});
+  }
+
   render() {
     const {
       current_user,
@@ -59,11 +71,16 @@ export default class SideSuggestedUsers extends React.Component {
       return null;
     }
 
+    let className = 'layout__row suggested_users';
+    if (this.state.loading) {
+      className += ' suggested_users-loading'
+    }
+
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        {_.take(users, 3).map((user) => (
-          <div className="layout__row" key={`user-${user.id}`}>
+        { _.take(users, 3).map((user) => (
+          <div className={className} key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User
                 avatarSize="32"
@@ -71,11 +88,16 @@ export default class SideSuggestedUsers extends React.Component {
               />
             </div>
 
-            <div className="layout__row layout__row-small">
+            <div className="layout__row layout__grid layout__row-small">
               <FollowButton
                 active_user={current_user}
                 following={i_am_following}
                 triggers={triggers}
+                user={user}
+              />
+              <IgnoreButton
+                active_user={current_user}
+                onClick={this.ignoreUser}
                 user={user}
               />
             </div>
