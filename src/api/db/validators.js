@@ -60,7 +60,8 @@ let User = {
       summary: ['string'],
       bio: ['string'],
       roles: ['array'],
-      first_login: ['boolean']
+      first_login: ['boolean'],
+      avatar: ['plainObject']
     }
   }
 };
