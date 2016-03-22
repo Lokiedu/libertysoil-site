@@ -55,7 +55,7 @@ export default class ChangeAvatarModal extends Component {
   };
 
   handleScale = () => {
-    this.setState({scale: this.refs.scale.value})
+    this.setState({ scale: parseFloat(this.refs.scale.value) })
   };
 
   close = () => {
