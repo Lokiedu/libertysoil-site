@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes, Component } from 'react';
-import AvatarEditor from 'react-avatar-editor';
+import AvatarEditor from '../../external/react-avatar-editor';
 
 import ModalComponent from '../modal-component';
 
