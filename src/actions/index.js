@@ -162,10 +162,12 @@ export function setUserPosts(user_id, posts) {
   }
 }
 
-export function setUserTags(hashtags) {
+export function setUserTags(tags) {
   return {
     type: SET_USER_TAGS,
-    hashtags
+    hashtags: tags.hashtags,
+    schools: tags.schools,
+    geotags: tags.geotags
   }
 }
 

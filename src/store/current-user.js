@@ -24,6 +24,8 @@ import * as a from '../actions';
 const initialState = i.Map({
   id: null,
   hashtags: i.List([]),
+  geotags: i.List([]),
+  schools: i.List([]),
   followed_hashtags: i.Map({}),
   followed_schools: i.Map({}),
   followed_geotags: i.Map({}),
@@ -51,6 +53,8 @@ export default function reducer(state=initialState, action) {
           state
             .set('id', newUid)
             .set('hashtags', i.List([]))
+            .set('geotags', i.List([]))
+            .set('schools', i.List([]))
             .set('followed_hashtags', i.Map({}))
             .set('followed_schools', i.Map({}))
             .set('followed_geotags', i.Map({}))
@@ -84,12 +88,27 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_USER_TAGS: {
-      let tags = _.take(action.hashtags, 10);
+      const hashtags = _.take(action.hashtags, 5);
+      const schools = _.take(action.schools, 5);
+      const geotags = _.take(action.geotags, 5);
 
-      if (tags)
-        state = state.set('hashtags', i.fromJS(tags));
-      else
+      if (hashtags) {
+        state = state.set('hashtags', i.fromJS(hashtags));
+      } else {
         state = state.set('hashtags', i.List([]));
+      }
+
+      if (schools) {
+        state = state.set('schools', i.fromJS(schools));
+      } else {
+        state = state.set('schools', i.List([]));
+      }
+
+      if (geotags) {
+        state = state.set('geotags', i.fromJS(geotags));
+      } else {
+        state = state.set('geotags', i.List([]));
+      }
 
       break;
     }
