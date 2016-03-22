@@ -19,14 +19,19 @@
 import React from 'react';
 
 import Time from '../time';
+import User from '../user';
 
 let Comment = ({
-  comment
+  comment,
+  author
 }) => {
   console.info('comment', comment);
 
   return (
     <article className="comment">
+      <header className="comment__header">
+        <User user={author} />
+      </header>
       <section className="comment__text content">
         {comment.text}
       </section>
