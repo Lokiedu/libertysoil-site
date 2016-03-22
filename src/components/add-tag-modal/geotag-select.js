@@ -40,6 +40,14 @@ export default class GeotagSelect extends Component {
     value: ''
   };
 
+  getValue() {
+    return this.state.value;
+  }
+
+  getFirstOverlapModel() {
+    return _.find(this.state.suggestions, s => s.name === this.state.value);
+  }
+
   reset() {
     this.setState({
       geotagId: '',

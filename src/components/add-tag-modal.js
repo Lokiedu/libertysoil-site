@@ -88,7 +88,11 @@ export default class AddTagModal extends Component {
     hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    type: PropTypes.oneOf(IMPLEMENTED_TAGS)
+    type: PropTypes.oneOf(IMPLEMENTED_TAGS),
+    triggers: PropTypes.shape({
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
+    })
   };
 
   static defaultProps = {
@@ -217,6 +221,7 @@ export default class AddTagModal extends Component {
             onAddGeotag={this._addGeotag}
             onAddHashtag={this._addHashtag}
             onAddSchool={this._addSchool}
+            triggers={this.props.triggers}
           />
           <AddedTags
             addedTags={this.state}

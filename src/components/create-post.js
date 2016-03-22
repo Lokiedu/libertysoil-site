@@ -54,7 +54,9 @@ export default class CreatePost extends React.Component {
     }).isRequired,
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
-      loadUserRecentTags: PropTypes.func.isRequired
+      loadUserRecentTags: PropTypes.func.isRequired,
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
     })
   };
 
@@ -249,6 +251,7 @@ export default class CreatePost extends React.Component {
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
+          triggers={this.props.triggers}
         />
       </div>
     )
