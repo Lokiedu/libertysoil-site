@@ -19,6 +19,7 @@ import React, {
     Component,
     PropTypes
 } from 'react';
+import { Link } from 'react-router';
 
 import bem from '../../utils/bemClassNames';
 import Button from '../button';
@@ -36,8 +37,15 @@ export default class CreateComment extends Component {
   };
 
   state = {
-    isExpanded: false
+    isExpanded: false,
+    comment: ''
   };
+
+  updateComment = (e) => {
+    this.setState({
+      comment: e.target.value
+    });
+  }
 
   expand = () => {
     if (!this.state.isExpanded) {
@@ -58,12 +66,15 @@ export default class CreateComment extends Component {
       postID,
       triggers
     } = this.props;
-    const comment = this.refs.comment.value.trim();
+    const comment = this.state.comment.trim();
 
     e && e.preventDefault();
 
     if (comment) {
       triggers.createComment(postID, comment);
+      this.setState({
+        comment: ''
+      });
     }
   };
 
@@ -73,7 +84,8 @@ export default class CreateComment extends Component {
       author
     } = this.props;
     const {
-      isExpanded
+      isExpanded,
+      comment
     } = this.state;
     const blockClassName = bem.makeClassName({
       block: 'create_comment',
@@ -83,30 +95,46 @@ export default class CreateComment extends Component {
     });
 
     if (!author) {
-      return false;
+      return (
+        <div className={`${blockClassName} ${className} content`}>
+          You can not comment. Please <Link to="/auth">register or log in</Link>.
+        </div>
+      );
     }
 
     return (
-        <form onSubmit={this.postComment} className={`${blockClassName} ${className}`}>
-          <div className="layout">
+      <form onSubmit={this.postComment} className={`${blockClassName} ${className}`}>
+        <div className="layout">
+          {isExpanded &&
+            <div className="layout__grid_item">
+              <User avatarSize="32" user={author} hideText={true} />
+            </div>
+          }
+          <div className="layout__grid_item layout__grid_item-wide">
+            <div className="layout__row">
+              <textarea
+                onFocus={this.expand}
+                onChange={this.updateComment}
+                className="input input-block create_comment__input"
+                placeholder="Add Comment"
+                value={comment}
+              ></textarea>
+            </div>
             {isExpanded &&
-              <div className="layout__grid_item">
-                <User avatarSize="32" user={author} hideText={true} />
+              <div className="layout__row">
+                <Button
+                  disabled={!comment.trim()}
+                  type="submit"
+                  className="layout__grid_item"
+                  title="Add Comment"
+                  color="light_blue"
+                />
+                <Button onClick={this.collapse} className="layout__grid_item" title="Cancel" color="transparent" />
               </div>
             }
-            <div className="layout__grid_item layout__grid_item-wide">
-              <div className="layout__row">
-                <textarea ref="comment" onFocus={this.expand} className="input input-block create_comment__input" type="text" placeholder="Add Comment"></textarea>
-              </div>
-              {isExpanded &&
-                <div className="layout__row">
-                  <Button type="submit" className="layout__grid_item" title="Comment" color="light_blue" />
-                  <Button onClick={this.collapse} className="layout__grid_item" title="Cancel" color="transparent" />
-                </div>
-              }
-            </div>
           </div>
-        </form>
+        </div>
+      </form>
     )
   }
 }

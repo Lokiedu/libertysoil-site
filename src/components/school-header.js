@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 
 import Panel from './panel';
 import Time from './time';
-import strftime from 'strftime';
 import FollowTagButton from './follow-tag-button';
 import Tag from './tag';
 import LikeTagButton from './like-tag-button';

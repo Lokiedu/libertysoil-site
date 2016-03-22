@@ -39,7 +39,7 @@ import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import { addPost, setRelatedPosts, setPostComments } from '../actions';
+import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';

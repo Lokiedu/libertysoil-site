@@ -40,8 +40,6 @@ let PostWrapper = ({
     }
   });
 
-  console.info('post', post);
-
   return (
     <section className={cardClassName}>
       <Preview post={post}/>
@@ -55,7 +53,7 @@ let PostWrapper = ({
         <Comments
           comments={comments}
           post={post}
-          author={author}
+          author={current_user.user}
           triggers={triggers}
           users={users}
         />
