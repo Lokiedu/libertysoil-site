@@ -79,12 +79,12 @@ export default class AddSchoolForm extends Component {
     return (
       <div className="add_tag_modal add_tag_modal-school">
 
-        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs" panelClassName="layout__row add_tag_modal__tab_panel">
+        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs">
           <Tab>
             <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Enter manually
             </TabTitle>
-            <TabContent>
+            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
               <form onSubmit={this.submitHandler}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
@@ -106,21 +106,27 @@ export default class AddSchoolForm extends Component {
             <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Used recently
             </TabTitle>
-            <TabContent>
-              <TagCloud
-                schools={this.props.userRecentSchools}
-                onClick={this._selectRecentlyUsedSchool}
-              />
+            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+              Used recently:
+              <div className="layout__row">
+                <TagCloud
+                  schools={this.props.userRecentSchools}
+                  onClick={this._selectRecentlyUsedSchool}
+                />
+              </div>
             </TabContent>
           </Tab>
           <Tab>
             <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Popular
             </TabTitle>
-            <TabContent>
-              <TagCloud
-                schools={popularSchools}
-              />
+            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+              Popular:
+              <div className="layout__row">
+                <TagCloud
+                  schools={popularSchools}
+                />
+              </div>
             </TabContent>
           </Tab>
         </Tabs>

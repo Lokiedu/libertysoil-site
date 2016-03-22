@@ -17,25 +17,24 @@
  */
 .add_tag_modal {
   &-hashtag {
-    .add_tag_modal__tab_panel,
+    .add_tag_modal__tab_panel-colored,
+    .add_tag_modal__tab_panel-top_colored:before,
     .add_tag_modal__tab-active {
       background-color: #5A93CC;
-
-      .tag {
-        background-color: #fff;
-      }
     }
   }
 
   &-location {
-    .add_tag_modal__tab_panel,
+    .add_tag_modal__tab_panel-colored,
+    .add_tag_modal__tab_panel-top_colored:before,
     .add_tag_modal__tab-active {
       background-color: #47B8E7;
     }
   }
 
   &-school {
-    .add_tag_modal__tab_panel,
+    .add_tag_modal__tab_panel-colored,
+    .add_tag_modal__tab_panel-top_colored:before,
     .add_tag_modal__tab-active {
       background-color: #DC3457;
     }
@@ -74,6 +73,19 @@
   &__tab_panel {
     padding: 20px;
     margin: 0 -20px;
+
+    &-top_colored {
+      position: relative;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+      }
+    }
   }
 
   &__added_tags {
