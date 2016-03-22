@@ -17,24 +17,42 @@
  */
 
 import React from 'react';
+import strftime from 'strftime';
 
-import Time from '../time';
-
-let Comment = ({
-  comment
+const Time = ({
+  title,
+  timestamp,
+  format,
+  ...props
 }) => {
-  console.info('comment', comment);
+  let formattedTime = '';
+  let date = new Date();
+
+  if (timestamp) {
+    date = new Date(timestamp);
+  }
+
+  if (!title) {
+    title = date.toUTCString();
+  }
+
+  formattedTime = strftime(format, date);
 
   return (
-    <article className="comment">
-      <section className="comment__text content">
-        {comment.text}
-      </section>
-      <footer className="comment__footer">
-        <Time className="comment__time" timestamp={comment.updated_at} />
-      </footer>
-    </article>
+    <time {...props} dateTime={date.toISOString()} title={title}>
+      {formattedTime}
+    </time>
   );
 
 };
-export default Comment;
+
+Time.propTypes = {
+  timestamp: React.PropTypes.any,
+  format: React.PropTypes.string
+};
+
+Time.defaultProps = {
+  format: '%B %e, %k:%M'
+};
+
+export default Time;
