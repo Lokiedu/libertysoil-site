@@ -21,6 +21,7 @@ import _ from 'lodash';
 import Comment from './comment';
 import CreateComment from './create-comment';
 import Icon from '../icon';
+import message from '../../utils/message';
 
 let Comments = (props) => {
   const {
@@ -31,23 +32,23 @@ let Comments = (props) => {
     users
   } = props;
   let postComments = [];
-
-  console.info('comments', comments);
-  console.info('users', users);
+  const title = message.compile('{count, plural, =0{No commets} one{1 comment} other{# Comments}}');
 
   if (post.post_comments.length) {
     postComments = (
-      post.post_comments.map((commentID, i) => {
-        const comment = comments[commentID];
+      <section className="comments__body">
+        {post.post_comments.map((commentID, i) => {
+          const comment = comments[commentID];
 
-        return (
-          <Comment
-            key={i}
-            comment={comments[commentID]}
-            author={users[comments[commentID].user_id]}
-          />
-        )
-      })
+          return (
+            <Comment
+              key={i}
+              comment={comments[commentID]}
+              author={users[comments[commentID].user_id]}
+            />
+          )
+        })}
+      </section>
     );
   }
 
@@ -57,10 +58,9 @@ let Comments = (props) => {
         <header className="comments__header">
           <div className="comments__count">
             <Icon className="comments__count_icon" icon="chat_bubble_outline" />
-            <div className="comments__count_title">{`${postComments.length} Comments`}</div>
+            <div className="comments__count_title">{title({ count: postComments.length })}</div>
           </div>
         </header>
-        {postComments}
       </div>
       <CreateComment author={author} className="card__footer" postID={post.id} triggers={triggers} />
     </div>
