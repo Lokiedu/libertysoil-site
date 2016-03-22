@@ -124,10 +124,10 @@ export default class ApiController {
     let posts = await q.fetch({withRelated: POST_RELATIONS});
     let post_comments_count = await this.countComments(posts);
 
-    posts = posts.serialize();
-    posts.forEach(post => {
-      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+    posts = posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       post.attributes.comments = post_comments_count[post.get('id')];
+      return post;
     });
 
     res.send(posts);
@@ -168,11 +168,13 @@ export default class ApiController {
            }
          })
          .fetch({withRelated: POST_RELATIONS});
+
       let post_comments_count = await this.countComments(posts);
-      posts = posts.serialize();
-      posts.forEach(post => {
-        post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+
+      posts = posts.map(post => {
+        post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
         post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
       });
 
       res.send(posts);
