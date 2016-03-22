@@ -694,6 +694,21 @@ export default class ApiController {
     }
   }
 
+  async checkEmailTaken(req, res) {
+    let User = this.bookshelf.model('User');
+
+    try {
+      await User
+        .forge()
+        .where('email', req.params.email)
+        .fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
+    }
+  }
+
   async getAvailableUsername(req, res) {
     let User = this.bookshelf.model('User');
 
