@@ -38,16 +38,17 @@ export default class AddTagForm extends Component {
       onAddGeotag,
       onAddHashtag,
       onAddSchool,
-      type
+      type,
+      userRecentTags
     } = this.props;
 
     switch (type) {
       case TAG_LOCATION:
-        return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} />;
+        return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} userRecentGeotags={userRecentTags.geotags} />;
       case TAG_HASHTAG:
-        return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} />;
+        return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} userRecentHashtags={userRecentTags.hashtags} />;
       case TAG_SCHOOL:
-        return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} />;
+        return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} userRecentSchools={userRecentTags.schools} />;
       default:
         return false;
     }

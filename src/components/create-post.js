@@ -47,8 +47,14 @@ export default class CreatePost extends React.Component {
     hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
     triggers: PropTypes.shape({
-      createPost: PropTypes.func.isRequired
+      createPost: PropTypes.func.isRequired,
+      loadUserRecentTags: PropTypes.func.isRequired
     })
   };
 
@@ -95,6 +101,7 @@ export default class CreatePost extends React.Component {
 
     await this.props.triggers.createPost('short_text', data);
     ga('send', 'event', 'Post', 'Done', data.hashtags.join(','));
+    await this.props.triggers.loadUserRecentTags();
 
     form.text.value = '';
     this._addTagModal.reset();
@@ -221,11 +228,12 @@ export default class CreatePost extends React.Component {
           </div>
         </form>
         <AddTagModal
+          ref={(c) => this._addTagModal = c}
           allSchools={this.props.allSchools}
           geotags={this.props.geotags}
           hashtags={this.props.hashtags}
-          ref={(c) => this._addTagModal = c}
           schools={this.props.schools}
+          userRecentTags={this.props.userRecentTags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}

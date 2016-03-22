@@ -18,8 +18,6 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
 import HashtagSelect from './hashtag-select';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
 import TagCloud from '../tag-cloud';
@@ -28,61 +26,9 @@ export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
 
   static propTypes = {
-    onAddHashtag: PropTypes.func.isRequired
+    onAddHashtag: PropTypes.func.isRequired,
+    userRecentHashtags: PropTypes.array.isRequired
   };
-
-  constructor(props) {
-    super(props);
-    this.addedHashtags = [];
-    this.state = {
-      recentHashtags: [],
-      selectedHashtags: []
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.addedHashtags) {
-      this.addedHashtags = _.clone(this.props.addedHashtags);
-    }
-    this.getRecentHashtags();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.addedHashtags.length > nextProps.addedHashtags.length) {
-      let removed = _.difference(this.addedHashtags, nextProps.addedHashtags);
-
-      removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentHashtags, t => tag.name === t.name);
-        let selectedHashtags = _.clone(this.state.selectedHashtags);
-        _.remove(selectedHashtags, i => index === i);
-        this.setState({ selectedHashtags: selectedHashtags });
-      });
-    }
-    this.addedHashtags = _.clone(nextProps.addedHashtags);
-  }
-
-  async getRecentHashtags() {
-    const client = new ApiClient(API_HOST);
-    try {
-      const hashtags = await client.userRecentHashtags();
-      this.setState({ recentHashtags: hashtags });
-      
-      this.removeSelected();
-      return hashtags;
-    } catch (e) {
-      return e.message;
-    }
-  }
-
-  removeSelected() {
-    const selectedHashtags = this.state.recentHashtags.map((tag, index) => {
-      if (_.findIndex(this.addedHashtags, t => t.name === tag.name) != -1) {
-        return index;
-      }
-      return undefined;
-    }).filter(v => v !== undefined);
-    this.setState({ selectedHashtags: selectedHashtags });
-  }
 
   _handleEnter = (event) => {
     event.preventDefault();
@@ -93,12 +39,8 @@ export default class AddHashtagForm extends Component {
   };
 
   _selectRecentlyUsedHashtag = (tag) => {
-    const index = _.findIndex(this.state.recentHashtags, t => t.name === tag.name);
-    let selectedHashtags = _.clone(this.state.selectedHashtags);
-    selectedHashtags.push(index);
-    this.setState({ selectedHashtags: selectedHashtags });
-
-    this._addTag(this.state.recentHashtags[index]);
+    const index = _.findIndex(this.props.userRecentHashtags, t => t.name === tag.name);
+    this._addTag(this.props.userRecentHashtags[index]);
   };
 
   _addTag = (tag) => {
@@ -118,10 +60,6 @@ export default class AddHashtagForm extends Component {
   };
 
   render() {
-    let recentHashtags = [];
-    if (Array.isArray(this.state.recentHashtags)) {
-      recentHashtags = _.clone(this.state.recentHashtags).filter((tag, i) => this.state.selectedHashtags.indexOf(i) === -1);
-    }
     const popularHashtags = [];
 
     return (
@@ -157,7 +95,7 @@ export default class AddHashtagForm extends Component {
             </TabTitle>
             <TabContent>
               <TagCloud
-                hashtags={recentHashtags}
+                hashtags={this.props.userRecentHashtags}
                 onClick={this._selectRecentlyUsedHashtag}
               />
             </TabContent>

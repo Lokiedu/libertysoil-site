@@ -18,8 +18,6 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
 import GeotagSelect from './geotag-select';
 import { preventDefault } from '../../utils/preventDefault';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
@@ -33,69 +31,13 @@ export default class AddGeotagForm extends Component {
     addedGeotags: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string
     })).isRequired,
-    onAddGeotag: PropTypes.func.isRequired
+    onAddGeotag: PropTypes.func.isRequired,
+    userRecentGeotags: PropTypes.array.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.addedGeotags = [];
-    this.state = {
-      recentGeotags: [],
-      selectedGeotags: []
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.addedGeotags) {
-      this.addedGeotags = _.clone(this.props.addedGeotags);
-    }
-    this.getRecentGeotags();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.addedGeotags.length > nextProps.addedGeotags.length) {
-      let removed = _.difference(this.addedGeotags, nextProps.addedGeotags);
-      
-      removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentGeotags, t => t.id === tag.id);
-        let selectedGeotags = _.clone(this.state.selectedGeotags);
-        _.remove(selectedGeotags, i => index === i);
-        this.setState({ selectedGeotags: selectedGeotags });
-      });
-    }
-    this.addedGeotags = _.clone(nextProps.addedGeotags);
-  }
-
-  async getRecentGeotags() {
-    const client = new ApiClient(API_HOST);
-    try {
-      const geotags = await client.userRecentGeotags();
-      this.setState({ recentGeotags: geotags });
-
-      this.removeSelected();
-      return geotags;
-    } catch (e) {
-      return e.message;
-    }
-  }
-
-  removeSelected() {
-    const selectedGeotags = this.state.recentGeotags.map((tag, index) => {
-      if (_.findIndex(this.addedGeotags, t => t.id === tag.id) != -1) {
-        return index;
-      }
-      return undefined;
-    }).filter(v => v !== undefined);
-    this.setState({ selectedGeotags: selectedGeotags });
-  }
-
   _selectRecentlyUsedGeotag = (tag) => {
-    const index = _.findIndex(this.state.recentGeotags, t => t.url_name === tag.urlId);
-    let selectedGeotags = _.clone(this.state.selectedGeotags);
-    selectedGeotags.push(index);
-    this.setState({ selectedGeotags: selectedGeotags });
-
-    this._addTag(this.state.recentGeotags[index]);
+    const index = _.findIndex(this.props.userRecentGeotags, t => t.url_name === tag.urlId);
+    this._addTag(this.props.userRecentGeotags[index]);
   };
 
   _addTag = (geotag) => {
@@ -115,10 +57,6 @@ export default class AddGeotagForm extends Component {
   };
 
   render() {
-    let recentGeotags = [];
-    if (Array.isArray(this.state.recentGeotags)) {
-      recentGeotags = _.clone(this.state.recentGeotags).filter((tag, i) => this.state.selectedGeotags.indexOf(i) === -1);
-    }
     const popularGeotags = [];
 
     return (
@@ -154,7 +92,7 @@ export default class AddGeotagForm extends Component {
             </TabTitle>
             <TabContent>
               <TagCloud
-                geotags={recentGeotags}
+                geotags={this.props.userRecentGeotags}
                 onClick={this._selectRecentlyUsedGeotag}
               />
             </TabContent>

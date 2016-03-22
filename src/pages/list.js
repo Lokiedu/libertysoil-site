@@ -84,7 +84,8 @@ export class List extends React.Component {
     await Promise.all([
       trigger.loadSchools(),
       trigger.loadPostRiver(),
-      trigger.loadPersonalizedSuggestions()
+      trigger.loadPersonalizedSuggestions(),
+      trigger.loadUserRecentTags()
     ]);
   }
 
@@ -160,6 +161,7 @@ export class List extends React.Component {
                   allSchools={_.values(this.props.schools)}
                   defaultText={this.props.create_post_form.text}
                   triggers={triggers}
+                  userRecentTags={current_user.recent_tags}
                   {...this.props.create_post_form}
                 />
                 <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>

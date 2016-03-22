@@ -30,7 +30,12 @@ const initialState = i.Map({
   liked_hashtags: i.Map({}),
   liked_schools: i.Map({}),
   liked_geotags: i.Map({}),
-  suggested_users: i.List([])
+  suggested_users: i.List([]),
+  recent_tags: i.Map({
+    hashtags: i.List([]),
+    schools: i.List([]),
+    geotags: i.List([])
+  })
 });
 
 export default function reducer(state=initialState, action) {
@@ -38,6 +43,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_CURRENT_USER: {
       const oldUid = state.get('id');
       const newUid = action.user ? action.user.id : null;
+
 
       // UID is changed. means logout or re-login. Do the cleanup
       if (oldUid !== newUid) {
@@ -51,7 +57,8 @@ export default function reducer(state=initialState, action) {
             .set('liked_hashtags', i.Map({}))
             .set('liked_schools', i.Map({}))
             .set('liked_geotags', i.Map({}))
-            .set('suggested_users', i.List([]));
+            .set('suggested_users', i.List([]))
+            .set('recent_tags', i.fromJS({ hashtags: [], schools: [], geotags: [] }));
         });
       }
 
@@ -83,6 +90,12 @@ export default function reducer(state=initialState, action) {
         state = state.set('hashtags', i.fromJS(tags));
       else
         state = state.set('hashtags', i.List([]));
+
+      break;
+    }
+
+    case a.SET_USER_RECENT_TAGS: {
+      state = state.set('recent_tags', i.fromJS(action.recent_tags));
 
       break;
     }

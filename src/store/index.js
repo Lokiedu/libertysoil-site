@@ -87,7 +87,12 @@ const initialState = i.Map({
     liked_hashtags: i.Map({}),
     liked_schools: i.Map({}),
     liked_geotags: i.Map({}),
-    suggested_users: i.List([])
+    suggested_users: i.List([]),
+    recent_tags: i.Map({
+      hashtags: i.List([]),
+      schools: i.List([]),
+      geotags: i.List([])
+    })
   }),
   create_post_form: i.fromJS({
     text: '',
