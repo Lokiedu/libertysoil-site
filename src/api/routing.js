@@ -88,10 +88,12 @@ export function initApi(bookshelf) {
   api.get('/user/recent-schools', wrap(controller.getUserRecentSchools.bind(controller)));
   api.get('/user/recent-geotags', wrap(controller.getUserRecentGeotags.bind(controller)));
   api.head('/user/:username', wrap(controller.checkUserExists.bind(controller)));
+  api.head('/user/email/:email', wrap(controller.checkEmailTaken.bind(controller)));
   api.get('/user/available-username/:username', wrap(controller.getAvailableUsername.bind(controller)));
   api.get('/user/:username', wrap(controller.getUser.bind(controller)));
   api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
   api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
+  api.post('/user/:username/ignore', wrap(controller.ignoreUser.bind(controller)));
 
   api.get('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
   api.post('/user/', wrap(controller.updateUser.bind(controller)));

@@ -16,42 +16,101 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import _ from 'lodash';
+import {
+  values,
+  throttle
+} from 'lodash';
 import { connect } from 'react-redux';
 
+import { toggleUISidebar } from '../actions';
+
+import Navigation from './navigation';
 import NavigationItem from './navigation-item';
 import CurrentUser from './current-user';
 import TagCloud from './tag-cloud';
 import SidebarFollowedTags from './sidebar-followed-tags';
 import currentUserSelector from '../selectors/currentUser';
-
+import createSelector from '../selectors/createSelector';
 
 class Sidebar extends React.Component {
   static displayName = 'Sidebar';
 
+  state = {
+    clientWidth: 0
+  };
+
+  componentDidMount () {
+    window.addEventListener('resize', this.toggleVisible);
+    document.addEventListener('DOMContentLoaded', this.toggleVisible);
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.toggleVisible);
+    document.removeEventListener('DOMContentLoaded', this.toggleVisible);
+  }
+
+  toggleVisible = throttle(() => {
+    const {
+      dispatch,
+      ui
+    } = this.props;
+    const breakpointWidth = 960;
+
+    if (typeof document == 'undefined') {
+      return;
+    }
+
+    const clientWidth = document.body.clientWidth;
+
+    if (clientWidth == this.state.clientWidth) {
+      return;
+    }
+
+    if (ui.get('sidebarIsVisible') && (clientWidth <= breakpointWidth) && (clientWidth < this.state.clientWidth)) {
+      dispatch(toggleUISidebar(false));
+    }
+
+    if (!ui.get('sidebarIsVisible') && (clientWidth >= breakpointWidth) && (clientWidth > this.state.clientWidth)) {
+      dispatch(toggleUISidebar(true));
+    }
+
+    this.setState({
+      clientWidth: clientWidth
+    });
+  }, 100);
+
   render() {
-    if (!this.props.is_logged_in) {
+    const {
+      ui,
+      is_logged_in
+    } = this.props;
+    let sidebarClassName = ['sidebar'];
+
+    if (!is_logged_in) {
       return null;
+    }
+
+    if (ui.get('sidebarIsVisible')) {
+      sidebarClassName.push('sidebar-visible');
     }
 
     let current_user = this.props.current_user.toJS();
 
-    let followedTags = _.values(current_user.followed_hashtags);
-    let followedSchools = _.values(current_user.followed_schools);
-    let followedGeotags = _.values(current_user.followed_geotags);
+    let followedTags = values(current_user.followed_hashtags);
+    let followedSchools = values(current_user.followed_schools);
+    let followedGeotags = values(current_user.followed_geotags);
     let showLikes = (current_user.likes && current_user.likes.length > 0);
     let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
     let showFollowedTags = !!followedTags.length || !!followedSchools.length || !!followedGeotags.length;
     let showUsedTags = current_user.hashtags && !!current_user.hashtags.length;
 
     return (
-      <div className="page__sidebar font-open_sans">
-        <div className="page__sidebar_user">
-          <CurrentUser user={current_user.user} />
-        </div>
-
-        <div className="navigation navigation-sidebar">
-          <NavigationItem enabled to="/" icon="star" icon="public">News Feed</NavigationItem>
+      <div className={sidebarClassName.join(' ')}>
+        <Navigation className="navigation-first">
+          <NavigationItem enabled to="/" icon="public">News Feed</NavigationItem>
+          <div className="navigation__item sidebar__user">
+            <CurrentUser user={current_user.user} />
+          </div>
           {showLikes &&
             <NavigationItem
               enabled
@@ -70,24 +129,25 @@ class Sidebar extends React.Component {
               My Favorites
             </NavigationItem>
           }
-        </div>
+        </Navigation>
 
         {showFollowedTags &&
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I follow</h4>
-            <div className="layout__row">
+            <Navigation>
               <SidebarFollowedTags geotags={followedGeotags} hashtags={followedTags} schools={followedSchools} />
-            </div>
+            </Navigation>
           </div>
         }
 
         {showUsedTags &&
           <div className="layout__row layout__row-double">
             <h4 className="sidebar__heading">I post to</h4>
-            <div className="sidebar__user_tags layout__row">
+            <div className="sidebar__user_tags">
               <TagCloud
                 hashtags={current_user.hashtags}
-                schools={[]}
+                schools={current_user.schools}
+                geotags={current_user.geotags}
                 truncated
               />
             </div>
@@ -98,4 +158,13 @@ class Sidebar extends React.Component {
   }
 }
 
-export default connect(currentUserSelector)(Sidebar);
+const selector = createSelector(
+  state => state.get('ui'),
+  currentUserSelector,
+  (ui, current_user) => ({
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(Sidebar);

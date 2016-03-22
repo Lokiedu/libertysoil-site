@@ -70,6 +70,7 @@ export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
+export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 
@@ -79,6 +80,7 @@ export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
 export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
+export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
 
 export function addUser(user) {
   return {
@@ -160,10 +162,12 @@ export function setUserPosts(user_id, posts) {
   }
 }
 
-export function setUserTags(hashtags) {
+export function setUserTags(tags) {
   return {
     type: SET_USER_TAGS,
-    hashtags
+    hashtags: tags.hashtags,
+    schools: tags.schools,
+    geotags: tags.geotags
   }
 }
 
@@ -211,6 +215,12 @@ export function removeUserFollowedGeotag(geotag) {
   }
 }
 
+export function setUserRecentTags(recent_tags) {
+  return {
+    type: SET_USER_RECENT_TAGS,
+    recent_tags
+  }
+}
 
 export function setTagPosts(hashtag, posts) {
   return {
@@ -483,5 +493,12 @@ export function setUIProgress(progress, value) {
     type: UI__SET_PROGRESS,
     progress,
     value
+  }
+}
+
+export function toggleUISidebar(isVisible) {
+  return {
+    type: UI__TOGGLE_SIDEBAR,
+    isVisible
   }
 }

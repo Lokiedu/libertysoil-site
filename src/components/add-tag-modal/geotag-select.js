@@ -40,6 +40,14 @@ export default class GeotagSelect extends Component {
     value: ''
   };
 
+  getValue() {
+    return this.state.value;
+  }
+
+  getFirstOverlapModel() {
+    return _.find(this.state.suggestions, s => s.name === this.state.value);
+  }
+
   reset() {
     this.setState({
       geotagId: '',
@@ -59,6 +67,25 @@ export default class GeotagSelect extends Component {
   }, 300);
 
   _getSuggestionValue = (geotag) => geotag.name;
+
+  _renderSuggestion(geotag) {
+    let name = geotag.name;
+    let additionalInfo = [];
+
+    if (!_.isEmpty(geotag.admin1)) {
+      additionalInfo.push(geotag.admin1.name);
+    }
+
+    if (!_.isEmpty(geotag.country)) {
+      additionalInfo.push(geotag.country.name);
+    }
+
+    if (additionalInfo.length > 0) {
+      name += ` (${additionalInfo.join(', ')})`;
+    }
+
+    return name;
+  }
 
   _handleSelect = (event, { suggestion }) => {
     event.preventDefault();
@@ -92,7 +119,7 @@ export default class GeotagSelect extends Component {
         <Autosuggest
           getSuggestionValue={this._getSuggestionValue}
           inputProps={inputProps}
-          renderSuggestion={this._getSuggestionValue}
+          renderSuggestion={this._renderSuggestion}
           suggestions={this.state.suggestions}
           onSuggestionSelected={this._handleSelect}
           onSuggestionsUpdateRequested={this._getSuggestions}

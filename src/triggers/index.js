@@ -29,7 +29,7 @@ import {
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress
+  setUIProgress, setUserRecentTags
 } from '../actions';
 
 
@@ -199,8 +199,8 @@ export class ActionsTrigger {
       let result = await this.client.createPost(type, data);
       this.dispatch(addPostToRiver(result));
 
-      let userTags = this.client.userTags();
-      this.dispatch(setUserTags(await userTags));
+      let userTags = await this.client.userTags();
+      this.dispatch(setUserTags(userTags));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -271,6 +271,17 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user1));
         this.dispatch(addUser(res.user2));
       }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  ignoreUser = async (user) => {
+    try {
+      await this.client.ignoreUser(user.username);
+      let result = await this.client.userSuggestions();
+      
+      this.dispatch(setPersonalizedSuggestedUsers(result));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -390,6 +401,18 @@ export class ActionsTrigger {
     }
   };
 
+  loadUserRecentTags = async () => {
+    try {
+      let geotags = await this.client.userRecentGeotags();
+      let schools = await this.client.userRecentSchools();
+      let hashtags = await this.client.userRecentHashtags();
+
+      this.dispatch(setUserRecentTags({ geotags, schools, hashtags }));
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
   updatePost = async (post_uuid, post_fields) => {
     try {
       let result = await this.client.updatePost(post_uuid, post_fields);
@@ -453,9 +476,11 @@ export class ActionsTrigger {
       let result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
+      return result;
     } catch (e) {
       this.dispatch(addError(e.message));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
+      return false;
     }
   };
 
@@ -466,6 +491,30 @@ export class ActionsTrigger {
     } catch (e) {
       this.dispatch(addError(e.message));
     }
+  };
+
+  checkSchoolExists = async (name) => {
+    let exists;
+    try {
+      exists = await this.client.checkSchoolExists(name);
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      return false;
+    }
+
+    return exists;
+  };
+
+  checkGeotagExists = async (name) => {
+    let exists;
+    try {
+      exists = await this.client.checkGeotagExists(name);
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      return false;
+    }
+
+    return exists;
   };
 
   loadSchoolCloud = async () => {
@@ -537,8 +586,8 @@ export class ActionsTrigger {
   };
 
   loadUserTags = async () => {
-    const userTags = this.client.userTags();
-    this.dispatch(setUserTags(await userTags));
+    const userTags = await this.client.userTags();
+    this.dispatch(setUserTags(userTags));
   };
 
   showRegisterForm = async () => {

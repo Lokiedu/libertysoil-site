@@ -107,8 +107,10 @@ class InductionPage extends React.Component {
       >
         <Helmet title="Suggested users at " />
         <div className="paper__page">
-          <h1 className="content__title">Thank you for registering!</h1>
-          <p>To get started, follow a few people below:</p>
+          <div className="content">
+            <h1 className="content__title">Thank you for registering!</h1>
+            <p>To get started, follow a few people below:</p>
+          </div>
         </div>
 
         <div className="paper__page">

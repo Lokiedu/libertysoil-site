@@ -102,6 +102,11 @@ export default class RegisterComponent extends React.Component {
     return await client.checkUserExists(username);
   }
 
+  async checkEmailTaken(email) {
+    const client = new ApiClient(API_HOST);
+    return await client.checkEmailTaken(email);
+  }
+
   inputHandler = async (event) => {
     if (this.usernameManuallyChanged)
       return;
@@ -143,8 +148,30 @@ export default class RegisterComponent extends React.Component {
       this.error = e.message;
     }
 
-    this.unavailable ? this.username.setCustomValidity('Username is taken') : this.username.setCustomValidity('');
+    if (this.unavailable) {
+      this.username.setCustomValidity('Username is taken');
+    } else {
+      this.username.setCustomValidity('');
+    }
   };
+
+  emailValidation = async (event) => {
+    const result = event.target.value.trim();
+
+    let unavailable;
+    try {
+      unavailable = await this.checkEmailTaken(result);
+      this.error = '';
+    } catch (e) {
+      this.error = e.message;
+    }
+
+    if (unavailable) {
+      this.email.setCustomValidity('Email is taken');
+    } else {
+      this.email.setCustomValidity('');
+    }
+  }
 
   passwordValidation = () => {
     const pass = this.password;
@@ -199,7 +226,7 @@ export default class RegisterComponent extends React.Component {
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input onBlur={reset} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+            <input ref={(c) => this.email = c} onChange={this.emailValidation} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
           </div>
         </div>
         <div className="layout__row layout__row-double">

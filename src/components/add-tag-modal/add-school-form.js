@@ -18,10 +18,7 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
 import SchoolSelect from './school-select';
-import { preventDefault } from '../../utils/preventDefault';
 import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
 import TagCloud from '../tag-cloud';
 
@@ -36,69 +33,28 @@ export default class AddSchoolForm extends Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })).isRequired,
-    onAddSchool: PropTypes.func.isRequired
+    onAddSchool: PropTypes.func.isRequired,
+    userRecentSchools: PropTypes.array.isRequired,
+    triggers: PropTypes.shape({
+      checkSchoolExists: PropTypes.func.isRequired
+    })
   };
 
-  constructor(props) {
-    super(props);
-    this.addedSchools = [];
-    this.state = {
-      recentSchools: [],
-      selectedSchools: []
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.addedSchools) {
-      this.addedSchools = _.clone(this.props.addedSchools);
-    }
-    this.getRecentSchools();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.addedSchools.length > nextProps.addedSchools.length) {
-      let removed = _.difference(this.addedSchools, nextProps.addedSchools);
-      
-      removed.forEach(tag => {
-        const index = _.findIndex(this.state.recentSchools, t => tag.url_name === t.url_name);
-        let selectedSchools = _.clone(this.state.selectedSchools);
-        _.remove(selectedSchools, i => index === i);
-        this.setState({ selectedSchools: selectedSchools });
-      });
-    }
-    this.addedSchools = _.clone(nextProps.addedSchools);
-  }
-
-  async getRecentSchools() {
-    const client = new ApiClient(API_HOST);
-    try {
-      const schools = await client.userRecentSchools();
-      this.setState({ recentSchools: schools });
-
-      this.removeSelected();
-      return schools;
-    } catch (e) {
-      return e.message;
-    }
-  }
-
-  removeSelected() {
-    const selectedSchools = this.state.recentSchools.map((school, index) => {
-      if (_.findIndex(this.addedSchools, s => s.url_name === school.url_name) != -1) {
-        return index;
-      }
-      return undefined;
-    }).filter(v => v !== undefined);
-    this.setState({ selectedSchools: selectedSchools });
-  }
-
   _selectRecentlyUsedSchool = (tag) => {
-    const index = _.findIndex(this.state.recentSchools, t => t.url_name === tag.urlId);
-    let selectedSchools = _.clone(this.state.selectedSchools);
-    selectedSchools.push(index);
-    this.setState({ selectedSchools: selectedSchools });
+    const index = _.findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
+    this._addTag(this.props.userRecentSchools[index]);
+  };
 
-    this._addTag(this.state.recentSchools[index]);
+  submitHandler = async (e) => {
+    e.preventDefault();
+
+    const name = this._input.getValue();
+    const exists = await this.props.triggers.checkSchoolExists(name);
+
+    if (exists) {
+      const model = this._input.getFirstOverlapModel();
+      this._addTag(model);
+    }
   };
 
   _addTag = (school) => {
@@ -118,10 +74,6 @@ export default class AddSchoolForm extends Component {
   };
 
   render() {
-    let recentSchools = [];
-    if (Array.isArray(this.state.recentSchools)) {
-      recentSchools = _.clone(this.state.recentSchools).filter((tag, i) => this.state.selectedSchools.indexOf(i) === -1);
-    }
     const popularSchools = [];
 
     return (
@@ -133,7 +85,7 @@ export default class AddSchoolForm extends Component {
               Enter manually
             </TabTitle>
             <TabContent>
-              <form onSubmit={preventDefault}>
+              <form onSubmit={this.submitHandler}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
                     <SchoolSelect
@@ -144,9 +96,7 @@ export default class AddSchoolForm extends Component {
                     />
                   </div>
                   <div className="layout__grid_item">
-                    <button className="button button-wide add_tag_modal__add_button action">
-                      Add
-                    </button>
+                    <input type="submit" value="Add" className="button button-wide add_tag_modal__add_button action" />
                   </div>
                 </div>
               </form>
@@ -158,7 +108,7 @@ export default class AddSchoolForm extends Component {
             </TabTitle>
             <TabContent>
               <TagCloud
-                schools={recentSchools}
+                schools={this.props.userRecentSchools}
                 onClick={this._selectRecentlyUsedSchool}
               />
             </TabContent>

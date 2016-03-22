@@ -41,7 +41,7 @@ let subjectToRequest = (subject) => {
   throw new Error('Unexpected format of test-subject')
 };
 
-expect.addAssertion('to yield an array of length', function (expect, subject, value) {
+expect.addAssertion('to body have array length', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
   }).then(function (context) {
     var body = context.httpResponse.body;
@@ -101,6 +101,14 @@ expect.addAssertion('not to open authorized', function (expect, subject, value) 
     .then(function (context) {
     const status = context.httpResponse.statusLine.statusCode;
     expect(status, 'to equal', 403);
+  });
+});
+
+expect.addAssertion('to open not found', function (expect, subject, value) {
+  return expect(subjectToRequest(subject), 'to yield response', {})
+    .then(function (context) {
+    const status = context.httpResponse.statusLine.statusCode;
+    expect(status, 'to equal', 404);
   });
 });
 

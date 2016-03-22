@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,31 +15,24 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@color__text: #464646;
-@color__background: #fefffe;
-@color__page_background: #e8e7e5;
+import React from 'react';
 
-@color__block_background: #fff;
-@color__border: #d3d2d1;
+export default class IgnoreButton extends React.Component {
+  static displayName = 'IgnoreButton';
 
-@color__green: #a2d544;
-@color__red: #fc2c5b;
-@color__blue: #40b7e9;
-@color__gray: #d3d2d1;
-@color__dark_gray: #666;
-@color__yellow: #efc242;
+  static propTypes = {
+    onClick: React.PropTypes.func.isRequired,
+    user: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired
+    })
+  };
 
-.color {
-  &-red {
-    color: @color__red;
-  }
-  &-yellow {
-    color: @color__yellow;
-  }
-  &-blue {
-    color: @color__blue;
-  }
-  &-green {
-    color: @color__green;
+  clickHandler = (e) => {
+    e.preventDefault();
+    this.props.onClick(this.props.user);
+  };
+
+  render() {
+    return <button className="button" onClick={this.clickHandler}>Ignore</button>;
   }
 }

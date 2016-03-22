@@ -55,7 +55,7 @@ export default class SchoolHeader extends React.Component {
     let toolbarSecondary = [];
 
     let name = school.url_name;
-    let updated_at = moment(school.updated_at).format('MMMM D, HH:MM');
+    let updated_at = moment(school.updated_at).format('MMMM D, HH:mm');
     let linesOfDescription = <p>No information provided...</p>;
 
     if (school.name) {
@@ -86,6 +86,7 @@ export default class SchoolHeader extends React.Component {
           tag={school.url_name}
           triggers={likeTriggers}
           outline={true}
+          size="midl"
         />
       ];
 
@@ -107,7 +108,7 @@ export default class SchoolHeader extends React.Component {
     return (
       <Panel
         title={name}
-        icon={<Tag size="BIG" type={TAG_SCHOOL} urlId={name} />}
+        icon={<Tag size="BIG" type={TAG_SCHOOL} urlId={school.url_name} />}
         toolbarPrimary={toolbarPrimary}
         toolbarSecondary={toolbarSecondary}
       >

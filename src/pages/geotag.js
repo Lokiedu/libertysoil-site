@@ -28,10 +28,11 @@ import NotFound from './not-found';
 
 import {
   Page,
+  PageMain,
   PageCaption,
   PageHero,
   PageBody,
-  PageCenter
+  PageContent
 } from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
@@ -150,7 +151,7 @@ export class GeotagPage extends Component {
         <Helmet title={`${geotag.name} posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <Breadcrumbs className="header__breadcrumbs">
+          <Breadcrumbs>
             <Link title="All Geotags" to="/geotag">
               <TagIcon inactive type={TAG_PLANET} />
             </Link>
@@ -170,36 +171,52 @@ export class GeotagPage extends Component {
                 urlId={geotag.country.url_name}
               />
             }
+            {!isEmpty(geotag.admin1) &&
+              <Tag
+                inactive={geotag.type != 'AdminDivision1'}
+                name={geotag.admin1.name}
+                type={TAG_LOCATION}
+                urlId={geotag.admin1.url_name}
+              />
+            }
             <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
           </Breadcrumbs>
         </Header>
 
         <Page>
-          <PageCaption>
-            {title} <span className="page__caption_highlight">Education</span>
-          </PageCaption>
-          <PageHero>
-            <img src="/images/hero/welcome.jpg" />
-          </PageHero>
-          <PageBody className="page__body-up">
-            <Panel
-              title={title}
-              icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
-              toolbarPrimary={toolbarPrimary}
-              toolbarSecondary={toolbarSecondary}
-            >
-              Short wikipedia description about this location will be displayed here soon.
-            </Panel>
-          </PageBody>
-          <PageBody>
-            <Sidebar current_user={current_user} />
-            <PageCenter>
-              <div className="page__content">
-                <River river={tagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
-              </div>
-            </PageCenter>
-            <SidebarAlt />
-          </PageBody>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageCaption>
+              {title} <span className="page__caption_highlight">Education</span>
+            </PageCaption>
+            <PageHero>
+              <img src="/images/hero/welcome.jpg" />
+            </PageHero>
+            <PageBody className="page__body-up">
+              <PageContent>
+                <Panel
+                  title={title}
+                  icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
+                  toolbarPrimary={toolbarPrimary}
+                  toolbarSecondary={toolbarSecondary}
+                >
+                  Short wikipedia description about this location will be displayed here soon.
+                </Panel>
+              </PageContent>
+            </PageBody>
+            <PageBody className="page__body-up layout__space_alt">
+              <PageContent>
+                <River
+                  river={tagPosts}
+                  posts={posts}
+                  users={users}
+                  current_user={current_user}
+                  triggers={triggers}
+                />
+              </PageContent>
+              <SidebarAlt />
+            </PageBody>
+          </PageMain>
         </Page>
         <Footer/>
       </div>

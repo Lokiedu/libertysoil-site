@@ -105,6 +105,39 @@ async function countries() {
   return executeQueries(countryQueries);
 }
 
+async function adminDivisions() {
+  process.stdout.write("=== DOWNLOADING ADMIN DIVISIONS DATA ===\n");
+  const response = await fetch('http://download.geonames.org/export/dump/admin1CodesASCII.txt');
+
+  process.stdout.write("=== PARSING ADMIN DIVISIONS DATA ===\n");
+  let lines = (await response.text())
+    .split('\n');
+
+  let queries = [];
+
+  for (let line of lines) {
+    if (!line.length) {
+      continue;
+    }
+
+    let attrs = line.split('\t');
+    let [countryCode, code] = attrs[0].split('.');
+
+    let adminDivision = {
+      id: attrs[3],
+      asciiname: attrs[2],
+      name: attrs[1],
+      code: code,
+      country_code: countryCode
+    };
+
+    queries.push(await createOrUpdate('geonames_admin1', {id: adminDivision.id}, adminDivision));
+  }
+
+  process.stdout.write("=== IMPORTING/UPDATING ADMIN DIVISIONS ===\n");
+  return executeQueries(queries);
+}
+
 async function cities() {
   process.stdout.write("=== DOWNLOADING CITIES DATA ===\n");
   let tmpFile = tmp.fileSync();
@@ -158,18 +191,9 @@ async function cities() {
   return executeQueries(cityQueries);
 }
 
-/**
- * Populates the geotags table with the data from geonames_countries and geonames_cities.
- */
 async function geotags() {
   // An index of url_name to optimize checking for existence.
   let urlNames = {};
-  // Continent code => continent attributes (including id)
-  let continentsByCodes = {};
-  // geoname country id => geotag country id
-  let countriesByGeonameCountryIds = {};
-  // Country id => continent code
-  let countryContinents = {};
 
   function geotagExists(urlName) {
     return urlNames[urlName];
@@ -192,6 +216,7 @@ async function geotags() {
   );
   urlNames['Earth'] = true;
 
+  // ============== CONTINENTS ===============
   process.stdout.write("=== IMPORTING/UPDATING CONTINENT GEOTAGS ===\n");
 
   let continentAttributes = [
@@ -223,35 +248,32 @@ async function geotags() {
       )
     );
   }
+  
+  const continents = await knex('geotags').where({type: 'Continent'});
 
-  // Index continent geotags by codes.
-  let continents = await knex('geotags').where({type: 'Continent'});
-  for (let continent of continents) {
-    continentsByCodes[continent.continent_code] = continent;
-  }
-
+  // ============== COUNTRIES ===============
   process.stdout.write("=== IMPORTING/UPDATING COUNTRY GEOTAGS ===\n");
 
-  let countries = await knex
+  let geonamesCountries = await knex
     .select('id', 'name', 'continent', 'iso_alpha2')
     .from('geonames_countries');
 
   let countryQueries = [];
 
-  for (let country of countries) {
+  for (let country of geonamesCountries) {
     let urlName = slug(country.name);
 
     urlNames[urlName] = true;
-    countryContinents[country.iso_alpha2] = country.continent;
 
     countryQueries.push(
       await createOrUpdate(
         'geotags',
-        {geonames_country_id: country.id, geonames_city_id: null},
+        {geonames_country_id: country.id, type: 'Country'},
         {
           continent_code: country.continent,
-          continent_id: continentsByCodes[country.continent].id,
+          continent_id: continents.find(continent => continent.continent_code == country.continent).id,
           geonames_country_id: country.id,
+          country_code: country.iso_alpha2,
           name: country.name,
           type: 'Country',
           url_name: urlName
@@ -261,31 +283,81 @@ async function geotags() {
   }
 
   await executeQueries(countryQueries);
+  
+  const countries = await knex('geotags').where({type: 'Country'});
 
-  // Index country geotags by geonames_country.id
-  let countryGeotags = await knex('geotags').where({type: 'Country'});
-  for (let country of countryGeotags) {
-    countriesByGeonameCountryIds[country.geonames_country_id] = country;
+  // ============== ADMIN DIVISIONS ===============
+  process.stdout.write("=== IMPORTING/UPDATING ADMIN DIVISION GEOTAGS ===\n");
+
+  let adminQueries = [];
+
+  let geonamesAdminDivisions = await knex('geonames_admin1');
+  for (let admin of geonamesAdminDivisions) {
+    const urlName = slug(admin.name);
+    const country = countries.find(country => country.country_code == admin.country_code);
+
+    urlNames[urlName] = true;
+
+    adminQueries.push(
+      await createOrUpdate(
+        'geotags',
+        {geonames_admin1_id: admin.id, type: 'AdminDivision1'},
+        {
+          admin1_code: admin.code,
+          continent_code: country.continent_code,
+          continent_id: country.continent_id,
+          country_code: country.country_code,
+          country_id: country.id,
+          geonames_country_id: country.geonames_country_id,
+          geonames_admin1_id: admin.id,
+          name: admin.name,
+          type: 'AdminDivision1',
+          url_name: urlName
+        }
+      )
+    );
   }
 
+  await executeQueries(adminQueries);
+
+  const adminDivisions = await knex('geotags').where({type: 'AdminDivision1'});
+  
+  // ============== CITIES ===============
   process.stdout.write("=== IMPORTING/UPDATING CITY GEOTAGS ===\n");
 
-  let cities = await knex
-    .select(
-      'cities.id',
-      'cities.asciiname as name',
-      'cities.population',
-      'cities.country',
-      'countries.id as country_id',
-      'countries.name as country_name'
-    )
+  let geonamesCities = await knex
+    .select(knex.raw(`
+      cities.id,
+      cities.asciiname as name,
+      cities.population,
+      cities.country,
+      cities.admin1,
+      MAX(countries.id) as country_id,
+      MAX(countries.name) as country_name
+    `))
     .from('geonames_cities as cities')
     .innerJoin('geonames_countries as countries', 'cities.country', 'countries.iso_alpha2')
+    .groupBy('cities.id')
     .orderBy('population', 'DESC');
 
   let cityQueries = [];
 
-  for (let city of cities) {
+  for (let city of geonamesCities) {
+    const country = countries.find(country => country.country_code === city.country);
+
+    let admin1 = adminDivisions.find(admin => (
+      admin.country_code === city.country && admin.admin1_code === city.admin1
+    ));
+
+    // There may be cities without admin1 (admin1 == '00', or empty, or not existing).
+    if (!admin1) {
+      admin1 = {
+        admin1_code: city.admin1,
+        admin1_id: null,
+        geonames_admin1_id: null
+      };
+    }
+
     let justCity = slug(city.name);
     let cityWithCountry = `${justCity}-${slug(city.country_name)}`;
     let cityWithIndex = (i) => `${cityWithCountry}-${i}`;
@@ -311,12 +383,16 @@ async function geotags() {
     cityQueries.push(
       await createOrUpdate(
         'geotags',
-        {geonames_city_id: city.id},
+        {geonames_city_id: city.id, type: 'City'},
         {
-          continent_code: countryContinents[city.country],
-          continent_id: continentsByCodes[countryContinents[city.country]].id,
-          country_id: countriesByGeonameCountryIds[city.country_id].id,
+          admin1_code: admin1.admin1_code,
+          admin1_id: admin1.id,
+          continent_code: country.continent_code,
+          continent_id: country.continent_id,
+          country_code: country.country_code,
+          country_id: country.id,
           geonames_country_id: city.country_id,
+          geonames_admin1_id: admin1.geonames_admin1_id,
           geonames_city_id: city.id,
           name: city.name,
           type: 'City',
@@ -332,6 +408,10 @@ async function geotags() {
 countries()
   .then(() => {
     process.stdout.write("=== COUNTRIES DONE ===\n");
+    return adminDivisions();
+  })
+  .then(() => {
+    process.stdout.write("=== ADMIN DIVISIONS DONE ===\n");
     return cities();
   })
   .then(() => {

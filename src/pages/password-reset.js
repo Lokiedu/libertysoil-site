@@ -23,6 +23,13 @@ import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Message from '../components/message';
@@ -77,27 +84,31 @@ export class Form extends React.Component {
     }
 
     return (
-      <div className="page__container-bg font-open_sans font-light">
+      <div className="font-open_sans font-light">
         <Helmet title="Reset Password for " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
-            className="header-transparent header-transparent_border"
+            className="header-transparent"
           />
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
             <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
           </header>
         </section>
-        <div className="page__content page__content-spacing">
-          <div className="page__body page__body-block page__body-small">
-            <div className="layout__row">
-              <div className="content__title layout__row">Reset Password</div>
-              <div className="layout__row">
-                {content}
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <Page className="page__container-no_spacing page__container-bg">
+          <PageMain>
+            <PageBody className="page__body-small">
+              <PageContent>
+                <div className="content__title layout__row">Reset Password</div>
+                <div className="layout__row">
+                  {content}
+                </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
+              
         <Footer/>
       </div>
     );

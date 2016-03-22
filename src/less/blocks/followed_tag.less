@@ -3,17 +3,23 @@
   padding: 10px;
 
   &:hover {
-    background-color: #FAF9F9;
+    background-color: @color__dark_gray;
+    color: white;
+  }
+
+  &-active {
+    background: @color__red;
+    color: #fff;
   }
 
   &__icon {
     display: block;
-    width: 23px;
-    height: 23px;
+    width: 17px;
+    height: 17px;
     border-radius: 11px;
     color: white;
     font-size: 13px;
-    line-height: 23px;
+    line-height: 17px;
     text-align: center;
   }
 

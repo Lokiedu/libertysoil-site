@@ -23,6 +23,13 @@ import ApiClient from '../api/client'
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
+
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
@@ -85,13 +92,13 @@ export class Auth extends React.Component {
     const registration_success = ui.registrationSuccess;
 
     return (
-      <div className="page__container-bg font-open_sans font-light">
+      <div className="font-open_sans font-light">
         <Helmet title="Login to " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             is_logged_in={is_logged_in}
             current_user={current_user}
-            className="header-transparent header-transparent_border"
+            className="header-transparent"
           >
             <HeaderLogo />
           </Header>
@@ -103,19 +110,22 @@ export class Auth extends React.Component {
           </header>
         </section>
 
-        {renderedMessages}
-
-        <div className="page__content page__content-spacing">
-          <div className="page__body page__body-small">
-            <div className="layout__row">
-              <Register
-                registration_success={registration_success}
-                onShowRegisterForm={triggers.showRegisterForm}
-                onRegisterUser={triggers.registerUser}
-              />
-            </div>
-          </div>
-        </div>
+        <Page className="page__container-no_spacing page__container-bg">
+          <PageMain>
+            <PageBody className="page__body-small">
+              <PageContent>
+                {renderedMessages}
+                <div className="layout__row">
+                  <Register
+                    registration_success={registration_success}
+                    onShowRegisterForm={triggers.showRegisterForm}
+                    onRegisterUser={triggers.registerUser}
+                  />
+                </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>

@@ -127,6 +127,16 @@ export default class ApiClient
     return true;
   }
 
+  async checkEmailTaken(email) {
+    try {
+      await this.head(`/api/v1/user/email/${email}`);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
   async getAvailableUsername(username) {
     let response = await this.get(`/api/v1/user/available-username/${username}`);
     return response.body.username;
@@ -269,6 +279,11 @@ export default class ApiClient
 
   async follow(userName) {
     let response = await this.post(`/api/v1/user/${userName}/follow`);
+    return response.body;
+  }
+
+  async ignoreUser(userName) {
+    let response = await this.post(`/api/v1/user/${userName}/ignore`);
     return response.body;
   }
 

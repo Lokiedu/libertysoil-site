@@ -28,7 +28,16 @@ export default class AddTagForm extends Component {
     onAddGeotag: PropTypes.func.isRequired,
     onAddHashtag: PropTypes.func.isRequired,
     onAddSchool: PropTypes.func.isRequired,
-    type: PropTypes.oneOf(IMPLEMENTED_TAGS).isRequired
+    type: PropTypes.oneOf(IMPLEMENTED_TAGS).isRequired,
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
+    triggers: PropTypes.shape({
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
+    })
   };
 
   render() {
@@ -38,16 +47,18 @@ export default class AddTagForm extends Component {
       onAddGeotag,
       onAddHashtag,
       onAddSchool,
-      type
+      type,
+      userRecentTags,
+      triggers
     } = this.props;
 
     switch (type) {
       case TAG_LOCATION:
-        return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} />;
+        return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} triggers={triggers} userRecentGeotags={userRecentTags.geotags} />;
       case TAG_HASHTAG:
-        return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} />;
+        return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} userRecentHashtags={userRecentTags.hashtags} />;
       case TAG_SCHOOL:
-        return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} />;
+        return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} triggers={triggers} userRecentSchools={userRecentTags.schools} />;
       default:
         return false;
     }

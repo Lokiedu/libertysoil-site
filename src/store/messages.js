@@ -34,6 +34,11 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.ADD_MESSAGE: {
+      const index = state.findIndex(item => item.message === action.message);
+      if (index !== -1) {
+        state = state.delete(index);
+      }
+
       state = state.push({
         type: messageType.MESSAGE,
         message: action.message

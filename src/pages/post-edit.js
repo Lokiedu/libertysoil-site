@@ -22,7 +22,15 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import NotFound from './not-found'
+import HeaderLogo from '../components/header-logo';
+import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import {API_HOST} from '../config';
@@ -47,10 +55,10 @@ class PostEditPage extends React.Component {
 
   static async fetchData(params, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
+    let trigger = new ActionsTrigger(client, store.dispatch);
     let schoolsPromise;
 
     if (noSchoolsLoaded) {
-      let trigger = new ActionsTrigger(client, store.dispatch);
       schoolsPromise = trigger.loadSchools();
     }
 
@@ -67,6 +75,8 @@ class PostEditPage extends React.Component {
       await schoolsPromise;
     }
 
+    await trigger.loadUserRecentTags();
+
     return 200;
   }
 
@@ -79,6 +89,9 @@ class PostEditPage extends React.Component {
   };
 
   render() {
+    let {
+      current_user
+    } = this.props;
     let postId = this.props.params.uuid;
 
     if (!(postId in this.props.posts)) {
@@ -98,34 +111,41 @@ class PostEditPage extends React.Component {
 
     let actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
     let client = new ApiClient(API_HOST);
-    let postTriggers = _.pick(new ActionsTrigger(client, this.props.dispatch), 'updatePost', 'deletePost');
+    let triggers = new ActionsTrigger(client, this.props.dispatch);
     let formState = this.props.edit_post_form;
 
     return (
       <div>
         <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={this.props.current_user}/>
-
-            <div className="page__content">
-              <EditPost
-                actions={actions}
-                allSchools={_.values(this.props.schools)}
-                post={post}
-                triggers={postTriggers}
-                onDelete={this._handleDelete}
-                onSubmit={this._handleSubmit}
-                {...formState}
-              />
-            </div>
-
-            <SidebarAlt>
-              <AddedTags {...formState} />
-            </SidebarAlt>
-          </div>
-        </div>
+        <Header
+          is_logged_in={this.props.is_logged_in}
+          current_user={this.props.current_user}
+        >
+          <HeaderLogo small />
+          <Breadcrumbs title="Edit post" />
+        </Header>
+        <Page>
+          <Sidebar current_user={this.props.current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <EditPost
+                  actions={actions}
+                  allSchools={_.values(this.props.schools)}
+                  userRecentTags={current_user.recent_tags}
+                  post={post}
+                  triggers={triggers}
+                  onDelete={this._handleDelete}
+                  onSubmit={this._handleSubmit}
+                  {...formState}
+                />
+              </PageContent>
+              <SidebarAlt>
+                <AddedTags {...formState} />
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
         <Footer/>
       </div>
     )

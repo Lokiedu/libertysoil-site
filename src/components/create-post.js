@@ -47,8 +47,16 @@ export default class CreatePost extends React.Component {
     hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
     triggers: PropTypes.shape({
-      createPost: PropTypes.func.isRequired
+      createPost: PropTypes.func.isRequired,
+      loadUserRecentTags: PropTypes.func.isRequired,
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
     })
   };
 
@@ -65,7 +73,7 @@ export default class CreatePost extends React.Component {
   };
 
   onClickOutside = () => {
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       this.setState({
@@ -77,7 +85,7 @@ export default class CreatePost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
@@ -95,6 +103,7 @@ export default class CreatePost extends React.Component {
 
     await this.props.triggers.createPost('short_text', data);
     ga('send', 'event', 'Post', 'Done', data.hashtags.join(','));
+    await this.props.triggers.loadUserRecentTags();
 
     form.text.value = '';
     this._addTagModal.reset();
@@ -110,6 +119,17 @@ export default class CreatePost extends React.Component {
     this.setState({
       expanded: !this.state.expanded
     });
+  };
+
+  _handleKeydown = (e) => {
+    const ENTER = 13;
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === ENTER) {
+        const submit = new Event('submit');
+        this.form.dispatchEvent(submit);
+      }
+    }
   };
 
   _showAddHashtagModal = (e) => {
@@ -167,7 +187,7 @@ export default class CreatePost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit}>
+        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
@@ -221,15 +241,17 @@ export default class CreatePost extends React.Component {
           </div>
         </form>
         <AddTagModal
+          ref={(c) => this._addTagModal = c}
           allSchools={this.props.allSchools}
           geotags={this.props.geotags}
           hashtags={this.props.hashtags}
-          ref={(c) => this._addTagModal = c}
           schools={this.props.schools}
+          userRecentTags={this.props.userRecentTags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
+          triggers={this.props.triggers}
         />
       </div>
     )

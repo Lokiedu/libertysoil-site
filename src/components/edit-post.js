@@ -34,6 +34,11 @@ export default class EditPost extends React.Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired,
     geotags: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
@@ -63,7 +68,10 @@ export default class EditPost extends React.Component {
     })),
     triggers: PropTypes.shape({
       updatePost: PropTypes.func.isRequired,
-      deletePost: PropTypes.func.isRequired
+      deletePost: PropTypes.func.isRequired,
+      loadUserRecentTags: PropTypes.func.isRequired,
+      checkSchoolExists: PropTypes.func.isRequired,
+      checkGeotagExists: PropTypes.func.isRequired
     })
   };
 
@@ -100,7 +108,7 @@ export default class EditPost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.refs.form;
+    let form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
@@ -115,10 +123,22 @@ export default class EditPost extends React.Component {
     };
 
     await this.props.triggers.updatePost(this.props.post.id, data);
+    await this.props.triggers.loadUserRecentTags();
 
     this.props.onSubmit(event);
 
     this.props.actions.resetEditPostForm();
+  };
+
+  _handleKeydown = (e) => {
+    const ENTER = 13;
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === ENTER) {
+        const submit = new Event('submit');
+        this.form.dispatchEvent(submit);
+      }
+    }
   };
 
   _handleDelete = async (event) => {
@@ -202,7 +222,7 @@ export default class EditPost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref="form" onSubmit={this._handleSubmit}>
+        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
           <input type="hidden" name="id" value={post.id} />
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
@@ -251,12 +271,14 @@ export default class EditPost extends React.Component {
           </div>
         </form>
         <AddTagModal
-          allSchools={allSchools}
           ref={(c) => this._addTagModal = c}
+          allSchools={allSchools}
+          userRecentTags={this.props.userRecentTags}
           type={addTagModalType}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
+          triggers={this.props.triggers}
           {...allModalTags}
         />
       </div>

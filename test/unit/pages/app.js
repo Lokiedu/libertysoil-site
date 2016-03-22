@@ -21,6 +21,11 @@ import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expe
 
 import { App } from '../../../src/pages/app';
 
+const props = {
+  ui: {
+    sidebarIsVisible: false
+  }
+}
 
 const GAInitializer = ga.Initializer;
 
@@ -30,7 +35,7 @@ describe('App page', function() {
     let renderer = TestUtils.createRenderer();
 
     delete process.env.GOOGLE_ANALYTICS_ID;
-    renderer.render(<App><span>foo</span></App>);
+    renderer.render(<App {...props}><span>foo</span></App>);
 
     return expect(renderer, 'not to contain', <GAInitializer />);
   });
@@ -39,7 +44,7 @@ describe('App page', function() {
     let renderer = TestUtils.createRenderer();
 
     process.env.GOOGLE_ANALYTICS_ID = 100;
-    renderer.render(<App><span>foo</span></App>);
+    renderer.render(<App {...props}><span>foo</span></App>);
 
     return expect(renderer, 'to contain', <GAInitializer />);
   });

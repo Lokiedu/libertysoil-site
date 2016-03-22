@@ -16,14 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .page {
-  &__sidebar_user {
-    margin-left: 5px;
-    margin-bottom: 10px;
 
-    .link {
-      border: none;
-    }
-  }
 }
 
 .page__title {
@@ -50,12 +43,12 @@
 .page__hero {
   width: 100%;
   background: #ddd;
-  margin: 0 auto -52px;
+  margin: 0 auto -20vmin;
   position: relative;
   z-index: 0;
 
   @media @after-wide {
-    width: 83.3%;
+    max-width: 1680px;
   }
 }
 
@@ -85,51 +78,62 @@
 }
 
 .page__sidebar {
-  padding: 10px;
-  flex: 0 0 100%;
-  min-width: 190px;
+  margin: 0 0 @space @space;
+  min-width: @sidebarWidth;
   box-sizing: border-box;
-  order: 20;
-  background: #f3f2f1;
-  margin-right: 10px;
 
-  @media @after-small {
-    order: 0;
-    flex: 0 0 18%;
+  @media @before-base {
+    display: none;
   }
+}
 
-  &-alt {
-    flex: 0 0 100%;
-
-    @media @after-base {
-      flex: 0 0 30%;
-    }
-  }
+.page__main {
+  flex: 1;
+  padding: @space * 2;
+  min-height: 512px;
 }
 
 .page__container {
   background: #f3f2f1;
   order: 10;
+  display: flex;
+  padding: @headerHeight 0 0 0;
+  //transition: padding @transition__time @transition__function;
 
-// this needs to be changed @agat
-// min page height should be set instead
-  padding-bottom: 300px;
+  @media @before-base {
+    padding-left: 0!important;
+  }
 
   &-bg {
     background: #fff;
   }
+
+  &-no_sidebar {
+    padding-left: 0!important;
+  }
+
+  &-no_spacing {
+    padding: 0!important;
+  }
+}
+
+.page-with_sidebar .page__container {
+  padding-left: @sidebarWidth;
 }
 
 .page__body {
   display: flex;
+  flex: 1;
   max-width: @siteWidth;
   //overflow: hidden; TODO: need test on mobile devices
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   flex-wrap: wrap;
 
   &-up {
     position: relative;
     z-index: 10;
+    background: #f3f2f1;
   }
 
   &-block {
@@ -160,6 +164,10 @@
       width: 700px;
     }
   }
+
+  &-wide {
+    max-width: none;
+  }
 }
 
 .page__body_content {
@@ -173,20 +181,11 @@
 }
 
 .page__content {
-  padding: 10px;
   flex: 1;
 
   &-horizontal_space {
     padding-top: 0;
     padding-bottom: 0;
-  }
-
-  &-spacing {
-    padding: @space * 3;
-
-    @media @before-normal {
-      padding: @space;
-    }
   }
 
   &-fill {

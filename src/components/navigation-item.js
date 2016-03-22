@@ -18,6 +18,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import Icon from './icon';
+
 export default class SidebarLink extends React.Component {
   static displayName = 'SidebarLink';
 
@@ -45,7 +47,9 @@ export default class SidebarLink extends React.Component {
 
     return (
       <Link activeClassName="navigation__item-active" className={className} to={to}>
-        <div className="navigation__icon"><span className="micon">{`${icon}`}</span></div>
+        <div className="navigation__icon">
+          <Icon icon={icon} />
+        </div>
         <div className="navigation__title">{children}</div>
         <div className="navigation__badge">{badge}</div>
       </Link>

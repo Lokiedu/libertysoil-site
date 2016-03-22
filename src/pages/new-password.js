@@ -24,6 +24,13 @@ import { API_HOST } from '../config';
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import { Link } from 'react-router';
+
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../components/page';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Messages from '../components/messages';
@@ -149,21 +156,25 @@ class Form extends React.Component {
         <Helmet title="Set New Password for " />
         <Header />
 
-        <div className="page__body">
-          <div className="area">
-            <div>
-              <Messages messages={messages} removeMessage={triggers.removeMessage} />
-              <div className="area__body layout-align_start">
-              <div className="box box-middle">
-                <header className="box__title">Set new password</header>
-                  <div className="box__body">
-                    {content}
+        <Page className="page__container-no_sidebar">
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <div className="area">
+                  <Messages messages={messages} removeMessage={triggers.removeMessage} />
+                  <div className="area__body layout-align_start">
+                    <div className="box box-middle">
+                      <header className="box__title">Set new password</header>
+                        <div className="box__body">
+                          {content}
+                        </div>
+                    </div>
                   </div>
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>

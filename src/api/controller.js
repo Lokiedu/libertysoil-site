@@ -73,7 +73,7 @@ export default class ApiController {
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
 
     let post_comments_count = await this.countComments(posts);
-    
+
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       post.attributes.comments = post_comments_count[post.get('id')];
@@ -124,10 +124,10 @@ export default class ApiController {
     let posts = await q.fetch({withRelated: POST_RELATIONS});
     let post_comments_count = await this.countComments(posts);
 
-    posts = posts.serialize();
-    posts.forEach(post => {
-      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
+    posts = posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       post.attributes.comments = post_comments_count[post.get('id')];
+      return post;
     });
 
     res.send(posts);
@@ -137,44 +137,51 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const Geotag = this.bookshelf.model('Geotag');
 
-    const geotag = await Geotag
-      .forge()
-      .where({url_name: req.params.url_name})
-      .fetch();
+    try {
+      const geotag = await Geotag
+        .forge()
+        .where({url_name: req.params.url_name})
+        .fetch({require: true});
 
-    let posts = await Post
-      .collection()
-      .query(qb => {
-        qb
-          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-          .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-          .orderBy('posts.created_at', 'desc')
-          .distinct();
+      let posts = await Post
+        .collection()
+        .query(qb => {
+          qb
+             .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+             .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+             .orderBy('posts.created_at', 'desc')
+             .distinct();
 
-        switch (geotag.attributes.type) {
-          case 'Continent':
-            qb.where('geotags.continent_code', geotag.attributes.continent_code);
-            break;
-          case 'Country':
-            qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
-            break;
-          case 'City':
-            qb.where('geotags.id', geotag.id);
-            break;
-          case 'Planet':
-            // There are no planets besides Earth yet.
-            break;
-        }
-      })
-      .fetch({withRelated: POST_RELATIONS});
-    let post_comments_count = await this.countComments(posts);
-    posts = posts.serialize();
-    posts.forEach(post => {
-      post.schools = post.schools.map(school => _.pick(school, 'id', 'name', 'url_name'));
-      post.attributes.comments = post_comments_count[post.get('id')];
-    });
+           switch (geotag.attributes.type) {
+           case 'Continent':
+             qb.where('geotags.continent_code', geotag.attributes.continent_code);
+             break;
+           case 'Country':
+             qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
+             break;
+           case 'City':
+             qb.where('geotags.id', geotag.id);
+             break;
+           case 'Planet':
+             // There are no planets besides Earth yet.
+             break;
+           }
+         })
+         .fetch({withRelated: POST_RELATIONS});
 
-    res.send(posts);
+      let post_comments_count = await this.countComments(posts);
+
+      posts = posts.map(post => {
+        post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
+        post.attributes.comments = post_comments_count[post.get('id')];
+        return post;
+      });
+
+      res.send(posts);
+    } catch (e) {
+      res.sendStatus(404);
+      return;
+    }
   }
 
 
@@ -185,7 +192,6 @@ export default class ApiController {
       return;
     }
     let Hashtag = this.bookshelf.model('Hashtag');
-
     let hashtags = await Hashtag
       .collection()
       .query(qb => {
@@ -197,7 +203,31 @@ export default class ApiController {
       })
       .fetch();
 
-    res.send(hashtags);
+    let School = this.bookshelf.model('School');
+    let schools = await School
+      .collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts_schools.school_id', 'schools.id')
+          .join('posts', 'posts_schools.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .distinct()
+      })
+      .fetch();
+
+    let Geotag = this.bookshelf.model('Geotag');
+    let geotags = await Geotag
+      .collection()
+      .query(qb => {
+        qb
+          .join('geotags_posts', 'geotags_posts.geotag_id', 'geotags.id')
+          .join('posts', 'geotags_posts.post_id', 'posts.id')
+          .where('posts.user_id', req.session.user)
+          .distinct()
+      })
+      .fetch();
+
+    res.send({ hashtags, schools, geotags });
   }
 
   async getPost(req, res) {
@@ -662,7 +692,7 @@ export default class ApiController {
 
     res.send(posts);
   }
-  
+
   async checkUserExists(req, res) {
     let User = this.bookshelf.model('User');
 
@@ -670,6 +700,21 @@ export default class ApiController {
       await User
         .forge()
         .where('username', req.params.username)
+        .fetch({require: true});
+
+      res.end();
+    } catch (e) {
+      res.status(404).end();
+    }
+  }
+
+  async checkEmailTaken(req, res) {
+    let User = this.bookshelf.model('User');
+
+    try {
+      await User
+        .forge()
+        .where('email', req.params.email)
         .fetch({require: true});
 
       res.end();
@@ -981,15 +1026,17 @@ export default class ApiController {
       return;
     }
 
-    let following = await this.bookshelf.knex
-      .select('followers.following_user_id')
-      .from('followers')
-      .where('followers.user_id', '=', req.session.user)
-      .map(row => row.following_user_id);
+    const User = this.bookshelf.model('User');
 
-    let User = this.bookshelf.model('User');
+    const user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['ignored_users', 'following']});
 
-    let q = User.forge()
+    const ignoredIds = user.related('ignored_users').pluck('id');
+    const followingIds = user.related('following').pluck('id');
+
+    const usersToIgnore = _.uniq(_.concat(ignoredIds, followingIds));
+
+    const suggestions = await User
+      .collection()
       .query(qb => {
         qb
           .select('active_users.*')
@@ -1002,14 +1049,11 @@ export default class ApiController {
               .groupBy('users.id')
               .as('active_users');
           })
-          .leftJoin('followers', 'active_users.id', 'followers.following_user_id')
-          .whereNull('followers.user_id')
-          .orWhereNotIn('active_users.id', following)
+          .whereNotIn('active_users.id', usersToIgnore)
           .orderBy('post_count', 'desc')
           .limit(6);
-      });
-
-    let suggestions = await q.fetchAll({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
+      })
+      .fetch({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     res.send(suggestions);
   }
@@ -1374,6 +1418,23 @@ export default class ApiController {
     }
 
     res.send(follow_status);
+  }
+
+  async ignoreUser(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    let User = this.bookshelf.model('User');
+    
+    let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['ignored_users']});
+    let userToIgnore = await User.where({username: req.params.username}).fetch({require: true});
+
+    await user.ignoreUser(userToIgnore.id);
+
+    res.send({success: true});
   }
 
   async updateUser(req, res) {
@@ -1976,7 +2037,7 @@ export default class ApiController {
       let geotag = await Geotag
         .forge()
         .where('url_name', req.params.url_name)
-        .fetch({require: true, withRelated: ['country', 'city', 'continent']});
+        .fetch({require: true, withRelated: ['country', 'admin1', 'city', 'continent']});
 
       res.send(geotag);
     } catch (e) {
@@ -1993,7 +2054,7 @@ export default class ApiController {
         qb
           .where('name', 'ILIKE',  `${req.params.query}%`)
           .limit(10);
-      }).fetch(/*{withRelated: 'place'}*/);
+      }).fetch({withRelated: ['country', 'admin1']});
 
       res.send({geotags});
     } catch (e) {

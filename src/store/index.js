@@ -38,7 +38,7 @@ import tag_posts from './tag_posts';
 import user_posts from './user_posts';
 import users from './users';
 import suggested_users from './suggested_users';
-import ui from './ui';
+import * as ui from './ui';
 import tag_cloud from './tag_cloud';
 import school_cloud from './school_cloud';
 import geotag_posts from './geotag_posts';
@@ -71,7 +71,7 @@ export const theReducer = combineReducers(i.Map({
   user_posts,
   users,
   suggested_users,
-  ui,
+  ui: ui.reducer,
   tag_cloud,
   school_cloud,
   related_posts
@@ -87,7 +87,12 @@ const initialState = i.Map({
     liked_hashtags: i.Map({}),
     liked_schools: i.Map({}),
     liked_geotags: i.Map({}),
-    suggested_users: i.List([])
+    suggested_users: i.List([]),
+    recent_tags: i.Map({
+      hashtags: i.List([]),
+      schools: i.List([]),
+      geotags: i.List([])
+    })
   }),
   create_post_form: i.fromJS({
     text: '',
@@ -127,9 +132,7 @@ const initialState = i.Map({
   tag_posts: i.Map({}),
   user_posts: i.Map({}),
   users: i.Map({}),
-  ui: i.Map({
-    progress: i.Map({})
-  })
+  ui: ui.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
