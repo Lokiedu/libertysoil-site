@@ -47,6 +47,8 @@ export default function reducer(state=initialState, action) {
           state
             .set('id', newUid)
             .set('hashtags', i.List([]))
+            .set('geotags', i.List([]))
+            .set('schools', i.List([]))
             .set('followed_hashtags', i.Map({}))
             .set('followed_schools', i.Map({}))
             .set('followed_geotags', i.Map({}))
@@ -79,9 +81,9 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_USER_TAGS: {
-      const hashtags = _.take(action.hashtags, 10);
-      const schools = _.take(action.schools, 10);
-      const geotags = _.take(action.geotags, 10);
+      const hashtags = _.take(action.hashtags, 5);
+      const schools = _.take(action.schools, 5);
+      const geotags = _.take(action.geotags, 5);
 
       if (hashtags) {
         state = state.set('hashtags', i.fromJS(hashtags));
