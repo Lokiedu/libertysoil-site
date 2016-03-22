@@ -20,6 +20,7 @@ import React from 'react';
 import _ from 'lodash';
 import Comment from './comment';
 import CreateComment from './create-comment';
+import Icon from '../icon';
 
 let Comments = (props) => {
   const {
@@ -29,23 +30,37 @@ let Comments = (props) => {
     post,
     users
   } = props;
+  let postComments = [];
 
-  //console.info('props', props);
+  console.info('comments', comments);
+  console.info('users', users);
+
+  if (post.post_comments.length) {
+    postComments = (
+      post.post_comments.map((commentID, i) => {
+        const comment = comments[commentID];
+
+        return (
+          <Comment
+            key={i}
+            comment={comments[commentID]}
+            author={users[comments[commentID].user_id]}
+          />
+        )
+      })
+    );
+  }
 
   return (
     <div>
-      <div className="card__comments">
-        {
-          post.post_comments.map((commentID, i) => {
-            return (
-              <Comment
-                key={i}
-                comment={comments[commentID]}
-                author={users[comments[commentID].user_id]}
-              />
-            )
-          })
-        }
+      <div className="card__comments comments">
+        <header className="comments__header">
+          <div className="comments__count">
+            <Icon className="comments__count_icon" icon="chat_bubble_outline" />
+            <div className="comments__count_title">{`${postComments.length} Comments`}</div>
+          </div>
+        </header>
+        {postComments}
       </div>
       <CreateComment author={author} className="card__footer" postID={post.id} triggers={triggers} />
     </div>

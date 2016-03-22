@@ -40,7 +40,7 @@ let PostWrapper = ({
     }
   });
 
-  //console.info('post', post);
+  console.info('post', post);
 
   return (
     <section className={cardClassName}>

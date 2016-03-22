@@ -29,8 +29,10 @@ export default function reducer(state=initialState, action) {
     case a.ADD_POST_TO_RIVER:
     {
       let postCopy = _.cloneDeep(action.post);
+
       delete postCopy.user;
       postCopy.post_comments = _.map(postCopy.post_comments, 'id');
+
       state = state.set(postCopy.id, i.fromJS(postCopy));
 
       break;
@@ -48,6 +50,7 @@ export default function reducer(state=initialState, action) {
       let postsWithoutUsers = _.keyBy(action.posts.map(post => {
         let postCopy = _.cloneDeep(post);
         delete postCopy.user;
+        postCopy.post_comments = _.map(postCopy.post_comments, 'id');
         return postCopy;
       }), 'id');
 
@@ -80,7 +83,7 @@ export default function reducer(state=initialState, action) {
 
     case a.SET_POST_COMMENTS: {
       if (action.post_id && action.comments) {
-        state = state.setIn([action.post_id, 'comments'], action.comments.length);
+        state = state.setIn([action.post_id, 'post_comments'], action.comments.map(comment => comment.id));
       }
       break;
     }

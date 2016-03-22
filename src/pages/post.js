@@ -57,7 +57,7 @@ export class PostPage extends React.Component {
   static async fetchData(params, store, client) {
     let post = await client.postInfo(params.uuid);
     let relatedPosts = client.relatedPosts(params.uuid);
-    store.dispatch(setPostComments(post.id, post.post_comments));
+
     store.dispatch(addPost(post));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
   }
@@ -93,8 +93,6 @@ export class PostPage extends React.Component {
       authorName = `${author.more.firstName} ${author.more.lastName}`;
     }
 
-    let current_post_comments = this.props.comments[current_post.id];
-
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />
@@ -121,7 +119,7 @@ export class PostPage extends React.Component {
                   current_user={this.props.current_user}
                   users={this.props.users}
                   post={current_post}
-                  comments={current_post_comments}
+                  comments={this.props.comments}
                   showComments={true}
                   triggers={triggers}
                 >

@@ -121,7 +121,7 @@ export default class Toolbar extends React.Component {
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
           <Icon icon="chat_bubble_outline" size="small" />
-          <span className="card__toolbar_item_value">{this.props.post.comments}</span>
+          <span className="card__toolbar_item_value">{this.props.post.post_comments.length}</span>
         </Link>
       </div>
     )

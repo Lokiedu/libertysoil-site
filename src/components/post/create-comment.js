@@ -89,9 +89,11 @@ export default class CreateComment extends Component {
     return (
         <form onSubmit={this.postComment} className={`${blockClassName} ${className}`}>
           <div className="layout">
-            <div className="layout__grid_item">
-              <User avatarSize="32" user={author} hideText={true} />
-            </div>
+            {isExpanded &&
+              <div className="layout__grid_item">
+                <User avatarSize="32" user={author} hideText={true} />
+              </div>
+            }
             <div className="layout__grid_item layout__grid_item-wide">
               <div className="layout__row">
                 <textarea ref="comment" onFocus={this.expand} className="input input-block create_comment__input" type="text" placeholder="Add Comment"></textarea>
