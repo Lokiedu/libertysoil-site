@@ -119,6 +119,7 @@ export class PostPage extends React.Component {
                 <PostWrapper
                   author={author}
                   current_user={this.props.current_user}
+                  users={this.props.users}
                   post={current_post}
                   comments={current_post_comments}
                   showComments={true}

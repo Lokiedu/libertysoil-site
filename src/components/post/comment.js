@@ -18,11 +18,20 @@
 
 import React from 'react';
 
-let Comment = (props) => {
+let Comment = ({
+  comment
+}) => {
+  console.info('comment', comment);
+
     return (
-        <div className="card__comment">
-            {props.text}
-        </div>
+        <article className="comment">
+            <section className="comment__text content">
+              {comment.text}
+            </section>
+            <footer className="comment__footer">
+              <time className="comment__time" dateTime={comment.updated_at}>time</time>
+            </footer>
+        </article>
     );
 
 };

@@ -23,25 +23,42 @@ import Preview from './preview';
 import Comments from './comments';
 
 
-let PostWrapper = (props) => {
+let PostWrapper = ({
+  users,
+  comments,
+  post,
+  author,
+  triggers,
+  showComments,
+  children,
+  current_user
+}) => {
   let cardClassName = bem.makeClassName({
     block: 'card',
     modifiers: {
-      full: props.showComments
+      full: showComments
     }
   });
 
+  //console.info('post', post);
+
   return (
     <section className={cardClassName}>
-      <Preview post={props.post}/>
+      <Preview post={post}/>
 
       <div className="card__content">
-        {props.children}
+        {children}
       </div>
 
-      <PostFooter author={props.author} current_user={props.current_user} post={props.post} triggers={props.triggers} />
-      {props.showComments &&
-        <Comments comments={props.comments} postID={props.post.id} author={props.author} triggers={props.triggers} />
+      <PostFooter author={author} current_user={current_user} post={post} triggers={triggers} />
+      {showComments &&
+        <Comments
+          comments={comments}
+          post={post}
+          author={author}
+          triggers={triggers}
+          users={users}
+        />
       }
 
     </section>

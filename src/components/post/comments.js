@@ -26,24 +26,28 @@ let Comments = (props) => {
     author,
     comments,
     triggers,
-    postID
+    post,
+    users
   } = props;
 
-  /*console.info('props', props);
-  console.info('comments', comments);*/
+  //console.info('props', props);
 
   return (
     <div>
       <div className="card__comments">
         {
-          _.values(props.comments).map(comment => {
+          post.post_comments.map((commentID, i) => {
             return (
-              <Comment {...comment} />
+              <Comment
+                key={i}
+                comment={comments[commentID]}
+                author={users[comments[commentID].user_id]}
+              />
             )
           })
         }
       </div>
-      <CreateComment author={author} className="card__footer" postID={postID} triggers={triggers} />
+      <CreateComment author={author} className="card__footer" postID={post.id} triggers={triggers} />
     </div>
   );
 
