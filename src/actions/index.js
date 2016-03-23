@@ -18,6 +18,7 @@
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
 export const ADD_GEOTAG = 'ADD_GEOTAG';
+export const ADD_HASHTAG = 'ADD_HASHTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
@@ -39,6 +40,7 @@ export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
 export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const SET_GEOTAGS = 'SET_GEOTAGS';
+export const SET_HASHTAGS = 'SET_HASHTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
 export const SET_POST_COMMENTS = 'SET_POST_COMMENTS';
 
@@ -112,6 +114,13 @@ export function addGeotag(geotag) {
   return {
     type: ADD_GEOTAG,
     geotag
+  }
+}
+
+export function addHashtag(hashtag) {
+  return {
+    type: ADD_HASHTAG,
+    hashtag
   }
 }
 
@@ -290,6 +299,13 @@ export function setGeotags(geotags) {
   return {
     type: SET_GEOTAGS,
     geotags
+  }
+}
+
+export function setHashtags(hashtags) {
+  return {
+    type: SET_HASHTAGS,
+    hashtags
   }
 }
 

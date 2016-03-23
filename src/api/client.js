@@ -439,6 +439,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async getHashtag(name) {
+    let response = await this.get(`/api/v1/tag/${name}`);
+    return response.body;
+  }
+
   async searchGeotags(query) {
     let response = await this.get(`/api/v1/geotags/search/${query}`);
     return response.body;

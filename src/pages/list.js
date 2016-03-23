@@ -24,7 +24,7 @@ import Helmet from 'react-helmet';
 import VisibilitySensor from 'react-visibility-sensor';
 
 import {API_HOST} from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 
 import {
   Page,
@@ -32,7 +32,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
-import CreatePost from '../components/create-post'
+import CreatePost from '../components/create-post';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
