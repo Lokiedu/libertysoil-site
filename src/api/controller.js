@@ -1429,7 +1429,7 @@ export default class ApiController {
     }
 
     let User = this.bookshelf.model('User');
-    
+
     let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['ignored_users']});
     let userToIgnore = await User.where({username: req.params.username}).fetch({require: true});
 
@@ -2459,7 +2459,7 @@ export default class ApiController {
     let Comment = this.bookshelf.model('Comment');
 
     try {
-      let comment_object = await Comment.where({ id: req.params.id }).fetch({require: true});
+      let comment_object = await Comment.where({ id: req.params.comment_id, post_id: req.params.id }).fetch({require: true});
 
       if (comment_object.get('user_id') != req.session.user) {
         res.status(403);
@@ -2467,14 +2467,14 @@ export default class ApiController {
         return;
       }
 
-      comment_object.destroy();
+      await comment_object.destroy();
     } catch(e) {
       res.status(500);
       res.send({error: e.message});
       return;
     }
-    res.status(200);
-    res.send({success: true});
+
+    await this.getPostComments(req, res);
   }
 
   async countComments(posts) {

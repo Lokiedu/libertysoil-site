@@ -20,17 +20,33 @@ import React from 'react';
 
 import Time from '../time';
 import User from '../user';
+import Icon from '../icon';
 
 let Comment = ({
+  postId,
   comment,
-  author
+  author,
+  current_user,
+  triggers
 }) => {
-  //console.info('comment', comment);
+  let toolbar = null;
+
+  if (current_user.id == author.id) {
+    toolbar = (
+      <div className="comment__toolbar">
+        {false && <Icon className="comment__toolbar_item" icon="edit" size="small" title="Edit" />}
+        <Icon onClick={triggers.deleteComment.bind(null, postId, comment.id)} className="comment__toolbar_item" icon="delete" size="small" title="Delete" />
+      </div>
+    );
+  }
 
   return (
     <article className="comment">
       <header className="comment__header">
-        <User user={author} />
+        <div className="comment__author">
+          <User user={author} />
+        </div>
+        {toolbar}
       </header>
       <div className="comment__body">
         <section className="comment__text">

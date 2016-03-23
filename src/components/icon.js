@@ -8,6 +8,8 @@ import star_border from 'react-icons/lib/md/star-border';
 import chat_bubble_outline from 'react-icons/lib/md/chat-bubble-outline';
 import link from 'react-icons/lib/md/link';
 import edit from 'react-icons/lib/md/edit';
+import close from 'react-icons/lib/md/close';
+import _delete from 'react-icons/lib/md/delete';
 
 const icons = {
   favorite,
@@ -17,7 +19,9 @@ const icons = {
   star_border,
   chat_bubble_outline,
   link,
-  edit
+  edit,
+  close,
+  delete: _delete
 };
 
 export default ({
