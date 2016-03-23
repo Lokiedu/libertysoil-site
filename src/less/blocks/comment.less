@@ -3,7 +3,25 @@
 }
 
 .comment__header {
-  
+  display: flex;
+  align-items: center;
+}
+
+.comment__author {
+  margin: 0 @space 0 0;
+}
+
+.comment__toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.comment__toolbar_item {
+  cursor: pointer;
+
+  & + & {
+    margin-left: 8px;
+  }
 }
 
 .comment__body {

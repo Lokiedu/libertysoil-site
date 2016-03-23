@@ -41,6 +41,9 @@ let Comments = (props) => {
             key={i}
             comment={comment}
             author={users[comment.user_id]}
+            current_user={author}
+            triggers={triggers}
+            postId={post.id}
           />
         ))}
       </section>

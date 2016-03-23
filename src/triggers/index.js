@@ -281,7 +281,7 @@ export class ActionsTrigger {
     try {
       await this.client.ignoreUser(user.username);
       let result = await this.client.userSuggestions();
-      
+
       this.dispatch(setPersonalizedSuggestedUsers(result));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -625,6 +625,18 @@ export class ActionsTrigger {
 
       if (responseBody) {
         this.dispatch(setPostComments(post_id, responseBody));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  deleteComment = async (postId, commentId) => {
+    try {
+      let responseBody = await this.client.deleteComment(postId, commentId);
+
+      if (responseBody) {
+        this.dispatch(setPostComments(postId, responseBody));
       }
     } catch (e) {
       this.dispatch(addError(e.message));
