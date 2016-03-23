@@ -35,14 +35,19 @@ const clearComments = (comments) => (
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.ADD_POST:
-    case a.ADD_POST_TO_RIVER: {
-      state = state.set(action.post.id, List(clearComments(action.post.post_comments)));
+    case a.ADD_POST: {
+      const comments = action.post.post_comments || [];
+      state = state.set(action.post.id, List(clearComments(comments)));
       break;
     }
 
     case a.SET_POST_COMMENTS: {
       state = state.set(action.postId, List(clearComments(action.comments)));
+      break;
+    }
+
+    case a.REMOVE_POST: {
+      state = state.delete(action.id);
       break;
     }
   }
