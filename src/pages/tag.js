@@ -91,6 +91,7 @@ export class TagPage extends Component {
           tag={tag}
           triggers={likeTriggers}
           outline={true}
+          size="midl"
         />
       ];
 

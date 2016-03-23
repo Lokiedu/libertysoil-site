@@ -127,6 +127,7 @@ export class GeotagPage extends Component {
           tag={this.props.params.url_name}
           triggers={likeTriggers}
           outline={true}
+          size="midl"
         />
       ];
 
