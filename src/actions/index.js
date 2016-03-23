@@ -504,10 +504,10 @@ export function toggleUISidebar(isVisible) {
   }
 }
 
-export function setPostComments(post_id, comments) {
+export function setPostComments(postId, comments) {
   return {
     type: SET_POST_COMMENTS,
-    post_id,
+    postId,
     comments
   }
 }

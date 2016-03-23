@@ -33,24 +33,16 @@ let Comments = (props) => {
   let postComments = [];
   const title = message.compile('{count, plural, =0{No commets} one{1 comment} other{# Comments}}');
 
-  if (post.post_comments.length && comments) {
+  if (post.comments && comments && comments[post.id]) {
     postComments = (
       <section className="comments__body">
-        {post.post_comments.map((commentID, i) => {
-          const comment = comments[commentID];
-
-          if (!comment) {
-            return false;
-          }
-
-          return (
-            <Comment
-              key={i}
-              comment={comment}
-              author={users[comment.user_id]}
-            />
-          )
-        })}
+        {comments[post.id].map((comment, i) => (
+          <Comment
+            key={i}
+            comment={comment}
+            author={users[comment.user_id]}
+          />
+        ))}
       </section>
     );
   }
@@ -61,7 +53,7 @@ let Comments = (props) => {
         <header className="comments__header">
           <div className="comments__count">
             <Icon className="comments__count_icon" icon="chat_bubble_outline" />
-            <div className="comments__count_title">{title({ count: post.post_comments.length })}</div>
+            <div className="comments__count_title">{title({ count: post.comments })}</div>
           </div>
         </header>
         {postComments}

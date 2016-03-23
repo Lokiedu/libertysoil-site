@@ -15,8 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Map, fromJS } from 'immutable';
-import { keyBy } from 'lodash';
+import { Map, List } from 'immutable';
 
 import * as a from '../actions';
 
@@ -38,12 +37,12 @@ export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_POST:
     case a.ADD_POST_TO_RIVER: {
-      state = state.merge(fromJS(keyBy(clearComments(action.post.post_comments), 'id')));
+      state = state.set(action.post.id, List(clearComments(action.post.post_comments)));
       break;
     }
 
     case a.SET_POST_COMMENTS: {
-      state = state.merge(fromJS(keyBy(clearComments(action.comments), 'id')));
+      state = state.set(action.postId, List(clearComments(action.comments)));
       break;
     }
   }
