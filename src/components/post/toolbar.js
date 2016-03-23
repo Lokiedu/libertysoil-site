@@ -18,6 +18,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import Icon from '../icon';
+
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 export default class Toolbar extends React.Component {
@@ -82,21 +84,26 @@ export default class Toolbar extends React.Component {
 
   render()
   {
-    let heart_class = 'fa-heart-o';
-    let star_class = 'fa-star-o';
+    let likeIcon = 'favorite_border';
+    let likeClass = '';
+    let favIcon = 'star_border';
+    let favClass = '';
+
     let like_action = this.likePost.bind(this);
     let fav_action = this.addPostToFavourites.bind(this);
 
     if (this.props.current_user) {
       if (this.props.current_user.likes.indexOf(this.props.post.id) > -1) {
         // current user liked this post
-        heart_class = 'fa-heart color-red';
+        likeIcon = 'favorite';
+        likeClass = 'color-red';
         like_action = this.unlikePost.bind(this);
       }
 
       if (this.props.current_user.favourites.indexOf(this.props.post.id) > -1) {
         // current user faved this post
-        star_class = 'fa-star color-yellow';
+        favIcon = 'star';
+        favClass = 'color-yellow';
         fav_action = this.removePostFromFavourites.bind(this);
       }
     }
@@ -104,18 +111,17 @@ export default class Toolbar extends React.Component {
     return (
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
-          <span className={`icon fa ${heart_class}`}></span>
+          <Icon icon={likeIcon} className={likeClass} size="small" />
           <span className="card__toolbar_item_value">{this.props.post.likers.length}</span>
         </span>
-
         <span className="card__toolbar_item action" onClick={fav_action}>
-          <span className={`icon fa ${star_class}`}></span>
+          <Icon icon={favIcon} className={favClass} size="small" />
           <span className="card__toolbar_item_value">{this.props.post.favourers.length}</span>
         </span>
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: this.props.post.id })} >
-          <span className="icon fa fa-comment-o"></span>
-          <span className="card__toolbar_item_value disqus-comment-count" data-disqus-identifier={this.props.post.id}></span>
+          <Icon icon="chat_bubble_outline" size="small" />
+          <span className="card__toolbar_item_value">{this.props.post.comments}</span>
         </Link>
       </div>
     )

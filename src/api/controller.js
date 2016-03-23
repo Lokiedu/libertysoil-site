@@ -236,6 +236,7 @@ export default class ApiController {
     try {
       let relations = POST_RELATIONS;
       relations.push('post_comments');
+      relations.push('post_comments.user');
 
       let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));

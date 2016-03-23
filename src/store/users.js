@@ -27,7 +27,6 @@ const cleanUser = user => {
   let users = {};
 
   if (!user) {
-
     return users;
   }
 
@@ -81,6 +80,16 @@ export default function reducer(state=initialState, action) {
     {
       let users = _.keyBy(_.uniq(action.posts.map(post => post.user), 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
+
+      break;
+    }
+
+    case a.SET_POST_COMMENTS:
+    {
+      let users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
+      state = state.mergeDeep(i.fromJS(users));
+
+      break;
     }
   }
 

@@ -55,10 +55,10 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let post = client.postInfo(params.uuid);
+    let post = await client.postInfo(params.uuid);
     let relatedPosts = client.relatedPosts(params.uuid);
 
-    store.dispatch(addPost(await post));
+    store.dispatch(addPost(post));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
   }
 
@@ -117,7 +117,9 @@ export class PostPage extends React.Component {
                 <PostWrapper
                   author={author}
                   current_user={this.props.current_user}
+                  users={this.props.users}
                   post={current_post}
+                  comments={this.props.comments}
                   showComments={true}
                   triggers={triggers}
                 >

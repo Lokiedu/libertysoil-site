@@ -4,12 +4,20 @@ import favorite from 'react-icons/lib/md/favorite';
 import favorite_border from 'react-icons/lib/md/favorite-border';
 import _public from 'react-icons/lib/md/public';
 import star from 'react-icons/lib/md/star';
+import star_border from 'react-icons/lib/md/star-border';
+import chat_bubble_outline from 'react-icons/lib/md/chat-bubble-outline';
+import link from 'react-icons/lib/md/link';
+import edit from 'react-icons/lib/md/edit';
 
 const icons = {
   favorite,
   favorite_border,
   public: _public,
-  star
+  star,
+  star_border,
+  chat_bubble_outline,
+  link,
+  edit
 };
 
 export default ({

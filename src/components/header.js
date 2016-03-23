@@ -66,10 +66,12 @@ export default class HeaderComponent extends React.Component {
     return (
       <div {...this.props} className={classNames}>
         <div className="header__body">
-          {!React.Children.count(children) &&
-            <HeaderLogo small />
-          }
-          {children}
+          <div className="header__content">
+            {!React.Children.count(children) &&
+              <HeaderLogo small />
+            }
+            {children}
+          </div>
           <AuthBlock is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}/>
         </div>
       </div>

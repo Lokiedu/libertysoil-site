@@ -40,6 +40,7 @@ export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
+export const SET_POST_COMMENTS = 'SET_POST_COMMENTS';
 
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
@@ -500,5 +501,13 @@ export function toggleUISidebar(isVisible) {
   return {
     type: UI__TOGGLE_SIDEBAR,
     isVisible
+  }
+}
+
+export function setPostComments(postId, comments) {
+  return {
+    type: SET_POST_COMMENTS,
+    postId,
+    comments
   }
 }

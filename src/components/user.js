@@ -18,8 +18,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
-import moment from 'moment';
 
+import Time from './time';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import ChangeAvatar from './settings/change-avatar';
 
@@ -63,12 +63,10 @@ export default class User extends Component {
       name = name.trim();
 
       if (timestamp.length > 0 && timestampLink.length > 0) {
-        let timestamp_string = moment(timestamp).format('MMMM D, HH:mm');
-
         render.timestamp =
           <p className="user_box__text">
             <Link to={timestampLink}>
-              {timestamp_string}
+              <Time timestamp={timestamp} />
             </Link>
           </p>
       }

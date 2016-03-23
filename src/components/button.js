@@ -26,7 +26,7 @@ export default class Button extends React.Component {
     className = `button button-icon action ${className}`;
 
     if (color) {
-      className += `button-${color}`;
+      className += ` button-${color}`;
     }
 
     if (waiting) {
@@ -35,10 +35,10 @@ export default class Button extends React.Component {
     }
 
     return (
-      <div className={className} {...props}>
+      <button className={className} {...props}>
         {icon}
         {title}
-      </div>
+      </button>
     );
   }
 }

@@ -91,6 +91,7 @@ export class TagPage extends Component {
           tag={tag}
           triggers={likeTriggers}
           outline={true}
+          size="midl"
         />
       ];
 
@@ -98,7 +99,7 @@ export class TagPage extends Component {
         <div key="posts" className="panel__toolbar_item-text">
           {thisTagPosts.length} posts
         </div>,
-        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <button key="new" className="button button-midi button-light_blue" type="button">New</button>,
         <FollowTagButton
           key="follow"
           current_user={current_user}

@@ -15,27 +15,37 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
-import { Link } from 'react-router';
+import { Map, List } from 'immutable';
 
-import Icon from '../icon';
+import * as a from '../actions';
 
-import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-let EditPostButton = (props) => {
-  if (!props.current_user || props.current_user.id !== props.post.user_id) {
-    return <script/>;
+const initialState = Map({});
+
+const clearComments = (comments) => (
+  comments.map(comment => {
+    let _comment = {
+      ...comment
+    };
+    delete _comment.user;
+
+    return _comment;
+  })
+);
+
+export default function reducer(state=initialState, action) {
+  switch (action.type) {
+    case a.ADD_POST:
+    case a.ADD_POST_TO_RIVER: {
+      state = state.set(action.post.id, List(clearComments(action.post.post_comments)));
+      break;
+    }
+
+    case a.SET_POST_COMMENTS: {
+      state = state.set(action.postId, List(clearComments(action.comments)));
+      break;
+    }
   }
 
-  let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
-
-  return (
-    <div className="card__toolbar_item">
-      <Link to={post_edit_url}>
-        <Icon icon="edit" size="small" />
-      </Link>
-    </div>
-  );
-};
-
-export default EditPostButton;
+  return state;
+}

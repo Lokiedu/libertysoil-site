@@ -21,6 +21,7 @@ import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
+  setPostComments,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
@@ -612,6 +613,18 @@ export class ActionsTrigger {
       if ('user' in res) {
         this.dispatch(addMessage('Avatar updated'));
         this.dispatch(addUser(res.user));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  createComment = async (post_id, comment) => {
+    try {
+      let responseBody = await this.client.createComment(post_id, comment);
+
+      if (responseBody) {
+        this.dispatch(setPostComments(post_id, responseBody));
       }
     } catch (e) {
       this.dispatch(addError(e.message));

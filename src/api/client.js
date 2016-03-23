@@ -458,4 +458,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async createComment(post_id, comment) {
+    let response = await this.post(`/api/v1/post/${post_id}/comments`, {
+      text: comment
+    });
+    return response.body;
+  }
+
 }

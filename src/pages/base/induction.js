@@ -25,6 +25,7 @@ import {
 } from '../../components/page';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 
 export default class BaseInductionPage extends React.Component {
@@ -45,7 +46,8 @@ export default class BaseInductionPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}/>
 
-        <Page className="page__container-no_sidebar">
+        <Page>
+          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
               <PageContent>

@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 
 import Panel from './panel';
-import moment from 'moment';
+import Time from './time';
 import FollowTagButton from './follow-tag-button';
 import Tag from './tag';
 import LikeTagButton from './like-tag-button';
@@ -55,7 +55,6 @@ export default class SchoolHeader extends React.Component {
     let toolbarSecondary = [];
 
     let name = school.url_name;
-    let updated_at = moment(school.updated_at).format('MMMM D, HH:mm');
     let linesOfDescription = <p>No information provided...</p>;
 
     if (school.name) {
@@ -94,7 +93,7 @@ export default class SchoolHeader extends React.Component {
         /*<div key="posts" className="panel__toolbar_item-text">
           {tagPosts.length} posts
         </div>,*/
-        <button key="new" className="button button-midi button-ligth_blue" type="button">New</button>,
+        <button key="new" className="button button-midi button-light_blue" type="button">New</button>,
         <FollowTagButton
           current_user={current_user}
           followed_tags={current_user ? current_user.followed_schools : {}}
@@ -113,7 +112,7 @@ export default class SchoolHeader extends React.Component {
         toolbarSecondary={toolbarSecondary}
       >
         {linesOfDescription}
-        <p>{updated_at}</p>
+        <p><Time timestamp={school.updated_at} /></p>
       </Panel>
     )
   }

@@ -15,27 +15,44 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React from 'react';
-import { Link } from 'react-router';
+import strftime from 'strftime';
 
-import Icon from '../icon';
+const Time = ({
+  title,
+  timestamp,
+  format,
+  ...props
+}) => {
+  let formattedTime = '';
+  let date = new Date();
 
-import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
-
-let EditPostButton = (props) => {
-  if (!props.current_user || props.current_user.id !== props.post.user_id) {
-    return <script/>;
+  if (timestamp) {
+    date = new Date(timestamp);
   }
 
-  let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
+  if (!title) {
+    title = date.toUTCString();
+  }
+
+  formattedTime = strftime(format, date);
 
   return (
-    <div className="card__toolbar_item">
-      <Link to={post_edit_url}>
-        <Icon icon="edit" size="small" />
-      </Link>
-    </div>
+    <time {...props} dateTime={date.toISOString()} title={title}>
+      {formattedTime}
+    </time>
   );
+
 };
 
-export default EditPostButton;
+Time.propTypes = {
+  timestamp: React.PropTypes.any,
+  format: React.PropTypes.string
+};
+
+Time.defaultProps = {
+  format: '%B %e, %k:%M'
+};
+
+export default Time;

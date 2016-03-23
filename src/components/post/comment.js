@@ -15,27 +15,33 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React from 'react';
-import { Link } from 'react-router';
 
-import Icon from '../icon';
+import Time from '../time';
+import User from '../user';
 
-import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
-
-let EditPostButton = (props) => {
-  if (!props.current_user || props.current_user.id !== props.post.user_id) {
-    return <script/>;
-  }
-
-  let post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
+let Comment = ({
+  comment,
+  author
+}) => {
+  //console.info('comment', comment);
 
   return (
-    <div className="card__toolbar_item">
-      <Link to={post_edit_url}>
-        <Icon icon="edit" size="small" />
-      </Link>
-    </div>
+    <article className="comment">
+      <header className="comment__header">
+        <User user={author} />
+      </header>
+      <div className="comment__body">
+        <section className="comment__text">
+          {comment.text}
+        </section>
+        <footer className="comment__footer">
+          <Time className="comment__time" timestamp={comment.updated_at} />
+        </footer>
+      </div>
+    </article>
   );
-};
 
-export default EditPostButton;
+};
+export default Comment;

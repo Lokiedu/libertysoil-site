@@ -15,19 +15,53 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
-import ReactDisqusThread from '../../scripts/disqus-thread';
 
-let Comments = (props) => (
-  <div className="card__comments">
-    <ReactDisqusThread
-      categoryId={props.post.type}
-      identifier={props.post.id}
-      shortname="lstest"
-      title="Post"
-      url={`http://alpha.libertysoil.org/post/${props.post.id}`}
-    />
-  </div>
-);
+import React from 'react';
+import Comment from './comment';
+import CreateComment from './create-comment';
+import Icon from '../icon';
+import message from '../../utils/message';
+
+let Comments = (props) => {
+  const {
+    author,
+    comments,
+    triggers,
+    post,
+    users
+  } = props;
+  let postComments = [];
+  const title = message.compile('{count, plural, =0{No commets} one{1 comment} other{# Comments}}');
+
+  if (post.comments && comments && comments[post.id]) {
+    postComments = (
+      <section className="comments__body">
+        {comments[post.id].map((comment, i) => (
+          <Comment
+            key={i}
+            comment={comment}
+            author={users[comment.user_id]}
+          />
+        ))}
+      </section>
+    );
+  }
+
+  return (
+    <div>
+      <div className="card__comments comments">
+        <header className="comments__header">
+          <div className="comments__count">
+            <Icon className="comments__count_icon" icon="chat_bubble_outline" />
+            <div className="comments__count_title">{title({ count: post.comments })}</div>
+          </div>
+        </header>
+        {postComments}
+      </div>
+      <CreateComment author={author} className="card__footer" postID={post.id} triggers={triggers} />
+    </div>
+  );
+
+};
 
 export default Comments;
