@@ -83,7 +83,7 @@ export class TagPage extends Component {
     store.dispatch(addHashtag(hashtag));
     store.dispatch(setTagPosts(params.tag, await tagPosts));
 
-    let trigger = new ActionsTrigger(client, store.dispatch);
+    const trigger = new ActionsTrigger(client, store.dispatch);
     Promise.all([
       trigger.loadSchools(),
       trigger.loadUserRecentTags()

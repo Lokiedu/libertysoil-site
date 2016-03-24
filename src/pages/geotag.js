@@ -16,14 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { setGeotagPosts, addGeotag } from '../actions';
+import {
+  setGeotagPosts,
+  addGeotag,
+  resetCreatePostForm,
+  updateCreatePostForm
+} from '../actions';
 import NotFound from './not-found';
 
 import {
@@ -34,6 +40,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
+import CreatePost from '../components/create-post';
 import Breadcrumbs from '../components/breadcrumbs';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
@@ -41,6 +48,7 @@ import Footer from '../components/footer';
 import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import AddedTags from '../components/post/added-tags';
 import Panel from '../components/panel';
 import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
@@ -77,26 +85,59 @@ export class GeotagPage extends Component {
 
     store.dispatch(addGeotag(geotag));
     store.dispatch(setGeotagPosts(params.url_name, await geotagPosts));
+
+    const trigger = new ActionsTrigger(client, store.dispatch);
+    Promise.all([
+      trigger.loadSchools(),
+      trigger.loadUserRecentTags()
+    ]);
+
     return 200;
   }
+
+  state = {
+    form: false
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.form) {
+      const postGeotags = this.props.create_post_form.geotags;
+      const index = postGeotags.findIndex(tag => tag.url_name === nextProps.params.url_name);
+
+      if (index < 0) {
+        this.setState({ form: false });
+      }
+    }
+  }
+
+  toggleForm = () => {
+    if (!this.state.form) {
+      const geotag = this.props.geotags[this.props.params.url_name];
+      this.props.resetCreatePostForm();
+      this.props.updateCreatePostForm({ geotags: [geotag] });
+    }
+
+    this.setState({ form: !this.state.form });
+  };
 
   render() {
     const {
       is_logged_in,
       current_user,
       posts,
+      resetCreatePostForm,
+      updateCreatePostForm,
       geotags,
       geotag_posts,
       users
     } = this.props;
 
-    let client = new ApiClient(API_HOST);
-    let triggers = new ActionsTrigger(client, this.props.dispatch);
-    let geotag = geotags[this.props.params.url_name];
-    const title = geotag ? geotag.name : this.props.params.url_name;
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    let toolbarPrimary = [];
-    let toolbarSecondary = [];
+    const geotag = geotags[this.props.params.url_name];
+    const title = geotag ? geotag.name : this.props.params.url_name;
 
     if (!geotag) {
       return <script />;
@@ -118,6 +159,12 @@ export class GeotagPage extends Component {
       unlikeTag: triggers.unlikeGeotag
     };
 
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
+
+    let createPostForm;
+    let addedTags;
+
     if (is_logged_in) {
       toolbarSecondary = [
         <LikeTagButton
@@ -135,7 +182,7 @@ export class GeotagPage extends Component {
         <div key="posts" className="panel__toolbar_item-text">
           {tagPosts.length} posts
         </div>,
-        <button key="new" className="button button-midi button-light_blue" type="button">New</button>,
+        <button key="new" onClick={this.toggleForm} className="button button-midi button-light_blue" type="button">New</button>,
         <FollowTagButton
           key="follow"
           current_user={current_user}
@@ -145,6 +192,20 @@ export class GeotagPage extends Component {
           className="button-midi"
         />
       ];
+
+      if (this.state.form) {
+        createPostForm = (
+          <CreatePost
+            actions={actions}
+            allSchools={_.values(this.props.schools)}
+            defaultText={this.props.create_post_form.text}
+            triggers={triggers}
+            userRecentTags={current_user.recent_tags}
+            {...this.props.create_post_form}
+          />
+        );
+        addedTags = <AddedTags {...this.props.create_post_form} />;
+      }
     }
 
     return (
@@ -207,6 +268,7 @@ export class GeotagPage extends Component {
             </PageBody>
             <PageBody className="page__body-up layout__space_alt">
               <PageContent>
+                {createPostForm}
                 <River
                   river={tagPosts}
                   posts={posts}
@@ -215,7 +277,9 @@ export class GeotagPage extends Component {
                   triggers={triggers}
                 />
               </PageContent>
-              <SidebarAlt />
+              <SidebarAlt>
+                {addedTags}
+              </SidebarAlt>
             </PageBody>
           </PageMain>
         </Page>
@@ -225,4 +289,7 @@ export class GeotagPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(GeotagPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(GeotagPage);
