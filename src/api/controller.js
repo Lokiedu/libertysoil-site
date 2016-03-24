@@ -2438,6 +2438,7 @@ export default class ApiController {
     comment_text = req.body.text.trim();
 
     comment_object.set('text', comment_text);
+    comment_object.set('updated_at', new Date().toJSON());
 
     await comment_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
