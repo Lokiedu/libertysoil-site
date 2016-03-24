@@ -110,6 +110,10 @@ export class GeotagPage extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.resetCreatePostForm();
+  }
+
   toggleForm = () => {
     if (!this.state.form) {
       const geotag = this.props.geotags[this.props.params.url_name];

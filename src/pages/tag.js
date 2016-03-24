@@ -107,6 +107,10 @@ export class TagPage extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.resetCreatePostForm();
+  }
+
   toggleForm = () => {
     if (!this.state.form) {
       const hashtag = this.props.hashtags[this.props.params.tag];

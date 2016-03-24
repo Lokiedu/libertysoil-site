@@ -53,9 +53,9 @@ class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
 
   static async fetchData(params, store, client) {
-    let schoolInfo = await client.schoolInfo(params.school_name);
+    let school = await client.getSchool(params.school_name);
 
-    store.dispatch(addSchool(schoolInfo));
+    store.dispatch(addSchool(school));
   }
 
   componentDidMount () {
