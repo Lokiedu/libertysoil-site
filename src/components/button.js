@@ -5,7 +5,8 @@ export default class Button extends React.Component {
 
   static propTypes = {
     color: PropTypes.string,
-    className: PropTypes.string
+    className: PropTypes.string,
+    size: PropTypes.string
   };
 
   static defaultProps = {
@@ -16,6 +17,7 @@ export default class Button extends React.Component {
   render() {
     let {
       color,
+      size,
       className,
       title,
       waiting,
@@ -27,6 +29,10 @@ export default class Button extends React.Component {
 
     if (color) {
       className += ` button-${color}`;
+    }
+
+    if (size) {
+      className += ` button-${size}`;
     }
 
     if (waiting) {
