@@ -24,6 +24,7 @@ import Time from '../time';
 import User from '../user';
 import Icon from '../icon';
 import Button from '../button';
+import Textarea from '../textarea';
 
 export default class Comment extends Component {
   state = {
@@ -44,7 +45,7 @@ export default class Comment extends Component {
 
   disableEditingComment = (e) => {
     e && e.preventDefault();
-    
+
     this.setState({
       isEditMode: false
     });
@@ -138,12 +139,11 @@ export default class Comment extends Component {
           onSubmit={this.saveComment}
         >
           <div className="layout__row">
-            <textarea
+            <Textarea
               className="input input-block comment__edit_area"
               value={text}
               onChange={this.updateCommentText}
-            >
-            </textarea>
+            />
           </div>
           <div className="layout__row layout">
             <Button
