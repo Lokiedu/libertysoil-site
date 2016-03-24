@@ -99,10 +99,70 @@ class Sidebar extends React.Component {
     let followedTags = values(current_user.followed_hashtags);
     let followedSchools = values(current_user.followed_schools);
     let followedGeotags = values(current_user.followed_geotags);
-    let showLikes = (current_user.likes && current_user.likes.length > 0);
+
+    let showLikes =
+      (current_user.likes && current_user.likes.length)
+      || this.props.current_user.get('liked_hashtags').length
+      || this.props.current_user.get('liked_geotags').length
+      || this.props.current_user.get('liked_schools').length;
     let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
-    let showFollowedTags = !!followedTags.length || !!followedSchools.length || !!followedGeotags.length;
-    let showUsedTags = current_user.hashtags && !!current_user.hashtags.length;
+    let showFollowedTags = followedTags.length || followedSchools.length || followedGeotags.length;
+    let showUsedTags = current_user.hashtags.length || current_user.geotags.length || current_user.schools.length;
+
+    let followedTagsSection;
+    if (showFollowedTags) {
+      followedTagsSection = (
+        <div className="layout__row layout__row-double">
+          <h4 className="sidebar__heading">I follow</h4>
+          <Navigation>
+            <SidebarFollowedTags geotags={followedGeotags} hashtags={followedTags} schools={followedSchools} />
+          </Navigation>
+        </div>
+      );
+    }
+    
+    let likesSection;
+    if (showLikes) {
+      likesSection = (
+        <NavigationItem
+          enabled
+          icon="favorite"
+          to={`/user/${current_user.user.username}/likes`}
+        >
+          My Likes
+        </NavigationItem>
+      );
+    }
+
+    let favouritesSection;
+    if (showFavorites) {
+      favouritesSection = (
+        <NavigationItem
+          enabled
+          icon="star"
+          to={`/user/${current_user.user.username}/favorites`}
+        >
+          My Favorites
+        </NavigationItem>
+      );
+    }
+
+    let usedTagsSection;
+    if (showUsedTags) {
+      usedTagsSection = (
+        <div className="layout__row layout__row-double">
+          <h4 className="sidebar__heading">I post to</h4>
+          <div className="sidebar__user_tags">
+            <TagCloud
+              hashtags={current_user.hashtags}
+              schools={current_user.schools}
+              geotags={current_user.geotags}
+              truncated
+            />
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={sidebarClassName.join(' ')}>
@@ -111,48 +171,12 @@ class Sidebar extends React.Component {
           <div className="navigation__item sidebar__user">
             <CurrentUser user={current_user.user} />
           </div>
-          {showLikes &&
-            <NavigationItem
-              enabled
-              icon="favorite"
-              to={`/user/${current_user.user.username}/likes`}
-            >
-              My Likes
-            </NavigationItem>
-          }
-          {showFavorites &&
-            <NavigationItem
-              enabled
-              icon="star"
-              to={`/user/${current_user.user.username}/favorites`}
-            >
-              My Favorites
-            </NavigationItem>
-          }
+          {likesSection}
+          {favouritesSection}
         </Navigation>
 
-        {showFollowedTags &&
-          <div className="layout__row layout__row-double">
-            <h4 className="sidebar__heading">I follow</h4>
-            <Navigation>
-              <SidebarFollowedTags geotags={followedGeotags} hashtags={followedTags} schools={followedSchools} />
-            </Navigation>
-          </div>
-        }
-
-        {showUsedTags &&
-          <div className="layout__row layout__row-double">
-            <h4 className="sidebar__heading">I post to</h4>
-            <div className="sidebar__user_tags">
-              <TagCloud
-                hashtags={current_user.hashtags}
-                schools={current_user.schools}
-                geotags={current_user.geotags}
-                truncated
-              />
-            </div>
-          </div>
-        }
+        {followedTagsSection}
+        {usedTagsSection}
       </div>
     );
   }
