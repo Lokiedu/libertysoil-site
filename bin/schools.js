@@ -38,26 +38,49 @@ async function action() {
     return obj;
   });
 
-  const insertData = _.uniq(assocData.map(obj => {
-    const name = obj['School full official name'].trim();
+  const userUrlNames = [];
 
-    return {
-      name: name,
-      url_name: slug(name)
+  const insertData = assocData.map(obj => {
+    const name = obj['School full official name'].trim().replace('\u200b', '');
+    let url_name = slug(name);
+
+    if (userUrlNames.includes(url_name)) {
+      const city = obj['City'].trim();
+      url_name = slug(`${name} ${city}`);
+
+      let i = 2;
+      while (userUrlNames.includes(url_name)) {
+        url_name = slug(`${name} ${city} ${++i}`);
+      }
     }
-  }), 'url_name');
+
+    userUrlNames.push(url_name);
+
+    return { name, url_name }
+  });
 
   spinner.text = 'connecting to DB';
   const Knex = knex(knexConfig[exec_env]);
 
   spinner.text = 'executing DB queries';
+  const usedNames = [];
+
   for (const rowData of insertData) {
-    try {
-      await Knex('schools').insert(rowData);
-    } catch (e) {
+    let result = await Knex('schools').first('id').where({url_name: rowData.url_name});
+
+    if (_.isUndefined(result) && !usedNames.includes(rowData.names)) {
+      result = await Knex('schools').first('id').where({name: rowData.name})
+    }
+
+    usedNames.push(rowData.names);
+
+    if (_.isUndefined(result)) {
       await Knex('schools')
-        .where('url_name', '=', rowData.url_name)
-        .update({ name: rowData.name });
+        .insert(rowData);
+    } else {
+      await Knex('schools')
+        .where({ id: result.id })
+        .update(rowData);
     }
   }
 
