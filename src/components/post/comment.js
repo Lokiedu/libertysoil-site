@@ -164,20 +164,18 @@ export default class Comment extends Component {
           </div>
         </form>
       );
-    } else {
-      return (
-        <div className="comment__body">
-          <section className="comment__text">
-            {comment.text}
-          </section>
-          <footer className="comment__footer">
-            <Time className="comment__time" timestamp={comment.updated_at} />
-          </footer>
-        </div>
-      );
     }
-
-    return toolbar;
+    
+    return (
+      <div className="comment__body">
+        <section className="comment__text">
+          {comment.text}
+        </section>
+        <footer className="comment__footer">
+          <Time className="comment__time" timestamp={comment.updated_at} />
+        </footer>
+      </div>
+    );
   };
 
   render () {
