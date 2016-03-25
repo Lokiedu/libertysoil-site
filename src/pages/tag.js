@@ -53,8 +53,8 @@ export class TagPage extends Component {
   static displayName = 'TagPage';
 
   static async fetchData(params, store, client) {
-    let tagPosts = client.tagPosts(params.tag);
-    store.dispatch(setTagPosts(params.tag, await tagPosts));
+    let tagPosts = await client.tagPosts(params.tag);
+    store.dispatch(setTagPosts(params.tag, tagPosts));
   }
 
   render() {
