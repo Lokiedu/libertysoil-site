@@ -235,7 +235,7 @@ export default class ApiController {
 
     try {
       let relations = POST_RELATIONS;
-      relations.push('post_comments');
+      relations.push({'post_comments': qb => { qb.orderBy('created_at'); }});
       relations.push('post_comments.user');
 
       let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
