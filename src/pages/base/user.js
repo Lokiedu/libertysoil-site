@@ -18,6 +18,9 @@
 import React from 'react';
 import { IndexLink } from 'react-router';
 import Gravatar from 'react-gravatar';
+import {
+  isEmpty
+} from 'lodash';
 
 import {
   Page,
@@ -50,7 +53,12 @@ export default class BaseUserPage extends React.Component {
       followers
     } = this.props;
 
-    let showLikesLink = page_user.liked_posts && !!page_user.liked_posts.length;
+    let showLikesLink = (
+      !isEmpty(page_user.liked_posts) ||
+      !isEmpty(page_user.liked_hashtags) ||
+      !isEmpty(page_user.liked_schools) ||
+      !isEmpty(page_user.liked_geotags)
+    );
     let showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
     let showBioLink = page_user.more && !!page_user.more.bio;
 
