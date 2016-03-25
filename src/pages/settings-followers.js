@@ -133,7 +133,7 @@ class SettingsFollowersPage extends React.Component {
             <div className="layout__row layout__row-double">
               <UserGrid
                 current_user={current_user}
-                empty_msg="Noone follows you yet"
+                empty_msg="No one follows you yet"
                 i_am_following={i_am_following}
                 triggers={triggers}
                 users={followersUsers}
