@@ -642,4 +642,16 @@ export class ActionsTrigger {
       this.dispatch(addError(e.message));
     }
   };
+
+  saveComment = async (postId, commentId, text) => {
+    try {
+      let responseBody = await this.client.saveComment(postId, commentId, text);
+
+      if (responseBody) {
+        this.dispatch(setPostComments(postId, responseBody));
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
 }

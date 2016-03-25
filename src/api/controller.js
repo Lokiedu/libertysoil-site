@@ -236,7 +236,7 @@ export default class ApiController {
 
     try {
       let relations = POST_RELATIONS;
-      relations.push('post_comments');
+      relations.push({'post_comments': qb => { qb.orderBy('created_at'); }});
       relations.push('post_comments.user');
 
       let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
@@ -2441,6 +2441,7 @@ export default class ApiController {
     comment_text = req.body.text.trim();
 
     comment_object.set('text', comment_text);
+    comment_object.set('updated_at', new Date().toJSON());
 
     await comment_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
