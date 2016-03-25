@@ -67,6 +67,7 @@ export default class ApiController {
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', req.params.user)
           .orderBy('posts.created_at', 'desc')
+          .whereIn('posts.type', ['short_text', 'long_text']);
       });
 
 
@@ -304,6 +305,7 @@ export default class ApiController {
       .query(qb => {
         qb
           .whereIn('id', likes)
+          .orWhereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
           .orderBy('posts.created_at', 'desc')
       });
 
@@ -1381,6 +1383,7 @@ export default class ApiController {
         require: true,
         withRelated: [
           'following', 'followers', 'liked_posts',
+          'liked_hashtags', 'liked_schools', 'liked_geotags',
           'favourited_posts', 'followed_hashtags',
           'followed_schools', 'followed_geotags'
         ]
