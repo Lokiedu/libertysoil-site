@@ -232,7 +232,16 @@ export function initBookshelfFromKnex(knex) {
         qb.whereIn('name', names);
       }).fetch();
 
-      await this.schools().attach(schoolsToAdd.pluck('id'));
+      const attachPromise = this.schools().attach(schoolsToAdd.pluck('id'));
+
+      const updatedAtPromise = knex('schools')
+        .whereIn('name', names)
+        .update({updated_at: new Date().toJSON()});
+
+      return Promise.all([
+        attachPromise,
+        updatedAtPromise
+      ]);
     },
     /**
      * Attaches schools, checking if a school is already attached,
