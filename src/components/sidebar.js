@@ -102,9 +102,9 @@ class Sidebar extends React.Component {
 
     let showLikes =
       (current_user.likes && current_user.likes.length)
-      || this.props.current_user.get('liked_hashtags').length
-      || this.props.current_user.get('liked_geotags').length
-      || this.props.current_user.get('liked_schools').length;
+      || this.props.current_user.get('liked_hashtags').size
+      || this.props.current_user.get('liked_geotags').size
+      || this.props.current_user.get('liked_schools').size;
     let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
     let showFollowedTags = followedTags.length || followedSchools.length || followedGeotags.length;
     let showUsedTags = current_user.hashtags.length || current_user.geotags.length || current_user.schools.length;
