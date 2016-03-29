@@ -62,7 +62,7 @@ export default class BaseSchoolPage extends React.Component {
 
         <Page>
           <Sidebar current_user={current_user} />
-          <PageMain>
+          <PageMain className="page__main-no_space">
             <PageCaption>
               {page_school.name}
             </PageCaption>

@@ -125,7 +125,7 @@ export class TagPage extends Component {
         </Header>
         <Page>
           <Sidebar current_user={current_user} />
-          <PageMain>
+          <PageMain className="page__main-no_space">
             <PageCaption>
               {tag}
             </PageCaption>

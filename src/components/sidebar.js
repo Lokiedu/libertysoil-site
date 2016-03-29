@@ -54,7 +54,7 @@ class Sidebar extends React.Component {
       dispatch,
       ui
     } = this.props;
-    const breakpointWidth = 960;
+    const breakpointWidth = 1024;
 
     if (typeof document == 'undefined') {
       return;
@@ -120,7 +120,7 @@ class Sidebar extends React.Component {
         </div>
       );
     }
-    
+
     let likesSection;
     if (showLikes) {
       likesSection = (
