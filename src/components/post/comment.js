@@ -99,7 +99,7 @@ export default class Comment extends Component {
     } = this.state;
     let toolbar = null;
 
-    if (current_user.id == author.id && !isEditMode) {
+    if (current_user && author && current_user.id == author.id && !isEditMode) {
       toolbar = (
         <div className="comment__toolbar">
           <Icon
@@ -165,7 +165,7 @@ export default class Comment extends Component {
         </form>
       );
     }
-    
+
     return (
       <div className="comment__body">
         <section className="comment__text">

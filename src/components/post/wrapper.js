@@ -39,6 +39,11 @@ let PostWrapper = ({
       full: showComments
     }
   });
+  let _author = null;
+
+  if (current_user) {
+    _author = current_user.user;
+  }
 
   return (
     <section className={cardClassName}>
@@ -53,7 +58,7 @@ let PostWrapper = ({
         <Comments
           comments={comments}
           post={post}
-          author={current_user.user}
+          author={_author}
           triggers={triggers}
           users={users}
         />
