@@ -120,6 +120,7 @@ export class PostPage extends React.Component {
                   users={this.props.users}
                   post={current_post}
                   comments={this.props.comments}
+                  ui={this.props.ui}
                   showComments={true}
                   triggers={triggers}
                 >

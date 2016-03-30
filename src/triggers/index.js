@@ -22,6 +22,7 @@ import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setPostComments,
+  saveCommentStart, saveCommentSuccess, saveCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
@@ -644,14 +645,21 @@ export class ActionsTrigger {
   };
 
   saveComment = async (postId, commentId, text) => {
+    this.dispatch(saveCommentStart(postId, commentId));
+
     try {
       let responseBody = await this.client.saveComment(postId, commentId, text);
 
       if (responseBody) {
-        this.dispatch(setPostComments(postId, responseBody));
+        if (responseBody.error) {
+          this.dispatch(saveCommentFailure(postId, commentId, responseBody.error));
+        } else {
+          this.dispatch(setPostComments(postId, responseBody));
+          this.dispatch(saveCommentSuccess(postId, commentId));
+        }
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(saveCommentFailure(postId, commentId, e.message));
     }
   };
 }

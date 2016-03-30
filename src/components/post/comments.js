@@ -28,7 +28,8 @@ let Comments = (props) => {
     comments,
     triggers,
     post,
-    users
+    users,
+    ui
   } = props;
   let postComments = [];
   const title = message.compile('{count, plural, =0{No commets} one{1 comment} other{# Comments}}');
@@ -44,6 +45,7 @@ let Comments = (props) => {
             current_user={author}
             triggers={triggers}
             postId={post.id}
+            ui={ui}
           />
         ))}
       </section>

@@ -42,6 +42,10 @@ export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
 export const SET_POST_COMMENTS = 'SET_POST_COMMENTS';
 
+export const SAVE_COMMENT__START = 'SAVE_COMMENT__START';
+export const SAVE_COMMENT__FAILURE = 'SAVE_COMMENT__FAILURE';
+export const SAVE_COMMENT__SUCCESS = 'SAVE_COMMENT__SUCCESS';
+
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
 
@@ -509,5 +513,30 @@ export function setPostComments(postId, comments) {
     type: SET_POST_COMMENTS,
     postId,
     comments
+  }
+}
+
+export function saveCommentStart(postId, commentId) {
+  return {
+    type: SAVE_COMMENT__START,
+    postId,
+    commentId
+  }
+}
+
+export function saveCommentSuccess(postId, commentId) {
+  return {
+    type: SAVE_COMMENT__SUCCESS,
+    postId,
+    commentId
+  }
+}
+
+export function saveCommentFailure(postId, commentId, message) {
+  return {
+    type: SAVE_COMMENT__FAILURE,
+    postId,
+    commentId,
+    message
   }
 }

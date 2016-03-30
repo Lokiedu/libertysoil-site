@@ -21,7 +21,8 @@ import * as a from '../actions';
 
 const initialState = i.Map({
   sidebarIsVisible: true,
-  progress: i.Map({})
+  progress: i.Map({}),
+  comments: i.Map({})
 });
 
 function reducer (state=initialState, action) {
@@ -64,6 +65,25 @@ function reducer (state=initialState, action) {
         state = state.set('registrationSuccess', false);
         break;
       }
+    case a.SAVE_COMMENT__START:
+      {
+        state = state.setIn(['comments', action.commentId, 'error'], '');
+        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], true);
+        break;
+      }
+    case a.SAVE_COMMENT__SUCCESS:
+      {
+        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        break;
+      }
+    case a.SAVE_COMMENT__FAILURE:
+      {
+        state = state.setIn(['comments', action.commentId, 'error'], action.message);
+        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        console.info('action', action);
+        break;
+      }
+
   }
 
   return state;

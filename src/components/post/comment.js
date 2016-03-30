@@ -25,12 +25,28 @@ import User from '../user';
 import Icon from '../icon';
 import Button from '../button';
 import Textarea from '../textarea';
+import Message from '../message';
 
 export default class Comment extends Component {
   state = {
     text: '',
     isEditMode: false
   };
+
+  componentWillReceiveProps (nextProps) {
+    const {
+      comment,
+      ui
+    } = this.props;
+    const commentUi = ui.comments[comment.id];
+    const nextCommentUi = nextProps.ui.comments[comment.id];
+
+    if (commentUi && nextCommentUi && commentUi.isSaveInProgress && !nextCommentUi.isSaveInProgress && !nextCommentUi.error) {
+      this.setState({
+        isEditMode: false
+      });
+    }
+  }
 
   editComment = () => {
     const {
@@ -67,10 +83,6 @@ export default class Comment extends Component {
     if (commentText) {
       triggers.saveComment(postId, comment.id, commentText);
     }
-
-    this.setState({
-      isEditMode: false
-    });
   }
 
   updateCommentText = (e) => {
@@ -123,10 +135,31 @@ export default class Comment extends Component {
     return toolbar;
   };
 
+  renderMessage = () => {
+    const {
+      comment,
+      ui
+    } = this.props;
+    let messageComponent = null;
+    const commentUi = ui.comments[comment.id];
+
+    if (commentUi && commentUi.error) {
+      messageComponent = (
+        <div className="layout__row">
+          <Message message={commentUi.error} type="ERROR" />
+        </div>
+      );
+    }
+
+    return messageComponent;
+  };
+
   renderBody = () => {
     const {
-      comment
+      comment,
+      ui
     } = this.props;
+    const commentUi = ui.comments[comment.id];
     const {
       text,
       isEditMode
@@ -147,7 +180,7 @@ export default class Comment extends Component {
           </div>
           <div className="layout__row layout">
             <Button
-              disabled={!text.trim()}
+              disabled={!text.trim() || (commentUi && commentUi.isSaveInProgress)}
               type="submit"
               size="midi"
               className="layout__grid_item"
@@ -155,6 +188,7 @@ export default class Comment extends Component {
               color="light_blue"
             />
             <Button
+              disabled={commentUi && commentUi.isSaveInProgress}
               onClick={this.disableEditingComment}
               className="layout__grid_item"
               title="Cancel"
@@ -192,6 +226,7 @@ export default class Comment extends Component {
           {this.renderToolbar()}
         </header>
         {this.renderBody()}
+        {this.renderMessage()}
       </article>
     );
   }

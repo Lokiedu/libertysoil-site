@@ -31,7 +31,8 @@ let PostWrapper = ({
   triggers,
   showComments,
   children,
-  current_user
+  current_user,
+  ui
 }) => {
   let cardClassName = bem.makeClassName({
     block: 'card',
@@ -61,6 +62,7 @@ let PostWrapper = ({
           author={_author}
           triggers={triggers}
           users={users}
+          ui={ui}
         />
       }
 

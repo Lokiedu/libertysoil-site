@@ -471,10 +471,13 @@ export default class ApiClient
   }
 
   async saveComment(postId, commentId, text) {
-    let response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
-      text
-    });
-    return response.body;
+    try {
+      let response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
+        text
+      });
+      return response.body;
+    } catch (err) {
+      return err.response.body;
+    }
   }
-
 }
