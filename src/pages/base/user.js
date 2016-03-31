@@ -35,6 +35,7 @@ import Footer from '../../components/footer';
 import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
+import SidebarAlt from '../../components/sidebarAlt';
 
 
 export default class BaseUserPage extends React.Component {
@@ -83,17 +84,17 @@ export default class BaseUserPage extends React.Component {
 
         <Page>
           <Sidebar current_user={current_user} />
-          <PageMain>
+          <PageMain className="page__main-no_space">
+            <ProfileHeader
+              user={page_user}
+              current_user={current_user}
+              i_am_following={i_am_following}
+              following={following}
+              followers={followers}
+              triggers={this.props.triggers}
+            />
             <PageBody>
               <PageContent>
-                <ProfileHeader
-                  user={page_user}
-                  current_user={current_user}
-                  i_am_following={i_am_following}
-                  following={following}
-                  followers={followers}
-                  triggers={this.props.triggers}
-                />
                 <div className="layout__space-double">
                   <div className="layout__grid tabs">
                     <div className="layout__grid_item"><IndexLink className="tabs__link" activeClassName="tabs__link-active" to={`/user/${page_user.username}`}>Posts</IndexLink></div>
@@ -139,6 +140,7 @@ export default class BaseUserPage extends React.Component {
                   {this.props.children}
                 </div>
               </PageContent>
+              <SidebarAlt />
             </PageBody>
           </PageMain>
         </Page>

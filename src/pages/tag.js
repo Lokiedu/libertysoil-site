@@ -129,9 +129,7 @@ export class TagPage extends Component {
             <PageCaption>
               {tag}
             </PageCaption>
-            <PageHero>
-              <img src="/images/hero/welcome.jpg" />
-            </PageHero>
+            <PageHero src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <Panel
                 title={tag}

@@ -190,9 +190,7 @@ export class GeotagPage extends Component {
             <PageCaption>
               {`${title} `}<span className="page__caption_highlight">Education</span>
             </PageCaption>
-            <PageHero>
-              <img src="/images/hero/welcome.jpg" />
-            </PageHero>
+            <PageHero src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <PageContent>
                 <Panel
