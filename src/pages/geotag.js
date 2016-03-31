@@ -20,7 +20,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import _, { isEmpty } from 'lodash';
+import { isEmpty, find, values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -102,9 +102,8 @@ export class GeotagPage extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {
       const postGeotags = this.props.create_post_form.geotags;
-      const index = postGeotags.findIndex(tag => tag.url_name === nextProps.params.url_name);
 
-      if (index < 0) {
+      if (!find(postGeotags, tag => tag.url_name === nextProps.params.url_name)) {
         this.setState({ form: false });
       }
     }
@@ -201,7 +200,7 @@ export class GeotagPage extends Component {
         createPostForm = (
           <CreatePost
             actions={actions}
-            allSchools={_.values(this.props.schools)}
+            allSchools={values(this.props.schools)}
             defaultText={this.props.create_post_form.text}
             triggers={triggers}
             userRecentTags={current_user.recent_tags}

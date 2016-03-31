@@ -17,6 +17,7 @@
  */
 import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
+import { find } from 'lodash';
 
 import {
   Page,
@@ -61,9 +62,8 @@ export default class BaseSchoolPage extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {
       const postSchools = this.props.create_post_form.schools;
-      const index = postSchools.findIndex(tag => tag.url_name === nextProps.page_school.url_name);
 
-      if (index < 0) {
+      if (!find(postSchools, tag => tag.url_name === nextProps.page_school.url_name)) {
         this.setState({ form: false });
       }
     }

@@ -20,7 +20,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
-import _ from 'lodash';
+import { values, find } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -99,9 +99,8 @@ export class TagPage extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {
       const postHashtags = this.props.create_post_form.hashtags;
-      const index = postHashtags.findIndex(tag => tag.name === nextProps.params.tag);
 
-      if (index < 0) {
+      if (!find(postHashtags, tag => tag.name === nextProps.params.tag)) {
         this.setState({ form: false });
       }
     }
@@ -192,7 +191,7 @@ export class TagPage extends Component {
         createPostForm = (
           <CreatePost
             actions={actions}
-            allSchools={_.values(this.props.schools)}
+            allSchools={values(this.props.schools)}
             defaultText={this.props.create_post_form.text}
             triggers={triggers}
             userRecentTags={current_user.recent_tags}
