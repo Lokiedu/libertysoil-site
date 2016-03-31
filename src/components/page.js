@@ -7,9 +7,9 @@ const Page = ({ children, className = '' }) => (
 );
 
 const PageCaption = ({ children }) => (
-  <div className="page__caption">
-    {children}
-  </div>
+  <header className="page__caption">
+    <h1>{children}</h1>
+  </header>
 );
 
 const PageHero = ({ children }) => (
