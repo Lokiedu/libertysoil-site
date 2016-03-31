@@ -66,9 +66,7 @@ export default class BaseSchoolPage extends React.Component {
             <PageCaption>
               {page_school.name}
             </PageCaption>
-            <PageHero>
-              <img src="/images/hero/welcome.jpg" />
-            </PageHero>
+            <PageHero src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <SchoolHeader
                 is_logged_in={is_logged_in}
