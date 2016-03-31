@@ -179,7 +179,7 @@ export default class CreatePost extends React.Component {
     this._closeAddTagModal();
   };
 
-  render () {
+  render() {
     let {
       addTagModalType,
       expanded
