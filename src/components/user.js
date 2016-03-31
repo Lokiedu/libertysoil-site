@@ -44,7 +44,8 @@ export default class User extends Component {
     isRound: false,
     avatarSize: 24,
     timestamp: '',
-    timestampLink: ''
+    timestampLink: '',
+    isLink: true
   };
 
   render() {
@@ -58,7 +59,8 @@ export default class User extends Component {
       avatarSize,
       timestamp,
       timestampLink,
-      className
+      className,
+      isLink
     } = this.props;
 
     let render = {};
@@ -73,14 +75,26 @@ export default class User extends Component {
         avatarClassName += ' user_box__avatar-round';
       }
 
-      render.avatar = (
-        <Link to={user_url} className={avatarClassName}>
-          {user.more && user.more.avatar ?
-          (<img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />) :
-          (<Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />)
-          }
-        </Link>
-      );
+      let avatar;
+      if (user.more && user.more.avatar) {
+        avatar = (
+          <img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
+        );
+      } else {
+        avatar = (
+          <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
+        );
+      }
+
+      if (isLink) {
+        render.avatar = (
+          <Link to={user_url} className={avatarClassName}>
+            {avatar}
+          </Link>
+        );
+      } else {
+        render.avatar = avatar;
+      }
     }
 
     if (editable) {
@@ -93,25 +107,37 @@ export default class User extends Component {
       if (user.more && user.more.firstName && user.more.lastName) {
         name = `${user.more.firstName} ${user.more.lastName}`;
       }
-
       name = name.trim();
 
-      if (timestamp.size > 0 && timestampLink.length > 0) {
-        render.timestamp =
-          <p className="user_box__text">
-            <Link to={timestampLink}>
-              <Time timestamp={timestamp} />
-            </Link>
-          </p>
+      if (isLink) {
+        render.name = (<Link className="link" to={user_url}>{name}</Link>);
+      } else {
+        render.name = name;
       }
 
-      render.text =
+      let time;
+      if (timestamp.length > 0) {
+        time = <Time timestamp={timestamp} />;
+
+        if (isLink && timestampLink.length > 0) {
+          time = <Link to={timestampLink}>{time}</Link>;
+        }
+
+        render.timestamp = (
+          <p className="user_box__text">
+            {time}
+          </p>
+        );
+      }
+
+      render.text = (
         <div className="user_box__body">
           <p className="user_box__name">
-            <Link className="link" to={user_url}>{name}</Link>
-          </p>
+            {render.name}
+          </p>   
           {render.timestamp}
-        </div>;
+        </div>
+      );
     }
 
     return (

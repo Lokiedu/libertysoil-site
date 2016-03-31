@@ -100,8 +100,7 @@ class Sidebar extends React.Component {
     }
 
     let current_user = this.props.current_user.toJS();
-    // const username = current_user.user.username;
-    // console.log(username);
+    const username = current_user.user.username;
 
     let followedTags = values(current_user.followed_hashtags);
     let followedSchools = values(current_user.followed_schools);
@@ -175,11 +174,11 @@ class Sidebar extends React.Component {
       <div className={sidebarClassName.join(' ')}>
         <Navigation className="navigation-first">
           <NavigationItem enabled to="/" icon="public">News Feed</NavigationItem>
-          
-            <div className="navigation__item sidebar__user">
-              <CurrentUser user={current_user.user} />
+          <NavigationItem enabled to={`/user/${username}`}>
+            <div style={{display: 'flex'}}>
+              <CurrentUser user={current_user.user} isLink={false} />
             </div>
-          
+          </NavigationItem>
           {likesSection}
           {favouritesSection}
         </Navigation>
