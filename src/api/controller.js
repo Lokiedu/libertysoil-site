@@ -684,11 +684,16 @@ export default class ApiController {
     let q = Post.forge()
       .query(qb => {
         qb
-          .distinct()
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
           .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
-          .orderBy('posts.fully_published_at', 'desc')
+          .orderByRaw(`
+            CASE WHEN posts.fully_published_at IS NOT NULL
+              THEN posts.fully_published_at
+              ELSE posts.created_at
+            END DESC
+          `)
+          .groupBy('posts.id')
           .limit(5)
           .offset(offset)
       });
