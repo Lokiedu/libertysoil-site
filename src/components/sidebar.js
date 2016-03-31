@@ -74,6 +74,11 @@ class Sidebar extends React.Component {
       dispatch(toggleUISidebar(true));
     }
 
+    // If DOMContentLoaded event and small screen width
+    if (this.state.clientWidth == 0 && clientWidth <= breakpointWidth) {
+      dispatch(toggleUISidebar(false));
+    }
+
     this.setState({
       clientWidth: clientWidth
     });
