@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -24,10 +24,44 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import ChangeAvatar from './settings/change-avatar';
 
 export default class User extends Component {
-  render () {
-    var { user, hideAvatar, updateAvatarTrigger, editable, hideText, isRound, avatarSize, timestamp, timestampLink, className } = this.props;
-    var render = {};
+  static propTypes = {
+    user: React.PropTypes.shape({
+      id: React.PropTypes.string.isRequired,
+      username: React.PropTypes.string.isRequired,
+      avatar: React.PropTypes.string
+    }).isRequired,
+    avatarSize: React.PropTypes.any.isRequired,
+    hideAvatar: React.PropTypes.bool,
+    isRound: React.PropTypes.bool,
+    hideText: React.PropTypes.bool,
+    timestamp: React.PropTypes.string,
+    timestampLink: React.PropTypes.string
+  };
 
+  static defaultProps = {
+    hideAvatar: false,
+    hideText: false,
+    isRound: false,
+    avatarSize: 24,
+    timestamp: '',
+    timestampLink: ''
+  };
+
+  render () {
+    const {
+      user,
+      hideAvatar,
+      updateAvatarTrigger,
+      editable,
+      hideText,
+      isRound,
+      avatarSize,
+      timestamp,
+      timestampLink,
+      className
+    } = this.props;
+
+    let render = {};
     render.cn = `user_box ${className || ''}`;
 
     let user_url = getUrl(URL_NAMES.USER, { username: user.username })
@@ -62,7 +96,7 @@ export default class User extends Component {
 
       name = name.trim();
 
-      if (timestamp.length > 0 && timestampLink.length > 0) {
+      if (timestamp.size > 0 && timestampLink.length > 0) {
         render.timestamp =
           <p className="user_box__text">
             <Link to={timestampLink}>
@@ -73,7 +107,9 @@ export default class User extends Component {
 
       render.text =
         <div className="user_box__body">
-          <p className="user_box__name"><Link className="link" to={user_url}>{name}</Link></p>
+          <p className="user_box__name">
+            <Link className="link" to={user_url}>{name}</Link>
+          </p>
           {render.timestamp}
         </div>;
     }
@@ -86,27 +122,4 @@ export default class User extends Component {
         </div>
     )
   }
-
-  static propTypes = {
-    user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired,
-      username: React.PropTypes.string.isRequired,
-      avatar: React.PropTypes.string
-    }).isRequired,
-    avatarSize: React.PropTypes.any.isRequired,
-    hideAvatar: React.PropTypes.bool,
-    isRound: React.PropTypes.bool,
-    hideText: React.PropTypes.bool,
-    timestamp: React.PropTypes.string,
-    timestampLink: React.PropTypes.string
-  };
-
-  static defaultProps = {
-    hideAvatar: false,
-    hideText: false,
-    isRound: false,
-    avatarSize: 24,
-    timestamp: '',
-    timestampLink: ''
-  };
 }

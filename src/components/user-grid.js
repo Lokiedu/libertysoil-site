@@ -20,40 +20,44 @@ import React from 'react';
 import FollowButton from './follow-button';
 import User from './user';
 
+export default class UserGrid extends React.Component {
+  
+  render() {
+    const {
+      current_user,
+      i_am_following,
+      triggers,
+      users
+    } = this.props;
 
-export const UserGrid = (props) => {
-  const {
-    current_user,
-    i_am_following,
-    triggers,
-    users
-  } = props;
+    if (!users) {
+      return <script/>;
+    }
 
-  if (!users) {
-    return <script/>;
-  }
-
-  return (
-    <div className="layout__grids layout__grids-space layout__grid-responsive">
-      {users.map((user) => (
-        <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
-          <div className="layout__row layout__row-small">
-            <User
-              user={user}
-              avatarSize="32"
-            />
-          </div>
-
-          <div className="layout__row layout__row-small">
-            <FollowButton
-              active_user={current_user}
-              following={i_am_following}
-              triggers={triggers}
-              user={user}
-            />
-          </div>
+    const usersToShow = users.map((user) => (
+      <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
+        <div className="layout__row layout__row-small">
+          <User
+            user={user}
+            avatarSize="32"
+          />
         </div>
-      ))}
-    </div>
-  );
-};
+
+        <div className="layout__row layout__row-small">
+          <FollowButton
+            active_user={current_user}
+            following={i_am_following}
+            triggers={triggers}
+            user={user}
+          />
+        </div>
+      </div>
+    ));
+
+    return (
+      <div className="layout__grids layout__grids-space layout__grid-responsive">
+        {usersToShow}
+      </div>
+    );
+  }
+}

@@ -22,42 +22,13 @@ import Helmet from 'react-helmet';
 import BaseSettingsPage from './base/settings';
 import User from '../components/user';
 import FollowButton from '../components/follow-button';
+import UserGrid from '../components/user-grid';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
-
-let UserGrid = ({users, current_user, i_am_following, triggers, empty_msg}) => {
-  if (users.length === 0) {
-    return <div>{empty_msg}</div>;
-  }
-
-  return (
-    <div className="layout__grids layout__grids-space layout__grid-responsive">
-      {users.map((user) => (
-        <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
-          <div className="layout__row layout__row-small">
-            <User
-              user={user}
-              avatarSize="32"
-            />
-          </div>
-
-          <div className="layout__row layout__row-small">
-            <FollowButton
-              active_user={current_user}
-              following={i_am_following}
-              triggers={triggers}
-              user={user}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -92,14 +63,42 @@ class SettingsFollowersPage extends React.Component {
       return false;
     }
 
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
     let followingUsers = following[current_user.id] || [];
     let followersUsers = followers[current_user.id] || [];
 
     followingUsers = followingUsers.map(user_id => users[user_id]);
     followersUsers = followersUsers.map(user_id => users[user_id]);
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    let followingUsersToShow;
+    if (followingUsers.length) {
+      followingUsersToShow = (
+        <UserGrid
+          current_user={current_user}
+          i_am_following={i_am_following}
+          triggers={triggers}
+          users={followingUsers}
+        />
+      );
+    } else {
+      followingUsersToShow = <div>You are not following any users</div>;
+    }
+
+    let followersToShow;
+    if (followersUsers.length) {
+      followersToShow = (
+        <UserGrid
+          current_user={current_user}
+          i_am_following={i_am_following}
+          triggers={triggers}
+          users={followersUsers}
+        />
+      );
+    } else {
+      followersToShow = <div>No one follows you yet</div>;
+    }
 
     return (
       <BaseSettingsPage
@@ -118,30 +117,18 @@ class SettingsFollowersPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row layout__row-double">
-            <UserGrid
-              current_user={current_user}
-              empty_msg="You are not following any users"
-              i_am_following={i_am_following}
-              triggers={triggers}
-              users={followingUsers}
-            />
+            {followingUsersToShow}
           </div>
         </div>
 
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
             <div className="layout__row layout__row-double">
-              <UserGrid
-                current_user={current_user}
-                empty_msg="No one follows you yet"
-                i_am_following={i_am_following}
-                triggers={triggers}
-                users={followersUsers}
-              />
+              {followersToShow}
             </div>
         </div>
       </BaseSettingsPage>
-    )
+    );
   }
 }
 
