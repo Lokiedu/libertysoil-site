@@ -466,8 +466,12 @@ export default class ApiClient
   }
 
   async deleteComment(postId, commentId) {
-    let response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
-    return response.body;
+    try {
+      let response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
+      return response.body;
+    } catch (err) {
+      return err.response.body;
+    }
   }
 
   async saveComment(postId, commentId, text) {

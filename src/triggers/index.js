@@ -23,6 +23,7 @@ import {
   addUser, addPost, addPostToRiver, setCurrentUser, removePost,
   setPostComments,
   saveCommentStart, saveCommentSuccess, saveCommentFailure,
+  deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
@@ -633,14 +634,22 @@ export class ActionsTrigger {
   };
 
   deleteComment = async (postId, commentId) => {
+    this.dispatch(deleteCommentStart(postId, commentId));
+
     try {
       let responseBody = await this.client.deleteComment(postId, commentId);
 
       if (responseBody) {
-        this.dispatch(setPostComments(postId, responseBody));
+        if (responseBody.error) {
+          this.dispatch(deleteCommentFailure(postId, commentId, responseBody.error));
+        } else {
+          this.dispatch(setPostComments(postId, responseBody));
+          this.dispatch(deleteCommentSuccess(postId, commentId));
+        }
+
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(deleteCommentFailure(postId, commentId, e.message));
     }
   };
 

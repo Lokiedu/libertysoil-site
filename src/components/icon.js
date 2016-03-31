@@ -30,11 +30,14 @@ export default ({
   icon,
   size,
   className,
+  disabled,
+  onClick,
   ...props
 }) => {
   let Icon = icons[icon];
   let classnameIcon = ['icon'];
   let classnameIconPic = ['micon'];
+  let localOnClick = onClick;
 
   className && classnameIcon.push(className);
   outline && classnameIcon.push('icon-outline');
@@ -50,8 +53,18 @@ export default ({
     classnameIconPic.push(`micon-${size}`);
   }
 
+  if (disabled) {
+    classnameIcon.push(`icon-disabled`);
+    localOnClick = null;
+  }
+
   return (
-    <div {...props} className={classnameIcon.join(' ')}>
+    <div
+      {...props}
+      disabled={disabled}
+      onClick={localOnClick}
+      className={classnameIcon.join(' ')}
+    >
       <Icon className={classnameIconPic.join(' ')} />
     </div>
   );

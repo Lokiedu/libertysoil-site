@@ -104,11 +104,15 @@ export default class Comment extends Component {
   renderToolbar = () => {
     const {
       author,
-      current_user
+      current_user,
+      comment,
+      ui
     } = this.props;
     const {
       isEditMode
     } = this.state;
+    const commentUi = ui.comments[comment.id] || {};
+    const isButtonsDisabled = commentUi.isSaveInProgress || commentUi.isDeleteInProgress;
     let toolbar = null;
 
     if (current_user && author && current_user.id == author.id && !isEditMode) {
@@ -120,6 +124,7 @@ export default class Comment extends Component {
             icon="edit"
             size="small"
             title="Edit"
+            disabled={isButtonsDisabled}
           />
           <Icon
             onClick={this.deleteComment}
@@ -127,6 +132,7 @@ export default class Comment extends Component {
             icon="delete"
             size="small"
             title="Delete"
+            disabled={isButtonsDisabled}
           />
         </div>
       );
@@ -141,9 +147,9 @@ export default class Comment extends Component {
       ui
     } = this.props;
     let messageComponent = null;
-    const commentUi = ui.comments[comment.id];
+    const commentUi = ui.comments[comment.id] || {};
 
-    if (commentUi && commentUi.error) {
+    if (commentUi.error) {
       messageComponent = (
         <div className="layout__row">
           <Message message={commentUi.error} type="ERROR" />

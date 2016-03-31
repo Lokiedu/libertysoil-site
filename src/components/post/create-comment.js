@@ -24,6 +24,7 @@ import { Link } from 'react-router';
 import bem from '../../utils/bemClassNames';
 import Button from '../button';
 import User from '../user';
+import Textarea from '../textarea';
 
 export default class CreateComment extends Component {
   static displayName = 'CreateComment';
@@ -112,13 +113,13 @@ export default class CreateComment extends Component {
           }
           <div className="layout__grid_item layout__grid_item-wide">
             <div className="layout__row">
-              <textarea
+              <Textarea
                 onFocus={this.expand}
                 onChange={this.updateComment}
                 className="input input-block create_comment__input"
                 placeholder="Add Comment"
                 value={comment}
-              ></textarea>
+              />
             </div>
             {isExpanded &&
               <div className="layout__row">
