@@ -100,7 +100,7 @@ class Sidebar extends React.Component {
     }
 
     let current_user = this.props.current_user.toJS();
-    const username = current_user.user.username;
+    // const username = current_user.user.username;
     // console.log(username);
 
     let followedTags = values(current_user.followed_hashtags);

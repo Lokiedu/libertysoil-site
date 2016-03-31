@@ -47,7 +47,7 @@ export default class User extends Component {
     timestampLink: ''
   };
 
-  render () {
+  render() {
     const {
       user,
       hideAvatar,
@@ -62,7 +62,7 @@ export default class User extends Component {
     } = this.props;
 
     let render = {};
-    render.cn = `user_box ${className || ''}`;
+    render.className = `user_box ${className || ''}`;
 
     let user_url = getUrl(URL_NAMES.USER, { username: user.username })
 
@@ -115,11 +115,11 @@ export default class User extends Component {
     }
 
     return (
-        <div className={render.cn}>
-          {render.avatar}
-          {render.changeAvatar}
-          {render.text}
-        </div>
+      <div className={render.className}>
+        {render.avatar}
+        {render.changeAvatar}
+        {render.text}
+      </div>
     )
   }
 }

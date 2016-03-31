@@ -42,7 +42,7 @@ class UserPage extends React.Component {
     store.dispatch(setUserPosts(userInfo.id, await userPosts));
   }
 
-  render () {
+  render() {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
       following,

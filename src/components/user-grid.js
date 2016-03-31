@@ -15,23 +15,31 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import FollowButton from './follow-button';
 import User from './user';
 
 export default class UserGrid extends React.Component {
-  
+  static propTypes = {
+    users: PropTypes.array
+  };
+
   render() {
     const {
       current_user,
       i_am_following,
       triggers,
-      users
+      users,
+      notFoundMessage
     } = this.props;
 
-    if (!users) {
-      return <script/>;
+    if (!users || !users.length) {
+      if (notFoundMessage) {
+        return <div>{notFoundMessage}</div>;
+      }
+
+      return <script />;
     }
 
     const usersToShow = users.map((user) => (
