@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
 
 import {
@@ -85,7 +85,7 @@ export class SchoolPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    const school = _.find(schools, {url_name: this.props.params.school_name});
+    const school = find(schools, {url_name: this.props.params.school_name});
 
     if (!school) {
       return <script />; // not loaded yet
@@ -105,7 +105,7 @@ export class SchoolPage extends React.Component {
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={_.values(schools)}
+        schools={values(schools)}
         create_post_form={this.props.create_post_form}
       >
         <Helmet title={`Posts about ${school.name} on `} />
