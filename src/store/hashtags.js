@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -16,42 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
+import _ from 'lodash';
 
 import * as a from '../actions';
-
 
 const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.ADD_POST_TO_RIVER: {
-      const hashtags = action.post.hashtags;
+    case a.ADD_HASHTAG: {
+      const hashtag = action.hashtag;
+      state = state.set(hashtag.name, i.fromJS(hashtag));
 
-      hashtags.forEach(tag => {
-        let posts = i.List([]);
-        if (state.get(tag.name)) {
-          posts = state.get(tag.name);
-        }
-        posts = posts.unshift(action.post.id);
-
-        state = state.set(tag.name, posts);
-      })
       break;
     }
 
-    case a.SET_TAG_POSTS: {
-      state = state.set(action.hashtag, i.List(action.posts.map(post => post.id)));
-      break;
-    }
+    case a.SET_HASHTAGS: {
+      const hashtags = _.keyBy(action.hashtags, 'name');
+      state = state.merge(i.fromJS(hashtags));
 
-    case a.REMOVE_POST: {
-      for (let hashtagName of state.keys()) {
-        let idx = state.get(hashtagName).findIndex(hashtagPostId => (hashtagPostId === action.id));
-
-        if (idx >= 0) {
-          state = state.deleteIn([hashtagName, idx]);
-        }
-      }
       break;
     }
   }

@@ -1721,6 +1721,8 @@ export default class ApiController {
     }
   }
 
+
+
   /**
    * Returns 50 most popular hashtags sorted by post count.
    * Each hashtag in response contains post_count.
@@ -2057,6 +2059,28 @@ export default class ApiController {
         .fetch({require: true, withRelated: ['country', 'admin1', 'city', 'continent']});
 
       res.send(geotag);
+    } catch (e) {
+      res.status(404);
+      res.send({error: e.message});
+    }
+  }
+
+  async getHashtag(req, res) {
+    let Hashtag = this.bookshelf.model('Hashtag');
+
+    if (!req.params.name) {
+      res.status(400);
+      res.send({error: '"name" parameter is not given'});
+      return;
+    }
+
+    try {
+      let hashtag = await Hashtag
+        .forge()
+        .where('name', req.params.name)
+        .fetch({require: true});
+
+      res.send(hashtag);
     } catch (e) {
       res.status(404);
       res.send({error: e.message});

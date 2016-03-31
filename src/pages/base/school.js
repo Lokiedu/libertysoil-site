@@ -15,8 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
+import { find } from 'lodash';
 
 import {
   Page,
@@ -28,6 +29,7 @@ import {
 }                       from '../../components/page';
 import Header           from '../../components/header';
 import HeaderLogo       from '../../components/header-logo';
+import CreatePost       from '../../components/create-post';
 import Breadcrumbs      from '../../components/breadcrumbs';
 import Tag              from '../../components/tag';
 import TagIcon          from '../../components/tag-icon';
@@ -35,18 +37,80 @@ import Footer           from '../../components/footer';
 import SchoolHeader     from '../../components/school-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
+import AddedTags        from '../../components/post/added-tags';
 import { TAG_SCHOOL }   from '../../consts/tags';
 
 
 export default class BaseSchoolPage extends React.Component {
   static displayName = 'BaseSchoolPage';
-  render () {
+
+  static propTypes = {
+    actions: PropTypes.shape({
+      resetCreatePostForm: PropTypes.func.isRequired,
+      updateCreatePostForm: PropTypes.func.isRequired
+    }).isRequired,
+    schools: PropTypes.shape().isRequired,
+    page_school: PropTypes.shape({
+      url_name: PropTypes.string.isRequired
+    }).isRequired
+  };
+
+  state = {
+    form: false
+  };
+  
+  componentWillReceiveProps(nextProps) {
+    if (this.state.form) {
+      const postSchools = this.props.create_post_form.schools;
+
+      if (!find(postSchools, tag => tag.url_name === nextProps.page_school.url_name)) {
+        this.setState({ form: false });
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.actions.resetCreatePostForm();
+  }
+
+  toggleForm = () => {
+    if (!this.state.form) {
+      const school = this.props.page_school;
+      this.props.actions.resetCreatePostForm();
+      this.props.actions.updateCreatePostForm({ schools: [school] });
+    }
+
+    this.setState({ form: !this.state.form });
+  };
+
+  render() {
     let {
       current_user,
       page_school,
       is_logged_in,
-      triggers
+      actions,
+      triggers,
+      schools
     } = this.props;
+
+    let createPostForm;
+    let addedTags;
+    if (is_logged_in) {
+
+      if (this.state.form) {
+        createPostForm = (
+          <CreatePost
+            actions={actions}
+            allSchools={schools}
+            defaultText={this.props.create_post_form.text}
+            triggers={triggers}
+            userRecentTags={current_user.recent_tags}
+            {...this.props.create_post_form}
+          />
+        );
+        addedTags = <AddedTags {...this.props.create_post_form} />;
+      }
+    }
 
     return (
       <div>
@@ -73,6 +137,7 @@ export default class BaseSchoolPage extends React.Component {
                 school={page_school}
                 current_user={current_user}
                 triggers={triggers}
+                newPost={this.toggleForm}
               />
             </PageBody>
             <PageBody className="page__body-up">
@@ -101,10 +166,13 @@ export default class BaseSchoolPage extends React.Component {
                   </div>
                 </div>
                 <div className="layout__row">
+                  {createPostForm}
                   {this.props.children}
                 </div>
               </PageContent>
-              <SidebarAlt />
+              <SidebarAlt>
+                {addedTags}
+              </SidebarAlt>
             </PageBody>
           </PageMain>
         </Page>

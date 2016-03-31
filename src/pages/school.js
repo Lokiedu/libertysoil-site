@@ -16,16 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
 
+import {
+  setSchoolPosts,
+  addSchool,
+  resetCreatePostForm,
+  updateCreatePostForm
+} from '../actions';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import NotFound from './not-found'
 import BaseSchoolPage from './base/school'
 import River from '../components/river_of_posts';
-import { addSchool, setSchoolPosts } from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
@@ -41,7 +47,7 @@ export class SchoolPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let school = client.schoolInfo(params.school_name);
+    let school = client.getSchool(params.school_name);
     let posts = client.schoolPosts(params.school_name);
 
     try {
@@ -55,14 +61,31 @@ export class SchoolPage extends React.Component {
     store.dispatch(addSchool(school));
     store.dispatch(setSchoolPosts(school, await posts));
 
+    const trigger = new ActionsTrigger(client, store.dispatch);
+    Promise.all([
+      trigger.loadSchools(),
+      trigger.loadUserRecentTags()
+    ]);
+
     return 200;
   }
 
   render() {
+    let {
+      is_logged_in,
+      current_user,
+      posts,
+      resetCreatePostForm,
+      updateCreatePostForm,
+      schools,
+      school_posts,
+      users
+    } = this.props;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
+    const school = find(schools, {url_name: this.props.params.school_name});
 
     if (!school) {
       return <script />; // not loaded yet
@@ -72,26 +95,33 @@ export class SchoolPage extends React.Component {
       return <NotFound/>;
     }
 
-    let schoolPosts = this.props.school_posts[school.id];
+    const schoolPosts = school_posts[school.id] || [];
 
     return (
       <BaseSchoolPage
-        current_user={this.props.current_user}
+        params={this.props.params}
+        current_user={current_user}
         page_school={school}
-        is_logged_in={this.props.is_logged_in}
+        is_logged_in={is_logged_in}
+        actions={actions}
         triggers={triggers}
+        schools={values(schools)}
+        create_post_form={this.props.create_post_form}
       >
         <Helmet title={`Posts about ${school.name} on `} />
         <River
-          current_user={this.props.current_user}
-          posts={this.props.posts}
+          current_user={current_user}
+          posts={posts}
           river={schoolPosts}
           triggers={triggers}
-          users={this.props.users}
+          users={users}
         />
       </BaseSchoolPage>
     )
   }
 }
 
-export default connect(defaultSelector)(SchoolPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(SchoolPage);

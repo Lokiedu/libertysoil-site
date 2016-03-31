@@ -24,6 +24,21 @@ const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
+    case a.ADD_POST_TO_RIVER: {
+      const schools = action.post.schools;
+
+      schools.forEach(tag => {
+        let posts = i.List([]);
+        if (state.get(tag.id)) {
+          posts = state.get(tag.id);
+        }
+        posts = posts.unshift(action.post.id);
+
+        state = state.set(tag.id, posts);
+      })
+      break;
+    }
+
     case a.SET_SCHOOL_POSTS: {
       state = state.set(action.school.id, i.List(action.posts.map(post => post.id)));
       break;

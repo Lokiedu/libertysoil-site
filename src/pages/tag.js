@@ -15,14 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
+import { values, find } from 'lodash';
 
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { setTagPosts } from '../actions';
+import {
+  addHashtag,
+  setTagPosts,
+  resetCreatePostForm,
+  updateCreatePostForm
+} from '../actions';
 
 import {
   Page,
@@ -32,6 +39,7 @@ import {
   PageBody,
   PageContent
 }                           from '../components/page';
+import CreatePost from '../components/create-post';
 import Breadcrumbs          from '../components/breadcrumbs';
 import Header               from '../components/header';
 import HeaderLogo           from '../components/header-logo';
@@ -40,6 +48,7 @@ import Footer               from '../components/footer';
 import River                from '../components/river_of_posts';
 import Sidebar              from '../components/sidebar';
 import SidebarAlt           from '../components/sidebarAlt';
+import AddedTags from '../components/post/added-tags';
 import Tag                  from '../components/tag';
 import TagIcon              from '../components/tag-icon';
 import FollowTagButton      from '../components/follow-tag-button';
@@ -48,14 +57,68 @@ import { ActionsTrigger }   from '../triggers';
 import { defaultSelector }  from '../selectors';
 import { TAG_HASHTAG }      from '../consts/tags';
 
-
 export class TagPage extends Component {
   static displayName = 'TagPage';
 
+  static propTypes = {
+    tag_posts: PropTypes.shape().isRequired,
+    hashtags: PropTypes.shape().isRequired,
+    params: PropTypes.shape({
+      tag: PropTypes.string.isRequired
+    })
+  };
+
   static async fetchData(params, store, client) {
+    let hashtag = client.getHashtag(params.tag);
     let tagPosts = client.tagPosts(params.tag);
+
+    try {
+      hashtag = await hashtag;
+    } catch (e) {
+      store.dispatch(addHashtag({name: params.tag}));
+
+      return 404;
+    }
+
+    store.dispatch(addHashtag(hashtag));
     store.dispatch(setTagPosts(params.tag, await tagPosts));
+
+    const trigger = new ActionsTrigger(client, store.dispatch);
+    Promise.all([
+      trigger.loadSchools(),
+      trigger.loadUserRecentTags()
+    ]);
+
+    return 200;
   }
+
+  state = {
+    form: false
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.form) {
+      const postHashtags = this.props.create_post_form.hashtags;
+
+      if (!find(postHashtags, tag => tag.name === nextProps.params.tag)) {
+        this.setState({ form: false });
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.resetCreatePostForm();
+  }
+
+  toggleForm = () => {
+    if (!this.state.form) {
+      const hashtag = this.props.hashtags[this.props.params.tag];
+      this.props.resetCreatePostForm();
+      this.props.updateCreatePostForm({ hashtags: [hashtag] });
+    }
+
+    this.setState({ form: !this.state.form });
+  };
 
   render() {
     const {
@@ -63,24 +126,35 @@ export class TagPage extends Component {
       current_user,
       posts,
       tag_posts,
+      resetCreatePostForm,
+      updateCreatePostForm,
       users,
-      params
+      params,
+      hashtags
     } = this.props;
-
-    const tag = params.tag;
-
-    let toolbarPrimary = [];
-    let toolbarSecondary = [];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    const thisTagPosts = tag_posts[this.props.params.tag] || [];
+    const tag = hashtags[params.tag];
+
+    if (!tag) {
+      return <script />;
+    }
+
+    const thisTagPosts = tag_posts[tag.name] || [];
     const followedTags = (current_user) ? current_user.followed_hashtags : {};
     const likeTriggers = {
       likeTag: triggers.likeHashtag,
       unlikeTag: triggers.unlikeHashtag
     };
+
+    let toolbarPrimary = [];
+    let toolbarSecondary = [];
+
+    let createPostForm;
+    let addedTags;
 
     if (is_logged_in) {
       toolbarSecondary = [
@@ -99,50 +173,70 @@ export class TagPage extends Component {
         <div key="posts" className="panel__toolbar_item-text">
           {thisTagPosts.length} posts
         </div>,
-        <button key="new" className="button button-midi button-light_blue" type="button">New</button>,
+        <button key="new" onClick={this.toggleForm} className="button button-midi button-light_blue" type="button">
+          New
+        </button>,
         <FollowTagButton
           key="follow"
           current_user={current_user}
           followed_tags={followedTags}
-          tag={tag}
+          tag={tag.name}
           triggers={triggers}
           className="button-midi"
         />
       ];
+
+      if (this.state.form) {
+
+        createPostForm = (
+          <CreatePost
+            actions={actions}
+            allSchools={values(this.props.schools)}
+            defaultText={this.props.create_post_form.text}
+            triggers={triggers}
+            userRecentTags={current_user.recent_tags}
+            {...this.props.create_post_form}
+          />
+        );
+        addedTags = <AddedTags {...this.props.create_post_form} />;
+      }
     }
 
     return (
       <div>
-        <Helmet title={`"${tag}" posts on `} />
+        <Helmet title={`"${tag.name}" posts on `} />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
           <Breadcrumbs>
             <Link to="/tag" title="All Hashtags">
               <TagIcon inactive type={TAG_HASHTAG} />
             </Link>
-            <Tag name={this.props.params.tag} type={TAG_HASHTAG} urlId={this.props.params.tag} />
+            <Tag name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
           </Breadcrumbs>
         </Header>
         <Page>
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             <PageCaption>
-              {tag}
+              {tag.name}
             </PageCaption>
             <PageHero src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <Panel
-                title={tag}
-                icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag} />}
+                title={tag.name}
+                icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag.name} />}
                 toolbarPrimary={toolbarPrimary}
                 toolbarSecondary={toolbarSecondary}
               ></Panel>
             </PageBody>
             <PageBody className="page__body-up layout__space_alt">
               <PageContent>
+                {createPostForm}
                 <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
               </PageContent>
-              <SidebarAlt />
+              <SidebarAlt>
+                {addedTags}
+              </SidebarAlt>
             </PageBody>
           </PageMain>
         </Page>
@@ -152,4 +246,7 @@ export class TagPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(TagPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(TagPage);
