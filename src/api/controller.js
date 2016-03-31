@@ -304,9 +304,17 @@ export default class ApiController {
       let q = Post.forge()
       .query(qb => {
         qb
+          .select()
+          .from('posts')
           .whereIn('id', likes)
-          .orWhereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
-          .orderBy('posts.created_at', 'desc')
+          .union(function() {
+            this
+              .select()
+              .from('posts')
+              .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
+              .andWhere('user_id', user_id[0]);
+          })
+          .orderBy('created_at', 'desc');
       });
 
       let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});

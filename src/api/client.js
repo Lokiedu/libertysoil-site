@@ -158,7 +158,7 @@ export default class ApiClient
   }
 
   async schoolInfo(school_name) {
-    let response = await this.get(`/api/v1/school/${school_name}`)
+    let response = await this.get(`/api/v1/school/${school_name}`);
     return response.body;
   }
 
@@ -183,7 +183,7 @@ export default class ApiClient
   }
 
   async userLikedPosts() {
-    let response = await this.get(`/api/v1/posts/liked`)
+    let response = await this.get(`/api/v1/posts/liked`);
     return response.body;
   }
 
@@ -193,17 +193,17 @@ export default class ApiClient
   }
 
   async getLikedPosts(username) {
-    let response = await this.get(`/api/v1/posts/liked/${username}`)
+    let response = await this.get(`/api/v1/posts/liked/${username}`);
     return response.body;
   }
 
   async userFavouredPosts() {
-    let response = await this.get(`/api/v1/posts/favoured`)
+    let response = await this.get(`/api/v1/posts/favoured`);
     return response.body;
   }
 
   async getFavouredPosts(username) {
-    let response = await this.get(`/api/v1/posts/favoured/${username}`)
+    let response = await this.get(`/api/v1/posts/favoured/${username}`);
     return response.body;
   }
 
