@@ -64,7 +64,7 @@ class TagCloudPage extends Component {
 
         <Page>
           <Sidebar current_user={this.props.current_user} />
-          <PageMain>
+          <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>

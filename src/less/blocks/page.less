@@ -78,26 +78,35 @@
 }
 
 .page__sidebar {
-  margin: 0 0 @space @space;
-  min-width: @sidebarWidth;
+  margin: 0 0 @space 0;
+  width: 100%;
   box-sizing: border-box;
 
-  @media @before-base {
-    display: none;
+  @media @after-base {
+    width: 288px - @space;
+    margin: 0 0 @space @space;
+  }
+
+  @media @after-base {
+    width: @sidebarWidth - @space;
   }
 }
 
 .page__main {
   flex: 1;
-  padding: @space * 2;
   min-height: 512px;
+  padding-top: @space;
+
+  &-no_space {
+    padding-top: 0;
+  }
 }
 
 .page__container {
   background: #f3f2f1;
   order: 10;
   display: flex;
-  padding: @headerHeight 0 0 0;
+  padding: @headerHeight 0 @space 0;
   //transition: padding @transition__time @transition__function;
 
   @media @before-base {
@@ -118,13 +127,12 @@
 }
 
 .page-with_sidebar .page__container {
-  padding-left: @sidebarWidth;
+  padding-left: @navigationWidth;
 }
 
 .page__body {
   display: flex;
   flex: 1;
-  max-width: @siteWidth;
   //overflow: hidden; TODO: need test on mobile devices
   margin-left: auto;
   margin-right: auto;
@@ -145,11 +153,19 @@
   }
 
   @media @after-small {
-    /*.layout-columns;
+    width: 480px;
+  }
 
-    &-rows {
-      .layout-rows;
-    }*/
+  @media @after-normal {
+    width: 768px;
+  }
+
+  @media @after-base {
+    width: 834px;
+  }
+
+  @media @after-wide {
+    width: 920px;
   }
 
   &-small {

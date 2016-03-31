@@ -186,7 +186,7 @@ export class GeotagPage extends Component {
 
         <Page>
           <Sidebar current_user={current_user} />
-          <PageMain>
+          <PageMain className="page__main-no_space">
             <PageCaption>
               {title} <span className="page__caption_highlight">Education</span>
             </PageCaption>
