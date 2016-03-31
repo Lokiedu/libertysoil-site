@@ -46,6 +46,14 @@ export const SAVE_COMMENT__START = 'SAVE_COMMENT__START';
 export const SAVE_COMMENT__FAILURE = 'SAVE_COMMENT__FAILURE';
 export const SAVE_COMMENT__SUCCESS = 'SAVE_COMMENT__SUCCESS';
 
+export const DELETE_COMMENT__START = 'DELETE_COMMENT__START';
+export const DELETE_COMMENT__FAILURE = 'DELETE_COMMENT__FAILURE';
+export const DELETE_COMMENT__SUCCESS = 'DELETE_COMMENT__SUCCESS';
+
+export const CREATE_COMMENT__START = 'CREATE_COMMENT__START';
+export const CREATE_COMMENT__FAILURE = 'CREATE_COMMENT__FAILURE';
+export const CREATE_COMMENT__SUCCESS = 'CREATE_COMMENT__SUCCESS';
+
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
 
@@ -537,6 +545,54 @@ export function saveCommentFailure(postId, commentId, message) {
     type: SAVE_COMMENT__FAILURE,
     postId,
     commentId,
+    message
+  }
+}
+
+export function deleteCommentStart(postId, commentId) {
+  return {
+    type: DELETE_COMMENT__START,
+    postId,
+    commentId
+  }
+}
+
+export function deleteCommentSuccess(postId, commentId) {
+  return {
+    type: DELETE_COMMENT__SUCCESS,
+    postId,
+    commentId
+  }
+}
+
+export function deleteCommentFailure(postId, commentId, message) {
+  return {
+    type: DELETE_COMMENT__FAILURE,
+    postId,
+    commentId,
+    message
+  }
+}
+
+export function createCommentStart(postId, text) {
+  return {
+    type: CREATE_COMMENT__START,
+    postId,
+    text
+  }
+}
+
+export function createCommentSuccess(postId) {
+  return {
+    type: CREATE_COMMENT__SUCCESS,
+    postId
+  }
+}
+
+export function createCommentFailure(postId, message) {
+  return {
+    type: CREATE_COMMENT__FAILURE,
+    postId,
     message
   }
 }
