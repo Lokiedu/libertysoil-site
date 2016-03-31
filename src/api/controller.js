@@ -2117,35 +2117,49 @@ export default class ApiController {
       // I've tried `leftJoinRaw`, and `on(knex.raw())`.
       // Both trow `syntax error at or near "$1"`.
       let posts = await Post.collection().query(qb => {
+        let countQueries = [];
+
+        if (!_.isEmpty(hashtagIds)) {
+          qb
+            .leftJoin('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
+            .leftJoin('hashtags', function () {
+              this
+                .on('hashtags_posts.hashtag_id', 'hashtags.id')
+                .andOn(knex.raw(`hashtags.id IN ${formatArray(hashtagIds)}`));
+            });
+
+          countQueries.push('COUNT(DISTINCT hashtags.id)');
+        }
+
+        if (!_.isEmpty(schoolIds)) {
+          qb
+            .leftJoin('posts_schools', 'posts.id', 'posts_schools.post_id')
+            .leftJoin('schools', function () {
+              this
+                .on('posts_schools.school_id', 'schools.id')
+                .andOn(knex.raw(`schools.id IN ${formatArray(schoolIds)}`));
+            });
+
+          countQueries.push('COUNT(DISTINCT schools.id)');
+        }
+
+        if (!_.isEmpty(geotagIds)) {
+          qb
+            .leftJoin('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+            .leftJoin('geotags', function () {
+              this
+                .on('geotags_posts.geotag_id', 'geotags.id')
+                .andOn(knex.raw(`geotags.id IN ${formatArray(geotagIds)}`));
+            });
+
+          countQueries.push('COUNT(DISTINCT geotags.id)');
+        }
+
         qb
-          .leftJoin('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
-          .leftJoin('hashtags', function () {
-            this
-              .on('hashtags_posts.hashtag_id', 'hashtags.id')
-              .andOn(knex.raw(`hashtags.id IN ${formatArray(hashtagIds)}`));
-          })
-
-          .leftJoin('posts_schools', 'posts.id', 'posts_schools.post_id')
-          .leftJoin('schools', function () {
-            this
-              .on('posts_schools.school_id', 'schools.id')
-              .andOn(knex.raw(`schools.id IN ${formatArray(schoolIds)}`));
-          })
-
-          .leftJoin('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-          .leftJoin('geotags', function () {
-            this
-              .on('geotags_posts.geotag_id', 'geotags.id')
-              .andOn(knex.raw(`geotags.id IN ${formatArray(geotagIds)}`));
-          })
-
           .whereNot('posts.id', post.id)
           .groupBy('posts.id')
           .orderByRaw(`
-            (COUNT(DISTINCT hashtags.id) +
-             COUNT(DISTINCT schools.id) +
-             COUNT(DISTINCT geotags.id) +
-             random() * 3)
+            (${countQueries.join(' + ')} + random() * 3)
             DESC,
             fully_published_at DESC
           `)
