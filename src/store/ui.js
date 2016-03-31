@@ -77,9 +77,20 @@ function reducer (state=initialState, action) {
         state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], true);
         break;
       }
+    case a.CREATE_COMMENT__START:
+      {
+        state = state.setIn(['comments', 'new', 'error'], '');
+        state = state.setIn(['comments', 'new', 'isCreateInProgress'], true);
+        break;
+      }
     case a.SAVE_COMMENT__SUCCESS:
       {
         state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        break;
+      }
+    case a.CREATE_COMMENT__SUCCESS:
+      {
+        state = state.setIn(['comments', 'new', 'isCreateInProgress'], false);
         break;
       }
     case a.DELETE_COMMENT__SUCCESS:
@@ -91,6 +102,12 @@ function reducer (state=initialState, action) {
       {
         state = state.setIn(['comments', action.commentId, 'error'], action.message);
         state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        break;
+      }
+    case a.CREATE_COMMENT__FAILURE:
+      {
+        state = state.setIn(['comments', 'new', 'error'], action.message);
+        state = state.setIn(['comments', 'new', 'isCreateInProgress'], false);
         break;
       }
     case a.DELETE_COMMENT__FAILURE:

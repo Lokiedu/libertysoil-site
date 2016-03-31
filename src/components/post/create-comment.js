@@ -25,6 +25,7 @@ import bem from '../../utils/bemClassNames';
 import Button from '../button';
 import User from '../user';
 import Textarea from '../textarea';
+import Message from '../message';
 
 export default class CreateComment extends Component {
   static displayName = 'CreateComment';
@@ -42,8 +43,24 @@ export default class CreateComment extends Component {
     comment: ''
   };
 
+  componentWillReceiveProps (nextProps) {
+    const {
+      ui
+    } = this.props;
+    const commentUi = ui.comments.new;
+    const nextCommentUi = nextProps.ui.comments.new;
+
+    if (commentUi && nextCommentUi && commentUi.isCreateInProgress && !nextCommentUi.isCreateInProgress && !nextCommentUi.error) {
+      this.setState({
+        isExpanded: false,
+        comment: ''
+      });
+    }
+  }
+
   updateComment = (e) => {
     this.setState({
+      isExpanded: true,
       comment: e.target.value
     });
   }
@@ -64,7 +81,7 @@ export default class CreateComment extends Component {
 
   postComment = (e) => {
     const {
-      postID,
+      postId,
       triggers
     } = this.props;
     const comment = this.state.comment.trim();
@@ -72,17 +89,33 @@ export default class CreateComment extends Component {
     e && e.preventDefault();
 
     if (comment) {
-      triggers.createComment(postID, comment);
-      this.setState({
-        comment: ''
-      });
+      triggers.createComment(postId, comment);
     }
+  };
+
+  renderMessage = () => {
+    const {
+      ui
+    } = this.props;
+    let messageComponent = null;
+    const commentUi = ui.comments.new || {};
+
+    if (commentUi.error) {
+      messageComponent = (
+        <div className="layout__row">
+          <Message message={commentUi.error} type="ERROR" />
+        </div>
+      );
+    }
+
+    return messageComponent;
   };
 
   render () {
     const {
       className,
-      author
+      author,
+      ui
     } = this.props;
     const {
       isExpanded,
@@ -94,6 +127,7 @@ export default class CreateComment extends Component {
         expanded: isExpanded
       }
     });
+    const commentUi = ui.comments.new || {};
 
     if (!author) {
       return (
@@ -124,15 +158,21 @@ export default class CreateComment extends Component {
             {isExpanded &&
               <div className="layout__row">
                 <Button
-                  disabled={!comment.trim()}
+                  disabled={!comment.trim() || commentUi.isCreateInProgress}
                   type="submit"
                   className="layout__grid_item"
                   title="Add Comment"
                   color="light_blue"
                 />
-                <Button onClick={this.collapse} className="layout__grid_item" title="Cancel" color="transparent" />
+                <Button
+                  onClick={this.collapse}
+                  className="layout__grid_item"
+                  title="Cancel"
+                  color="transparent"
+                />
               </div>
             }
+            {this.renderMessage()}
           </div>
         </div>
       </form>

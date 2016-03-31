@@ -63,7 +63,13 @@ let Comments = (props) => {
         </header>
         {postComments}
       </div>
-      <CreateComment author={author} className="card__footer" postID={post.id} triggers={triggers} />
+      <CreateComment
+        author={author}
+        className="card__footer"
+        postId={post.id}
+        triggers={triggers}
+        ui={ui}
+      />
     </div>
   );
 

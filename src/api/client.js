@@ -458,11 +458,15 @@ export default class ApiClient
     return response.body;
   }
 
-  async createComment(post_id, text) {
-    let response = await this.post(`/api/v1/post/${post_id}/comments`, {
-      text
-    });
-    return response.body;
+  async createComment(postId, text) {
+    try {
+      let response = await this.post(`/api/v1/post/${postId}/comments`, {
+        text
+      });
+      return response.body;
+    } catch (err) {
+      return err.response.body;
+    }
   }
 
   async deleteComment(postId, commentId) {

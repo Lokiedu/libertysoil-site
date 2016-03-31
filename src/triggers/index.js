@@ -24,6 +24,7 @@ import {
   setPostComments,
   saveCommentStart, saveCommentSuccess, saveCommentFailure,
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
+  createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
@@ -621,12 +622,19 @@ export class ActionsTrigger {
     }
   };
 
-  createComment = async (post_id, comment) => {
+  createComment = async (postId, comment) => {
+    this.dispatch(createCommentStart(postId, comment));
+
     try {
-      let responseBody = await this.client.createComment(post_id, comment);
+      let responseBody = await this.client.createComment(postId, comment);
 
       if (responseBody) {
-        this.dispatch(setPostComments(post_id, responseBody));
+        if (responseBody.error) {
+          this.dispatch(createCommentFailure(postId, responseBody.error));
+        } else {
+          this.dispatch(setPostComments(postId, responseBody));
+          this.dispatch(createCommentSuccess(postId));
+        }
       }
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -646,7 +654,6 @@ export class ActionsTrigger {
           this.dispatch(setPostComments(postId, responseBody));
           this.dispatch(deleteCommentSuccess(postId, commentId));
         }
-
       }
     } catch (e) {
       this.dispatch(deleteCommentFailure(postId, commentId, e.message));
