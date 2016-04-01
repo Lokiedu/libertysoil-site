@@ -16,24 +16,40 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
-import _ from 'lodash';
+import { keyBy } from 'lodash';
 
 import * as a from '../actions';
 
+
+function cleanupSchoolObject(school) {
+  if (school.description === null) {
+    school.description = '';
+  }
+
+  if (school.lat === null) {
+    school.lat = 0.0;
+  }
+
+  if (school.lon === null) {
+    school.lon = 0.0;
+  }
+
+  return school;
+}
 
 const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_SCHOOL: {
-      const school = action.school;
+      const school = cleanupSchoolObject(action.school);
       state = state.set(school.id, i.fromJS(school));
 
       break;
     }
 
     case a.SET_SCHOOLS: {
-      const schools = _.keyBy(action.schools, 'id');
+      const schools = keyBy(action.schools.map(school => cleanupSchoolObject(school)), 'id');
       state = state.merge(i.fromJS(schools));
 
       break;
