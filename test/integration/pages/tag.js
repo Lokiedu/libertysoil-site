@@ -59,4 +59,8 @@ describe('Tag Cloud page', () => {
 
   });
 
+  it('specific tag page works', async () => {
+    let context = await expect({ url: '/tag/foo-hashtag-name' }, 'to open successfully');
+  });
+
 });
