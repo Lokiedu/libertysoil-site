@@ -40,6 +40,7 @@
   color: #a0a0a0;
 }
 
+@hero-max-height: 600px;
 .page__hero {
   width: 100%;
   background: #ddd;
@@ -48,11 +49,16 @@
   z-index: 0;
   height: 70vh;
   min-height: 300px;
-  max-height: 600px;
+  max-height: @hero-max-height;
 
   @media @after-wide {
     max-width: 1680px;
   }
+}
+
+.page__hero_map {
+  width: 100%;
+  height: @hero-max-height; // map height must be in pixels
 }
 
 .page__hero_content {
