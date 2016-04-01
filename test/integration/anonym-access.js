@@ -26,7 +26,7 @@ describe('pages that are available for anonym', function () {
     });
 
     it('User profile page works', async function () {
-      return expect(`/user/john`, 'to body contains', 'John Smith');
+      return expect(`/user/john`, 'body to contain', 'John Smith');
     });
   });
 

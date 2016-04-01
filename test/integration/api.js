@@ -49,7 +49,7 @@ describe('api v.1', () => {
           username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: "test",
           email: 'test'
-        }}, 'to validation fail with', {
+        }}, 'to fail validation with', {
           username: ['The username must not exceed 31 characters long',
                      'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
                     ],
@@ -63,14 +63,14 @@ describe('api v.1', () => {
           username: 'user',
           password: "testtest\x00",
           email: 'test@example.com'
-        }}, 'to validation fail with', {
+        }}, 'to fail validation with', {
           password: ['Password is min. 8 characters. Password can only have ascii characters.']
         });
       });
 
       it('FAILS when no required attributes passed', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
-        }}, 'to validation fail with', {
+        }}, 'to fail validation with', {
           username: ['The username is required'],
           password: ['The password is required'],
           email: ['The email is required']
@@ -117,7 +117,7 @@ describe('api v.1', () => {
             // prove that there is no email validation errors
             await expect({ url: `/api/v1/users`, method: 'POST', body: {
               email: email
-            }}, 'to validation fail with', {
+            }}, 'to fail validation with', {
               username: ['The username is required'],
               password: ['The password is required']
             });
@@ -129,7 +129,7 @@ describe('api v.1', () => {
             // prove that there is no email validation errors
             await expect({ url: `/api/v1/users`, method: 'POST', body: {
               email: email
-            }}, 'to validation fail with', {
+            }}, 'to fail validation with', {
               username: ['The username is required'],
               password: ['The password is required'],
               email: ['The email must be a valid email address']
@@ -274,14 +274,14 @@ describe('api v.1', () => {
           it('First page of subscriptions should return by-default', async () => {
             await expect(
               { url: `/api/v1/posts`, session: sessionId },
-              'to body satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
+              'body to satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
             );
           });
 
           it('Other pages of subscriptions should work', async () => {
             await expect(
               { url: `/api/v1/posts?offset=4`, session: sessionId },
-              'to body satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
+              'body to satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
             );
           });
         });
@@ -320,7 +320,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured`, session: sessionId },
-              'to body satisfy', [{text: 'This is clean post'}]
+              'body to satisfy', [{text: 'This is clean post'}]
             );
           });
         });
@@ -360,7 +360,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked`, session: sessionId },
-              'to body satisfy', [{text: 'This is clean post'}]
+              'body to satisfy', [{text: 'This is clean post'}]
             );
           });
         });
@@ -394,7 +394,7 @@ describe('api v.1', () => {
 
           await expect(
             {url: `/api/v1/user/tags`, session: sessionId},
-            'to body satisfy',
+            'body to satisfy',
             body => {
               expect(body.hashtags, 'to have length', 1);
             }
@@ -577,7 +577,7 @@ describe('api v.1', () => {
           await post.attachHashtags(['foo']);
           await expect(
             { url: `/api/v1/posts/tag/foo` },
-            'to body satisfy', [{text: post.get('text')}]
+            'body to satisfy', [{text: post.get('text')}]
           );
         });
 
@@ -597,7 +597,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured/${user.get('username')}` },
-              'to body satisfy', [{text: post.get('text')}]
+              'body to satisfy', [{text: post.get('text')}]
             );
           });
         });
@@ -618,7 +618,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked/${user.get('username')}` },
-              'to body satisfy', [{text: post.get('text')}]
+              'body to satisfy', [{text: post.get('text')}]
             );
           });
         });
