@@ -50,7 +50,7 @@ module.exports = {
       {test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css!postcss')},
       {test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css!postcss!less')},
       {test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
-      {test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000'}
+      {test: /\.(png|jpg|svg)$/, loader: 'file?name=[hash].[ext]'}
     ]
   },
 
