@@ -17,6 +17,14 @@
  */
 import React, { Component } from 'react';
 
+import backpackImg from '../images/welcome/backpack.jpg';
+import baloonImg from '../images/welcome/balloon.jpg';
+import curiosityImg from '../images/welcome/curiosity.png';
+import dataImg from '../images/welcome/data.jpg';
+import suppliesImg from '../images/welcome/supplies.jpg';
+import telescopeImg from '../images/welcome/telescope.png';
+
+
 export default class WhatIsLibertySoil extends Component {
   constructor (props) {
     super(props);
@@ -75,7 +83,8 @@ export default class WhatIsLibertySoil extends Component {
         break;
     }
 
-    return (<div>
+    return (
+      <div>
         <section className="landing">
           <header className="landing__header">
             <h2 className="landing__subtitle">Resources, perspectives, experience</h2>
@@ -95,14 +104,14 @@ export default class WhatIsLibertySoil extends Component {
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img width="400" height="300" src={require('../images/welcome/telescope.png')} />
+                  <img width="400" height="300" src={telescopeImg} />
                 </div>
               </div>
             </div>}
             {activeSlide == 1 && <div className="layout layout-align_center layout-align_vertical layout__grid layout__grid-responsive">
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img src={require('../images/welcome/backpack.jpg')} width="400" height="300" />
+                  <img src={backpackImg} width="400" height="300" />
                 </div>
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
@@ -117,7 +126,7 @@ export default class WhatIsLibertySoil extends Component {
             {activeSlide == 2 && <div className="layout layout-align_center layout-align_vertical layout__grid layout__grid-responsive">
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img src={require('../images/welcome/balloon.jpg')} width="400" height="300" />
+                  <img src={baloonImg} width="400" height="300" />
                 </div>
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
@@ -140,7 +149,7 @@ export default class WhatIsLibertySoil extends Component {
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img src={require('../images/welcome/supplies.jpg')} width="400" height="300" />
+                  <img src={suppliesImg} width="400" height="300" />
                 </div>
               </div>
             </div>}
@@ -155,7 +164,7 @@ export default class WhatIsLibertySoil extends Component {
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img src={require('../images/welcome/data.jpg')} width="400" height="300" />
+                  <img src={dataImg} width="400" height="300" />
                 </div>
               </div>
             </div>}
@@ -171,13 +180,14 @@ export default class WhatIsLibertySoil extends Component {
               </div>
               <div className="layout__grid_item layout__grid_item-identical">
                 <div className="void">
-                  <img src={require('../images/welcome/curiosity.png')} width="400" height="300" />
+                  <img src={curiosityImg} width="400" height="300" />
                 </div>
               </div>
             </div>}
 
           </div>
         </div>
-    </div>)
+      </div>
+    )
   }
 }
