@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -24,69 +24,6 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import ChangeAvatar from './settings/change-avatar';
 
 export default class User extends Component {
-  render () {
-    var { user, hideAvatar, updateAvatarTrigger, editable, hideText, isRound, avatarSize, timestamp, timestampLink, className } = this.props;
-    var render = {};
-
-    render.cn = `user_box ${className || ''}`;
-
-    let user_url = getUrl(URL_NAMES.USER, { username: user.username })
-
-    if (!hideAvatar) {
-      let avatarClassName = 'user_box__avatar';
-
-      if (isRound) {
-        avatarClassName += ' user_box__avatar-round';
-      }
-
-      render.avatar = (
-        <Link to={user_url} className={avatarClassName}>
-          {user.more && user.more.avatar ?
-          (<img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />) :
-          (<Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />)
-          }
-        </Link>
-      );
-    }
-
-    if (editable) {
-      render.changeAvatar = (<ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />);
-    }
-
-    if (!hideText) {
-      let name = user.username;
-
-      if (user.more && user.more.firstName && user.more.lastName) {
-        name = `${user.more.firstName} ${user.more.lastName}`;
-      }
-
-      name = name.trim();
-
-      if (timestamp.length > 0 && timestampLink.length > 0) {
-        render.timestamp =
-          <p className="user_box__text">
-            <Link to={timestampLink}>
-              <Time timestamp={timestamp} />
-            </Link>
-          </p>
-      }
-
-      render.text =
-        <div className="user_box__body">
-          <p className="user_box__name"><Link className="link" to={user_url}>{name}</Link></p>
-          {render.timestamp}
-        </div>;
-    }
-
-    return (
-        <div className={render.cn}>
-          {render.avatar}
-          {render.changeAvatar}
-          {render.text}
-        </div>
-    )
-  }
-
   static propTypes = {
     user: React.PropTypes.shape({
       id: React.PropTypes.string.isRequired,
@@ -107,6 +44,112 @@ export default class User extends Component {
     isRound: false,
     avatarSize: 24,
     timestamp: '',
-    timestampLink: ''
+    timestampLink: '',
+    isLink: true
   };
+
+  render() {
+    const {
+      user,
+      hideAvatar,
+      updateAvatarTrigger,
+      editable,
+      hideText,
+      isRound,
+      avatarSize,
+      timestamp,
+      timestampLink,
+      className,
+      isLink
+    } = this.props;
+
+    let render = {};
+    render.className = `user_box ${className || ''}`;
+
+    let user_url = getUrl(URL_NAMES.USER, { username: user.username })
+
+    if (!hideAvatar) {
+      let avatarClassName = 'user_box__avatar';
+
+      if (isRound) {
+        avatarClassName += ' user_box__avatar-round';
+      }
+
+      let avatar;
+      if (user.more && user.more.avatar) {
+        avatar = (
+          <img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
+        );
+      } else {
+        avatar = (
+          <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
+        );
+      }
+
+      if (isLink) {
+        render.avatar = (
+          <Link to={user_url} className={avatarClassName}>
+            {avatar}
+          </Link>
+        );
+      } else {
+        render.avatar = (
+          <div className={avatarClassName}>
+            {avatar}
+          </div>
+        );
+      }
+    }
+
+    if (editable) {
+      render.changeAvatar = (<ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />);
+    }
+
+    if (!hideText) {
+      let name = user.username;
+
+      if (user.more && user.more.firstName && user.more.lastName) {
+        name = `${user.more.firstName} ${user.more.lastName}`;
+      }
+      name = name.trim();
+
+      if (isLink) {
+        render.name = (<Link className="link" to={user_url}>{name}</Link>);
+      } else {
+        render.name = name;
+      }
+
+      let time;
+      if (timestamp.length > 0) {
+        time = <Time timestamp={timestamp} />;
+
+        if (isLink && timestampLink.length > 0) {
+          time = <Link to={timestampLink}>{time}</Link>;
+        }
+
+        render.timestamp = (
+          <p className="user_box__text">
+            {time}
+          </p>
+        );
+      }
+
+      render.text = (
+        <div className="user_box__body">
+          <p className="user_box__name">
+            {render.name}
+          </p>   
+          {render.timestamp}
+        </div>
+      );
+    }
+
+    return (
+      <div className={render.className}>
+        {render.avatar}
+        {render.changeAvatar}
+        {render.text}
+      </div>
+    )
+  }
 }

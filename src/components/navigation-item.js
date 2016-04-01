@@ -27,7 +27,8 @@ export default class SidebarLink extends React.Component {
     enabled: React.PropTypes.bool,
     badge: React.PropTypes.any,
     to: React.PropTypes.string,
-    icon: React.PropTypes.string
+    icon: React.PropTypes.string,
+    className: React.PropTypes.string
   };
 
   render() {
@@ -40,16 +41,26 @@ export default class SidebarLink extends React.Component {
     } = this.props;
 
     let className = 'navigation__item';
+    if (this.props.className) {
+      className += ` ${this.props.className}`;
+    }
 
     if (!enabled) {
       className += ' navigation__item-disabled';
     }
 
-    return (
-      <Link activeClassName="navigation__item-active" className={className} to={to}>
+    let iconRender;
+    if (icon) {
+      iconRender = (
         <div className="navigation__icon">
           <Icon icon={icon} />
         </div>
+      );
+    }
+
+    return (
+      <Link activeClassName="navigation__item-active" className={className} to={to}>
+        {iconRender}
         <div className="navigation__title">{children}</div>
         <div className="navigation__badge">{badge}</div>
       </Link>

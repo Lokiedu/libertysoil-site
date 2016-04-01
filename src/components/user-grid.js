@@ -15,45 +15,57 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import FollowButton from './follow-button';
 import User from './user';
 
+export default class UserGrid extends React.Component {
+  static propTypes = {
+    users: PropTypes.array
+  };
 
-export const UserGrid = (props) => {
-  const {
-    current_user,
-    i_am_following,
-    triggers,
-    users
-  } = props;
+  render() {
+    const {
+      current_user,
+      i_am_following,
+      triggers,
+      users,
+      notFoundMessage
+    } = this.props;
 
-  if (!users) {
-    return <script/>;
-  }
+    if (!users || !users.length) {
+      if (notFoundMessage) {
+        return <div>{notFoundMessage}</div>;
+      }
 
-  return (
-    <div className="layout__grids layout__grids-space layout__grid-responsive">
-      {users.map((user) => (
-        <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
-          <div className="layout__row layout__row-small">
-            <User
-              user={user}
-              avatarSize="32"
-            />
-          </div>
+      return <script />;
+    }
 
-          <div className="layout__row layout__row-small">
-            <FollowButton
-              active_user={current_user}
-              following={i_am_following}
-              triggers={triggers}
-              user={user}
-            />
-          </div>
+    const usersToShow = users.map((user) => (
+      <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
+        <div className="layout__row layout__row-small">
+          <User
+            user={user}
+            avatarSize="32"
+          />
         </div>
-      ))}
-    </div>
-  );
-};
+
+        <div className="layout__row layout__row-small">
+          <FollowButton
+            active_user={current_user}
+            following={i_am_following}
+            triggers={triggers}
+            user={user}
+          />
+        </div>
+      </div>
+    ));
+
+    return (
+      <div className="layout__grids layout__grids-space layout__grid-responsive">
+        {usersToShow}
+      </div>
+    );
+  }
+}

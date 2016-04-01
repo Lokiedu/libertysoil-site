@@ -27,6 +27,6 @@ export default class CurrentUser extends React.Component {
       return <script/>;
     }
 
-    return <User className="user_box-small" user={this.props.user} />;
+    return <User {...this.props} className="user_box-small" />;
   }
 }
