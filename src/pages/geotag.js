@@ -217,7 +217,7 @@ export class GeotagPage extends Component {
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
           <Breadcrumbs>
-            <Link title="All Geotags" to="/geotag">
+            <Link title="All Geotags" to="/geo">
               <TagIcon inactive type={TAG_PLANET} />
             </Link>
             {!isEmpty(geotag.continent) &&
