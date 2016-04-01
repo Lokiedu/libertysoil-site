@@ -41,7 +41,7 @@ let subjectToRequest = (subject) => {
   throw new Error('Unexpected format of test-subject')
 };
 
-expect.addAssertion('to body have array length', function (expect, subject, value) {
+expect.addAssertion('to have body array length', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
   }).then(function (context) {
     var body = context.httpResponse.body;
@@ -63,7 +63,7 @@ expect.addAssertion('to open successfully', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('to body contains', function (expect, subject, value) {
+expect.addAssertion('body to contain', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
     statusCode: 200
   }).then(function (context) {
@@ -72,7 +72,7 @@ expect.addAssertion('to body contains', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('to body satisfy', function (expect, subject, value) {
+expect.addAssertion('body to satisfy', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
   }).then(function (context) {
     let body = context.httpResponse.body;
@@ -112,7 +112,7 @@ expect.addAssertion('to open not found', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('to validation fail with', function (expect, subject, value) {
+expect.addAssertion('to fail validation with', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
     statusCode: 400
   }).then(function (context) {

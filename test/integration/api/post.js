@@ -64,7 +64,7 @@ describe('Post', () => {
 
       await expect(
         {url: `/api/v1/posts/tag/${name}`, method: 'GET'},
-        'to body have array length',
+        'to have body array length',
         1
       );
     });
@@ -86,7 +86,7 @@ describe('Post', () => {
 
       await expect(
         {url: `/api/v1/posts/school/${name}`, method: 'GET'},
-        'to body have array length',
+        'to have body array length',
         1
       );
     });
@@ -108,10 +108,9 @@ describe('Post', () => {
 
       await expect(
         {url: `/api/v1/posts/geotag/${name}`, method: 'GET'},
-        'to body have array length',
+        'to have body array length',
         1
       );
     });
   });
 });
-

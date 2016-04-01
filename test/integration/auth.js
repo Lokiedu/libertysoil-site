@@ -107,7 +107,7 @@ describe('api v1', async () => {
             method: 'POST',
             body: { username: 'test', password: 'test' }
           },
-          'to body satisfy', { success: true}
+          'body to satisfy', { success: true}
         );
       });
 
