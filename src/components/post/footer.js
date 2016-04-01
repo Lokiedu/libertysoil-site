@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
+import { isEmpty } from 'lodash';
 
 import Icon from '../icon';
 import EditPostButton from './edit-post-button'
@@ -27,6 +28,7 @@ import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 let PostFooter = ({author, current_user, post, triggers}) => {
   let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
+  const hasTags = !isEmpty(post.geotags) || !isEmpty(post.hashtags) || !isEmpty(post.schools);
 
   return (
     <div>
@@ -34,11 +36,13 @@ let PostFooter = ({author, current_user, post, triggers}) => {
         <User avatarSize="32" timestamp={post.created_at} timestampLink={post_url} user={author}/>
       </div>
 
-      <footer className="card__footer">
-        <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
-      </footer>
+      {hasTags &&
+        <footer className="card__footer">
+          <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
+        </footer>
+      }
 
-      <footer className="card__footer">
+      <footer className="card__footer card__footer-separator">
         <div className="card__toolbars">
           <Toolbar current_user={current_user} post={post} triggers={triggers} />
 

@@ -92,7 +92,10 @@
   padding: 20px;
   background: #f9f8f8;
   position: relative;
-  border-top: 1px solid @color__gray;
+
+  &-separator {
+    border-top: 1px solid @color__gray;
+  }
 }
 
 .card__toolbar {
@@ -106,8 +109,6 @@
   &-right {
     flex: none!important;
     margin-left: @space;
-    border-left: 1px solid @color__gray;
-    padding-left: 5px;
 
     .card__toolbar_item {
       margin-right: 0;
