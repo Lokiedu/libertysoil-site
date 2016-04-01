@@ -25,11 +25,20 @@ import TagLikePost from './tag-like-post';
 
 export default class RiverOfPostsComponent extends React.Component {
   render() {
-    if (_.isUndefined(this.props.river)) {
+    const {
+      triggers,
+      current_user,
+      users,
+      river,
+      comments,
+      ui
+    } = this.props;
+
+    if (_.isUndefined(river)) {
       return <script/>;
     }
 
-    let posts = this.props.river.map(id => this.props.posts[id]);
+    let posts = river.map(id => this.props.posts[id]);
 
     return (
       <div>
@@ -40,7 +49,7 @@ export default class RiverOfPostsComponent extends React.Component {
             case PostTypes.GEOTAG_LIKE:
               return (
                 <TagLikePost
-                  author={this.props.users[post.user_id]}
+                  author={users[post.user_id]}
                   key={post.id}
                   post={post}
                 />
@@ -49,12 +58,15 @@ export default class RiverOfPostsComponent extends React.Component {
             case PostTypes.LONG_TEXT:
               return (
                 <PostWrapper
-                  author={this.props.users[post.user_id]}
-                  current_user={this.props.current_user}
+                  author={users[post.user_id]}
+                  current_user={current_user}
                   key={post.id}
                   post={post}
+                  comments={comments}
+                  showComments={true}
+                  ui={ui}
+                  triggers={triggers}
                   showComments={false}
-                  triggers={this.props.triggers}
                 >
                   <ShortTextPost post={post}/>
                 </PostWrapper>

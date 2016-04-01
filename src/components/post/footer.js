@@ -18,8 +18,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { isEmpty } from 'lodash';
+import Time from '../time';
 
-import Icon from '../icon';
 import EditPostButton from './edit-post-button'
 import TagLine from './tagline'
 import Toolbar from './toolbar'
@@ -32,9 +32,17 @@ let PostFooter = ({author, current_user, post, triggers}) => {
 
   return (
     <div>
-      <div className="card__owner">
-        <User avatarSize="32" timestamp={post.created_at} timestampLink={post_url} user={author}/>
+      <div className="card__meta">
+        <div className="card__owner">
+          <User avatarSize="39" user={author} />
+        </div>
+        <div className="card__timestamp">
+          <Link to={post_url}>
+            <Time timestamp={post.created_at} />
+          </Link>
+        </div>
       </div>
+
 
       {hasTags &&
         <footer className="card__footer">
@@ -42,15 +50,12 @@ let PostFooter = ({author, current_user, post, triggers}) => {
         </footer>
       }
 
-      <footer className="card__footer card__footer-separator">
+      <footer className="card__footer card__footer-colored">
         <div className="card__toolbars">
           <Toolbar current_user={current_user} post={post} triggers={triggers} />
 
           <div className="card__toolbar card__toolbar-right">
             <EditPostButton current_user={current_user} post={post} />
-            <Link to={post_url} className="card__toolbar_item">
-              <Icon icon="link" size="small" />
-            </Link>
           </div>
         </div>
       </footer>

@@ -95,7 +95,7 @@ export default class Toolbar extends React.Component {
     let like_action = this.likePost.bind(this);
     let fav_action = this.addPostToFavourites.bind(this);
 
-    const isPostAuthor = (post.user_id == current_user.id);
+    const isPostAuthor = (current_user && post.user_id == current_user.id);
 
     if (current_user) {
       if (current_user.likes.indexOf(post.id) > -1) {
@@ -113,23 +113,28 @@ export default class Toolbar extends React.Component {
       }
     }
 
+    if (isPostAuthor) {
+      like_action = null;
+      fav_action = null;
+    }
+
     return (
       <div className="card__toolbar">
-        {!isPostAuthor &&
-          <span className="card__toolbar_item action" onClick={like_action}>
-            <Icon icon={likeIcon} className={likeClass} size="small" />
+        <span className="card__toolbar_item action" onClick={like_action}>
+          <Icon icon={likeIcon} className={likeClass} outline={true} size="small" />
+          {!!post.likers.length &&
             <span className="card__toolbar_item_value">{post.likers.length}</span>
-          </span>
-        }
-        {!isPostAuthor &&
-          <span className="card__toolbar_item action" onClick={fav_action}>
-            <Icon icon={favIcon} className={favClass} size="small" />
+          }
+        </span>
+        <span className="card__toolbar_item action" onClick={fav_action}>
+          <Icon icon={favIcon} className={favClass} outline={true} size="small" />
+          {!!post.favourers.length &&
             <span className="card__toolbar_item_value">{post.favourers.length}</span>
-          </span>
-        }
+          }
+        </span>
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: post.id })} >
-          <Icon icon="chat_bubble_outline" size="small" />
+          <Icon icon="chat_bubble_outline" outline={true} size="small" />
           <span className="card__toolbar_item_value">{post.comments}</span>
         </Link>
       </div>

@@ -1,5 +1,12 @@
 .comment {
-  padding: 10px 0;
+  padding: 10px 15px 10px 21px;
+  margin: 1px 0 0 0;
+  background: #fff;
+}
+
+.comment__container {
+  display: flex;
+  align-items: flex-start;
 }
 
 .comment__header {
@@ -8,7 +15,7 @@
 }
 
 .comment__author {
-  margin: 0 @space 0 0;
+  margin: 0 10px 0 0;
 }
 
 .comment__toolbar {
@@ -18,6 +25,11 @@
 
 .comment__toolbar_item {
   cursor: pointer;
+  color: @color__gray;
+
+  &:hover {
+    color: @color__darker;
+  }
 
   & + & {
     margin-left: 8px;
@@ -25,15 +37,17 @@
 }
 
 .comment__body {
-  padding: 0 0 0 30px;
+  flex: 1;
 }
 
 .comment__edit {
-  margin: @space 0;
+  flex: 1;
 }
 
 .comment__text {
-  font-size: 15px;
+  margin: 1px 0 0 0;
+  &:extend(.font-open_sans);
+  font-size: 12px;
   line-height: 1.4;
 }
 

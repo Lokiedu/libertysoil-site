@@ -211,9 +211,11 @@ export default class Comment extends Component {
         <section className="comment__text">
           {comment.text}
         </section>
-        <footer className="comment__footer">
-          <Time className="comment__time" timestamp={comment.updated_at} />
-        </footer>
+        {false &&
+          <footer className="comment__footer">
+            <Time className="comment__time" timestamp={comment.updated_at} />
+          </footer>
+        }
       </div>
     );
   };
@@ -225,13 +227,15 @@ export default class Comment extends Component {
 
     return (
       <article className="comment">
-        <header className="comment__header">
-          <div className="comment__author">
-            <User user={author} />
-          </div>
+        <div className="comment__container">
+          <header className="comment__header">
+            <div className="comment__author">
+              <User user={author} avatarSize="17" hideText={true} />
+            </div>
+          </header>
+          {this.renderBody()}
           {this.renderToolbar()}
-        </header>
-        {this.renderBody()}
+        </div>
         {this.renderMessage()}
       </article>
     );

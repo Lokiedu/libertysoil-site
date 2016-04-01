@@ -21,6 +21,7 @@ import * as PostTypes  from '../consts/postTypeConstants';
 import * as TagTypes from '../consts/tags';
 import User from './user';
 import Tag from './tag';
+import Time from './time';
 
 
 export default class TagLikePost extends React.Component {
@@ -80,7 +81,7 @@ export default class TagLikePost extends React.Component {
     }
 
     return (
-      <section className="card card-padded">
+      <section className="card card-padded card-with_bg">
         <div className="layout__grid layout-align_vertical">
           <div className="layout__grid_item">
             {tag}
@@ -89,7 +90,11 @@ export default class TagLikePost extends React.Component {
             was liked by
           </div>
           <div className="layout__grid_item">
-            <User avatarSize="32" timestamp={post.created_at} timestampLink="/" user={author}/>
+            <User avatarSize="32" user={author} />
+          </div>
+          <div className="layout__grid_item layout__grid_item-wide"></div>
+          <div className="layout__grid_item">
+            <Time timestamp={post.created_at} className="card__timestamp" />
           </div>
         </div>
       </section>
