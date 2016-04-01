@@ -20,142 +20,84 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router'
 import _ from 'lodash';
 import Helmet from 'react-helmet';
-import { form } from 'react-inform';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
 import BaseSchoolPage from './base/school'
-import { addSchool } from '../actions';
+import {
+  addSchool,
+  resetCreatePostForm,
+  updateCreatePostForm
+} from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-import GeoInput from '../components/geo-input';
-import Message from '../components/message';
+import SchoolEditForm from '../components/school-edit-form';
+import NotFound from './not-found';
 
 
-const fields = ['name', 'description'];
-const validate = values => {
-  const { name } = values;
-  const errors = {};
-
-  if (!name) {
-    errors.name = 'Name is required';
-  }
-
-  return errors;
-}
-
-@form({
-	fields,
-  validate
-})
 class SchoolEditPage extends React.Component {
-  static displayName = 'SchoolEditPage';
-
   static async fetchData(params, store, client) {
-    let school = await client.getSchool(params.school_name);
+    let school = client.getSchool(params.school_name);
 
-    store.dispatch(addSchool(school));
-  }
+    try {
+      store.dispatch(addSchool(await school));
+    } catch (e) {
+      store.dispatch(addSchool({url_name: params.school_name}));
 
-  componentDidMount () {
-    const {
-      form,
-      schools,
-      params
-    } = this.props;
-
-    const school = _.find(schools, {url_name: params.school_name});
-    form.onValues(school);
-  }
-
-  submitHandler(event) {
-    form.forceValidate();
-
-    event.preventDefault();
-
-    if (!this.props.form.isValid()) {
-      return;
+      return 404;
     }
 
-    let form = event.target;
+    const trigger = new ActionsTrigger(client, store.dispatch);
+    await Promise.all([
+      trigger.loadSchools()
+    ]);
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    triggers.updateSchool(
-      form.id.value,
-      {
-        name: form.name.value,
-        description: form.description.value,
-        lat: form.lat.value,
-        lon: form.lon.value
-      }
-    ).then((result) => {
-      browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
-    }).catch(() => {
-      // do nothing. redux has an error already
-    });
+    return 200;
   }
 
-  render() {
-    const {
-      form,
-      fields
-    } = this.props;
+  saveSchool = (id, name, description, lat, lon) => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let school = _.find(this.props.schools, {url_name: this.props.params.school_name});
-    let initialLocation = {lat: school.lat, lon: school.lon};
+    triggers.updateSchool(id, { name, description, lat, lon })
+      .then((result) => {
+        browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
+      }).catch(() => {
+        // do nothing. redux has an error already
+      });
+  };
+
+  render() {
+    const { schools } = this.props;
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const actions = {resetCreatePostForm, updateCreatePostForm};
+
+    let school = _.find(schools, {url_name: this.props.params.school_name});
+
+    if (!school) {
+      return false;  // not loaded yet
+    }
+
+    if (!school.id) {
+      return <NotFound/>;
+    }
 
     return (
       <BaseSchoolPage
         current_user={this.props.current_user}
         is_logged_in={this.props.is_logged_in}
         page_school={school}
+        actions={actions}
         triggers={triggers}
+        schools={schools}
       >
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <form onSubmit={this.submitHandler.bind(this)}>
-              <input type="hidden" name="id" value={school.id} />
-
-              <div className="layout__row">
-                <label htmlFor="name" className="layout__block layout__row layout__row-small">Name</label>
-                <input
-                  className="input input-block content layout__row layout__row-small"
-                  defaultValue={school.name}
-                  type="text"
-                  {...fields.name}
-                />
-                {fields.name.error &&
-                  <Message message={fields.name.error} />
-                }
-              </div>
-
-              <div className="layout__row">
-                <label htmlFor="description" className="layout__block layout__row layout__row-small">Description</label>
-                <textarea
-                  className="input input-block input-textarea content layout__row layout__row-small"
-                  defaultValue={school.description}
-                  {...fields.description}
-                />
-              </div>
-              <GeoInput initialLocation={initialLocation} />
-              <div className="layout__row">
-                <div className="layout layout__grid layout-align_right">
-                  <button
-                    disabled={!form.isValid()}
-                    className="button button-wide button-green"
-                    type="submit"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </form>
+            <SchoolEditForm saveSchoolHandler={this.saveSchool} school={school} />
           </div>
         </div>
       </BaseSchoolPage>
