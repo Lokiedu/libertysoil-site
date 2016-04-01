@@ -88,6 +88,7 @@ export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
+export const SET_GEOTAG_CLOUD = 'SET_GEOTAG_CLOUD';
 
 export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
@@ -436,6 +437,14 @@ export function setSchoolCloud(schools) {
     schools
   }
 }
+
+export function setGeotagCloud(geotags) {
+  return {
+    type: SET_GEOTAG_CLOUD,
+    geotags
+  }
+}
+
 
 export function registrationSuccess() {
   return {

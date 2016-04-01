@@ -27,7 +27,7 @@ import {
   createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
-  submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, addUserFollowedTag,
+  submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
   addUserFollowedGeotag, removeUserFollowedGeotag,
@@ -526,6 +526,15 @@ export class ActionsTrigger {
       let result = await this.client.schoolCloud();
       this.dispatch(setSchools(result));
       this.dispatch(setSchoolCloud(result));
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  };
+
+  loadGeotagCloud = async () => {
+    try {
+      let result = await this.client.geotagCloud();
+      this.dispatch(setGeotagCloud(result));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
