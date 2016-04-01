@@ -171,7 +171,7 @@ class Sidebar extends React.Component {
     }
 
     const username = current_user.user.username;
-    const test = RegExp(`user/${username}\/?`, 'i');
+    const test = RegExp(`user\/${username}\/?$`);
     let currentUser;
     if (routing && routing.locationBeforeTransitions.pathname.match(test)) {
       currentUser = (
@@ -206,9 +206,11 @@ class Sidebar extends React.Component {
 const selector = createSelector(
   state => state.get('ui'),
   currentUserSelector,
-  (ui, current_user) => ({
+  state => state.get('routing'),
+  (ui, current_user, routing) => ({
     ui,
-    ...current_user
+    ...current_user,
+    routing
   })
 );
 

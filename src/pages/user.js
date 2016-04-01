@@ -46,8 +46,7 @@ class UserPage extends React.Component {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
       following,
-      followers,
-      routing
+      followers
     } = this.props;
 
     if (_.isUndefined(page_user)) {
@@ -74,7 +73,6 @@ class UserPage extends React.Component {
         is_logged_in={this.props.is_logged_in}
         page_user={page_user}
         triggers={triggers}
-        routing={routing}
       >
         <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River

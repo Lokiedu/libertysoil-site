@@ -51,8 +51,7 @@ export default class BaseUserPage extends React.Component {
       is_logged_in,
       page_user,
       following,
-      followers,
-      routing
+      followers
     } = this.props;
 
     let showLikesLink = (
@@ -84,7 +83,7 @@ export default class BaseUserPage extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} routing={routing} />
+          <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             <ProfileHeader
               user={page_user}
