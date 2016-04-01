@@ -49,12 +49,6 @@ let Welcome = () => {
             </p>
             <p>We encourage people to collect, share and discuss resources on teaching and learning, helping to build a better understanding of the diversity within education. We aim to help families and schools solve problems like bullying, academic pressure, depression, anxiety, professional and social isolation, to name just a few. Needless to say, poor early life experiences negatively affect each person and a society as a whole.</p>
           </div>
-          <section className="landing">
-            <header className="landing__header width">
-              <h3 className="landing__stats"><Link to="/">LibertySoil.org</Link> is in <i>alpha</i> stage starting <time dateTime="2015-10-05">October 5th, 2015</time>. Target public <i>beta</i> release date is October 28th, 2015. All LibertySoil.org code is released under the open source <a href="https://github.com/Lokiedu/libertysoil-site/…/master/LICENSE">AGPL license</a> and is free to use. Contribute on <a href="https://github.com/Lokiedu/libertysoil-site"><i>GitHub.</i></a></h3>
-            </header>
-          </section>
-
 
         {/*  <div className="page__body">
             <div className="page__content">
