@@ -120,6 +120,7 @@ export function initApi(bookshelf) {
   api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));
   api.post('/tag/:name/unlike', wrap(controller.unlikeHashtag.bind(controller)));
 
+  api.get('/geotag-cloud', wrap(controller.getGeotagCloud.bind(controller)));
   api.head('/geotag/:name', wrap(controller.checkGeotagExists.bind(controller)));
   api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));

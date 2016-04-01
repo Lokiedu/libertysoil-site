@@ -414,6 +414,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async geotagCloud() {
+    let response = await this.get('/api/v1/geotag-cloud');
+    return response.body;
+  }
+
   async followGeotag(urlName) {
     let response = await this.post(`/api/v1/geotag/${urlName}/follow`);
     return response.body;
