@@ -62,7 +62,7 @@ export class SchoolPage extends React.Component {
     store.dispatch(setSchoolPosts(school, await posts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
-    Promise.all([
+    await Promise.all([
       trigger.loadSchools(),
       trigger.loadUserRecentTags()
     ]);
