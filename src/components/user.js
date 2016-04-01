@@ -93,7 +93,11 @@ export default class User extends Component {
           </Link>
         );
       } else {
-        render.avatar = avatar;
+        render.avatar = (
+          <div className={avatarClassName}>
+            {avatar}
+          </div>
+        );
       }
     }
 

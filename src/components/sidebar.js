@@ -87,7 +87,8 @@ class Sidebar extends React.Component {
   render() {
     const {
       ui,
-      is_logged_in
+      is_logged_in,
+      routing
     } = this.props;
     let sidebarClassName = ['sidebar'];
 
@@ -100,7 +101,6 @@ class Sidebar extends React.Component {
     }
 
     let current_user = this.props.current_user.toJS();
-    const username = current_user.user.username;
 
     let followedTags = values(current_user.followed_hashtags);
     let followedSchools = values(current_user.followed_schools);
@@ -170,15 +170,28 @@ class Sidebar extends React.Component {
       );
     }
 
+    const username = current_user.user.username;
+    const test = RegExp(`user/${username}\/?`, 'i');
+    let currentUser;
+    if (routing && routing.locationBeforeTransitions.pathname.match(test)) {
+      currentUser = (
+        <NavigationItem enabled to={`/user/${username}`} className="sidebar__user">
+          <CurrentUser user={current_user.user} isLink={false} />
+        </NavigationItem>
+      );
+    } else {
+      currentUser = (
+        <div className="navigation__item sidebar__user">
+          <CurrentUser user={current_user.user} />
+        </div>
+      );
+    }
+
     return (
       <div className={sidebarClassName.join(' ')}>
         <Navigation className="navigation-first">
           <NavigationItem enabled to="/" icon="public">News Feed</NavigationItem>
-          <NavigationItem enabled to={`/user/${username}`}>
-            <div style={{display: 'flex'}}>
-              <CurrentUser user={current_user.user} isLink={false} />
-            </div>
-          </NavigationItem>
+          {currentUser}
           {likesSection}
           {favouritesSection}
         </Navigation>
