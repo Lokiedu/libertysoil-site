@@ -21,22 +21,12 @@ import _ from 'lodash';
 import * as a from '../actions';
 
 
-const initialState = i.Map({});
+const initialState = i.List([]);
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
-    case a.ADD_GEOTAG: {
-      const geotag = action.geotag;
-      state = state.set(geotag.url_name, i.fromJS(geotag));
-
-      break;
-    }
-
-    case a.SET_GEOTAG_CLOUD:
-    case a.SET_GEOTAGS: {
-      const geotags = _.keyBy(action.geotags, 'url_name');
-      state = i.fromJS(geotags);
-
+    case a.SET_GEOTAG_CLOUD: {
+      state = i.fromJS(_.map(action.geotags, 'url_name'));
       break;
     }
   }

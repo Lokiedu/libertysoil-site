@@ -1776,6 +1776,25 @@ export default class ApiController {
     }
   }
 
+  async getGeotagCloud(req, res) {
+    const Geotag = this.bookshelf.model('Geotag');
+
+    const geotags = await Geotag
+      .collection()
+      .query(qb => {
+        qb
+          .select('geotags.*')
+          .count('geotags_posts.* as post_count')
+          .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
+          .groupBy('geotags.id')
+          .orderBy('post_count', 'DESC')
+          .limit(50);
+      })
+      .fetch({require: true});
+
+    res.send(geotags);
+  }
+
   async getUserRecentHashtags(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
