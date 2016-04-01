@@ -124,7 +124,10 @@ export class List extends React.Component {
       resetCreatePostForm,
       updateCreatePostForm,
       ui,
-      river
+      river,
+      posts,
+      comments,
+      users
     } = this.props;
 
     const actions = {resetCreatePostForm, updateCreatePostForm};
@@ -164,7 +167,15 @@ export class List extends React.Component {
                   userRecentTags={current_user.recent_tags}
                   {...this.props.create_post_form}
                 />
-                <River river={this.props.river} posts={this.props.posts} users={this.props.users} current_user={this.props.current_user} triggers={triggers}/>
+                <River
+                  river={river}
+                  posts={posts}
+                  users={users}
+                  current_user={current_user}
+                  triggers={triggers}
+                  ui={ui}
+                  comments={comments}
+                />
                 {loadMore}
               </PageContent>
               <SidebarAlt>

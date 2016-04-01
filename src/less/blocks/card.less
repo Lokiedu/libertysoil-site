@@ -16,9 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .card {
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 
   & + & {
@@ -37,7 +34,11 @@
   }
 
   &-padded {
-    padding: 20px;
+    padding: 15px;
+  }
+
+  &-with_bg {
+    background: #fff;
   }
 
   &__link {
@@ -63,6 +64,7 @@
 }
 
 .card__content {
+  background: #fff;
   padding: 20px 20px 0 20px;
   line-height: 1.4;
 
@@ -75,8 +77,21 @@
   }
 }
 
+.card__meta {
+  background: #fff;
+  padding: 20px 15px 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .card__owner {
-  padding: 20px;
+  color: @color__darker;
+}
+
+.card__timestamp {
+  font-size: 12px;
+  color: @color__dark_gray;
 }
 
 .card__read_link {
@@ -84,15 +99,17 @@
 }
 
 .card__comments {
-  padding: 20px;
-  border-top: 1px solid @color__gray;
+
 }
 
 .card__footer {
-  padding: 20px;
+  padding: 15px;
   background: #f9f8f8;
   position: relative;
-  border-top: 1px solid @color__gray;
+
+  &-colored {
+    background: @color__panel_bg;
+  }
 }
 
 .card__toolbar {
@@ -106,25 +123,22 @@
   &-right {
     flex: none!important;
     margin-left: @space;
-    border-left: 1px solid @color__gray;
-    padding-left: 5px;
 
     .card__toolbar_item {
       margin-right: 0;
-      margin-left: @space;
+      margin-left: 10px;
     }
   }
 
   &_item_value {
     font-size: 13px;
-    margin-left: 4px;
+    margin-left: 6px;
   }
 }
 
 .card__toolbar_item {
-  color: #aeaeae;
   display: flex;
-  margin-right: @space;
+  margin-right: 10px;
   align-items: center;
 
   &:hover {

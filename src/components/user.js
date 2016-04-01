@@ -41,7 +41,7 @@ export default class User extends Component {
   static defaultProps = {
     hideAvatar: false,
     hideText: false,
-    isRound: false,
+    isRound: true,
     avatarSize: 24,
     timestamp: '',
     timestampLink: '',

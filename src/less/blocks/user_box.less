@@ -16,10 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .user_box {
-  &:extend(.layout);
-  &:extend(.layout-align_vertical);
+  &:extend(.font-open_sans);
+  display: flex;
+  align-items: center;
   border: none;
-  font-size: 14px;
+  font-size: 12px;
 
   &-small {
     font-size: 11px;
@@ -29,19 +30,20 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    &:extend(.layout);
+    display: flex;
 
     a {
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      border: none;
     }
   }
 
   &__body {
     flex: 1;
-    &:extend(.layout);
+    display: flex;
     &:extend(.layout-rows);
 
     .user_box__avatar + & {
