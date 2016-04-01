@@ -40,9 +40,11 @@ class SchoolEditForm extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    this.props.form.forceValidate();
+    const { fields, form } = this.props;
 
-    if (!this.props.form.isValid()) {
+    form.forceValidate();
+
+    if (!form.isValid()) {
       return;
     }
 
@@ -50,8 +52,8 @@ class SchoolEditForm extends React.Component {
 
     this.props.saveSchoolHandler(
       theForm.id.value,
-      theForm.name.value,
-      theForm.description.value,
+      fields.name.value,
+      fields.description.value,
       theForm.lat.value,
       theForm.lon.value
     );
