@@ -41,14 +41,14 @@ describe('School page', function() {
 
   it('MUST renders default school description if no description provided', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", name: "test"}} />);
+    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", name: "test"}} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', "No information provided...");
   });
 
   it('MUST renders school description', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", description: 'test description'}} />);
+    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", description: 'test description'}} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', "test description");
   });
