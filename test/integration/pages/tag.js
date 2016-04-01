@@ -24,19 +24,23 @@ import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let Post = bookshelf.model('Post');
+const bookshelf = initBookshelf($dbConfig);
+const Post = bookshelf.model('Post');
+const User = bookshelf.model('User');
 
 describe('Tag Cloud page', () => {
-  let post;
+  let post, user;
 
   before(async () => {
+    await bookshelf.knex('users').del();
     await bookshelf.knex('posts').del();
 
+    user = await User.create('test', 'test', 'test@example.com');
     post = new Post({
       id: uuid4(),
       type: 'short_text',
-      text: 'Lorem ipsum'
+      text: 'Lorem ipsum',
+      user_id: user.get('id')
     });
 
     await post.save(null, {method: 'insert'});
@@ -45,6 +49,7 @@ describe('Tag Cloud page', () => {
 
   after(async () => {
     await post.destroy();
+    await user.destroy();
   });
 
   it('can open tag page and see cloud', async () => {
