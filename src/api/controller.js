@@ -2074,7 +2074,7 @@ export default class ApiController {
       let geotag = await Geotag
         .forge()
         .where('url_name', req.params.url_name)
-        .fetch({require: true, withRelated: ['country', 'admin1', 'city', 'continent']});
+        .fetch({require: true, withRelated: ['country', 'admin1', 'city', 'continent', 'geonames_city']});
 
       res.send(geotag);
     } catch (e) {

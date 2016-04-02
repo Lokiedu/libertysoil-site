@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { isEmpty } from 'lodash';
 
 import { MAPBOX_ACCESS_TOKEN } from '../config';
 
@@ -30,15 +31,39 @@ export default class MapboxMap extends React.Component {
   static displayName = 'MapboxMap';
 
   static propTypes = {
+    frozen: PropTypes.bool,
+    noWheelZoom: PropTypes.bool,
     selectedLocation: PropTypes.shape({
       lat: PropTypes.number,
       lon: PropTypes.number
-    }).isRequired,
+    }),
     viewLocation: PropTypes.shape({
       lat: PropTypes.number,
       lon: PropTypes.number
-    }).isRequired
+    })
   };
+
+  static defaultProps = {
+    zoom: 13,
+    frozen: false,
+    noWheelZoom: false
+  };
+
+  componentDidMount() {
+    let map = this.leafletMap.leafletElement;
+
+    if (this.props.frozen) {
+      map.dragging.disable();
+      map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+      map.scrollWheelZoom.disable();
+      map.keyboard.disable();
+    }
+
+    if (this.props.noWheelZoom) {
+      map.scrollWheelZoom.disable();
+    }
+  }
 
   render() {
     if (!Leaflet) {
@@ -55,14 +80,15 @@ export default class MapboxMap extends React.Component {
       <Leaflet.Map
         center={viewLocation}
         ref={c => this.leafletMap = c}
-        zoom={13}
         {...props}
       >
         <Leaflet.TileLayer
           attribution='<a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox &copy; OpenStreetMap</a> <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>'
           url={`http://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}`}
         />
-        <Leaflet.Marker position={selectedLocation} />
+        {!isEmpty(selectedLocation) &&
+          <Leaflet.Marker position={selectedLocation} />
+        }
       </Leaflet.Map>
     );
   }

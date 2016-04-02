@@ -54,11 +54,33 @@ import Tag from '../components/tag';
 import TagIcon from '../components/tag-icon';
 import FollowTagButton from '../components/follow-tag-button';
 import LikeTagButton from '../components/like-tag-button';
+import MapboxMap from '../components/mapbox-map';
 
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 
+
+function Hero({ geotag }) {
+  if (geotag.type == 'City' && geotag.geonames_city) {
+    let location = {
+      lat: geotag.geonames_city.latitude,
+      lon: geotag.geonames_city.longitude
+    };
+
+    return (
+      <PageHero>
+        <MapboxMap
+          className="page__hero_map"
+          frozen
+          viewLocation={location}
+        />
+      </PageHero>
+    );
+  }
+
+  return <PageHero src="/images/hero/welcome.jpg" />;
+}
 
 export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
@@ -254,7 +276,7 @@ export class GeotagPage extends Component {
             <PageCaption>
               {`${title} `}<span className="page__caption_highlight">Education</span>
             </PageCaption>
-            <PageHero src="/images/hero/welcome.jpg" />
+            <Hero geotag={geotag} />
             <PageBody className="page__body-up">
               <PageContent>
                 <Panel
