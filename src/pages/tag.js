@@ -162,7 +162,7 @@ export class TagPage extends Component {
           key="like"
           is_logged_in={is_logged_in}
           liked_tags={current_user.liked_hashtags}
-          tag={tag}
+          tag={tag.name}
           triggers={likeTriggers}
           outline={true}
           size="midl"
