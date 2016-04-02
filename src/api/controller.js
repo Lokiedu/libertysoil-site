@@ -1739,8 +1739,7 @@ export default class ApiController {
             .count('hashtags_posts.* as post_count')
             .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
             .groupBy('hashtags.id')
-            .orderBy('post_count', 'DESC')
-            .limit(50);
+            .orderBy('post_count', 'DESC');
         })
         .fetch({require: true});
 
