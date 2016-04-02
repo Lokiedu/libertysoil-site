@@ -103,17 +103,11 @@ export default class AddTagModal extends Component {
     onSave: () => {}
   };
 
-
-  constructor(props) {
-    super(props);
-
-    // Temporarily added tags.
-    this.state = {
-      geotags: _.clone(props.geotags),
-      schools: _.clone(props.schools),
-      hashtags: _.clone(props.hashtags)
-    };
-  }
+  state = {
+    geotags: _.clone(this.props.geotags),
+    schools: _.clone(this.props.schools),
+    hashtags: _.clone(this.props.hashtags)
+  };
 
   reset = () => {
     this.setState({
@@ -180,7 +174,7 @@ export default class AddTagModal extends Component {
     this.props.onClose(event);
   };
 
-  render () {
+  render() {
     let {
       allSchools,
       type,

@@ -79,7 +79,8 @@ export default class EditPost extends React.Component {
     super(props);
 
     this.state = {
-      addTagModalType: null
+      addTagModalType: null,
+      upToDate: false
     };
   }
 
@@ -92,6 +93,12 @@ export default class EditPost extends React.Component {
     };
 
     this.props.actions.updateEditPostForm(newFormState);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.id === nextProps.post.id) {
+      this.setState({upToDate: true});
+    }
   }
 
   componentWillUnmount() {
@@ -199,7 +206,7 @@ export default class EditPost extends React.Component {
     this._closeAddTagModal();
   };
 
-  render () {
+  render() {
     let {
       allSchools,
       post
@@ -270,17 +277,19 @@ export default class EditPost extends React.Component {
             </div>
           </div>
         </form>
-        <AddTagModal
-          ref={(c) => this._addTagModal = c}
-          allSchools={allSchools}
-          userRecentTags={this.props.userRecentTags}
-          type={addTagModalType}
-          onClose={this._closeAddTagModal}
-          onSave={this._addTags}
-          onTypeChange={this._changeAddTagModal}
-          triggers={this.props.triggers}
-          {...allModalTags}
-        />
+        { this.state.upToDate &&
+          <AddTagModal
+            ref={(c) => this._addTagModal = c}
+            allSchools={allSchools}
+            userRecentTags={this.props.userRecentTags}
+            type={addTagModalType}
+            onClose={this._closeAddTagModal}
+            onSave={this._addTags}
+            onTypeChange={this._changeAddTagModal}
+            triggers={this.props.triggers}
+            {...allModalTags}
+          />
+        }
       </div>
     )
   }
