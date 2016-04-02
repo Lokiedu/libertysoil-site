@@ -15,40 +15,57 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import BaseSuggestionsPage from './base/suggestions';
-import { UserGrid } from '../components/user-grid';
+import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 
-const DiscoverGrid = (props) => {
-  if (props.users.length === 0) {
-    return <script/>;
+class DiscoverGrid extends React.Component {
+  static displayName = 'DiscoverGrid';
+
+  static propTypes = {
+    users: PropTypes.array
   }
 
-  return (
-    <div className="paper__page">
-      <h2 className="content__sub_title layout__row">People to follow</h2>
-      <div className="layout__row layout__row-double">
-        <UserGrid
-          current_user={props.current_user}
-          i_am_following={props.i_am_following}
-          triggers={props.triggers}
-          users={props.users}
-        />
+  render() {
+    const {
+      users,
+      current_user,
+      i_am_following,
+      triggers
+    } = this.props;
+
+    if (users.length === 0) {
+      return <script/>;
+    }
+
+    return (
+      <div className="paper__page">
+        <h2 className="content__sub_title layout__row">People to follow</h2>
+        <div className="layout__row layout__row-double">
+          <UserGrid
+            current_user={current_user}
+            i_am_following={i_am_following}
+            triggers={triggers}
+            users={users}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 class SuggestionsPage extends React.Component {
+  static displayName = 'SuggestionsPage';
+
   static async fetchData(params, store, client) {
     let triggers = new ActionsTrigger(client, store.dispatch);
     const result = await triggers.loadPersonalizedSuggestions()
