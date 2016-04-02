@@ -48,7 +48,8 @@ export default class SchoolHeader extends React.Component {
       school,
       current_user,
       triggers = {},
-      is_logged_in
+      is_logged_in,
+      schoolPostsAmount
     } = this.props;
 
     let toolbarPrimary = [];
@@ -90,9 +91,9 @@ export default class SchoolHeader extends React.Component {
       ];
 
       toolbarPrimary = [
-        /*<div key="posts" className="panel__toolbar_item-text">
-          {tagPosts.length} posts
-        </div>,*/
+        <div key="posts" className="panel__toolbar_item-text">
+          {schoolPostsAmount} posts
+        </div>,
         <button key="new" onClick={this.props.newPost} className="button button-midi button-light_blue" type="button">New</button>,
         <FollowTagButton
           current_user={current_user}

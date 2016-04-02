@@ -106,6 +106,7 @@ export class SchoolPage extends React.Component {
         actions={actions}
         triggers={triggers}
         schools={values(schools)}
+        schoolPostsAmount={schoolPosts.length}
         create_post_form={this.props.create_post_form}
       >
         <Helmet title={`Posts about ${school.name} on `} />

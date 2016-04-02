@@ -90,7 +90,8 @@ export default class BaseSchoolPage extends React.Component {
       is_logged_in,
       actions,
       triggers,
-      schools
+      schools,
+      schoolPostsAmount
     } = this.props;
 
     let createPostForm;
@@ -138,6 +139,7 @@ export default class BaseSchoolPage extends React.Component {
                 current_user={current_user}
                 triggers={triggers}
                 newPost={this.toggleForm}
+                schoolPostsAmount={schoolPostsAmount}
               />
             </PageBody>
             <PageBody className="page__body-up">
