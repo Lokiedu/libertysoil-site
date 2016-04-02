@@ -154,17 +154,20 @@ export default class ApiController {
              .distinct();
 
            switch (geotag.attributes.type) {
+           case 'Planet':
+             // There are no planets besides Earth yet.
+             break;
            case 'Continent':
              qb.where('geotags.continent_code', geotag.attributes.continent_code);
              break;
            case 'Country':
              qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
              break;
+           case 'AdminDivision1':
+             qb.where('geotags.geonames_admin1_id', geotag.attributes.geonames_admin1_id);
+             break;
            case 'City':
              qb.where('geotags.id', geotag.id);
-             break;
-           case 'Planet':
-             // There are no planets besides Earth yet.
              break;
            }
          })
