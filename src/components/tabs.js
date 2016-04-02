@@ -127,12 +127,19 @@ export class Tabs extends React.Component {
 
     return (
       <div className={className}>
-        <nav className={menuClassName}>
-          {titles}
-        </nav>
+        { !this.props.invert &&
+          <nav className={menuClassName}>
+            {titles}
+          </nav>
+        }
         <div className={panelClassName}>
           {tabs}
         </div>
+        { this.props.invert &&
+          <nav className={menuClassName}>
+            {titles}
+          </nav>
+        }
       </div>
     );
   }
