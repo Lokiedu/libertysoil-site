@@ -104,8 +104,6 @@ export default class GeotagSelect extends Component {
   };
 
   render() {
-    let { onSelect, ...restProps } = this.props;
-
     let inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       placeholder: 'Start typing...',
@@ -123,7 +121,7 @@ export default class GeotagSelect extends Component {
           suggestions={this.state.suggestions}
           onSuggestionSelected={this._handleSelect}
           onSuggestionsUpdateRequested={this._getSuggestions}
-          {...restProps}
+          {...this.props}
         />
       </div>
     );

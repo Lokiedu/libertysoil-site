@@ -77,8 +77,7 @@ class SettingsPasswordPage extends React.Component {
       is_logged_in,
       messages,
       following,
-      followers,
-      ...props
+      followers
     } = this.props;
 
     if (!is_logged_in) {

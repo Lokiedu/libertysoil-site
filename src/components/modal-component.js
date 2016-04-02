@@ -16,7 +16,6 @@ class ModalComponent extends Component {
 
   static propTypes = {
     children: PropTypes.any,
-    hideCloseButton: PropTypes.bool,
     onHide: PropTypes.func,
     title: PropTypes.string.isRequired,
     size: PropTypes.oneOf(_.values(SIZES))
@@ -24,7 +23,6 @@ class ModalComponent extends Component {
 
   static defaultProps = {
     title: '',
-    hideCloseButton: false,
     onHide: () => {},
     width: ''
   };
@@ -53,10 +51,8 @@ class ModalComponent extends Component {
 
   render () {
     const {
-      title,
       size,
       children,
-      hideCloseButton,
       className,
       ...props
     } = this.props;

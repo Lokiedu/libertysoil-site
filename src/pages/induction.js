@@ -69,8 +69,7 @@ class InductionPage extends React.Component {
       is_logged_in,
       i_am_following,
       suggested_users,
-      messages,
-      ...props
+      messages
     } = this.props;
 
     const client = new ApiClient(API_HOST);

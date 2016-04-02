@@ -53,8 +53,7 @@ class SettingsFollowersPage extends React.Component {
       messages,
       following,
       followers,
-      users,
-      ...props
+      users
     } = this.props;
 
     if (!is_logged_in) {

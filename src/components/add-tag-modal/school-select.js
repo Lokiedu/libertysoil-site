@@ -77,8 +77,6 @@ export default class SchoolSelect extends Component {
   };
 
   render() {
-    let { onSelect, schools, ...restProps } = this.props;
-
     let inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       name: 'school',
@@ -95,7 +93,7 @@ export default class SchoolSelect extends Component {
         suggestions={this.state.suggestions}
         onSuggestionSelected={this._handleSelect}
         onSuggestionsUpdateRequested={this._getSuggestions}
-        {...restProps}
+        {...this.props}
       />
     );
   }
