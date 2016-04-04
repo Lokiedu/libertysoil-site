@@ -144,6 +144,8 @@ export class List extends React.Component {
           </VisibilitySensor>
         </div>
       );
+    } else {
+      loadMore = <VisibilitySensor onChange={this.loadMore} />;
     }
 
     return (
