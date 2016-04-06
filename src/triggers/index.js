@@ -20,7 +20,7 @@ import { browserHistory } from 'react-router';
 import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
-  addUser, addPost, addPostToRiver, setCurrentUser, removePost,
+  addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
   setPostComments,
   saveCommentStart, saveCommentSuccess, saveCommentFailure,
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
@@ -262,6 +262,10 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user1));
         this.dispatch(addUser(res.user2));
       }
+
+      this.dispatch(clearRiver());
+      this.loadPostRiver();
+
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -275,6 +279,10 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user1));
         this.dispatch(addUser(res.user2));
       }
+
+      this.dispatch(clearRiver());
+      this.loadPostRiver();
+
     } catch (e) {
       this.dispatch(addError(e.message));
     }
