@@ -58,7 +58,7 @@ export default class TagIcon extends React.Component {
         );
       case TAG_SCHOOL:
         return (
-          <span className={`${className} tag_icon-school micon`} {...props}>school</span>
+          <span className={`${className} tag_icon-school`} {...props}><span className="micon">school</span></span>
         );
       case TAG_MENTION:
         return (
@@ -66,15 +66,15 @@ export default class TagIcon extends React.Component {
         );
       case TAG_LOCATION:
         return (
-          <span className={`${className} tag_icon-location micon`} {...props}>location_on</span>
+          <span className={`${className} tag_icon-location`} {...props}><span className="micon">location_on</span></span>
         );
       case TAG_EVENT:
         return (
-          <span className={`${className} tag_icon-event micon`} {...props}>event</span>
+          <span className={`${className} tag_icon-event`} {...props}><span className="micon">event</span></span>
         );
       case TAG_PLANET:
         return (
-          <span className={`${className} tag_icon-planet micon`} {...props}>public</span>
+          <span className={`${className} tag_icon-planet`} {...props}><span className="micon">public</span></span>
         );
       default:
         return false;
