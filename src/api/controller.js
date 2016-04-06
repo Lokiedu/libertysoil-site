@@ -252,95 +252,71 @@ export default class ApiController {
     }
   }
 
-  async userLikedPosts(req, res) {
+  async currentUserLikedPosts(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
       return;
     }
-    let Post = this.bookshelf.model('Post');
 
     try {
-      let likes = await this.bookshelf.knex
-        .select('post_id')
-        .from('likes')
-        .where({user_id: req.session.user})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .select()
-          .from('posts')
-          .whereIn('id', likes)
-          .union(function() {
-            this
-              .select()
-              .from('posts')
-              .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
-              .andWhere('user_id', req.session.user);
-          })
-          .orderBy('created_at', 'desc');
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      let posts = await this.getLikedPosts(req.session.user);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
   }
 
-  async getLikedPosts(req, res) {
-    let Post = this.bookshelf.model('Post');
-
+  async userLikedPosts(req, res) {
     try {
       let user_id = await this.bookshelf.knex
         .select('id')
         .from('users')
         .where('users.username', '=', req.params.user)
         .map(row => row.id);
-
-      let likes = await this.bookshelf.knex
-        .select('post_id')
-        .from('likes')
-        .where({user_id: user_id[0]})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .select()
-          .from('posts')
-          .whereIn('id', likes)
-          .union(function() {
-            this
-              .select()
-              .from('posts')
-              .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
-              .andWhere('user_id', user_id[0]);
-          })
-          .orderBy('created_at', 'desc');
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      
+      let posts = await this.getLikedPosts(user_id[0]);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
+  }
+
+  async getLikedPosts(userId) {
+    let Post = this.bookshelf.model('Post');
+
+    let likes = await this.bookshelf.knex
+      .select('post_id')
+      .from('likes')
+      .where({user_id: userId})
+      .map(row => row.post_id);
+
+    let q = Post.forge()
+    .query(qb => {
+      qb
+        .select()
+        .from('posts')
+        .whereIn('id', likes)
+        .union(function() {
+          this
+            .select()
+            .from('posts')
+            .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
+            .andWhere('user_id', userId);
+        })
+        .orderBy('created_at', 'desc');
+    });
+
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
+    posts = posts.map(post => {
+      post.attributes.comments = post_comments_count[post.get('id')];
+      return post;
+    });
+
+    return posts;
   }
 
   async userFavouredPosts(req, res) {
