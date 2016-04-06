@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import i from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 import * as a from '../actions';
 import messageType from '../consts/messageTypeConstants';
@@ -51,6 +52,7 @@ export default function reducer(state=initialState, action) {
       break;
     }
 
+    case LOCATION_CHANGE:
     case a.REMOVE_ALL_MESSAGES: {
       state = state.clear();
       break;
