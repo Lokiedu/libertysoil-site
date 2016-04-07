@@ -19,6 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
 import { Tabs, Tab, TabTitle, TabContent } from './tabs';
+import VisibilitySensor from './visibility-sensor';
 
 export default class Reviews extends Component {
   static propTypes = {
@@ -26,9 +27,14 @@ export default class Reviews extends Component {
   };
 
   state = {
-    mobile: true
+    mobile: true,
+    active: 0,
+    sliding: false
   };
 
+  slideshow = null;
+  length = 0;
+  delay = 5000;
   clientWidth = 0;
 
   componentDidMount() {
@@ -40,6 +46,40 @@ export default class Reviews extends Component {
     window.removeEventListener('resize', this.toggleMode);
     document.removeEventListener('DOMContentLoaded', this.toggleMode);
   }
+
+  setSlideshow = (isVisible) => {
+    switch (!this.state.mobile && isVisible) {
+      case true: {
+        if (!this.slideshow) {
+          this.slideshow = setInterval(this.changeSlide, this.delay);
+        }
+        break;
+      }
+      case false: {
+        if (this.slideshow) {
+          clearInterval(this.slideshow);
+          this.slideshow = null;
+        }
+        break;
+      }
+    }
+  };
+
+  activeChanged = (activeId) => {
+    this.active = activeId;
+  };
+
+  changeSlide = () => {
+    let newActive = this.state.active;
+    if (this.state.active === this.length - 1) {
+      newActive = 0;
+    } else {
+      ++newActive;
+    }
+    this.setState({ sliding: true });
+    this.setState({ active: newActive });
+    this.setState({ sliding: false });
+  };
 
   toggleMode = throttle(() => {
     const breakpointWidth = 1024;
@@ -115,8 +155,9 @@ export default class Reviews extends Component {
         }
       }
     ];
-    //const { quotes } = this.props;
+    //const { quotes }  = this.props;
 
+    this.length = quotes.length;
     let preparedQuotes;
     if (this.state.mobile) {
       preparedQuotes = quotes.map((q, i) => (
@@ -142,13 +183,18 @@ export default class Reviews extends Component {
         </blockquote>
       ));
     } else {
+      let reviewClassName = 'review';
+      if (this.state.loading) {
+        reviewClassName += ' review-sliding';
+      }
+
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
           <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
             <img className="user_box__avatar" src={q.author.avatar_url} width="64px" height="64px" alt=""/>
           </TabTitle>
           <TabContent>
-            <blockquote className="review">
+            <blockquote className={reviewClassName}>
               <p className="review__body content">
                 {q.body}
               </p>
@@ -170,10 +216,13 @@ export default class Reviews extends Component {
           </TabContent>
         </Tab>
       ));
+
       preparedQuotes = (
-        <Tabs invert menuClassName="review_group__navigation page__body width">
-          {tabs}
-        </Tabs>
+        <VisibilitySensor onChange={this.setSlideshow}>
+          <Tabs active={this.state.active} onActiveChanged={this.activeChanged} invert menuClassName="review_group__navigation page__body width">
+            {tabs}
+          </Tabs>
+        </VisibilitySensor>
       );
     }
 
