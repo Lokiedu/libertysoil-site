@@ -262,7 +262,15 @@ describe('api v.1', () => {
                 user_id: user.get('id'),
                 text: `This is a Post #${i}`
               });
-              return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
+
+              const dateJson = new Date(Date.now() - 50000 + i*1000).toJSON();
+              let defaultAttr = { fully_published_at: dateJson, created_at: dateJson };
+
+              if (i % 2) { // for even posts do not set fully_published_at
+                defaultAttr.fully_published_at = null;
+              }
+
+              return post.save(defaultAttr, {method: 'insert'});
             }));
 
           });
