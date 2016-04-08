@@ -113,4 +113,24 @@ describe('Post', () => {
       );
     });
   });
+
+  describe('/api/v1/posts/liked/:name', () => {
+    let postHashtagLike;
+
+    before(async () => {
+      postHashtagLike = await new Post(PostFactory.build({type: 'hashtag_like'})).save(null, {method: 'insert'});
+    });
+
+    after(async () => {
+      await postHashtagLike.destroy();
+    });
+
+    it('should not return hashtag_like posts from other authors', async () => {
+      await expect(
+        {url: `/api/v1/posts/liked/${user.get('username')}`},
+        'to have body array length',
+        0
+      );
+    });
+  });
 });
