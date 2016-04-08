@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ export default class Reviews extends Component {
     document.removeEventListener('DOMContentLoaded', this.toggleMode);
   }
 
-  setSlideshow = (isVisible) => {
+  toggleSlideshow = (isVisible) => {
     switch (!this.state.mobile && isVisible) {
       case true: {
         if (!this.slideshow) {
@@ -76,9 +76,11 @@ export default class Reviews extends Component {
     } else {
       ++newActive;
     }
+
     this.setState({ sliding: true });
-    this.setState({ active: newActive });
-    this.setState({ sliding: false });
+    setTimeout(() => {
+      this.setState({ active: newActive, sliding: false });
+    }, 500);
   };
 
   toggleMode = throttle(() => {
@@ -183,9 +185,9 @@ export default class Reviews extends Component {
         </blockquote>
       ));
     } else {
-      let reviewClassName = 'review';
-      if (this.state.loading) {
-        reviewClassName += ' review-sliding';
+      let reviewClassName = 'review__body content';
+      if (this.state.sliding) {
+        reviewClassName += ' review__body-sliding';
       }
 
       const tabs = quotes.map((q, i) => (
@@ -194,8 +196,8 @@ export default class Reviews extends Component {
             <img className="user_box__avatar" src={q.author.avatar_url} width="64px" height="64px" alt=""/>
           </TabTitle>
           <TabContent>
-            <blockquote className={reviewClassName}>
-              <p className="review__body content">
+            <blockquote className="review">
+              <p className={reviewClassName}>
                 {q.body}
               </p>
               <footer className="review__author">
@@ -218,7 +220,7 @@ export default class Reviews extends Component {
       ));
 
       preparedQuotes = (
-        <VisibilitySensor onChange={this.setSlideshow}>
+        <VisibilitySensor onMount={this.toggleSlideshow} onChange={this.toggleSlideshow}>
           <Tabs active={this.state.active} onActiveChanged={this.activeChanged} invert menuClassName="review_group__navigation page__body width">
             {tabs}
           </Tabs>
