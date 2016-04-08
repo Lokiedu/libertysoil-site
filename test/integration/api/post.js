@@ -34,103 +34,105 @@ const School = bookshelf.model('School');
 const Geotag = bookshelf.model('Geotag');
 
 describe('Post', () => {
-  let user;
-  let post;
-
-  before(async () => {
-    let userAttrs = UserFactory.build();
-    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-    post = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
-  });
-
-  after(async () => {
-    await post.destroy();
-    await user.destroy();
-  });
-
-  describe('/api/v1/posts/tag/:name', async () => {
-    let hashtag;
+  describe('Not authenticated user', () => {
+    let user;
+    let post;
 
     before(async () => {
-      hashtag = await post.hashtags().create(HashtagFactory.build());
+      let userAttrs = UserFactory.build();
+      user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+      post = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
     });
 
     after(async () => {
-      await hashtag.destroy();
+      await post.destroy();
+      await user.destroy();
     });
 
-    it('responds with hashtag posts', async () => {
-      const name = encodeURIComponent(hashtag.attributes.name);
+    describe('/api/v1/posts/tag/:name', async () => {
+      let hashtag;
 
-      await expect(
-        {url: `/api/v1/posts/tag/${name}`, method: 'GET'},
-        'to have body array length',
-        1
-      );
-    });
-  });
+      before(async () => {
+        hashtag = await post.hashtags().create(HashtagFactory.build());
+      });
 
-  describe('/api/v1/posts/school/:url_name', () => {
-    let school;
+      after(async () => {
+        await hashtag.destroy();
+      });
 
-    before(async () => {
-      school = await post.schools().create(SchoolFactory.build());
-    });
+      it('responds with hashtag posts', async () => {
+        const name = encodeURIComponent(hashtag.attributes.name);
 
-    after(async () => {
-      await post.schools().detach(school);
-    });
-
-    it('responds with school posts', async () => {
-      const name = encodeURIComponent(school.attributes.url_name);
-
-      await expect(
-        {url: `/api/v1/posts/school/${name}`, method: 'GET'},
-        'to have body array length',
-        1
-      );
-    });
-  });
-
-  describe('/api/v1/posts/geotag/:url_name', () => {
-    let geotag;
-
-    before(async () => {
-      geotag = await post.geotags().create(GeotagFactory.build());
+        await expect(
+          {url: `/api/v1/posts/tag/${name}`, method: 'GET'},
+          'to have body array length',
+          1
+        );
+      });
     });
 
-    after(async () => {
-      await post.geotags().detach(geotag);
+    describe('/api/v1/posts/school/:url_name', () => {
+      let school;
+
+      before(async () => {
+        school = await post.schools().create(SchoolFactory.build());
+      });
+
+      after(async () => {
+        await post.schools().detach(school);
+      });
+
+      it('responds with school posts', async () => {
+        const name = encodeURIComponent(school.attributes.url_name);
+
+        await expect(
+          {url: `/api/v1/posts/school/${name}`, method: 'GET'},
+          'to have body array length',
+          1
+        );
+      });
     });
 
-    it('responds with geotag posts', async () => {
-      const name = encodeURIComponent(geotag.attributes.url_name);
+    describe('/api/v1/posts/geotag/:url_name', () => {
+      let geotag;
 
-      await expect(
-        {url: `/api/v1/posts/geotag/${name}`, method: 'GET'},
-        'to have body array length',
-        1
-      );
+      before(async () => {
+        geotag = await post.geotags().create(GeotagFactory.build());
+      });
+
+      after(async () => {
+        await post.geotags().detach(geotag);
+      });
+
+      it('responds with geotag posts', async () => {
+        const name = encodeURIComponent(geotag.attributes.url_name);
+
+        await expect(
+          {url: `/api/v1/posts/geotag/${name}`, method: 'GET'},
+          'to have body array length',
+          1
+        );
+      });
     });
-  });
 
-  describe('/api/v1/posts/liked/:name', () => {
-    let postHashtagLike;
+    describe('/api/v1/posts/liked/:name', () => {
+      let postHashtagLike;
 
-    before(async () => {
-      postHashtagLike = await new Post(PostFactory.build({type: 'hashtag_like'})).save(null, {method: 'insert'});
-    });
+      before(async () => {
+        postHashtagLike = await new Post(PostFactory.build({type: 'hashtag_like'})).save(null, {method: 'insert'});
+      });
 
-    after(async () => {
-      await postHashtagLike.destroy();
-    });
+      after(async () => {
+        await postHashtagLike.destroy();
+      });
 
-    it('should not return hashtag_like posts from other authors', async () => {
-      await expect(
-        {url: `/api/v1/posts/liked/${user.get('username')}`},
-        'to have body array length',
-        0
-      );
+      it('should not return hashtag_like posts from other authors', async () => {
+        await expect(
+          {url: `/api/v1/posts/liked/${user.get('username')}`},
+          'to have body array length',
+          0
+        );
+      });
     });
   });
 });
