@@ -529,6 +529,12 @@ export default class ApiController {
       let post = await Post.where({id: req.params.id}).fetch({require: true});
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
 
+      if (post.user_id === user.id) {
+        res.status(403);
+        res.send({error: "You can't like your own post"});
+        return;
+      }
+
       await user.liked_posts().attach(post);
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
@@ -600,6 +606,12 @@ export default class ApiController {
     try {
       let post = await Post.where({id: req.params.id}).fetch({require: true});
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['favourited_posts']});
+
+      if (post.user_id === user.id) {
+        res.status(403);
+        res.send({error: "You can't add your own post to favorites"});
+        return;
+      }
 
       await user.favourited_posts().attach(post);
 
