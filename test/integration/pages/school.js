@@ -1,72 +1,68 @@
 /* eslint-env node, mocha */
-import { TestUtils, unexpected, expect, unexpectedReact, React } from '../../../test-helpers/expect-unit';
-import { SchoolPage } from '../../../src/pages/school';
-/*
-describe('SchoolPage', function () {
-  describe('FollowTagButton', function () {
-    it('renders "Follow" button when a user doesn\'t follow the tag', function() {
-      let user = {
-        email: 'test@test.test',
-        followed_schools: {}
-      };
+/* global $dbConfig */
+import { jsdom } from 'jsdom';
+import { v4 as uuid4 } from 'uuid';
 
-      let params = {
-        school_name: 'school.com'
-      };
+import expect from '../../../test-helpers/expect';
+import { login } from '../../../test-helpers/api';
+import UserFactory from '../../../test-helpers/factories/user.js';
+import PostFactory from '../../../test-helpers/factories/post.js';
+import SchoolFactory from '../../../test-helpers/factories/school.js';
+import initBookshelf from '../../../src/api/db';
 
-      let schools = [
-        {id: 1, name: 'school', url_name: 'school.com'}
-      ];
+let bookshelf = initBookshelf($dbConfig);
+let Post = bookshelf.model('Post');
+let User = bookshelf.model('User');
+let School = bookshelf.model('School');
 
-      let component = TestUtils.renderIntoDocument(
-        <SchoolPage
-          current_user={user}
-          params={params}
-          school_posts={[]}
-          schools={schools}
-          users={[]}
-        />
-      );
 
-      expect(component, 'to have rendered',
-        <button className="button button-green">Follow</button>
-      );
+describe('School page', () => {
+  describe('when user is logged in', () => {
+    let user;
+    let sessionId;
+
+    before(async () => {
+      await bookshelf.knex('users').del();
+      user = await User.create('test', 'test', 'test@example.com');
+      await user.save({'email_check_hash': ''},{require:true});
+
+      sessionId = await login('test', 'test');
     });
 
-    it('renders "Following" button when a user follows the tag', function() {
-      let user = {
-        email: 'test@test.test',
-        followed_schools: {
-          TestSchool: {
-            name: 'TestTag',
-            url_name: 'school.com'
-          }
-        }
-      };
+    after(async () => {
+      await user.destroy();
+    });
 
-      let params = {
-        school_name: 'school.com'
-      };
+    describe('Check counters', () => {
 
-      let schools = [
-        {id: 1, name: 'school', url_name: 'school.com'}
-      ];
+      let post, school, author;
 
-      let component = TestUtils.renderIntoDocument(
-        <SchoolPage
-          current_user={user}
-          is_logged_in
-          params={params}
-          school_posts={[]}
-          schools={schools}
-          users={[]}
-        />
-      );
+      before(async () => {
+        await bookshelf.knex('posts').del();
+        await bookshelf.knex('schools').del();
 
-      expect(component, 'to have rendered',
-        <button className="button button-yellow">Following</button>
-      );
+        const userAttrs = UserFactory.build();
+
+        author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        post = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
+        school = await new School(SchoolFactory.build()).save(null, {method: 'insert'});
+
+        await post.attachSchools([school.get('name')]);
+      });
+
+      after(async () => {
+        await post.destroy();
+        await school.destroy();
+        await author.destroy();
+      });
+
+      it('displays posts counter', async () => {
+        let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
+
+        let document = jsdom(context.httpResponse.body);
+        let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
+        return expect(content, 'to have text', '1 posts');
+      });
     });
   });
 });
-*/
