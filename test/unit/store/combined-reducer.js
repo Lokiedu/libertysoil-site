@@ -16,8 +16,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint-env node, mocha */
 import i from 'immutable';
 
+import expect from '../../../test-helpers/expect';
 import { theReducer } from '../../../src/store';
 import { SET_CURRENT_USER } from '../../../src/actions';
 
@@ -26,6 +28,36 @@ describe('combined reducer "theReducer"', function() {
 
   it('is should not throw any error when action SET_CURRENT_USER and action.user equals null', function() {
     theReducer(i.Map({}), {type: SET_CURRENT_USER, user: null});
+  });
+
+  it('should not rewrite user followers existing data', () => {
+    const initialState = i.Map({
+        users: i.Map({
+          1: i.Map({
+            id: 1,
+            username: 'foo',
+            more: 'bar'
+          })
+        })
+    });
+
+    const state = theReducer(
+      initialState,
+      {
+        type: SET_CURRENT_USER,
+        user: {
+          following: [
+            {
+              id: 1,
+              username: 'new-foo'
+            }
+          ]
+        }
+      }
+    );
+
+    expect(state.getIn(['users', '1', 'more']), 'to equal', 'bar');
+    expect(state.getIn(['users', '1', 'username']), 'to equal', 'new-foo');
   });
 
 });
