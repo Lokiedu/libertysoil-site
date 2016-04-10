@@ -65,8 +65,8 @@ export default class Reviews extends Component {
     }
   };
 
-  activeChanged = (activeId) => {
-    this.active = activeId;
+  clickHandler = (activeId) => {
+    this.setState({ active: activeId });
   };
 
   changeSlide = () => {
@@ -193,7 +193,7 @@ export default class Reviews extends Component {
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
           <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
-            <img className="user_box__avatar" src={q.author.avatar_url} width="64px" height="64px" alt=""/>
+            <img className="user_box__avatar" src={q.author.avatar_url} width="64" height="64" alt=""/>
           </TabTitle>
           <TabContent>
             <blockquote className="review">
@@ -221,7 +221,7 @@ export default class Reviews extends Component {
 
       preparedQuotes = (
         <VisibilitySensor onMount={this.toggleSlideshow} onChange={this.toggleSlideshow}>
-          <Tabs active={this.state.active} onActiveChanged={this.activeChanged} invert menuClassName="review_group__navigation page__body width">
+          <Tabs active={this.state.active} onClick={this.clickHandler} invert menuClassName="review_group__navigation page__body width">
             {tabs}
           </Tabs>
         </VisibilitySensor>
