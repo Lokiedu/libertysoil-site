@@ -103,7 +103,7 @@ export default class ChangeAvatarModal extends Component {
         onHide={this.close}
       >
         <ModalComponent.Head>
-          <ModalComponent.Title>Choose your user picture</ModalComponent.Title>
+          <ModalComponent.Title>Upload new profile picture for </ModalComponent.Title>
         </ModalComponent.Head>
         <ModalComponent.Body>
           <div className="change_avatar_modal__editor">
@@ -112,7 +112,14 @@ export default class ChangeAvatarModal extends Component {
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="change_avatar_modal__footer">
-            <div className="button button-wide button-red button-centered action" onClick={this.save}>Save</div>
+            <div className="layout__grid">
+              <div className="layout__grid_item">
+                <div className="button button-wide button-red button-centered action" onClick={this.save}>Save</div>
+              </div>
+              <div className="layout__grid_item">
+                <div className="button button-wide button-lightgray button-centered action" onClick={this.close}>Cancel</div>
+              </div>
+            </div>
           </footer>
         </ModalComponent.Actions>
       </ModalComponent>

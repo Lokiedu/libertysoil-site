@@ -615,7 +615,7 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop) =>{
+  updateAvatar = async (image, crop) => {
     try {
       let original = await this.client.uploadImage([image]);
       original = original.attachments[0].id;
@@ -638,6 +638,32 @@ export class ActionsTrigger {
       this.dispatch(addError(e.message));
     }
   };
+
+  // updateUserHeader = async (image, crop) => {
+  //   try {
+  //     let original = await this.client.uploadImage([image]);
+  //     original = original.attachments[0].id;
+
+  //     let cropped = await this.client.processImage(
+  //       original, [{crop: crop}, {resize: {width: HEADER_SIZE.width, height: HEADER_SIZE.height}}]
+  //     );
+
+  //     let res = await this.client.updateUser({
+  //       more: {
+  //         header: {
+  //           attachment_id: cropped.attachment.id,
+  //           url: cropped.attachment.s3_url
+  //         }
+  //       }
+  //     });
+  //     if ('user' in res) {
+  //       this.dispatch(addMessage('Profile header image updated'));
+  //       this.dispatch(addUser(res.user));
+  //     }
+  //   } catch (e) {
+  //     this.dispatch(addError(e.message));
+  //   }
+  // };
 
   createComment = async (postId, comment) => {
     this.dispatch(createCommentStart(postId, comment));
