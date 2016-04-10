@@ -49,7 +49,7 @@ export default class BaseSchoolPage extends React.Component {
       resetCreatePostForm: PropTypes.func.isRequired,
       updateCreatePostForm: PropTypes.func.isRequired
     }).isRequired,
-    schools: PropTypes.shape().isRequired,
+    schools: PropTypes.arrayOf(PropTypes.shape()).isRequired,
     page_school: PropTypes.shape({
       url_name: PropTypes.string.isRequired
     }).isRequired
@@ -58,7 +58,7 @@ export default class BaseSchoolPage extends React.Component {
   state = {
     form: false
   };
-  
+
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {
       const postSchools = this.props.create_post_form.schools;

@@ -19,7 +19,7 @@ import { parse as parseUrl } from 'url';
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import _ from 'lodash';
+import { isString, indexOf } from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 import knexLogger from 'knex-logger';
@@ -76,10 +76,20 @@ const knexConfig = db_config[exec_env];
 let bookshelf = initBookshelf(knexConfig);
 let api = initApi(bookshelf)
 
+if (indexOf(['test', 'travis'], exec_env) !== -1) {
+  let warn = console.error; // eslint-disable-line no-console
+  console.error = function(warning) { // eslint-disable-line no-console
+    if (/(Invalid prop|Failed propType)/.test(warning)) {
+      throw new Error(warning);
+    }
+    warn.apply(console, arguments);
+  };
+}
+
 let reactHandler = async (req, res) => {
   const store = initState();
 
-  if (req.session && req.session.user && _.isString(req.session.user)) {
+  if (req.session && req.session.user && isString(req.session.user)) {
     try {
       let user = await bookshelf
         .model('User')
@@ -177,7 +187,7 @@ let reactHandler = async (req, res) => {
 const domainValidator = (req, res, next) => {
   const { hostname } = parseUrl(API_HOST);
 
-  if (_.isString(req.hostname) && req.hostname !== hostname) {
+  if (isString(req.hostname) && req.hostname !== hostname) {
     const newUri = `${API_HOST}${req.originalUrl}`;
     res.redirect(301, newUri);
     return;
