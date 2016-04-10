@@ -687,12 +687,13 @@ export default class ApiController {
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
           .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
-          .orderByRaw(`
-            CASE WHEN posts.fully_published_at IS NOT NULL
-              THEN posts.fully_published_at
-              ELSE posts.created_at
-            END DESC
-          `)
+          // .orderByRaw(`
+          //   CASE WHEN posts.fully_published_at IS NOT NULL
+          //     THEN posts.fully_published_at
+          //     ELSE posts.created_at
+          //   END DESC
+          // `)
+          .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id')
           .limit(5)
           .offset(offset)
@@ -2438,15 +2439,16 @@ export default class ApiController {
     let Comment = this.bookshelf.model('Comment');
     let Post = this.bookshelf.model('Post');
 
-
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
       return;
     }
 
+    let post_object;
+
     try {
-      await Post.where({id: req.params.id}).fetch({require: true});
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
     } catch (e) {
       res.sendStatus(404);
       return;
@@ -2467,8 +2469,11 @@ export default class ApiController {
       text: comment_text
     });
 
+    post_object.attributes.updated_at = new Date().toJSON();
+
     try {
       await comment_object.save(null, {method: 'insert'});
+      await post_object.save(null, {method: 'update'});
       await this.getPostComments(req, res);
     } catch (e) {
       res.status(500);
@@ -2483,12 +2488,18 @@ export default class ApiController {
       return;
     }
 
+    let Post = this.bookshelf.model('Post');
     let Comment = this.bookshelf.model('Comment');
 
+    let post_object;
     let comment_object;
 
     try {
-      comment_object = await Comment.where({ id: req.params.comment_id,post_id: req.params.id }).fetch({require: true});
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
+      comment_object = await Comment.where({
+        id: req.params.comment_id,
+        post_id: req.params.id
+      }).fetch({require: true});
     } catch(e) {
       res.status(404);
       res.send({error: e.message});
@@ -2511,8 +2522,10 @@ export default class ApiController {
 
     comment_object.set('text', comment_text);
     comment_object.set('updated_at', new Date().toJSON());
+    post_object.attributes.updated_at = new Date().toJSON();
 
     await comment_object.save(null, {method: 'update'});
+    await post_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
   }
 
@@ -2529,9 +2542,12 @@ export default class ApiController {
       return;
     }
 
+    let Post = this.bookshelf.model('Post');
     let Comment = this.bookshelf.model('Comment');
 
+    let post_object;
     try {
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
       let comment_object = await Comment.where({ id: req.params.comment_id, post_id: req.params.id }).fetch({require: true});
 
       if (comment_object.get('user_id') != req.session.user) {
@@ -2547,6 +2563,9 @@ export default class ApiController {
       return;
     }
 
+    post_object.attributes.updated_at = new Date().toJSON();
+    
+    await post_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
   }
 
