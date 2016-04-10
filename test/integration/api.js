@@ -264,11 +264,7 @@ describe('api v.1', () => {
               });
 
               const dateJson = new Date(Date.now() - 50000 + i*1000).toJSON();
-              let defaultAttr = { fully_published_at: dateJson, created_at: dateJson };
-
-              if (i % 2) { // for even posts do not set fully_published_at
-                defaultAttr.fully_published_at = null;
-              }
+              let defaultAttr = { updated_at: dateJson };
 
               return post.save(defaultAttr, {method: 'insert'});
             }));
