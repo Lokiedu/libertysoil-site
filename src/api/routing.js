@@ -62,8 +62,8 @@ export function initApi(bookshelf) {
   api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
   api.get('/posts/liked', wrap(controller.currentUserLikedPosts.bind(controller)));
   api.get('/posts/liked/:user', wrap(controller.userLikedPosts.bind(controller)));
-  api.get('/posts/favoured', wrap(controller.userFavouredPosts.bind(controller)));
-  api.get('/posts/favoured/:user', wrap(controller.getFavouredPosts.bind(controller)));
+  api.get('/posts/favoured', wrap(controller.currentUserFavouredPosts.bind(controller)));
+  api.get('/posts/favoured/:user', wrap(controller.userFavouredPosts.bind(controller)));
   api.get('/posts/tag/:tag', wrap(controller.tagPosts.bind(controller)));
   api.get('/posts/school/:school', wrap(controller.schoolPosts.bind(controller)));
   api.get('/posts/geotag/:url_name', wrap(controller.geotagPosts.bind(controller)));

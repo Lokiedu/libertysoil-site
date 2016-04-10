@@ -66,7 +66,7 @@ export default class ApiController {
         qb
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', req.params.user)
-          .orderBy('posts.created_at', 'desc')
+          .orderBy('posts.updated_at', 'desc')
           .whereIn('posts.type', ['short_text', 'long_text']);
       });
 
@@ -306,7 +306,7 @@ export default class ApiController {
             .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
             .andWhere('user_id', userId);
         })
-        .orderBy('created_at', 'desc');
+        .orderBy('updated_at', 'desc');
     });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
@@ -319,45 +319,23 @@ export default class ApiController {
     return posts;
   }
 
-  async userFavouredPosts(req, res) {
+  async currentUserFavouredPosts(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
       return;
     }
-    let Post = this.bookshelf.model('Post');
 
     try {
-      let favourites = await this.bookshelf.knex
-        .select('post_id')
-        .from('favourites')
-        .where({user_id: req.session.user})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .whereIn('id', favourites)
-          .orderBy('posts.created_at', 'desc')
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      let posts = await this.getFavouredPosts(req.session.user);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
   }
 
-  async getFavouredPosts(req, res) {
-    let Post = this.bookshelf.model('Post');
-
+  async userFavouredPosts(req, res) {
     try {
       let user_id = await this.bookshelf.knex
         .select('id')
@@ -365,31 +343,38 @@ export default class ApiController {
         .where('users.username', '=', req.params.user)
         .map(row => row.id);
 
-      let favourites = await this.bookshelf.knex
-        .select('post_id')
-        .from('favourites')
-        .where({user_id: user_id[0]})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .whereIn('id', favourites)
-          .orderBy('posts.created_at', 'desc')
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      let posts = await this.getFavouredPosts(user_id[0]);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
+  }
+
+  async getFavouredPosts(userId) {
+    let Post = this.bookshelf.model('Post');
+
+    let favourites = await this.bookshelf.knex
+      .select('post_id')
+      .from('favourites')
+      .where({user_id: userId})
+      .map(row => row.post_id);
+
+    let q = Post.forge()
+    .query(qb => {
+      qb
+        .whereIn('id', favourites)
+        .orderBy('posts.updated_at', 'desc')
+    });
+
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
+    posts = posts.map(post => {
+      post.attributes.comments = post_comments_count[post.get('id')];
+      return post;
+    });
+
+    return posts;
   }
 
   async checkSchoolExists(req, res) {
@@ -687,12 +672,6 @@ export default class ApiController {
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
           .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
-          // .orderByRaw(`
-          //   CASE WHEN posts.fully_published_at IS NOT NULL
-          //     THEN posts.fully_published_at
-          //     ELSE posts.created_at
-          //   END DESC
-          // `)
           .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id')
           .limit(5)
