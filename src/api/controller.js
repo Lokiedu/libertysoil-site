@@ -521,6 +521,9 @@ export default class ApiController {
       }
 
       await user.liked_posts().attach(post);
+      
+      post.attributes.updated_at = new Date().toJSON();
+      await post.save(null, {method: 'update'});
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
 
@@ -557,6 +560,9 @@ export default class ApiController {
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
 
       await user.liked_posts().detach(post);
+
+      post.attributes.updated_at = new Date().toJSON();
+      await post.save(null, {method: 'update'});
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
 
