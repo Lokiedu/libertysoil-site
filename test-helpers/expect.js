@@ -97,11 +97,13 @@ expect.addAssertion('to open authorized', function (expect, subject, value) {
 });
 
 expect.addAssertion('not to open authorized', function (expect, subject, value) {
+  expect.errorMode = 'bubble';
   return expect(subjectToRequest(subject), 'to yield response', {})
     .then(function (context) {
-    const status = context.httpResponse.statusLine.statusCode;
-    expect(status, 'to equal', 403);
-  });
+
+      const status = context.httpResponse.statusLine.statusCode;
+      expect(status, 'to equal', 403);
+    });
 });
 
 expect.addAssertion('to open not found', function (expect, subject, value) {
