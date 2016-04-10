@@ -19,7 +19,7 @@ import { parse as parseUrl } from 'url';
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import _ from 'lodash';
+import { isString } from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 import knexLogger from 'knex-logger';
@@ -79,7 +79,7 @@ let api = initApi(bookshelf)
 let reactHandler = async (req, res) => {
   const store = initState();
 
-  if (req.session && req.session.user && _.isString(req.session.user)) {
+  if (req.session && req.session.user && isString(req.session.user)) {
     try {
       let user = await bookshelf
         .model('User')
@@ -177,7 +177,7 @@ let reactHandler = async (req, res) => {
 const domainValidator = (req, res, next) => {
   const { hostname } = parseUrl(API_HOST);
 
-  if (_.isString(req.hostname) && req.hostname !== hostname) {
+  if (isString(req.hostname) && req.hostname !== hostname) {
     const newUri = `${API_HOST}${req.originalUrl}`;
     res.redirect(301, newUri);
     return;
