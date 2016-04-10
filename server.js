@@ -19,7 +19,7 @@ import { parse as parseUrl } from 'url';
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { isString } from 'lodash';
+import { isString, indexOf } from 'lodash';
 import session from 'express-session';
 import initRedisStore from 'connect-redis';
 import knexLogger from 'knex-logger';
@@ -75,6 +75,16 @@ let exec_env = process.env.DB_ENV || 'development';
 const knexConfig = db_config[exec_env];
 let bookshelf = initBookshelf(knexConfig);
 let api = initApi(bookshelf)
+
+if (indexOf(['test', 'travis'], exec_env) !== -1) {
+  let warn = console.error; // eslint-disable-line no-console
+  console.error = function(warning) { // eslint-disable-line no-console
+    if (/(Invalid prop|Failed propType)/.test(warning)) {
+      throw new Error(warning);
+    }
+    warn.apply(console, arguments);
+  };
+}
 
 let reactHandler = async (req, res) => {
   const store = initState();
