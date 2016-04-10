@@ -65,7 +65,7 @@ export class Tab extends Component {
 export class Tabs extends Component {
   static displayName = 'Tabs';
   static propTypes = {
-    onActiveChanged: PropTypes.func,
+    onClick: PropTypes.func,
     active: PropTypes.number,
     invert: PropTypes.bool,
     className: PropTypes.string,
@@ -79,7 +79,7 @@ export class Tabs extends Component {
 
   static defaultProps = {
     active: 0,
-    onActiveChanged: () => {}
+    onClick: () => {}
   };
 
   componentWillReceiveProps(nextProps) {
@@ -90,7 +90,7 @@ export class Tabs extends Component {
   
   clickHandler = (i) => {
     this.setState({ active: i });
-    this.props.onActiveChanged(i);
+    this.props.onClick(i);
   };
 
   render() {
