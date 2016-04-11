@@ -454,6 +454,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async getQuotes() {
+    let response = await this.get('/api/v1/quotes');
+    return response.body;
+  }
+
   async uploadImage(images) {
     let data = new FormData;
     images.forEach((image) => {

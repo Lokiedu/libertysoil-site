@@ -129,6 +129,8 @@ export function initApi(bookshelf) {
   api.post('/geotag/:url_name/like', wrap(controller.likeGeotag.bind(controller)));
   api.post('/geotag/:url_name/unlike', wrap(controller.unlikeGeotag.bind(controller)));
 
+  api.get('/quotes', wrap(controller.getQuotes.bind(controller)));
+
 
   return api;
 }
