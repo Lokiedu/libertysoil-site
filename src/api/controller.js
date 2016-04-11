@@ -275,7 +275,7 @@ export default class ApiController {
         .from('users')
         .where('users.username', '=', req.params.user)
         .map(row => row.id);
-      
+
       let posts = await this.getLikedPosts(user_id[0]);
       res.send(posts);
     } catch (e) {
@@ -529,6 +529,12 @@ export default class ApiController {
       let post = await Post.where({id: req.params.id}).fetch({require: true});
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
 
+      if (post.get('user_id') === user.id) {
+        res.status(403);
+        res.send({error: "You can't like your own post"});
+        return;
+      }
+
       await user.liked_posts().attach(post);
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
@@ -600,6 +606,12 @@ export default class ApiController {
     try {
       let post = await Post.where({id: req.params.id}).fetch({require: true});
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['favourited_posts']});
+
+      if (post.get('user_id') === user.id) {
+        res.status(403);
+        res.send({error: "You can't add your own post to favorites"});
+        return;
+      }
 
       await user.favourited_posts().attach(post);
 
@@ -2406,6 +2418,19 @@ export default class ApiController {
       res.status(500);
       res.send({error: `Couldn't unlike the geotag: ${e.message}`});
     }
+  }
+  
+  async getQuotes(req, res) {
+    const Quote = this.bookshelf.model('Quote');
+
+    const quotes = await Quote
+      .collection()
+      .query(qb => {
+        qb.orderBy('last_name');
+      })
+      .fetch();
+
+    res.send(quotes);
   }
 
   async getPostComments(req, res) {

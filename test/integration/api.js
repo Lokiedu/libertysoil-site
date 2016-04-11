@@ -262,7 +262,15 @@ describe('api v.1', () => {
                 user_id: user.get('id'),
                 text: `This is a Post #${i}`
               });
-              return post.save({fully_published_at: (new Date(Date.now() - 50000 + i*1000)).toJSON()}, {method: 'insert'});
+
+              const dateJson = new Date(Date.now() - 50000 + i*1000).toJSON();
+              let defaultAttr = { fully_published_at: dateJson, created_at: dateJson };
+
+              if (i % 2) { // for even posts do not set fully_published_at
+                defaultAttr.fully_published_at = null;
+              }
+
+              return post.save(defaultAttr, {method: 'insert'});
             }));
 
           });
@@ -287,11 +295,20 @@ describe('api v.1', () => {
         });
 
         describe('Favourites', () => {
+          let ownPost;
 
           beforeEach(async () => {
+            ownPost = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              text: `This is own post`,
+              user_id: user.id
+            });
+            await ownPost.save({}, {method: 'insert'});
           });
 
           afterEach(async () => {
+            await ownPost.destroy();
           });
 
           it('CAN fav post', async () => {
@@ -323,15 +340,31 @@ describe('api v.1', () => {
               'body to satisfy', [{text: 'This is clean post'}]
             );
           });
+
+          it('CAN NOT fav own post', async () => {
+            await expect(
+              { url: `/api/v1/post/${ownPost.id}/fav`, session: sessionId, method: 'POST' },
+              'not to open authorized'
+            );
+          });
         });
 
         describe('Likes', () => {
+          let ownPost;
 
           beforeEach(async () => {
+            ownPost = new Post({
+              id: uuid4(),
+              type: POST_DEFAULT_TYPE,
+              text: `This is own post`,
+              user_id: user.id
+            });
+            await ownPost.save({}, {method: 'insert'});
           });
 
           afterEach(async () => {
             await user.liked_posts().detach(post);
+            await ownPost.destroy();
           });
 
           it('CAN like post', async () => {
@@ -361,6 +394,13 @@ describe('api v.1', () => {
             await expect(
               { url: `/api/v1/posts/liked`, session: sessionId },
               'body to satisfy', [{text: 'This is clean post'}]
+            );
+          });
+
+          it('CAN NOT like own post', async () => {
+            await expect(
+              { url: `/api/v1/post/${ownPost.id}/fav`, session: sessionId, method: 'POST' },
+              'not to open authorized'
             );
           });
         });
