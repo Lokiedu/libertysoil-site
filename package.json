@@ -19,6 +19,7 @@
     "import:geonames": "babel-node bin/geonames.js",
     "import:geotags": "babel-node bin/geotags.js",
     "import:schools": "babel-node bin/schools.js",
+    "import:quotes": "babel-node bin/quotes.js",
     "webpack:build:dev": "webpack --config webpack.dev.config.js",
     "webpack:build:prod": "NODE_ENV=production webpack --config webpack.prod.config.js",
     "db:migrate": "knex migrate:latest",
