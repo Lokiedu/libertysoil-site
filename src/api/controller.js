@@ -2405,6 +2405,19 @@ export default class ApiController {
       res.send({error: `Couldn't unlike the geotag: ${e.message}`});
     }
   }
+  
+  async getQuotes(req, res) {
+    const Quote = this.bookshelf.model('Quote');
+
+    const quotes = await Quote
+      .collection()
+      .query(qb => {
+        qb.orderBy('last_name');
+      })
+      .fetch();
+
+    res.send(quotes);
+  }
 
   async getPostComments(req, res) {
     let Comment = this.bookshelf.model('Comment');
