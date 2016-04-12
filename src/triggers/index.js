@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ import {
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress, setUserRecentTags
+  setUIProgress, setUserRecentTags, setQuotes
 } from '../actions';
 
 
@@ -397,6 +397,16 @@ export class ActionsTrigger {
       }
     }
   };
+
+  setQuotes = async () => {
+    try {
+      let result = await this.client.getQuotes();
+
+      this.dispatch(setQuotes(result));
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+  }
 
   deletePost = async (post_uuid) => {
     try {

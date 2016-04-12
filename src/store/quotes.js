@@ -15,26 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.review_group {
-  &__reviews {
+import i from 'immutable';
 
-  }
+import * as a from '../actions';
 
-  &__navigation {
-    padding-bottom: @doubleSpace;
-    &:extend(.layout);
-    &:extend(.layout-columns);
-    &:extend(.layout-align_center);
-    justify-content: space-around;
+const initialState = i.List([]);
 
-    &_item {
-      margin: 2px;
-      opacity: 0.7;
-      cursor: pointer;
-
-      &-active {
-        opacity: 1;
-      }
+export default function reducer(state = initialState, action) {
+  switch (action.type) {
+    case a.SET_QUOTES: {
+      state = i.fromJS(action.quotes);
     }
   }
+
+  return state;
 }
