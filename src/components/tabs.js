@@ -15,9 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-export class TabTitle extends React.Component {
+export class TabTitle extends Component {
   static displayName = 'TabTitle';
 
   render() {
@@ -29,7 +29,7 @@ export class TabTitle extends React.Component {
   }
 }
 
-export class TabContent extends React.Component {
+export class TabContent extends Component {
   static displayName = 'TabContent';
 
   render() {
@@ -37,7 +37,7 @@ export class TabContent extends React.Component {
   }
 }
 
-export class Tab extends React.Component {
+export class Tab extends Component {
   static displayName = 'Tab';
 
   render() {
@@ -62,22 +62,35 @@ export class Tab extends React.Component {
   }
 }
 
-export class Tabs extends React.Component {
+export class Tabs extends Component {
   static displayName = 'Tabs';
+  static propTypes = {
+    onClick: PropTypes.func,
+    active: PropTypes.number,
+    invert: PropTypes.bool,
+    className: PropTypes.string,
+    menuClassName: PropTypes.string,
+    panelClassName: PropTypes.string
+  };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      active: this.props.active
-    };
-  }
+  state = {
+    active: this.props.active
+  };
 
   static defaultProps = {
-    active: 0
+    active: 0,
+    onClick: () => {}
   };
+
+  componentWillReceiveProps(nextProps) {
+    if ((typeof nextProps.active === 'number') && (nextProps.active !== this.state.active)) {
+      this.setState({ active: nextProps.active });
+    }
+  }
   
   clickHandler = (i) => {
     this.setState({ active: i });
+    this.props.onClick(i);
   };
 
   render() {
@@ -127,12 +140,19 @@ export class Tabs extends React.Component {
 
     return (
       <div className={className}>
-        <nav className={menuClassName}>
-          {titles}
-        </nav>
+        { !this.props.invert &&
+          <nav className={menuClassName}>
+            {titles}
+          </nav>
+        }
         <div className={panelClassName}>
           {tabs}
         </div>
+        { this.props.invert &&
+          <nav className={menuClassName}>
+            {titles}
+          </nav>
+        }
       </div>
     );
   }

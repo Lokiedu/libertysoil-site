@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -89,6 +89,8 @@ export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 export const SET_GEOTAG_CLOUD = 'SET_GEOTAG_CLOUD';
+
+export const SET_QUOTES = 'SET_QUOTES';
 
 export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
@@ -523,6 +525,13 @@ export function removeLikedGeotag(geotag) {
   return {
     type: REMOVE_LIKED_GEOTAG,
     geotag
+  }
+}
+
+export function setQuotes(quotes) {
+  return {
+    type: SET_QUOTES,
+    quotes
   }
 }
 
