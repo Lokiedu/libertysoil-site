@@ -30,7 +30,7 @@ import {
 import Header           from '../../components/header';
 import HeaderLogo       from '../../components/header-logo';
 import CreatePost       from '../../components/create-post';
-import Breadcrumbs      from '../../components/breadcrumbs';
+import Breadcrumbs      from '../../components/breadcrumbs/breadcrumbs';
 import Tag              from '../../components/tag';
 import TagIcon          from '../../components/tag-icon';
 import Footer           from '../../components/footer';

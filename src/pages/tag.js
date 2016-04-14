@@ -40,7 +40,7 @@ import {
   PageContent
 }                           from '../components/page';
 import CreatePost from '../components/create-post';
-import Breadcrumbs          from '../components/breadcrumbs';
+import Breadcrumbs          from '../components/breadcrumbs/breadcrumbs';
 import Header               from '../components/header';
 import HeaderLogo           from '../components/header-logo';
 import Panel                from '../components/panel';

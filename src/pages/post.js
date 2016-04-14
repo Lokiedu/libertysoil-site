@@ -28,7 +28,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
-import Breadcrumbs from '../components/breadcrumbs';
+import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import HeaderLogo from '../components/header-logo';
 import NotFound from './not-found'
 import Header from '../components/header';

@@ -30,7 +30,7 @@ import {
 } from '../components/page';
 import NotFound from './not-found'
 import HeaderLogo from '../components/header-logo';
-import Breadcrumbs from '../components/breadcrumbs';
+import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import {API_HOST} from '../config';
