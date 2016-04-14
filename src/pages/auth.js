@@ -113,7 +113,7 @@ export class Auth extends React.Component {
         <Page className="page__container-no_spacing page__container-bg">
           <PageMain>
             <PageBody className="page__body-small">
-              <PageContent>
+              <PageContent className="page__content-mobile_space">
                 {renderedMessages}
                 <div className="layout__row">
                   <Register

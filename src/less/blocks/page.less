@@ -82,6 +82,10 @@
 
 .page__messages {
   margin-top: -27px;
+
+  @media @before-normal {
+    margin-top: 0;
+  }
 }
 
 .page__sidebar {
@@ -205,15 +209,17 @@
 
 .page__content {
   flex: auto;
-  overflow: hidden;
+  padding: 0 0 @doubleSpace 0;
 
-  &-horizontal_space {
-    padding-top: 0;
-    padding-bottom: 0;
+  @media @before-normal {
+    overflow: hidden;
   }
 
-  &-fill {
-    padding: 0;
+  &-mobile_space {
+    @media @before-normal {
+      padding-right: @space;
+      padding-left: @space;
+    }
   }
 }
 

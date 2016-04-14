@@ -39,7 +39,16 @@ export default class LoginComponent extends React.Component {
             <div className="input_group">
               <span className="input_group__before input_group__before-outside micon micon-extra">person</span>
               <div className="input_group__input">
-                <input className="input input-big input-block" id="loginUsername" required="required" type="text" name="username" placeholder="Username" />
+                <input
+                  className="input input-big input-block"
+                  id="loginUsername"
+                  required="required"
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                />
               </div>
             </div>
           </div>
