@@ -30,9 +30,7 @@ import {
 import Header           from '../../components/header';
 import HeaderLogo       from '../../components/header-logo';
 import CreatePost       from '../../components/create-post';
-import Breadcrumbs      from '../../components/breadcrumbs/breadcrumbs';
-import Tag              from '../../components/tag';
-import TagIcon          from '../../components/tag-icon';
+import TagBreadcrumbs   from '../../components/breadcrumbs/tag-breadcrumbs';
 import Footer           from '../../components/footer';
 import SchoolHeader     from '../../components/school-header';
 import Sidebar          from '../../components/sidebar';
@@ -117,12 +115,7 @@ export default class BaseSchoolPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <Breadcrumbs>
-            <Link to="/s" title="All Schools">
-              <TagIcon inactive type={TAG_SCHOOL} />
-            </Link>
-            <Tag name={page_school.name} type={TAG_SCHOOL} urlId={page_school.url_name} />
-          </Breadcrumbs>
+          <TagBreadcrumbs type={TAG_SCHOOL} tag={page_school} />
         </Header>
 
         <Page>
