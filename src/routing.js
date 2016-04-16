@@ -40,10 +40,12 @@ import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
+import TagEditPage from './pages/tag-edit';
 import TagCloudPage from './pages/tag-cloud';
 import SchoolCloudPage from './pages/school-cloud';
 import GeotagCloudPage from './pages/geotag-cloud';
 import GeotagPage from './pages/geotag';
+import GeotagEditPage from './pages/geotag-edit';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -70,7 +72,10 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />
       <Route path="/tag">
         <IndexRoute component={TagCloudPage} onEnter={withoutAuth} />
-        <Route component={TagPage} path=":tag" onEnter={withoutAuth} />
+        <Route path="/tag/:tag">
+          <IndexRoute component={TagPage} onEnter={withoutAuth} />
+          <Route component={HashtagEditPage} path="/tag/:tag/edit" onEnter={withAuth} />
+        </Route>
       </Route>
       <Route path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
@@ -92,7 +97,10 @@ export function getRoutes(authHandler, fetchHandler) {
       </Route>
       <Route path="/geo">
         <IndexRoute component={GeotagCloudPage} onEnter={withoutAuth} />
-        <Route component={GeotagPage} path="/geo/:url_name" onEnter={withoutAuth} />
+        <Route path="/geo/:url_name">
+          <IndexRoute component={GeotagPage} onEnter={withoutAuth} />
+          <Route component={GeotagEditPage} path="/geo/:url_name/edit" onEnter={withAuth} />
+        </Route>
       </Route>
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
