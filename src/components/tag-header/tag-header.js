@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { Link, IndexLink } from 'react-router';
 
 import Panel from '../panel';
 import Time from '../time';
@@ -76,6 +77,19 @@ function getFollowedTags(user, type) {
   }
 }
 
+function getTagPrefix(type) {
+  switch (type) {
+    case TAG_SCHOOL:
+      return 's';
+    case TAG_HASHTAG:
+      return 'tag';
+    case TAG_LOCATION:
+      return 'geo';
+    default:
+      return '';
+  }
+}
+
 export default class TagHeader extends React.Component {
   static displayName = 'TagHeader';
 
@@ -113,6 +127,9 @@ export default class TagHeader extends React.Component {
 
     let toolbarPrimary = [];
     let toolbarSecondary = [];
+    let toolbarAlt = [];
+
+    const prefix = getTagPrefix(type);
 
     let name = tag.url_name;
     if (tag.name) {
@@ -155,6 +172,24 @@ export default class TagHeader extends React.Component {
         />
       ];
 
+      toolbarAlt = [
+        <IndexLink
+          activeClassName="tabs__link-active"
+          className="tabs__link button button-midi"
+          to={`/${prefix}/${url_name}`}
+        >
+          Posts
+        </IndexLink>,
+        <Link
+          activeClassName="tabs__link-active"
+          className="tabs__link button button-midi"
+          to={`/${prefix}/${url_name}/edit`}
+          visible={true}
+        >
+          Edit
+        </Link>
+      ];
+
       if (postsAmount) {
         toolbarPrimary.unshift(
           <div key="posts" className="panel__toolbar_item-text">
@@ -170,6 +205,7 @@ export default class TagHeader extends React.Component {
         icon={<Tag size="BIG" type={type} urlId={url_name} />}
         toolbarPrimary={toolbarPrimary}
         toolbarSecondary={toolbarSecondary}
+        toolbarAlt={toolbarAlt}
       >
         {linesOfDescription}
         {tag.updated_at &&

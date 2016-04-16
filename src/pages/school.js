@@ -29,8 +29,7 @@ import {
 } from '../actions';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import NotFound from './not-found'
-import BaseSchoolPage from './base/school';
+import NotFound from './not-found';
 import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers'

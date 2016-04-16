@@ -18,9 +18,8 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import Helmet from 'react-helmet';
-import { values, find } from 'lodash';
+import { values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -72,34 +71,6 @@ export class TagPage extends Component {
     return 200;
   }
 
-  state = {
-    form: false
-  };
-
-  componentWillReceiveProps(nextProps) {
-    if (this.state.form) {
-      const postHashtags = this.props.create_post_form.hashtags;
-
-      if (isEmpty(postHashtags)) {
-        this.setState({ form: false });
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetCreatePostForm();
-  }
-
-  toggleForm = () => {
-    if (!this.state.form) {
-      const hashtag = this.props.hashtags[this.props.params.tag];
-      this.props.resetCreatePostForm();
-      this.props.updateCreatePostForm({ hashtags: [hashtag] });
-    }
-
-    this.setState({ form: !this.state.form });
-  };
-
   render() {
     const {
       is_logged_in,
@@ -139,7 +110,7 @@ export class TagPage extends Component {
         postsAmount={thisTagPosts.length}
         create_post_form={this.props.create_post_form}
       >
-        <Helmet title={`Posts about ${tag.name} on `} />
+        <Helmet title={`"${tag.name}" posts on `} />
         <River
           current_user={current_user}
           posts={posts}

@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { Link, IndexLink } from 'react-router';
 import { values } from 'lodash';
 
 import {
@@ -28,6 +27,7 @@ import {
   PageContent
 }                       from '../../components/page';
 import Header           from '../../components/header';
+import MapboxMap        from '../../components/mapbox-map';
 import HeaderLogo       from '../../components/header-logo';
 import CreatePost       from '../../components/create-post';
 import TagBreadcrumbs   from '../../components/breadcrumbs/tag-breadcrumbs';
@@ -42,12 +42,63 @@ function formInitialTags(type, value) {
   switch (type) {
     case TAG_SCHOOL:
       return { schools: value };
-    case TAG_LOCATION:
-      return { hashtags: value };
     case TAG_HASHTAG:
+      return { hashtags: value };
+    case TAG_LOCATION:
       return { geotags: value };
     default:
       return {};
+  }
+}
+
+function getPageCaption(type, name) {
+  let caption;
+  switch (type) {
+    case TAG_LOCATION: {
+      caption = [`${name} `, <span className="page__caption_highlight">Education</span>];
+      break;
+    }
+    default:
+      caption = name;
+  }
+
+  return (
+    <PageCaption>
+      {caption}
+    </PageCaption>
+  );
+}
+
+function GeotagPageHero({ geotag }) {
+  if (geotag.type == 'City' && geotag.geonames_city) {
+    let location = {
+      lat: geotag.geonames_city.latitude,
+      lon: geotag.geonames_city.longitude
+    };
+
+    return (
+      <PageHero>
+        <MapboxMap
+          className="page__hero_map"
+          frozen
+          viewLocation={location}
+        />
+      </PageHero>
+    );
+  }
+
+  return <PageHero src="/images/hero/welcome.jpg" />;
+}
+
+function TagPageHero({ type, tag, src }) {
+  switch (type) {
+    case TAG_HASHTAG:
+    case TAG_SCHOOL:
+      return <PageHero src={src} />;
+    case TAG_LOCATION:
+      return <GeotagPageHero geotag={tag} />;
+    default:
+      return <script />;
   }
 }
 
@@ -55,9 +106,7 @@ export default class BaseTagPage extends React.Component {
   static displayName = 'BaseTagPage';
 
   static propTypes = {
-    tag: PropTypes.shape({
-      name: PropTypes.string
-    }).isRequired,
+    tag: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
     actions: PropTypes.shape({
       resetCreatePostForm: PropTypes.func,
@@ -109,10 +158,12 @@ export default class BaseTagPage extends React.Component {
       postsAmount
     } = this.props;
 
-    let url_name = tag.name;
-    if (tag.url_name) {
-      url_name = tag.url_name;
+    let name = tag.url_name;
+    if (tag.name) {
+      name = tag.name;
     }
+
+    const pageCaption = getPageCaption(type, name);
 
     let createPostForm;
     let addedTags;
@@ -142,10 +193,8 @@ export default class BaseTagPage extends React.Component {
         <Page>
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
-            <PageCaption>
-              {tag.name}
-            </PageCaption>
-            <PageHero src="/images/hero/welcome.jpg" />
+            {pageCaption}
+            <TagPageHero type={type} tag={tag} src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}
@@ -159,29 +208,7 @@ export default class BaseTagPage extends React.Component {
             </PageBody>
             <PageBody className="page__body-up">
               <PageContent>
-                <div className="layout__space-double">
-                  <div className="layout__grid tabs">
-                    <div className="layout__grid_item">
-                      <IndexLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/s/${url_name}`}
-                      >
-                        About
-                      </IndexLink>
-                    </div>
-                    <div className="layout__grid_item">
-                      <Link
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/s/${url_name}/edit`}
-                        visible={true}
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                <div className="layout__space-double"></div>
                 <div className="layout__row">
                   {createPostForm}
                   {this.props.children}
