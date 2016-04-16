@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { Link, IndexLink } from 'react-router';
 
 import Panel from './panel';
 import Time from './time';
@@ -54,6 +55,7 @@ export default class SchoolHeader extends React.Component {
 
     let toolbarPrimary = [];
     let toolbarSecondary = [];
+    let toolbarAlt = [];
 
     let name = school.url_name;
     let linesOfDescription = <p>No information provided...</p>;
@@ -103,6 +105,24 @@ export default class SchoolHeader extends React.Component {
           className="button-midi"
         />
       ];
+
+      toolbarAlt = [
+        <IndexLink
+          activeClassName="tabs__link-active"
+          className="tabs__link button button-midi"
+          to={`/s/${school.url_name}`}
+        >
+          Posts
+        </IndexLink>,
+        <Link
+          activeClassName="tabs__link-active"
+          className="tabs__link button button-midi"
+          to={`/s/${school.url_name}/edit`}
+          visible={true}
+        >
+          Edit
+        </Link>
+      ];
     }
 
     return (
@@ -111,6 +131,7 @@ export default class SchoolHeader extends React.Component {
         icon={<Tag size="BIG" type={TAG_SCHOOL} urlId={school.url_name} />}
         toolbarPrimary={toolbarPrimary}
         toolbarSecondary={toolbarSecondary}
+        toolbarAlt={toolbarAlt}
       >
         {linesOfDescription}
         <p><Time timestamp={school.updated_at} /></p>

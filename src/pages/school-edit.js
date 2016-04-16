@@ -23,7 +23,7 @@ import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import BaseSchoolPage from './base/school'
+import BaseTagPage from './base/tag'
 import {
   addSchool,
   resetCreatePostForm,
@@ -86,10 +86,11 @@ class SchoolEditPage extends React.Component {
     }
 
     return (
-      <BaseSchoolPage
+      <BaseTagPage
         current_user={this.props.current_user}
         is_logged_in={this.props.is_logged_in}
-        page_school={school}
+        tag={school}
+        type="TAG_SCHOOL"
         actions={actions}
         triggers={triggers}
         schools={schools}
@@ -100,7 +101,7 @@ class SchoolEditPage extends React.Component {
             <SchoolEditForm saveSchoolHandler={this.saveSchool} school={school} />
           </div>
         </div>
-      </BaseSchoolPage>
+      </BaseTagPage>
     );
   }
 }

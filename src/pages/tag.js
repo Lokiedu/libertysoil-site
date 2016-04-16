@@ -31,31 +31,11 @@ import {
   updateCreatePostForm
 } from '../actions';
 
-import {
-  Page,
-  PageMain,
-  PageCaption,
-  PageHero,
-  PageBody,
-  PageContent
-}                           from '../components/page';
-import CreatePost from '../components/create-post';
-import Breadcrumbs          from '../components/breadcrumbs/breadcrumbs';
-import Header               from '../components/header';
-import HeaderLogo           from '../components/header-logo';
-import Panel                from '../components/panel';
-import Footer               from '../components/footer';
 import River                from '../components/river_of_posts';
-import Sidebar              from '../components/sidebar';
-import SidebarAlt           from '../components/sidebarAlt';
-import AddedTags from '../components/post/added-tags';
-import Tag                  from '../components/tag';
-import TagIcon              from '../components/tag-icon';
-import FollowTagButton      from '../components/follow-tag-button';
-import LikeTagButton        from '../components/like-tag-button';
 import { ActionsTrigger }   from '../triggers';
 import { defaultSelector }  from '../selectors';
 import { TAG_HASHTAG }      from '../consts/tags';
+import BaseTagPage from './base/tag';
 
 export class TagPage extends Component {
   static displayName = 'TagPage';
@@ -100,7 +80,7 @@ export class TagPage extends Component {
     if (this.state.form) {
       const postHashtags = this.props.create_post_form.hashtags;
 
-      if (!find(postHashtags, tag => tag.name === nextProps.params.tag)) {
+      if (isEmpty(postHashtags)) {
         this.setState({ form: false });
       }
     }
@@ -130,7 +110,8 @@ export class TagPage extends Component {
       updateCreatePostForm,
       users,
       params,
-      hashtags
+      hashtags,
+      schools
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -144,105 +125,30 @@ export class TagPage extends Component {
     }
 
     const thisTagPosts = tag_posts[tag.name] || [];
-    const followedTags = (current_user) ? current_user.followed_hashtags : {};
-    const likeTriggers = {
-      likeTag: triggers.likeHashtag,
-      unlikeTag: triggers.unlikeHashtag
-    };
-
-    let toolbarPrimary = [];
-    let toolbarSecondary = [];
-
-    let createPostForm;
-    let addedTags;
-
-    if (is_logged_in) {
-      toolbarSecondary = [
-        <LikeTagButton
-          key="like"
-          is_logged_in={is_logged_in}
-          liked_tags={current_user.liked_hashtags}
-          tag={tag.name}
-          triggers={likeTriggers}
-          outline={true}
-          size="midl"
-        />
-      ];
-
-      toolbarPrimary = [
-        <div key="posts" className="panel__toolbar_item-text">
-          {thisTagPosts.length} posts
-        </div>,
-        <button key="new" onClick={this.toggleForm} className="button button-midi button-light_blue" type="button">
-          New
-        </button>,
-        <FollowTagButton
-          key="follow"
-          current_user={current_user}
-          followed_tags={followedTags}
-          tag={tag.name}
-          triggers={triggers}
-          className="button-midi"
-        />
-      ];
-
-      if (this.state.form) {
-
-        createPostForm = (
-          <CreatePost
-            actions={actions}
-            allSchools={values(this.props.schools)}
-            defaultText={this.props.create_post_form.text}
-            triggers={triggers}
-            userRecentTags={current_user.recent_tags}
-            {...this.props.create_post_form}
-          />
-        );
-        addedTags = <AddedTags {...this.props.create_post_form} />;
-      }
-    }
 
     return (
-      <div>
-        <Helmet title={`"${tag.name}" posts on `} />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
-          <HeaderLogo small />
-          <Breadcrumbs>
-            <Link to="/tag" title="All Hashtags">
-              <TagIcon inactive type={TAG_HASHTAG} />
-            </Link>
-            <Tag name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
-          </Breadcrumbs>
-        </Header>
-        <Page>
-          <Sidebar current_user={current_user} />
-          <PageMain className="page__main-no_space">
-            <PageCaption>
-              {tag.name}
-            </PageCaption>
-            <PageHero src="/images/hero/welcome.jpg" />
-            <PageBody className="page__body-up">
-              <Panel
-                title={tag.name}
-                icon={<Tag size="BIG" type={TAG_HASHTAG} urlId={tag.name} />}
-                toolbarPrimary={toolbarPrimary}
-                toolbarSecondary={toolbarSecondary}
-              ></Panel>
-            </PageBody>
-            <PageBody className="page__body-up layout__space_alt">
-              <PageContent>
-                {createPostForm}
-                <River river={thisTagPosts} posts={posts} users={users} current_user={current_user} triggers={triggers}/>
-              </PageContent>
-              <SidebarAlt>
-                {addedTags}
-              </SidebarAlt>
-            </PageBody>
-          </PageMain>
-        </Page>
-        <Footer/>
-      </div>
-    )
+      <BaseTagPage
+        params={this.props.params}
+        current_user={current_user}
+        tag={tag}
+        type={TAG_HASHTAG}
+        is_logged_in={is_logged_in}
+        actions={actions}
+        triggers={triggers}
+        schools={values(schools)}
+        postsAmount={thisTagPosts.length}
+        create_post_form={this.props.create_post_form}
+      >
+        <Helmet title={`Posts about ${tag.name} on `} />
+        <River
+          current_user={current_user}
+          posts={posts}
+          river={thisTagPosts}
+          triggers={triggers}
+          users={users}
+        />
+      </BaseTagPage>
+    );
   }
 }
 

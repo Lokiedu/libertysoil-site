@@ -8,6 +8,7 @@
 
 .panel__body {
   display: flex;
+  justify-content: space-between;
   padding: 10px;
   background: #fff;
 }
@@ -19,6 +20,10 @@
   top: -28px;
 }
 
+.panel__content {
+  flex-grow: 1;
+}
+
 .panel__toolbar {
   display: flex;
   justify-content: space-between;
@@ -26,8 +31,13 @@
   padding: 17px 12px;
 }
 
+.panel__toolbar-transparent {
+  background: transparent;
+}
+
 .panel__toolbar_left,
-.panel__toolbar_right {
+.panel__toolbar_right,
+.panel__toolbar_alt {
   display: flex;
   align-items: center;
   line-height: 33px;

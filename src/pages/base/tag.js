@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,10 +14,10 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
-import { find } from 'lodash';
+import { values } from 'lodash';
 
 import {
   Page,
@@ -32,11 +32,11 @@ import HeaderLogo       from '../../components/header-logo';
 import CreatePost       from '../../components/create-post';
 import TagBreadcrumbs   from '../../components/breadcrumbs/tag-breadcrumbs';
 import Footer           from '../../components/footer';
-import SchoolHeader     from '../../components/school-header';
+import TagHeader        from '../../components/tag-header/tag-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
-import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG }   from '../../consts/tags';
+import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -51,17 +51,17 @@ function formInitialTags(type, value) {
   }
 }
 
-export default class BaseSchoolPage extends React.Component {
-  static displayName = 'BaseSchoolPage';
+export default class BaseTagPage extends React.Component {
+  static displayName = 'BaseTagPage';
 
   static propTypes = {
-    actions: PropTypes.shape({
-      resetCreatePostForm: PropTypes.func.isRequired,
-      updateCreatePostForm: PropTypes.func.isRequired
+    tag: PropTypes.shape({
+      name: PropTypes.string
     }).isRequired,
-    schools: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-    page_school: PropTypes.shape({
-      url_name: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
+    actions: PropTypes.shape({
+      resetCreatePostForm: PropTypes.func,
+      updateCreatePostForm: PropTypes.func
     }).isRequired
   };
 
@@ -90,34 +90,38 @@ export default class BaseSchoolPage extends React.Component {
 
   toggleForm = () => {
     if (!this.state.form) {
-      const school = this.props.page_school;
+      const { tag, type } = this.props;
       this.props.actions.resetCreatePostForm();
-      this.props.actions.updateCreatePostForm(formInitialTags(TAG_SCHOOL, [school]));
+      this.props.actions.updateCreatePostForm(formInitialTags(type, [tag]));
     }
 
     this.setState({ form: !this.state.form });
   };
 
   render() {
-    let {
-      current_user,
-      page_school,
+    const {
       is_logged_in,
+      current_user,
       actions,
       triggers,
-      schools,
+      type,
+      tag,
       postsAmount
     } = this.props;
+
+    let url_name = tag.name;
+    if (tag.url_name) {
+      url_name = tag.url_name;
+    }
 
     let createPostForm;
     let addedTags;
     if (is_logged_in) {
-
       if (this.state.form) {
         createPostForm = (
           <CreatePost
             actions={actions}
-            allSchools={schools}
+            allSchools={values(this.props.schools)}
             defaultText={this.props.create_post_form.text}
             triggers={triggers}
             userRecentTags={current_user.recent_tags}
@@ -132,33 +136,55 @@ export default class BaseSchoolPage extends React.Component {
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
-          <TagBreadcrumbs type={TAG_SCHOOL} tag={page_school} />
+          <TagBreadcrumbs type={type} tag={tag} />
         </Header>
 
         <Page>
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             <PageCaption>
-              {page_school.name}
+              {tag.name}
             </PageCaption>
             <PageHero src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
-              <SchoolHeader
+              <TagHeader
                 is_logged_in={is_logged_in}
-                school={page_school}
+                tag={tag}
+                type={type}
                 current_user={current_user}
                 triggers={triggers}
                 newPost={this.toggleForm}
-                schoolPostsAmount={postsAmount}
+                postsAmount={postsAmount}
               />
             </PageBody>
             <PageBody className="page__body-up">
               <PageContent>
                 <div className="layout__space-double">
-                  <div className="layout__row">
-                    {createPostForm}
-                    {this.props.children}
+                  <div className="layout__grid tabs">
+                    <div className="layout__grid_item">
+                      <IndexLink
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${url_name}`}
+                      >
+                        About
+                      </IndexLink>
+                    </div>
+                    <div className="layout__grid_item">
+                      <Link
+                        activeClassName="tabs__link-active"
+                        className="tabs__link"
+                        to={`/s/${url_name}/edit`}
+                        visible={true}
+                      >
+                        Edit
+                      </Link>
+                    </div>
                   </div>
+                </div>
+                <div className="layout__row">
+                  {createPostForm}
+                  {this.props.children}
                 </div>
               </PageContent>
               <SidebarAlt>
