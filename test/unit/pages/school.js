@@ -19,7 +19,8 @@
 import { TestUtils, expect, React, PropTypes } from '../../../test-helpers/expect-unit';
 
 import { SchoolPage } from '../../../src/pages/school';
-import SchoolHeader from '../../../src/components/school-header';
+import { TAG_SCHOOL } from '../../../src/consts/tags';
+import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
 
@@ -41,14 +42,14 @@ describe('School page', function() {
 
   it('MUST renders default school description if no description provided', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", name: "test"}} is_logged_in={false} />);
+    renderer.render(<TagHeader type={TAG_SCHOOL} tag={{url_name: 'test', id: "1", name: "test"}} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', "No information provided...");
   });
 
   it('MUST renders school description', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolHeader school={{url_name: 'test', id: "1", description: 'test description'}} is_logged_in={false} />);
+    renderer.render(<TagHeader type={TAG_SCHOOL} tag={{url_name: 'test', id: "1", description: 'test description'}} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', "test description");
   });

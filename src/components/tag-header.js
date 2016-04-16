@@ -112,7 +112,7 @@ export default class TagHeader extends React.Component {
       unfollowGeotag: PropTypes.func,
       likeGeotag: PropTypes.func,
       unlikeGeotag: PropTypes.func
-    }).isRequired
+    })
   };
 
   render() {
