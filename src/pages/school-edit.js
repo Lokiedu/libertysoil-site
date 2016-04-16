@@ -34,6 +34,7 @@ import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import SchoolEditForm from '../components/school-edit-form';
 import NotFound from './not-found';
+import { TAG_SCHOOL } from '../consts/tags';
 
 
 class SchoolEditPage extends React.Component {
@@ -90,7 +91,7 @@ class SchoolEditPage extends React.Component {
         current_user={this.props.current_user}
         is_logged_in={this.props.is_logged_in}
         tag={school}
-        type="TAG_SCHOOL"
+        type={TAG_SCHOOL}
         actions={actions}
         triggers={triggers}
         schools={schools}

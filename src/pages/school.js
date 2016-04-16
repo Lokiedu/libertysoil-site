@@ -34,6 +34,7 @@ import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+import { TAG_SCHOOL } from '../consts/tags';
 
 
 export class SchoolPage extends React.Component {
@@ -102,7 +103,7 @@ export class SchoolPage extends React.Component {
         params={this.props.params}
         current_user={current_user}
         tag={school}
-        type="TAG_SCHOOL"
+        type={TAG_SCHOOL}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}

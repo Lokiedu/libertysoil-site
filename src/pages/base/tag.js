@@ -32,7 +32,7 @@ import HeaderLogo       from '../../components/header-logo';
 import CreatePost       from '../../components/create-post';
 import TagBreadcrumbs   from '../../components/breadcrumbs/tag-breadcrumbs';
 import Footer           from '../../components/footer';
-import TagHeader        from '../../components/tag-header/tag-header';
+import TagHeader        from '../../components/tag-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
