@@ -41,7 +41,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Hashtag, School, Country, AdminDivision1, City, Attachment, Geotag, Comment;
+  let User, Post, Hashtag, School, Country, AdminDivision1, City, Attachment, Geotag, Comment, Quote;
 
   User = bookshelf.Model.extend({
     tableName: 'users',
@@ -500,6 +500,10 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  Quote = bookshelf.Model.extend({
+    tableName: 'quotes'
+  });
+
   let Posts;
 
   Posts = bookshelf.Collection.extend({
@@ -517,6 +521,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Attachment', Attachment);
   bookshelf.model('Geotag', Geotag);
   bookshelf.model('Comment', Comment);
+  bookshelf.model('Quote', Quote);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
