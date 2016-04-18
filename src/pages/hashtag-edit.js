@@ -19,6 +19,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
+import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
 import { defaultSelector } from '../selectors';
@@ -32,6 +33,7 @@ import {
   updateCreatePostForm
 } from '../actions';
 import { ActionsTrigger } from '../triggers';
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import { TAG_HASHTAG } from '../consts/tags';
 
@@ -54,6 +56,18 @@ class HashtagEditPage extends React.Component {
 
     return 200;
   }
+
+  saveHashtag = (description) => {
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updateHashtag(name, { description })
+      .then((result) => {
+        browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
+      }).catch(() => {
+        // do nothing. redux has an error already
+      });
+  };
 
   render() {
     const {
@@ -79,6 +93,7 @@ class HashtagEditPage extends React.Component {
 
     return (
       <BaseTagPage
+        editable={true}
         params={this.props.params}
         current_user={current_user}
         tag={tag}

@@ -19,6 +19,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
+import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
 import { defaultSelector } from '../selectors';
@@ -32,6 +33,7 @@ import {
   updateCreatePostForm
 } from '../actions';
 import { ActionsTrigger } from '../triggers';
+import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import NotFound from './not-found';
 import { TAG_LOCATION } from '../consts/tags';
@@ -55,6 +57,18 @@ class GeotagEditPage extends React.Component {
 
     return 200;
   }
+
+  saveGeotag = (description) => {
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updateGeotag(name, { description })
+      .then((result) => {
+        browserHistory.push(getUrl(URL_NAMES.GEOTAG, {url_name: result.url_name}));
+      }).catch(() => {
+        // do nothing. redux has an error already
+      });
+  };
 
   render() {
     const {
@@ -85,6 +99,7 @@ class GeotagEditPage extends React.Component {
 
     return (
       <BaseTagPage
+        editable={true}
         params={this.props.params}
         current_user={current_user}
         tag={geotag}

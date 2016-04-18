@@ -27,22 +27,24 @@ export default class TagEditForm extends React.Component {
 
   static propTypes = {
     type: PropTypes.string.isRequired,
-    tag: PropTypes.object.isRequired
+    tag: PropTypes.object.isRequired,
+    saveHandler: PropTypes.func.isRequired
   };
 
   render() {
     const {
       type,
-      tag
+      tag,
+      saveHandler
     } = this.props;
 
     switch (type) {
       case TAG_HASHTAG:
-        return <HashtagEditForm hashtag={tag} saveHandler={() => {}} />;
+        return <HashtagEditForm hashtag={tag} saveHandler={saveHandler} />;
       case TAG_SCHOOL:
-        return <SchoolEditForm school={tag} saveHandler={() => {}} />;
+        return <SchoolEditForm school={tag} saveHandler={saveHandler} />;
       case TAG_LOCATION:
-        return <GeotagEditForm geotag={tag} saveHandler={() => {}} />;
+        return <GeotagEditForm geotag={tag} saveHandler={saveHandler} />;
       default:
         return <script />;
     }

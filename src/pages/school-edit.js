@@ -17,19 +17,19 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
 import {
   addSchool,
   resetCreatePostForm,
   updateCreatePostForm
 } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
@@ -88,6 +88,7 @@ class SchoolEditPage extends React.Component {
 
     return (
       <BaseTagPage
+        editable={true}
         current_user={this.props.current_user}
         is_logged_in={this.props.is_logged_in}
         tag={school}
