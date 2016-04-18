@@ -40,6 +40,7 @@ export default class Reviews extends Component {
   };
 
   slideshow = null;
+  imageHovered = false;
   length = 0;
   delay = 5000;
   clientWidth = 0;
@@ -78,6 +79,10 @@ export default class Reviews extends Component {
   };
 
   changeSlide = () => {
+    if (this.imageHovered) {
+      return;
+    }
+
     let newActive = this.state.active;
     if (this.state.active === this.length - 1) {
       newActive = 0;
@@ -100,7 +105,7 @@ export default class Reviews extends Component {
     }
 
     if (clientWidth >= breakpointWidth) {
-      this.setState({ mobile: false })
+      this.setState({ mobile: false });
     }
 
     if (clientWidth < breakpointWidth) {
@@ -155,7 +160,13 @@ export default class Reviews extends Component {
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
           <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
-            <img className="user_box__avatar" src={q.avatar_url} width="64" height="64" alt=""/>
+            <img onMouseOver={() => this.imageHovered = true}
+                 onMouseOut={() => this.imageHovered = false}
+                 className="user_box__avatar"
+                 src={q.avatar_url}
+                 width="64"
+                 height="64"
+                 alt=""/>
           </TabTitle>
           <TabContent>
             <blockquote className="review">
