@@ -40,7 +40,7 @@ import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
-import TagEditPage from './pages/tag-edit';
+import HashtagEditPage from './pages/hashtag-edit';
 import TagCloudPage from './pages/tag-cloud';
 import SchoolCloudPage from './pages/school-cloud';
 import GeotagCloudPage from './pages/geotag-cloud';

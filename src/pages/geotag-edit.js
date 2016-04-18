@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,39 +14,38 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router'
-import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
+import { values } from 'lodash';
+
+import { defaultSelector } from '../selectors';
 
 import {API_HOST} from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
 import {
-  addSchool,
+  addGeotag,
   resetCreatePostForm,
   updateCreatePostForm
 } from '../actions';
-import { ActionsTrigger } from '../triggers'
-import { defaultSelector } from '../selectors';
-import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import { ActionsTrigger } from '../triggers';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import NotFound from './not-found';
-import { TAG_SCHOOL } from '../consts/tags';
+import { TAG_LOCATION } from '../consts/tags';
 
-
-class SchoolEditPage extends React.Component {
-  static displayName = 'SchoolEditPage';
+class GeotagEditPage extends React.Component {
+  static displayName = 'GeotagEditPage';
 
   static async fetchData(params, store, client) {
-    let school = client.getSchool(params.school_name);
+    let geotag = client.getGeotag(params.url_name);
 
     try {
-      store.dispatch(addSchool(await school));
+      store.dispatch(addGeotag(await geotag));
     } catch (e) {
-      store.dispatch(addSchool({url_name: params.school_name}));
+      store.dispatch(addGeotag({url_name: params.url_name}));
 
       return 404;
     }
@@ -57,49 +56,49 @@ class SchoolEditPage extends React.Component {
     return 200;
   }
 
-  saveSchool = (id, name, description, lat, lon) => {
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    triggers.updateSchool(id, { name, description, lat, lon })
-      .then((result) => {
-        browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
-      }).catch(() => {
-        // do nothing. redux has an error already
-      });
-  };
-
   render() {
-    const { schools } = this.props;
+    const {
+      is_logged_in,
+      current_user,
+      users,
+      resetCreatePostForm,
+      updateCreatePostForm,
+      params,
+      geotags,
+      schools
+    } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    let school = _.find(schools, {url_name: this.props.params.school_name});
+    const geotag = geotags[this.props.params.url_name];
+    const title = geotag ? geotag.name : this.props.params.url_name;
 
-    if (!school) {
-      return false;  // not loaded yet
+    if (!geotag) {
+      return <script />;
     }
 
-    if (!school.id) {
+    if (!geotag.id) {
       return <NotFound/>;
     }
 
     return (
       <BaseTagPage
-        current_user={this.props.current_user}
-        is_logged_in={this.props.is_logged_in}
-        tag={school}
-        type={TAG_SCHOOL}
+        params={this.props.params}
+        current_user={current_user}
+        tag={geotag}
+        type={TAG_LOCATION}
+        is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={schools}
+        schools={values(schools)}
+        create_post_form={this.props.create_post_form}
       >
-        <Helmet title={`Edit ${school.name} on `} />
+        <Helmet title={`${title} posts on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={school} type={TAG_SCHOOL} saveSchoolHandler={this.saveSchool} />
+            <TagEditForm tag={geotag} type={TAG_LOCATION} saveHandler={this.saveGeotag} />
           </div>
         </div>
       </BaseTagPage>
@@ -107,4 +106,7 @@ class SchoolEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SchoolEditPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(GeotagEditPage);

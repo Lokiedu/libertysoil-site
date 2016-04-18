@@ -14,16 +14,16 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 
-import GeotagBreadcrumbs from './geotag-breadcrumbs';
-import SchoolBreadcrumbs from './school-breadcrumbs';
-import HashtagBreadcrumbs from './hashtag-breadcrumbs';
+import GeotagEditForm from './geotag-edit-form';
+import SchoolEditForm from './school-edit-form';
+import HashtagEditForm from './hashtag-edit-form';
 import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 
-export default class TagBreadcrumbs extends React.Component {
-  static displayName = 'TagBreadcrumbs';
+export default class TagEditForm extends React.Component {
+  static displayName = 'TagEditForm';
 
   static propTypes = {
     type: PropTypes.string.isRequired,
@@ -38,11 +38,11 @@ export default class TagBreadcrumbs extends React.Component {
 
     switch (type) {
       case TAG_HASHTAG:
-        return <HashtagBreadcrumbs hashtag={tag} />;
+        return <HashtagEditForm hashtag={tag} saveHandler={() => {}} />;
       case TAG_SCHOOL:
-        return <SchoolBreadcrumbs school={tag} />;
+        return <SchoolEditForm school={tag} saveHandler={() => {}} />;
       case TAG_LOCATION:
-        return <GeotagBreadcrumbs geotag={tag} />;
+        return <GeotagEditForm geotag={tag} saveHandler={() => {}} />;
       default:
         return <script />;
     }
