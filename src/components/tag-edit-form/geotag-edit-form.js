@@ -58,7 +58,7 @@ class GeotagEditForm extends React.Component {
       return;
     }
 
-    this.props.saveSchoolHandler(
+    this.props.saveHandler(
       fields.description.value
     );
   };

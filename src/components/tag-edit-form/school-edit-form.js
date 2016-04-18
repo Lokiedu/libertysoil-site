@@ -68,7 +68,7 @@ class SchoolEditForm extends React.Component {
 
     let theForm = event.target;
 
-    this.props.saveSchoolHandler(
+    this.props.saveHandler(
       theForm.id.value,
       fields.name.value,
       fields.description.value,

@@ -74,7 +74,6 @@ class GeotagEditPage extends React.Component {
     const {
       is_logged_in,
       current_user,
-      users,
       resetCreatePostForm,
       updateCreatePostForm,
       params,
@@ -100,7 +99,7 @@ class GeotagEditPage extends React.Component {
     return (
       <BaseTagPage
         editable={true}
-        params={this.props.params}
+        params={params}
         current_user={current_user}
         tag={geotag}
         type={TAG_LOCATION}

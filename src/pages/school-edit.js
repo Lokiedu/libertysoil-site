@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
@@ -70,7 +71,14 @@ class SchoolEditPage extends React.Component {
   };
 
   render() {
-    const { schools } = this.props;
+    const {
+      schools,
+      current_user,
+      is_logged_in,
+      resetCreatePostForm,
+      updateCreatePostForm,
+      params
+    } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -89,18 +97,20 @@ class SchoolEditPage extends React.Component {
     return (
       <BaseTagPage
         editable={true}
-        current_user={this.props.current_user}
-        is_logged_in={this.props.is_logged_in}
+        params={params}
+        current_user={current_user}
+        is_logged_in={is_logged_in}
         tag={school}
         type={TAG_SCHOOL}
         actions={actions}
         triggers={triggers}
         schools={schools}
+        create_post_form={this.props.create_post_form}
       >
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={school} type={TAG_SCHOOL} saveSchoolHandler={this.saveSchool} />
+            <TagEditForm tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} />
           </div>
         </div>
       </BaseTagPage>
@@ -108,4 +118,7 @@ class SchoolEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SchoolEditPage);
+export default connect(defaultSelector, dispatch => ({
+  dispatch,
+  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+}))(SchoolEditPage);

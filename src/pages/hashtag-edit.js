@@ -75,7 +75,6 @@ class HashtagEditPage extends React.Component {
       current_user,
       resetCreatePostForm,
       updateCreatePostForm,
-      users,
       params,
       hashtags,
       schools
@@ -94,7 +93,7 @@ class HashtagEditPage extends React.Component {
     return (
       <BaseTagPage
         editable={true}
-        params={this.props.params}
+        params={params}
         current_user={current_user}
         tag={tag}
         type={TAG_HASHTAG}
