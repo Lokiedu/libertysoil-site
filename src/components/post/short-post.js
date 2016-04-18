@@ -16,15 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
-import ShortTextPost from './short-text-post';
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 import User from '../user';
+
 
 const ShortPost = ({ post, author }) => (
   <div className="short_post short_post-spacing" key={post.id}>
-    <div className="short_post__text">
-      <ShortTextPost author={author} post={post} />
-    </div>
+    <Link className="short_post__text" to={getUrl(URL_NAMES.POST, { uuid: post.id })}>
+      {post.text}
+    </Link>
     <div className="short_post__author">
       <User avatarSize="20" user={author} />
     </div>
