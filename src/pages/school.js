@@ -29,11 +29,12 @@ import {
 } from '../actions';
 import {API_HOST} from '../config';
 import ApiClient from '../api/client'
-import NotFound from './not-found'
-import BaseSchoolPage from './base/school'
+import NotFound from './not-found';
+import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
+import { TAG_SCHOOL } from '../consts/tags';
 
 
 export class SchoolPage extends React.Component {
@@ -98,15 +99,16 @@ export class SchoolPage extends React.Component {
     const schoolPosts = school_posts[school.id] || [];
 
     return (
-      <BaseSchoolPage
+      <BaseTagPage
         params={this.props.params}
         current_user={current_user}
-        page_school={school}
+        tag={school}
+        type={TAG_SCHOOL}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
         schools={values(schools)}
-        schoolPostsAmount={schoolPosts.length}
+        postsAmount={schoolPosts.length}
         create_post_form={this.props.create_post_form}
       >
         <Helmet title={`Posts about ${school.name} on `} />
@@ -117,8 +119,8 @@ export class SchoolPage extends React.Component {
           triggers={triggers}
           users={users}
         />
-      </BaseSchoolPage>
-    )
+      </BaseTagPage>
+    );
   }
 }
 

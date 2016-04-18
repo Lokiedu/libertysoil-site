@@ -33,7 +33,8 @@ export default ({
   title,
   icon,
   toolbarPrimary,
-  toolbarSecondary
+  toolbarSecondary,
+  toolbarAlt
 }) => (
   <div className="panel">
     <div className="panel__body">
@@ -54,6 +55,9 @@ export default ({
           </div>
         }
       </div>
+      {toolbarAlt &&
+        PanelToolbarArea('alt', toolbarAlt)
+      }
     </div>
     <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} />
   </div>

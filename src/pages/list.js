@@ -41,7 +41,7 @@ import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
 import Button from '../components/button';
-import Breadcrumbs from '../components/breadcrumbs';
+import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';

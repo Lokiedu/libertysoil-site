@@ -21,7 +21,7 @@ import Helmet from 'react-helmet';
 
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
-import Breadcrumbs from '../components/breadcrumbs';
+import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';

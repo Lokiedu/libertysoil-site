@@ -19,8 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
-import { isEmpty, find, values } from 'lodash';
+import { values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -32,55 +31,12 @@ import {
 } from '../actions';
 import NotFound from './not-found';
 
-import {
-  Page,
-  PageMain,
-  PageCaption,
-  PageHero,
-  PageBody,
-  PageContent
-} from '../components/page';
-import CreatePost from '../components/create-post';
-import Breadcrumbs from '../components/breadcrumbs';
-import Header from '../components/header';
-import HeaderLogo from '../components/header-logo';
-import Footer from '../components/footer';
 import River from '../components/river_of_posts';
-import Sidebar from '../components/sidebar';
-import SidebarAlt from '../components/sidebarAlt';
-import AddedTags from '../components/post/added-tags';
-import Panel from '../components/panel';
-import Tag from '../components/tag';
-import TagIcon from '../components/tag-icon';
-import FollowTagButton from '../components/follow-tag-button';
-import LikeTagButton from '../components/like-tag-button';
-import MapboxMap from '../components/mapbox-map';
+import BaseTagPage from './base/tag';
 
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
-import { TAG_LOCATION, TAG_PLANET } from '../consts/tags';
-
-
-function Hero({ geotag }) {
-  if (geotag.type == 'City' && geotag.geonames_city) {
-    let location = {
-      lat: geotag.geonames_city.latitude,
-      lon: geotag.geonames_city.longitude
-    };
-
-    return (
-      <PageHero>
-        <MapboxMap
-          className="page__hero_map"
-          frozen
-          viewLocation={location}
-        />
-      </PageHero>
-    );
-  }
-
-  return <PageHero src="/images/hero/welcome.jpg" />;
-}
+import { TAG_LOCATION } from '../consts/tags';
 
 export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
@@ -117,34 +73,6 @@ export class GeotagPage extends Component {
     return 200;
   }
 
-  state = {
-    form: false
-  };
-
-  componentWillReceiveProps(nextProps) {
-    if (this.state.form) {
-      const postGeotags = this.props.create_post_form.geotags;
-
-      if (!find(postGeotags, tag => tag.url_name === nextProps.params.url_name)) {
-        this.setState({ form: false });
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetCreatePostForm();
-  }
-
-  toggleForm = () => {
-    if (!this.state.form) {
-      const geotag = this.props.geotags[this.props.params.url_name];
-      this.props.resetCreatePostForm();
-      this.props.updateCreatePostForm({ geotags: [geotag] });
-    }
-
-    this.setState({ form: !this.state.form });
-  };
-
   render() {
     const {
       is_logged_in,
@@ -154,7 +82,8 @@ export class GeotagPage extends Component {
       updateCreatePostForm,
       geotags,
       geotag_posts,
-      users
+      users,
+      schools
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -172,143 +101,31 @@ export class GeotagPage extends Component {
       return <NotFound/>;
     }
 
-    let tagPosts = geotag_posts[this.props.params.url_name] || [];
-
-    let followTriggers = {
-      followTag: triggers.followGeotag,
-      unfollowTag: triggers.unfollowGeotag
-    };
-
-    let likeTriggers = {
-      likeTag: triggers.likeGeotag,
-      unlikeTag: triggers.unlikeGeotag
-    };
-
-    let toolbarPrimary = [];
-    let toolbarSecondary = [];
-
-    let createPostForm;
-    let addedTags;
-
-    if (is_logged_in) {
-      toolbarSecondary = [
-        <LikeTagButton
-          key="like"
-          is_logged_in={is_logged_in}
-          liked_tags={current_user.liked_geotags}
-          tag={this.props.params.url_name}
-          triggers={likeTriggers}
-          outline={true}
-          size="midl"
-        />
-      ];
-
-      toolbarPrimary = [
-        <div key="posts" className="panel__toolbar_item-text">
-          {tagPosts.length} posts
-        </div>,
-        <button key="new" onClick={this.toggleForm} className="button button-midi button-light_blue" type="button">New</button>,
-        <FollowTagButton
-          key="follow"
-          current_user={current_user}
-          followed_tags={current_user.followed_geotags}
-          tag={this.props.params.url_name}
-          triggers={followTriggers}
-          className="button-midi"
-        />
-      ];
-
-      if (this.state.form) {
-        createPostForm = (
-          <CreatePost
-            actions={actions}
-            allSchools={values(this.props.schools)}
-            defaultText={this.props.create_post_form.text}
-            triggers={triggers}
-            userRecentTags={current_user.recent_tags}
-            {...this.props.create_post_form}
-          />
-        );
-        addedTags = <AddedTags {...this.props.create_post_form} />;
-      }
-    }
+    const geotagPosts = geotag_posts[this.props.params.url_name] || [];
 
     return (
-      <div>
-        <Helmet title={`${geotag.name} posts on `} />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
-          <HeaderLogo small />
-          <Breadcrumbs>
-            <Link title="All Geotags" to="/geo">
-              <TagIcon inactive type={TAG_PLANET} />
-            </Link>
-            {!isEmpty(geotag.continent) &&
-              <Tag
-                inactive={geotag.type != 'Continent'}
-                name={geotag.continent.name}
-                type={TAG_LOCATION}
-                urlId={geotag.continent.url_name}
-              />
-            }
-            {!isEmpty(geotag.country) &&
-              <Tag
-                inactive={geotag.type != 'Country'}
-                name={geotag.country.name}
-                type={TAG_LOCATION}
-                urlId={geotag.country.url_name}
-              />
-            }
-            {!isEmpty(geotag.admin1) &&
-              <Tag
-                inactive={geotag.type != 'AdminDivision1'}
-                name={geotag.admin1.name}
-                type={TAG_LOCATION}
-                urlId={geotag.admin1.url_name}
-              />
-            }
-            <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
-          </Breadcrumbs>
-        </Header>
-
-        <Page>
-          <Sidebar current_user={current_user} />
-          <PageMain className="page__main-no_space">
-            <PageCaption>
-              {`${title} `}<span className="page__caption_highlight">Education</span>
-            </PageCaption>
-            <Hero geotag={geotag} />
-            <PageBody className="page__body-up">
-              <PageContent>
-                <Panel
-                  title={title}
-                  icon={<Tag size="BIG" type={TAG_LOCATION} urlId={geotag.url_name} />}
-                  toolbarPrimary={toolbarPrimary}
-                  toolbarSecondary={toolbarSecondary}
-                >
-                  Short wikipedia description about this location will be displayed here soon.
-                </Panel>
-              </PageContent>
-            </PageBody>
-            <PageBody className="page__body-up layout__space_alt">
-              <PageContent>
-                {createPostForm}
-                <River
-                  river={tagPosts}
-                  posts={posts}
-                  users={users}
-                  current_user={current_user}
-                  triggers={triggers}
-                />
-              </PageContent>
-              <SidebarAlt>
-                {addedTags}
-              </SidebarAlt>
-            </PageBody>
-          </PageMain>
-        </Page>
-        <Footer/>
-      </div>
-    )
+      <BaseTagPage
+        params={this.props.params}
+        current_user={current_user}
+        tag={geotag}
+        type={TAG_LOCATION}
+        is_logged_in={is_logged_in}
+        actions={actions}
+        triggers={triggers}
+        schools={values(schools)}
+        postsAmount={geotagPosts.length}
+        create_post_form={this.props.create_post_form}
+      >
+        <Helmet title={`${title} posts on `} />
+        <River
+          current_user={current_user}
+          posts={posts}
+          river={geotagPosts}
+          triggers={triggers}
+          users={users}
+        />
+      </BaseTagPage>
+    );
   }
 }
 

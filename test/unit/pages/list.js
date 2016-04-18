@@ -27,7 +27,7 @@ import River from '../../../src/components/river_of_posts';
 import Sidebar from '../../../src/components/sidebar';
 import SidebarAlt from '../../../src/components/sidebarAlt';
 import AddedTags from '../../../src/components/post/added-tags';
-import Breadcrumbs from '../../../src/components/breadcrumbs';
+import Breadcrumbs from '../../../src/components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../../../src/components/side-suggested-users';
 import CreatePost from '../../../src/components/create-post';
 
