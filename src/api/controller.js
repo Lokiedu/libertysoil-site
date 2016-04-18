@@ -66,7 +66,7 @@ export default class ApiController {
         qb
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', req.params.user)
-          .orderBy('posts.created_at', 'desc')
+          .orderBy('posts.updated_at', 'desc')
           .whereIn('posts.type', ['short_text', 'long_text']);
       });
 
@@ -306,7 +306,7 @@ export default class ApiController {
             .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
             .andWhere('user_id', userId);
         })
-        .orderBy('created_at', 'desc');
+        .orderBy('updated_at', 'desc');
     });
 
     let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
@@ -319,45 +319,23 @@ export default class ApiController {
     return posts;
   }
 
-  async userFavouredPosts(req, res) {
+  async currentUserFavouredPosts(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403)
       res.send({error: 'You are not authorized'})
       return;
     }
-    let Post = this.bookshelf.model('Post');
 
     try {
-      let favourites = await this.bookshelf.knex
-        .select('post_id')
-        .from('favourites')
-        .where({user_id: req.session.user})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .whereIn('id', favourites)
-          .orderBy('posts.created_at', 'desc')
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      let posts = await this.getFavouredPosts(req.session.user);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
   }
 
-  async getFavouredPosts(req, res) {
-    let Post = this.bookshelf.model('Post');
-
+  async userFavouredPosts(req, res) {
     try {
       let user_id = await this.bookshelf.knex
         .select('id')
@@ -365,31 +343,38 @@ export default class ApiController {
         .where('users.username', '=', req.params.user)
         .map(row => row.id);
 
-      let favourites = await this.bookshelf.knex
-        .select('post_id')
-        .from('favourites')
-        .where({user_id: user_id[0]})
-        .map(row => row.post_id);
-
-      let q = Post.forge()
-      .query(qb => {
-        qb
-          .whereIn('id', favourites)
-          .orderBy('posts.created_at', 'desc')
-      });
-
-      let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
-      let post_comments_count = await this.countComments(posts);
-      posts = posts.map(post => {
-        post.attributes.comments = post_comments_count[post.get('id')];
-        return post;
-      });
+      let posts = await this.getFavouredPosts(user_id[0]);
       res.send(posts);
-    } catch (ex) {
+    } catch (e) {
       res.status(500);
-      res.send(ex.message);
-      return;
+      res.send(e.message);
     }
+  }
+
+  async getFavouredPosts(userId) {
+    let Post = this.bookshelf.model('Post');
+
+    let favourites = await this.bookshelf.knex
+      .select('post_id')
+      .from('favourites')
+      .where({user_id: userId})
+      .map(row => row.post_id);
+
+    let q = Post.forge()
+    .query(qb => {
+      qb
+        .whereIn('id', favourites)
+        .orderBy('posts.updated_at', 'desc')
+    });
+
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let post_comments_count = await this.countComments(posts);
+    posts = posts.map(post => {
+      post.attributes.comments = post_comments_count[post.get('id')];
+      return post;
+    });
+
+    return posts;
   }
 
   async checkSchoolExists(req, res) {
@@ -536,6 +521,9 @@ export default class ApiController {
       }
 
       await user.liked_posts().attach(post);
+      
+      post.attributes.updated_at = new Date().toJSON();
+      await post.save(null, {method: 'update'});
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
 
@@ -572,6 +560,9 @@ export default class ApiController {
       let user = await User.where({id: req.session.user}).fetch({require: true, withRelated: ['liked_posts']});
 
       await user.liked_posts().detach(post);
+
+      post.attributes.updated_at = new Date().toJSON();
+      await post.save(null, {method: 'update'});
 
       post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: ['likers']});
 
@@ -687,12 +678,7 @@ export default class ApiController {
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
           .whereRaw('(followers.user_id = ? OR posts.user_id = ?)', [uid, uid])  // followed posts
           .whereRaw('(posts.fully_published_at IS NOT NULL OR posts.user_id = ?)', [uid]) // only major and own posts
-          .orderByRaw(`
-            CASE WHEN posts.fully_published_at IS NOT NULL
-              THEN posts.fully_published_at
-              ELSE posts.created_at
-            END DESC
-          `)
+          .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id')
           .limit(5)
           .offset(offset)
@@ -2438,15 +2424,16 @@ export default class ApiController {
     let Comment = this.bookshelf.model('Comment');
     let Post = this.bookshelf.model('Post');
 
-
     if (!req.session || !req.session.user) {
       res.status(403);
       res.send({error: 'You are not authorized'});
       return;
     }
 
+    let post_object;
+
     try {
-      await Post.where({id: req.params.id}).fetch({require: true});
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
     } catch (e) {
       res.sendStatus(404);
       return;
@@ -2467,8 +2454,11 @@ export default class ApiController {
       text: comment_text
     });
 
+    post_object.attributes.updated_at = new Date().toJSON();
+
     try {
       await comment_object.save(null, {method: 'insert'});
+      await post_object.save(null, {method: 'update'});
       await this.getPostComments(req, res);
     } catch (e) {
       res.status(500);
@@ -2483,12 +2473,18 @@ export default class ApiController {
       return;
     }
 
+    let Post = this.bookshelf.model('Post');
     let Comment = this.bookshelf.model('Comment');
 
+    let post_object;
     let comment_object;
 
     try {
-      comment_object = await Comment.where({ id: req.params.comment_id,post_id: req.params.id }).fetch({require: true});
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
+      comment_object = await Comment.where({
+        id: req.params.comment_id,
+        post_id: req.params.id
+      }).fetch({require: true});
     } catch(e) {
       res.status(404);
       res.send({error: e.message});
@@ -2511,8 +2507,10 @@ export default class ApiController {
 
     comment_object.set('text', comment_text);
     comment_object.set('updated_at', new Date().toJSON());
+    post_object.attributes.updated_at = new Date().toJSON();
 
     await comment_object.save(null, {method: 'update'});
+    await post_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
   }
 
@@ -2529,9 +2527,12 @@ export default class ApiController {
       return;
     }
 
+    let Post = this.bookshelf.model('Post');
     let Comment = this.bookshelf.model('Comment');
 
+    let post_object;
     try {
+      post_object = await Post.where({id: req.params.id}).fetch({require: true});
       let comment_object = await Comment.where({ id: req.params.comment_id, post_id: req.params.id }).fetch({require: true});
 
       if (comment_object.get('user_id') != req.session.user) {
@@ -2547,6 +2548,9 @@ export default class ApiController {
       return;
     }
 
+    post_object.attributes.updated_at = new Date().toJSON();
+    
+    await post_object.save(null, {method: 'update'});
     await this.getPostComments(req, res);
   }
 
