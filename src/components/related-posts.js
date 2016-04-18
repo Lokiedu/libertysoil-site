@@ -21,7 +21,7 @@ import { truncate } from 'grapheme-utils';
 
 import { ShortPost } from './post';
 
-export default function RelatedPosts({ current_user, posts, triggers, users }) {
+export default function RelatedPosts({ posts, users }) {
   if (!posts || !posts.length) {
     return <noscript />;
   }
