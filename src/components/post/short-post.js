@@ -16,20 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import Linkify from 'react-linkify';
 
-let ShortTextPost = ({ post }) => {
-  let text = '';
+import ShortTextPost from './short-text-post';
+import User from '../user';
 
-  if (post.text) {
-    text = post.text.split("\n").map((line, i) => <p key={`text-${i}`}>{line}</p>);
-  }
+const ShortPost = ({ post, author }) => (
+  <div className="short_post short_post-spacing" key={post.id}>
+    <div className="short_post__text">
+      <ShortTextPost author={author} post={post} />
+    </div>
+    <div className="short_post__author">
+      <User avatarSize="20" user={author} />
+    </div>
+  </div>
+);
 
-  return (
-    <Linkify properties={{target: '_blank'}}>
-      {text}
-    </Linkify>
-  );
-};
-
-export default ShortTextPost;
+export default ShortPost;

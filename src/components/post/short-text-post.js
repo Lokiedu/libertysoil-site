@@ -15,34 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@color__text: #464646;
-@color__background: #fefffe;
-@color__page_background: #e8e7e5;
+import React from 'react';
+import Linkify from 'react-linkify';
 
-@color__block_background: #fff;
-@color__border: #d3d2d1;
-@color__panel_bg: #f2eae3;
+const ShortTextPost = ({ post }) => {
+  let text = '';
 
-@color__green: #a2d544;
-@color__red: #fc2c5b;
-@color__blue: #40b7e9;
-@color__dark_blue: #689ACA;
-@color__gray: #d3d2d1;
-@color__dark_gray: #666;
-@color__darker: #333;
-@color__yellow: #efc242;
+  if (post.text) {
+    text = post.text.split("\n").map((line, i) => <p key={`text-${i}`}>{line}</p>);
+  }
 
-.color {
-  &-red {
-    color: @color__red;
-  }
-  &-yellow {
-    color: @color__yellow;
-  }
-  &-blue {
-    color: @color__blue;
-  }
-  &-green {
-    color: @color__green;
-  }
-}
+  return (
+    <Linkify properties={{target: '_blank'}}>
+      {text}
+    </Linkify>
+  );
+};
+
+export default ShortTextPost;

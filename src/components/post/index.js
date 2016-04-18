@@ -15,6 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-export {default as ShortTextPost} from './short-text';
+export {default as ShortTextPost} from './short-text-post';
+export {default as ShortPost} from './short-post';
 export {default as PostWrapper} from './wrapper';
 export {default as EditPost} from './edit-short-post';  // ToDo: export meta-component instead
