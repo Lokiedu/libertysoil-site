@@ -54,7 +54,7 @@ class Sidebar extends React.Component {
       dispatch,
       ui
     } = this.props;
-    const breakpointWidth = 1024;
+    const breakpointWidth = 1330;
 
     if (typeof document == 'undefined') {
       return;
