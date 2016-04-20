@@ -15,6 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+@hero-max-height: 400px;
+
 .page {
 
 }
@@ -26,21 +29,31 @@
 .page__caption {
   text-align: center;
   color: #333;
-  font-size: 28px;
   font-weight: 600;
   &:extend(.font-open_sans);
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1em;
   display: block;
-  padding: 3.3vw 5vw;
+  max-height: 115px;
+  font-size: 20px;
+  padding: 6vw 5vw;
+
+  @media @after-small {
+    font-size: 22px;
+    padding: 4.5vw 5vw;
+  }
+
+  @media @after-normal {
+    font-size: 24px;
+    padding: 3vw 5vw;
+  }
 }
 
 .page__caption_highlight {
   color: #a0a0a0;
 }
 
-@hero-max-height: 600px;
 .page__hero {
   width: 100%;
   background: #ddd;
