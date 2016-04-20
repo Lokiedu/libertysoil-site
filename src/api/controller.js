@@ -686,7 +686,12 @@ export default class ApiController {
           .offset(offset)
       });
 
-    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
+    let relations = _.concat(
+      POST_RELATIONS,
+      {post_comments: qb => qb.orderBy('created_at')},
+    );
+
+    let posts = await q.fetchAll({require: false, withRelated: relations});
     let post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
