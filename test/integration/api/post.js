@@ -48,6 +48,27 @@ describe('Post', () => {
       await post.destroy();
       await user.destroy();
     });
+    
+    describe('/api/v1/post/:id', () => {
+      describe('when post exists', () => {
+        it('responds with post', async () => {
+          await expect(
+            {url: `/api/v1/post/${post.id}`, method: 'GET'},
+            'body to satisfy',
+            {id: post.id}
+          );
+        });
+      });
+
+      describe("when post doesn't exist", () => {
+        it('responds with post', async () => {
+          await expect(
+            {url: `/api/v1/post/123`, method: 'GET'},
+            'to open not found'
+          );
+        });
+      });
+    });
 
     describe('/api/v1/posts/tag/:name', async () => {
       let hashtag;
