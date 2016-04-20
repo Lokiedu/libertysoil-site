@@ -36,7 +36,7 @@ import TagHeader        from '../../components/tag-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
-import UpdatePicture      from '../../components/update-picture';
+import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
 
 function formInitialTags(type, value) {

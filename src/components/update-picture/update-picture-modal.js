@@ -14,42 +14,22 @@
  */
 import React, { PropTypes } from 'react';
 
-import ModalComponent from './modal-component';
+import ModalComponent from '../modal-component';
 import UpdatePictureForm from './update-picture-form';
 
-export default class UpdatePicture extends React.Component {
-  static displayName = 'UpdatePicture';
+export default class UpdatePictureModal extends React.Component {
+  static displayName = 'UpdatePictureModal';
 
   static propTypes = {
+    visible: PropTypes.bool.isRequired,
     what: PropTypes.string.isRequired,
     where: PropTypes.string.isRequired,
     limits: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
     }),
-    saveHandler: PropTypes.func,
-    close: PropTypes.func
-  };
-
-  static defaultProps = {
-    saveHandler: () => {},
-    close: () => {}
-  };
-
-  constructor() {
-    super();
-
-    this.state = {
-
-    };
-  }
-
-  save = () => {
-    this.props.saveHandler();
-  };
-
-  close = () => {
-    this.props.close();
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired
   };
 
   render() {
@@ -58,9 +38,13 @@ export default class UpdatePicture extends React.Component {
       where,
       limits
     } = this.props;
+
+    if (!this.props.visible) {
+      return <script />;
+    }
     
     return (
-      <ModalComponent size="normal" onHide={this._handleClose}>
+      <ModalComponent size="normal" onHide={this.props.onClose}>
         <ModalComponent.Head>
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>
@@ -69,8 +53,8 @@ export default class UpdatePicture extends React.Component {
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">
-            <div className="button button-wide button-red action" onClick={this.save}>Save</div>
-            <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.close}>Cancel</div>
+            <div className="button button-wide button-red action" onClick={this.props.onSave}>Save</div>
+            <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.props.onClose}>Cancel</div>
           </footer>
         </ModalComponent.Actions>
       </ModalComponent>
