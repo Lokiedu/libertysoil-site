@@ -17,25 +17,38 @@
  */
 import React from 'react';
 
-import { ShortTextPost } from './post';
-import PostFooter from './post/footer';
+import { truncate } from 'grapheme-utils';
 
+import { ShortPost } from './post';
 
-export default function RelatedPosts({ current_user, posts, triggers, users }) {
+export default function RelatedPosts({ posts, users }) {
   if (!posts || !posts.length) {
     return <noscript />;
   }
 
   return (
     <div>
+      <div className="sidebar_section_title">
+        <h3>Related posts</h3>
+      </div>
       {posts.map(post => {
         let author = users[post.user_id];
+        let text = 'No text...';
+
+        if (post.text) {
+          text = truncate(post.text, {
+            length: 256
+          });
+        }
 
         return (
-          <div className="side_block card-compact" key={post.id}>
-            <ShortTextPost post={post} />
-            <PostFooter author={author} current_user={current_user} post={post} triggers={triggers} />
-          </div>
+          <ShortPost
+            post={{
+              ...post,
+              text
+            }}
+            author={author}
+          />
         );
       })}
     </div>
