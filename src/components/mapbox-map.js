@@ -55,9 +55,11 @@ export default class MapboxMap extends React.Component {
     if (this.props.frozen) {
       map.dragging.disable();
       map.touchZoom.disable();
+      map.boxZoom.disable();
       map.doubleClickZoom.disable();
       map.scrollWheelZoom.disable();
       map.keyboard.disable();
+      map.removeControl(map.zoomControl);
     }
 
     if (this.props.noWheelZoom) {
