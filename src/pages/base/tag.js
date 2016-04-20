@@ -98,7 +98,15 @@ function TagPageHero({ type, tag, src, editable, saveHandler, limits }) {
       return (
         <PageHero src={src}>
           {editable &&
-            <UpdatePicture what="header image" where={`${tag}`} saveHandler={saveHandler} limits={limits} />
+            <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
+              <div className="layout__grid_item">
+                <UpdatePicture
+                  what="header image"
+                  where={(<span className="font-bold">{tag.name}</span>)}
+                  saveHandler={saveHandler}
+                  limits={limits} />
+              </div>
+            </div>
           }
         </PageHero>
       );

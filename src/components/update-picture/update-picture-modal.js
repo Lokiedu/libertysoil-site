@@ -22,15 +22,17 @@ export default class UpdatePictureModal extends React.Component {
 
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    what: PropTypes.string.isRequired,
-    where: PropTypes.string.isRequired,
-    limits: PropTypes.shape({
-      width: PropTypes.number,
-      height: PropTypes.number
-    }),
-    onSave: PropTypes.func.isRequired,
+    what: PropTypes.any.isRequired,
+    where: PropTypes.any.isRequired,
+    onSubmit: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired
   };
+
+  submitHandler = () => {
+    const { avatar, crop } = this.form._submit();
+    
+    this.props.onSubmit(avatar, crop);
+  }
 
   render() {
     const {
@@ -44,16 +46,16 @@ export default class UpdatePictureModal extends React.Component {
     }
     
     return (
-      <ModalComponent size="normal" onHide={this.props.onClose}>
+      <ModalComponent size="big" onHide={this.props.onClose}>
         <ModalComponent.Head>
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>
         <ModalComponent.Body>
-          <UpdatePictureForm limits={limits} onAdd={this.add} />
+          <UpdatePictureForm ref={c => this.form = c} limits={limits} />
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">
-            <div className="button button-wide button-red action" onClick={this.props.onSave}>Save</div>
+            <div className="button button-wide button-red action" onClick={this.submitHandler}>Preview</div>
             <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.props.onClose}>Cancel</div>
           </footer>
         </ModalComponent.Actions>
