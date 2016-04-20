@@ -22,12 +22,22 @@ import FollowButton from './follow-button';
 import { Link } from 'react-router';
 
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
+import ChangeAvatar from './settings/change-avatar';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
   render () {
-    const { user, current_user, editable, updateAvatarTrigger, i_am_following, following, followers } = this.props;
+    const {
+      user,
+      current_user,
+      editable,
+      updateAvatarTrigger,
+      i_am_following,
+      following,
+      followers
+    } = this.props;
+
     let name = user.username;
     let summary = '';
     let followingCount;
@@ -90,7 +100,16 @@ export default class ProfileHeader extends React.Component {
       <div className="profile">
         <div className="profile__body">
           <div className="layout__row">
-            <User user={user} editable={editable} updateAvatarTrigger={updateAvatarTrigger} avatarSize="120" isRound={true} hideText={true} />
+            <div className="layout__grid">
+              <div className="layout__grid_item layout__grid_item-wide">
+                <User user={user} editable={editable} updateAvatarTrigger={updateAvatarTrigger} avatarSize="120" isRound={true} hideText={true} />
+              </div>
+              {editable &&
+                <div className="layout__grid_item">
+                  <ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />
+                </div>
+              }
+            </div>
           </div>
           <div className="layout__row">
             <div className="layout__grid">
