@@ -444,6 +444,14 @@ export class ActionsTrigger {
     }
   };
 
+  updateHashtag = async () => {
+
+  }
+
+  updateGeotag = async () => {
+    
+  }
+
   updateSchool = async (school_uuid, school_fields) => {
     try {
       let result = await this.client.updateSchool(school_uuid, school_fields);

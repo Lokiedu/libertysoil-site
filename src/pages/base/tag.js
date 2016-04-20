@@ -36,6 +36,7 @@ import TagHeader        from '../../components/tag-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
+import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
 
 function formInitialTags(type, value) {
@@ -90,11 +91,17 @@ function GeotagPageHero({ geotag }) {
   return <PageHero src="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src }) {
+function TagPageHero({ type, tag, src, editable, saveHandler, limits }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
-      return <PageHero src={src} />;
+      return (
+        <PageHero src={src}>
+          {editable &&
+            <UpdatePicture what="header image" where={`${tag}`} saveHandler={saveHandler} limits={limits} />
+          }
+        </PageHero>
+      );
     case TAG_LOCATION:
       return <GeotagPageHero geotag={tag} />;
     default:
@@ -155,7 +162,8 @@ export default class BaseTagPage extends React.Component {
       triggers,
       type,
       tag,
-      postsAmount
+      postsAmount,
+      editable
     } = this.props;
 
     let name = tag.url_name;
@@ -194,7 +202,7 @@ export default class BaseTagPage extends React.Component {
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             {pageCaption}
-            <TagPageHero type={type} tag={tag} src="/images/hero/welcome.jpg" />
+            <TagPageHero type={type} tag={tag} editable={editable} src="/images/hero/welcome.jpg" />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}
@@ -204,7 +212,9 @@ export default class BaseTagPage extends React.Component {
                 triggers={triggers}
                 newPost={this.toggleForm}
                 postsAmount={postsAmount}
+                editable={editable}
               />
+
             </PageBody>
             <PageBody className="page__body-up">
               <PageContent>
