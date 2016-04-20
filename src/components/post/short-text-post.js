@@ -18,7 +18,7 @@
 import React from 'react';
 import Linkify from 'react-linkify';
 
-let ShortTextPost = ({ post }) => {
+const ShortTextPost = ({ post }) => {
   let text = '';
 
   if (post.text) {

@@ -15,34 +15,22 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@color__text: #464646;
-@color__background: #fefffe;
-@color__page_background: #e8e7e5;
+import React from 'react';
+import { Link } from 'react-router';
 
-@color__block_background: #fff;
-@color__border: #d3d2d1;
-@color__panel_bg: #f2eae3;
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
+import User from '../user';
 
-@color__green: #a2d544;
-@color__red: #fc2c5b;
-@color__blue: #40b7e9;
-@color__dark_blue: #689ACA;
-@color__gray: #d3d2d1;
-@color__dark_gray: #666;
-@color__darker: #333;
-@color__yellow: #efc242;
 
-.color {
-  &-red {
-    color: @color__red;
-  }
-  &-yellow {
-    color: @color__yellow;
-  }
-  &-blue {
-    color: @color__blue;
-  }
-  &-green {
-    color: @color__green;
-  }
-}
+const ShortPost = ({ post, author }) => (
+  <div className="short_post short_post-spacing" key={post.id}>
+    <Link className="short_post__text" to={getUrl(URL_NAMES.POST, { uuid: post.id })}>
+      {post.text}
+    </Link>
+    <div className="short_post__author">
+      <User avatarSize="20" user={author} />
+    </div>
+  </div>
+);
+
+export default ShortPost;
