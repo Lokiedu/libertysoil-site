@@ -39,7 +39,7 @@ export default class UpdatePicture extends React.Component {
     super();
 
     this.state = {
-      modalVisible: true
+      modalVisible: false
     };
   }
 
@@ -58,8 +58,7 @@ export default class UpdatePicture extends React.Component {
   render() {
     const {
       what,
-      where,
-      limits
+      where
     } = this.props;
     
     return (
