@@ -80,6 +80,8 @@ export default function reducer(state=initialState, action) {
       let users = _.keyBy(_.uniq(action.posts.map(post => post.user), 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
+      console.info('users', state.toJS());
+
       break;
     }
 

@@ -66,7 +66,7 @@ export default class RiverOfPostsComponent extends React.Component {
                   showComments={true}
                   ui={ui}
                   triggers={triggers}
-                  showComments={false}
+                  users={users}
                 >
                   <ShortTextPost post={post}/>
                 </PostWrapper>

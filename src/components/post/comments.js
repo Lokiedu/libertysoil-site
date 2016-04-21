@@ -16,60 +16,138 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, {
+  Component
+} from 'react';
 
 import Comment from './comment';
 import CreateComment from './create-comment';
-//import message from '../../utils/message';
+import message from '../../utils/message';
 
-let Comments = (props) => {
-  const {
-    author,
-    comments,
-    triggers,
-    post,
-    users,
-    ui
-  } = props;
-  let postComments = [];
-  //const title = message.compile('{count, plural, =0{No commets} one{1 comment} other{# Comments}}');
-  const hasComments = !!(post.comments && comments && comments[post.id] && comments[post.id].length);
+const CommentsPlaceholder = ({ count, ...props }) => (
+  <article className="comment comment-placeholder" {...props}>
+    <div className="comment__container">
+      <div className="comment__header"></div>
+      <div className="comment__text action link">
+        {message.compile('Show {count, plural, one{1 comment} other{# comments}}')({ count })}
+      </div>
+    </div>
+  </article>
+);
 
-  if (hasComments) {
-    postComments = (
-      <section className="comments__body">
-        {comments[post.id].map((comment, i) => (
-          <Comment
-            key={i}
-            comment={comment}
-            author={users[comment.user_id]}
-            current_user={author}
-            triggers={triggers}
-            postId={post.id}
-            ui={ui}
-          />
-        ))}
-      </section>
-    );
-  }
+class Comments extends Component {
+  static displayName = 'Comments';
 
-  return (
-    <div>
-      {hasComments &&
-        <div className="card__comments comments">
-          {postComments}
-        </div>
-      }
-      <CreateComment
-        author={author}
-        className="card__footer"
-        postId={post.id}
+  defaultProps = {
+    showAllComments: false
+  };
+
+  state = {
+    showAllComments: false
+  };
+
+  constructor (props) {
+    super(props);
+
+    this.setState({
+      showAllComments: props.showAllComments
+    });
+  };
+
+  showAllComments = () => {
+    this.setState({
+      showAllComments: true
+    });
+  };
+
+  renderComment = (i, comment) => {
+    const {
+      author,
+      triggers,
+      users,
+      post,
+      ui
+    } = this.props;
+
+    return (
+      <Comment
+        key={i}
+        comment={comment}
+        author={users[comment.user_id]}
+        current_user={author}
         triggers={triggers}
+        postId={post.id}
         ui={ui}
       />
-    </div>
-  );
+    );
+  };
 
-};
+  renderComments = () => {
+    const {
+      comments,
+      post
+    } = this.props;
+    const {
+      showAllComments
+    } = this.state;
+    const hasComments = !!(post.comments && comments && comments[post.id] && comments[post.id].length);
+    let commentsData = [];
+    let postComments = [];
+
+    if (hasComments) {
+      commentsData = comments[post.id];
+
+      if (showAllComments) {
+        postComments = commentsData.map((comment, i) => (this.renderComment(i, comment)));
+      } else {
+        postComments.push(this.renderComment(0, commentsData[0]));
+
+        commentsData[1] && postComments.push(this.renderComment(1, commentsData[1]));
+
+        if (commentsData.length > 3) {
+          postComments.push(
+            <CommentsPlaceholder onClick={this.showAllComments} key="placeholder" count={commentsData.length - 3} />
+          );
+        }
+
+        if (commentsData.length > 2) {
+          postComments.push(this.renderComment('last', commentsData[commentsData.length - 1]));
+        }
+      }
+
+      return (
+        <div className="card__comments comments">
+          <section className="comments__body">
+            {postComments}
+          </section>
+        </div>
+      );
+    }
+
+    return false;
+  };
+
+  render() {
+    const {
+      author,
+      triggers,
+      post,
+      ui
+    } = this.props;
+
+    return (
+      <div>
+        {this.renderComments()}
+        <CreateComment
+          author={author}
+          className="card__footer"
+          postId={post.id}
+          triggers={triggers}
+          ui={ui}
+        />
+      </div>
+    );
+  }
+}
 
 export default Comments;
