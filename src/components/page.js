@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { throttle } from 'lodash';
 
 const Page = ({ children, className = '' }) => (
   <div className={`page__container ${className}`}>
@@ -33,61 +33,51 @@ const PageCaption = ({ children }) => (
 export class PageHero extends React.Component {
   static displayName = 'PageHero'
 
+  state = {
+    left: null
+  };
+
+  onResize = throttle(() => {
+    const { left, width } = this.props.crop;
+    const viewWidth = window.innerWidth;
+    const l = (width - viewWidth) / 2 + left;
+
+    this.setState({ left: l });
+  }, 60);
+
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.crop) {
-      return;
+    if (window) {
+      if (nextProps.crop) {
+        window.addEventListener('resize', this.onResize);
+      } else {
+        window.removeEventListener('resize', this.onResize);
+      }
     }
+  }
 
-    const src = nextProps.src;
-    const { top, left, width, height } = nextProps.crop;
-
-    let img = new Image(width, height);
-    img.src = src;
-
-    img.onload = () => {
-      let canvas = ReactDOM.findDOMNode(this.canvas);
-      let ctx = canvas.getContext('2d');
-      
-      canvas.width = width;
-      canvas.height = height;
-      
-      ctx.drawImage(img,          // original
-        left, top, width, height, // cropped
-        0, 0, width, height       // canvas
-      );
-    };
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);     
   }
 
   render() {
     const { children, src, crop } = this.props;
 
-    let content;
+    let style = { backgroundImage: `url(${src})` };
     if (crop) {
-      content =  (
-        <div className="page__hero_content">
-          <canvas ref={c => this.canvas = c} className="page__hero_background"></canvas>
-          <div className="page__hero_content">
-            {children}
-          </div>
-        </div>
-      );
-    } else {
-      content = (
-        <div
-          className="page__hero_content"
-          style={{
-            backgroundImage: `url(${src})`
-          }}
-        >
-          {children}
-        </div>
-      );
+      if (typeof this.state.left === 'object') {
+        this.onResize();
+      }
+
+      style.backgroundPosition = `-${this.state.left}px -${crop.top}px`;
+      style.backgroundSize = 'auto';
     }
 
     return (
       <div className="page__hero">
         <div className="page__hero_body">
-          {content}
+          <div className="page__hero_content" style={style}>
+            {children}
+          </div>
         </div>
       </div>
     );
