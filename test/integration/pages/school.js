@@ -34,8 +34,7 @@ describe('School page', () => {
     });
 
     describe('Check counters', () => {
-
-      let post, school, author;
+      let author, post1, post2, school;
 
       before(async () => {
         await bookshelf.knex('posts').del();
@@ -44,24 +43,37 @@ describe('School page', () => {
         const userAttrs = UserFactory.build();
 
         author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-        post = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
         school = await new School(SchoolFactory.build()).save(null, {method: 'insert'});
 
-        await post.attachSchools([school.get('name')]);
+        post1 = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
+        post2 = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
       });
 
       after(async () => {
-        await post.destroy();
+        await post1.destroy();
+        await post2.destroy();
         await school.destroy();
         await author.destroy();
       });
 
       it('displays posts counter', async () => {
-        let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
+        await post1.attachSchools([school.get('name')]);
+        {
+          let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
 
-        let document = jsdom(context.httpResponse.body);
-        let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
-        return expect(content, 'to have text', '1 posts');
+          let document = jsdom(context.httpResponse.body);
+          let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
+          await expect(content, 'to have text', '1 post');
+        }
+
+        await post2.attachSchools([school.get('name')]);
+        {
+          let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
+
+          let document = jsdom(context.httpResponse.body);
+          let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
+          await expect(content, 'to have text', '2 posts');
+        }
       });
     });
   });
