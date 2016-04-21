@@ -77,7 +77,9 @@ export default class UpdatePicture extends React.Component {
       left: crop.x * img.width,
       top: crop.y * img.height,
       right: ((crop.x + crop.width) * img.width),
-      bottom: ((crop.y + crop.height) * img.height)
+      bottom: ((crop.y + crop.height) * img.height),
+      width: crop.width * img.width,
+      height: crop.height * img.height
     };
 
     submit(image, newCrop);
