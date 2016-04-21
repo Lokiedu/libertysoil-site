@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
+import { values, clone } from 'lodash';
 
 import {
   Page,
@@ -139,6 +139,10 @@ export default class BaseTagPage extends React.Component {
 
   componentWillMount() {
     this.postsAmount = this.props.postsAmount;    
+  }
+
+  _getNewPicture() {
+    return clone(this.state.pic);
   }
 
   addPicture = async (image, newCrop) => {
