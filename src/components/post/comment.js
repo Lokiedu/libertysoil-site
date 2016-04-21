@@ -26,6 +26,7 @@ import Icon from '../icon';
 import Button from '../button';
 import Textarea from '../textarea';
 import Message from '../message';
+import paragraphify from '../../utils/paragraphify';
 
 export default class Comment extends Component {
   state = {
@@ -209,7 +210,7 @@ export default class Comment extends Component {
     return (
       <div className="comment__body">
         <section className="comment__text">
-          {comment.text}
+          {paragraphify(comment.text)}
         </section>
         {false &&
           <footer className="comment__footer">
