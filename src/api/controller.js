@@ -33,7 +33,8 @@ import { User as UserValidators } from './db/validators';
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
-  'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag'
+  'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
+  {post_comments: qb => qb.orderBy('created_at')}, 'post_comments.user'
 ]);
 
 export default class ApiController {
@@ -238,15 +239,11 @@ export default class ApiController {
     let Post = this.bookshelf.model('Post');
 
     try {
-      let relations = _.concat(
-        POST_RELATIONS,
-        {post_comments: qb => { qb.orderBy('created_at'); }},
-        'post_comments.user'
-      );
+      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: POST_RELATIONS});
 
-      let post = await Post.where({id: req.params.id}).fetch({require: true, withRelated: relations});
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
       post.attributes.comments = post.relations.post_comments.length;
+
       res.send(post.toJSON());
     } catch (e) {
       res.sendStatus(404);
@@ -686,12 +683,7 @@ export default class ApiController {
           .offset(offset)
       });
 
-    let relations = _.concat(
-      POST_RELATIONS,
-      {post_comments: qb => qb.orderBy('created_at')},
-    );
-
-    let posts = await q.fetchAll({require: false, withRelated: relations});
+    let posts = await q.fetchAll({require: false, withRelated: POST_RELATIONS});
     let post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({id: row.id, name: row.attributes.name, url_name: row.attributes.url_name}));
