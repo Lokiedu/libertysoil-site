@@ -65,7 +65,7 @@
   max-height: @hero-max-height;
 
   @media @after-wide {
-    max-width: 1680px;
+    max-width: 1400px;
   }
 }
 
@@ -157,7 +157,6 @@
 .page__body {
   display: flex;
   flex: 1;
-  //overflow: hidden; TODO: need test on mobile devices
   margin-left: auto;
   margin-right: auto;
   flex-wrap: wrap;
@@ -225,6 +224,8 @@
   padding: 0 0 @doubleSpace 0;
 
   @media @before-normal {
+    flex: none;
+    width: 100%;
     overflow: hidden;
   }
 

@@ -27,6 +27,7 @@
   top: @headerHeight;
   overflow: auto;
   transform: translateX(-110%);
+  z-index: 100;
   //transition: transform @transition__time @transition__function;
 
   &__heading {
@@ -41,7 +42,6 @@
 
   @media (max-width: 1330px) {
     box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.09);
-    z-index: 100;
   }
 }
 
