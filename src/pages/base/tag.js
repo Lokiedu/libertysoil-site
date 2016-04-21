@@ -70,18 +70,37 @@ function getPageCaption(type, name) {
 }
 
 function GeotagPageHero({ geotag }) {
-  if (geotag.type == 'City' && geotag.geonames_city) {
-    let location = {
-      lat: geotag.geonames_city.latitude,
-      lon: geotag.geonames_city.longitude
-    };
+  let type = geotag.type;
+  let location = {
+    lat: geotag.lat,
+    lon: geotag.lon
+  };
 
+  // A lot of admin divisions don't have lat/lon. Attempt to take coords from the country.
+  if (!(location.lat && location.lon) && geotag.country) {
+    type = 'Country';
+    location.lat = geotag.country.lat;
+    location.lon = geotag.country.lon;
+  }
+
+  let zoom;
+  switch (type) {
+    case 'Planet': zoom = 3; break;
+    case 'Continent': zoom = 4; break;
+    case 'Country': zoom = 5; break;
+    case 'AdminDivision1': zoom = 6; break;
+    case 'City': zoom = 12; break;
+    default: zoom = 10;
+  }
+
+  if (location.lat && location.lon) {
     return (
       <PageHero>
         <MapboxMap
           className="page__hero_map"
           frozen
           viewLocation={location}
+          zoom={zoom}
         />
       </PageHero>
     );
