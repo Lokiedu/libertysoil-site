@@ -91,19 +91,19 @@ function GeotagPageHero({ geotag }) {
   return <PageHero src="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src, editable, saveHandler, limits }) {
+function TagPageHero({ type, tag, src, crop, editable, onSubmit, limits }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
       return (
-        <PageHero src={src}>
+        <PageHero src={src} crop={crop}>
           {editable &&
             <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
               <div className="layout__grid_item">
                 <UpdatePicture
                   what="header image"
                   where={(<span className="font-bold">{tag.name}</span>)}
-                  saveHandler={saveHandler}
+                  onSubmit={onSubmit}
                   limits={limits} />
               </div>
             </div>
@@ -130,13 +130,32 @@ export default class BaseTagPage extends React.Component {
   };
 
   state = {
-    form: false
+    form: false,
+    picture: null
   };
 
   postsAmount = null;
+  defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
     this.postsAmount = this.props.postsAmount;    
+  }
+
+  addPicture = async (image, newCrop) => {
+    if (image) {
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        let pic = {};
+        pic.src = reader.result;
+        pic.crop = newCrop;
+        
+        this.setState({picture: pic});
+      }
+
+      reader.readAsDataURL(image);
+    } else {
+      this.setState({picture: null});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -181,6 +200,13 @@ export default class BaseTagPage extends React.Component {
 
     const pageCaption = getPageCaption(type, name);
 
+    let pic;
+    if (this.state.picture) {
+      pic = this.state.picture;
+    } else {
+      pic = { src: this.defaultPicture };
+    }
+
     let createPostForm;
     let addedTags;
     if (is_logged_in) {
@@ -210,7 +236,12 @@ export default class BaseTagPage extends React.Component {
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             {pageCaption}
-            <TagPageHero type={type} tag={tag} editable={editable} src="/images/hero/welcome.jpg" />
+            <TagPageHero
+              type={type}
+              tag={tag}
+              editable={editable}
+              onSubmit={this.addPicture}
+              {...pic} />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}

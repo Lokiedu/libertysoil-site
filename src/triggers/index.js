@@ -633,7 +633,7 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop) =>{
+  updateAvatar = async (image, crop) => {
     try {
       let original = await this.client.uploadImage([image]);
       original = original.attachments[0].id;
