@@ -87,8 +87,8 @@ export default class UpdatePicture extends React.Component {
 
   render() {
     return (
-      <div className="user_box__edit_avatar user_box__edit_avatar-no_margin">
-        <button onClick={this.open}>
+      <div className="">
+        <button onClick={this.open} className="update_picture__camera">
           <span className="micon">camera</span>
         </button>
         <UpdatePictureModal

@@ -15,12 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.update_picture__container {
-  
-  &:hover {
-    
+.update_picture {
+
+  &__container {
+    &:hover {
+
+      .update_picture__camera {
+        color: #eee;
+      }
+    }
+  }
+
+  &__camera {
+    background: none;
+    border: none;
+
     .micon {
-      color: #fff;
+      font-size: 30px;
+
+      &:hover {
+        color: #fff;
+      }
     }
   }
 }

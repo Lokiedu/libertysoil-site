@@ -66,7 +66,7 @@ export class PageHero extends React.Component {
       content =  (
         <div className="page__hero_content">
           <canvas ref={c => this.canvas = c} className="page__hero_background"></canvas>
-          <div className="page__hero_nodes">
+          <div className="page__hero_content">
             {children}
           </div>
         </div>

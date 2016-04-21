@@ -70,12 +70,14 @@ export default class UpdatePictureForm extends React.Component {
             height={limits.height}
             image={this.state.image}
             scale={this.state.scale}
-            style={{width: '100%'}}
+            style={{width: '100%', cursor: 'move'}}
           />
-          <div className="change_avatar_modal__size_box">
-            <span className="change_avatar_modal__size_box__icon">-</span>
-            <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
-            <span className="change_avatar_modal__size_box__icon">+</span>
+          <div className="layout layout__row layout-align_center">
+            <div className="change_avatar_modal__size_box">
+              <span className="change_avatar_modal__size_box__icon micon">remove</span>
+              <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
+              <span className="change_avatar_modal__size_box__icon micon">add</span>
+            </div>
           </div>
         </div>
       );
