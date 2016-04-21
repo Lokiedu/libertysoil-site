@@ -45,6 +45,9 @@ class UserPage extends React.Component {
   render() {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
+      ui,
+      users,
+      comments,
       following,
       followers
     } = this.props;
@@ -80,7 +83,9 @@ class UserPage extends React.Component {
           posts={this.props.posts}
           river={user_posts}
           triggers={triggers}
-          users={this.props.users}
+          users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseUserPage>
     )

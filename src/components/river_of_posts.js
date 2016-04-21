@@ -28,6 +28,7 @@ export default class RiverOfPostsComponent extends React.Component {
     const {
       triggers,
       current_user,
+      showComments,
       users,
       river,
       comments,
@@ -63,7 +64,6 @@ export default class RiverOfPostsComponent extends React.Component {
                   key={post.id}
                   post={post}
                   comments={comments}
-                  showComments={true}
                   ui={ui}
                   triggers={triggers}
                   users={users}

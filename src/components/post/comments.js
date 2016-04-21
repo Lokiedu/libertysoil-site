@@ -42,16 +42,12 @@ class Comments extends Component {
     showAllComments: false
   };
 
-  state = {
-    showAllComments: false
-  };
-
   constructor (props) {
     super(props);
 
-    this.setState({
+    this.state = {
       showAllComments: props.showAllComments
-    });
+    };
   };
 
   showAllComments = () => {
