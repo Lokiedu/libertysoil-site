@@ -41,6 +41,10 @@ export default class UpdatePictureModal extends React.Component {
   submitHandler = async () => {
     const { avatar, crop } = this.form._submit();
 
+    if (!avatar) {
+      this.setState({error: 'Nothing to preview. Upload image first.'})
+    }
+
     let img = new Image();
     let reader = new FileReader();
 
@@ -63,11 +67,41 @@ export default class UpdatePictureModal extends React.Component {
 
         return;
       }
-      
-      this.props.onSubmit(avatar, newCrop);
+
+      if (newCrop.height > 2800) {
+        this.setState({
+          error: `Image mustn't be greater than 2800px in width. Now: ${parseInt(newCrop.width)}px`
+        });
+
+        return;
+      }
+
+      let canvas = document.createElement('canvas');
+      canvas.width = 1400;
+      canvas.height = 400;
+      let ctx = canvas.getContext('2d');
+
+      const wRatio = canvas.width / newCrop.width;
+
+      ctx.drawImage(img,
+        newCrop.left, newCrop.top, newCrop.width, newCrop.height,
+        0, 0, canvas.width, newCrop.height * wRatio
+      );
+
+      let src = canvas.toDataURL();
+
+      this.props.onSubmit({
+        production: { picture: avatar, crop: newCrop },
+        preview: { src: src }
+      });
     }
 
     reader.readAsDataURL(avatar);
+  }
+
+  closeHandler = () => {
+    this.setState({error: ''});
+    this.props.onClose();
   }
 
   render() {
@@ -82,7 +116,7 @@ export default class UpdatePictureModal extends React.Component {
     }
     
     return (
-      <ModalComponent size="big" onHide={this.props.onClose}>
+      <ModalComponent size="big" onHide={this.closeHandler}>
         <ModalComponent.Head>
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>

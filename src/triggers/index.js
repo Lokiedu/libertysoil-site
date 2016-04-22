@@ -652,10 +652,10 @@ export class ActionsTrigger {
     }
   };
 
-  updateHeaderPicture = async (image, crop, scale) => {
+  updateHeaderPicture = async ({ picture, crop, scale }) => {
     let more = {};
     try {
-      let original = await this.client.uploadImage([image]);
+      let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
       let cropped = await this.client.processImage(original, [{crop: crop}, { scale: scale }]);

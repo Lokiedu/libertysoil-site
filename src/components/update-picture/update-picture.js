@@ -47,8 +47,8 @@ export default class UpdatePicture extends React.Component {
     this.setState({modalVisible: true});
   };
 
-  submitHandler = (image, crop) => {
-    this.pictureUpdateHandler(image, crop, this.props.onSubmit).then(() => {
+  submitHandler = ({ production, preview }) => {
+    this.props.onSubmit({ production, preview }).then(() => {
       this.close();
     });
   };
@@ -56,10 +56,6 @@ export default class UpdatePicture extends React.Component {
   close = () => {
     this.setState({modalVisible: false});
     this.props.onClose();
-  };
-
-  pictureUpdateHandler = async (image, crop, submit) => {
-    await submit(image, crop);
   };
 
   render() {

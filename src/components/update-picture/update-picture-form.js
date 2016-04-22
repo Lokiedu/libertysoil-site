@@ -41,7 +41,9 @@ export default class UpdatePictureForm extends React.Component {
   };
 
   _submit = () => {
-    //this.setState({image: null});
+    if (!this.state.image) {
+      return {};
+    }
 
     return { avatar: this.state.avatar, crop: this.editor.getCroppingRect() };
   }
@@ -87,7 +89,7 @@ export default class UpdatePictureForm extends React.Component {
           <div className="layout layout__row layout-align_center">
             <div className="change_avatar_modal__size_box">
               <span className="change_avatar_modal__size_box__icon micon">remove</span>
-              <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
+              <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="0.1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
               <span className="change_avatar_modal__size_box__icon micon">add</span>
             </div>
           </div>
