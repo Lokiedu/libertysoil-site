@@ -30,6 +30,7 @@ import {
   updateCreatePostForm
 } from '../actions';
 
+import NotFound from './not-found';
 import River                from '../components/river_of_posts';
 import { ActionsTrigger }   from '../triggers';
 import { defaultSelector }  from '../selectors';
@@ -95,6 +96,10 @@ export class TagPage extends Component {
 
     if (!tag) {
       return <script />;
+    }
+
+    if (!tag.id) {
+      return <NotFound/>;
     }
 
     const thisTagPosts = tag_posts[tag.name] || [];
