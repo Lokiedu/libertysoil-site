@@ -35,7 +35,7 @@ describe('List page with redux', function() {
 
   it('MUST render important components', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<List create_post_form={{text: 'foo'}} current_user={{id: '1'}} river={[]} ui={{progress: {}}} />);
+    renderer.render(<List comments={[]} create_post_form={{text: 'foo'}} current_user={{id: '1'}} river={[]} ui={{progress: {}}} />);
 
     return expect(
       renderer,
