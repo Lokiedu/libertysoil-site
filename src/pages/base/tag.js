@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
+import { values, pick } from 'lodash';
 
 import {
   Page,
@@ -38,6 +38,7 @@ import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
+import { TAG_HEADER_SIZE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -91,14 +92,22 @@ function GeotagPageHero({ geotag }) {
   return <PageHero src="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src, editable, saveHandler, limits }) {
+function TagPageHero({ type, tag, src, crop, editable, onSubmit, limits }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
       return (
-        <PageHero src={src}>
+        <PageHero src={src} crop={crop}>
           {editable &&
-            <UpdatePicture what="header image" where={`${tag}`} saveHandler={saveHandler} limits={limits} />
+            <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
+              <div className="layout__grid_item">
+                <UpdatePicture
+                  what="header image"
+                  where={(<span className="font-bold">{tag.name}</span>)}
+                  onSubmit={onSubmit}
+                  limits={limits} />
+              </div>
+            </div>
           }
         </PageHero>
       );
@@ -122,13 +131,46 @@ export default class BaseTagPage extends React.Component {
   };
 
   state = {
-    form: false
+    form: false,
+    picture: null,
+    pictureFile: null
   };
 
   postsAmount = null;
+  defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
-    this.postsAmount = this.props.postsAmount;    
+    this.postsAmount = this.props.postsAmount;
+
+    if (this.props.tag.more && this.props.tag.more.head_pic) {
+      this.defaultPicture = this.props.tag.more.head_pic.url;
+    }
+  }
+
+  _getNewPicture() {
+    if (this.state.pictureFile) {
+      return { image: this.state.pictureFile, ...pick(this.state.picture, ['crop', 'scale']) };
+    }
+
+    return undefined;
+  }
+
+  addPicture = async (image, crop) => {
+    if (image) {
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        let pic = {};
+        pic.src = reader.result;
+        pic.crop = crop;
+        pic.scale = { wRatio: TAG_HEADER_SIZE.width / crop.width };
+        
+        this.setState({picture: pic, pictureFile: image});
+      }
+
+      reader.readAsDataURL(image);
+    } else {
+      this.setState({picture: null, pictureFile: null});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -173,6 +215,13 @@ export default class BaseTagPage extends React.Component {
 
     const pageCaption = getPageCaption(type, name);
 
+    let pic;
+    if (this.state.picture) {
+      pic = this.state.picture;
+    } else {
+      pic = { src: this.defaultPicture };
+    }
+
     let createPostForm;
     let addedTags;
     if (is_logged_in) {
@@ -202,7 +251,12 @@ export default class BaseTagPage extends React.Component {
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             {pageCaption}
-            <TagPageHero type={type} tag={tag} editable={editable} src="/images/hero/welcome.jpg" />
+            <TagPageHero
+              type={type}
+              tag={tag}
+              editable={editable}
+              onSubmit={this.addPicture}
+              {...pic} />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}

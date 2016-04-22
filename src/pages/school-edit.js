@@ -58,11 +58,17 @@ class SchoolEditPage extends React.Component {
     return 200;
   }
 
-  saveSchool = (id, name, description, lat, lon) => {
+  saveSchool = async (id, name, description, lat, lon) => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    triggers.updateSchool(id, { name, description, lat, lon })
+    let more = {};
+    const pic = this.base._getNewPicture();
+    if (pic) {
+      more = await triggers.updateHeaderPicture(pic.image, pic.crop, pic.scale);
+    }
+
+    triggers.updateSchool(id, { name, description, lat, lon, more })
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
       }).catch(() => {
@@ -96,6 +102,7 @@ class SchoolEditPage extends React.Component {
 
     return (
       <BaseTagPage
+        ref={c => this.base = c}
         editable={true}
         params={params}
         current_user={current_user}

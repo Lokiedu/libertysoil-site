@@ -20,19 +20,19 @@ export default class UpdatePicture extends React.Component {
   static displayName = 'UpdatePicture';
 
   static propTypes = {
-    what: PropTypes.string.isRequired,
-    where: PropTypes.string.isRequired,
+    what: PropTypes.any.isRequired,
+    where: PropTypes.any.isRequired,
     limits: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
     }),
-    saveHandler: PropTypes.func,
-    close: PropTypes.func
+    onSubmit: PropTypes.func,
+    onClose: PropTypes.func
   };
 
   static defaultProps = {
-    saveHandler: () => {},
-    close: () => {}
+    onSubmit: () => {},
+    onClose: () => {}
   };
 
   constructor() {
@@ -47,31 +47,57 @@ export default class UpdatePicture extends React.Component {
     this.setState({modalVisible: true});
   };
 
-  save = () => {
-    this.props.saveHandler();
+  submitHandler = (image, crop) => {
+    this.pictureUpdateHandler(image, crop, this.props.onSubmit).then(() => {
+      this.close();
+    });
   };
 
   close = () => {
     this.setState({modalVisible: false});
+    this.props.onClose();
+  };
+
+  pictureUpdateHandler = async (image, crop, submit) => {
+    let img = new Image();
+
+    let readImage = new Promise((resolve) => {
+      let reader = new FileReader;
+      img.onload = function() {
+        resolve();
+      };
+      reader.onload = function (e) {
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(image);
+    });
+    await readImage;
+
+    let newCrop = {
+      left: crop.x * img.width,
+      top: crop.y * img.height,
+      right: ((crop.x + crop.width) * img.width),
+      bottom: ((crop.y + crop.height) * img.height),
+      width: crop.width * img.width,
+      height: crop.height * img.height
+    };
+
+    submit(image, newCrop);
   };
 
   render() {
-    const {
-      what,
-      where
-    } = this.props;
-    
     return (
-      <div className="user_box__edit_avatar">
-        <button onClick={this.open} style={{position: 'absolute', bottom: '100px', right: '20px'}}>
+      <div className="">
+        <button onClick={this.open} className="update_picture__camera">
           <span className="micon">camera</span>
         </button>
         <UpdatePictureModal
+          what={this.props.what}
+          where={this.props.where}
+          limits={this.props.limits}
           visible={this.state.modalVisible}
-          what={what}
-          where={where}
           onClose={this.close}
-          onSave={this.save}
+          onSubmit={this.submitHandler}
         />
       </div>
     );

@@ -20,7 +20,7 @@ import { Link } from 'react-router';
 
 import User from './user';
 import FollowButton from './follow-button';
-import ChangeAvatar from './settings/change-avatar';
+import UpdatePicture from './update-picture/update-picture';
 
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
@@ -106,7 +106,7 @@ export default class ProfileHeader extends React.Component {
                </div>
                {editable &&
                  <div className="layout__grid_item">
-                   <ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />
+                   <UpdatePicture what="profile background" where={`${name}`} />
                  </div>
                }
              </div>
