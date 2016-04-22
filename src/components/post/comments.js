@@ -29,7 +29,7 @@ const CommentsPlaceholder = ({ count, ...props }) => (
     <div className="comment__container">
       <div className="comment__header"></div>
       <div className="comment__text action link">
-        {message.compile('Show {count, plural, one{1 comment} other{# comments}}')({ count })}
+        {message.compile('{count, plural, one{1 comment} other{# comments}}')({ count })}
       </div>
     </div>
   </article>
@@ -48,7 +48,7 @@ class Comments extends Component {
     this.state = {
       showAllComments: props.showAllComments
     };
-  };
+  }
 
   showAllComments = () => {
     this.setState({
@@ -67,12 +67,12 @@ class Comments extends Component {
 
     return (
       <Comment
-        key={i}
-        comment={comment}
         author={users[comment.user_id]}
+        comment={comment}
         current_user={author}
-        triggers={triggers}
+        key={i}
         postId={post.id}
+        triggers={triggers}
         ui={ui}
       />
     );

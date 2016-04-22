@@ -22,9 +22,9 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 import HeaderLogo from './header-logo';
 import User from './user';
-import { API_HOST } from '../config'
+import { API_HOST } from '../config';
 
-import Dropdown from './dropdown'
+import Dropdown from './dropdown';
 
 let AuthBlock = (props) => {
   if (props.is_logged_in) {
