@@ -22,7 +22,6 @@ import React, {
 
 import Time from '../time';
 import User from '../user';
-import Icon from '../icon';
 import Button from '../button';
 import Textarea from '../textarea';
 import Message from '../message';
@@ -55,8 +54,6 @@ export default class Comment extends Component {
     const {
       comment
     } = this.props;
-
-    console.info('editComment');
 
     this.setState({
       text: comment.text,
