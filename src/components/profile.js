@@ -16,18 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
 import User from './user';
 import FollowButton from './follow-button';
-import { Link } from 'react-router';
+import UpdatePicture from './update-picture/update-picture';
 
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
-  render () {
-    const { user, current_user, editable, updateAvatarTrigger, i_am_following, following, followers } = this.props;
+  render() {
+    const {
+      user,
+      current_user,
+      editable,
+      updateAvatarTrigger,
+      i_am_following,
+      following,
+      followers
+    } = this.props;
+    
     let name = user.username;
     let summary = '';
     let followingCount;
@@ -87,10 +97,19 @@ export default class ProfileHeader extends React.Component {
     name = name.trim();
 
     return (
-      <div className="profile">
+      <div ref={c => this.root = c} className="profile">
         <div className="profile__body">
           <div className="layout__row">
-            <User user={user} editable={editable} updateAvatarTrigger={updateAvatarTrigger} avatarSize="120" isRound={true} hideText={true} />
+            <div className="layout__grid">
+               <div className="layout__grid_item layout__grid_item-wide">
+                 <User user={user} editable={editable} updateAvatarTrigger={updateAvatarTrigger} avatarSize="120" isRound={true} hideText={true} />
+               </div>
+               {editable &&
+                 <div className="layout__grid_item">
+                   <UpdatePicture what="profile background" where={`${name}`} />
+                 </div>
+               }
+             </div>
           </div>
           <div className="layout__row">
             <div className="layout__grid">

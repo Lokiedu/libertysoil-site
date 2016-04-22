@@ -36,6 +36,10 @@ export async function processImage(buffer, transforms) {
         batch.resize(params.width, params.height);
         break;
       }
+      case 'scale': {
+        batch.scale(params.wRatio);
+        break;
+      }
     }
   }
 

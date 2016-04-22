@@ -28,7 +28,10 @@ import Checkit from 'checkit';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
-import { User as UserValidators } from './db/validators';
+import {
+  User as UserValidators,
+  School as SchoolValidators
+} from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
@@ -480,7 +483,17 @@ export default class ApiController {
 
     try {
       let school = await School.where({id: req.params.id}).fetch({require: true, withRelated: 'images'});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'more', 'lat', 'lon');
+      let newAttributes = _.pick(req.body, 'name', 'description', 'lat', 'lon');
+
+      let properties = {};
+      for (let fieldName in SchoolValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
+      }
+
+      properties.last_editor = req.session.user;
+      newAttributes.more = _.extend(school.get('more'), properties);
 
       if (_.isArray(images)) {
         school.updateImages(images);

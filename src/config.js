@@ -38,7 +38,9 @@ export const URL = {
   [URL_NAMES.SETTINGS]: '/settings',
   [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
   [URL_NAMES.CHANGE_PASSWORD]: '/settings/password',
-  [URL_NAMES.SCHOOL]: '/s/:url_name'
+  [URL_NAMES.SCHOOL]: '/s/:url_name',
+  [URL_NAMES.HASHTAG]: '/tag/:name',
+  [URL_NAMES.GEOTAG]: '/geo/:url_name'
 };
 
 export const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;

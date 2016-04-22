@@ -17,7 +17,6 @@
  */
 import { browserHistory } from 'react-router';
 
-import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
@@ -444,6 +443,10 @@ export class ActionsTrigger {
     }
   };
 
+  updateHashtag = async () => {
+
+  }
+
   updateSchool = async (school_uuid, school_fields) => {
     try {
       let result = await this.client.updateSchool(school_uuid, school_fields);
@@ -625,12 +628,12 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop) =>{
+  updateAvatar = async (image, crop, resize) => {
     try {
       let original = await this.client.uploadImage([image]);
       original = original.attachments[0].id;
 
-      let cropped = await this.client.processImage(original, [{crop: crop}, { resize: {width: AVATAR_SIZE.width, height: AVATAR_SIZE.height}}]);
+      let cropped = await this.client.processImage(original, [{crop: crop}, resize]);
 
       let res = await this.client.updateUser({
         more: {
@@ -648,6 +651,27 @@ export class ActionsTrigger {
       this.dispatch(addError(e.message));
     }
   };
+
+  updateHeaderPicture = async (image, crop, scale) => {
+    let more = {};
+    try {
+      let original = await this.client.uploadImage([image]);
+      original = original.attachments[0].id;
+
+      let cropped = await this.client.processImage(original, [{crop: crop}, { scale: scale }]);
+
+      more = {
+        head_pic: {
+          attachment_id: cropped.attachment.id,
+          url: cropped.attachment.s3_url
+        }
+      }
+    } catch (e) {
+      this.dispatch(addError(e.message));
+    }
+
+    return more;
+  }
 
   createComment = async (postId, comment) => {
     this.dispatch(createCommentStart(postId, comment));
