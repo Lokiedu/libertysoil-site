@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { throttle } from 'lodash';
 
 const Page = ({ children, className = '' }) => (
   <div className={`page__container ${className}`}>
@@ -30,59 +29,20 @@ const PageCaption = ({ children }) => (
   </header>
 );
 
-export class PageHero extends React.Component {
-  static displayName = 'PageHero'
-
-  state = {
-    left: null
-  };
-
-  onResize = throttle(() => {
-    const { left, width } = this.props.crop;
-    const viewWidth = window.innerWidth;
-    const l = (width - viewWidth) / 2 + left;
-
-    this.setState({ left: l });
-  }, 60);
-
-  componentWillReceiveProps(nextProps) {
-    if (window) {
-      if (nextProps.crop) {
-        window.addEventListener('resize', this.onResize);
-      } else {
-        window.removeEventListener('resize', this.onResize);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);     
-  }
-
-  render() {
-    const { children, src, crop } = this.props;
-
-    let style = { backgroundImage: `url(${src})` };
-    if (crop) {
-      if (typeof this.state.left === 'object') {
-        this.onResize();
-      }
-
-      style.backgroundPosition = `-${this.state.left}px -${crop.top}px`;
-      style.backgroundSize = 'auto';
-    }
-
-    return (
-      <div className="page__hero">
-        <div className="page__hero_body">
-          <div className="page__hero_content" style={style}>
-            {children}
-          </div>
-        </div>
+const PageHero = ({ children, src }) => (
+  <div className="page__hero">
+    <div className="page__hero_body">
+      <div
+        className="page__hero_content"
+        style={{
+          backgroundImage: `url(${src})`
+        }}
+      >
+        {children}
       </div>
-    );
-  }
-}
+    </div>
+  </div>
+);
 
 
 const PageMain = ({ children, className = '', ...props }) => (
@@ -106,6 +66,7 @@ const PageContent = ({ children, className = '' }) => (
 export {
   Page,
   PageMain,
+  PageHero,
   PageCaption,
   PageBody,
   PageContent

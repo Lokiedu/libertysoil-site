@@ -47,8 +47,8 @@ export default class UpdatePicture extends React.Component {
     this.setState({modalVisible: true});
   };
 
-  submitHandler = (image, crop) => {
-    this.pictureUpdateHandler(image, crop, this.props.onSubmit).then(() => {
+  submitHandler = ({ production, preview }) => {
+    this.props.onSubmit({ production, preview }).then(() => {
       this.close();
     });
   };
@@ -56,33 +56,6 @@ export default class UpdatePicture extends React.Component {
   close = () => {
     this.setState({modalVisible: false});
     this.props.onClose();
-  };
-
-  pictureUpdateHandler = async (image, crop, submit) => {
-    let img = new Image();
-
-    let readImage = new Promise((resolve) => {
-      let reader = new FileReader;
-      img.onload = function() {
-        resolve();
-      };
-      reader.onload = function (e) {
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(image);
-    });
-    await readImage;
-
-    let newCrop = {
-      left: crop.x * img.width,
-      top: crop.y * img.height,
-      right: ((crop.x + crop.width) * img.width),
-      bottom: ((crop.y + crop.height) * img.height),
-      width: crop.width * img.width,
-      height: crop.height * img.height
-    };
-
-    submit(image, newCrop);
   };
 
   render() {

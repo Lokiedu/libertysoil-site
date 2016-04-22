@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, pick } from 'lodash';
+import { values, clone } from 'lodash';
 
 import {
   Page,
@@ -111,12 +111,12 @@ function GeotagPageHero({ geotag }) {
   return <PageHero src="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src, crop, editable, onSubmit, limits }) {
+function TagPageHero({ type, tag, src, editable, onSubmit, limits }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
       return (
-        <PageHero src={src} crop={crop}>
+        <PageHero src={src}>
           {editable &&
             <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
               <div className="layout__grid_item">
@@ -151,8 +151,8 @@ export default class BaseTagPage extends React.Component {
 
   state = {
     form: false,
-    picture: null,
-    pictureFile: null
+    production: null,
+    preview: null
   };
 
   postsAmount = null;
@@ -167,28 +167,27 @@ export default class BaseTagPage extends React.Component {
   }
 
   _getNewPicture() {
-    if (this.state.pictureFile) {
-      return { image: this.state.pictureFile, ...pick(this.state.picture, ['crop', 'scale']) };
+    if (this.state.production) {
+      return this.state.production;
     }
 
     return undefined;
   }
 
-  addPicture = async (image, crop) => {
-    if (image) {
-      let reader = new FileReader();
-      reader.onloadend = () => {
-        let pic = {};
-        pic.src = reader.result;
-        pic.crop = crop;
-        pic.scale = { wRatio: TAG_HEADER_SIZE.width / crop.width };
-        
-        this.setState({picture: pic, pictureFile: image});
+  addPicture = async ({ production, preview }) => {
+    if (production) {
+      let _preview = { src: preview.src };
+      let _production = { picture: production.picture, crop: production.crop };
+
+      if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / _production.crop.width };
+      } else {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
       }
 
-      reader.readAsDataURL(image);
+      this.setState({production: _production, preview: _preview});
     } else {
-      this.setState({picture: null, pictureFile: null});
+      this.setState({production: null, preview: null});
     }
   }
 
@@ -235,8 +234,8 @@ export default class BaseTagPage extends React.Component {
     const pageCaption = getPageCaption(type, name);
 
     let pic;
-    if (this.state.picture) {
-      pic = this.state.picture;
+    if (this.state.preview) {
+      pic = clone(this.state.preview);
     } else {
       pic = { src: this.defaultPicture };
     }
