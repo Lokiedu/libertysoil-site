@@ -565,23 +565,58 @@ export default class ApiController {
       return;
     }
 
-    let images;
-
-    if (req.body.images) {
-      if (!_.isArray(req.body.images)) {
-        res.status(400);
-        res.send({error: `"images" parameter is expected to be an array`});
-        return;
-      }
-
-      images = _.uniq(req.body.images);
-    }
-
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({id: req.params.id}).fetch({require: true, withRelated: 'images'});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'lat', 'lon');
+      const school = await School.where({ id: req.params.id }).fetch({ require: true, withRelated: 'images' });
+
+      const allowedAttributes = [
+        'name', 'description',
+        'lat', 'lon',
+        'is_open', 'principal_name', 'principal_surname',
+        'foundation_year', 'foundation_month', 'foundation_day',
+        'number_of_students', 'org_membership',
+        'teaching_languages', 'required_languages',
+        'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+        'website', 'facebook', 'twitter', 'wikipedia'
+      ];
+      const processData = (data) => {
+        if ('is_open' in data) {
+          if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
+            throw new Error("'is_open' has to be boolean or null");
+          }
+        }
+
+        if ('number_of_students' in data) {
+          if (!_.isPlainObject(data.number_of_students)) {
+            throw new Error("'number_of_students' should be an object");
+          }
+        }
+
+        if ('org_membership' in data) {
+          if (!_.isPlainObject(data.org_membership)) {
+            throw new Error("'org_membership' should be an object");
+          }
+        }
+
+        if ('teaching_languages' in data) {
+          if (!_.isArray(data.teaching_languages)) {
+            throw new Error("'teaching_languages' should be an array");
+          }
+          data.teaching_languages = JSON.stringify(data.teaching_languages);
+        }
+
+        if ('required_languages' in data) {
+          if (!_.isArray(data.required_languages)) {
+            throw new Error("'required_languages' should be an array");
+          }
+          data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        return data;
+      };
+
+      const attributesWithValues = processData(_.pick(req.body, allowedAttributes));
 
       let properties = {};
       for (let fieldName in SchoolValidators.more) {
@@ -591,20 +626,30 @@ export default class ApiController {
       }
 
       properties.last_editor = req.session.user;
-      newAttributes.more = _.extend(school.get('more'), properties);
+      attributesWithValues.more = _.extend(school.get('more'), properties);
 
-      if (_.isArray(images)) {
-        school.updateImages(images);
+      school.set(attributesWithValues);
+
+      if (req.body.images) {
+        if (!_.isArray(req.body.images)) {
+          res.status(400);
+          res.send({error: `"images" parameter is expected to be an array`});
+          return;
+        }
+
+        const images = _.uniq(req.body.images);
+
+        if (_.isArray(images)) {
+          school.updateImages(images);
+        }
       }
 
-      school.set(newAttributes);
       await school.save();
 
       res.send(school);
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
-      return;
     }
   }
 
