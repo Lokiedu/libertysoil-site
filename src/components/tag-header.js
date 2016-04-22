@@ -191,9 +191,14 @@ export default class TagHeader extends React.Component {
       ];
 
       if (postsAmount) {
+        let postsWordForm = 'post';
+        if (postsAmount > 1) {
+          postsWordForm += 's';
+        }
+
         toolbarPrimary.unshift(
           <div key="posts" className="panel__toolbar_item-text">
-            {postsAmount} posts
+            {postsAmount} {postsWordForm}
           </div>
         );
       }

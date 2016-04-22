@@ -40,13 +40,15 @@ export default class MapboxMap extends React.Component {
     viewLocation: PropTypes.shape({
       lat: PropTypes.number,
       lon: PropTypes.number
-    })
+    }),
+    mapId: PropTypes.string
   };
 
   static defaultProps = {
     zoom: 13,
     frozen: false,
-    noWheelZoom: false
+    noWheelZoom: false,
+    mapId: 'mapbox.streets-basic'
   };
 
   componentDidMount() {
@@ -75,6 +77,7 @@ export default class MapboxMap extends React.Component {
     let {
       selectedLocation,
       viewLocation,
+      mapId,
       ...props
     } = this.props;
 
@@ -86,7 +89,7 @@ export default class MapboxMap extends React.Component {
       >
         <Leaflet.TileLayer
           attribution='<a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox &copy; OpenStreetMap</a> <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>'
-          url={`http://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}`}
+          url={`http://api.tiles.mapbox.com/v4/${mapId}/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}`}
         />
         {!isEmpty(selectedLocation) &&
           <Leaflet.Marker position={selectedLocation} />
