@@ -37,9 +37,13 @@ import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
 
-  props = {
+  static defaultProps = {
     onSave: false
-  };
+  }
+
+  _getNewPictures() {
+    return this.head._getNewPictures();
+  }
 
   render () {
     const {
@@ -89,12 +93,12 @@ export default class BaseSettingsPage extends React.Component {
               <PageBody>
                 <PageContent>
                   <ProfileHeader
+                    ref={c => this.head = c}
                     user={current_user.user}
                     current_user={current_user}
                     following={following}
                     followers={followers}
                     editable={true}
-                    updateAvatarTrigger={triggers.updateAvatar}
                   />
                   <div className="page__content page__content-spacing">
                     <div className="layout__row layout-small">

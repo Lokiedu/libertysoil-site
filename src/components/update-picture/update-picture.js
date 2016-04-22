@@ -60,7 +60,7 @@ export default class UpdatePicture extends React.Component {
 
   render() {
     return (
-      <div className="">
+      <div className="update_picture">
         <button onClick={this.open} className="update_picture__camera">
           <span className="micon">camera</span>
         </button>

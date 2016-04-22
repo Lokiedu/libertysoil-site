@@ -70,17 +70,24 @@ class SettingsPage extends React.Component {
 
   };
 
-  onSave = () => {
+  onSave = async () => {
     let roles = this.state.roles;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    let processedPictures;
+    let pictures = this.base._getNewPictures();
+    if (pictures.head_pic) {
+      processedPictures = await triggers.updateHeaderPicture({...pictures.head_pic});
+    }
+
     triggers.updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value,
-        roles: roles
+        roles: roles,
+        ...processedPictures
       }
     });
   };
@@ -117,6 +124,7 @@ class SettingsPage extends React.Component {
 
     return (
       <BaseSettingsPage
+        ref={c => this.base = c}
         current_user={current_user}
         followers={followers}
         following={following}
