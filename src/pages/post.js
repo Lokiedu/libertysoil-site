@@ -121,7 +121,7 @@ export class PostPage extends React.Component {
                   post={current_post}
                   comments={this.props.comments}
                   ui={this.props.ui}
-                  showComments={true}
+                  showAllComments={true}
                   triggers={triggers}
                 >
                   <ShortTextPost post={current_post}/>

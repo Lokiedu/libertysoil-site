@@ -44,6 +44,13 @@ class UserFavoritesPage extends React.Component {
   render () {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
+      posts,
+      current_user,
+      users,
+      comments,
+      ui,
+      i_am_following,
+      is_logged_in,
       following,
       followers
     } = this.props;
@@ -63,21 +70,23 @@ class UserFavoritesPage extends React.Component {
 
     return (
       <BaseUserFavoritesPage
-        current_user={this.props.current_user}
+        current_user={current_user}
         following={following}
         followers={followers}
-        i_am_following={this.props.i_am_following}
-        is_logged_in={this.props.is_logged_in}
+        i_am_following={i_am_following}
+        is_logged_in={is_logged_in}
         page_user={page_user}
         triggers={triggers}
       >
         <Helmet title={`Favorites of ${page_user.fullName} on `} />
         <River
-          current_user={this.props.current_user}
-          posts={this.props.posts}
+          current_user={current_user}
+          posts={posts}
           river={this.props.favourites_river[page_user.id]}
           triggers={triggers}
-          users={this.props.users}
+          users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseUserFavoritesPage>
     )

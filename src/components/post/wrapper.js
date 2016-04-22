@@ -29,7 +29,7 @@ let PostWrapper = ({
   post,
   author,
   triggers,
-  showComments,
+  showAllComments,
   children,
   current_user,
   ui
@@ -37,7 +37,7 @@ let PostWrapper = ({
   let cardClassName = bem.makeClassName({
     block: 'card',
     modifiers: {
-      full: showComments
+
     }
   });
   let _author = null;
@@ -55,16 +55,15 @@ let PostWrapper = ({
       </div>
 
       <PostFooter author={author} current_user={current_user} post={post} triggers={triggers} />
-      {showComments &&
-        <Comments
-          comments={comments}
-          post={post}
-          author={_author}
-          triggers={triggers}
-          users={users}
-          ui={ui}
-        />
-      }
+      <Comments
+        showAllComments={showAllComments}
+        comments={comments}
+        post={post}
+        author={_author}
+        triggers={triggers}
+        users={users}
+        ui={ui}
+      />
 
     </section>
   );

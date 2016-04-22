@@ -82,7 +82,9 @@ export class TagPage extends Component {
       users,
       params,
       hashtags,
-      schools
+      schools,
+      ui,
+      comments
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -117,6 +119,8 @@ export class TagPage extends Component {
           river={thisTagPosts}
           triggers={triggers}
           users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseTagPage>
     );

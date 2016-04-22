@@ -22,10 +22,12 @@ import React, {
 
 import Time from '../time';
 import User from '../user';
-import Icon from '../icon';
 import Button from '../button';
 import Textarea from '../textarea';
 import Message from '../message';
+import Dropdown from '../dropdown';
+import MenuItem from '../menu-item';
+import paragraphify from '../../utils/paragraphify';
 
 export default class Comment extends Component {
   state = {
@@ -115,26 +117,12 @@ export default class Comment extends Component {
     const isButtonsDisabled = commentUi.isSaveInProgress || commentUi.isDeleteInProgress;
     let toolbar = null;
 
-    if (current_user && author && current_user.id == author.id && !isEditMode) {
+    if (current_user && author && current_user.id == author.id && !isEditMode && !isButtonsDisabled) {
       toolbar = (
-        <div className="comment__toolbar">
-          <Icon
-            onClick={this.editComment}
-            className="comment__toolbar_item"
-            icon="edit"
-            size="small"
-            title="Edit"
-            disabled={isButtonsDisabled}
-          />
-          <Icon
-            onClick={this.deleteComment}
-            className="comment__toolbar_item"
-            icon="delete"
-            size="small"
-            title="Delete"
-            disabled={isButtonsDisabled}
-          />
-        </div>
+        <Dropdown>
+          <MenuItem onClick={this.editComment}>Edit comment</MenuItem>
+          <MenuItem onClick={this.deleteComment}>Delete</MenuItem>
+        </Dropdown>
       );
     }
 
@@ -209,7 +197,7 @@ export default class Comment extends Component {
     return (
       <div className="comment__body">
         <section className="comment__text">
-          {comment.text}
+          {paragraphify(comment.text)}
         </section>
         {false &&
           <footer className="comment__footer">
