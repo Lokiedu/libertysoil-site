@@ -10,3 +10,7 @@ export const SIZE = {
   NORMAL: 'NORMAL',
   BIG: 'BIG'
 };
+
+export const TAG_HEADER_SIZE = {
+  width: 1400
+}

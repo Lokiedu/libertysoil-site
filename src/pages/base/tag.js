@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, clone } from 'lodash';
+import { values, pick } from 'lodash';
 
 import {
   Page,
@@ -38,6 +38,7 @@ import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
+import { TAG_HEADER_SIZE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -131,34 +132,44 @@ export default class BaseTagPage extends React.Component {
 
   state = {
     form: false,
-    picture: null
+    picture: null,
+    pictureFile: null
   };
 
   postsAmount = null;
   defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
-    this.postsAmount = this.props.postsAmount;    
+    this.postsAmount = this.props.postsAmount;
+
+    if (this.props.tag.more && this.props.tag.more.head_pic) {
+      this.defaultPicture = this.props.tag.more.head_pic.url;
+    }
   }
 
   _getNewPicture() {
-    return clone(this.state.pic);
+    if (this.state.pictureFile) {
+      return { image: this.state.pictureFile, ...pick(this.state.picture, ['crop', 'scale']) };
+    }
+
+    return undefined;
   }
 
-  addPicture = async (image, newCrop) => {
+  addPicture = async (image, crop) => {
     if (image) {
       let reader = new FileReader();
       reader.onloadend = () => {
         let pic = {};
         pic.src = reader.result;
-        pic.crop = newCrop;
+        pic.crop = crop;
+        pic.scale = { wRatio: TAG_HEADER_SIZE.width / crop.width };
         
-        this.setState({picture: pic});
+        this.setState({picture: pic, pictureFile: image});
       }
 
       reader.readAsDataURL(image);
     } else {
-      this.setState({picture: null});
+      this.setState({picture: null, pictureFile: null});
     }
   }
 

@@ -58,15 +58,17 @@ class SchoolEditPage extends React.Component {
     return 200;
   }
 
-  saveSchool = (id, name, description, lat, lon) => {
+  saveSchool = async (id, name, description, lat, lon) => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const pic = this.base.getNewPicture();
+    let more = {};
+    const pic = this.base._getNewPicture();
+    if (pic) {
+      more = await triggers.updateHeaderPicture(pic.image, pic.crop, pic.scale);
+    }
 
-    // processImage
-
-    triggers.updateSchool(id, { name, description, lat, lon, pic })
+    triggers.updateSchool(id, { name, description, lat, lon, more })
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
       }).catch(() => {
