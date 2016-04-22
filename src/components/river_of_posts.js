@@ -37,7 +37,6 @@ export default class RiverOfPostsComponent extends Component {
     const {
       triggers,
       current_user,
-      showComments,
       users,
       river,
       comments,
