@@ -27,11 +27,24 @@ import User from '../user';
 import Textarea from '../textarea';
 import Message from '../message';
 
+const AddCommentPlaceholder = (props) => (
+  <article className="comment comment-transparent" {...props}>
+    <div className="comment__container">
+      <div className="comment__header"></div>
+      <div className="comment__text action link">
+        Add comment
+      </div>
+    </div>
+  </article>
+);
+
 export default class CreateComment extends Component {
   static displayName = 'CreateComment';
 
   static propTypes = {
-    className:  PropTypes.string
+    author: PropTypes.object.isRequired,
+    className:  PropTypes.string,
+    ui: PropTypes.any.isRequired
   };
 
   static defaultProps = {
@@ -113,8 +126,8 @@ export default class CreateComment extends Component {
 
   render () {
     const {
-      className,
       author,
+      className,
       ui
     } = this.props;
     const {
@@ -137,41 +150,46 @@ export default class CreateComment extends Component {
       );
     }
 
+    if (!isExpanded) {
+      return <AddCommentPlaceholder onClick={this.expand} />;
+    }
+
     return (
-      <form onSubmit={this.postComment} className={`${blockClassName} ${className}`}>
+      <form className={`${blockClassName} ${className}`} onSubmit={this.postComment}>
         <div className="layout">
-          {isExpanded &&
-            <div className="layout__grid_item">
-              <User avatarSize="32" user={author} hideText={true} />
-            </div>
-          }
+          <div className="layout__grid_item">
+            <User
+              avatarSize="32"
+              hideText
+              user={author}
+            />
+          </div>
           <div className="layout__grid_item layout__grid_item-wide">
             <div className="layout__row">
               <Textarea
-                onFocus={this.expand}
-                onChange={this.updateComment}
+                autoFocus
                 className="input input-block create_comment__input"
                 placeholder="Add Comment"
                 value={comment}
+                onChange={this.updateComment}
               />
             </div>
-            {isExpanded &&
-              <div className="layout__row">
-                <Button
-                  disabled={!comment.trim() || commentUi.isCreateInProgress}
-                  type="submit"
-                  className="layout__grid_item"
-                  title="Add Comment"
-                  color="light_blue"
-                />
-                <Button
-                  onClick={this.collapse}
-                  className="layout__grid_item"
-                  title="Cancel"
-                  color="transparent"
-                />
-              </div>
-            }
+            <div className="layout__row">
+              <Button
+                className="layout__grid_item"
+                color="light_blue"
+                disabled={!comment.trim() || commentUi.isCreateInProgress}
+                size="midi"
+                title="Post"
+                type="submit"
+              />
+              <Button
+                className="layout__grid_item"
+                color="transparent"
+                title="Cancel"
+                onClick={this.collapse}
+              />
+            </div>
             {this.renderMessage()}
           </div>
         </div>

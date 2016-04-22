@@ -15,7 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import React, {
+  Component,
+  PropTypes
+} from 'react'
 import _ from 'lodash'
 
 import * as PostTypes  from '../consts/postTypeConstants';
@@ -23,7 +26,13 @@ import { ShortTextPost, PostWrapper } from './post';
 import TagLikePost from './tag-like-post';
 
 
-export default class RiverOfPostsComponent extends React.Component {
+export default class RiverOfPostsComponent extends Component {
+  static propTypes = {
+    comments: PropTypes.any.isRequired,
+    ui: PropTypes.any.isRequired,
+    river: PropTypes.any.isRequired
+  };
+
   render() {
     const {
       triggers,
@@ -63,10 +72,9 @@ export default class RiverOfPostsComponent extends React.Component {
                   key={post.id}
                   post={post}
                   comments={comments}
-                  showComments={true}
                   ui={ui}
                   triggers={triggers}
-                  showComments={false}
+                  users={users}
                 >
                   <ShortTextPost post={post}/>
                 </PostWrapper>

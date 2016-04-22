@@ -73,6 +73,8 @@ export class SchoolPage extends React.Component {
 
   render() {
     let {
+      comments,
+      ui,
       is_logged_in,
       current_user,
       posts,
@@ -118,6 +120,8 @@ export class SchoolPage extends React.Component {
           river={schoolPosts}
           triggers={triggers}
           users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseTagPage>
     );

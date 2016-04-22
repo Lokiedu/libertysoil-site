@@ -2,6 +2,18 @@
   padding: 10px 15px 10px 21px;
   margin: 1px 0 0 0;
   background: #fff;
+
+  &-placeholder {
+    background: #f9f8f8;
+  }
+
+  &-transparent {
+    background: none;
+  }
+
+  .dropdown__trigger {
+    color: @color__gray;
+  }
 }
 
 .comment__container {
@@ -12,6 +24,9 @@
 .comment__header {
   display: flex;
   align-items: center;
+  width: 27px;
+  height: 17px;
+  overflow: hidden;
 }
 
 .comment__author {
@@ -49,6 +64,10 @@
   &:extend(.font-open_sans);
   font-size: 12px;
   line-height: 1.4;
+
+  p + p {
+    margin-top: 8px;
+  }
 }
 
 .comment__time {

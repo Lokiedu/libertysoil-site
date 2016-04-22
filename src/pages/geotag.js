@@ -75,6 +75,8 @@ export class GeotagPage extends Component {
 
   render() {
     const {
+      ui,
+      comments,
       is_logged_in,
       current_user,
       posts,
@@ -123,6 +125,8 @@ export class GeotagPage extends Component {
           river={geotagPosts}
           triggers={triggers}
           users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseTagPage>
     );

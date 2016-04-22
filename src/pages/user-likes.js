@@ -15,7 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, {
+  Component
+} from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
@@ -31,7 +33,7 @@ import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 
-class UserLikesPage extends React.Component {
+class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
 
   static async fetchData(params, store, client) {
@@ -45,6 +47,11 @@ class UserLikesPage extends React.Component {
   render () {
     let page_user = _.find(this.props.users, {username: this.props.params.username});
     const {
+      posts,
+      current_user,
+      users,
+      comments,
+      ui,
       following,
       followers
     } = this.props;
@@ -74,11 +81,13 @@ class UserLikesPage extends React.Component {
       >
         <Helmet title={`Likes of ${page_user.fullName} on `} />
         <River
-          current_user={this.props.current_user}
-          posts={this.props.posts}
+          current_user={current_user}
+          posts={posts}
           river={this.props.likes_river[page_user.id]}
           triggers={triggers}
-          users={this.props.users}
+          users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseUserLikesPage>
     )
