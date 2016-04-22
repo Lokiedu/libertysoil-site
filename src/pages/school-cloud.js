@@ -29,6 +29,13 @@ import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
+import {
+  Page,
+  PageBody,
+  PageCaption,
+  PageContent,
+  PageMain
+} from '../components/page';
 
 
 class SchoolCloudPage extends Component {
@@ -61,21 +68,19 @@ class SchoolCloudPage extends Component {
           </div>
         </Header>
 
-        <div className="page__container">
-          <div className="page__body">
-            <Sidebar current_user={current_user} />
-            <div className="page__body_content">
-              <div className="page__content page__content-spacing">
-                <div className="layout__row">
-                  <div className="head">School cloud</div>
-                </div>
+        <Page>
+          <Sidebar current_user={current_user} />
+          <PageMain className="page__main-no_space">
+            <PageBody>
+              <PageContent>
+                <PageCaption>School cloud</PageCaption>
                 <div className="layout__row">
                   <TagCloud schools={schoolsForCloud}/>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
 
         <Footer/>
       </div>
