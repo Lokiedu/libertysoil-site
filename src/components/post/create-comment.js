@@ -42,7 +42,7 @@ export default class CreateComment extends Component {
   static displayName = 'CreateComment';
 
   static propTypes = {
-    author: PropTypes.object.isRequired,
+    author: PropTypes.object,
     className:  PropTypes.string,
     ui: PropTypes.any.isRequired
   };
