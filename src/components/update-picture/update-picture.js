@@ -59,30 +59,7 @@ export default class UpdatePicture extends React.Component {
   };
 
   pictureUpdateHandler = async (image, crop, submit) => {
-    let img = new Image();
-
-    let readImage = new Promise((resolve) => {
-      let reader = new FileReader;
-      img.onload = function() {
-        resolve();
-      };
-      reader.onload = function (e) {
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(image);
-    });
-    await readImage;
-
-    let newCrop = {
-      left: crop.x * img.width,
-      top: crop.y * img.height,
-      right: ((crop.x + crop.width) * img.width),
-      bottom: ((crop.y + crop.height) * img.height),
-      width: crop.width * img.width,
-      height: crop.height * img.height
-    };
-
-    submit(image, newCrop);
+    await submit(image, crop);
   };
 
   render() {

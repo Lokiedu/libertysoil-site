@@ -181,7 +181,14 @@ export default class BaseTagPage extends React.Component {
         let pic = {};
         pic.src = reader.result;
         pic.crop = crop;
-        pic.scale = { wRatio: TAG_HEADER_SIZE.width / crop.width };
+
+        if (crop.width > TAG_HEADER_SIZE.BIG.width) {
+          pic.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / crop.width };
+        } else {
+          pic.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / crop.width };
+        }
+
+        console.log(pic.scale);
         
         this.setState({picture: pic, pictureFile: image});
       }

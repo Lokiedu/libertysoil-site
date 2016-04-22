@@ -27,9 +27,11 @@ export default class UpdatePictureForm extends React.Component {
 
   static defaultProps = {
     limits: {
-      width: 760,
-      height: 300
-    }
+      width: 1400,
+      height: 400
+    },
+    onChange: () => {},
+    onClear: () => {}
   }
 
   state = {
@@ -39,9 +41,15 @@ export default class UpdatePictureForm extends React.Component {
   };
 
   _submit = () => {
-    this.setState({image: null});
+    //this.setState({image: null});
 
     return { avatar: this.state.avatar, crop: this.editor.getCroppingRect() };
+  }
+
+  clearHandler = () => {
+    this.setState({image: null});
+
+    this.props.onClear();
   }
 
   changeHandler = (event) => {
@@ -50,10 +58,14 @@ export default class UpdatePictureForm extends React.Component {
       image: URL.createObjectURL(file),
       avatar: file
     });
+
+    this.props.onChange();
   };
 
   scaleHandler = () => {
-    this.setState({ scale: parseFloat(this.scale.value) })
+    this.setState({ scale: parseFloat(this.scale.value) });
+
+    this.props.onChange();
   };
 
   render() {
@@ -78,6 +90,9 @@ export default class UpdatePictureForm extends React.Component {
               <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
               <span className="change_avatar_modal__size_box__icon micon">add</span>
             </div>
+          </div>
+          <div className="layout layout__row">
+            <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.clearHandler}>Upload another photo</div>
           </div>
         </div>
       );
