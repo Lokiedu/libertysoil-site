@@ -13,7 +13,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
-import { throttle, lodash } from 'lodash';
+import { throttle, pick } from 'lodash';
 
 import ModalComponent from '../modal-component';
 import Message from '../message';

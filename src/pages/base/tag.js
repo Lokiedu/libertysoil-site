@@ -108,15 +108,15 @@ function GeotagPageHero({ geotag }) {
     );
   }
 
-  return <PageHero src="/images/hero/welcome.jpg" />;
+  return <PageHero url="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src, editable, onSubmit, limits }) {
+function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
       return (
-        <PageHero src={src}>
+        <PageHero url={url}>
           {editable &&
             <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
               <div className="layout__grid_item">
@@ -124,7 +124,8 @@ function TagPageHero({ type, tag, src, editable, onSubmit, limits }) {
                   what="header image"
                   where={(<span className="font-bold">{tag.name}</span>)}
                   onSubmit={onSubmit}
-                  limits={limits} />
+                  limits={limits}
+                  preview={preview} />
               </div>
             </div>
           }
@@ -232,11 +233,11 @@ export default class BaseTagPage extends React.Component {
 
     const pageCaption = getPageCaption(type, name);
 
-    let pic;
+    let headerPictureUrl;
     if (this.state.preview) {
-      pic = clone(this.state.preview);
+      headerPictureUrl = this.state.preview.url;
     } else {
-      pic = { url: this.defaultPicture };
+      headerPictureUrl = this.defaultPicture;
     }
 
     let createPostForm;
@@ -273,7 +274,9 @@ export default class BaseTagPage extends React.Component {
               tag={tag}
               editable={editable}
               onSubmit={this.addPicture}
-              {...pic} />
+              preview={TAG_HEADER_SIZE.PREVIEW}
+              limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
+              url={headerPictureUrl} />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}

@@ -29,13 +29,13 @@ const PageCaption = ({ children }) => (
   </header>
 );
 
-const PageHero = ({ children, src }) => (
+const PageHero = ({ children, url }) => (
   <div className="page__hero">
     <div className="page__hero_body">
       <div
         className="page__hero_content"
         style={{
-          backgroundImage: `url(${src})`
+          backgroundImage: `url(${url})`
         }}
       >
         {children}
