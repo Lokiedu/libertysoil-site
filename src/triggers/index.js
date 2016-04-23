@@ -210,12 +210,14 @@ export class ActionsTrigger {
   };
 
   updateUserInfo = async (user) => {
+    let status = false;
     try {
       let res = await this.client.updateUser(user);
 
       if ('user' in res) {
         this.dispatch(addMessage('Saved successfully'));
         this.dispatch(addUser(res.user));
+        status = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
@@ -224,6 +226,7 @@ export class ActionsTrigger {
         this.dispatch(addError(e.message));
       }
     }
+    return status;
   };
 
   changePassword = async (old_password, new_password1, new_password2) => {

@@ -82,7 +82,7 @@ class SettingsPage extends React.Component {
       processedPictures = await triggers.updateHeaderPicture({...pictures.head_pic});
     }
 
-    triggers.updateUserInfo({
+    let result = await triggers.updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value,
@@ -90,6 +90,10 @@ class SettingsPage extends React.Component {
         ...processedPictures
       }
     });
+
+    if (result) {
+      this.base._clearPreview();
+    }
   };
 
   addRole = () => {

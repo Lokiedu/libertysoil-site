@@ -56,6 +56,10 @@ export default class ProfileHeader extends React.Component {
     return pictures;
   }
 
+  _clearPreview() {
+    this.setState({ avatar: null, head_pic: null });
+  }
+
   addAvatar = async ({ production, preview }) => {
     if (production) {
       let _preview = { src: preview.src };
@@ -121,7 +125,7 @@ export default class ProfileHeader extends React.Component {
       }
 
       if (user.more.head_pic) {
-        picture = user.more.head_pic.src;
+        picture = user.more.head_pic.url;
       }
     }
 

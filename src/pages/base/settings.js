@@ -45,6 +45,10 @@ export default class BaseSettingsPage extends React.Component {
     return this.head._getNewPictures();
   }
 
+  _clearPreview() {
+    this.head._clearPreview();
+  }
+
   render () {
     const {
       onSave,
