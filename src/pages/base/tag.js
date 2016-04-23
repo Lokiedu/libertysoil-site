@@ -176,7 +176,6 @@ export default class BaseTagPage extends React.Component {
 
   addPicture = async ({ production, preview }) => {
     if (production) {
-      let _preview = { src: preview.src };
       let _production = { picture: production.picture, crop: production.crop };
 
       if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
@@ -185,7 +184,7 @@ export default class BaseTagPage extends React.Component {
         _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
       }
 
-      this.setState({production: _production, preview: _preview});
+      this.setState({production: _production, preview});
     } else {
       this.setState({production: null, preview: null});
     }
@@ -237,7 +236,7 @@ export default class BaseTagPage extends React.Component {
     if (this.state.preview) {
       pic = clone(this.state.preview);
     } else {
-      pic = { src: this.defaultPicture };
+      pic = { url: this.defaultPicture };
     }
 
     let createPostForm;

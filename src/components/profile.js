@@ -23,15 +23,10 @@ import FollowButton from './follow-button';
 import UpdatePicture from './update-picture/update-picture';
 
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
-import { PROFILE_HEADER_SIZE } from '../consts/profileConstants';
+import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
-
-  static defaultProps = {
-    onAvatarUpdate: () => {},
-    onHeaderUpdate: () => {}
-  }
 
   unsaved = false;
 
@@ -58,20 +53,14 @@ export default class ProfileHeader extends React.Component {
 
   _clearPreview() {
     this.setState({ avatar: null, head_pic: null });
+    this.unsaved = false;
   }
 
   addAvatar = async ({ production, preview }) => {
     if (production) {
-      let _preview = { src: preview.src };
       let _production = { picture: production.picture, crop: production.crop };
 
-      if (_production.crop.width > PROFILE_HEADER_SIZE.BIG.width) {
-        _production.scale = { wRatio: PROFILE_HEADER_SIZE.BIG.width / _production.crop.width };
-      } else {
-        _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / _production.crop.width };
-      }
-
-      this.setState({avatar: {production: _production, preview: _preview}});
+      this.setState({avatar: {production, preview}});
       this.unsaved = true;
     } else {
       this.setState({avatar: {production: null, preview: null}});
@@ -80,7 +69,6 @@ export default class ProfileHeader extends React.Component {
 
   addHeaderPicture = async ({ production, preview }) => {
     if (production) {
-      let _preview = { src: preview.src };
       let _production = { picture: production.picture, crop: production.crop };
 
       if (_production.crop.width > PROFILE_HEADER_SIZE.BIG.width) {
@@ -89,7 +77,7 @@ export default class ProfileHeader extends React.Component {
         _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / _production.crop.width };
       }
 
-      this.setState({head_pic: {production: _production, preview: _preview}});
+      this.setState({head_pic: {production: _production, preview}});
       this.unsaved = true;
     } else {
       this.setState({head_pic: {production: null, preview: null}});
@@ -130,7 +118,7 @@ export default class ProfileHeader extends React.Component {
     }
 
     if (this.state.head_pic) {
-      picture = this.state.head_pic.preview.src;
+      picture = this.state.head_pic.preview.url;
     }
 
     let followingCount;
@@ -189,7 +177,12 @@ export default class ProfileHeader extends React.Component {
                </div>
                {editable &&
                  <div className="layout__grid_item layout__grid_item-wide layout-align_right update_picture__container">
-                   <UpdatePicture what="profile background" where={modalName} onSubmit={this.addHeaderPicture}/>
+                   <UpdatePicture
+                     what="profile background"
+                     where={modalName}
+                     preview={PROFILE_HEADER_SIZE.PREVIEW}
+                     limits={{min: PROFILE_HEADER_SIZE.NORMAL, max: PROFILE_HEADER_SIZE.BIG}}
+                     onSubmit={this.addHeaderPicture} />
                  </div>
                }
              </div>

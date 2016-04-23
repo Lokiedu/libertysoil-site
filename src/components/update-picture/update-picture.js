@@ -13,6 +13,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { pick } from 'lodash';
 
 import UpdatePictureModal from './update-picture-modal';
 
@@ -23,9 +24,19 @@ export default class UpdatePicture extends React.Component {
     what: PropTypes.any.isRequired,
     where: PropTypes.any.isRequired,
     limits: PropTypes.shape({
+      min: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number
+      }),
+      max: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number
+      })
+    }),
+    preview: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
-    }),
+    }).isRequired,
     onSubmit: PropTypes.func,
     onClose: PropTypes.func
   };
@@ -35,13 +46,9 @@ export default class UpdatePicture extends React.Component {
     onClose: () => {}
   };
 
-  constructor() {
-    super();
-
-    this.state = {
-      modalVisible: false
-    };
-  }
+  state = {
+    modalVisible: false
+  };
 
   open = () => {
     this.setState({modalVisible: true});
@@ -65,12 +72,10 @@ export default class UpdatePicture extends React.Component {
           <span className="micon">camera</span>
         </button>
         <UpdatePictureModal
-          what={this.props.what}
-          where={this.props.where}
-          limits={this.props.limits}
           visible={this.state.modalVisible}
           onClose={this.close}
           onSubmit={this.submitHandler}
+          {...pick(this.props, ['what', 'where', 'limits', 'preview'])}
         />
       </div>
     );

@@ -17,5 +17,9 @@ export const PROFILE_HEADER_SIZE = {
   },
   BIG: {
     width: 2800
+  },
+  PREVIEW: {
+    width: 1400,
+    height: 400
   }
 };
