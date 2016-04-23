@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
+import { values, isEmpty } from 'lodash';
 
 import {
   Page,
@@ -153,8 +153,7 @@ export default class BaseTagPage extends React.Component {
 
   state = {
     form: false,
-    production: null,
-    preview: null
+    head_pic: null
   };
 
   postsAmount = null;
@@ -168,12 +167,17 @@ export default class BaseTagPage extends React.Component {
     }
   }
 
-  _getNewPicture() {
-    if (this.state.production) {
-      return this.state.production;
+  _getNewPictures() {
+    let pictures = {};
+    if (this.state.head_pic) {
+      pictures.head_pic = this.state.head_pic.production;
     }
 
-    return undefined;
+    if (isEmpty(pictures)) {
+      return undefined;
+    }
+
+    return pictures;
   }
 
   addPicture = async ({ production, preview }) => {
@@ -186,9 +190,9 @@ export default class BaseTagPage extends React.Component {
         _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
       }
 
-      this.setState({production: _production, preview});
+      this.setState({head_pic: {production: _production, preview}});
     } else {
-      this.setState({production: null, preview: null});
+      this.setState({head_pic: null});
     }
   }
 
@@ -235,8 +239,8 @@ export default class BaseTagPage extends React.Component {
     const pageCaption = getPageCaption(type, name);
 
     let headerPictureUrl;
-    if (this.state.preview) {
-      headerPictureUrl = this.state.preview.url;
+    if (this.state.head_pic) {
+      headerPictureUrl = this.state.head_pic.preview.url;
     } else {
       headerPictureUrl = this.defaultPicture;
     }

@@ -25,7 +25,7 @@ import {
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
   createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
+  setUserTags, setSchools, addHashtag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
@@ -446,9 +446,17 @@ export class ActionsTrigger {
     }
   };
 
-  updateHashtag = async () => {
+  updateHashtag = async (hashtag_uuid, hashtag_fields) => {
+    try {
+      let result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
+      this.dispatch(addHashtag(result));
 
-  }
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
+    }
+  };
 
   updateSchool = async (school_uuid, school_fields) => {
     try {

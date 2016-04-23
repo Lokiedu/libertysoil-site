@@ -76,6 +76,7 @@ let School = {
 
 let Hashtag = {
   more: {
+    description: ['string'],
     head_pic: ['plainObject'],
     last_editor: ['string']
   }

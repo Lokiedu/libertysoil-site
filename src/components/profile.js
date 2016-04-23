@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
+import { isEmpty } from 'lodash';
 
 import User from './user';
 import FollowButton from './follow-button';
@@ -36,10 +37,6 @@ export default class ProfileHeader extends React.Component {
   };
 
   _getNewPictures() {
-    if (!this.unsaved) {
-      return undefined;
-    }
-
     let pictures = {};
     if (this.state.avatar) {
       pictures.avatar = this.state.avatar.production;
@@ -48,12 +45,15 @@ export default class ProfileHeader extends React.Component {
       pictures.head_pic = this.state.head_pic.production;
     }
 
+    if (isEmpty(pictures)) {
+      return undefined;
+    }
+
     return pictures;
   }
 
   _clearPreview() {
     this.setState({ avatar: null, head_pic: null });
-    this.unsaved = false;
   }
 
   addAvatar = async ({ production, preview }) => {
@@ -62,7 +62,6 @@ export default class ProfileHeader extends React.Component {
       _production.resize = { width: AVATAR_SIZE.width };
 
       this.setState({avatar: {production: _production, preview}});
-      this.unsaved = true;
     } else {
       this.setState({avatar: {production: null, preview: null}});
     }
@@ -79,7 +78,6 @@ export default class ProfileHeader extends React.Component {
       }
 
       this.setState({head_pic: {production: _production, preview}});
-      this.unsaved = true;
     } else {
       this.setState({head_pic: {production: null, preview: null}});
     }

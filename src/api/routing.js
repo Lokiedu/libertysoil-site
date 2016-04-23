@@ -115,6 +115,7 @@ export function initApi(bookshelf) {
   api.get('/tag-cloud', wrap(controller.getTagCloud.bind(controller)));
   api.get('/tags/search/:query', wrap(controller.searchTags.bind(controller)));
   api.get('/tag/:name', wrap(controller.getHashtag.bind(controller)));
+  api.post('/tag/:id', wrap(controller.updateHashtag.bind(controller)));
   api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
   api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
   api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));

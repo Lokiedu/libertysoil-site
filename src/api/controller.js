@@ -30,7 +30,8 @@ import { processImage } from '../utils/image';
 import config from '../../config';
 import {
   User as UserValidators,
-  School as SchoolValidators
+  School as SchoolValidators,
+  Hashtag as HashtagValidators
 } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
@@ -450,6 +451,53 @@ export default class ApiController {
       res.send(city.toJSON());
     } catch (e) {
       res.sendStatus(404)
+      return;
+    }
+  }
+
+  async updateHashtag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let checkit = new Checkit(HashtagValidators.more);
+    
+    try {
+      await checkit.run(req.body.more);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
+    }
+
+    try {
+      let Hashtag = this.bookshelf.model('Hashtag');
+      let hashtag = await Hashtag.where({id: req.params.id}).fetch({require: true});
+
+      let properties = {};
+      for (let fieldName in HashtagValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
+      }
+
+      properties = _.extend(hashtag.get('more'), properties);
+      
+      hashtag.set('more', properties);
+      await hashtag.save(null, {method: 'update'});
+
+      res.send(hashtag);
+    } catch (e) {
+      res.status(500);
+      res.send({error: 'Update failed'});
       return;
     }
   }
@@ -1459,8 +1507,6 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-
     let checkit = new Checkit(UserValidators.settings.more);
     try {
       await checkit.run(req.body.more);
@@ -1469,6 +1515,8 @@ export default class ApiController {
       res.send({error: e.toJSON()});
       return;
     }
+
+    let User = this.bookshelf.model('User');
 
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true});

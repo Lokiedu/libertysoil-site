@@ -112,17 +112,16 @@ class SchoolEditForm extends React.Component {
 
         <GeoInput initialLocation={initialLocation} />
 
-        <div className="layout__row">
+        <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
-
             <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '90%'}}>
-            <button
-              className="button button-wide button-green"
-              disabled={!form.isValid()}
-              type="submit"
-            >
-              Save
-            </button>
+              <button
+                className="button button-wide button-green"
+                disabled={!form.isValid()}
+                type="submit"
+              >
+                Save
+              </button>
             </Loader>
           </div>
         </div>

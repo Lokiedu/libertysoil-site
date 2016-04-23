@@ -63,14 +63,17 @@ class SchoolEditPage extends React.Component {
   }
 
   saveSchool = async (id, name, description, lat, lon) => {
+    this.setState({processing: true});
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    this.setState({processing: true});
     let more = {};
-    const newPictureData = this.base._getNewPicture();
-    if (newPictureData) {
-      more.head_pic = await triggers.updateHeaderPicture({...newPictureData});
+    const pictures = this.base._getNewPictures();
+    if (pictures) {
+      if (pictures.head_pic) {
+        more.head_pic = await triggers.updateHeaderPicture({...pictures.head_pic});
+      }
     }
 
     triggers.updateSchool(id, { name, description, lat, lon, more })
