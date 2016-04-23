@@ -58,10 +58,15 @@ class SchoolEditPage extends React.Component {
     return 200;
   }
 
+  state = {
+    processing: false
+  }
+
   saveSchool = async (id, name, description, lat, lon) => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    this.setState({processing: true});
     let more = {};
     const newPictureData = this.base._getNewPicture();
     if (newPictureData) {
@@ -74,6 +79,8 @@ class SchoolEditPage extends React.Component {
       }).catch(() => {
         // do nothing. redux has an error already
       });
+
+    this.setState({processing: false});
   };
 
   render() {
@@ -117,7 +124,7 @@ class SchoolEditPage extends React.Component {
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} />
+            <TagEditForm tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
           </div>
         </div>
       </BaseTagPage>

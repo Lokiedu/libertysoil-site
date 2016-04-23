@@ -37,7 +37,8 @@ class SettingsPage extends React.Component {
     super(props);
 
     this.state = {
-      roles: []
+      roles: [],
+      processing: false
     };
   }
 
@@ -71,18 +72,21 @@ class SettingsPage extends React.Component {
   };
 
   onSave = async () => {
-    let roles = this.state.roles;
+    this.setState({processing: true});
 
+    let roles = this.state.roles;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let processedPictures = {};
     let pictures = this.base._getNewPictures();
-    if (pictures.head_pic) {
-      processedPictures.head_pic = await triggers.updateHeaderPicture({...pictures.head_pic});
-    }
-    if (pictures.avatar) {
-      processedPictures.avatar = await triggers.updateAvatar({...pictures.avatar});
+    if (pictures) {
+      if (pictures.head_pic) {
+        processedPictures.head_pic = await triggers.updateHeaderPicture({...pictures.head_pic});
+      }
+      if (pictures.avatar) {
+        processedPictures.avatar = await triggers.updateAvatar({...pictures.avatar});
+      }
     }
 
     let result = await triggers.updateUserInfo({
@@ -97,6 +101,8 @@ class SettingsPage extends React.Component {
     if (result) {
       this.base._clearPreview();
     }
+
+    this.setState({processing: false});
   };
 
   addRole = () => {
@@ -139,6 +145,7 @@ class SettingsPage extends React.Component {
         messages={messages}
         triggers={triggers}
         onSave={this.onSave}
+        processing={this.state.processing}
       >
         <Helmet title="Your Profile Settings on " />
         <form ref="form" className="paper__page">

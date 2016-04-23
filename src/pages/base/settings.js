@@ -18,6 +18,7 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 import Gravatar from 'react-gravatar';
+import Loader from 'react-loader';
 
 import {
   Page,
@@ -33,6 +34,7 @@ import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
+import { LOADER_OPTIONS } from '../../consts/loader';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -58,7 +60,8 @@ export default class BaseSettingsPage extends React.Component {
       following,
       followers,
       messages,
-      triggers
+      triggers,
+      processing
     } = this.props;
 
     const user = current_user.user;
@@ -72,8 +75,10 @@ export default class BaseSettingsPage extends React.Component {
     let saveButton;
     if (this.props.onSave) {
       saveButton = (
-        <div className="void">
-          <span className="button button-green action" onClick={onSave}>Save changes</span>
+        <div className="void" style={{position: 'relative'}}>
+          <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '5%'}}>
+            <span className="button button-green action" onClick={onSave}>Save changes</span>
+          </Loader>
         </div>
       );
     }
