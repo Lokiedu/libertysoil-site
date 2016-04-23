@@ -18,9 +18,7 @@
 import React from 'react';
 import { IndexLink } from 'react-router';
 import Gravatar from 'react-gravatar';
-import {
-  isEmpty
-} from 'lodash';
+import { isEmpty } from 'lodash';
 
 import {
   Page,
@@ -89,6 +87,7 @@ export default class BaseUserPage extends React.Component {
               user={page_user}
               current_user={current_user}
               i_am_following={i_am_following}
+              editable={false}
               following={following}
               followers={followers}
               triggers={this.props.triggers}

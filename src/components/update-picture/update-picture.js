@@ -75,7 +75,7 @@ export default class UpdatePicture extends React.Component {
           visible={this.state.modalVisible}
           onClose={this.close}
           onSubmit={this.submitHandler}
-          {...pick(this.props, ['what', 'where', 'limits', 'preview'])}
+          {...pick(this.props, ['what', 'where', 'limits', 'preview', 'flexible'])}
         />
       </div>
     );

@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, clone } from 'lodash';
+import { values } from 'lodash';
 
 import {
   Page,
@@ -111,7 +111,7 @@ function GeotagPageHero({ geotag }) {
   return <PageHero url="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview }) {
+function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flexible }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
@@ -125,6 +125,7 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview }) {
                   where={(<span className="font-bold">{tag.name}</span>)}
                   onSubmit={onSubmit}
                   limits={limits}
+                  flexible={flexible}
                   preview={preview} />
               </div>
             </div>
@@ -275,6 +276,7 @@ export default class BaseTagPage extends React.Component {
               editable={editable}
               onSubmit={this.addPicture}
               preview={TAG_HEADER_SIZE.PREVIEW}
+              flexible={true}
               limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
               url={headerPictureUrl} />
             <PageBody className="page__body-up">

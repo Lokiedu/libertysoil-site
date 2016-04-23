@@ -631,49 +631,42 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop, resize) => {
+  updateAvatar = async ({ picture, crop, resize }) => {
+    let avatar;
     try {
-      let original = await this.client.uploadImage([image]);
+      let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
       let cropped = await this.client.processImage(original, [{crop: crop}, resize]);
 
-      let res = await this.client.updateUser({
-        more: {
-          avatar: {
-            attachment_id: cropped.attachment.id,
-            url: cropped.attachment.s3_url
-          }
-        }
-      });
-      if ('user' in res) {
-        this.dispatch(addMessage('Avatar updated'));
-        this.dispatch(addUser(res.user));
-      }
+      avatar = {
+        attachment_id: cropped.attachment.id,
+        url: cropped.attachment.s3_url
+      };
     } catch (e) {
       this.dispatch(addError(e.message));
     }
+
+    return avatar;
   };
 
   updateHeaderPicture = async ({ picture, crop, scale }) => {
-    let more = {};
+    let head_pic;
     try {
       let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
       let cropped = await this.client.processImage(original, [{crop: crop}, { scale: scale }]);
 
-      more = {
-        head_pic: {
-          attachment_id: cropped.attachment.id,
-          url: cropped.attachment.s3_url
-        }
-      }
+      head_pic = {
+        attachment_id: cropped.attachment.id,
+        url: cropped.attachment.s3_url
+      };
     } catch (e) {
       this.dispatch(addError(e.message));
     }
 
-    return more;
+    return head_pic;
   }
 
   createComment = async (postId, comment) => {

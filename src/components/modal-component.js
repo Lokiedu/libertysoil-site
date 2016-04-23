@@ -49,6 +49,13 @@ class ModalComponent extends Component {
     this.props.onHide(e);
   };
 
+  getWidth() {
+    return {
+      width: this.body.offsetWidth,
+      height: this.body.offsetHeight
+    };
+  }
+
   render () {
     const {
       size,
@@ -71,7 +78,7 @@ class ModalComponent extends Component {
 
     return (
       <div className={cn} {...props} onClick={this.hide}>
-        <div className="modal__section" onClick={this.clickHandler}>
+        <div ref={c => this.body = c} className="modal__section" onClick={this.clickHandler}>
             {children}
         </div>
       </div>

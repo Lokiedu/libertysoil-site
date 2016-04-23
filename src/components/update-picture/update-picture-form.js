@@ -67,21 +67,28 @@ export default class UpdatePictureForm extends React.Component {
   };
 
   render() {
-    const { preview } = this.props;
+    const { preview, flexible } = this.props;
+
+    let editorStyle = { cursor: 'move' };
+    if (flexible) {
+      editorStyle.width = '100%';
+    }
 
     if (this.state.image) {
       return (
         <div className="layout__row">
-          <Editor
-            ref={c => this.editor = c}
-            border={50}
-            color={[255, 255, 255, 0.6]}
-            width={preview.width}
-            height={preview.height}
-            image={this.state.image}
-            scale={this.state.scale}
-            style={{width: '100%', cursor: 'move'}}
-          />
+          <div className="update_picture__editor">
+            <Editor
+              ref={c => this.editor = c}
+              border={50}
+              color={[255, 255, 255, 0.6]}
+              width={preview.width}
+              height={preview.height}
+              image={this.state.image}
+              scale={this.state.scale}
+              style={editorStyle}
+            />
+          </div>
           <div className="layout layout__row layout-align_center">
             <div className="update_picture__toolbar">
               <span className="update_picture__control micon">remove</span>

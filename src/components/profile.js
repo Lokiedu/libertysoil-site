@@ -59,8 +59,9 @@ export default class ProfileHeader extends React.Component {
   addAvatar = async ({ production, preview }) => {
     if (production) {
       let _production = { picture: production.picture, crop: production.crop };
+      _production.resize = { width: AVATAR_SIZE.width };
 
-      this.setState({avatar: {production, preview}});
+      this.setState({avatar: {production: _production, preview}});
       this.unsaved = true;
     } else {
       this.setState({avatar: {production: null, preview: null}});
@@ -121,6 +122,11 @@ export default class ProfileHeader extends React.Component {
       picture = this.state.head_pic.preview.url;
     }
 
+    let avatarPreview;
+    if (this.state.avatar) {
+      avatarPreview = this.state.avatar.preview;
+    }
+
     let followingCount;
     let followersCount;
 
@@ -172,18 +178,27 @@ export default class ProfileHeader extends React.Component {
         <div className="profile__body">
           <div className="layout__row">
             <div className="layout__grid">
-               <div className="layout__grid_item layout__grid_item-wide">
-                 <User user={user} editable={editable} onSubmit={this.addAvatar} avatarSize="120" isRound={true} hideText={true} />
-               </div>
-               {editable &&
-                 <div className="layout__grid_item layout__grid_item-wide layout-align_right update_picture__container">
-                   <UpdatePicture
-                     what="profile background"
-                     where={modalName}
-                     preview={PROFILE_HEADER_SIZE.PREVIEW}
-                     limits={{min: PROFILE_HEADER_SIZE.NORMAL, max: PROFILE_HEADER_SIZE.BIG}}
-                     onSubmit={this.addHeaderPicture} />
-                 </div>
+              <div className="layout__grid_item layout__grid_item-wide">
+                <User
+                  user={user}
+                  editorConfig={editable ? {flexible: false, onUpdateAvatar: this.addAvatar} : false}
+                  avatarPreview={avatarPreview}
+                  avatarSize="120"
+                  isRound={true}
+                  hideText={true}
+                />
+              </div>
+              {editable &&
+                <div className="layout__grid_item layout__grid_item-wide layout-align_right update_picture__container">
+                  <UpdatePicture
+                    what="profile background"
+                    where={modalName}
+                    preview={PROFILE_HEADER_SIZE.PREVIEW}
+                    flexible={true}
+                    limits={{min: PROFILE_HEADER_SIZE.NORMAL, max: PROFILE_HEADER_SIZE.BIG}}
+                    onSubmit={this.addHeaderPicture}
+                  />
+                </div>
                }
              </div>
           </div>

@@ -65,7 +65,7 @@ class SchoolEditPage extends React.Component {
     let more = {};
     const newPictureData = this.base._getNewPicture();
     if (newPictureData) {
-      more = await triggers.updateHeaderPicture({...newPictureData});
+      more.head_pic = await triggers.updateHeaderPicture({...newPictureData});
     }
 
     triggers.updateSchool(id, { name, description, lat, lon, more })

@@ -76,10 +76,13 @@ class SettingsPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let processedPictures;
+    let processedPictures = {};
     let pictures = this.base._getNewPictures();
     if (pictures.head_pic) {
-      processedPictures = await triggers.updateHeaderPicture({...pictures.head_pic});
+      processedPictures.head_pic = await triggers.updateHeaderPicture({...pictures.head_pic});
+    }
+    if (pictures.avatar) {
+      processedPictures.avatar = await triggers.updateAvatar({...pictures.avatar});
     }
 
     let result = await triggers.updateUserInfo({

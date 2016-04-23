@@ -142,7 +142,7 @@ export default class UpdatePictureModal extends React.Component {
     }
     
     return (
-      <ModalComponent size="big" onHide={this.closeHandler}>
+      <ModalComponent ref={c => this.modal = c} size="big" onHide={this.closeHandler}>
         <ModalComponent.Head>
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>
@@ -156,7 +156,7 @@ export default class UpdatePictureModal extends React.Component {
             ref={c => this.form = c}
             onChange={this.changeHandler}
             onClear={this.changeHandler}
-            preview={this.props.preview}
+            {...pick(this.props, ['preview', 'flexible'])}
           />
         </ModalComponent.Body>
         <ModalComponent.Actions>
