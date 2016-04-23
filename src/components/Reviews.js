@@ -137,7 +137,7 @@ export default class Reviews extends Component {
           <footer className="review__author">
             <section className="user_box">
               <img className="user_box__avatar" src={q.avatar_url} width="64px" height="64px" alt=""/>
-              <div className="user_box__body">
+              <div className="user_box__body user_box__body-flexless">
                 <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
                 { q.description &&
                   <p className="user_box__text">
