@@ -58,16 +58,26 @@ class GeotagEditPage extends React.Component {
     return 200;
   }
 
-  saveGeotag = (description) => {
+  state = {
+    processing: false
+  }
+
+  saveGeotag = async (id, description) => {
+    this.setState({processing: true});
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    triggers.updateGeotag(name, { description })
+    let more = { description };
+
+    triggers.updateGeotag(id, { more })
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.GEOTAG, {url_name: result.url_name}));
       }).catch(() => {
         // do nothing. redux has an error already
       });
+
+    this.setState({processing: false});
   };
 
   render() {
@@ -112,7 +122,7 @@ class GeotagEditPage extends React.Component {
         <Helmet title={`${title} posts on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={geotag} type={TAG_LOCATION} saveHandler={this.saveGeotag} />
+            <TagEditForm tag={geotag} type={TAG_LOCATION} saveHandler={this.saveGeotag} processing={this.state.processing}/>
           </div>
         </div>
       </BaseTagPage>

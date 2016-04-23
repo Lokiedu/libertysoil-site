@@ -124,6 +124,7 @@ export function initApi(bookshelf) {
   api.get('/geotag-cloud', wrap(controller.getGeotagCloud.bind(controller)));
   api.head('/geotag/:name', wrap(controller.checkGeotagExists.bind(controller)));
   api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
+  api.post('/geotag/:id', wrap(controller.updateGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
   api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));
   api.post('/geotag/:url_name/unfollow', wrap(controller.unfollowGeotag.bind(controller)));

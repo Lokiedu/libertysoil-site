@@ -74,6 +74,13 @@ let School = {
   }
 };
 
+let Geotag = {
+  more: {
+    description: ['string'],
+    last_editor: ['string']
+  }
+};
+
 let Hashtag = {
   more: {
     description: ['string'],
@@ -82,4 +89,4 @@ let Hashtag = {
   }
 };
 
-export { User, School, Hashtag };
+export { User, School, Hashtag, Geotag };

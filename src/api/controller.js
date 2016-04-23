@@ -31,7 +31,8 @@ import config from '../../config';
 import {
   User as UserValidators,
   School as SchoolValidators,
-  Hashtag as HashtagValidators
+  Hashtag as HashtagValidators,
+  Geotag as GeotagValidators
 } from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
@@ -455,6 +456,54 @@ export default class ApiController {
     }
   }
 
+  async updateGeotag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let checkit = new Checkit(GeotagValidators.more);
+    
+    try {
+      await checkit.run(req.body.more);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
+    }
+
+    try {
+      let Geotag = this.bookshelf.model('Geotag');
+      let geotag = await Geotag.where({id: req.params.id}).fetch({require: true});
+
+      let properties = {};
+      for (let fieldName in GeotagValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
+      }
+
+      properties.last_editor = req.session.user;
+      properties = _.extend(geotag.get('more'), properties);
+      
+      geotag.set('more', properties);
+      await geotag.save(null, {method: 'update'});
+
+      res.send(geotag);
+    } catch (e) {
+      res.status(500);
+      res.send({error: 'Update failed'});
+      return;
+    }
+  }
+
   async updateHashtag(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -489,6 +538,7 @@ export default class ApiController {
         }
       }
 
+      properties.last_editor = req.session.user;
       properties = _.extend(hashtag.get('more'), properties);
       
       hashtag.set('more', properties);

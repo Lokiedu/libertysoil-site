@@ -25,7 +25,7 @@ import {
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
   createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addHashtag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
+  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
@@ -443,6 +443,18 @@ export class ActionsTrigger {
       this.dispatch(addPost(result));
     } catch (e) {
       this.dispatch(addError(e.message));
+    }
+  };
+
+  updateGeotag = async (geotag_uuid, geotag_fields) => {
+    try {
+      let result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
+      this.dispatch(addGeotag(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
     }
   };
 

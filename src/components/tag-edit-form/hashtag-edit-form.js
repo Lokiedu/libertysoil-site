@@ -19,9 +19,8 @@ import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
 
-import { LOADER_OPTIONS } from '../../consts/loader';
-
 import Message from '../message';
+import { LOADER_OPTIONS } from '../../consts/loader';
 
 class HashtagEditForm extends React.Component {
   static displayName = 'HashtagEditForm';
