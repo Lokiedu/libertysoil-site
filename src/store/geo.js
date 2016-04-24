@@ -20,37 +20,15 @@ import _ from 'lodash';
 
 import * as a from '../actions';
 
+
 const initialState = i.Map({
-  cities: i.Map({}),    // index by numeric id
-  cityPosts: i.Map({}),
-  countries: i.Map({}),  // index by ISO-code
-  countryPosts: i.Map({})
+  countries: i.Map({})  // index by id
 });
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.SET_COUNTRIES: {
-      state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'iso_alpha2')));
-      break;
-    }
-
-    case a.ADD_COUNTRY: {
-      state = state.setIn(['countries', action.country.iso_alpha2], i.fromJS(action.country));
-      break;
-    }
-
-    case a.ADD_CITY: {
-      state = state.setIn(['cities', action.city.id.toString()], i.fromJS(action.city));
-      break;
-    }
-
-    case a.SET_COUNTRY_POSTS: {
-      state = state.setIn(['countryPosts', action.countryCode], i.List(action.posts.map(post => post.id)));
-      break;
-    }
-
-    case a.SET_CITY_POSTS: {
-      state = state.setIn(['cityPosts', action.cityId.toString()], i.List(action.posts.map(post => post.id)));
+      state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'id')));
       break;
     }
   }

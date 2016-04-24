@@ -421,10 +421,10 @@ export default class ApiController {
   }
 
   async getCountries(req, res) {
-    let Country = this.bookshelf.model('Country');
+    const Geotag = this.bookshelf.model('Geotag');
 
     try {
-      let countries = await Country.fetchAll();
+      let countries = await Geotag.where({ type: 'Country' }).fetchAll();
       res.send(countries.toJSON());
     } catch (e) {
       res.sendStatus(404)

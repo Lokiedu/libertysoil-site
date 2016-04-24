@@ -222,6 +222,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async countries() {
+    let response = await this.get(`/api/v1/countries/`);
+    return response.body;
+  }
+
   async country(country_code) {
     let response = await this.get(`/api/v1/country/${country_code}`);
     return response.body;
