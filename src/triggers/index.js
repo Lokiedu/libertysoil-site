@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { browserHistory } from 'react-router';
+import { toSpreadArray } from '../utils/lang';
 
 import {
   addError, addMessage, removeAllMessages,
@@ -651,42 +652,23 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async ({ picture, crop, resize }) => {
-    let avatar;
+  uploadPicture = async ({ picture, ...options }) => {
+    let img;
     try {
       let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
-      let cropped = await this.client.processImage(original, [{crop: crop}, resize]);
+      let processed = await this.client.processImage(original, toSpreadArray(options));
 
-      avatar = {
-        attachment_id: cropped.attachment.id,
-        url: cropped.attachment.s3_url
+      img = {
+        attachment_id: processed.attachment.id,
+        url: processed.attachment.s3_url
       };
     } catch (e) {
       this.dispatch(addError(e.message));
     }
 
-    return avatar;
-  };
-
-  updateHeaderPicture = async ({ picture, crop, scale }) => {
-    let head_pic;
-    try {
-      let original = await this.client.uploadImage([picture]);
-      original = original.attachments[0].id;
-
-      let cropped = await this.client.processImage(original, [{crop: crop}, { scale: scale }]);
-
-      head_pic = {
-        attachment_id: cropped.attachment.id,
-        url: cropped.attachment.s3_url
-      };
-    } catch (e) {
-      this.dispatch(addError(e.message));
-    }
-
-    return head_pic;
+    return img;
   }
 
   createComment = async (postId, comment) => {

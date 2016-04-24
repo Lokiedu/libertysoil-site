@@ -59,7 +59,7 @@ export default class ProfileHeader extends React.Component {
   addAvatar = async ({ production, preview }) => {
     if (production) {
       let _production = { picture: production.picture, crop: production.crop };
-      _production.resize = { width: AVATAR_SIZE.width };
+      _production.resize = { width: AVATAR_SIZE.width, height: AVATAR_SIZE.height };
 
       this.setState({avatar: {production: _production, preview}});
     } else {

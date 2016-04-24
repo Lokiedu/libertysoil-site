@@ -72,7 +72,7 @@ class SchoolEditPage extends React.Component {
     const pictures = this.base._getNewPictures();
     if (pictures) {
       if (pictures.head_pic) {
-        more.head_pic = await triggers.updateHeaderPicture({...pictures.head_pic});
+        more.head_pic = await triggers.uploadPicture({...pictures.head_pic});
       }
     }
 

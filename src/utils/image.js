@@ -33,11 +33,19 @@ export async function processImage(buffer, transforms) {
         break;
       }
       case 'resize': {
-        batch.resize(params.width, params.height);
+        if (params.height) {
+          batch.resize(params.width, params.height);
+        } else {
+          batch.resize(params.width);
+        }
         break;
       }
       case 'scale': {
-        batch.scale(params.wRatio);
+        if (params.hRatio) {
+          batch.scale(params.wRatio, params.hRatio);
+        } else {
+          batch.scale(params.wRatio);
+        }
         break;
       }
     }
