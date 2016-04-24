@@ -116,6 +116,16 @@ class SchoolEditForm extends React.Component {
         is_open: isOpenDbValue,
         principal_name: fields.principal_name.value,
         principal_surname: fields.principal_surname.value,
+        postal_code: fields.postal_code.value,
+        city: fields.city.value,
+        address1: fields.address1.value,
+        address2: fields.address2.value,
+        house: fields.house.value,
+        phone: fields.phone.value,
+        website: fields.website.value,
+        facebook: fields.facebook.value,
+        twitter: fields.twitter.value,
+        wikipedia: fields.wikipedia.value,
       }
     );
   };
@@ -175,11 +185,22 @@ class SchoolEditForm extends React.Component {
           </select>
         </div>
 
+        <TextInputField defaultValue={school.postal_code} field={fields.postal_code} name="postal_code" title="Postal Code" />
+        <TextInputField defaultValue={school.city} field={fields.city} name="city" title="City" />
+        <TextInputField defaultValue={school.address1} field={fields.address1} name="address1" title="Address" />
+        <TextInputField defaultValue={school.address2} field={fields.address2} name="address2" title="Address 2" />
+        <TextInputField defaultValue={school.house} field={fields.house} name="house" title="House" />
+        <TextInputField defaultValue={school.phone} field={fields.phone} name="phone" title="Phone" />
+
         <GeoInput initialLocation={initialLocation} />
 
         <TextInputField defaultValue={school.principal_name} field={fields.principal_name} name="principal_name" title="Principal Name" />
         <TextInputField defaultValue={school.principal_surname} field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
 
+        <TextInputField defaultValue={school.website} field={fields.website} name="website" title="Website" type="url" />
+        <TextInputField defaultValue={school.facebook} field={fields.facebook} name="facebook" title="Facebook" type="url" />
+        <TextInputField defaultValue={school.twitter} field={fields.twitter} name="twitter" title="Twitter" type="url" />
+        <TextInputField defaultValue={school.wikipedia} field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
@@ -199,7 +220,12 @@ class SchoolEditForm extends React.Component {
   }
 }
 
-const fields = ['name', 'description', 'is_open', 'principal_name', 'principal_surname', 'country_id'];
+const fields = [
+  'name', 'description', 'is_open',
+  'principal_name', 'principal_surname',
+  'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+  'website', 'facebook', 'twitter', 'wikipedia'
+];
 const validate = values => {
   const { name } = values;
   const errors = {};
