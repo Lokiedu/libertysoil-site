@@ -70,6 +70,14 @@ class SchoolEditForm extends React.Component {
 
     let theForm = event.target;
 
+    const isOpenValue = fields.is_open.value;
+    let isOpenDbValue = null;
+    if (isOpenValue === 'yes') {
+      isOpenDbValue = true;
+    } else if (isOpenValue === 'no') {
+      isOpenDbValue = false;
+    }
+
     this.props.saveHandler(
       theForm.id.value,
       {
@@ -77,6 +85,9 @@ class SchoolEditForm extends React.Component {
         description: fields.description.value,
         lat: theForm.lat.value,
         lon: theForm.lon.value,
+        is_open: isOpenDbValue,
+        principal_name: fields.principal_name.value,
+        principal_surname: fields.principal_surname.value,
       }
     );
   };
@@ -84,6 +95,14 @@ class SchoolEditForm extends React.Component {
   render() {
     const { fields, form, school, processing } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
+
+    let is_open = 'unknown';
+
+    if (school.is_open === true) {
+      is_open = 'yes';
+    } else if (school.is_open === false) {
+      is_open = 'no';
+    }
 
     return (
       <form onSubmit={this.submitHandler}>
@@ -95,6 +114,7 @@ class SchoolEditForm extends React.Component {
             className="input input-block content layout__row layout__row-small"
             defaultValue={school.name}
             type="text"
+            id="name"
             {...fields.name}
           />
 
@@ -104,15 +124,64 @@ class SchoolEditForm extends React.Component {
         </div>
 
         <div className="layout__row">
+          <label className="layout__block layout__row layout__row-small" htmlFor="is_open">Is it open?</label>
+          <select
+            className="input input-block input-select layout__row layout__row-small"
+            defaultValue={is_open}
+            id="is_open"
+            {...fields.is_open}
+          >
+            <option value="unknown">unknown</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
-                <textarea
-                  className="input input-block input-textarea content layout__row layout__row-small"
-                  defaultValue={school.description}
-                  {...fields.description}
-                />
+            <textarea
+              className="input input-block input-textarea content layout__row layout__row-small"
+              defaultValue={school.description}
+              id="description"
+              {...fields.description}
+            />
+        </div>
+
+        <div className="layout__row">
+          <label className="layout__block layout__row layout__row-small" htmlFor="country_id">Country</label>
+          <select
+            className="input input-block input-select layout__row layout__row-small"
+            defaultValue={school.country_id}
+            id="country_id"
+            {...fields.country_id}
+          >
+            <option value="">unknown</option>
+          </select>
         </div>
 
         <GeoInput initialLocation={initialLocation} />
+
+        <div className="layout__row">
+          <label className="layout__block layout__row layout__row-small" htmlFor="principal_name">Principal Name</label>
+          <input
+            className="input input-block content layout__row layout__row-small"
+            defaultValue={school.principal_name}
+            type="text"
+            id="principal_name"
+            {...fields.principal_name}
+          />
+        </div>
+
+        <div className="layout__row">
+          <label className="layout__block layout__row layout__row-small" htmlFor="principal_surname">Principal Surname</label>
+          <input
+            className="input input-block content layout__row layout__row-small"
+            defaultValue={school.principal_surname}
+            type="text"
+            id="principal_name"
+            {...fields.principal_surname}
+          />
+        </div>
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
@@ -132,7 +201,7 @@ class SchoolEditForm extends React.Component {
   }
 }
 
-const fields = ['name', 'description'];
+const fields = ['name', 'description', 'is_open', 'principal_name', 'principal_surname', 'country_id'];
 const validate = values => {
   const { name } = values;
   const errors = {};
