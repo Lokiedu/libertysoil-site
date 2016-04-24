@@ -72,10 +72,12 @@ class SchoolEditForm extends React.Component {
 
     this.props.saveHandler(
       theForm.id.value,
-      fields.name.value,
-      fields.description.value,
-      theForm.lat.value,
-      theForm.lon.value
+      {
+        name: fields.name.value,
+        description: fields.description.value,
+        lat: theForm.lat.value,
+        lon: theForm.lon.value,
+      }
     );
   };
 

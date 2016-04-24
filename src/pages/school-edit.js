@@ -62,7 +62,7 @@ class SchoolEditPage extends React.Component {
     processing: false
   }
 
-  saveSchool = async (id, name, description, lat, lon) => {
+  saveSchool = async (id, properties) => {
     this.setState({processing: true});
 
     const client = new ApiClient(API_HOST);
@@ -75,7 +75,8 @@ class SchoolEditPage extends React.Component {
       more[name] = await triggers.uploadPicture({...pictures[name]});
     }
 
-    triggers.updateSchool(id, { name, description, lat, lon, more })
+    const schoolProperties = { ...properties, more };
+    triggers.updateSchool(id, schoolProperties)
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
       }).catch(() => {
