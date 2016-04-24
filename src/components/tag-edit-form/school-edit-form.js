@@ -20,6 +20,7 @@ import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
 
 import GeoInput from '../geo-input';
+import Messages from '../messages';
 import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
@@ -80,7 +81,14 @@ class SchoolEditForm extends React.Component {
   };
 
   render() {
-    const { fields, form, school, processing } = this.props;
+    const {
+      fields,
+      form,
+      school,
+      processing,
+      triggers,
+      messages
+    } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
 
     return (
@@ -125,6 +133,7 @@ class SchoolEditForm extends React.Component {
             </Loader>
           </div>
         </div>
+        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
       </form>
     );
   }
