@@ -20,6 +20,7 @@ import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
 
 import Message from '../message';
+import Messages from '../messages';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
 class HashtagEditForm extends React.Component {
@@ -68,7 +69,14 @@ class HashtagEditForm extends React.Component {
   };
 
   render() {
-    const { fields, form, hashtag, processing } = this.props;
+    const {
+      fields,
+      form,
+      hashtag,
+      processing,
+      messages,
+      triggers
+    } = this.props;
     
     let defaultDescription;
     if (hashtag.more) {
@@ -105,6 +113,7 @@ class HashtagEditForm extends React.Component {
             </Loader>
           </div>
         </div>
+        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
       </form>
     );
   }

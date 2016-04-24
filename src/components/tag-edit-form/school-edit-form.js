@@ -21,6 +21,7 @@ import Loader from 'react-loader';
 import { each, pick, sortBy } from 'lodash';
 
 import GeoInput from '../geo-input';
+import Messages from '../messages';
 import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
@@ -140,7 +141,15 @@ class SchoolEditForm extends React.Component {
   };
 
   render() {
-    const { countries, fields, form, school, processing } = this.props;
+    const {
+      countries,
+      fields,
+      form,
+      school,
+      processing,
+      triggers,
+      messages
+    } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
 
     let is_open = 'unknown';
@@ -278,6 +287,7 @@ class SchoolEditForm extends React.Component {
             </Loader>
           </div>
         </div>
+        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
       </form>
     );
   }

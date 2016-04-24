@@ -78,19 +78,28 @@ class SchoolEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let more = {};
-    const pictures = this.base._getNewPictures();
-
-    for (let name in pictures) {
-      more[name] = await triggers.uploadPicture({...pictures[name]});
+    try {
+      let pictures = this.base._getNewPictures();
+      for (let name in pictures) {
+        more[name] = await triggers.uploadPicture({...pictures[name]});
+      }
+    } catch (e) {
+      if (!confirm("It seems like there're problems with upload the images. Would you like to continue saving changes without them?")) {
+        this.setState({processing: false});
+        return;
+      }
     }
 
     const schoolProperties = { ...properties, more };
-    triggers.updateSchool(id, schoolProperties)
-      .then((result) => {
-        browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
-      }).catch(() => {
-        // do nothing. redux has an error already
-      });
+    try {
+      let result = await triggers.updateSchool(id, schoolProperties);
+      browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
+    } catch (e) {
+      if (confirm("Saving changes failed. Would you like to try again?")) {
+        this.saveSchool(id, name, description, lat, lon);
+        return;
+      }
+    }
 
     this.setState({processing: false});
   };
@@ -103,7 +112,8 @@ class SchoolEditPage extends React.Component {
       is_logged_in,
       resetCreatePostForm,
       updateCreatePostForm,
-      params
+      params,
+      messages
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -142,7 +152,15 @@ class SchoolEditPage extends React.Component {
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm countries={countries} tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
+            <TagEditForm
+              countries={countries}
+              messages={messages}
+              processing={this.state.processing}
+              saveHandler={this.saveSchool}
+              tag={school}
+              triggers={triggers}
+              type={TAG_SCHOOL}
+            />
           </div>
         </div>
       </BaseTagPage>

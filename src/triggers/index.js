@@ -667,6 +667,7 @@ export class ActionsTrigger {
       };
     } catch (e) {
       this.dispatch(addError(e.message));
+      throw e;
     }
 
     return img;
