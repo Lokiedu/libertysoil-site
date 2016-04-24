@@ -25,7 +25,7 @@ import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
 
-const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
+const TextInputField = ({ field, name, title, type='text' }) => {
   const id = `input_${name}`;
 
   return (
@@ -33,7 +33,6 @@ const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
       <label className="layout__block layout__row layout__row-small" htmlFor={id}>{title}</label>
       <input
         className="input input-block content layout__row layout__row-small"
-        defaultValue={defaultValue}
         id={id}
         type={type}
         {...field}
@@ -126,6 +125,15 @@ class SchoolEditForm extends React.Component {
         facebook: fields.facebook.value,
         twitter: fields.twitter.value,
         wikipedia: fields.wikipedia.value,
+        org_membership: {
+          adec: { is_member: fields.adec.value },
+          aero: { is_member: fields.aero.value },
+          australian: { is_member: null },
+          eudec: { is_member: fields.eudec.value },
+          iden: { is_member: fields.iden.value },
+          alternative_to_school: { is_member: fields.alternative_to_school.value },
+          wikipedia_list: { is_member: fields.wikipedia_list.value }
+        }
       }
     );
   };
@@ -134,25 +142,16 @@ class SchoolEditForm extends React.Component {
     const { countries, fields, form, school, processing } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
 
-    let is_open = 'unknown';
-
-    if (school.is_open === true) {
-      is_open = 'yes';
-    } else if (school.is_open === false) {
-      is_open = 'no';
-    }
-
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={school.id} />
 
-        <TextInputField defaultValue={school.name} field={fields.name} name="name" title="Name" />
+        <TextInputField field={fields.name} name="name" title="Name" />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="is_open">Is it open?</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
-            defaultValue={is_open}
             id="is_open"
             {...fields.is_open}
           >
@@ -164,19 +163,17 @@ class SchoolEditForm extends React.Component {
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
-            <textarea
-              className="input input-block input-textarea content layout__row layout__row-small"
-              defaultValue={school.description}
-              id="description"
-              {...fields.description}
-            />
+          <textarea
+            className="input input-block input-textarea content layout__row layout__row-small"
+            id="description"
+            {...fields.description}
+          />
         </div>
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="country_id">Country</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
-            defaultValue={school.country_id}
             id="country_id"
             {...fields.country_id}
           >
@@ -185,22 +182,56 @@ class SchoolEditForm extends React.Component {
           </select>
         </div>
 
-        <TextInputField defaultValue={school.postal_code} field={fields.postal_code} name="postal_code" title="Postal Code" />
-        <TextInputField defaultValue={school.city} field={fields.city} name="city" title="City" />
-        <TextInputField defaultValue={school.address1} field={fields.address1} name="address1" title="Address" />
-        <TextInputField defaultValue={school.address2} field={fields.address2} name="address2" title="Address 2" />
-        <TextInputField defaultValue={school.house} field={fields.house} name="house" title="House" />
-        <TextInputField defaultValue={school.phone} field={fields.phone} name="phone" title="Phone" />
+        <TextInputField field={fields.postal_code} name="postal_code" title="Postal Code" />
+        <TextInputField field={fields.city} name="city" title="City" />
+        <TextInputField field={fields.address1} name="address1" title="Address" />
+        <TextInputField field={fields.address2} name="address2" title="Address 2" />
+        <TextInputField field={fields.house} name="house" title="House" />
+        <TextInputField field={fields.phone} name="phone" title="Phone" />
 
         <GeoInput initialLocation={initialLocation} />
 
-        <TextInputField defaultValue={school.principal_name} field={fields.principal_name} name="principal_name" title="Principal Name" />
-        <TextInputField defaultValue={school.principal_surname} field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
+        <TextInputField field={fields.principal_name} name="principal_name" title="Principal Name" />
+        <TextInputField field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
 
-        <TextInputField defaultValue={school.website} field={fields.website} name="website" title="Website" type="url" />
-        <TextInputField defaultValue={school.facebook} field={fields.facebook} name="facebook" title="Facebook" type="url" />
-        <TextInputField defaultValue={school.twitter} field={fields.twitter} name="twitter" title="Twitter" type="url" />
-        <TextInputField defaultValue={school.wikipedia} field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
+        <TextInputField field={fields.website} name="website" title="Website" type="url" />
+        <TextInputField field={fields.facebook} name="facebook" title="Facebook" type="url" />
+        <TextInputField field={fields.twitter} name="twitter" title="Twitter" type="url" />
+        <TextInputField field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
+
+        <div className="layout__row">
+          <div className="layout__row">Membership:</div>
+
+          <div className="layout__row">
+            <label>ADEC <input type="checkbox" {...fields.adec}/></label>
+          </div>
+
+          <div className="layout__row">
+            <label>AERO <input type="checkbox" {...fields.aero}/></label>
+          </div>
+
+          {/*
+          <div className="layout__row">
+            <label>Australian <input type="checkbox" {...fields.australian}/></label>
+          </div>
+          */}
+
+          <div className="layout__row">
+            <label>EUDEC <input type="checkbox" {...fields.eudec}/></label>
+          </div>
+
+          <div className="layout__row">
+            <label>IDEN <input type="checkbox" {...fields.iden}/></label>
+          </div>
+
+          <div className="layout__row">
+            <label>AlternativeToSchool.com entry <input type="checkbox" {...fields.alternative_to_school}/></label>
+          </div>
+
+          <div className="layout__row">
+            <label>Wikipedia list of schools entry <input type="checkbox" {...fields.wikipedia_list}/></label>
+          </div>
+        </div>
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
@@ -224,7 +255,8 @@ const fields = [
   'name', 'description', 'is_open',
   'principal_name', 'principal_surname',
   'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
-  'website', 'facebook', 'twitter', 'wikipedia'
+  'website', 'facebook', 'twitter', 'wikipedia',
+  'adec', 'aero', 'australian', 'eudec', 'iden', 'alternative_to_school', 'wikipedia_list'
 ];
 const validate = values => {
   const { name } = values;
