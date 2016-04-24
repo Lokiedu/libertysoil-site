@@ -68,18 +68,31 @@ class HashtagEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let more = { description };
-    const pictures = this.base._getNewPictures();
+    try {
 
-    for (let name in pictures) {
-      more[name] = await triggers.uploadPicture({...pictures[name]});
+      const pictures = this.base._getNewPictures();
+      for (let name in pictures) {
+        more[name] = await triggers.uploadPicture({...pictures[name]});
+      }
+
+    } catch (e) {
+      if (!confirm("It seems like there're problems with upload the images. Would you like to continue saving changes without them?")) {
+        this.setState({processing: false});
+        return;
+      }
     }
 
-    triggers.updateHashtag(id, { more })
-      .then((result) => {
-        browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
-      }).catch(() => {
-        // do nothing. redux has an error already
-    });
+    try {
+      
+      let result = await triggers.updateHashtag(id, { more });
+      browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
+
+    } catch (e) {
+      if (confirm("Saving changes failed. Would you like to try again?")) {
+        this.saveHashtag(id, description);
+        return;
+      }
+    }
 
     this.setState({processing: false});
   };
@@ -92,7 +105,8 @@ class HashtagEditPage extends React.Component {
       updateCreatePostForm,
       params,
       hashtags,
-      schools
+      schools,
+      messages
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -122,7 +136,13 @@ class HashtagEditPage extends React.Component {
         <Helmet title={`"${tag.name}" posts on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={tag} type={TAG_HASHTAG} saveHandler={this.saveHashtag} processing={this.state.processing} />
+            <TagEditForm
+              tag={tag}
+              type={TAG_HASHTAG}
+              messages={messages}
+              triggers={triggers}
+              saveHandler={this.saveHashtag}
+              processing={this.state.processing} />
           </div>
         </div>
       </BaseTagPage>
