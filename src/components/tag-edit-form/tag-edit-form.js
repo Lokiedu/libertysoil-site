@@ -35,6 +35,7 @@ export default class TagEditForm extends React.Component {
 
   render() {
     const {
+      countries,
       type,
       tag
     } = this.props;
@@ -45,7 +46,7 @@ export default class TagEditForm extends React.Component {
       case TAG_HASHTAG:
         return <HashtagEditForm hashtag={tag} {...commonProps} />;
       case TAG_SCHOOL:
-        return <SchoolEditForm school={tag} {...commonProps} />;
+        return <SchoolEditForm school={tag} countries={countries} {...commonProps} />;
       case TAG_LOCATION:
         return <GeotagEditForm geotag={tag} {...commonProps} />;
       default:

@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
+import { sortBy } from 'lodash';
 
 import GeoInput from '../geo-input';
 import Message from '../message';
@@ -27,6 +28,10 @@ class SchoolEditForm extends React.Component {
   static displayName = 'SchoolEditForm';
 
   static propTypes = {
+    countries: PropTypes.objectOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    })).isRequired,
     fields: PropTypes.shape({
       description: PropTypes.shape().isRequired,
       name: PropTypes.shape({
@@ -83,6 +88,7 @@ class SchoolEditForm extends React.Component {
       {
         name: fields.name.value,
         description: fields.description.value,
+        country_id: fields.country_id.value,
         lat: theForm.lat.value,
         lon: theForm.lon.value,
         is_open: isOpenDbValue,
@@ -93,7 +99,7 @@ class SchoolEditForm extends React.Component {
   };
 
   render() {
-    const { fields, form, school, processing } = this.props;
+    const { countries, fields, form, school, processing } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
 
     let is_open = 'unknown';
@@ -156,6 +162,7 @@ class SchoolEditForm extends React.Component {
             {...fields.country_id}
           >
             <option value="">unknown</option>
+            {sortBy(countries, 'name').map(country => <option value={country.id} key={country.id}>{country.name}</option>)}
           </select>
         </div>
 

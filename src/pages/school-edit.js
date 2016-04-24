@@ -97,6 +97,7 @@ class SchoolEditPage extends React.Component {
 
   render() {
     const {
+      geo,
       schools,
       current_user,
       is_logged_in,
@@ -110,8 +111,13 @@ class SchoolEditPage extends React.Component {
     const actions = {resetCreatePostForm, updateCreatePostForm};
 
     let school = find(schools, {url_name: this.props.params.school_name});
+    const countries = geo.countries;
 
     if (!school) {
+      return false;  // not loaded yet
+    }
+
+    if (countries.length === 0) {
       return false;  // not loaded yet
     }
 
@@ -136,7 +142,7 @@ class SchoolEditPage extends React.Component {
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
+            <TagEditForm countries={countries} tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
           </div>
         </div>
       </BaseTagPage>
