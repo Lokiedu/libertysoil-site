@@ -24,6 +24,28 @@ import GeoInput from '../geo-input';
 import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
+
+const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
+  const id = `input_${name}`;
+
+  return (
+    <div className="layout__row">
+      <label className="layout__block layout__row layout__row-small" htmlFor={id}>{title}</label>
+      <input
+        className="input input-block content layout__row layout__row-small"
+        defaultValue={defaultValue}
+        id={id}
+        type={type}
+        {...field}
+      />
+
+      {field.error &&
+        <Message message={field.error} />
+      }
+    </div>
+  );
+};
+
 class SchoolEditForm extends React.Component {
   static displayName = 'SchoolEditForm';
 
@@ -114,20 +136,7 @@ class SchoolEditForm extends React.Component {
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={school.id} />
 
-        <div className="layout__row">
-          <label className="layout__block layout__row layout__row-small" htmlFor="name">Name</label>
-          <input
-            className="input input-block content layout__row layout__row-small"
-            defaultValue={school.name}
-            type="text"
-            id="name"
-            {...fields.name}
-          />
-
-          {fields.name.error &&
-            <Message message={fields.name.error} />
-          }
-        </div>
+        <TextInputField defaultValue={school.name} field={fields.name} name="name" title="Name" />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="is_open">Is it open?</label>
@@ -168,27 +177,9 @@ class SchoolEditForm extends React.Component {
 
         <GeoInput initialLocation={initialLocation} />
 
-        <div className="layout__row">
-          <label className="layout__block layout__row layout__row-small" htmlFor="principal_name">Principal Name</label>
-          <input
-            className="input input-block content layout__row layout__row-small"
-            defaultValue={school.principal_name}
-            type="text"
-            id="principal_name"
-            {...fields.principal_name}
-          />
-        </div>
+        <TextInputField defaultValue={school.principal_name} field={fields.principal_name} name="principal_name" title="Principal Name" />
+        <TextInputField defaultValue={school.principal_surname} field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
 
-        <div className="layout__row">
-          <label className="layout__block layout__row layout__row-small" htmlFor="principal_surname">Principal Surname</label>
-          <input
-            className="input input-block content layout__row layout__row-small"
-            defaultValue={school.principal_surname}
-            type="text"
-            id="principal_name"
-            {...fields.principal_surname}
-          />
-        </div>
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
