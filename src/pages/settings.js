@@ -80,13 +80,9 @@ class SettingsPage extends React.Component {
 
     let processedPictures = {};
     let pictures = this.base._getNewPictures();
-    if (pictures) {
-      if (pictures.head_pic) {
-        processedPictures.head_pic = await triggers.uploadPicture({...pictures.head_pic});
-      }
-      if (pictures.avatar) {
-        processedPictures.avatar = await triggers.uploadPicture({...pictures.avatar});
-      }
+    
+    for (let name in pictures) {
+      processedPictures[name] = await triggers.uploadPicture({...pictures[name]});
     }
 
     let result = await triggers.updateUserInfo({

@@ -19,7 +19,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import _ from 'lodash';
+import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
 import {API_HOST} from '../config';
@@ -70,10 +70,9 @@ class SchoolEditPage extends React.Component {
 
     let more = {};
     const pictures = this.base._getNewPictures();
-    if (pictures) {
-      if (pictures.head_pic) {
-        more.head_pic = await triggers.uploadPicture({...pictures.head_pic});
-      }
+
+    for (let name in pictures) {
+      more[name] = await triggers.uploadPicture({...pictures[name]});
     }
 
     triggers.updateSchool(id, { name, description, lat, lon, more })
@@ -100,7 +99,7 @@ class SchoolEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = {resetCreatePostForm, updateCreatePostForm};
 
-    let school = _.find(schools, {url_name: this.props.params.school_name});
+    let school = find(schools, {url_name: this.props.params.school_name});
 
     if (!school) {
       return false;  // not loaded yet

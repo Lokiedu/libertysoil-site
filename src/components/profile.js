@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
-import { isEmpty } from 'lodash';
 
 import User from './user';
 import FollowButton from './follow-button';
@@ -43,10 +42,6 @@ export default class ProfileHeader extends React.Component {
     }
     if (this.state.head_pic) {
       pictures.head_pic = this.state.head_pic.production;
-    }
-
-    if (isEmpty(pictures)) {
-      return undefined;
     }
 
     return pictures;

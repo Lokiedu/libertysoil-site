@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, isEmpty } from 'lodash';
+import { values } from 'lodash';
 
 import {
   Page,
@@ -171,10 +171,6 @@ export default class BaseTagPage extends React.Component {
     let pictures = {};
     if (this.state.head_pic) {
       pictures.head_pic = this.state.head_pic.production;
-    }
-
-    if (isEmpty(pictures)) {
-      return undefined;
     }
 
     return pictures;

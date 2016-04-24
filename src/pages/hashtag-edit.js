@@ -67,12 +67,11 @@ class HashtagEditPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = { description: description };
+    let more = { description };
     const pictures = this.base._getNewPictures();
-    if (pictures) {
-      if (pictures.head_pic) {
-        more.head_pic = await triggers.uploadPicture({...pictures.head_pic});
-      }
+
+    for (let name in pictures) {
+      more[name] = await triggers.uploadPicture({...pictures[name]});
     }
 
     triggers.updateHashtag(id, { more })
