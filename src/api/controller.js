@@ -644,6 +644,15 @@ export default class ApiController {
         }
       }
 
+      let languages = school.get('teaching_languages');
+      if (_.isArray(languages)) {
+        school.set('teaching_languages', JSON.stringify(languages));
+      }
+      languages = school.get('required_languages')
+      if (_.isArray(languages)) {
+        school.set('required_languages', JSON.stringify(languages));
+      }
+
       await school.save();
 
       res.send(school);
