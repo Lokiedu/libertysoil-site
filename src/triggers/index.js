@@ -33,7 +33,8 @@ import {
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress, setUserRecentTags, setQuotes
+  setUIProgress, setUserRecentTags, setQuotes,
+  setCountries
 } from '../actions';
 
 
@@ -727,4 +728,13 @@ export class ActionsTrigger {
       this.dispatch(saveCommentFailure(postId, commentId, e.message));
     }
   };
+
+  getCountries = async () => {
+    try {
+      const response = await this.client.countries();
+      this.dispatch(setCountries(response));
+    } catch (e) {
+      console.error(`Failed to fetch countries: ${e}`);  // eslint-disable-line no-console
+    }
+  }
 }

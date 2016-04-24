@@ -52,8 +52,17 @@ class SchoolEditPage extends React.Component {
       return 404;
     }
 
+    const props = store.getState();
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.loadSchools();
+
+    const promises = [];
+    promises.push(trigger.loadSchools());
+
+    if (props.get('geo').get('countries').size === 0) {
+      promises.push(trigger.getCountries());
+    }
+
+    await Promise.all(promises);
 
     return 200;
   }
@@ -62,7 +71,7 @@ class SchoolEditPage extends React.Component {
     processing: false
   }
 
-  saveSchool = async (id, name, description, lat, lon) => {
+  saveSchool = async (id, properties) => {
     this.setState({processing: true});
 
     const client = new ApiClient(API_HOST);
@@ -75,7 +84,8 @@ class SchoolEditPage extends React.Component {
       more[name] = await triggers.uploadPicture({...pictures[name]});
     }
 
-    triggers.updateSchool(id, { name, description, lat, lon, more })
+    const schoolProperties = { ...properties, more };
+    triggers.updateSchool(id, schoolProperties)
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
       }).catch(() => {
@@ -87,6 +97,7 @@ class SchoolEditPage extends React.Component {
 
   render() {
     const {
+      geo,
       schools,
       current_user,
       is_logged_in,
@@ -100,8 +111,13 @@ class SchoolEditPage extends React.Component {
     const actions = {resetCreatePostForm, updateCreatePostForm};
 
     let school = find(schools, {url_name: this.props.params.school_name});
+    const countries = geo.countries;
 
     if (!school) {
+      return false;  // not loaded yet
+    }
+
+    if (countries.length === 0) {
       return false;  // not loaded yet
     }
 
@@ -126,7 +142,7 @@ class SchoolEditPage extends React.Component {
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
+            <TagEditForm countries={countries} tag={school} type={TAG_SCHOOL} saveHandler={this.saveSchool} processing={this.state.processing}/>
           </div>
         </div>
       </BaseTagPage>
