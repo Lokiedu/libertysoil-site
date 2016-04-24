@@ -17,8 +17,10 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
+import Loader from 'react-loader';
 
 import Message from '../message';
+import { LOADER_OPTIONS } from '../../consts/loader';
 
 class HashtagEditForm extends React.Component {
   static displayName = 'HashtagEditForm';
@@ -53,26 +55,35 @@ class HashtagEditForm extends React.Component {
     const { fields, form } = this.props;
 
     form.forceValidate();
-
     if (!form.isValid()) {
       return;
     }
 
+    let theForm = event.target;
+
     this.props.saveHandler(
+      theForm.id.value,
       fields.description.value
     );
   };
 
   render() {
-    const { fields, form, hashtag } = this.props;
+    const { fields, form, hashtag, processing } = this.props;
+    
+    let defaultDescription;
+    if (hashtag.more) {
+      defaultDescription = hashtag.more.description;
+    }
 
     return (
       <form onSubmit={this.submitHandler}>
+        <input name="id" type="hidden" value={hashtag.id} />
+
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
-            defaultValue={hashtag.description}
+            defaultValue={defaultDescription}
             {...fields.description}
           />
 
@@ -81,15 +92,17 @@ class HashtagEditForm extends React.Component {
           }
         </div>
 
-        <div className="layout__row">
-          <div className="layout layout__grid layout-align_right">
-            <button
-              className="button button-wide button-green"
-              disabled={!form.isValid()}
-              type="submit"
-            >
-              Save
-            </button>
+        <div className="layout__row layout__space-triple">
+          <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
+            <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '90%'}}>
+              <button
+                className="button button-wide button-green"
+                disabled={!form.isValid()}
+                type="submit"
+              >
+                Save
+              </button>
+            </Loader>
           </div>
         </div>
       </form>

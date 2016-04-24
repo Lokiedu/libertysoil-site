@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, clone } from 'lodash';
+import { values } from 'lodash';
 
 import {
   Page,
@@ -108,15 +108,15 @@ function GeotagPageHero({ geotag }) {
     );
   }
 
-  return <PageHero src="/images/hero/welcome.jpg" />;
+  return <PageHero url="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src, editable, onSubmit, limits }) {
+function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flexible }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
       return (
-        <PageHero src={src}>
+        <PageHero url={url}>
           {editable &&
             <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
               <div className="layout__grid_item">
@@ -124,7 +124,9 @@ function TagPageHero({ type, tag, src, editable, onSubmit, limits }) {
                   what="header image"
                   where={(<span className="font-bold">{tag.name}</span>)}
                   onSubmit={onSubmit}
-                  limits={limits} />
+                  limits={limits}
+                  flexible={flexible}
+                  preview={preview} />
               </div>
             </div>
           }
@@ -151,8 +153,7 @@ export default class BaseTagPage extends React.Component {
 
   state = {
     form: false,
-    production: null,
-    preview: null
+    head_pic: null
   };
 
   postsAmount = null;
@@ -166,17 +167,17 @@ export default class BaseTagPage extends React.Component {
     }
   }
 
-  _getNewPicture() {
-    if (this.state.production) {
-      return this.state.production;
+  _getNewPictures() {
+    let pictures = {};
+    if (this.state.head_pic) {
+      pictures.head_pic = this.state.head_pic.production;
     }
 
-    return undefined;
+    return pictures;
   }
 
   addPicture = async ({ production, preview }) => {
     if (production) {
-      let _preview = { src: preview.src };
       let _production = { picture: production.picture, crop: production.crop };
 
       if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
@@ -185,9 +186,9 @@ export default class BaseTagPage extends React.Component {
         _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
       }
 
-      this.setState({production: _production, preview: _preview});
+      this.setState({head_pic: {production: _production, preview}});
     } else {
-      this.setState({production: null, preview: null});
+      this.setState({head_pic: null});
     }
   }
 
@@ -233,11 +234,11 @@ export default class BaseTagPage extends React.Component {
 
     const pageCaption = getPageCaption(type, name);
 
-    let pic;
-    if (this.state.preview) {
-      pic = clone(this.state.preview);
+    let headerPictureUrl;
+    if (this.state.head_pic) {
+      headerPictureUrl = this.state.head_pic.preview.url;
     } else {
-      pic = { src: this.defaultPicture };
+      headerPictureUrl = this.defaultPicture;
     }
 
     let createPostForm;
@@ -274,7 +275,10 @@ export default class BaseTagPage extends React.Component {
               tag={tag}
               editable={editable}
               onSubmit={this.addPicture}
-              {...pic} />
+              preview={TAG_HEADER_SIZE.PREVIEW}
+              flexible={true}
+              limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
+              url={headerPictureUrl} />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}

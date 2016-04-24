@@ -37,7 +37,8 @@ class SettingsPage extends React.Component {
     super(props);
 
     this.state = {
-      roles: []
+      roles: [],
+      processing: false
     };
   }
 
@@ -70,19 +71,34 @@ class SettingsPage extends React.Component {
 
   };
 
-  onSave = () => {
-    let roles = this.state.roles;
+  onSave = async () => {
+    this.setState({processing: true});
 
+    let roles = this.state.roles;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    triggers.updateUserInfo({
+    let processedPictures = {};
+    let pictures = this.base._getNewPictures();
+    
+    for (let name in pictures) {
+      processedPictures[name] = await triggers.uploadPicture({...pictures[name]});
+    }
+
+    let result = await triggers.updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value,
-        roles: roles
+        roles: roles,
+        ...processedPictures
       }
     });
+
+    if (result) {
+      this.base._clearPreview();
+    }
+
+    this.setState({processing: false});
   };
 
   addRole = () => {
@@ -117,6 +133,7 @@ class SettingsPage extends React.Component {
 
     return (
       <BaseSettingsPage
+        ref={c => this.base = c}
         current_user={current_user}
         followers={followers}
         following={following}
@@ -124,6 +141,7 @@ class SettingsPage extends React.Component {
         messages={messages}
         triggers={triggers}
         onSave={this.onSave}
+        processing={this.state.processing}
       >
         <Helmet title="Your Profile Settings on " />
         <form ref="form" className="paper__page">

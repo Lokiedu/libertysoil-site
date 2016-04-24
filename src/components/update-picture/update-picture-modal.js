@@ -13,7 +13,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
-import { throttle } from 'lodash';
+import { throttle, pick } from 'lodash';
 
 import ModalComponent from '../modal-component';
 import Message from '../message';
@@ -34,6 +34,55 @@ export default class UpdatePictureModal extends React.Component {
     error: ''
   }
 
+  validate = (crop) => {
+    const { limits } = this.props;
+
+    if (!limits) {
+      return true;
+    }
+
+    let error = '';
+    if (limits.min) {
+
+      if (limits.min.width && (crop.width < limits.min.width)) {
+        error = `Image must be at least ${limits.min.width}px in width. Now: ${parseInt(crop.width)}px`;
+      }
+      if (!error && limits.min.height && (crop.height < limits.min.height)) {
+        error = `Image must be at least ${limits.min.height}px in width. Now: ${parseInt(crop.height)}px`;
+      }
+    }
+
+    if (!error && limits.max) {
+
+      if (limits.max.width && (crop.width > limits.max.width)) {
+        error = `Image mustn't be greater than ${limits.max.width}px in width. Now: ${parseInt(crop.width)}px`;
+      }
+      if (!error && limits.max.height && (crop.height > limits.max.height)) {
+        error = `Image mustn't be greater than ${limits.max.height}px in width. Now: ${parseInt(crop.height)}px`;
+      }
+    }
+
+    this.setState({error});
+    return (error == '');
+  }
+
+  getPreview = (img, crop) => {
+    const { width, height } = this.props.preview;
+    const wRatio = width / crop.width;
+
+    let canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    let ctx = canvas.getContext('2d');
+
+    ctx.drawImage(img,
+      crop.left, crop.top, crop.width, crop.height,
+      0, 0, canvas.width, crop.height * wRatio
+    );
+
+    return { url: canvas.toDataURL() };
+  };
+
   changeHandler = throttle(() => {
     this.setState({error: ''});
   }, 100);
@@ -42,7 +91,8 @@ export default class UpdatePictureModal extends React.Component {
     const { avatar, crop } = this.form._submit();
 
     if (!avatar) {
-      this.setState({error: 'Nothing to preview. Upload image first.'})
+      this.setState({error: 'Nothing to preview. Upload image first.'});
+      return;
     }
 
     let img = new Image();
@@ -60,40 +110,20 @@ export default class UpdatePictureModal extends React.Component {
         height: crop.height * img.height
       };
 
-      if (newCrop.width < 1400) {
-        this.setState({
-          error: `Image must be at least 1400px in width. Now: ${parseInt(newCrop.width)}px`
-        });
-
+      const isValid = this.validate(newCrop);
+      if (!isValid) {
         return;
       }
 
-      if (newCrop.height > 2800) {
-        this.setState({
-          error: `Image mustn't be greater than 2800px in width. Now: ${parseInt(newCrop.width)}px`
-        });
+      let pictureData = {
+        production: { picture: avatar, crop: newCrop }
+      };
 
-        return;
+      if (this.props.preview) {
+        pictureData.preview = this.getPreview(img, newCrop);
       }
 
-      let canvas = document.createElement('canvas');
-      canvas.width = 1400;
-      canvas.height = 400;
-      let ctx = canvas.getContext('2d');
-
-      const wRatio = canvas.width / newCrop.width;
-
-      ctx.drawImage(img,
-        newCrop.left, newCrop.top, newCrop.width, newCrop.height,
-        0, 0, canvas.width, newCrop.height * wRatio
-      );
-
-      let src = canvas.toDataURL();
-
-      this.props.onSubmit({
-        production: { picture: avatar, crop: newCrop },
-        preview: { src: src }
-      });
+      this.props.onSubmit(pictureData);
     }
 
     reader.readAsDataURL(avatar);
@@ -105,22 +135,18 @@ export default class UpdatePictureModal extends React.Component {
   }
 
   render() {
-    const {
-      what,
-      where,
-      limits
-    } = this.props;
+    const { what, where } = this.props;
 
     if (!this.props.visible) {
       return <script />;
     }
     
     return (
-      <ModalComponent size="big" onHide={this.closeHandler}>
+      <ModalComponent ref={c => this.modal = c} size="big" onHide={this.closeHandler}>
         <ModalComponent.Head>
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>
-        <ModalComponent.Body>
+        <ModalComponent.Body className="update_picture__modal">
           { this.state.error &&
             <div className="layout__row">
               <Message message={this.state.error} />
@@ -128,10 +154,10 @@ export default class UpdatePictureModal extends React.Component {
           }
           <UpdatePictureForm
             ref={c => this.form = c}
-            limits={limits}
             onChange={this.changeHandler}
             onClear={this.changeHandler}
-            />
+            {...pick(this.props, ['preview', 'flexible'])}
+          />
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">

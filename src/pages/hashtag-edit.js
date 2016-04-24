@@ -57,16 +57,31 @@ class HashtagEditPage extends React.Component {
     return 200;
   }
 
-  saveHashtag = (description) => {
+  state = {
+    processing: false
+  }
+
+  saveHashtag = async (id, description) => {
+    this.setState({processing: true});
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    triggers.updateHashtag(name, { description })
+    let more = { description };
+    const pictures = this.base._getNewPictures();
+
+    for (let name in pictures) {
+      more[name] = await triggers.uploadPicture({...pictures[name]});
+    }
+
+    triggers.updateHashtag(id, { more })
       .then((result) => {
         browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
       }).catch(() => {
         // do nothing. redux has an error already
-      });
+    });
+
+    this.setState({processing: false});
   };
 
   render() {
@@ -92,6 +107,7 @@ class HashtagEditPage extends React.Component {
 
     return (
       <BaseTagPage
+        ref={c => this.base = c}
         editable={true}
         params={params}
         current_user={current_user}
@@ -106,7 +122,7 @@ class HashtagEditPage extends React.Component {
         <Helmet title={`"${tag.name}" posts on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={tag} type={TAG_HASHTAG} saveHandler={this.saveHashtag} />
+            <TagEditForm tag={tag} type={TAG_HASHTAG} saveHandler={this.saveHashtag} processing={this.state.processing} />
           </div>
         </div>
       </BaseTagPage>

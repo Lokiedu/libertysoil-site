@@ -144,6 +144,8 @@ export default class TagHeader extends React.Component {
     let linesOfDescription = <p>No information provided...</p>;
     if (tag.description) {
       linesOfDescription = tag.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
+    } else if (tag.more && tag.more.description) {
+      linesOfDescription = tag.more.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
     }
 
     if (is_logged_in) {

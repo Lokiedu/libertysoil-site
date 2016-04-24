@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { browserHistory } from 'react-router';
+import { toSpreadArray } from '../utils/lang';
 
 import {
   addError, addMessage, removeAllMessages,
@@ -25,7 +26,7 @@ import {
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
   createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
+  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
@@ -210,12 +211,14 @@ export class ActionsTrigger {
   };
 
   updateUserInfo = async (user) => {
+    let status = false;
     try {
       let res = await this.client.updateUser(user);
 
       if ('user' in res) {
         this.dispatch(addMessage('Saved successfully'));
         this.dispatch(addUser(res.user));
+        status = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
@@ -224,6 +227,7 @@ export class ActionsTrigger {
         this.dispatch(addError(e.message));
       }
     }
+    return status;
   };
 
   changePassword = async (old_password, new_password1, new_password2) => {
@@ -443,9 +447,29 @@ export class ActionsTrigger {
     }
   };
 
-  updateHashtag = async () => {
+  updateGeotag = async (geotag_uuid, geotag_fields) => {
+    try {
+      let result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
+      this.dispatch(addGeotag(result));
 
-  }
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
+    }
+  };
+
+  updateHashtag = async (hashtag_uuid, hashtag_fields) => {
+    try {
+      let result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
+      this.dispatch(addHashtag(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
+    }
+  };
 
   updateSchool = async (school_uuid, school_fields) => {
     try {
@@ -628,49 +652,23 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop, resize) => {
-    try {
-      let original = await this.client.uploadImage([image]);
-      original = original.attachments[0].id;
-
-      let cropped = await this.client.processImage(original, [{crop: crop}, resize]);
-
-      let res = await this.client.updateUser({
-        more: {
-          avatar: {
-            attachment_id: cropped.attachment.id,
-            url: cropped.attachment.s3_url
-          }
-        }
-      });
-      if ('user' in res) {
-        this.dispatch(addMessage('Avatar updated'));
-        this.dispatch(addUser(res.user));
-      }
-    } catch (e) {
-      this.dispatch(addError(e.message));
-    }
-  };
-
-  updateHeaderPicture = async ({ picture, crop, scale }) => {
-    let more = {};
+  uploadPicture = async ({ picture, ...options }) => {
+    let img;
     try {
       let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
-      let cropped = await this.client.processImage(original, [{crop: crop}, { scale: scale }]);
+      let processed = await this.client.processImage(original, toSpreadArray(options));
 
-      more = {
-        head_pic: {
-          attachment_id: cropped.attachment.id,
-          url: cropped.attachment.s3_url
-        }
-      }
+      img = {
+        attachment_id: processed.attachment.id,
+        url: processed.attachment.s3_url
+      };
     } catch (e) {
       this.dispatch(addError(e.message));
     }
 
-    return more;
+    return img;
   }
 
   createComment = async (postId, comment) => {

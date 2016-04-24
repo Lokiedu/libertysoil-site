@@ -17,9 +17,11 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
+import Loader from 'react-loader';
 
 import GeoInput from '../geo-input';
 import Message from '../message';
+import { LOADER_OPTIONS } from '../../consts/loader';
 
 class SchoolEditForm extends React.Component {
   static displayName = 'SchoolEditForm';
@@ -78,9 +80,9 @@ class SchoolEditForm extends React.Component {
   };
 
   render() {
-    const { fields, form, school } = this.props;
+    const { fields, form, school, processing } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
-    
+
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={school.id} />
@@ -110,15 +112,17 @@ class SchoolEditForm extends React.Component {
 
         <GeoInput initialLocation={initialLocation} />
 
-        <div className="layout__row">
-          <div className="layout layout__grid layout-align_right">
-            <button
-              className="button button-wide button-green"
-              disabled={!form.isValid()}
-              type="submit"
-            >
-              Save
-            </button>
+        <div className="layout__row layout__space-triple">
+          <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
+            <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '90%'}}>
+              <button
+                className="button button-wide button-green"
+                disabled={!form.isValid()}
+                type="submit"
+              >
+                Save
+              </button>
+            </Loader>
           </div>
         </div>
       </form>

@@ -19,17 +19,13 @@ export default class UpdatePictureForm extends React.Component {
   static displayName = 'UpdatePictureForm';
 
   static propTypes = {
-    limits: PropTypes.shape({
+    preview: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
-    })
+    }).isRequired
   };
 
   static defaultProps = {
-    limits: {
-      width: 1400,
-      height: 400
-    },
     onChange: () => {},
     onClear: () => {}
   }
@@ -71,26 +67,33 @@ export default class UpdatePictureForm extends React.Component {
   };
 
   render() {
-    const { limits } = this.props;
+    const { preview, flexible } = this.props;
+
+    let editorStyle = { cursor: 'move' };
+    if (flexible) {
+      editorStyle.width = '100%';
+    }
 
     if (this.state.image) {
       return (
         <div className="layout__row">
-          <Editor
-            ref={c => this.editor = c}
-            border={50}
-            color={[255, 255, 255, 0.6]}
-            width={limits.width}
-            height={limits.height}
-            image={this.state.image}
-            scale={this.state.scale}
-            style={{width: '100%', cursor: 'move'}}
-          />
+          <div className="update_picture__editor">
+            <Editor
+              ref={c => this.editor = c}
+              border={50}
+              color={[255, 255, 255, 0.6]}
+              width={preview.width}
+              height={preview.height}
+              image={this.state.image}
+              scale={this.state.scale}
+              style={editorStyle}
+            />
+          </div>
           <div className="layout layout__row layout-align_center">
-            <div className="change_avatar_modal__size_box">
-              <span className="change_avatar_modal__size_box__icon micon">remove</span>
-              <input className="change_avatar_modal__size_box__bar" defaultValue="1" max="2" min="0.1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
-              <span className="change_avatar_modal__size_box__icon micon">add</span>
+            <div className="update_picture__toolbar">
+              <span className="update_picture__control micon">remove</span>
+              <input className="update_picture__bar" defaultValue="1" max="2" min="0.5" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
+              <span className="update_picture__control micon">add</span>
             </div>
           </div>
           <div className="layout layout__row">
@@ -102,7 +105,7 @@ export default class UpdatePictureForm extends React.Component {
 
     return (
       <div className="layout__row">
-        <input className="change_avatar_modal__input" type="file" onChange={this.changeHandler} />
+        <input className="update_picture__input" type="file" onChange={this.changeHandler} />
       </div>
     );
   }

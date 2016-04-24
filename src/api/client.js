@@ -369,6 +369,16 @@ export default class ApiClient
     return response.body;
   }
 
+  async updateGeotag(uuid, data) {
+    let response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
+    return response.body;
+  }
+
+  async updateHashtag(uuid, data) {
+    let response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
+    return response.body;
+  }
+
   async updateSchool(uuid, data) {
     let response = await this.postJSON(`/api/v1/school/${uuid}`, data);
     return response.body;

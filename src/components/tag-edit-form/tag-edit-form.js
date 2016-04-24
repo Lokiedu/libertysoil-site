@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { pick } from 'lodash';
 
 import GeotagEditForm from './geotag-edit-form';
 import SchoolEditForm from './school-edit-form';
@@ -28,23 +29,25 @@ export default class TagEditForm extends React.Component {
   static propTypes = {
     type: PropTypes.string.isRequired,
     tag: PropTypes.object.isRequired,
-    saveHandler: PropTypes.func.isRequired
+    saveHandler: PropTypes.func.isRequired,
+    processing: PropTypes.bool.isRequired
   };
 
   render() {
     const {
       type,
-      tag,
-      saveHandler
+      tag
     } = this.props;
+
+    let commonProps = pick(this.props, ['saveHandler', 'processing']);
 
     switch (type) {
       case TAG_HASHTAG:
-        return <HashtagEditForm hashtag={tag} saveHandler={saveHandler} />;
+        return <HashtagEditForm hashtag={tag} {...commonProps} />;
       case TAG_SCHOOL:
-        return <SchoolEditForm school={tag} saveHandler={saveHandler} />;
+        return <SchoolEditForm school={tag} {...commonProps} />;
       case TAG_LOCATION:
-        return <GeotagEditForm geotag={tag} saveHandler={saveHandler} />;
+        return <GeotagEditForm geotag={tag} {...commonProps} />;
       default:
         return <script />;
     }

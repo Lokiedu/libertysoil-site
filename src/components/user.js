@@ -21,7 +21,8 @@ import Gravatar from 'react-gravatar';
 
 import Time from './time';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-import ChangeAvatar from './settings/change-avatar';
+import { AVATAR_SIZE } from '../consts/profileConstants';
+import UpdatePicture from './update-picture/update-picture';
 
 export default class User extends Component {
   static propTypes = {
@@ -51,9 +52,9 @@ export default class User extends Component {
   render() {
     const {
       user,
+      avatarPreview,
       hideAvatar,
-      updateAvatarTrigger,
-      editable,
+      editorConfig,
       hideText,
       isRound,
       avatarSize,
@@ -76,7 +77,11 @@ export default class User extends Component {
       }
 
       let avatar;
-      if (user.more && user.more.avatar) {
+      if (avatarPreview) {
+        avatar = (
+          <img src={avatarPreview.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
+        );
+      } else if (user.more && user.more.avatar) {
         avatar = (
           <img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
         );
@@ -101,8 +106,28 @@ export default class User extends Component {
       }
     }
 
-    if (editable) {
-      render.changeAvatar = (<ChangeAvatar updateAvatarTrigger={updateAvatarTrigger} current_user={user} />);
+    if (editorConfig) {
+      let modalName = <span className="font-bold">{user.username}</span>;
+
+      if (user.more) {
+        if (user.more.firstName || user.more.lastName) {
+          modalName = [
+            <span className="font-bold">{user.more.firstName} {user.more.lastName}</span>,
+            ` (${user.username})`
+          ];
+        }
+      }
+
+      render.changeAvatar = (
+        <UpdatePicture
+          what="profile picture"
+          where={modalName}
+          limits={{min: AVATAR_SIZE}}
+          preview={AVATAR_SIZE}
+          flexible={editorConfig.flexible}
+          onSubmit={editorConfig.onUpdateAvatar}
+        />
+      );
     }
 
     if (!hideText) {

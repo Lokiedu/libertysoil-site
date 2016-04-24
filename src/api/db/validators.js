@@ -74,11 +74,19 @@ let School = {
   }
 };
 
+let Geotag = {
+  more: {
+    description: ['string'],
+    last_editor: ['string']
+  }
+};
+
 let Hashtag = {
   more: {
+    description: ['string'],
     head_pic: ['plainObject'],
     last_editor: ['string']
   }
 };
 
-export { User, School, Hashtag };
+export { User, School, Hashtag, Geotag };

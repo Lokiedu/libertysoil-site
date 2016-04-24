@@ -14,49 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-.update_picture {
-  &__camera {
-    background: none;
-    border: none;
+ */
+import { reduce } from 'lodash';
 
-    .micon {
-      color: #fff;
-      font-size: 30px;
-      opacity: 0.5;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
-  
-  &__modal,
-  &__control,
-  &__input,
-  .message {
-    color: #464646;
-  }
-
-  &__control {
-    margin: 0 10px;
-  }
-
-  &__input {
-    width: 300px;
-  }
-
-  &__editor {
-    text-align: center;
-  }
-
-  &__toolbar {
-    margin-bottom: 25px;
-  }
-
-  &__bar {
-    vertical-align: baseline;
-    cursor: move;
-  }
+export function toSpreadArray(obj) {
+  return reduce(obj, (arr, value, key) => {
+    arr.push({[key]: value});
+    return arr;
+  }, []);
 }
-
