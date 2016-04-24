@@ -92,7 +92,8 @@ class GeotagEditPage extends React.Component {
       updateCreatePostForm,
       params,
       geotags,
-      schools
+      schools,
+      messages
     } = this.props;
 
     const client = new ApiClient(API_HOST);
@@ -126,7 +127,14 @@ class GeotagEditPage extends React.Component {
         <Helmet title={`${title} posts on `} />
         <div className="paper">
           <div className="paper__page">
-            <TagEditForm tag={geotag} type={TAG_LOCATION} saveHandler={this.saveGeotag} processing={this.state.processing}/>
+            <TagEditForm
+              tag={geotag}
+              type={TAG_LOCATION}
+              messages={messages}
+              triggers={triggers}
+              saveHandler={this.saveGeotag}
+              processing={this.state.processing}
+            />
           </div>
         </div>
       </BaseTagPage>

@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
 
+import Messages from '../messages';
 import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
@@ -68,7 +69,14 @@ class GeotagEditForm extends React.Component {
   };
 
   render() {
-    const { fields, form, geotag, processing } = this.props;
+    const {
+      fields,
+      form,
+      geotag,
+      processing,
+      triggers,
+      messages
+    } = this.props;
 
     let defaultDescription;
     if (geotag.more) {
@@ -105,6 +113,7 @@ class GeotagEditForm extends React.Component {
             </Loader>
           </div>
         </div>
+        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
       </form>
     );
   }
