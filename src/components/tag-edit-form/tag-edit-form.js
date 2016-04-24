@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { each, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import GeotagEditForm from './geotag-edit-form';
 import SchoolEditForm from './school-edit-form';
@@ -47,35 +47,7 @@ export default class TagEditForm extends React.Component {
       case TAG_HASHTAG:
         return <HashtagEditForm hashtag={tag} {...commonProps} />;
       case TAG_SCHOOL: {
-        let is_open = 'unknown';
-
-        if (tag.is_open === true) {
-          is_open = 'yes';
-        } else if (tag.is_open === false) {
-          is_open = 'no';
-        }
-
-        const memberships = {};
-        each(tag.org_membership, (row, key) => {
-          memberships[key] = row.is_member;
-        });
-
-        // needed for react-inform
-        const values = {
-          ...pick(
-            tag,
-            [
-              'name', 'description',
-              'principal_name', 'principal_surname',
-              'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
-              'website', 'facebook', 'twitter', 'wikipedia'
-            ]
-          ),
-          ...{ is_open },
-          ...memberships
-        };
-
-        return <SchoolEditForm school={tag} countries={countries} saveHandler={saveHandler} value={values} {...commonProps} />;
+        return <SchoolEditForm school={tag} countries={countries} {...commonProps} />;
       }
       case TAG_LOCATION:
         return <GeotagEditForm geotag={tag} {...commonProps} />;

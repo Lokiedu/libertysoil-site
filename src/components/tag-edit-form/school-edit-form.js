@@ -18,14 +18,14 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 import Loader from 'react-loader';
-import { sortBy } from 'lodash';
+import { each, pick, sortBy } from 'lodash';
 
 import GeoInput from '../geo-input';
 import Message from '../message';
 import { LOADER_OPTIONS } from '../../consts/loader';
 
 
-const TextInputField = ({ field, name, title, type='text' }) => {
+const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
   const id = `input_${name}`;
 
   return (
@@ -33,6 +33,7 @@ const TextInputField = ({ field, name, title, type='text' }) => {
       <label className="layout__block layout__row layout__row-small" htmlFor={id}>{title}</label>
       <input
         className="input input-block content layout__row layout__row-small"
+        defaultValue={defaultValue}
         id={id}
         type={type}
         {...field}
@@ -126,13 +127,13 @@ class SchoolEditForm extends React.Component {
         twitter: fields.twitter.value,
         wikipedia: fields.wikipedia.value,
         org_membership: {
-          adec: { is_member: fields.adec.value },
-          aero: { is_member: fields.aero.value },
+          adec: { is_member: theForm.adec.checked },
+          aero: { is_member: theForm.aero.checked },
           australian: { is_member: null },
-          eudec: { is_member: fields.eudec.value },
-          iden: { is_member: fields.iden.value },
-          alternative_to_school: { is_member: fields.alternative_to_school.value },
-          wikipedia_list: { is_member: fields.wikipedia_list.value }
+          eudec: { is_member: theForm.eudec.checked },
+          iden: { is_member: theForm.iden.checked },
+          alternative_to_school: { is_member: theForm.alternative_to_school.checked},
+          wikipedia_list: { is_member: theForm.wikipedia_list.checked }
         }
       }
     );
@@ -142,16 +143,45 @@ class SchoolEditForm extends React.Component {
     const { countries, fields, form, school, processing } = this.props;
     const initialLocation = {lat: school.lat, lon: school.lon};
 
+    let is_open = 'unknown';
+
+    if (school.is_open === true) {
+      is_open = 'yes';
+    } else if (school.is_open === false) {
+      is_open = 'no';
+    }
+
+    const memberships = {};
+    each(school.org_membership, (row, key) => {
+      memberships[key] = row.is_member;
+    });
+
+    // needed for react-inform
+    const values = {
+      ...pick(
+        school,
+        [
+          'name', 'description',
+          'principal_name', 'principal_surname',
+          'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+          'website', 'facebook', 'twitter', 'wikipedia'
+        ]
+      ),
+      ...{ is_open },
+      ...memberships
+    };
+
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={school.id} />
 
-        <TextInputField field={fields.name} name="name" title="Name" />
+        <TextInputField defaultValue={values.name} field={fields.name} name="name" title="Name" />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="is_open">Is it open?</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
+            defaultValue={values.is_open}
             id="is_open"
             {...fields.is_open}
           >
@@ -165,6 +195,7 @@ class SchoolEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
+            defaultValue={values.description}
             id="description"
             {...fields.description}
           />
@@ -174,6 +205,7 @@ class SchoolEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="country_id">Country</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
+            defaultValue={values.country}
             id="country_id"
             {...fields.country_id}
           >
@@ -182,54 +214,54 @@ class SchoolEditForm extends React.Component {
           </select>
         </div>
 
-        <TextInputField field={fields.postal_code} name="postal_code" title="Postal Code" />
-        <TextInputField field={fields.city} name="city" title="City" />
-        <TextInputField field={fields.address1} name="address1" title="Address" />
-        <TextInputField field={fields.address2} name="address2" title="Address 2" />
-        <TextInputField field={fields.house} name="house" title="House" />
-        <TextInputField field={fields.phone} name="phone" title="Phone" />
+        <TextInputField defaultValue={values.postal_code} field={fields.postal_code} name="postal_code" title="Postal Code" />
+        <TextInputField defaultValue={values.city} field={fields.city} name="city" title="City" />
+        <TextInputField defaultValue={values.address1} field={fields.address1} name="address1" title="Address" />
+        <TextInputField defaultValue={values.address2} field={fields.address2} name="address2" title="Address 2" />
+        <TextInputField defaultValue={values.house} field={fields.house} name="house" title="House" />
+        <TextInputField defaultValue={values.phone} field={fields.phone} name="phone" title="Phone" />
 
         <GeoInput initialLocation={initialLocation} />
 
-        <TextInputField field={fields.principal_name} name="principal_name" title="Principal Name" />
-        <TextInputField field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
+        <TextInputField defaultValue={values.principal_name} field={fields.principal_name} name="principal_name" title="Principal Name" />
+        <TextInputField defaultValue={values.principal_surname} field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
 
-        <TextInputField field={fields.website} name="website" title="Website" type="url" />
-        <TextInputField field={fields.facebook} name="facebook" title="Facebook" type="url" />
-        <TextInputField field={fields.twitter} name="twitter" title="Twitter" type="url" />
-        <TextInputField field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
+        <TextInputField defaultValue={values.website} field={fields.website} name="website" title="Website" type="url" />
+        <TextInputField defaultValue={values.facebook} field={fields.facebook} name="facebook" title="Facebook" type="url" />
+        <TextInputField defaultValue={values.twitter} field={fields.twitter} name="twitter" title="Twitter" type="url" />
+        <TextInputField defaultValue={values.wikipedia} field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
 
         <div className="layout__row">
           <div className="layout__row">Membership:</div>
 
           <div className="layout__row">
-            <label>ADEC <input type="checkbox" {...fields.adec}/></label>
+            <label>ADEC <input defaultChecked={values.adec} name="adec" type="checkbox" {...fields.adec} value="true"/></label>
           </div>
 
           <div className="layout__row">
-            <label>AERO <input type="checkbox" {...fields.aero}/></label>
+            <label>AERO <input defaultChecked={values.aero} name="aero" type="checkbox" {...fields.aero} value="true"/></label>
           </div>
 
           {/*
           <div className="layout__row">
-            <label>Australian <input type="checkbox" {...fields.australian}/></label>
+            <label>Australian <input defaultChecked={values.australian} name="australian" type="checkbox" {...fields.australian} value="true"/></label>
           </div>
           */}
 
           <div className="layout__row">
-            <label>EUDEC <input type="checkbox" {...fields.eudec}/></label>
+            <label>EUDEC <input defaultChecked={values.eudec} name="eudec" type="checkbox" {...fields.eudec} value="true"/></label>
           </div>
 
           <div className="layout__row">
-            <label>IDEN <input type="checkbox" {...fields.iden}/></label>
+            <label>IDEN <input defaultChecked={values.iden} name="iden" type="checkbox" {...fields.iden} value="true"/></label>
           </div>
 
           <div className="layout__row">
-            <label>AlternativeToSchool.com entry <input type="checkbox" {...fields.alternative_to_school}/></label>
+            <label>AlternativeToSchool.com entry <input defaultChecked={values.alternative_to_school} name="alternative_to_school" type="checkbox" {...fields.alternative_to_school} value="true"/></label>
           </div>
 
           <div className="layout__row">
-            <label>Wikipedia list of schools entry <input type="checkbox" {...fields.wikipedia_list}/></label>
+            <label>Wikipedia list of schools entry <input defaultChecked={values.wikipedia_list} name="wikipedia_list" type="checkbox" {...fields.wikipedia_list} value="true"/></label>
           </div>
         </div>
 
