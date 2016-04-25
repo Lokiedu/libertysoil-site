@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
+import { values, pick } from 'lodash';
 
 import {
   Page,
@@ -179,13 +179,15 @@ export default class BaseTagPage extends React.Component {
 
   addPicture = async ({ production, preview }) => {
     if (production) {
-      const _production = { picture: production.picture, crop: production.crop };
+      const _production = { picture: production.picture };
 
-      if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
-        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / _production.crop.width };
+      if (production.crop.width > TAG_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / production.crop.width };
       } else {
-        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
+        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
+
+      _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
 
       this.setState({head_pic: {production: _production, preview}});
     } else {
