@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
-import Gravatar from 'react-gravatar';
 import Loader from 'react-loader';
 
 import {
@@ -31,6 +30,7 @@ import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
+import User from '../../components/user';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
@@ -66,8 +66,7 @@ export default class BaseSettingsPage extends React.Component {
 
     const user = current_user.user;
 
-    let name = current_user.username;
-
+    let name = user.username;
     if (user.more && (user.more.firstName || user.more.lastName)) {
       name = `${user.more.firstName} ${user.more.lastName}`;
     }
@@ -90,7 +89,7 @@ export default class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <Gravatar default="retro" md5={user.gravatarHash} size={36} />
+                <User user={user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
               </div>
             </Breadcrumbs>
           </div>

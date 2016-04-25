@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { IndexLink } from 'react-router';
-import Gravatar from 'react-gravatar';
 import { isEmpty } from 'lodash';
 
 import {
@@ -34,6 +33,7 @@ import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
+import User from '../../components/user';
 
 
 export default class BaseUserPage extends React.Component {
@@ -63,8 +63,10 @@ export default class BaseUserPage extends React.Component {
 
     let name = page_user.username;
 
-    if (page_user.more && (page_user.more.firstName || page_user.more.lastName)) {
-      name = `${page_user.more.firstName} ${page_user.more.lastName}`;
+    if (page_user.more) {
+      if (page_user.more.firstName || page_user.more.lastName) {
+        name = `${page_user.more.firstName} ${page_user.more.lastName}`;
+      }
     }
 
     return (
@@ -73,9 +75,7 @@ export default class BaseUserPage extends React.Component {
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
-              <div className="user_box__avatar user_box__avatar-round">
-                <Gravatar default="retro" md5={page_user.gravatarHash} size={36} />
-              </div>
+              <User user={page_user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
             </Breadcrumbs>
           </div>
         </Header>
