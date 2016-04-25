@@ -53,8 +53,19 @@ export async function renderWelcomeTemplate(dateObject, username, email) {
 }
 
 export async function renderNewCommentTemplate(comment, commentAuthor, post, postAuthor) {
-  const authorAvatarUrl = commentAuthor.more.avatar.url || `http://www.gravatar.com/avatar/${commentAuthor.gravatarHash}?s=17&r=g&d=retro`;
-  const userAvatarUrl = postAuthor.more.avatar.url || `http://www.gravatar.com/avatar/${postAuthor.gravatarHash}?s=36&r=g&d=retro`;
+  let authorAvatarUrl;
+  if (commentAuthor.more && commentAuthor.more.avatar && commentAuthor.more.avatar.url) {
+    authorAvatarUrl = commentAuthor.more.avatar.url;
+  } else {
+    authorAvatarUrl = `http://www.gravatar.com/avatar/${commentAuthor.gravatarHash}?s=17&r=g&d=retro`;
+  }
+
+  let userAvatarUrl;
+  if (postAuthor.more && postAuthor.more.avatar && postAuthor.more.avatar.url) {
+    userAvatarUrl = postAuthor.more.avatar.url;
+  } else {
+    userAvatarUrl = `http://www.gravatar.com/avatar/${postAuthor.gravatarHash}?s=36&r=g&d=retro`;
+  }
 
   const context = {
     host: API_HOST,
