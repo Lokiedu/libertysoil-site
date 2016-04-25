@@ -168,7 +168,8 @@ export default class BaseTagPage extends React.Component {
   }
 
   _getNewPictures() {
-    let pictures = {};
+    const pictures = {};
+
     if (this.state.head_pic) {
       pictures.head_pic = this.state.head_pic.production;
     }
@@ -178,7 +179,7 @@ export default class BaseTagPage extends React.Component {
 
   addPicture = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture, crop: production.crop };
+      const _production = { picture: production.picture, crop: production.crop };
 
       if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
         _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / _production.crop.width };
@@ -190,7 +191,7 @@ export default class BaseTagPage extends React.Component {
     } else {
       this.setState({head_pic: null});
     }
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {

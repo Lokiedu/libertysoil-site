@@ -656,10 +656,10 @@ export class ActionsTrigger {
   uploadPicture = async ({ picture, ...options }) => {
     let img;
     try {
-      let original = await this.client.uploadImage([picture]);
-      original = original.attachments[0].id;
+      const original = await this.client.uploadImage([picture]);
+      const originalId = original.attachments[0].id;
 
-      let processed = await this.client.processImage(original, toSpreadArray(options));
+      const processed = await this.client.processImage(originalId, toSpreadArray(options));
 
       img = {
         attachment_id: processed.attachment.id,
@@ -671,7 +671,7 @@ export class ActionsTrigger {
     }
 
     return img;
-  }
+  };
 
   createComment = async (postId, comment) => {
     this.dispatch(createCommentStart(postId, comment));
