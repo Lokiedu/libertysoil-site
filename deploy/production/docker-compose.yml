@@ -23,6 +23,12 @@ backup:
 redis:
   image: "redis:3.0"
   restart: always
+sphinx:
+  image: "quay.io/dipstudio/libertysoil-sphinx:latest"
+  ports:
+    - "9312:9312"
+    - "9306:9306"
+  restart: always
 app:
   image: "quay.io/dipstudio/libertysoil:1.5.0"
   ports:
