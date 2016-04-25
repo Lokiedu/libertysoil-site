@@ -76,17 +76,14 @@ queue.process('on-comment', async function(job, done) {
     let comment = await Comment.where({id: job.data.commentId}).fetch({require: true, withRelated: ['user', 'post', 'post.user']});
     comment = comment.toJSON();
 
-    if (comment.user.id === comment.post.user.id) {
-      done();
-      return;
+    if (comment.user_id !== comment.post.user_id) {
+      queue.create('new-comment-email', {
+        comment: comment,
+        commentAuthor: comment.user,
+        post: comment.post,
+        postAuthor: comment.post.user
+      }).save();
     }
-
-    queue.createJob('new-comment-email', {
-      comment: comment,
-      commentAuthor: comment.user,
-      post: comment.post,
-      postAuthor: comment.post.user
-    });
 
     done();
   } catch (e) {
