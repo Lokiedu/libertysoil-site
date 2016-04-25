@@ -13,7 +13,7 @@ export const AVATAR_SIZE = {
 
 export const PROFILE_HEADER_SIZE = {
   NORMAL: {
-    width: 1400
+    width: 700
   },
   BIG: {
     width: 2800
