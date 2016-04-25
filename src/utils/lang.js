@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import i from 'immutable';
-import _ from 'lodash';
+import { reduce } from 'lodash';
 
-import * as a from '../actions';
-
-
-const initialState = i.Map({
-  countries: i.Map({})  // index by id
-});
-
-export default function reducer(state=initialState, action) {
-  switch (action.type) {
-    case a.SET_COUNTRIES: {
-      state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'id')));
-      break;
-    }
-  }
-
-  return state;
+export function toSpreadArray(obj) {
+  return reduce(obj, (arr, value, key) => {
+    arr.push({[key]: value});
+    return arr;
+  }, []);
 }

@@ -28,7 +28,12 @@ import Checkit from 'checkit';
 
 import { processImage } from '../utils/image';
 import config from '../../config';
-import { User as UserValidators } from './db/validators';
+import {
+  User as UserValidators,
+  School as SchoolValidators,
+  Hashtag as HashtagValidators,
+  Geotag as GeotagValidators
+} from './db/validators';
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
@@ -416,10 +421,10 @@ export default class ApiController {
   }
 
   async getCountries(req, res) {
-    let Country = this.bookshelf.model('Country');
+    const Geotag = this.bookshelf.model('Geotag');
 
     try {
-      let countries = await Country.fetchAll();
+      let countries = await Geotag.where({ type: 'Country' }).fetchAll();
       res.send(countries.toJSON());
     } catch (e) {
       res.sendStatus(404)
@@ -451,6 +456,102 @@ export default class ApiController {
     }
   }
 
+  async updateGeotag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let checkit = new Checkit(GeotagValidators.more);
+    
+    try {
+      await checkit.run(req.body.more);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
+    }
+
+    try {
+      let Geotag = this.bookshelf.model('Geotag');
+      let geotag = await Geotag.where({id: req.params.id}).fetch({require: true});
+
+      let properties = {};
+      for (let fieldName in GeotagValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
+      }
+
+      properties.last_editor = req.session.user;
+      properties = _.extend(geotag.get('more'), properties);
+      
+      geotag.set('more', properties);
+      await geotag.save(null, {method: 'update'});
+
+      res.send(geotag);
+    } catch (e) {
+      res.status(500);
+      res.send({error: 'Update failed'});
+      return;
+    }
+  }
+
+  async updateHashtag(req, res) {
+    if (!req.session || !req.session.user) {
+      res.status(403);
+      res.send({error: 'You are not authorized'});
+      return;
+    }
+
+    if (!('id' in req.params)) {
+      res.status(400);
+      res.send({error: '"id" parameter is not given'});
+      return;
+    }
+
+    let checkit = new Checkit(HashtagValidators.more);
+    
+    try {
+      await checkit.run(req.body.more);
+    } catch (e) {
+      res.status(400);
+      res.send({error: e.toJSON()});
+      return;
+    }
+
+    try {
+      let Hashtag = this.bookshelf.model('Hashtag');
+      let hashtag = await Hashtag.where({id: req.params.id}).fetch({require: true});
+
+      let properties = {};
+      for (let fieldName in HashtagValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
+      }
+
+      properties.last_editor = req.session.user;
+      properties = _.extend(hashtag.get('more'), properties);
+      
+      hashtag.set('more', properties);
+      await hashtag.save(null, {method: 'update'});
+
+      res.send(hashtag);
+    } catch (e) {
+      res.status(500);
+      res.send({error: 'Update failed'});
+      return;
+    }
+  }
+
   async updateSchool(req, res) {
     if (!req.session || !req.session.user) {
       res.status(403);
@@ -464,36 +565,100 @@ export default class ApiController {
       return;
     }
 
-    let images;
-
-    if (req.body.images) {
-      if (!_.isArray(req.body.images)) {
-        res.status(400);
-        res.send({error: `"images" parameter is expected to be an array`});
-        return;
-      }
-
-      images = _.uniq(req.body.images);
-    }
-
     let School = this.bookshelf.model('School');
 
     try {
-      let school = await School.where({id: req.params.id}).fetch({require: true, withRelated: 'images'});
-      let newAttributes = _.pick(req.body, 'name', 'description', 'more', 'lat', 'lon');
+      const school = await School.where({ id: req.params.id }).fetch({ require: true, withRelated: 'images' });
 
-      if (_.isArray(images)) {
-        school.updateImages(images);
+      const allowedAttributes = [
+        'name', 'description',
+        'lat', 'lon',
+        'is_open', 'principal_name', 'principal_surname',
+        'foundation_year', 'foundation_month', 'foundation_day',
+        'number_of_students', 'org_membership',
+        'teaching_languages', 'required_languages',
+        'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+        'website', 'facebook', 'twitter', 'wikipedia'
+      ];
+      const processData = (data) => {
+        if ('is_open' in data) {
+          if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
+            throw new Error("'is_open' has to be boolean or null");
+          }
+        }
+
+        if ('number_of_students' in data) {
+          if (!_.isPlainObject(data.number_of_students)) {
+            throw new Error("'number_of_students' should be an object");
+          }
+        }
+
+        if ('org_membership' in data) {
+          if (!_.isPlainObject(data.org_membership)) {
+            throw new Error("'org_membership' should be an object");
+          }
+        }
+
+        if ('teaching_languages' in data) {
+          if (!_.isArray(data.teaching_languages)) {
+            throw new Error("'teaching_languages' should be an array");
+          }
+          data.teaching_languages = JSON.stringify(data.teaching_languages);
+        }
+
+        if ('required_languages' in data) {
+          if (!_.isArray(data.required_languages)) {
+            throw new Error("'required_languages' should be an array");
+          }
+          data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        return data;
+      };
+
+      const attributesWithValues = processData(_.pick(req.body, allowedAttributes));
+
+      let properties = {};
+      for (let fieldName in SchoolValidators.more) {
+        if (fieldName in req.body.more) {
+          properties[fieldName] = req.body.more[fieldName];
+        }
       }
 
-      school.set(newAttributes);
+      properties.last_editor = req.session.user;
+      attributesWithValues.more = _.extend(school.get('more'), properties);
+
+      school.set(attributesWithValues);
+
+      if (req.body.images) {
+        if (!_.isArray(req.body.images)) {
+          res.status(400);
+          res.send({error: `"images" parameter is expected to be an array`});
+          return;
+        }
+
+        const images = _.uniq(req.body.images);
+
+        if (_.isArray(images)) {
+          school.updateImages(images);
+        }
+      }
+
+      let languages = school.get('teaching_languages');
+      if (_.isArray(languages)) {
+        school.set('teaching_languages', JSON.stringify(languages));
+      }
+      languages = school.get('required_languages')
+      if (_.isArray(languages)) {
+        school.set('required_languages', JSON.stringify(languages));
+      }
+
       await school.save();
 
       res.send(school);
     } catch (e) {
       res.status(500);
       res.send({error: e.message});
-      return;
     }
   }
 
@@ -1446,8 +1611,6 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-
     let checkit = new Checkit(UserValidators.settings.more);
     try {
       await checkit.run(req.body.more);
@@ -1456,6 +1619,8 @@ export default class ApiController {
       res.send({error: e.toJSON()});
       return;
     }
+
+    let User = this.bookshelf.model('User');
 
     try {
       let user = await User.where({id: req.session.user}).fetch({require: true});

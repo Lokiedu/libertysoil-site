@@ -26,7 +26,9 @@ export const URL_NAMES = {
   MANAGE_FOLLOWERS: `MANAGE_FOLLOWERS`,
   CHANGE_PASSWORD: `CHANGE_PASSWORD`,
   EDIT_POST: `EDIT_POST`,
-  SCHOOL: 'SCHOOL'
+  SCHOOL: 'SCHOOL',
+  HASHTAG: 'HASHTAG',
+  GEOTAG: 'GEOTAG'
 };
 
 export const URL = {
@@ -38,7 +40,9 @@ export const URL = {
   [URL_NAMES.SETTINGS]: '/settings',
   [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
   [URL_NAMES.CHANGE_PASSWORD]: '/settings/password',
-  [URL_NAMES.SCHOOL]: '/s/:url_name'
+  [URL_NAMES.SCHOOL]: '/s/:url_name',
+  [URL_NAMES.HASHTAG]: '/tag/:name',
+  [URL_NAMES.GEOTAG]: '/geo/:url_name'
 };
 
 export const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -118,6 +118,11 @@
   }
 }
 
+.layout__grid-full {
+  width: 100%;
+  height: 100%;
+}
+
 .layout__grid_item {
   margin-right: @space;
   box-sizing: border-box;
@@ -195,6 +200,10 @@
   &:last-child {
     margin-bottom: 0;
   }
+
+  &-centered {
+    margin: 0 auto;
+  }
 }
 
 .layout__fill {
@@ -212,6 +221,10 @@
 
 .layout__space-double {
   margin: @space * 2 0;
+}
+
+.layout__space-triple {
+  margin: @space * 3 0;
 }
 
 .layout__space_left {

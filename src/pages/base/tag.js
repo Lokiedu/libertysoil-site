@@ -36,7 +36,9 @@ import TagHeader        from '../../components/tag-header';
 import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
+import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
+import { TAG_HEADER_SIZE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -106,14 +108,30 @@ function GeotagPageHero({ geotag }) {
     );
   }
 
-  return <PageHero src="/images/hero/welcome.jpg" />;
+  return <PageHero url="/images/hero/welcome.jpg" />;
 }
 
-function TagPageHero({ type, tag, src }) {
+function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flexible }) {
   switch (type) {
     case TAG_HASHTAG:
     case TAG_SCHOOL:
-      return <PageHero src={src} />;
+      return (
+        <PageHero url={url}>
+          {editable &&
+            <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
+              <div className="layout__grid_item">
+                <UpdatePicture
+                  what="header image"
+                  where={(<span className="font-bold">{tag.name}</span>)}
+                  onSubmit={onSubmit}
+                  limits={limits}
+                  flexible={flexible}
+                  preview={preview} />
+              </div>
+            </div>
+          }
+        </PageHero>
+      );
     case TAG_LOCATION:
       return <GeotagPageHero geotag={tag} />;
     default:
@@ -134,13 +152,44 @@ export default class BaseTagPage extends React.Component {
   };
 
   state = {
-    form: false
+    form: false,
+    head_pic: null
   };
 
   postsAmount = null;
+  defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
-    this.postsAmount = this.props.postsAmount;    
+    this.postsAmount = this.props.postsAmount;
+
+    if (this.props.tag.more && this.props.tag.more.head_pic) {
+      this.defaultPicture = this.props.tag.more.head_pic.url;
+    }
+  }
+
+  _getNewPictures() {
+    let pictures = {};
+    if (this.state.head_pic) {
+      pictures.head_pic = this.state.head_pic.production;
+    }
+
+    return pictures;
+  }
+
+  addPicture = async ({ production, preview }) => {
+    if (production) {
+      let _production = { picture: production.picture, crop: production.crop };
+
+      if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / _production.crop.width };
+      } else {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
+      }
+
+      this.setState({head_pic: {production: _production, preview}});
+    } else {
+      this.setState({head_pic: null});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -174,7 +223,8 @@ export default class BaseTagPage extends React.Component {
       triggers,
       type,
       tag,
-      postsAmount
+      postsAmount,
+      editable
     } = this.props;
 
     let name = tag.url_name;
@@ -183,6 +233,13 @@ export default class BaseTagPage extends React.Component {
     }
 
     const pageCaption = getPageCaption(type, name);
+
+    let headerPictureUrl;
+    if (this.state.head_pic) {
+      headerPictureUrl = this.state.head_pic.preview.url;
+    } else {
+      headerPictureUrl = this.defaultPicture;
+    }
 
     let createPostForm;
     let addedTags;
@@ -213,7 +270,15 @@ export default class BaseTagPage extends React.Component {
           <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             {pageCaption}
-            <TagPageHero type={type} tag={tag} src="/images/hero/welcome.jpg" />
+            <TagPageHero
+              type={type}
+              tag={tag}
+              editable={editable}
+              onSubmit={this.addPicture}
+              preview={TAG_HEADER_SIZE.PREVIEW}
+              flexible={true}
+              limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
+              url={headerPictureUrl} />
             <PageBody className="page__body-up">
               <TagHeader
                 is_logged_in={is_logged_in}
@@ -223,7 +288,9 @@ export default class BaseTagPage extends React.Component {
                 triggers={triggers}
                 newPost={this.toggleForm}
                 postsAmount={postsAmount}
+                editable={editable}
               />
+
             </PageBody>
             <PageBody className="page__body-up">
               <PageContent>

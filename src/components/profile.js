@@ -16,32 +16,112 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
 import User from './user';
 import FollowButton from './follow-button';
-import { Link } from 'react-router';
+import UpdatePicture from './update-picture/update-picture';
 
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
+import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
-  render () {
-    const { user, current_user, editable, updateAvatarTrigger, i_am_following, following, followers } = this.props;
+  unsaved = false;
+
+  state = {
+    avatar: null,
+    head_pic: null
+  };
+
+  _getNewPictures() {
+    let pictures = {};
+    if (this.state.avatar) {
+      pictures.avatar = this.state.avatar.production;
+    }
+    if (this.state.head_pic) {
+      pictures.head_pic = this.state.head_pic.production;
+    }
+
+    return pictures;
+  }
+
+  _clearPreview() {
+    this.setState({ avatar: null, head_pic: null });
+  }
+
+  addAvatar = async ({ production, preview }) => {
+    if (production) {
+      let _production = { picture: production.picture, crop: production.crop };
+      _production.resize = { width: AVATAR_SIZE.width, height: AVATAR_SIZE.height };
+
+      this.setState({avatar: {production: _production, preview}});
+    } else {
+      this.setState({avatar: {production: null, preview: null}});
+    }
+  };
+
+  addHeaderPicture = async ({ production, preview }) => {
+    if (production) {
+      let _production = { picture: production.picture, crop: production.crop };
+
+      if (_production.crop.width > PROFILE_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: PROFILE_HEADER_SIZE.BIG.width / _production.crop.width };
+      } else {
+        _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / _production.crop.width };
+      }
+
+      this.setState({head_pic: {production: _production, preview}});
+    } else {
+      this.setState({head_pic: {production: null, preview: null}});
+    }
+  };
+
+  render() {
+    const {
+      user,
+      current_user,
+      editable,
+      i_am_following,
+      following,
+      followers
+    } = this.props;
+    
+    let picture = '/assets/d18659acda9afc3dea60b49d71d689ae.jpg';
     let name = user.username;
     let summary = '';
-    let followingCount;
-    let followersCount;
 
+    let modalName = <span className="font-bold">{name}</span>;
     if (user.more) {
       if (user.more.firstName || user.more.lastName) {
         name = `${user.more.firstName} ${user.more.lastName}`;
+        modalName = [
+          <span className="font-bold">{name}</span>,
+          ` (${user.username})`
+        ];
       }
 
       if (user.more.summary) {
         summary = user.more.summary;
       }
+
+      if (user.more.head_pic) {
+        picture = user.more.head_pic.url;
+      }
     }
+
+    if (this.state.head_pic) {
+      picture = this.state.head_pic.preview.url;
+    }
+
+    let avatarPreview;
+    if (this.state.avatar) {
+      avatarPreview = this.state.avatar.preview;
+    }
+
+    let followingCount;
+    let followersCount;
 
     if (following && following[user.id] && following[user.id].length) {
       // if anonym user, then do not show "Manage followers" links next to follow counters
@@ -87,10 +167,33 @@ export default class ProfileHeader extends React.Component {
     name = name.trim();
 
     return (
-      <div className="profile">
+      <div ref={c => this.root = c} className="profile" style={{backgroundImage: `url('${picture}')`}}>
         <div className="profile__body">
           <div className="layout__row">
-            <User user={user} editable={editable} updateAvatarTrigger={updateAvatarTrigger} avatarSize="120" isRound={true} hideText={true} />
+            <div className="layout__grid">
+              <div className="layout__grid_item layout__grid_item-wide">
+                <User
+                  user={user}
+                  editorConfig={editable ? {flexible: false, onUpdateAvatar: this.addAvatar} : false}
+                  avatarPreview={avatarPreview}
+                  avatarSize="120"
+                  isRound={true}
+                  hideText={true}
+                />
+              </div>
+              {editable &&
+                <div className="layout__grid_item layout__grid_item-wide layout-align_right update_picture__container">
+                  <UpdatePicture
+                    what="profile background"
+                    where={modalName}
+                    preview={PROFILE_HEADER_SIZE.PREVIEW}
+                    flexible={true}
+                    limits={{min: PROFILE_HEADER_SIZE.NORMAL, max: PROFILE_HEADER_SIZE.BIG}}
+                    onSubmit={this.addHeaderPicture}
+                  />
+                </div>
+               }
+             </div>
           </div>
           <div className="layout__row">
             <div className="layout__grid">

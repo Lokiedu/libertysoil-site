@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { browserHistory } from 'react-router';
+import { toSpreadArray } from '../utils/lang';
 
-import { AVATAR_SIZE } from '../consts/profileConstants';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
@@ -26,14 +26,15 @@ import {
   deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
   createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
+  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess, showRegisterForm,
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress, setUserRecentTags, setQuotes
+  setUIProgress, setUserRecentTags, setQuotes,
+  setCountries
 } from '../actions';
 
 
@@ -211,12 +212,14 @@ export class ActionsTrigger {
   };
 
   updateUserInfo = async (user) => {
+    let status = false;
     try {
       let res = await this.client.updateUser(user);
 
       if ('user' in res) {
         this.dispatch(addMessage('Saved successfully'));
         this.dispatch(addUser(res.user));
+        status = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
@@ -225,6 +228,7 @@ export class ActionsTrigger {
         this.dispatch(addError(e.message));
       }
     }
+    return status;
   };
 
   changePassword = async (old_password, new_password1, new_password2) => {
@@ -444,6 +448,30 @@ export class ActionsTrigger {
     }
   };
 
+  updateGeotag = async (geotag_uuid, geotag_fields) => {
+    try {
+      let result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
+      this.dispatch(addGeotag(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
+    }
+  };
+
+  updateHashtag = async (hashtag_uuid, hashtag_fields) => {
+    try {
+      let result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
+      this.dispatch(addHashtag(result));
+
+      return result;
+    } catch (e) {
+      this.dispatch(addError(e.message));
+      throw e;
+    }
+  };
+
   updateSchool = async (school_uuid, school_fields) => {
     try {
       let result = await this.client.updateSchool(school_uuid, school_fields);
@@ -625,29 +653,25 @@ export class ActionsTrigger {
     this.dispatch(showRegisterForm());
   };
 
-  updateAvatar = async (image, crop) =>{
+  uploadPicture = async ({ picture, ...options }) => {
+    let img;
     try {
-      let original = await this.client.uploadImage([image]);
+      let original = await this.client.uploadImage([picture]);
       original = original.attachments[0].id;
 
-      let cropped = await this.client.processImage(original, [{crop: crop}, { resize: {width: AVATAR_SIZE.width, height: AVATAR_SIZE.height}}]);
+      let processed = await this.client.processImage(original, toSpreadArray(options));
 
-      let res = await this.client.updateUser({
-        more: {
-          avatar: {
-            attachment_id: cropped.attachment.id,
-            url: cropped.attachment.s3_url
-          }
-        }
-      });
-      if ('user' in res) {
-        this.dispatch(addMessage('Avatar updated'));
-        this.dispatch(addUser(res.user));
-      }
+      img = {
+        attachment_id: processed.attachment.id,
+        url: processed.attachment.s3_url
+      };
     } catch (e) {
       this.dispatch(addError(e.message));
+      throw e;
     }
-  };
+
+    return img;
+  }
 
   createComment = async (postId, comment) => {
     this.dispatch(createCommentStart(postId, comment));
@@ -705,4 +729,13 @@ export class ActionsTrigger {
       this.dispatch(saveCommentFailure(postId, commentId, e.message));
     }
   };
+
+  getCountries = async () => {
+    try {
+      const response = await this.client.countries();
+      this.dispatch(setCountries(response));
+    } catch (e) {
+      console.error(`Failed to fetch countries: ${e}`);  // eslint-disable-line no-console
+    }
+  }
 }

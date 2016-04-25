@@ -115,6 +115,7 @@ export function initApi(bookshelf) {
   api.get('/tag-cloud', wrap(controller.getTagCloud.bind(controller)));
   api.get('/tags/search/:query', wrap(controller.searchTags.bind(controller)));
   api.get('/tag/:name', wrap(controller.getHashtag.bind(controller)));
+  api.post('/tag/:id', wrap(controller.updateHashtag.bind(controller)));
   api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
   api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
   api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));
@@ -123,6 +124,7 @@ export function initApi(bookshelf) {
   api.get('/geotag-cloud', wrap(controller.getGeotagCloud.bind(controller)));
   api.head('/geotag/:name', wrap(controller.checkGeotagExists.bind(controller)));
   api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
+  api.post('/geotag/:id', wrap(controller.updateGeotag.bind(controller)));
   api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
   api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));
   api.post('/geotag/:url_name/unfollow', wrap(controller.unfollowGeotag.bind(controller)));

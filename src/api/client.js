@@ -222,6 +222,11 @@ export default class ApiClient
     return response.body;
   }
 
+  async countries() {
+    let response = await this.get(`/api/v1/countries/`);
+    return response.body;
+  }
+
   async country(country_code) {
     let response = await this.get(`/api/v1/country/${country_code}`);
     return response.body;
@@ -366,6 +371,16 @@ export default class ApiClient
 
   async deletePost(uuid) {
     let response = await this.del(`/api/v1/post/${uuid}`);
+    return response.body;
+  }
+
+  async updateGeotag(uuid, data) {
+    let response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
+    return response.body;
+  }
+
+  async updateHashtag(uuid, data) {
+    let response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
     return response.body;
   }
 
