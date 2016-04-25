@@ -65,7 +65,9 @@ export default function reducer(state=initialState, action) {
     case a.ADD_POST:
     case a.ADD_POST_TO_RIVER: {
       const user = action.post.user;
-      state = state.set(user.id, i.fromJS(user));
+      const comment_authors = action.post.post_comments.map(comment => comment.user);
+      const users = _.keyBy(_.uniq([user, ...comment_authors], 'id'), 'id');
+      state = state.mergeDeep(i.fromJS(users));
 
       break;
     }
@@ -77,7 +79,9 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_GEOTAG_POSTS:
     {
-      let users = _.keyBy(_.uniq(action.posts.map(post => post.user), 'id'), 'id');
+      const authors = action.posts.map(post => post.user);
+      const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
+      const users = _.keyBy(_.uniq([...authors, ...comment_authors], 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;
