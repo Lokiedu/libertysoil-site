@@ -29,6 +29,20 @@ export async function processImage(buffer, transforms) {
 
     switch (type) {
       case 'crop': {
+        if (params.left < 0 || params.top < 0 || params.right < 0 || params.bottom < 0) {
+          throw new RangeError('crop parameters should be positive');
+        }
+
+        const w = image.width();
+        const h = image.height();
+
+        if (
+          params.left > w || params.right > w || params.left > params.right ||
+          params.top > h || params.bottom > h || params.top > params.bottom
+        ) {
+          throw new RangeError('crop parameters should fit within borders of image');
+        }
+
         batch.crop(params.left, params.top, params.right, params.bottom);
         break;
       }

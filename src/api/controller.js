@@ -1840,11 +1840,14 @@ export default class ApiController {
 
       res.send({success: true, attachment: result});
     } catch (e) {
-      res.status(500);
-      res.send({error: `Image transformation failed: ${e.message}`});
-      return;
+      if (e instanceof RangeError) {
+        res.status(400);
+        res.send({ error: e.message });
+      } else {
+        res.status(500);
+        res.send({error: `Image transformation failed: ${e.message}`});
+      }
     }
-
   }
 
   async pickpoint(req, res) {
