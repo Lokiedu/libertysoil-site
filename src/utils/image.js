@@ -1,11 +1,11 @@
-import bluebird from 'bluebird';
-import lwipOld from 'lwip';
+import { promisifyAll } from 'bluebird';
 import fileType from 'file-type';
+import lwipOld from 'lwip';
 
 // taken from https://github.com/nkt/node-lwip-promise/blob/master/index.js
-let lwip = bluebird.promisifyAll(lwipOld);
-bluebird.promisifyAll(require('lwip/lib/Image').prototype);
-bluebird.promisifyAll(require('lwip/lib/Batch').prototype);
+const lwip = promisifyAll(lwipOld);
+promisifyAll(require('lwip/lib/Image').prototype);
+promisifyAll(require('lwip/lib/Batch').prototype);
 
 
 /**
