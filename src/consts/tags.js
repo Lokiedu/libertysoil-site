@@ -12,8 +12,11 @@ export const SIZE = {
 };
 
 export const TAG_HEADER_SIZE = {
-  NORMAL: {
+  MIN: {
     width: 700
+  },
+  NORMAL: {
+    width: 1400
   },
   BIG: {
     width: 2800

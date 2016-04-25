@@ -184,13 +184,14 @@ export default class BaseTagPage extends React.Component {
     if (production) {
       const _production = { picture: production.picture };
 
+      // properties assign order is important
+      _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
+
       if (production.crop.width > TAG_HEADER_SIZE.BIG.width) {
         _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / production.crop.width };
       } else {
         _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
-
-      _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
 
       this.setState({head_pic: {production: _production, preview}});
     } else {
@@ -286,7 +287,7 @@ export default class BaseTagPage extends React.Component {
               onSubmit={this.addPicture}
               preview={TAG_HEADER_SIZE.PREVIEW}
               flexible={true}
-              limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
+              limits={{min: TAG_HEADER_SIZE.MIN, max: TAG_HEADER_SIZE.BIG}}
               url={headerPictureUrl} />
             <PageBody className="page__body-up">
               <TagHeader
