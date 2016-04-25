@@ -2639,6 +2639,9 @@ export default class ApiController {
     try {
       await comment_object.save(null, {method: 'insert'});
       await post_object.save(null, {method: 'update'});
+
+      this.queue.createJob('on-comment', {commentId: comment_object.id});
+
       await this.getPostComments(req, res);
     } catch (e) {
       res.status(500);

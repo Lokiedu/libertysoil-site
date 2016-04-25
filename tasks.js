@@ -18,10 +18,16 @@
 import kueLib from 'kue';
 
 import config from './config';
-import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate } from './src/email-templates/index';
+import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate, renderNewCommentTemplate } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 import { API_HOST, API_URL_PREFIX } from './src/config';
+import dbConfig from './knexfile';
+import initBookshelf from './src/api/db';
 
+
+const dbEnv = process.env.DB_ENV || 'development';
+const knexConfig = dbConfig[dbEnv];
+const bookshelf = initBookshelf(knexConfig);
 
 let queue = kueLib.createQueue(config.kue);
 
@@ -57,6 +63,48 @@ queue.process('verify-email', async function(job, done) {
   try {
     const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
     await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+queue.process('on-comment', async function(job, done) {
+  try {
+    const Comment = bookshelf.model('Comment');
+
+    let comment = await Comment.where({id: job.data.commentId}).fetch({require: true, withRelated: ['user', 'post', 'post.user']});
+    comment = comment.toJSON();
+
+    if (comment.user.id === comment.post.user.id) {
+      done();
+      return;
+    }
+
+    queue.createJob('new-comment-email', {
+      comment: comment,
+      commentAuthor: comment.user,
+      post: comment.post,
+      postAuthor: comment.post.user
+    });
+
+    done();
+  } catch (e) {
+    done(e);
+  }
+});
+
+queue.process('new-comment-email', async function(job, done) {
+  try {
+    const {
+      comment,
+      commentAuthor,
+      post,
+      postAuthor
+    } = job.data;
+
+    const html = await renderNewCommentTemplate(comment, commentAuthor, post, postAuthor);
+    await sendEmail('New Comment on LibertySoil.org', html, job.data.postAuthor.email);
     done();
   } catch (e) {
     done(e);
