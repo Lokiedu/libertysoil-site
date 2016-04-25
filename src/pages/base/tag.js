@@ -38,7 +38,7 @@ import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
-import { TAG_HEADER_SIZE } from '../../consts/tags';
+import { TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -151,20 +151,19 @@ export default class BaseTagPage extends React.Component {
     }).isRequired
   };
 
-  state = {
-    form: false,
-    head_pic: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      form: false,
+      head_pic: null
+    };
+  }
 
   postsAmount = null;
-  defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
     this.postsAmount = this.props.postsAmount;
-
-    if (this.props.tag.more && this.props.tag.more.head_pic) {
-      this.defaultPicture = this.props.tag.more.head_pic.url;
-    }
   }
 
   _getNewPictures() {
@@ -175,6 +174,10 @@ export default class BaseTagPage extends React.Component {
     }
 
     return pictures;
+  }
+
+  _clearPreview() {
+    this.setState({ head_pic: null });
   }
 
   addPicture = async ({ production, preview }) => {
@@ -201,6 +204,7 @@ export default class BaseTagPage extends React.Component {
         this.setState({ form: false });
       }
     }
+
     this.postsAmount = nextProps.postsAmount;
   }
 
@@ -240,8 +244,10 @@ export default class BaseTagPage extends React.Component {
     let headerPictureUrl;
     if (this.state.head_pic) {
       headerPictureUrl = this.state.head_pic.preview.url;
+    } else if (this.props.tag.more && this.props.tag.more.head_pic) {
+      headerPictureUrl = this.props.tag.more.head_pic.url;
     } else {
-      headerPictureUrl = this.defaultPicture;
+      headerPictureUrl = DEFAULT_HEADER_PICTURE;
     }
 
     let createPostForm;
