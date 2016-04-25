@@ -35,10 +35,10 @@ export default class Reviews extends Component {
 
   state = {
     mobile: true,
-    active: 0,
     sliding: false
   };
 
+  active = 0;
   slideshow = null;
   imageHovered = false;
   length = 0;
@@ -75,7 +75,8 @@ export default class Reviews extends Component {
   };
 
   clickHandler = (activeId) => {
-    this.setState({ active: activeId });
+    this.active = activeId;
+    this.panel.to(activeId);
   };
 
   changeSlide = () => {
@@ -83,8 +84,8 @@ export default class Reviews extends Component {
       return;
     }
 
-    let newActive = this.state.active;
-    if (this.state.active === this.length - 1) {
+    let newActive = this.active;
+    if (newActive === this.length - 1) {
       newActive = 0;
     } else {
       ++newActive;
@@ -92,7 +93,9 @@ export default class Reviews extends Component {
 
     this.setState({ sliding: true });
     setTimeout(() => {
-      this.setState({ active: newActive, sliding: false });
+      this.panel.to(newActive);
+      this.active = newActive;
+      this.setState({ sliding: false });
     }, 500);
   };
 
@@ -194,7 +197,7 @@ export default class Reviews extends Component {
 
       preparedQuotes = (
         <VisibilitySensor onMount={this.toggleSlideshow} onChange={this.toggleSlideshow}>
-          <Tabs active={this.state.active} onClick={this.clickHandler} invert menuClassName="review_group__navigation page__body width">
+          <Tabs ref={c => this.panel = c} onClick={this.clickHandler} invert menuClassName="review_group__navigation page__body width">
             {tabs}
           </Tabs>
         </VisibilitySensor>
