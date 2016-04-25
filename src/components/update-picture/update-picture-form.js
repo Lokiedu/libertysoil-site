@@ -92,7 +92,7 @@ export default class UpdatePictureForm extends React.Component {
           <div className="layout layout__row layout-align_center">
             <div className="update_picture__toolbar">
               <span className="update_picture__control micon">remove</span>
-              <input className="update_picture__bar" defaultValue="1" max="2" min="0.5" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
+              <input className="update_picture__bar" defaultValue="1" max="2" min="1" name="scale" ref={c => this.scale = c} step="0.01" type="range" onChange={this.scaleHandler} />
               <span className="update_picture__control micon">add</span>
             </div>
           </div>
