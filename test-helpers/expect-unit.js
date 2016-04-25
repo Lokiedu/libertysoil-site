@@ -5,6 +5,7 @@ import TestUtils from 'react-addons-test-utils';
 import React from 'react';
 
 const expect = unexpected.clone()
-    .use(unexpectedReact);
+    .use(unexpectedReact)
+    .use(require('unexpected-dom'));
 
 export { unexpected, TestUtils, expect, unexpectedReact, React};

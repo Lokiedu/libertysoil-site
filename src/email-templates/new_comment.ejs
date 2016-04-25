@@ -206,7 +206,7 @@
             <td class="page__header" style="border-collapse: collapse;padding: 15px 15px 15px 0;color: #000;font-size: 14px;">New Comment on LibertySoil.org</td>
             <td class="header__avatar" style="border-collapse: collapse;padding: 15px;width: 36px;">
                 <div class="user_avatar" style="width: 36px;height: 36px;border-radius: 50%;overflow: hidden;">
-                    <img src="http://dummyimage.com/36x36" width="36" height="36" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
+                    <img src="<%= postAuthor.avatarUrl %>" width="36" height="36" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
                 </div>
             </td>
           </tr>
@@ -215,23 +215,22 @@
     </tr>
     <tr>
       <td class="page__content" style="border-collapse: collapse;padding: 25px 30px 30px 30px;border-bottom: 20px solid #ffa116;">
-        <p class="page__content_text page__content_text-comment" style="margin: 5px 0 0 0;margin: 0;font-size: 16px;line-height: 1.4;">Comment firts line of text.</p>
-        <p class="page__content_text page__content_text-comment" style="margin: 5px 0 0 0;font-size: 16px;line-height: 1.4;">Another line of text.</p>
+        <p class="page__content_text page__content_text-comment" style="margin: 5px 0 0 0;font-size: 16px;line-height: 1.4;"><%= comment.text %></p>
         <table class="user" style="width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 20px 0 0 0;">
           <tr>
             <td class="user__avatar" valign="top" style="border-collapse: collapse;padding: 0 10px 0 0;width: 17px;">
                 <div class="user__avatar_pic" style="border-radius: 50%;overflow: hidden;">
-                    <img src="http://dummyimage.com/17x17" width="17" height="17" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
+                    <img src="<%= commentAuthor.avatarUrl %>" width="17" height="17" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
                 </div>
             </td>
             <td class="user__name" style="border-collapse: collapse;padding: 0;">
-                <div><a class="user__profile" href="#" style="text-decoration: none;color: inherit;">Vladimiras Lekecinskas</a></div>
-                <div class="text-gray" style="color: #bbb;">on Friday 2nd February, 20:11<div>
+                <div><a id="comment-author-link" class="user__profile" href="<%= commentAuthor.url %>" style="text-decoration: none;color: inherit;"><%= commentAuthor.name %></a></div>
+                <div class="text-gray" style="color: #bbb;"><%= comment.date %><div>
             </div></div></td>
           </tr>
         </table>
         <div class="space" style="height: 20px;">&nbsp;</div>
-        <p class="page__content_text" style="margin: 20px 0 0 0;font-size: 16px;line-height: 1.4;">Commented your post: <a href="#" class="page__blue" style="text-decoration: underline;color: #40b7e9;">What do you think?</a></p>
+        <p class="page__content_text" style="margin: 20px 0 0 0;font-size: 16px;line-height: 1.4;">Commented your post: <a id="post-link" href="<%= post.url %>" class="page__blue" style="text-decoration: underline;color: #40b7e9;"><%= post.title %></a></p>
         <div class="space" style="height: 20px;">&nbsp;</div>
         <div class="space" style="height: 20px;">&nbsp;</div>
         <p class="page__content_text" style="margin: 20px 0 0 0;font-size: 16px;line-height: 1.4;"><a href="#" style="text-decoration: underline;color: inherit;">Click here</a> to mute this thread (stop receiving email notifications for this post only).</p>
@@ -243,7 +242,7 @@
         <table style="width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
           <tr>
             <td class="page__logo" style="border-collapse: collapse;padding: 15px;width: 36px;">
-              <img src="http://www.libertysoil.org/images/mail/ls.png" width="36" height="36" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
+              <img src="<%= host %>/images/mail/ls.png" width="36" height="36" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
             </td>
             <td class="page__header" style="border-collapse: collapse;padding: 15px 15px 15px 0;color: #000;font-size: 14px;">LibertySoil.org</td>
             <td class="page__header page__header-right" style="border-collapse: collapse;padding: 15px 15px 15px 0;color: #000;font-size: 14px;text-align: right;">
