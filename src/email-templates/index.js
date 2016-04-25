@@ -19,7 +19,8 @@ import { renderFile } from 'ejs';
 import { promisify } from 'bluebird';
 import moment from 'moment';
 
-import { API_HOST } from '../config';
+import { getUrl } from '../utils/urlGenerator';
+import { API_HOST, URL_NAMES } from '../config';
 
 
 const renderFileAsync = promisify(renderFile);
@@ -49,4 +50,31 @@ export async function renderWelcomeTemplate(dateObject, username, email) {
     `${__dirname}/welcome.ejs`,
     { date, email, host: API_HOST, username }
   );
+}
+
+export async function renderNewCommentTemplate(comment, commentAuthor, post, postAuthor) {
+  const authorAvatarUrl = commentAuthor.more.avatar.url || `http://www.gravatar.com/avatar/${commentAuthor.gravatarHash}?s=17&r=g&d=retro`;
+  const userAvatarUrl = postAuthor.more.avatar.url || `http://www.gravatar.com/avatar/${postAuthor.gravatarHash}?s=36&r=g&d=retro`;
+
+  const context = {
+    host: API_HOST,
+    comment: {
+      text: comment.text,
+      date: moment(comment.created_at).format('Do [of] MMMM YYYY')
+    },
+    commentAuthor: {
+      name: `${commentAuthor.more.firstName} ${commentAuthor.more.lastName}`,
+      url: API_HOST + getUrl(URL_NAMES.USER, {username: commentAuthor.username}),
+      avatarUrl: authorAvatarUrl
+    },
+    post: {
+      url: API_HOST + getUrl(URL_NAMES.POST, {uuid: comment.post_id}),
+      title: post.more.pageTitle
+    },
+    postAuthor: {
+      avatarUrl: userAvatarUrl
+    }
+  };
+
+  return await renderFileAsync(`${__dirname}/new_comment.ejs`, context);
 }
