@@ -12,6 +12,9 @@ export const SIZE = {
 };
 
 export const TAG_HEADER_SIZE = {
+  MIN: {
+    width: 700
+  },
   NORMAL: {
     width: 1400
   },
@@ -23,3 +26,5 @@ export const TAG_HEADER_SIZE = {
     height: 400
   }
 }
+
+export const DEFAULT_HEADER_PICTURE = '/images/hero/welcome.jpg';

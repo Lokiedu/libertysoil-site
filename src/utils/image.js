@@ -1,11 +1,12 @@
-import bluebird from 'bluebird';
-import lwipOld from 'lwip';
+import { promisifyAll } from 'bluebird';
 import fileType from 'file-type';
+import lwipOld from 'lwip';
+import { pick } from 'lodash';
 
 // taken from https://github.com/nkt/node-lwip-promise/blob/master/index.js
-let lwip = bluebird.promisifyAll(lwipOld);
-bluebird.promisifyAll(require('lwip/lib/Image').prototype);
-bluebird.promisifyAll(require('lwip/lib/Batch').prototype);
+const lwip = promisifyAll(lwipOld);
+promisifyAll(require('lwip/lib/Image').prototype);
+promisifyAll(require('lwip/lib/Batch').prototype);
 
 
 /**
@@ -29,7 +30,27 @@ export async function processImage(buffer, transforms) {
 
     switch (type) {
       case 'crop': {
-        batch.crop(params.left, params.top, params.right, params.bottom);
+        const cropParams = pick(params, ['left', 'top', 'right', 'bottom']);
+
+        if (Object.keys(cropParams).length !== Object.keys(params).length) {
+          throw new RangeError('"crop" accepts only "left", "top", "right" and "bottom" options');
+        }
+
+        if (cropParams.left < 0 || cropParams.top < 0 || cropParams.right < 0 || cropParams.bottom < 0) {
+          throw new RangeError('crop parameters should be positive');
+        }
+
+        const w = image.width();
+        const h = image.height();
+
+        if (
+          cropParams.left > w || cropParams.right > w || cropParams.left > cropParams.right ||
+          cropParams.top > h || cropParams.bottom > h || cropParams.top > cropParams.bottom
+        ) {
+          throw new RangeError('crop parameters should fit within borders of image');
+        }
+
+        batch.crop(cropParams.left, cropParams.top, cropParams.right, cropParams.bottom);
         break;
       }
       case 'resize': {

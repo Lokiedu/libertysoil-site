@@ -17,8 +17,6 @@
  */
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
-import Gravatar from 'react-gravatar';
-import Loader from 'react-loader';
 
 import {
   Page,
@@ -26,15 +24,16 @@ import {
   PageBody,
   PageContent
 } from '../../components/page';
+import Button from '../../components/button';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
 import ProfileHeader from '../../components/profile';
+import User from '../../components/user';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
-import { LOADER_OPTIONS } from '../../consts/loader';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -66,19 +65,16 @@ export default class BaseSettingsPage extends React.Component {
 
     const user = current_user.user;
 
-    let name = current_user.username;
-
+    let name = user.username;
     if (user.more && (user.more.firstName || user.more.lastName)) {
       name = `${user.more.firstName} ${user.more.lastName}`;
     }
 
     let saveButton;
-    if (this.props.onSave) {
+    if (onSave) {
       saveButton = (
-        <div className="void" style={{position: 'relative'}}>
-          <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '5%'}}>
-            <span className="button button-green action" onClick={onSave}>Save changes</span>
-          </Loader>
+        <div className="void">
+          <Button className="button-green" title="Save changes" waiting={processing} onClick={onSave}/>
         </div>
       );
     }
@@ -90,7 +86,7 @@ export default class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <Gravatar default="retro" md5={user.gravatarHash} size={36} />
+                <User user={user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
               </div>
             </Breadcrumbs>
           </div>

@@ -17,6 +17,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router';
+import { pick } from 'lodash';
 
 import User from './user';
 import FollowButton from './follow-button';
@@ -53,7 +54,11 @@ export default class ProfileHeader extends React.Component {
 
   addAvatar = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture, crop: production.crop };
+      let _production = {
+        picture: production.picture,
+        crop: pick(production.crop, ['left', 'top', 'right', 'bottom'])
+      };
+
       _production.resize = { width: AVATAR_SIZE.width, height: AVATAR_SIZE.height };
 
       this.setState({avatar: {production: _production, preview}});
@@ -64,12 +69,15 @@ export default class ProfileHeader extends React.Component {
 
   addHeaderPicture = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture, crop: production.crop };
+      let _production = { picture: production.picture };
 
-      if (_production.crop.width > PROFILE_HEADER_SIZE.BIG.width) {
-        _production.scale = { wRatio: PROFILE_HEADER_SIZE.BIG.width / _production.crop.width };
+      // properties assign order is important
+      _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
+
+      if (production.crop.width > PROFILE_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: PROFILE_HEADER_SIZE.BIG.width / production.crop.width };
       } else {
-        _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / _production.crop.width };
+        _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
 
       this.setState({head_pic: {production: _production, preview}});
@@ -188,7 +196,7 @@ export default class ProfileHeader extends React.Component {
                     where={modalName}
                     preview={PROFILE_HEADER_SIZE.PREVIEW}
                     flexible={true}
-                    limits={{min: PROFILE_HEADER_SIZE.NORMAL, max: PROFILE_HEADER_SIZE.BIG}}
+                    limits={{min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG}}
                     onSubmit={this.addHeaderPicture}
                   />
                 </div>

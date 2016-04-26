@@ -82,10 +82,8 @@ export class Tabs extends Component {
     onClick: () => {}
   };
 
-  componentWillReceiveProps(nextProps) {
-    if ((typeof nextProps.active === 'number') && (nextProps.active !== this.state.active)) {
-      this.setState({ active: nextProps.active });
-    }
+  to = (i) => {
+    this.setState({active: i});
   }
   
   clickHandler = (i) => {

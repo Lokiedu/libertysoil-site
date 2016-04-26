@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
+import { values, pick } from 'lodash';
 
 import {
   Page,
@@ -38,7 +38,7 @@ import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
-import { TAG_HEADER_SIZE } from '../../consts/tags';
+import { TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -151,24 +151,24 @@ export default class BaseTagPage extends React.Component {
     }).isRequired
   };
 
-  state = {
-    form: false,
-    head_pic: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      form: false,
+      head_pic: null
+    };
+  }
 
   postsAmount = null;
-  defaultPicture = '/images/hero/welcome.jpg';
 
   componentWillMount() {
     this.postsAmount = this.props.postsAmount;
-
-    if (this.props.tag.more && this.props.tag.more.head_pic) {
-      this.defaultPicture = this.props.tag.more.head_pic.url;
-    }
   }
 
   _getNewPictures() {
-    let pictures = {};
+    const pictures = {};
+
     if (this.state.head_pic) {
       pictures.head_pic = this.state.head_pic.production;
     }
@@ -176,21 +176,28 @@ export default class BaseTagPage extends React.Component {
     return pictures;
   }
 
+  _clearPreview() {
+    this.setState({ head_pic: null });
+  }
+
   addPicture = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture, crop: production.crop };
+      const _production = { picture: production.picture };
 
-      if (_production.crop.width > TAG_HEADER_SIZE.BIG.width) {
-        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / _production.crop.width };
+      // properties assign order is important
+      _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
+
+      if (production.crop.width > TAG_HEADER_SIZE.BIG.width) {
+        _production.scale = { wRatio: TAG_HEADER_SIZE.BIG.width / production.crop.width };
       } else {
-        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / _production.crop.width };
+        _production.scale = { wRatio: TAG_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
 
       this.setState({head_pic: {production: _production, preview}});
     } else {
       this.setState({head_pic: null});
     }
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     if (this.state.form) {
@@ -198,6 +205,7 @@ export default class BaseTagPage extends React.Component {
         this.setState({ form: false });
       }
     }
+
     this.postsAmount = nextProps.postsAmount;
   }
 
@@ -237,8 +245,10 @@ export default class BaseTagPage extends React.Component {
     let headerPictureUrl;
     if (this.state.head_pic) {
       headerPictureUrl = this.state.head_pic.preview.url;
+    } else if (this.props.tag.more && this.props.tag.more.head_pic) {
+      headerPictureUrl = this.props.tag.more.head_pic.url;
     } else {
-      headerPictureUrl = this.defaultPicture;
+      headerPictureUrl = DEFAULT_HEADER_PICTURE;
     }
 
     let createPostForm;
@@ -277,7 +287,7 @@ export default class BaseTagPage extends React.Component {
               onSubmit={this.addPicture}
               preview={TAG_HEADER_SIZE.PREVIEW}
               flexible={true}
-              limits={{min: TAG_HEADER_SIZE.NORMAL, max: TAG_HEADER_SIZE.BIG}}
+              limits={{min: TAG_HEADER_SIZE.MIN, max: TAG_HEADER_SIZE.BIG}}
               url={headerPictureUrl} />
             <PageBody className="page__body-up">
               <TagHeader
