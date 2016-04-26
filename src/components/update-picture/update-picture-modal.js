@@ -48,7 +48,7 @@ export default class UpdatePictureModal extends React.Component {
         error = `Image must be at least ${limits.min.width}px in width. Now: ${parseInt(crop.width)}px`;
       }
       if (!error && limits.min.height && (crop.height < limits.min.height)) {
-        error = `Image must be at least ${limits.min.height}px in width. Now: ${parseInt(crop.height)}px`;
+        error = `Image must be at least ${limits.min.height}px in height. Now: ${parseInt(crop.height)}px`;
       }
     }
 
@@ -58,7 +58,7 @@ export default class UpdatePictureModal extends React.Component {
         error = `Image mustn't be greater than ${limits.max.width}px in width. Now: ${parseInt(crop.width)}px`;
       }
       if (!error && limits.max.height && (crop.height > limits.max.height)) {
-        error = `Image mustn't be greater than ${limits.max.height}px in width. Now: ${parseInt(crop.height)}px`;
+        error = `Image mustn't be greater than ${limits.max.height}px in height. Now: ${parseInt(crop.height)}px`;
       }
     }
 
@@ -100,7 +100,11 @@ export default class UpdatePictureModal extends React.Component {
 
     reader.onloadend = (e) => {
       img.src = e.target.result;
+    }
 
+    reader.readAsDataURL(avatar);
+
+    img.onload = () => {
       let newCrop = {
         left: crop.x * img.width,
         top: crop.y * img.height,
@@ -124,9 +128,7 @@ export default class UpdatePictureModal extends React.Component {
       }
 
       this.props.onSubmit(pictureData);
-    }
-
-    reader.readAsDataURL(avatar);
+    };
   }
 
   closeHandler = () => {
