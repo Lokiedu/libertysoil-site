@@ -19,8 +19,8 @@ export default class Button extends React.Component {
       color,
       size,
       className,
-      title,
       waiting,
+      title,
       ...props
     } = this.props;
     let icon = null;
@@ -41,7 +41,7 @@ export default class Button extends React.Component {
     }
 
     return (
-      <button className={className} {...props}>
+      <button className={className} title={title} {...props}>
         {icon}
         {title}
       </button>
