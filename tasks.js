@@ -73,15 +73,17 @@ queue.process('on-comment', async function(job, done) {
   try {
     const Comment = bookshelf.model('Comment');
 
-    let comment = await Comment.where({id: job.data.commentId}).fetch({require: true, withRelated: ['user', 'post', 'post.user']});
-    comment = comment.toJSON();
+    const comment = await Comment.where({id: job.data.commentId}).fetch({require: true, withRelated: ['user', 'post', 'post.user']});
+    const commentAuthor = comment.related('user');
+    const post = comment.related('post');
+    const postAuthor = comment.related('post').related('user');
 
-    if (comment.user_id !== comment.post.user_id) {
+    if (commentAuthor.id !== postAuthor.id) {
       queue.create('new-comment-email', {
-        comment: comment,
-        commentAuthor: comment.user,
-        post: comment.post,
-        postAuthor: comment.post.user
+        comment: comment.attributes,
+        commentAuthor: commentAuthor.attributes,
+        post:  post.attributes,
+        postAuthor: postAuthor.attributes
       }).save();
     }
 
