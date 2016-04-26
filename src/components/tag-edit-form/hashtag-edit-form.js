@@ -17,11 +17,10 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
-import Loader from 'react-loader';
 
+import Button from '../button';
 import Message from '../message';
 import Messages from '../messages';
-import { LOADER_OPTIONS } from '../../consts/loader';
 
 class HashtagEditForm extends React.Component {
   static displayName = 'HashtagEditForm';
@@ -101,16 +100,8 @@ class HashtagEditForm extends React.Component {
         </div>
 
         <div className="layout__row layout__space-triple">
-          <div className="layout layout__grid layout-align_right" style={{position: 'relative'}}>
-            <Loader loaded={!processing} options={{...LOADER_OPTIONS, left: '90%'}}>
-              <button
-                className="button button-wide button-green"
-                disabled={!form.isValid()}
-                type="submit"
-              >
-                Save
-              </button>
-            </Loader>
+          <div className="layout layout__grid layout-align_right">
+            <Button type="submit" className="button-green" disabled={!form.isValid()} title="Save" waiting={processing}/>
           </div>
         </div>
         <Messages messages={messages} removeMessage={triggers.removeMessage}/>
