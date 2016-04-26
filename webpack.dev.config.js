@@ -65,7 +65,7 @@ module.exports = {
   plugins: [
     // An appropriate alternative to envify.
     new webpack.EnvironmentPlugin([
-      'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN'
+      'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN', 'GOOGLE_ANALYTICS_ID'
     ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
