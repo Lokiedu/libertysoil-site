@@ -23,9 +23,9 @@ import uuid from 'uuid'
 import slug from 'slug';
 import request from 'superagent';
 import crypto from 'crypto'
-import QueueSingleton from '../utils/queue';
 import Checkit from 'checkit';
 
+import QueueSingleton from '../utils/queue';
 import { processImage } from '../utils/image';
 import config from '../../config';
 import {
@@ -34,6 +34,7 @@ import {
   Hashtag as HashtagValidators,
   Geotag as GeotagValidators
 } from './db/validators';
+
 
 let bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
