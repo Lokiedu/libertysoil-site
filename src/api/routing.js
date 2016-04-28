@@ -15,8 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import express from 'express';
-import multer from 'multer';
+import Router from 'koa-router';
+import multer from 'koa-multer';
 
 import ApiController from './controller';
 
@@ -27,18 +27,20 @@ export function initApi(bookshelf) {
 
   let wrap =
     (handler) =>
-      (req, res, next) =>
-        handler(req, res, next)
+      (ctx, next) =>
+        handler(ctx, next)
           .catch((e) => {
-            console.log(`an error was thrown from url-handler of ${req.originalUrl}:\n`, e);  // eslint-disable-line no-console
+            console.log(`an error was thrown from url-handler of ${ctx.req.originalUrl}:\n`, e);  // eslint-disable-line no-console
 
-            res.status(500);
-            res.send({error: 'Internal Server Error'});
+            ctx.status = 500;
+            ctx.body = {error: 'Internal Server Error'};
+            // res.status(500);
+            // res.send({error: 'Internal Server Error'});
           });
 
-  let api = express.Router();
+  let api = new Router();
 
-  api.get('/test', wrap(controller.test));
+  api.get('/test', controller.test);
   api.post('/users', wrap(controller.registerUser.bind(controller)));
   api.post('/session', wrap(controller.login.bind(controller)));
 
@@ -134,5 +136,5 @@ export function initApi(bookshelf) {
   api.get('/quotes', wrap(controller.getQuotes.bind(controller)));
 
 
-  return api;
+  return api.routes();
 }
