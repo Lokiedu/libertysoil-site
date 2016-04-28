@@ -154,7 +154,7 @@ if (indexOf(['test', 'travis'], exec_env) !== -1) {
 
 app.use(mount('/api/v1', api));
 
-app.use(convert(serve(`${__dirname}/public/`)));
+app.use(convert(serve(`${__dirname}/public/`, { index: false, defer: false })));
 
 app.use(async function reactMiddleware(ctx, next) {
   const store = initState();
