@@ -15,15 +15,24 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*eslint-env node */
 import { parse as parseUrl } from 'url';
+import path from 'path';
+import fs from 'fs';
 
-import express from 'express';
-import bodyParser from 'body-parser';
+import Koa from 'koa';
 import { isString, indexOf } from 'lodash';
-import session from 'express-session';
-import initRedisStore from 'connect-redis';
+import session from 'koa-generic-session';
+import redisStore from 'koa-redis';
+import convert from 'koa-convert';
+import cors from 'kcors';
+import serve from 'koa-static';
+import bodyParser from 'koa-bodyparser';
+import mount from 'koa-mount';
 import knexLogger from 'knex-logger';
 import chokidar from 'chokidar';
+import ejs from 'ejs';
+import { promisify } from 'bluebird';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server'
@@ -50,31 +59,88 @@ import {
 import db_config from './knexfile';
 
 
-let wrap = fn => (...args) => fn(...args).catch(args[2]);
+let exec_env = process.env.DB_ENV || 'development';
 
-let RedisStore = initRedisStore(session);
+let app = new Koa();
 
-let sessionMiddleware = session({
-  store: new RedisStore({
-    host: '127.0.0.1',
-    port: 6379
-  }),
-  secret: 'libertysoil',
-  resave: false,
-  saveUninitialized: false
+let knexConfig = db_config[exec_env];
+let bookshelf = initBookshelf(knexConfig);
+let api = initApi(bookshelf);
+let matchPromisified = promisify(match, { multiArgs: true });
+let templatePath = path.join(__dirname, '/src/views/index.ejs');
+let template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), {filename: templatePath});
+
+if (exec_env === 'development') {
+  let webpackDevMiddleware = require('webpack-koa-dev-middleware').default;
+  let webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
+  let webpack = require('webpack');
+  let webpackConfig = require('./webpack.dev.config');
+  let compiler = webpack(webpackConfig);
+
+  app.use(convert(webpackDevMiddleware(compiler, {
+    log: console.log,
+    path: '/__webpack_hmr',
+    publicPath: webpackConfig.output.publicPath,
+    stats: {
+      colors: true
+    }
+  })));
+  app.use(convert(webpackHotMiddleware(compiler)));
+
+  // Taken from https://github.com/glenjamin/ultimate-hot-reloading-example/blob/master/server.js
+
+  // Do "hot-reloading" of express stuff on the server
+  // Throw away cached modules and re-require next time
+  // Ensure there's no important state in there!
+  var watcher = chokidar.watch('./src/api');
+  watcher.on('ready', function () {
+    watcher.on('all', function () {
+      console.log('Clearing /src/api/ cache from server');
+      Object.keys(require.cache).forEach(function (id) {
+        if (/\/src\/api\//.test(id)) delete require.cache[id];
+      });
+    });
+  });
+
+  // Do "hot-reloading" of react stuff on the server
+  // Throw away the cached client modules and let them be re-required next time
+  compiler.plugin('done', function () {
+    console.log('Clearing /src/ cache from server');
+    Object.keys(require.cache).forEach(function (id) {
+        if (/\/src\//.test(id)) delete require.cache[id];
+      });
+  });
+}
+
+app.use(async (ctx, next) => {
+  const { hostname } = parseUrl(API_HOST);
+  if (isString(ctx.req.hostname) && ctx.req.hostname !== hostname) {
+    const newUri = `${API_HOST}${ctx.req.originalUrl}`;
+    ctx.status = 301;
+    ctx.redirect(newUri);
+    return;
+  }
+  await next();
 });
 
-let corsMiddleware = (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-};
+app.keys = ['libertysoil'];
 
+app.use(convert(session({
+  store: redisStore(
+    {
+      host: '127.0.0.1',
+      port: 6379
+    }
+  ),
+  key: 'connect.sid',
+  cookie: {signed: false}
+})));
 
-let exec_env = process.env.DB_ENV || 'development';
-const knexConfig = db_config[exec_env];
-let bookshelf = initBookshelf(knexConfig);
-let api = initApi(bookshelf)
+app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
+
+app.use(convert(cors({
+  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+})));
 
 if (indexOf(['test', 'travis'], exec_env) !== -1) {
   let warn = console.error; // eslint-disable-line no-console
@@ -86,14 +152,16 @@ if (indexOf(['test', 'travis'], exec_env) !== -1) {
   };
 }
 
-let reactHandler = async (req, res) => {
+app.use(mount('/api/v1', api));
+
+app.use(async function reactMiddleware(ctx, next) {
   const store = initState();
 
-  if (req.session && req.session.user && isString(req.session.user)) {
+  if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
     try {
       let user = await bookshelf
         .model('User')
-        .where({id: req.session.user})
+        .where({id: ctx.session.user})
         .fetch({
           require: true,
           withRelated: [
@@ -112,12 +180,12 @@ let reactHandler = async (req, res) => {
       let likes = await bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({user_id: req.session.user});
+        .where({user_id: ctx.session.user});
 
       let favourites = await bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({user_id: req.session.user});
+        .where({user_id: ctx.session.user});
 
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
@@ -128,7 +196,7 @@ let reactHandler = async (req, res) => {
   }
 
   const authHandler = new AuthHandler(store);
-  const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST, req));
+  const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST, ctx));
   const Routes = getRoutes(authHandler.handle, fetchHandler.handleSynchronously);
 
   const makeRoutes = (history) => (
@@ -141,24 +209,24 @@ let reactHandler = async (req, res) => {
   const history = syncHistoryWithStore(memoryHistory, store, { selectLocationState: state => state.get('routing') });
   let routes = makeRoutes(history);
 
-  match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
-    if (redirectLocation) {
-      res.redirect(307, redirectLocation.pathname + redirectLocation.search)
-      return;
-    }
+  try {
+    const [ redirectLocation, renderProps ] = await matchPromisified({ routes, location: ctx.url });
 
-    if (error) {
-      res.status(500).send(error.message)
+    if (redirectLocation) {
+      ctx.status = 307;
+      ctx.redirect(redirectLocation.pathname + redirectLocation.search);
       return;
     }
 
     if (renderProps == null) {
-      res.status(404).send('Not found')
+      ctx.status = 404;
+      ctx.body = 'Not found';
       return;
     }
 
     if (fetchHandler.redirectTo !== null) {
-      res.redirect(fetchHandler.status, fetchHandler.redirectTo);
+      ctx.status = fetchHandler.status;
+      ctx.redirect(fetchHandler.redirectTo);
       return;
     }
 
@@ -171,87 +239,25 @@ let reactHandler = async (req, res) => {
       let state = JSON.stringify(store.getState().toJS());
 
       if (fetchHandler.status !== null) {
-        res.status(fetchHandler.status);
+        ctx.status = fetchHandler.status;
       }
 
       const metadata = ExecutionEnvironment.canUseDOM ? Helmet.peek() : Helmet.rewind();
 
-      res.render('index', { html, state, metadata });
+      ctx.staus = 200;
+      ctx.body = template({state, html, metadata});
     } catch (e) {
       console.error(e.stack);
-      res.status(500).send(e.message)
+      ctx.status = 500;
+      ctx.body = e.message;
     }
-  });
-};
-
-const domainValidator = (req, res, next) => {
-  const { hostname } = parseUrl(API_HOST);
-
-  if (isString(req.hostname) && req.hostname !== hostname) {
-    const newUri = `${API_HOST}${req.originalUrl}`;
-    res.redirect(301, newUri);
-    return;
+  } catch (e) {
+    console.error(e.stack);
+    ctx.status = 500;
+    ctx.body = e.message;
   }
+});
 
-  next();
-};
-
-let app = express();
-
-if (process.env.NODE_ENV == 'development') {
-  var webpack = require('webpack');
-  var webpackConfig = require('./webpack.dev.config');
-  var compiler = webpack(webpackConfig);
-
-  app.use(require('webpack-dev-middleware')(compiler, {
-    log: console.log,
-    path: '/__webpack_hmr',
-    publicPath: webpackConfig.output.publicPath,
-    stats: {
-      colors: true
-    }
-  }));
-  app.use(require('webpack-hot-middleware')(compiler));
-
-  // Taken from https://github.com/glenjamin/ultimate-hot-reloading-example/blob/master/server.js
-
-  // Do "hot-reloading" of express stuff on the server
-  // Throw away cached modules and re-require next time
-  // Ensure there's no important state in there!
-  var watcher = chokidar.watch('./src/api');
-  watcher.on('ready', function () {
-    watcher.on('all', function () {
-      console.log("Clearing /src/api/ cache from server");
-      Object.keys(require.cache).forEach(function (id) {
-        if (/\/src\/api\//.test(id)) delete require.cache[id];
-      });
-    });
-  });
-
-  // Do "hot-reloading" of react stuff on the server
-  // Throw away the cached client modules and let them be re-required next time
-  compiler.plugin('done', function () {
-    console.log("Clearing /src/ cache from server");
-    Object.keys(require.cache).forEach(function (id) {
-      if (/\/src\//.test(id)) delete require.cache[id];
-    });
-  });
-
-  app.use(knexLogger(bookshelf.knex));
-}
-
-app.set('views', './src/views');
-app.set('view engine', 'ejs');
-
-app.use(domainValidator);
-
-app.use(sessionMiddleware);
-app.use(bodyParser.urlencoded({ extended: true }));  // for parsing application/x-www-form-urlencoded
-app.use(bodyParser.json());  // for parsing application/json
-app.use(corsMiddleware);
-
-app.use('/api/v1', api);
-app.use(express.static('public', { index: false}));
-app.use(wrap(reactHandler));
+app.use(convert(serve('public/')));
 
 export default app;
