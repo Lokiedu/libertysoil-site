@@ -25,115 +25,102 @@ let upload = multer({storage: multer.memoryStorage()});
 export function initApi(bookshelf) {
   let controller = new ApiController(bookshelf);
 
-  let wrap =
-    (handler) =>
-      (ctx, next) =>
-        handler(ctx, next)
-          .catch((e) => {
-            console.log(`an error was thrown from url-handler of ${ctx.req.originalUrl}:\n`, e);  // eslint-disable-line no-console
-
-            ctx.status = 500;
-            ctx.body = {error: 'Internal Server Error'};
-            // res.status(500);
-            // res.send({error: 'Internal Server Error'});
-          });
-
   let api = new Router();
 
   api.get('/test', controller.test);
-  api.post('/users', wrap(controller.registerUser.bind(controller)));
-  api.post('/session', wrap(controller.login.bind(controller)));
+  api.post('/users', controller.registerUser);
+  api.post('/session', controller.login);
 
-  api.get('/posts', wrap(controller.subscriptions.bind(controller)));
-  api.post('/posts', wrap(controller.createPost.bind(controller)));
-  api.get('/post/:id', wrap(controller.getPost.bind(controller)));
-  api.post('/post/:id', wrap(controller.updatePost.bind(controller)));
-  api.delete('/post/:id', wrap(controller.removePost.bind(controller)));
-  api.post('/post/:id/like', wrap(controller.likePost.bind(controller)));
-  api.post('/post/:id/unlike', wrap(controller.unlikePost.bind(controller)));
-  api.post('/post/:id/fav', wrap(controller.favPost.bind(controller)));
-  api.post('/post/:id/unfav', wrap(controller.unfavPost.bind(controller)));
-  api.get('/post/:id/related-posts', wrap(controller.getRelatedPosts.bind(controller)));
+  api.get('/posts', controller.subscriptions);
+  api.post('/posts', controller.createPost);
+  api.get('/post/:id', controller.getPost);
+  api.post('/post/:id', controller.updatePost);
+  api.delete('/post/:id', controller.removePost);
+  api.post('/post/:id/like', controller.likePost);
+  api.post('/post/:id/unlike', controller.unlikePost);
+  api.post('/post/:id/fav', controller.favPost);
+  api.post('/post/:id/unfav', controller.unfavPost);
+  api.get('/post/:id/related-posts', controller.getRelatedPosts);
 
-  api.get('/post/:id/comments', wrap(controller.getPostComments.bind(controller)));
-  api.post('/post/:id/comments', wrap(controller.postComment.bind(controller)));
-  api.post('/post/:id/comment/:comment_id', wrap(controller.editComment.bind(controller)));
-  api.delete('/post/:id/comment/:comment_id', wrap(controller.removeComment.bind(controller)));
+  api.get('/post/:id/comments', controller.getPostComments);
+  api.post('/post/:id/comments', controller.postComment);
+  api.post('/post/:id/comment/:comment_id', controller.editComment);
+  api.delete('/post/:id/comment/:comment_id', controller.removeComment);
 
-  api.get('/posts/all', wrap(controller.allPosts.bind(controller)));
-  api.get('/posts/user/:user', wrap(controller.userPosts.bind(controller)));
-  api.get('/posts/liked', wrap(controller.currentUserLikedPosts.bind(controller)));
-  api.get('/posts/liked/:user', wrap(controller.userLikedPosts.bind(controller)));
-  api.get('/posts/favoured', wrap(controller.currentUserFavouredPosts.bind(controller)));
-  api.get('/posts/favoured/:user', wrap(controller.userFavouredPosts.bind(controller)));
-  api.get('/posts/tag/:tag', wrap(controller.tagPosts.bind(controller)));
-  api.get('/posts/school/:school', wrap(controller.schoolPosts.bind(controller)));
-  api.get('/posts/geotag/:url_name', wrap(controller.geotagPosts.bind(controller)));
-  api.get('/user/tags', wrap(controller.userTags.bind(controller)));
+  api.get('/posts/all', controller.allPosts);
+  api.get('/posts/user/:user', controller.userPosts);
+  api.get('/posts/liked', controller.currentUserLikedPosts);
+  api.get('/posts/liked/:user', controller.userLikedPosts);
+  api.get('/posts/favoured', controller.currentUserFavouredPosts);
+  api.get('/posts/favoured/:user', controller.userFavouredPosts);
+  api.get('/posts/tag/:tag', controller.tagPosts);
+  api.get('/posts/school/:school', controller.schoolPosts);
+  api.get('/posts/geotag/:url_name', controller.geotagPosts);
+  api.get('/user/tags', controller.userTags);
 
-  api.get('/school-cloud', wrap(controller.getSchoolCloud.bind(controller)));
-  api.get('/schools', wrap(controller.getSchools.bind(controller)));
-  api.head('/school/:name', wrap(controller.checkSchoolExists.bind(controller)));
-  api.get('/school/:url_name', wrap(controller.getSchool.bind(controller)));
-  api.post('/school/:id', wrap(controller.updateSchool.bind(controller)));
-  api.post('/school/:name/follow', wrap(controller.followSchool.bind(controller)));
-  api.post('/school/:name/unfollow', wrap(controller.unfollowSchool.bind(controller)));
-  api.post('/school/:url_name/like', wrap(controller.likeSchool.bind(controller)));
-  api.post('/school/:url_name/unlike', wrap(controller.unlikeSchool.bind(controller)));
+  api.get('/school-cloud', controller.getSchoolCloud);
+  api.get('/schools', controller.getSchools);
+  api.head('/school/:name', controller.checkSchoolExists);
+  api.get('/school/:url_name', controller.getSchool);
+  api.post('/school/:id', controller.updateSchool);
+  api.post('/school/:name/follow', controller.followSchool);
+  api.post('/school/:name/unfollow', controller.unfollowSchool);
+  api.post('/school/:url_name/like', controller.likeSchool);
+  api.post('/school/:url_name/unlike', controller.unlikeSchool);
 
-  api.get('/countries/', wrap(controller.getCountries.bind(controller)));
-  api.get('/country/:code', wrap(controller.getCountry.bind(controller)));
-  //api.get('/cities/', wrap(controller.getCities.bind(controller)));
-  api.get('/city/:id', wrap(controller.getCity.bind(controller)));
+  api.get('/countries/', controller.getCountries);
+  api.get('/country/:code', controller.getCountry);
+  //api.get('/cities/', controller.getCities);
+  api.get('/city/:id', controller.getCity);
 
-  api.get('/user/recent-hashtags', wrap(controller.getUserRecentHashtags.bind(controller)));
-  api.get('/user/recent-schools', wrap(controller.getUserRecentSchools.bind(controller)));
-  api.get('/user/recent-geotags', wrap(controller.getUserRecentGeotags.bind(controller)));
-  api.head('/user/:username', wrap(controller.checkUserExists.bind(controller)));
-  api.head('/user/email/:email', wrap(controller.checkEmailTaken.bind(controller)));
-  api.get('/user/available-username/:username', wrap(controller.getAvailableUsername.bind(controller)));
-  api.get('/user/:username', wrap(controller.getUser.bind(controller)));
-  api.post('/user/:username/follow', wrap(controller.followUser.bind(controller)));
-  api.post('/user/:username/unfollow', wrap(controller.unfollowUser.bind(controller)));
-  api.post('/user/:username/ignore', wrap(controller.ignoreUser.bind(controller)));
+  api.get('/user/recent-hashtags', controller.getUserRecentHashtags);
+  api.get('/user/recent-schools', controller.getUserRecentSchools);
+  api.get('/user/recent-geotags', controller.getUserRecentGeotags);
+  api.head('/user/:username', controller.checkUserExists);
+  api.head('/user/email/:email', controller.checkEmailTaken);
+  api.get('/user/available-username/:username', controller.getAvailableUsername);
+  api.get('/user/:username', controller.getUser);
+  api.post('/user/:username/follow', controller.followUser);
+  api.post('/user/:username/unfollow', controller.unfollowUser);
+  api.post('/user/:username/ignore', controller.ignoreUser);
 
-  api.get('/user/verify/:hash', wrap(controller.verifyEmail.bind(controller)));
-  api.post('/user/', wrap(controller.updateUser.bind(controller)));
-  api.post('/user/password', wrap(controller.changePassword.bind(controller)));
+  api.get('/user/verify/:hash', controller.verifyEmail);
+  api.post('/user/', controller.updateUser);
+  api.post('/user/password', controller.changePassword);
 
-  api.post('/resetpassword', wrap(controller.resetPassword.bind(controller)));
-  api.post('/newpassword/:hash', wrap(controller.newPassword.bind(controller)));
+  api.post('/resetpassword', controller.resetPassword);
+  api.post('/newpassword/:hash', controller.newPassword);
 
-  api.post('/logout', wrap(controller.logout.bind(controller)));
+  api.post('/logout', controller.logout);
 
-  api.get('/suggestions/personalized', wrap(controller.userSuggestions.bind(controller)));
-  api.get('/suggestions/initial', wrap(controller.initialSuggestions.bind(controller)));
+  api.get('/suggestions/personalized', controller.userSuggestions);
+  api.get('/suggestions/initial', controller.initialSuggestions);
 
-  api.post('/upload', upload.array('files', 8), wrap(controller.uploadFiles.bind(controller)));
-  api.post('/image', wrap(controller.processImage.bind(controller)));
+  api.post('/upload', upload.array('files', 8), controller.uploadFiles);
+  api.post('/image', controller.processImage);
 
-  api.get('/pickpoint', wrap(controller.pickpoint.bind(controller)));
+  api.get('/pickpoint', controller.pickpoint);
 
-  api.get('/tag-cloud', wrap(controller.getTagCloud.bind(controller)));
-  api.get('/tags/search/:query', wrap(controller.searchTags.bind(controller)));
-  api.get('/tag/:name', wrap(controller.getHashtag.bind(controller)));
-  api.post('/tag/:id', wrap(controller.updateHashtag.bind(controller)));
-  api.post('/tag/:name/follow', wrap(controller.followTag.bind(controller)));
-  api.post('/tag/:name/unfollow', wrap(controller.unfollowTag.bind(controller)));
-  api.post('/tag/:name/like', wrap(controller.likeHashtag.bind(controller)));
-  api.post('/tag/:name/unlike', wrap(controller.unlikeHashtag.bind(controller)));
+  api.get('/tag-cloud', controller.getTagCloud);
+  api.get('/tags/search/:query', controller.searchTags);
+  api.get('/tag/:name', controller.getHashtag);
+  api.post('/tag/:id', controller.updateHashtag);
+  api.post('/tag/:name/follow', controller.followTag);
+  api.post('/tag/:name/unfollow', controller.unfollowTag);
+  api.post('/tag/:name/like', controller.likeHashtag);
+  api.post('/tag/:name/unlike', controller.unlikeHashtag);
 
-  api.get('/geotag-cloud', wrap(controller.getGeotagCloud.bind(controller)));
-  api.head('/geotag/:name', wrap(controller.checkGeotagExists.bind(controller)));
-  api.get('/geotag/:url_name', wrap(controller.getGeotag.bind(controller)));
-  api.post('/geotag/:id', wrap(controller.updateGeotag.bind(controller)));
-  api.get('/geotags/search/:query', wrap(controller.searchGeotags.bind(controller)));
-  api.post('/geotag/:url_name/follow', wrap(controller.followGeotag.bind(controller)));
-  api.post('/geotag/:url_name/unfollow', wrap(controller.unfollowGeotag.bind(controller)));
-  api.post('/geotag/:url_name/like', wrap(controller.likeGeotag.bind(controller)));
-  api.post('/geotag/:url_name/unlike', wrap(controller.unlikeGeotag.bind(controller)));
+  api.get('/geotag-cloud', controller.getGeotagCloud);
+  api.head('/geotag/:name', controller.checkGeotagExists);
+  api.get('/geotag/:url_name', controller.getGeotag);
+  api.post('/geotag/:id', controller.updateGeotag);
+  api.get('/geotags/search/:query', controller.searchGeotags);
+  api.post('/geotag/:url_name/follow', controller.followGeotag);
+  api.post('/geotag/:url_name/unfollow', controller.unfollowGeotag);
+  api.post('/geotag/:url_name/like', controller.likeGeotag);
+  api.post('/geotag/:url_name/unlike', controller.unlikeGeotag);
 
-  api.get('/quotes', wrap(controller.getQuotes.bind(controller)));
+  api.get('/quotes', controller.getQuotes);
 
 
   return api.routes();

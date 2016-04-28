@@ -44,16 +44,19 @@ const POST_RELATIONS = Object.freeze([
 ]);
 
 export default class ApiController {
-  constructor (bookshelf) {
+  bookshelf;
+  queue;
+
+  constructor(bookshelf) {
     this.bookshelf = bookshelf;
     this.queue = new QueueSingleton;
   }
 
-  async test(ctx) {
+  test = async (ctx) => {
     ctx.body = 'test message in response';
-  }
+  };
 
-  async allPosts(ctx) {
+  allPosts = async (ctx) => {
     let Posts = this.bookshelf.collection('Posts');
     let posts = new Posts();
     let response = await posts.fetch({require: false, withRelated: POST_RELATIONS});
@@ -63,9 +66,9 @@ export default class ApiController {
     });
 
     ctx.body = response;
-  }
+  };
 
-  async userPosts(ctx) {
+  userPosts = async (ctx) => {
     let Post = this.bookshelf.model('Post');
 
     let q = Post.forge()
@@ -89,9 +92,9 @@ export default class ApiController {
     });
 
     ctx.body = posts;
-  }
+  };
 
-  async tagPosts(ctx) {
+  tagPosts = async (ctx) => {
     let Post = this.bookshelf.model('Post');
 
     let q = Post.forge()
@@ -114,9 +117,9 @@ export default class ApiController {
     });
 
     ctx.body = posts;
-  }
+  };
 
-  async schoolPosts(ctx) {
+  schoolPosts = async (ctx) => {
     let Post = this.bookshelf.model('Post');
 
     let q = Post.collection()
@@ -139,9 +142,9 @@ export default class ApiController {
     });
 
     ctx.body = posts;
-  }
+  };
 
-  async geotagPosts(ctx) {
+  geotagPosts = async (ctx) => {
     const Post = this.bookshelf.model('Post');
     const Geotag = this.bookshelf.model('Geotag');
 
@@ -193,10 +196,9 @@ export default class ApiController {
       ctx.status = 404;
       return;
     }
-  }
+  };
 
-
-  async userTags(ctx){
+  userTags = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403
       ctx.body = {error: 'You are not authorized'};
@@ -239,9 +241,9 @@ export default class ApiController {
       .fetch();
 
     ctx.body = { hashtags, schools, geotags };
-  }
+  };
 
-  async getPost(ctx) {
+  getPost = async (ctx) => {
     let Post = this.bookshelf.model('Post');
 
     try {
@@ -255,9 +257,9 @@ export default class ApiController {
       ctx.status = 404;
       return;
     }
-  }
+  };
 
-  async currentUserLikedPosts(ctx) {
+  currentUserLikedPosts = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403
       ctx.body = {error: 'You are not authorized'};
@@ -271,9 +273,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = e.message;
     }
-  }
+  };
 
-  async userLikedPosts(ctx) {
+  userLikedPosts = async (ctx) =>  {
     try {
       let user_id = await this.bookshelf.knex
         .select('id')
@@ -287,9 +289,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = e.message;
     }
-  }
+  };
 
-  async getLikedPosts(userId) {
+  getLikedPosts = async (userId) => {
     let Post = this.bookshelf.model('Post');
 
     let likes = await this.bookshelf.knex
@@ -322,9 +324,9 @@ export default class ApiController {
     });
 
     return posts;
-  }
+  };
 
-  async currentUserFavouredPosts(ctx) {
+  currentUserFavouredPosts = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403
       ctx.body = {error: 'You are not authorized'};
@@ -338,9 +340,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = e.message;
     }
-  }
+  };
 
-  async userFavouredPosts(ctx) {
+  userFavouredPosts = async (ctx) => {
     try {
       let user_id = await this.bookshelf.knex
         .select('id')
@@ -354,9 +356,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = e.message;
     }
-  }
+  };
 
-  async getFavouredPosts(userId) {
+  getFavouredPosts = async (userId) => {
     let Post = this.bookshelf.model('Post');
 
     let favourites = await this.bookshelf.knex
@@ -380,9 +382,9 @@ export default class ApiController {
     });
 
     return posts;
-  }
+  };
 
-  async checkSchoolExists(ctx) {
+  checkSchoolExists = async (ctx) => {
     let School = this.bookshelf.model('School');
 
     try {
@@ -392,9 +394,9 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 404;
     }
-  }
+  };
 
-  async getSchool(ctx) {
+  getSchool = async (ctx) => {
     let School = this.bookshelf.model('School');
 
     try {
@@ -407,9 +409,9 @@ export default class ApiController {
       ctx.status = 404
       return;
     }
-  }
+  };
 
-  async getSchools(ctx) {
+  getSchools = async (ctx) => {
     let School = this.bookshelf.model('School');
 
     try {
@@ -419,9 +421,9 @@ export default class ApiController {
       ctx.status = 404;
       return;
     }
-  }
+  };
 
-  async getCountries(ctx) {
+  getCountries = async (ctx) => {
     const Geotag = this.bookshelf.model('Geotag');
 
     try {
@@ -431,9 +433,9 @@ export default class ApiController {
       ctx.status = 404
       return;
     }
-  }
+  };
 
-  async getCountry(ctx) {
+  getCountry = async (ctx) => {
     let Country = this.bookshelf.model('Country');
 
     try {
@@ -443,9 +445,9 @@ export default class ApiController {
       ctx.status = 404
       return;
     }
-  }
+  };
 
-  async getCity(ctx) {
+  getCity = async (ctx) => {
     let City = this.bookshelf.model('City');
 
     try {
@@ -455,9 +457,9 @@ export default class ApiController {
       ctx.status = 404
       return;
     }
-  }
+  };
 
-  async updateGeotag(ctx) {
+  updateGeotag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -503,9 +505,9 @@ export default class ApiController {
       ctx.body = {error: 'Update failed'};
       return;
     }
-  }
+  };
 
-  async updateHashtag(ctx) {
+  updateHashtag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -551,9 +553,9 @@ export default class ApiController {
       ctx.body = {error: 'Update failed'};
       return;
     }
-  }
+  };
 
-  async updateSchool(ctx) {
+  updateSchool = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -661,9 +663,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async likePost(ctx) {
+  likePost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -706,11 +708,11 @@ export default class ApiController {
     }
 
     ctx.body = result;
-  }
+  };
 
-  async unlikePost(ctx) {
+  unlikePost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403
+      ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
       return;
     }
@@ -745,9 +747,9 @@ export default class ApiController {
     }
 
     ctx.body = result;
-  }
+  };
 
-  async favPost(ctx) {
+  favPost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -787,9 +789,9 @@ export default class ApiController {
     }
 
     ctx.body = result;
-  }
+  };
 
-  async unfavPost(ctx) {
+  unfavPost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -823,9 +825,9 @@ export default class ApiController {
     }
 
     ctx.body = result;
-  }
+  };
 
-  async subscriptions(ctx) {
+  subscriptions = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -858,9 +860,9 @@ export default class ApiController {
     });
 
     ctx.body = posts;
-  }
+  };
 
-  async checkUserExists(ctx) {
+  checkUserExists = async (ctx) => {
     let User = this.bookshelf.model('User');
 
     try {
@@ -873,9 +875,9 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 404;
     }
-  }
+  };
 
-  async checkEmailTaken(ctx) {
+  checkEmailTaken = async (ctx) => {
     let User = this.bookshelf.model('User');
 
     try {
@@ -888,9 +890,9 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 404;
     }
-  }
+  };
 
-  async getAvailableUsername(ctx) {
+  getAvailableUsername = async (ctx) => {
     let User = this.bookshelf.model('User');
 
     async function checkUserExists(username) {
@@ -914,9 +916,9 @@ export default class ApiController {
       ctx.status = 404;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async registerUser(ctx) {
+  registerUser = async (ctx) => {
     let optionalFields = ['firstName', 'lastName'];
 
     let checkit = new Checkit(UserValidators.registration);
@@ -979,9 +981,9 @@ export default class ApiController {
     });
 
     ctx.body = { success: true, user };
-  }
+  };
 
-  async login(ctx) {
+  login = async (ctx) => {
     if (!ctx.session) {
       ctx.status = 500;
       ctx.body = {error: 'Internal Server Error'};
@@ -1049,9 +1051,9 @@ export default class ApiController {
       });
 
     ctx.body = { success: true, user };
-  }
+  };
 
-  async verifyEmail(ctx) {
+  verifyEmail = async (ctx) => {
     let User = this.bookshelf.model('User');
 
     let user;
@@ -1074,7 +1076,7 @@ export default class ApiController {
     });
 
     ctx.redirect('/');
-  }
+  };
 
   /**
    * Looks users record by submitted email, saves user random SHA1 hash.
@@ -1085,8 +1087,7 @@ export default class ApiController {
    * When user saved successfully, send message (publich event?) to user with
    * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
    */
-  async resetPassword(ctx) {
-
+  resetPassword = async (ctx) => {
     if (ctx.session && ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'Please use profile change password feature.'};
@@ -1131,14 +1132,14 @@ export default class ApiController {
 
     ctx.status = 200;
     ctx.body = {success: true};
-  }
+  };
 
   /**
    * New password form action.
    * Validates new password form with password/password repeat values.
    * Saves new password to User model.
    */
-  async newPassword(ctx) {
+  newPassword = async (ctx) => {
 
     if (ctx.session && ctx.session.user) {
       ctx.redirect('/');
@@ -1178,16 +1179,16 @@ export default class ApiController {
     await user.save(null, {method: 'update'});
     ctx.body = {success: true};
 
-  }
+  };
 
-  async logout(ctx) {
+  logout = async (ctx) => {
     if (ctx.session && ctx.session.user) {
       ctx.session = null;
     }
     ctx.redirect('/');
-  }
+  };
 
-  async userSuggestions(ctx) {
+  userSuggestions = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1224,9 +1225,9 @@ export default class ApiController {
       .fetch({withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     ctx.body = suggestions;
-  }
+  };
 
-  async initialSuggestions(ctx) {
+  initialSuggestions = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1251,9 +1252,9 @@ export default class ApiController {
     let suggestions = await q.fetchAll({require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts']});
 
     ctx.body = suggestions;
-  }
+  };
 
-  async createPost(ctx) {
+  createPost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1385,9 +1386,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async updatePost(ctx) {
+  updatePost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1504,9 +1505,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async removePost(ctx) {
+  removePost = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1538,9 +1539,9 @@ export default class ApiController {
     }
     ctx.status = 200;
     ctx.body = {success: true};
-  }
+  };
 
-  async getUser(ctx) {
+  getUser = async (ctx) => {
     let User = this.bookshelf.model('User');
     let u = await User
       .where({username: ctx.params.username})
@@ -1555,9 +1556,9 @@ export default class ApiController {
       });
 
     ctx.body = u.toJSON();
-  }
+  };
 
-  async followUser(ctx) {
+  followUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1587,9 +1588,9 @@ export default class ApiController {
     }
 
     ctx.body = follow_status;
-  }
+  };
 
-  async ignoreUser(ctx) {
+  ignoreUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1604,9 +1605,9 @@ export default class ApiController {
     await user.ignoreUser(userToIgnore.id);
 
     ctx.body = {success: true};
-  }
+  };
 
-  async updateUser(ctx) {
+  updateUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1646,9 +1647,9 @@ export default class ApiController {
       ctx.body = {error: 'Update failed'};
       return;
     }
-  }
+  };
 
-  async changePassword(ctx) {
+  changePassword = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1686,9 +1687,9 @@ export default class ApiController {
       ctx.body = {error: 'Update failed'};
       return;
     }
-  }
+  };
 
-  async unfollowUser(ctx) {
+  unfollowUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1718,13 +1719,13 @@ export default class ApiController {
     }
 
     ctx.body = follow_status;
-  }
+  };
 
   /**
    * Creates attachments from 'files'.
    * Important: set the 'name' property of each file input to 'files', not 'files[]' or 'files[0]'
    */
-  async uploadFiles(ctx) {
+  uploadFiles = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1756,7 +1757,7 @@ export default class ApiController {
       ctx.body = {error: `Upload failed: ${e.stack}`};
       return;
     }
-  }
+  };
 
   /**
    * Loads the image from s3, transforms it and creates a new attachment with the new image
@@ -1767,7 +1768,7 @@ export default class ApiController {
    *   transforms (required) - Json array with transforms. See utils/image.js processImage
    *   derived_id - Id of the attachment to reuse
    */
-  async processImage(ctx) {
+  processImage = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1850,9 +1851,9 @@ export default class ApiController {
         ctx.body = { error: `Image transformation failed: ${e.message}` };
       }
     }
-  }
+  };
 
-  async pickpoint(ctx) {
+  pickpoint = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1874,15 +1875,13 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
-
-
+  };
 
   /**
    * Returns 50 most popular hashtags sorted by post count.
    * Each hashtag in response contains post_count.
    */
-  async getTagCloud(ctx) {
+  getTagCloud = async (ctx) => {
     let Hashtag = this.bookshelf.model('Hashtag');
 
     try {
@@ -1904,9 +1903,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async getSchoolCloud(ctx) {
+  getSchoolCloud = async (ctx) => {
     let School = this.bookshelf.model('School');
 
     try {
@@ -1928,9 +1927,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async getGeotagCloud(ctx) {
+  getGeotagCloud = async (ctx) => {
     const Geotag = this.bookshelf.model('Geotag');
 
     const geotags = await Geotag
@@ -1947,9 +1946,9 @@ export default class ApiController {
       .fetch({require: true});
 
     ctx.body = geotags;
-  }
+  };
 
-  async getUserRecentHashtags(ctx) {
+  getUserRecentHashtags = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1972,9 +1971,9 @@ export default class ApiController {
       .fetch();
 
     ctx.body = hashtags;
-  }
+  };
 
-  async getUserRecentSchools(ctx) {
+  getUserRecentSchools = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -1997,9 +1996,9 @@ export default class ApiController {
       .fetch();
 
     ctx.body = schools;
-  }
+  };
 
-  async getUserRecentGeotags(ctx) {
+  getUserRecentGeotags = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2022,9 +2021,9 @@ export default class ApiController {
       .fetch();
 
     ctx.body = geotags;
-  }
+  };
 
-  async followTag(ctx) {
+  followTag = async (ctx) => {
     let User = this.bookshelf.model('User');
     let Hashtag = this.bookshelf.model('Hashtag');
 
@@ -2052,9 +2051,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async unfollowTag(ctx) {
+  unfollowTag = async (ctx) => {
     let User = this.bookshelf.model('User');
     let Hashtag = this.bookshelf.model('Hashtag');
 
@@ -2082,9 +2081,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async followSchool(ctx) {
+  followSchool = async (ctx) => {
     let User = this.bookshelf.model('User');
     let School = this.bookshelf.model('School');
 
@@ -2112,9 +2111,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async unfollowSchool(ctx) {
+  unfollowSchool = async (ctx) => {
     let User = this.bookshelf.model('User');
     let School = this.bookshelf.model('School');
 
@@ -2142,9 +2141,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async followGeotag(ctx) {
+  followGeotag = async (ctx) =>  {
     let User = this.bookshelf.model('User');
     let Geotag = this.bookshelf.model('Geotag');
 
@@ -2172,9 +2171,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async unfollowGeotag(ctx) {
+  unfollowGeotag = async (ctx) => {
     let User = this.bookshelf.model('User');
     let Geotag = this.bookshelf.model('Geotag');
 
@@ -2202,9 +2201,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async checkGeotagExists(ctx) {
+  checkGeotagExists = async (ctx) => {
     let Geotag = this.bookshelf.model('Geotag');
 
     try {
@@ -2214,9 +2213,9 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 404;
     }
-  }
+  };
 
-  async getGeotag(ctx) {
+  getGeotag = async (ctx) => {
     let Geotag = this.bookshelf.model('Geotag');
 
     if (!ctx.params.url_name) {
@@ -2236,9 +2235,9 @@ export default class ApiController {
       ctx.status = 404;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async getHashtag(ctx) {
+  getHashtag = async (ctx) => {
     let Hashtag = this.bookshelf.model('Hashtag');
 
     if (!ctx.params.name) {
@@ -2258,9 +2257,9 @@ export default class ApiController {
       ctx.status = 404;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async searchGeotags(ctx) {
+  searchGeotags = async (ctx) => {
     let Geotag = this.bookshelf.model('Geotag');
 
     try {
@@ -2276,9 +2275,9 @@ export default class ApiController {
       ctx.body = {error: e.message};
       return;
     }
-  }
+  };
 
-  async searchTags(ctx) {
+  searchTags = async (ctx) => {
     let Hashtag = this.bookshelf.model('Hashtag');
 
     try {
@@ -2293,12 +2292,12 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
   /**
    * Gets 3 related posts ordered by a number of matching tags + a random number between 0 and 3.
    */
-  async getRelatedPosts(ctx) {
+  getRelatedPosts = async (ctx) => {
     function formatArray(array) {
       return `(${array.map(function (e) { return "'" + e + "'"; }).join(',')})`
     }
@@ -2381,9 +2380,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async likeHashtag(ctx) {
+  likeHashtag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2413,10 +2412,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't like the tag: ${e.message}`};
     }
-  }
+  };
 
-
-  async unlikeHashtag(ctx) {
+  unlikeHashtag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2445,9 +2443,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't unlike the tag: ${e.message}`};
     }
-  }
+  };
 
-  async likeSchool(ctx) {
+  likeSchool = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2477,10 +2475,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't like the school: ${e.message}`};
     }
-  }
+  };
 
-
-  async unlikeSchool(ctx) {
+  unlikeSchool = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2509,9 +2506,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't unlike the school: ${e.message}`};
     }
-  }
+  };
 
-  async likeGeotag(ctx) {
+  likeGeotag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2541,10 +2538,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't like the geotag: ${e.message}`};
     }
-  }
+  };
 
-
-  async unlikeGeotag(ctx) {
+  unlikeGeotag = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2573,9 +2569,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: `Couldn't unlike the geotag: ${e.message}`};
     }
-  }
+  };
 
-  async getQuotes(ctx) {
+  getQuotes = async (ctx) => {
     const Quote = this.bookshelf.model('Quote');
 
     const quotes = await Quote
@@ -2586,9 +2582,9 @@ export default class ApiController {
       .fetch();
 
     ctx.body = quotes;
-  }
+  };
 
-  async getPostComments(ctx) {
+  getPostComments = async (ctx) => {
     let Comment = this.bookshelf.model('Comment');
     let q = Comment.forge()
       .query(qb => {
@@ -2600,9 +2596,9 @@ export default class ApiController {
     let comments = await q.fetchAll({require: false, withRelated: ['user']});
 
     ctx.body = comments;
-  }
+  };
 
-  async postComment(ctx) {
+  postComment = async (ctx) => {
     let Comment = this.bookshelf.model('Comment');
     let Post = this.bookshelf.model('Post');
 
@@ -2649,9 +2645,9 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = {error: e.message};
     }
-  }
+  };
 
-  async editComment(ctx) {
+  editComment = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2697,9 +2693,9 @@ export default class ApiController {
     await comment_object.save(null, {method: 'update'});
     await post_object.save(null, {method: 'update'});
     await this.getPostComments(ctx);
-  }
+  };
 
-  async removeComment(ctx) {
+  removeComment = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = {error: 'You are not authorized'};
@@ -2737,9 +2733,9 @@ export default class ApiController {
 
     await post_object.save(null, {method: 'update'});
     await this.getPostComments(ctx);
-  }
+  };
 
-  async countComments(posts) {
+  countComments = async (posts) => {
     let ids = posts.map(post => {
       return post.get('id');
     });
@@ -2767,5 +2763,5 @@ export default class ApiController {
 
     let zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
     return _.merge(_.zipObject(missing, zeroes), mapped_counts)
-  }
+  };
 }
