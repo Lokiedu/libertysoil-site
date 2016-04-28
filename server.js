@@ -154,6 +154,8 @@ if (indexOf(['test', 'travis'], exec_env) !== -1) {
 
 app.use(mount('/api/v1', api));
 
+app.use(convert(serve(`${__dirname}/public/`)));
+
 app.use(async function reactMiddleware(ctx, next) {
   const store = initState();
 
@@ -257,7 +259,5 @@ app.use(async function reactMiddleware(ctx, next) {
     ctx.body = e.message;
   }
 });
-
-app.use(convert(serve('public/')));
 
 export default app;
