@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/Lokiedu/libertysoil-site/badge.svg)](https://coveralls.io/github/Lokiedu/libertysoil-site)
+
 ## Requirements
 
 * Redis 3.0
@@ -22,5 +24,5 @@ Most source files of Libertysoil.org website are made available under the terms 
     Eastlands Industrial Estate
     Leiston
     IP16 4US
-    info@lokieducation.org 
+    info@lokieducation.org
     (+44) 17288 31433
