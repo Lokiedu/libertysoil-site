@@ -73,10 +73,20 @@ expect.addAssertion('body to contain', function (expect, subject, value) {
 });
 
 expect.addAssertion('body to satisfy', function (expect, subject, value) {
+  expect.errorMode = 'bubble';
   return expect(subjectToRequest(subject), 'to yield response', {
   }).then(function (context) {
     let body = context.httpResponse.body;
     expect(body, 'to satisfy', value);
+  });
+});
+
+expect.addAssertion('headers to satisfy', function (expect, subject, value) {
+  expect.errorMode = 'bubble';
+  return expect(subjectToRequest(subject), 'to yield response', {
+  }).then(function (context) {
+    let headers = context.httpResponse.headers;
+    expect(headers, 'to satisfy', value);
   });
 });
 
