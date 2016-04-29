@@ -2,8 +2,7 @@
 
 * Redis 3.0
 * Postgres 9.4
-* NodeJS (4.2.1 is actively used by developers now)
-* `npm install -g babel babel-eslint eslint eslint-plugin-react gulp nodemon knex`
+* NodeJS (5.11 is actively used by developers now)
 * `npm install`
 
 ## Setting Up Development Environment

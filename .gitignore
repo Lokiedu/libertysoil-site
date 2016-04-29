@@ -1,8 +1,10 @@
+/coverage
 /node_modules
-/secrets.env
 /npm-debug.log
 build
 public/scripts
 public/styles
 public/assets
-.idea
+/.idea
+/deploy/production/secrets.env
+/deploy/staging/secrets.env
