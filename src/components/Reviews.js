@@ -37,15 +37,15 @@ export default class Reviews extends Component {
     super(props);
 
     this.state = {
+      active: 0,
       mobile: true,
       sliding: false
     };
 
-    this.active = 0;
     this.slideshow = null;
     this.imageHovered = false;
     this.length = 0;
-    this.delay = 5000;
+    this.delay = 30000;
     this.clientWidth = 0;
   }
 
@@ -64,23 +64,34 @@ export default class Reviews extends Component {
     switch (!this.state.mobile && isVisible) {
       case true: {
         if (!this.slideshow) {
-          this.slideshow = setInterval(this.changeSlide, this.delay);
+          this.startSlideshow();
         }
         break;
       }
       case false: {
         if (this.slideshow) {
-          clearInterval(this.slideshow);
-          this.slideshow = null;
+          this.stopSlideshow();
         }
         break;
       }
     }
   };
 
+  startSlideshow = () => {
+    this.slideshow = setInterval(this.changeSlide, this.delay);
+  };
+
+  stopSlideshow = () => {
+    clearInterval(this.slideshow);
+    this.slideshow = null;
+  };
+
   clickHandler = (activeId) => {
-    this.active = activeId;
     this.panel.to(activeId);
+    this.setState({ active: activeId });
+
+    this.stopSlideshow();
+    this.startSlideshow();
   };
 
   changeSlide = () => {
@@ -88,7 +99,7 @@ export default class Reviews extends Component {
       return;
     }
 
-    let newActive = this.active;
+    let newActive = this.state.active;
     if (newActive === this.length - 1) {
       newActive = 0;
     } else {
@@ -98,8 +109,7 @@ export default class Reviews extends Component {
     this.setState({ sliding: true });
     setTimeout(() => {
       this.panel.to(newActive);
-      this.active = newActive;
-      this.setState({ sliding: false });
+      this.setState({ active: newActive, sliding: false });
     }, 500);
   };
 
@@ -201,13 +211,19 @@ export default class Reviews extends Component {
           </div>
           <div className="review_group__navigation page__body width">
             {quotes.map((q, i) => (
-              <Tab.Title activeClassName="review_group__navigation_item-active" className="review_group__navigation_item" index={i} key={i} onClick={this.clickHandler}>
+              <Tab.Title
+                activeClassName="review_group__navigation_item-active"
+                className="review_group__navigation_item"
+                index={i}
+                key={i}
+                onClick={this.clickHandler}
+              >
                 <img
                   alt=""
-                  className="user_box__avatar"
-                  height="64"
+                  className="user_box__avatar review_group__navigation_pic"
+                  height={this.state.active === i ? "80" : "64"}
                   src={q.avatar_url}
-                  width="64"
+                  width={this.state.active === i ? "80" : "64"}
                   onMouseOut={this.onImageMouseOut}
                   onMouseOver={this.onImageMouseOver}
                 />
