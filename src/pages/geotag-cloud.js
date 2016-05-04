@@ -18,6 +18,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { has, transform } from 'lodash';
 
 import {
   Page,
@@ -31,11 +32,11 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
-import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { TAG_PLANET } from '../consts/tags';
+import Continent from '../components/continent';
 
 
 class GeotagCloudPage extends Component {
@@ -56,6 +57,19 @@ class GeotagCloudPage extends Component {
 
     const geotagsForCloud = geotag_cloud.map(url_name => geotags[url_name]);
 
+    let geotagsByContinents = {};
+    geotagsForCloud.forEach(geotag => {
+      if (geotag.continent_code) {
+        const code = geotag.continent_code;
+
+        if (!has(geotagsByContinents, code)) {
+          geotagsByContinents[code] = [geotag];
+        } else {
+          geotagsByContinents[code].push(geotag);
+        }
+      }
+    });
+
     return (
       <div>
         <Helmet title="Geotags of " />
@@ -74,9 +88,10 @@ class GeotagCloudPage extends Component {
             <PageBody>
               <PageContent>
                 <PageCaption>Geotag cloud</PageCaption>
-                <div className="layout__row">
-                  <TagCloud geotags={geotagsForCloud}/>
-                </div>
+                {transform(geotagsByContinents, (arr, value, key) =>
+                  arr.push(<Continent code={key} geotags={value} key={key} />)
+                  , [])
+                }
               </PageContent>
             </PageBody>
           </PageMain>
