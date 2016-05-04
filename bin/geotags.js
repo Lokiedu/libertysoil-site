@@ -80,7 +80,7 @@ async function countries() {
   }
 
   return bulkUpsert('geotags', countryObjects, attrs => {
-    return {geonames_country_id: attrs.geonames_country_id, type: 'Country'};
+    return {country_code: attrs.country_code, type: 'Country'};
   });
 }
 
