@@ -33,20 +33,21 @@
   &:extend(.font-open_sans);
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1em;
+  line-height: 75px;
   display: block;
-  max-height: 115px;
+  height: 75px;
   font-size: 20px;
-  padding: 6vw 5vw;
+  padding: 0 5vw;
 
   @media @after-small {
     font-size: 22px;
-    padding: 4.5vw 5vw;
+    padding: 0 5vw;
+    height: 115px;
+    line-height: 115px;
   }
 
   @media @after-normal {
     font-size: 24px;
-    padding: 3vw 5vw;
   }
 }
 
