@@ -21,6 +21,7 @@ import * as a from '../actions';
 
 const initialState = i.Map({
   sidebarIsVisible: true,
+  sidebarSwitchedOff: false,
   progress: i.Map({}),
   comments: i.Map({})
 });
@@ -37,6 +38,18 @@ function reducer (state=initialState, action) {
         }
 
         state = state.set('sidebarIsVisible', isVisible);
+
+        break;
+      }
+    case a.UI__SWITCH_OFF_SIDEBAR:
+      {
+        state = state.set('sidebarSwitchedOff', true);
+
+        break;
+      }
+    case a.UI__SWITCH_ON_SIDEBAR:
+      {
+        state = state.set('sidebarSwitchedOff', false);
 
         break;
       }

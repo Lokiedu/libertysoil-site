@@ -21,15 +21,26 @@ import React, {
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
-import { toggleUISidebar } from '../actions';
+import {
+  toggleUISidebar,
+  switchOffUISidebar,
+  switchONUISidebar
+} from '../actions';
 import currentUserSelector from '../selectors/currentUser';
 import createSelector from '../selectors/createSelector';
 
 class HeaderLogo extends Component {
   toggleSidebar = () => {
     const {
-      dispatch
+      dispatch,
+      ui
     } = this.props;
+
+    if (ui.get('sidebarIsVisible')) {
+      dispatch(switchOffUISidebar());
+    } else {
+      dispatch(switchONUISidebar());
+    }
 
     dispatch(toggleUISidebar());
   };
@@ -55,7 +66,7 @@ class HeaderLogo extends Component {
     if (current_user.get('id')) {
       return (
         <div
-          onClick={this.toggleSidebar}
+         onClick={this.toggleSidebar}
           className="header__logo action"
         >
           {logoBody}

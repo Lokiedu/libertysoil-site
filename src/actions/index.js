@@ -99,6 +99,8 @@ export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
 export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
 export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
+export const UI__SWITCH_OFF_SIDEBAR = 'UI__SWITCH_OFF_SIDEBAR';
+export const UI__SWITCH_ON_SIDEBAR = 'UI__SWITCH_ON_SIDEBAR';
 
 export function addUser(user) {
   return {
@@ -547,6 +549,18 @@ export function toggleUISidebar(isVisible) {
   return {
     type: UI__TOGGLE_SIDEBAR,
     isVisible
+  }
+}
+
+export function switchOffUISidebar() {
+  return {
+    type: UI__SWITCH_OFF_SIDEBAR
+  }
+}
+
+export function switchONUISidebar() {
+  return {
+    type: UI__SWITCH_ON_SIDEBAR
   }
 }
 

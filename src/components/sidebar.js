@@ -70,7 +70,7 @@ class Sidebar extends React.Component {
       dispatch(toggleUISidebar(false));
     }
 
-    if (!ui.get('sidebarIsVisible') && (clientWidth >= breakpointWidth) && (clientWidth > this.state.clientWidth)) {
+    if (!ui.get('sidebarIsVisible') && !ui.get('sidebarSwitchedOff') && (clientWidth >= breakpointWidth) && (clientWidth > this.state.clientWidth)) {
       dispatch(toggleUISidebar(true));
     }
 
