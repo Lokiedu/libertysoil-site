@@ -79,9 +79,14 @@ class Register extends React.Component {
     this.first = '';
     this.last = '';
     this.usernameManuallyChanged = false;
-    this.state = {
-      username: ''
-    };
+  }
+
+  componentDidMount() {
+    this.username.addEventListener('input', this.inputUsername);
+  }
+
+  componentWillUnmount() {
+    this.username.removeEventListener('input', this.inputUsername);
   }
 
   submitHandler = (event) => {
@@ -111,12 +116,14 @@ class Register extends React.Component {
     return await client.getAvailableUsername(username);
   }
 
-  inputHandler = async (event) => {
-    if (this.usernameManuallyChanged)
+  changeName = async (event) => {
+    if (this.usernameManuallyChanged) {
       return;
+    }
 
     const field = event.target;
     const input = field.value.replace(/\W|\d/g, '');
+    field.value = input;
 
     if (field.getAttribute('name') === 'firstName') {
       this.first = input;
@@ -126,22 +133,23 @@ class Register extends React.Component {
 
     const result = this.first + this.last;
     if (!result) {
-      this.setState({ username: result });
+      this.username.value = result;
       return;
     }
 
     try {
-      this.setState({ username: await this.getAvailableUsername(result) });
+      this.username.value = await this.getAvailableUsername(result);
       this.error = '';
     } catch (e) {
       this.error = e.message;
     }
   };
 
-  inputUsername = async (event) => {
-    const result = event.target.value.replace(/\s|\W/g, '');
+  inputUsername = (event) => {
+    const field = event.target;
+    const result = field.value.replace(/\s|\W/g, '');
 
-    this.setState({ username: result });
+    field.value = result;
     this.usernameManuallyChanged = true;
   };
 
@@ -166,15 +174,15 @@ class Register extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="username">Username</label>
-            <input ref={(c) => this.username = c} className="input input-gray input-big input-block" type="text" placeholder="Username" id="username" name="username" required="required" onChange={this.inputUsername} value={this.state.username} {...fields.username}/>
+            <input ref={(c) => this.username = c} className="input input-gray input-big input-block" type="text" placeholder="Username" id="username" name="username" required="required" {...fields.username}/>
             {fields.username.error &&
               <Message message={fields.username.error} />
             }
