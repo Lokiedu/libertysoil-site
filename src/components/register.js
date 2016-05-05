@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
-import { form as inform } from 'react-inform';
+import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
 
 import ApiClient from '../api/client';
@@ -73,10 +73,21 @@ class Register extends React.Component {
     }).isRequired
   };
 
+  constructor() {
+    super();
+
+    this.first = '';
+    this.last = '';
+    this.usernameManuallyChanged = false;
+    this.state = {
+      username: ''
+    };
+  }
+
   submitHandler = (event) => {
     event.preventDefault();
 
-    const { fields, form } = this.props;
+    const { form } = this.props;
 
     form.forceValidate();
 
@@ -94,17 +105,6 @@ class Register extends React.Component {
       theForm.lastName.value
     );
   };
-
-  constructor() {
-    super();
-
-    this.first = '';
-    this.last = '';
-    this.usernameManuallyChanged = false;
-    this.state = {
-      username: ''
-    };
-  }
 
   async getAvailableUsername(username) {
     const client = new ApiClient(API_HOST);
@@ -136,8 +136,6 @@ class Register extends React.Component {
     } catch (e) {
       this.error = e.message;
     }
-
-    console.log(this.state.username);
   };
 
   inputUsername = async (event) => {
@@ -156,7 +154,6 @@ class Register extends React.Component {
     }
 
     const reset = ((e) => e.target.setCustomValidity(''));
-    console.log(fields.username);
     return (
     <div id="register" className="div">
       <header className="layout__row layout__row-double">
@@ -222,97 +219,51 @@ class Register extends React.Component {
   }
 }
 
-const checkEmailTaken = async (email) => {
+const checkEmailNotTaken = (email) => {
   const client = new ApiClient(API_HOST);
-  return await client.checkEmailTaken(email);
+  return client.checkEmailTaken(email).then(taken => !taken);
 };
 
-const checkUserExists = async (username) => {
+const checkUsernameNotTaken = (username) => {
   const client = new ApiClient(API_HOST);
-  return await client.checkUserExists(username);
+  return client.checkUserExists(username).then(exists => !exists);
 };
-
-const validateUsername = async (username) => {
-  if (!username) {
-    return 'Enter your username';
-  }
-
-  let taken;
-  try {
-    taken = await checkUserExists(username);
-  } catch (e) {
-    return e.message;
-  }
-
-  if (taken) {
-    return 'Username is taken';
-  } else {
-    return undefined;
-  }
-};
-
-const validateEmail = async (email) => {
-  if (!email) {
-    return 'Enter your email address';
-  }
-
-  let taken;
-  try {
-    taken = await checkEmailTaken(email);
-  } catch (e) {
-    return e.message;
-  }
-
-  if (taken) {
-    return 'Email is taken';
-  } else {
-    return undefined;
-  }
-}
 
 const validatePassword = (password) => {
   if (password && password.length < 8) {
-    return 'Password must contain at least 8 symbols';
-  } else {
-    return undefined;
+    return false;
   }
+  return true;
 };
 
-const validatePasswordRepeat = (password, repeat) => {
-  if (password !== repeat) {
-    return "Passwords don't match";
-  } else {
-    return undefined;
+const validatePasswordRepeat = (passwordRepeat, form) => {
+  if (form.password !== passwordRepeat) {
+    return false;
   }
+  return true;
 };
 
-const fields = ['username', 'password', 'passwordRepeat', 'email', 'agree'];
-const validate = async (values) => {
-  const {
-    username,
-    password,
-    passwordRepeat,
-    email,
-    agree
-  } = values;
-  const errors = {};
+const validateAgree = (agree) => {
+  return agree;
+}
 
-  errors.username = await validateUsername(username);
-  errors.email = await validateEmail(email);
-  errors.password = validatePassword(password);
-  errors.passwordRepeat = validatePasswordRepeat(password, passwordRepeat);
-  
-  if (!agree) {
-    errors.agree = 'You have to agree to Terms before registering';
+const WrappedRegister = inform(from({
+  username: {
+    'Username is taken': checkUsernameNotTaken
+  },
+  email: {
+    'Email is taken': checkEmailNotTaken
+  },
+  password: {
+    'Password must contain at least 8 symbols': validatePassword
+  },
+  passwordRepeat: {
+    'Passwords don\'t match': validatePasswordRepeat
+  },
+  agree: {
+    'You have to agree to Terms before registering': validateAgree
   }
-
-  return errors;
-};
-
-const WrappedRegister = inform({
-  fields,
-  validate
-})(Register);
+}))(Register);
 
 export default WrappedRegister;
 
