@@ -243,25 +243,25 @@ const validatePasswordRepeat = (passwordRepeat, form) => {
   return true;
 };
 
-const validateAgree = (agree) => {
-  return agree;
-}
-
 const WrappedRegister = inform(from({
   username: {
+    'You must enter username to continue': u => u,
     'Username is taken': checkUsernameNotTaken
   },
   email: {
+    'You must enter email to continue': e => e,
     'Email is taken': checkEmailNotTaken
   },
   password: {
+    'You must enter password to continue': p => p,
     'Password must contain at least 8 symbols': validatePassword
   },
   passwordRepeat: {
+    'You must enter your password again to continue': p => p,
     'Passwords don\'t match': validatePasswordRepeat
   },
   agree: {
-    'You have to agree to Terms before registering': validateAgree
+    'You have to agree to Terms before registering': a => a
   }
 }))(Register);
 
