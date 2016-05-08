@@ -12,8 +12,8 @@ export default (ComposedComponent) => {
     static displayName = 'ProfileHeader';
 
     handleClickOutside = (e) => {
-      var component = this.refs.root;
-      var el = ReactDOM.findDOMNode(component);
+      const component = this.refs.root;
+      const el = ReactDOM.findDOMNode(component);
 
       if (!el.contains(e.target)) {
         component.onClickOutside && component.onClickOutside(e);

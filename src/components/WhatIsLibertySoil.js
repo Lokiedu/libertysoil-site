@@ -41,8 +41,8 @@ export default class WhatIsLibertySoil extends Component {
   }
 
   render () {
-    var activeSlide = this.state.activeSlide;
-    var navigation;
+    const activeSlide = this.state.activeSlide;
+    let navigation;
 
     switch (activeSlide) {
       case 0:
