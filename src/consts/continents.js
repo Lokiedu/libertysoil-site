@@ -22,6 +22,10 @@ const CONTINENTS = {
   AF: {
     name: 'Africa',
     url_name: 'Africa'
+  },
+  AN: {
+    name: 'Antarctica',
+    url_name: 'Antarctica'
   }
 };
 
