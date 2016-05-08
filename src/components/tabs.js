@@ -133,7 +133,7 @@ export class Tabs extends Component {
 
     const tabs = React.Children.map(this.props.children, (item, i) => React.cloneElement(item, {
       key: i,
-      active: (this.state.active === i) ? true : false
+      active: (this.state.active === i)
     }));
 
     return (

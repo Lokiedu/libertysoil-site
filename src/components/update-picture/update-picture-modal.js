@@ -163,7 +163,7 @@ export default class UpdatePictureModal extends React.Component {
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">
-            <div disabled={this.state.error ? true : false} className="button button-wide button-red action" onClick={this.submitHandler}>Preview</div>
+            <div disabled={!!this.state.error} className="button button-wide button-red action" onClick={this.submitHandler}>Preview</div>
             <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.props.onClose}>Cancel</div>
           </footer>
         </ModalComponent.Actions>
