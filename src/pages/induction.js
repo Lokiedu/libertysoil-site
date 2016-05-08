@@ -57,7 +57,7 @@ class InductionPage extends React.Component {
     const result = await trigger.loadInitialSuggestions();
 
     if (!result) {
-      return {status: 307, redirectTo: '/'};
+      return { status: 307, redirectTo: '/' };
     }
 
     return 200;

@@ -55,7 +55,7 @@ export class TagPage extends Component {
     try {
       hashtag = await hashtag;
     } catch (e) {
-      store.dispatch(addHashtag({name: params.tag}));
+      store.dispatch(addHashtag({ name: params.tag }));
 
       return 404;
     }
@@ -90,7 +90,7 @@ export class TagPage extends Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
     const tag = hashtags[params.tag];
 
@@ -134,5 +134,5 @@ export class TagPage extends Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(TagPage);

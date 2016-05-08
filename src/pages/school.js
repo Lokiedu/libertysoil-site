@@ -27,7 +27,7 @@ import {
   resetCreatePostForm,
   updateCreatePostForm
 } from '../actions';
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client'
 import NotFound from './not-found';
 import BaseTagPage from './base/tag';
@@ -54,7 +54,7 @@ export class SchoolPage extends React.Component {
     try {
       school = await school;
     } catch (e) {
-      store.dispatch(addSchool({url_name: params.school_name}));
+      store.dispatch(addSchool({ url_name: params.school_name }));
 
       return 404;
     }
@@ -86,9 +86,9 @@ export class SchoolPage extends React.Component {
     } = this.props;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools, {url_name: this.props.params.school_name});
+    const school = find(schools, { url_name: this.props.params.school_name });
 
     if (!school) {
       return <script />; // not loaded yet
@@ -130,5 +130,5 @@ export class SchoolPage extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolPage);

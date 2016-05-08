@@ -62,7 +62,7 @@ export default class UpdatePictureModal extends React.Component {
       }
     }
 
-    this.setState({error});
+    this.setState({ error });
     return (error == '');
   }
 
@@ -84,14 +84,14 @@ export default class UpdatePictureModal extends React.Component {
   };
 
   changeHandler = throttle(() => {
-    this.setState({error: ''});
+    this.setState({ error: '' });
   }, 100);
 
   submitHandler = async () => {
     const { avatar, crop } = this.form._submit();
 
     if (!avatar) {
-      this.setState({error: 'Nothing to preview. Upload image first.'});
+      this.setState({ error: 'Nothing to preview. Upload image first.' });
       return;
     }
 
@@ -132,7 +132,7 @@ export default class UpdatePictureModal extends React.Component {
   }
 
   closeHandler = () => {
-    this.setState({error: ''});
+    this.setState({ error: '' });
     this.props.onClose();
   }
 
@@ -149,7 +149,7 @@ export default class UpdatePictureModal extends React.Component {
           <ModalComponent.Title>Upload new {what} for {where}</ModalComponent.Title>
         </ModalComponent.Head>
         <ModalComponent.Body className="update_picture__modal">
-          { this.state.error &&
+          {this.state.error &&
             <div className="layout__row">
               <Message message={this.state.error} />
             </div>

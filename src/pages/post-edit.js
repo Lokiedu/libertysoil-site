@@ -33,7 +33,7 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client'
 import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
@@ -66,7 +66,7 @@ class PostEditPage extends React.Component {
       let post = await client.postInfo(params.uuid);
       store.dispatch(addPost(post));
     } catch (e) {
-      store.dispatch(addPost({error: true, id: params.uuid, user: {}}));
+      store.dispatch(addPost({ error: true, id: params.uuid, user: {} }));
 
       return 404;
     }
@@ -81,7 +81,7 @@ class PostEditPage extends React.Component {
   }
 
   _handleSubmit = () => {
-    browserHistory.push(getUrl(URL_NAMES.POST, {uuid: this.props.params.uuid}));
+    browserHistory.push(getUrl(URL_NAMES.POST, { uuid: this.props.params.uuid }));
   };
 
   _handleDelete = () => {
@@ -154,5 +154,5 @@ class PostEditPage extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetEditPostForm, updateEditPostForm}, dispatch)
+  ...bindActionCreators({ resetEditPostForm, updateEditPostForm }, dispatch)
 }))(PostEditPage);

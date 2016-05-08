@@ -121,20 +121,20 @@ export default class Toolbar extends React.Component {
     return (
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
-          <Icon icon={likeIcon} className={likeClass} outline={true} size="small" />
+          <Icon icon={likeIcon} className={likeClass} outline size="small" />
           {!!post.likers.length &&
             <span className="card__toolbar_item_value">{post.likers.length}</span>
           }
         </span>
         <span className="card__toolbar_item action" onClick={fav_action}>
-          <Icon icon={favIcon} className={favClass} outline={true} size="small" />
+          <Icon icon={favIcon} className={favClass} outline size="small" />
           {!!post.favourers.length &&
             <span className="card__toolbar_item_value">{post.favourers.length}</span>
           }
         </span>
 
         <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: post.id })} >
-          <Icon icon="chat_bubble_outline" outline={true} size="small" />
+          <Icon icon="chat_bubble_outline" outline size="small" />
           <span className="card__toolbar_item_value">{post.comments}</span>
         </Link>
       </div>

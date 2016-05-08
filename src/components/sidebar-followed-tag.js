@@ -16,7 +16,7 @@ export default class SidebarFollowedTag extends React.Component {
 
   render() {
     let { urlId, name, type } = this.props;
-    let truncatedName = truncate(name, {length: 50});
+    let truncatedName = truncate(name, { length: 50 });
     let className;
     let url;
 

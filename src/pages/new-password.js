@@ -70,7 +70,7 @@ class PasswordForm extends React.Component {
       errors.password = null;
     }
 
-    this.setState({errors});
+    this.setState({ errors });
   }
 
   _validatePasswordRepeat() {
@@ -83,7 +83,7 @@ class PasswordForm extends React.Component {
       errors.password_repeat = null;
     }
 
-    this.setState({errors});
+    this.setState({ errors });
   }
 
   render() {

@@ -218,7 +218,7 @@ export default class Comment extends Component {
         <div className="comment__container">
           <header className="comment__header">
             <div className="comment__author">
-              <User user={author} avatarSize="17" hideText={true} />
+              <User user={author} avatarSize="17" hideText />
             </div>
           </header>
           {this.renderBody()}

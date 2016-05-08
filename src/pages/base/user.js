@@ -75,7 +75,7 @@ export default class BaseUserPage extends React.Component {
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
-              <User user={page_user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
+              <User user={page_user} avatarSize="36" isRound hideText isLink={false} />
             </Breadcrumbs>
           </div>
         </Header>

@@ -36,11 +36,11 @@ class Dropdown extends Component {
   };
 
   toggleVisibility = () => {
-    this.setState({isVisible: !this.state.isVisible});
+    this.setState({ isVisible: !this.state.isVisible });
   };
 
   hide = () => {
-    this.setState({isVisible: false});
+    this.setState({ isVisible: false });
   };
 
   render () {

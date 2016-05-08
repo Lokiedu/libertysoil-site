@@ -56,7 +56,7 @@ export class GeotagPage extends Component {
     try {
       geotag = await geotag;
     } catch (e) {
-      store.dispatch(addGeotag({url_name: params.url_name}));
+      store.dispatch(addGeotag({ url_name: params.url_name }));
 
       return 404;
     }
@@ -90,7 +90,7 @@ export class GeotagPage extends Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
     const geotag = geotags[this.props.params.url_name];
     const title = geotag ? geotag.name : this.props.params.url_name;
@@ -135,5 +135,5 @@ export class GeotagPage extends Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagPage);

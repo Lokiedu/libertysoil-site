@@ -51,7 +51,7 @@ export default class UpdatePicture extends React.Component {
   };
 
   open = () => {
-    this.setState({modalVisible: true});
+    this.setState({ modalVisible: true });
   };
 
   submitHandler = ({ production, preview }) => {
@@ -61,7 +61,7 @@ export default class UpdatePicture extends React.Component {
   };
 
   close = () => {
-    this.setState({modalVisible: false});
+    this.setState({ modalVisible: false });
     this.props.onClose();
   };
 

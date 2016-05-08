@@ -24,7 +24,7 @@ import NotFound from './not-found'
 import BaseUserPage from './base/user'
 import River from '../components/river_of_posts';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client'
 import { addUser, setUserPosts } from '../actions';
 import { ActionsTrigger } from '../triggers'
@@ -43,7 +43,7 @@ class UserPage extends React.Component {
   }
 
   render() {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+    let page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       ui,
       users,

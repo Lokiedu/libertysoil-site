@@ -51,7 +51,7 @@ export default class PasswordForm extends React.Component {
       errors.old_password = null;
     }
 
-    this.setState({errors});
+    this.setState({ errors });
   }
 
   _validateNewPassword() {
@@ -64,7 +64,7 @@ export default class PasswordForm extends React.Component {
       errors.new_password = null;
     }
 
-    this.setState({errors});
+    this.setState({ errors });
   }
 
   _validateNewPasswordRepeat() {
@@ -77,7 +77,7 @@ export default class PasswordForm extends React.Component {
       errors.new_password_repeat = null;
     }
 
-    this.setState({errors});
+    this.setState({ errors });
   }
 
   _handleSubmit(event) {

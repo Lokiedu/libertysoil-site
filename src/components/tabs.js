@@ -83,7 +83,7 @@ export class Tabs extends Component {
   };
 
   to = (i) => {
-    this.setState({active: i});
+    this.setState({ active: i });
   }
 
   clickHandler = (i) => {
@@ -138,7 +138,7 @@ export class Tabs extends Component {
 
     return (
       <div className={className}>
-        { !this.props.invert &&
+        {!this.props.invert &&
           <nav className={menuClassName}>
             {titles}
           </nav>
@@ -146,7 +146,7 @@ export class Tabs extends Component {
         <div className={panelClassName}>
           {tabs}
         </div>
-        { this.props.invert &&
+        {this.props.invert &&
           <nav className={menuClassName}>
             {titles}
           </nav>

@@ -35,7 +35,7 @@ export default class AddHashtagForm extends Component {
 
     let tagName = this._input.value.trim();
 
-    this._addTag({name: tagName});
+    this._addTag({ name: tagName });
   };
 
   _selectRecentlyUsedHashtag = (tag) => {

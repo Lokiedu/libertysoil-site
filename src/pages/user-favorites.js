@@ -24,7 +24,7 @@ import NotFound from './not-found'
 import BaseUserFavoritesPage from './base/user'
 import River from '../components/river_of_posts';
 import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import { addUser, setPostsToFavouritesRiver } from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
@@ -42,7 +42,7 @@ class UserFavoritesPage extends React.Component {
   }
 
   render () {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+    let page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,
       current_user,

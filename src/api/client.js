@@ -298,18 +298,18 @@ export default class ApiClient
   }
 
   async changePassword(old_password, new_password) {
-    let response = await this.postJSON(`/api/v1/user/password`, {old_password, new_password});
+    let response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
     return response.body;
   }
 
   async resetPassword(email) {
-    let response = await this.postJSON(`/api/v1/resetpassword`, {email});
+    let response = await this.postJSON(`/api/v1/resetpassword`, { email });
 
     return response.body;
   }
 
   async newPassword(hash, password, password_repeat) {
-    let response = await this.postJSON(`/api/v1/newpassword/${hash}`, {password, password_repeat});
+    let response = await this.postJSON(`/api/v1/newpassword/${hash}`, { password, password_repeat });
     return response.body;
   }
 
@@ -484,7 +484,7 @@ export default class ApiClient
   }
 
   async processImage(id, transforms, derived_id=null) {
-    let response = await this.postJSON('/api/v1/image', {original_id: id, transforms: JSON.stringify(transforms), derived_id: derived_id});
+    let response = await this.postJSON('/api/v1/image', { original_id: id, transforms: JSON.stringify(transforms), derived_id: derived_id });
     return response.body;
   }
 

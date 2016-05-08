@@ -86,7 +86,7 @@ export default class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <User user={user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
+                <User user={user} avatarSize="36" isRound hideText isLink={false} />
               </div>
             </Breadcrumbs>
           </div>
@@ -103,7 +103,7 @@ export default class BaseSettingsPage extends React.Component {
                     current_user={current_user}
                     following={following}
                     followers={followers}
-                    editable={true}
+                    editable
                   />
                   <div className="page__content page__content-spacing">
                     <div className="layout__row layout-small">

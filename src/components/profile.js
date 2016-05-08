@@ -61,9 +61,9 @@ export default class ProfileHeader extends React.Component {
 
       _production.resize = { width: AVATAR_SIZE.width, height: AVATAR_SIZE.height };
 
-      this.setState({avatar: {production: _production, preview}});
+      this.setState({ avatar: { production: _production, preview } });
     } else {
-      this.setState({avatar: {production: null, preview: null}});
+      this.setState({ avatar: { production: null, preview: null } });
     }
   };
 
@@ -80,9 +80,9 @@ export default class ProfileHeader extends React.Component {
         _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
 
-      this.setState({head_pic: {production: _production, preview}});
+      this.setState({ head_pic: { production: _production, preview } });
     } else {
-      this.setState({head_pic: {production: null, preview: null}});
+      this.setState({ head_pic: { production: null, preview: null } });
     }
   };
 
@@ -175,18 +175,18 @@ export default class ProfileHeader extends React.Component {
     name = name.trim();
 
     return (
-      <div ref={c => this.root = c} className="profile" style={{backgroundImage: `url('${picture}')`}}>
+      <div ref={c => this.root = c} className="profile" style={{ backgroundImage: `url('${picture}')` }}>
         <div className="profile__body">
           <div className="layout__row">
             <div className="layout__grid">
               <div className="layout__grid_item layout__grid_item-wide">
                 <User
                   user={user}
-                  editorConfig={editable ? {flexible: false, onUpdateAvatar: this.addAvatar} : false}
+                  editorConfig={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
                   avatarPreview={avatarPreview}
                   avatarSize="120"
-                  isRound={true}
-                  hideText={true}
+                  isRound
+                  hideText
                 />
               </div>
               {editable &&
@@ -195,8 +195,8 @@ export default class ProfileHeader extends React.Component {
                     what="profile background"
                     where={modalName}
                     preview={PROFILE_HEADER_SIZE.PREVIEW}
-                    flexible={true}
-                    limits={{min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG}}
+                    flexible
+                    limits={{ min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG }}
                     onSubmit={this.addHeaderPicture}
                   />
                 </div>

@@ -65,10 +65,10 @@ export class Auth extends React.Component {
     const is_first_login = !more || more.get('first_login');
 
     if (is_first_login) {
-      return {status: 307, redirectTo: '/induction'};
+      return { status: 307, redirectTo: '/induction' };
     }
 
-    return {status: 307, redirectTo: '/'};
+    return { status: 307, redirectTo: '/' };
   }
 
   render() {

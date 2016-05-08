@@ -63,7 +63,7 @@ export default class GeotagSelect extends Component {
     let client = new ApiClient(API_HOST);
     let response = await client.searchGeotags(value.trim());
 
-    this.setState({suggestions: response.geotags.slice(0, 5)});
+    this.setState({ suggestions: response.geotags.slice(0, 5) });
   }, 300);
 
   _getSuggestionValue = (geotag) => geotag.name;

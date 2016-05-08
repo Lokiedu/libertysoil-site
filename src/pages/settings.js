@@ -72,7 +72,7 @@ class SettingsPage extends React.Component {
   };
 
   onSave = async () => {
-    this.setState({processing: true});
+    this.setState({ processing: true });
 
     let roles = this.state.roles;
     const client = new ApiClient(API_HOST);
@@ -82,7 +82,7 @@ class SettingsPage extends React.Component {
     let pictures = this.base._getNewPictures();
 
     for (let name in pictures) {
-      processedPictures[name] = await triggers.uploadPicture({...pictures[name]});
+      processedPictures[name] = await triggers.uploadPicture({ ...pictures[name] });
     }
 
     let result = await triggers.updateUserInfo({
@@ -98,7 +98,7 @@ class SettingsPage extends React.Component {
       this.base._clearPreview();
     }
 
-    this.setState({processing: false});
+    this.setState({ processing: false });
   };
 
   addRole = () => {
@@ -161,7 +161,7 @@ class SettingsPage extends React.Component {
             roles={roles}
             onAdd={this.addRole}
             onChange={this.onRolesChange}
-            />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  />
         </div>
       </BaseSettingsPage>
     )

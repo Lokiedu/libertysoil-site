@@ -21,7 +21,7 @@ export default class Textarea extends Component {
         <input
           type="submit"
           ref={c => this.submit = c}
-          style={{display: 'none'}}
+          style={{ display: 'none' }}
         />
       </div>
     );

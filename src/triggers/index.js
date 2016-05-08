@@ -309,7 +309,7 @@ export class ActionsTrigger {
     let user = null;
 
     try {
-      const result = await this.client.login({username, password});
+      const result = await this.client.login({ username, password });
 
       if (!result.success) {
         this.dispatch(setCurrentUser(null));
@@ -376,7 +376,7 @@ export class ActionsTrigger {
 
     // FIXME: disable form
     try {
-      let result = await this.client.registerUser({username, password, email, firstName, lastName});
+      let result = await this.client.registerUser({ username, password, email, firstName, lastName });
 
       if (result.success) {
         this.dispatch(registrationSuccess());

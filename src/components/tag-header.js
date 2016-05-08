@@ -158,7 +158,7 @@ export default class TagHeader extends React.Component {
           liked_tags={getLikedTags(current_user, type)}
           tag={url_name}
           triggers={likeTriggers}
-          outline={true}
+          outline
           size="midl"
         />
       ];
@@ -186,7 +186,7 @@ export default class TagHeader extends React.Component {
           activeClassName="tabs__link-active"
           className="tabs__link button button-midi"
           to={`/${prefix}/${url_name}/edit`}
-          visible={true}
+          visible
         >
           Edit
         </Link>

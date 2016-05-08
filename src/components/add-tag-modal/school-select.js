@@ -59,7 +59,7 @@ export default class SchoolSelect extends Component {
     let regex = new RegExp('^' + value.trim(), 'i');
     let suggestions = this.props.schools.filter(school => regex.test(school.name)).slice(0, 5);
 
-    this.setState({suggestions});
+    this.setState({ suggestions });
   };
 
   _handleChange = (event, { newValue }) => {

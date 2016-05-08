@@ -39,7 +39,7 @@ export async function renderVerificationTemplate(dateObject, username, email, co
 
   return await renderFileAsync(
     `${__dirname}/verification.ejs`,
-    {confirmationLink, date, email, host: API_HOST, username }
+    { confirmationLink, date, email, host: API_HOST, username }
   );
 }
 
@@ -75,11 +75,11 @@ export async function renderNewCommentTemplate(comment, commentAuthor, post, pos
     },
     commentAuthor: {
       name: `${commentAuthor.more.firstName} ${commentAuthor.more.lastName}`,
-      url: API_HOST + getUrl(URL_NAMES.USER, {username: commentAuthor.username}),
+      url: API_HOST + getUrl(URL_NAMES.USER, { username: commentAuthor.username }),
       avatarUrl: authorAvatarUrl
     },
     post: {
-      url: API_HOST + getUrl(URL_NAMES.POST, {uuid: comment.post_id}),
+      url: API_HOST + getUrl(URL_NAMES.POST, { uuid: comment.post_id }),
       title: post.more.pageTitle
     },
     postAuthor: {

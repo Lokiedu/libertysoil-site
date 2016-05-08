@@ -142,7 +142,7 @@ export default class Reviews extends Component {
               <img className="user_box__avatar" src={q.avatar_url} width="64px" height="64px" alt=""/>
               <div className="user_box__body user_box__body-flexless">
                 <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                { q.description &&
+                {q.description &&
                   <p className="user_box__text">
                     <a href={q.link}>
                       {q.description}
@@ -164,12 +164,13 @@ export default class Reviews extends Component {
         <Tab key={i}>
           <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
             <img onMouseOver={() => this.imageHovered = true}
-                 onMouseOut={() => this.imageHovered = false}
-                 className="user_box__avatar"
-                 src={q.avatar_url}
-                 width="64"
-                 height="64"
-                 alt=""/>
+              onMouseOut={() => this.imageHovered = false}
+              className="user_box__avatar"
+              src={q.avatar_url}
+              width="64"
+              height="64"
+              alt=""
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  />
           </TabTitle>
           <TabContent>
             <blockquote className="review">
@@ -180,7 +181,7 @@ export default class Reviews extends Component {
                 <section className="user_box">
                   <div className="user_box__body">
                     <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                    { q.description &&
+                    {q.description &&
                       <p className="user_box__text">
                         <a href={q.link}>
                           {q.description}
@@ -204,7 +205,7 @@ export default class Reviews extends Component {
       );
     }
 
-    return <div>
+    return (<div>
         <div className="page__container-bg">
         <div className="page__body page__body-rows width">
           <h2 className="page__title content-center layout__space"></h2>
@@ -217,6 +218,6 @@ export default class Reviews extends Component {
           </div>
         </div>
       </div>
-    </div>;
+    </div>);
   }
 }

@@ -32,7 +32,7 @@ let EditPostButton = (props) => {
   return (
     <div className="card__toolbar_item">
       <Link to={post_edit_url}>
-        <Icon icon="edit"outline={true} size="small" />
+        <Icon icon="edit"outline size="small" />
       </Link>
     </div>
   );

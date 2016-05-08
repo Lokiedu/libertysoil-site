@@ -106,7 +106,7 @@ export default class Tag extends React.Component {
     }
 
     if (truncated) {
-      tagName = truncate(name, {length: 16});
+      tagName = truncate(name, { length: 16 });
     }
 
     if (!collapsed && tagName) {

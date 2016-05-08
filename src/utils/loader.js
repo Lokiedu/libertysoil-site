@@ -118,7 +118,7 @@ export class FetchHandler {
           const response = await route.component.fetchData(nextState.params, this.store, this.apiClient);
 
           if (isPlainObject(response)) {
-            const {status, redirectTo} = response;
+            const { status, redirectTo } = response;
             this.status = status;
             this.redirectTo = redirectTo;
 

@@ -37,7 +37,7 @@ import { ShortTextPost, PostWrapper } from '../components/post'
 import Sidebar from '../components/sidebar';
 import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client'
 import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
@@ -86,7 +86,7 @@ export class PostPage extends React.Component {
                          ? relatedPostIds.map(id => this.props.posts[id])
                          : null;
 
-    const authorUrl = getUrl(URL_NAMES.USER, {username: author.username});
+    const authorUrl = getUrl(URL_NAMES.USER, { username: author.username });
     let authorName = author.username;
 
     if (author.more && (author.more.firstName || author.more.lastName)) {
@@ -98,7 +98,7 @@ export class PostPage extends React.Component {
         <Helmet title={`${current_post.more.pageTitle} on `} />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
           <HeaderLogo small />
-          <Breadcrumbs title={truncate(current_post.text, {length: 16})}>
+          <Breadcrumbs title={truncate(current_post.text, { length: 16 })}>
             <Link
               className="user_box__avatar user_box__avatar-round"
               title={authorName}
@@ -121,7 +121,7 @@ export class PostPage extends React.Component {
                   post={current_post}
                   comments={this.props.comments}
                   ui={this.props.ui}
-                  showAllComments={true}
+                  showAllComments
                   triggers={triggers}
                 >
                   <ShortTextPost post={current_post}/>

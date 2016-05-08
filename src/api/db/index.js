@@ -101,7 +101,7 @@ export function initBookshelfFromKnex(knex) {
 
       if (
         this.id != userId &&
-        _.isUndefined(this.related('ignored_users').find({id: userId}))
+        _.isUndefined(this.related('ignored_users').find({ id: userId }))
       ) {
         await this.ignored_users().attach(userId);
       }
@@ -148,7 +148,7 @@ export function initBookshelfFromKnex(knex) {
       obj.set('more', moreData);
     }
 
-    await obj.save(null, {method: 'insert'});
+    await obj.save(null, { method: 'insert' });
 
     return obj;
   };
@@ -236,7 +236,7 @@ export function initBookshelfFromKnex(knex) {
 
       const updatedAtPromise = knex('schools')
         .whereIn('name', names)
-        .update({updated_at: new Date().toJSON()});
+        .update({ updated_at: new Date().toJSON() });
 
       return Promise.all([
         attachPromise,
@@ -328,14 +328,14 @@ export function initBookshelfFromKnex(knex) {
 
   Hashtag.createOrSelect = async (name) => {
     try {
-      return await Hashtag.where({ name }).fetch({require: true});
+      return await Hashtag.where({ name }).fetch({ require: true });
     } catch (e) {
       let hashtag = new Hashtag({
         id: uuid.v4(),
         name
       });
 
-      await hashtag.save(null, {method: 'insert'});
+      await hashtag.save(null, { method: 'insert' });
       return hashtag
     }
   };
@@ -360,14 +360,14 @@ export function initBookshelfFromKnex(knex) {
 
   School.createOrSelect = async (name) => {
     try {
-      return await School.where({ name }).fetch({require: true});
+      return await School.where({ name }).fetch({ require: true });
     } catch (e) {
       let school = new School({
         id: uuid.v4(),
         name
       });
 
-      await school.save(null, {method: 'insert'});
+      await school.save(null, { method: 'insert' });
       return school;
     }
   };

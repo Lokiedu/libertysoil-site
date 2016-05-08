@@ -54,9 +54,9 @@ export default class SideSuggestedUsers extends React.Component {
   };
 
   ignoreUser = async (user) => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     await this.props.triggers.ignoreUser(user);
-    this.setState({loading: false});
+    this.setState({ loading: false });
   }
 
   render() {
@@ -79,7 +79,7 @@ export default class SideSuggestedUsers extends React.Component {
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        { _.take(users, 3).map((user) => (
+        {_.take(users, 3).map((user) => (
           <div className={className} key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User

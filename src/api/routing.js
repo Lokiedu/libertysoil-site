@@ -20,7 +20,7 @@ import multer from 'koa-multer';
 
 import ApiController from './controller';
 
-let upload = multer({storage: multer.memoryStorage()});
+let upload = multer({ storage: multer.memoryStorage() });
 
 export function initApi(bookshelf) {
   let controller = new ApiController(bookshelf);

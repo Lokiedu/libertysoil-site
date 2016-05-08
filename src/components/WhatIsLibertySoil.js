@@ -46,40 +46,40 @@ export default class WhatIsLibertySoil extends Component {
 
     switch (activeSlide) {
       case 0:
-        navigation = <p>
+        navigation = (<p>
           <span className="highlight">Why join LibertySoil:</span>&nbsp;<span className="link" onClick={this.changeSlide.bind(this, 1)}>Children</span>, <span className="link" onClick={this.changeSlide.bind(this, 2)}>Parents</span>, <span className="link" onClick={this.changeSlide.bind(this, 3)}>Teachers</span>, <span className="link" onClick={this.changeSlide.bind(this, 4)}>Schools</span> and the <span className="link" onClick={this.changeSlide.bind(this, 5)}>Society</span>?
-        </p>;
+        </p>);
         break;
 
       case 1:
-        navigation = <p>
+        navigation = (<p>
           <span className="link" onClick={this.changeSlide.bind(this, 0)}>Why join LibertySoil:</span>&nbsp;<span className="highlight">Children</span>, <span className="link" onClick={this.changeSlide.bind(this, 2)}>Parents</span>, <span className="link" onClick={this.changeSlide.bind(this, 3)}>Teachers</span>, <span className="link" onClick={this.changeSlide.bind(this, 4)}>Schools</span> and the <span className="link" onClick={this.changeSlide.bind(this, 5)}>Society</span>?
-        </p>;
+        </p>);
         break;
 
       case 2:
-        navigation = <p>
+        navigation = (<p>
           <span className="link" onClick={this.changeSlide.bind(this, 0)}>Why join LibertySoil:</span>&nbsp;<span className="link" onClick={this.changeSlide.bind(this, 1)}>Children</span>, <span className="highlight">Parents</span>, <span className="link" onClick={this.changeSlide.bind(this, 3)}>Teachers</span>, <span className="link" onClick={this.changeSlide.bind(this, 4)}>Schools</span> and the <span className="link" onClick={this.changeSlide.bind(this, 5)}>Society</span>?
-        </p>;
+        </p>);
         break;
 
 
       case 3:
-        navigation = <p>
+        navigation = (<p>
           <span className="link" onClick={this.changeSlide.bind(this, 0)}>Why join LibertySoil:</span>&nbsp;<span className="link" onClick={this.changeSlide.bind(this, 1)}>Children</span>, <span className="link" onClick={this.changeSlide.bind(this, 2)}>Parents</span>, <span className="highlight">Teachers</span>, <span className="link" onClick={this.changeSlide.bind(this, 4)}>Schools</span> and the <span className="link" onClick={this.changeSlide.bind(this, 5)}>Society</span>?
-        </p>;
+        </p>);
         break;
 
       case 4:
-        navigation = <p>
+        navigation = (<p>
           <span className="link" onClick={this.changeSlide.bind(this, 0)}>Why join LibertySoil:</span>&nbsp;<span className="link" onClick={this.changeSlide.bind(this, 1)}>Children</span>, <span className="link" onClick={this.changeSlide.bind(this, 2)}>Parents</span>, <span className="link" onClick={this.changeSlide.bind(this, 3)}>Teachers</span>, <span className="highlight">Schools</span> and the <span className="link" onClick={this.changeSlide.bind(this, 5)}>Society</span>?
-        </p>;
+        </p>);
         break;
 
       case 5:
-        navigation = <p>
+        navigation = (<p>
           <span className="link" onClick={this.changeSlide.bind(this, 0)}>Why join LibertySoil:</span>&nbsp;<span className="link" onClick={this.changeSlide.bind(this, 1)}>Children</span>, <span className="link" onClick={this.changeSlide.bind(this, 2)}>Parents</span>, <span className="link" onClick={this.changeSlide.bind(this, 3)}>Teachers</span>, <span className="link" onClick={this.changeSlide.bind(this, 4)}>Schools</span> and the <span className="highlight">Society</span>?
-        </p>;
+        </p>);
         break;
     }
 

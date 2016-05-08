@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
 import TagIcon from './tag-icon';
@@ -97,7 +97,7 @@ export default class EditPost extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.id === nextProps.post.id) {
-      this.setState({upToDate: true});
+      this.setState({ upToDate: true });
     }
   }
 
@@ -277,7 +277,7 @@ export default class EditPost extends React.Component {
             </div>
           </div>
         </form>
-        { this.state.upToDate &&
+        {this.state.upToDate &&
           <AddTagModal
             ref={(c) => this._addTagModal = c}
             allSchools={allSchools}

@@ -122,7 +122,7 @@ export default class User extends Component {
         <UpdatePicture
           what="profile picture"
           where={modalName}
-          limits={{min: AVATAR_SIZE}}
+          limits={{ min: AVATAR_SIZE }}
           preview={AVATAR_SIZE}
           flexible={editorConfig.flexible}
           onSubmit={editorConfig.onUpdateAvatar}

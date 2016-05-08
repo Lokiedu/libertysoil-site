@@ -28,7 +28,7 @@ let ShortTextPost = ({ post }) => {
   }
 
   return (
-    <Linkify properties={{target: '_blank'}}>
+    <Linkify properties={{ target: '_blank' }}>
       {text}
     </Linkify>
   );

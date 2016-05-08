@@ -45,7 +45,7 @@ export default class UpdatePictureForm extends React.Component {
   }
 
   clearHandler = () => {
-    this.setState({image: null});
+    this.setState({ image: null });
 
     this.props.onClear();
   }

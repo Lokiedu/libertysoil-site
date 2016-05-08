@@ -23,7 +23,7 @@ import Helmet from 'react-helmet';
 import NotFound from './not-found'
 import BaseUserPage from './base/user'
 import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import { addUser } from '../actions';
 import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
@@ -36,7 +36,7 @@ class AboutUserPage extends React.Component {
   }
 
   render() {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+    let page_user = _.find(this.props.users, { username: this.props.params.username });
     let linesOfBio = <p>No information provided...</p>;
 
     if (_.isUndefined(page_user)) {

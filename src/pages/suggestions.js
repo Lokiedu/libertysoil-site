@@ -71,7 +71,7 @@ class SuggestionsPage extends React.Component {
     const result = await triggers.loadPersonalizedSuggestions()
 
     if (!result) {
-      return {status: 307, redirectTo: '/'};
+      return { status: 307, redirectTo: '/' };
     }
 
     return 200;

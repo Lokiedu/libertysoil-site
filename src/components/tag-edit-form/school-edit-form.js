@@ -132,7 +132,7 @@ class SchoolEditForm extends React.Component {
           australian: { is_member: null },
           eudec: { is_member: theForm.eudec.checked },
           iden: { is_member: theForm.iden.checked },
-          alternative_to_school: { is_member: theForm.alternative_to_school.checked},
+          alternative_to_school: { is_member: theForm.alternative_to_school.checked },
           wikipedia_list: { is_member: theForm.wikipedia_list.checked }
         }
       }
@@ -149,7 +149,7 @@ class SchoolEditForm extends React.Component {
       triggers,
       messages
     } = this.props;
-    const initialLocation = {lat: school.lat, lon: school.lon};
+    const initialLocation = { lat: school.lat, lon: school.lon };
 
     let is_open = 'unknown';
 

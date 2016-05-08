@@ -23,7 +23,7 @@ import Helmet from 'react-helmet';
 
 import VisibilitySensor from 'react-visibility-sensor';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 
 import {
@@ -130,7 +130,7 @@ export class List extends React.Component {
       users
     } = this.props;
 
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let loadMore;
@@ -140,7 +140,8 @@ export class List extends React.Component {
           <VisibilitySensor onChange={this.loadMore}>
             <Button
               title="Load more..." waiting={ui.progress.loadRiverInProgress}
-              onClick={triggers.loadPostRiver.bind(null, river.length)} />
+              onClick={triggers.loadPostRiver.bind(null, river.length)}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                />
           </VisibilitySensor>
         </div>
       );
@@ -201,5 +202,5 @@ export class List extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(List);
