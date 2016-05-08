@@ -4,38 +4,36 @@ import { Link } from 'react-router';
 import CONTINENTS from '../consts/continents';
 import TagCloud from './tag-cloud';
 
-export default class Continent extends React.Component {
-  static displayName = 'Continent';
-  static propTypes = {
-    code: PropTypes.string.isRequired,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      url_name: PropTypes.string
-    })).isRequired
-  };
 
-  render() {
-    const {
-      code,
-      geotags
-    } = this.props;
+const Continent = ({ code, count, geotags }) => {
+  const imageUrl = `/images/geo/continents/${code}.svg`;
+  const name = CONTINENTS[code].name;
+  const url_name = CONTINENTS[code].url_name;
 
-    const imageUrl = '/images/geo/continents/' + code + '.svg';
-    const name = CONTINENTS[code].name;
-    const url_name = CONTINENTS[code].url_name;
-
-    return (
-      <div className="layout__row continent" style={{
-          backgroundImage: `url(${imageUrl})`,
-          minHeight: '200px'
-        }}
-      >
-        <Link className="continent__title" to={`/geo/${url_name}`}>
-          {name} <span className="continent__amount">({geotags.length})</span>
-        </Link>
-        <div className="layout__row">
-          <TagCloud geotags={geotags} />
-        </div>
+  return (
+    <div
+      className="layout__row continent"
+      style={{
+        backgroundImage: `url(${imageUrl})`,
+        minHeight: '200px'
+      }}
+    >
+      <Link className="continent__title" to={`/geo/${url_name}`}>
+        {name} <span className="continent__amount">({count})</span>
+      </Link>
+      <div className="layout__row">
+        <TagCloud geotags={geotags} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+Continent.propTypes = {
+  code: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired,
+  geotags: PropTypes.arrayOf(PropTypes.shape({
+    url_name: PropTypes.string
+  })).isRequired
+};
+
+export default Continent;

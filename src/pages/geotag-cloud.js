@@ -18,7 +18,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { has, transform } from 'lodash';
 
 import {
   Page,
@@ -55,19 +54,10 @@ class GeotagCloudPage extends Component {
       geotag_cloud
     } = this.props;
 
-    const geotagsForCloud = geotag_cloud.map(url_name => geotags[url_name]);
-
-    let geotagsByContinents = {};
-    geotagsForCloud.forEach(geotag => {
-      if (geotag.continent_code) {
-        const code = geotag.continent_code;
-
-        if (!has(geotagsByContinents, code)) {
-          geotagsByContinents[code] = [geotag];
-        } else {
-          geotagsByContinents[code].push(geotag);
-        }
-      }
+    const geotagsByContinents = geotag_cloud.map(continent => {
+      return Object.assign(continent, {
+        geotags: continent.geotags.map(urlName => geotags[urlName])
+      });
     });
 
     return (
@@ -88,9 +78,15 @@ class GeotagCloudPage extends Component {
             <PageBody>
               <PageContent>
                 <PageCaption>Geotag cloud</PageCaption>
-                {transform(geotagsByContinents, (arr, value, key) =>
-                  arr.push(<Continent code={key} geotags={value} key={key} />)
-                  , [])
+                {
+                  geotagsByContinents.map(continent => (
+                    <Continent
+                      code={continent.continent_code}
+                      count={continent.geotag_count}
+                      geotags={continent.geotags}
+                      key={continent.continent_code}
+                    />
+                  ))
                 }
               </PageContent>
             </PageBody>
