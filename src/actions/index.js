@@ -438,10 +438,10 @@ export function setSchoolCloud(schools) {
   };
 }
 
-export function setGeotagCloud(geotags) {
+export function setGeotagCloud(continents) {
   return {
     type: SET_GEOTAG_CLOUD,
-    geotags
+    continents
   };
 }
 
