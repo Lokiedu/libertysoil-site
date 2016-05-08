@@ -1930,20 +1930,46 @@ export default class ApiController {
   getGeotagCloud = async (ctx) => {
     const Geotag = this.bookshelf.model('Geotag');
 
-    const geotags = await Geotag
-      .collection()
-      .query(qb => {
-        qb
-          .select('geotags.*')
-          .count('geotags_posts.* as post_count')
-          .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
-          .groupBy('geotags.id')
-          .orderBy('post_count', 'DESC')
-          .limit(50);
-      })
-      .fetch({ require: true });
+    const continentCodes = [
+      'EU', 'NA', 'SA', 'AF', 'AS', 'OC', 'AN'
+    ];
 
-    ctx.body = geotags;
+    const geotagsByContinents = [];
+
+    for (const code of continentCodes) {
+      const count = await Geotag
+        .collection()
+        .query(qb => {
+          qb
+            .where('continent_code', code)
+            .whereNot('type', 'Continent')
+            .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id');
+        })
+        .count();
+
+      const geotags = await Geotag
+        .collection()
+        .query(qb => {
+          qb
+            .select('geotags.*')
+            .where('continent_code', code)
+            .whereNot('type', 'Continent')
+            .count('geotags_posts.* as post_count')
+            .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
+            .groupBy('geotags.id')
+            .orderBy('post_count', 'DESC')
+            .limit(10);
+        })
+        .fetch();
+
+      geotagsByContinents.push({
+        continent_code: code,
+        geotag_count: parseInt(count),
+        geotags
+      });
+    }
+
+    ctx.body = geotagsByContinents;
   };
 
   getUserRecentHashtags = async (ctx) => {
