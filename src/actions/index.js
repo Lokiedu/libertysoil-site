@@ -410,7 +410,7 @@ export function submitResetPassword() {
 }
 
 export function submitNewPassword() {
-  return{
+  return {
     type: SUBMIT_NEW_PASSWORD
   }
 }

@@ -1407,7 +1407,7 @@ export default class ApiController {
 
     try {
       post_object = await Post.where({ id: ctx.params.id, user_id: ctx.session.user }).fetch({require: true, withRelated: ['hashtags']});
-    } catch(e) {
+    } catch (e) {
       ctx.status = 500;
       ctx.body = {error: e.message};
       return
@@ -1532,7 +1532,7 @@ export default class ApiController {
       }
 
       post_object.destroy();
-    } catch(e) {
+    } catch (e) {
       ctx.status = 500;
       ctx.body = {error: e.message};
       return;
@@ -1582,7 +1582,7 @@ export default class ApiController {
 
       follow_status.user1 = user.toJSON();
       follow_status.user2 = follow.toJSON();
-    } catch(ex) {
+    } catch (ex) {
       ctx.status = 500;
       follow_status.error = ex.message;
     }
@@ -1642,7 +1642,7 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
 
       ctx.body = {user};
-    } catch(e) {
+    } catch (e) {
       ctx.status = 500;
       ctx.body = {error: 'Update failed'};
       return;
@@ -1682,7 +1682,7 @@ export default class ApiController {
       await user.save(null, {method: 'update'});
 
       ctx.body = {success: true};
-    } catch(e) {
+    } catch (e) {
       ctx.status = 500;
       ctx.body = {error: 'Update failed'};
       return;
@@ -1713,7 +1713,7 @@ export default class ApiController {
 
       follow_status.user1 = user.toJSON();
       follow_status.user2 = follow.toJSON();
-    } catch(ex) {
+    } catch (ex) {
       ctx.status = 500;
       follow_status.error = ex.message;
     }
@@ -2617,7 +2617,7 @@ export default class ApiController {
       return;
     }
 
-    if(!('text' in ctx.request.body)) {
+    if (!('text' in ctx.request.body)) {
       ctx.status = 400;
       ctx.body = {error: 'Comment text cannot be empty'};
       return;
@@ -2666,19 +2666,19 @@ export default class ApiController {
         id: ctx.params.comment_id,
         post_id: ctx.params.id
       }).fetch({require: true});
-    } catch(e) {
+    } catch (e) {
       ctx.status = 404;
       ctx.body = {error: e.message};
       return
     }
 
-    if(comment_object.get('user_id') != ctx.session.user)  {
+    if (comment_object.get('user_id') != ctx.session.user)  {
       ctx.status = 403;
     }
 
     let comment_text;
 
-    if(!('text' in ctx.request.body) || ctx.request.body.text.trim().length === 0) {
+    if (!('text' in ctx.request.body) || ctx.request.body.text.trim().length === 0) {
       ctx.status = 400;
       ctx.body = {error: 'Comment text cannot be empty'};
       return;
@@ -2723,7 +2723,7 @@ export default class ApiController {
       }
 
       await comment_object.destroy();
-    } catch(e) {
+    } catch (e) {
       ctx.status = 500;
       ctx.body = {error: e.message};
       return;
@@ -2740,7 +2740,7 @@ export default class ApiController {
       return post.get('id');
     });
 
-    if(ids.length < 1) {
+    if (ids.length < 1) {
       return {};
     }
     let Comment = this.bookshelf.model('Comment');

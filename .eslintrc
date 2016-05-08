@@ -21,6 +21,7 @@
     "consistent-return": 2,
     "indent": [2, 2, { "SwitchCase": 1 }],
     "key-spacing": [2, { "beforeColon": false }],
+    "keyword-spacing": 2,
     "no-else-return": 2,
     "no-native-reassign": 2,
     "no-warning-comments": 1,
