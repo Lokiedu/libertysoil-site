@@ -1140,7 +1140,6 @@ export default class ApiController {
    * Saves new password to User model.
    */
   newPassword = async (ctx) => {
-
     if (ctx.session && ctx.session.user) {
       ctx.redirect('/');
       return;
@@ -1178,7 +1177,6 @@ export default class ApiController {
 
     await user.save(null, { method: 'update' });
     ctx.body = { success: true };
-
   };
 
   logout = async (ctx) => {

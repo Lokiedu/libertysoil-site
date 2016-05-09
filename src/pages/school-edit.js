@@ -91,11 +91,10 @@ class SchoolEditPage extends React.Component {
     }
 
     const schoolProperties = { ...properties, more };
-    try {
 
+    try {
       let result = await triggers.updateSchool(id, schoolProperties);
       browserHistory.push(getUrl(URL_NAMES.SCHOOL, { url_name: result.url_name }));
-
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveSchool(id, properties);

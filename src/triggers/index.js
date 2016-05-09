@@ -269,7 +269,6 @@ export class ActionsTrigger {
 
       this.dispatch(clearRiver());
       this.loadPostRiver();
-
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -286,7 +285,6 @@ export class ActionsTrigger {
 
       this.dispatch(clearRiver());
       this.loadPostRiver();
-
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -381,7 +379,6 @@ export class ActionsTrigger {
       if (result.success) {
         this.dispatch(registrationSuccess());
       }
-
     } catch (e) {
       // FIXME: enable form again
 

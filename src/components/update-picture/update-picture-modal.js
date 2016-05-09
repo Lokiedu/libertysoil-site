@@ -43,7 +43,6 @@ export default class UpdatePictureModal extends React.Component {
 
     let error = '';
     if (limits.min) {
-
       if (limits.min.width && (crop.width < limits.min.width)) {
         error = `Image must be at least ${limits.min.width}px in width. Now: ${parseInt(crop.width)}px`;
       }
@@ -53,7 +52,6 @@ export default class UpdatePictureModal extends React.Component {
     }
 
     if (!error && limits.max) {
-
       if (limits.max.width && (crop.width > limits.max.width)) {
         error = `Image mustn't be greater than ${limits.max.width}px in width. Now: ${parseInt(crop.width)}px`;
       }

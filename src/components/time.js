@@ -43,7 +43,6 @@ const Time = ({
       {formattedTime}
     </time>
   );
-
 };
 
 Time.propTypes = {

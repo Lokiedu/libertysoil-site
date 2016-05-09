@@ -79,7 +79,6 @@ export default class TagLine extends React.Component {
           <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
         )
       });
-
     }
 
     return (

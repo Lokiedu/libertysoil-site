@@ -148,7 +148,6 @@ export default class ProfileHeader extends React.Component {
           </div>
         );
       }
-
     }
 
     if (followers && followers[user.id] && followers[user.id].length) {
@@ -169,7 +168,6 @@ export default class ProfileHeader extends React.Component {
           </div>
         );
       }
-
     }
 
     name = name.trim();

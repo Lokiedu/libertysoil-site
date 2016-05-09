@@ -68,13 +68,12 @@ class HashtagEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let more = { description };
-    try {
 
+    try {
       const pictures = this.base._getNewPictures();
       for (let name in pictures) {
         more[name] = await triggers.uploadPicture({ ...pictures[name] });
       }
-
     } catch (e) {
       if (!confirm("It seems like there're problems with upload the images. Would you like to continue saving changes without them?")) {
         this.setState({ processing: false });
@@ -83,10 +82,8 @@ class HashtagEditPage extends React.Component {
     }
 
     try {
-
       let result = await triggers.updateHashtag(id, { more });
       browserHistory.push(getUrl(URL_NAMES.HASHTAG, { name: result.name }));
-
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveHashtag(id, description);
