@@ -32,7 +32,7 @@ export default class SidebarLink extends React.Component {
   };
 
   render() {
-    let {
+    const {
       icon,
       badge,
       enabled,

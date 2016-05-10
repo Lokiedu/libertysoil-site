@@ -95,7 +95,7 @@ class SchoolEditForm extends React.Component {
       return;
     }
 
-    let theForm = event.target;
+    const theForm = event.target;
 
     const isOpenValue = fields.is_open.value;
     let isOpenDbValue = null;

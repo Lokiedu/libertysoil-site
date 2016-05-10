@@ -23,14 +23,14 @@ import * as a from '../actions';
 const initialState = i.Map({});
 
 const cleanUser = user => {
-  let users = {};
+  const users = {};
 
   if (!user) {
     return users;
   }
 
   if (user.following) {
-    for (let followed_user of user.following) {
+    for (const followed_user of user.following) {
       users[followed_user.id] = followed_user;
     }
 
@@ -39,7 +39,7 @@ const cleanUser = user => {
   }
 
   if (user.followers) {
-    for (let follower of user.followers) {
+    for (const follower of user.followers) {
       users[follower.id] = follower;
     }
 
@@ -86,7 +86,7 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_POST_COMMENTS: {
-      let users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
+      const users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;

@@ -43,7 +43,7 @@ export default class TagLikePost extends React.Component {
   };
 
   render() {
-    let {
+    const {
       author,
       post
     } = this.props;

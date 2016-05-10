@@ -51,7 +51,7 @@ export class GeotagPage extends Component {
 
   static async fetchData(params, store, client) {
     let geotag = client.getGeotag(params.url_name);
-    let geotagPosts = client.geotagPosts(params.url_name);
+    const geotagPosts = client.geotagPosts(params.url_name);
 
     try {
       geotag = await geotag;

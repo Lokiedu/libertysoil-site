@@ -41,7 +41,7 @@ export default class AddTagForm extends Component {
   };
 
   render() {
-    let {
+    const {
       addedTags: { geotags, schools, hashtags },
       allSchools,
       onAddGeotag,

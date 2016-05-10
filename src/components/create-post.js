@@ -73,7 +73,7 @@ export default class CreatePost extends React.Component {
   };
 
   onClickOutside = () => {
-    let form = this.form;
+    const form = this.form;
 
     if (!form.text.value.trim().length) {
       this.setState({
@@ -85,13 +85,13 @@ export default class CreatePost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.form;
+    const form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
     }
 
-    let data = {
+    const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
@@ -180,7 +180,7 @@ export default class CreatePost extends React.Component {
   };
 
   render() {
-    let {
+    const {
       addTagModalType,
       expanded
     } = this.state;

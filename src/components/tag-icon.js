@@ -31,50 +31,50 @@ export default class TagIcon extends React.Component {
   };
 
   render() {
-    let { className, small, big, inactive, ...props } = this.props;
+    const { className, small, big, inactive, ...props } = this.props;
 
-    className = 'tag_icon';
+    let cn = 'tag_icon';
 
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
+    if (className) {
+      cn += ` ${className}`;
     }
 
     if (small) {
-      className += ' tag_icon-small';
+      cn += ' tag_icon-small';
     }
 
     if (big) {
-      className += ' tag_icon-big';
+      cn += ' tag_icon-big';
     }
 
     if (inactive) {
-      className += ' tag_icon-inactive';
+      cn += ' tag_icon-inactive';
     }
 
     switch (this.props.type) {
       case TAG_HASHTAG:
         return (
-          <span className={`${className} tag_icon-hashtag`} {...props}>#</span>
+          <span className={`${cn} tag_icon-hashtag`} {...props}>#</span>
         );
       case TAG_SCHOOL:
         return (
-          <span className={`${className} tag_icon-school`} {...props}><span className="micon">school</span></span>
+          <span className={`${cn} tag_icon-school`} {...props}><span className="micon">school</span></span>
         );
       case TAG_MENTION:
         return (
-          <span className={`${className} tag_icon-mention`} {...props}>@</span>
+          <span className={`${cn} tag_icon-mention`} {...props}>@</span>
         );
       case TAG_LOCATION:
         return (
-          <span className={`${className} tag_icon-location`} {...props}><span className="micon">location_on</span></span>
+          <span className={`${cn} tag_icon-location`} {...props}><span className="micon">location_on</span></span>
         );
       case TAG_EVENT:
         return (
-          <span className={`${className} tag_icon-event`} {...props}><span className="micon">event</span></span>
+          <span className={`${cn} tag_icon-event`} {...props}><span className="micon">event</span></span>
         );
       case TAG_PLANET:
         return (
-          <span className={`${className} tag_icon-planet`} {...props}><span className="micon">public</span></span>
+          <span className={`${cn} tag_icon-planet`} {...props}><span className="micon">public</span></span>
         );
       default:
         return false;

@@ -40,9 +40,9 @@ export default class PickpointInput extends React.Component {
   };
 
   _getSuggestions = _.throttle(async ({ value }) => {
-    let client = new ApiClient(API_HOST);
+    const client = new ApiClient(API_HOST);
 
-    let response = await client.pickpoint({
+    const response = await client.pickpoint({
       q: value
     });
 
@@ -68,7 +68,7 @@ export default class PickpointInput extends React.Component {
   };
 
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input autosuggest__input',
       onChange: this._handleChange,
       placeholder: 'Start typing...',

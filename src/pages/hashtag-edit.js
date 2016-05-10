@@ -41,7 +41,7 @@ class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
 
   static async fetchData(params, store, client) {
-    let hashtag = client.getHashtag(params.tag);
+    const hashtag = client.getHashtag(params.tag);
 
     try {
       store.dispatch(addHashtag(await hashtag));
@@ -57,8 +57,12 @@ class HashtagEditPage extends React.Component {
     return 200;
   }
 
-  state = {
-    processing: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      processing: false
+    };
   }
 
   saveHashtag = async (id, description) => {
@@ -67,11 +71,11 @@ class HashtagEditPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = { description };
+    const more = { description };
 
     try {
       const pictures = this.base._getNewPictures();
-      for (let name in pictures) {
+      for (const name in pictures) {
         more[name] = await triggers.uploadPicture({ ...pictures[name] });
       }
     } catch (e) {
@@ -82,7 +86,7 @@ class HashtagEditPage extends React.Component {
     }
 
     try {
-      let result = await triggers.updateHashtag(id, { more });
+      const result = await triggers.updateHashtag(id, { more });
       browserHistory.push(getUrl(URL_NAMES.HASHTAG, { name: result.name }));
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
@@ -140,7 +144,7 @@ class HashtagEditPage extends React.Component {
               triggers={triggers}
               saveHandler={this.saveHashtag}
               processing={this.state.processing}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             />
+            />
           </div>
         </div>
       </BaseTagPage>

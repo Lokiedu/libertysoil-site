@@ -49,7 +49,7 @@ export class SchoolPage extends React.Component {
 
   static async fetchData(params, store, client) {
     let school = client.getSchool(params.school_name);
-    let posts = client.schoolPosts(params.school_name);
+    const posts = client.schoolPosts(params.school_name);
 
     try {
       school = await school;
@@ -72,7 +72,7 @@ export class SchoolPage extends React.Component {
   }
 
   render() {
-    let {
+    const {
       comments,
       ui,
       is_logged_in,

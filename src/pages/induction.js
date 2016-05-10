@@ -31,7 +31,7 @@ import { ActionsTrigger } from '../triggers'
 import { defaultSelector } from '../selectors';
 
 
-let InductionDone = () => (
+const InductionDone = () => (
   <div className="area">
     <div className="area__body">
       <div className="message">
@@ -49,11 +49,11 @@ class InductionPage extends React.Component {
   static async fetchData(params, store, client) {
     const state = store.getState();
 
-    let currentUserId = state.getIn(['current_user', 'id']);
-    let userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
+    const currentUserId = state.getIn(['current_user', 'id']);
+    const userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
     store.dispatch(addUser(userInfo));
 
-    let trigger = new ActionsTrigger(client, store.dispatch);
+    const trigger = new ActionsTrigger(client, store.dispatch);
     const result = await trigger.loadInitialSuggestions();
 
     if (!result) {

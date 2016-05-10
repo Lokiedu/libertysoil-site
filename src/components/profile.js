@@ -29,15 +29,19 @@ import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      avatar: null,
+      head_pic: null
+    };
+  }
+
   unsaved = false;
 
-  state = {
-    avatar: null,
-    head_pic: null
-  };
-
   _getNewPictures() {
-    let pictures = {};
+    const pictures = {};
     if (this.state.avatar) {
       pictures.avatar = this.state.avatar.production;
     }
@@ -54,7 +58,7 @@ export default class ProfileHeader extends React.Component {
 
   addAvatar = async ({ production, preview }) => {
     if (production) {
-      let _production = {
+      const _production = {
         picture: production.picture,
         crop: pick(production.crop, ['left', 'top', 'right', 'bottom'])
       };
@@ -69,7 +73,7 @@ export default class ProfileHeader extends React.Component {
 
   addHeaderPicture = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture };
+      const _production = { picture: production.picture };
 
       // properties assign order is important
       _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);

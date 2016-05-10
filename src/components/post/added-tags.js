@@ -36,7 +36,7 @@ export default class AddedTags extends React.Component {
   };
 
   render() {
-    let { geotags, schools, hashtags } = this.props;
+    const { geotags, schools, hashtags } = this.props;
 
     if (!geotags.length && !schools.length && !hashtags.length) {
       return null;

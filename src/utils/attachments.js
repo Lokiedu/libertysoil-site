@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 import config from '../../config';
 
-let s3 = bluebird.promisifyAll(new AWS.S3(config.attachments.s3));
+const s3 = bluebird.promisifyAll(new AWS.S3(config.attachments.s3));
 
 /**
  * Uploads the file to the bucket specified in config.attachments.s3.Bucket.
@@ -14,7 +14,7 @@ let s3 = bluebird.promisifyAll(new AWS.S3(config.attachments.s3));
  * @returns {Promise} {Location: String, ETag: String}
  */
 export async function uploadAttachment(fileName, fileData, mimeType) {
-  let params = {
+  const params = {
     Key: fileName,
     Body: fileData,
     ContentType: mimeType
@@ -36,7 +36,7 @@ export async function downloadAttachment(fileName) {
 }
 
 export function generateName(fileName) {
-  let token = crypto.randomBytes(16).toString('hex');
+  const token = crypto.randomBytes(16).toString('hex');
 
   return `${config.attachments.prefix}${token}-${fileName}`;
 }

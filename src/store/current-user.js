@@ -66,12 +66,12 @@ export default function reducer(state=initialState, action) {
       }
 
       if (newUid) {
-        let followedTags = _.keyBy(action.user.followed_hashtags, 'name');
-        let followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
-        let followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
-        let likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
-        let likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
-        let likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
+        const followedTags = _.keyBy(action.user.followed_hashtags, 'name');
+        const followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
+        const followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
+        const likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
+        const likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
+        const likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
 
         state = state.withMutations(state => {
           state.set('followed_hashtags', i.fromJS(followedTags));

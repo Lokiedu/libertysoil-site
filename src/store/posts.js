@@ -26,7 +26,7 @@ export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_POST:
     case a.ADD_POST_TO_RIVER: {
-      let postCopy = _.cloneDeep(action.post);
+      const postCopy = _.cloneDeep(action.post);
 
       delete postCopy.user;
       delete postCopy.post_comments;
@@ -44,8 +44,8 @@ export default function reducer(state=initialState, action) {
     case a.SET_SCHOOL_POSTS:
     case a.SET_GEOTAG_POSTS:
     case a.SET_RELATED_POSTS: {
-      let postsWithoutUsers = _.keyBy(action.posts.map(post => {
-        let postCopy = _.cloneDeep(post);
+      const postsWithoutUsers = _.keyBy(action.posts.map(post => {
+        const postCopy = _.cloneDeep(post);
 
         delete postCopy.user;
         delete postCopy.post_comments;

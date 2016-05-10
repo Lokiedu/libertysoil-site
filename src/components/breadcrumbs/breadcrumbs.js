@@ -57,8 +57,8 @@ export default class Breadcrumbs extends Component {
   }, 100);
 
   updateVisibleCrumbs = () => {
-    let breadcrumbsWidth = this.refs.breadcrumbs.offsetWidth;
-    let bodyWidth = this.refs.body.offsetWidth;
+    const breadcrumbsWidth = this.refs.breadcrumbs.offsetWidth;
+    const bodyWidth = this.refs.body.offsetWidth;
 
     if (bodyWidth >= breadcrumbsWidth) {
       if (this.state.visibleCrumbs > 0) {

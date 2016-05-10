@@ -47,7 +47,7 @@ export default class RiverOfPostsComponent extends Component {
       return <script/>;
     }
 
-    let posts = river.map(id => this.props.posts[id]);
+    const posts = river.map(id => this.props.posts[id]);
 
     return (
       <div>

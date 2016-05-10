@@ -42,7 +42,7 @@ class GeotagEditPage extends React.Component {
   static displayName = 'GeotagEditPage';
 
   static async fetchData(params, store, client) {
-    let geotag = client.getGeotag(params.url_name);
+    const geotag = client.getGeotag(params.url_name);
 
     try {
       store.dispatch(addGeotag(await geotag));
@@ -58,8 +58,12 @@ class GeotagEditPage extends React.Component {
     return 200;
   }
 
-  state = {
-    processing: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      processing: false
+    };
   }
 
   saveGeotag = async (id, description) => {
@@ -68,10 +72,10 @@ class GeotagEditPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = { description };
+    const more = { description };
 
     try {
-      let result = await triggers.updateGeotag(id, { more });
+      const result = await triggers.updateGeotag(id, { more });
       browserHistory.push(getUrl(URL_NAMES.GEOTAG, { url_name: result.url_name }));
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {

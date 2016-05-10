@@ -71,13 +71,8 @@ export class List extends React.Component {
     }).isRequired
   };
 
-  state = {
-    downloadAttemptsCount: 0,
-    displayLoadMore: true
-  };
-
   static async fetchData(params, store, client) {
-    let trigger = new ActionsTrigger(client, store.dispatch);
+    const trigger = new ActionsTrigger(client, store.dispatch);
 
     store.dispatch(clearRiver());
 
@@ -89,6 +84,15 @@ export class List extends React.Component {
     ]);
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      downloadAttemptsCount: 0,
+      displayLoadMore: true
+    }
+  }
+
   loadMore = async (isVisible) => {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -96,7 +100,7 @@ export class List extends React.Component {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      let res = await triggers.loadPostRiver(this.props.river.length);
+      const res = await triggers.loadPostRiver(this.props.river.length);
 
       let displayLoadMore = false;
       if (res === false) { // bad response

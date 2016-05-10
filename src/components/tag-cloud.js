@@ -43,7 +43,7 @@ export default class TagCloud extends React.Component {
   };
 
   render() {
-    let tags = convertModelsToTags(this.props)
+    const tags = convertModelsToTags(this.props)
       .map((tag, index) => (
         <Tag
           truncated={this.props.truncated}

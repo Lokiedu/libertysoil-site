@@ -23,7 +23,7 @@ export default class SidebarFollowedTags extends React.Component {
   };
 
   _collectTags() {
-    let tags = convertModelsToTags(this.props);
+    const tags = convertModelsToTags(this.props);
 
     return _.sortBy(tags, 'name');
   }

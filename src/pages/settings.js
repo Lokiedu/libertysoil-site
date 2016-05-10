@@ -61,9 +61,9 @@ class SettingsPage extends React.Component {
       return;
     }
 
-    let currentUser = props.get('users').get(currentUserId);
+    const currentUser = props.get('users').get(currentUserId);
 
-    let userInfo = client.userInfo(currentUser.get('username'));
+    const userInfo = client.userInfo(currentUser.get('username'));
     store.dispatch(addUser(await userInfo));
   }
 
@@ -74,18 +74,18 @@ class SettingsPage extends React.Component {
   onSave = async () => {
     this.setState({ processing: true });
 
-    let roles = this.state.roles;
+    const roles = this.state.roles;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let processedPictures = {};
-    let pictures = this.base._getNewPictures();
+    const processedPictures = {};
+    const pictures = this.base._getNewPictures();
 
-    for (let name in pictures) {
+    for (const name in pictures) {
       processedPictures[name] = await triggers.uploadPicture({ ...pictures[name] });
     }
 
-    let result = await triggers.updateUserInfo({
+    const result = await triggers.updateUserInfo({
       more: {
         summary: this.refs.form.summary.value,
         bio: this.refs.form.bio.value,
@@ -102,7 +102,7 @@ class SettingsPage extends React.Component {
   };
 
   addRole = () => {
-    let roles = this.state.roles;
+    const roles = this.state.roles;
 
     roles.push([ROLES[0], '']);
 
@@ -126,7 +126,7 @@ class SettingsPage extends React.Component {
       return false;
     }
 
-    let roles = this.state.roles;
+    const roles = this.state.roles;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

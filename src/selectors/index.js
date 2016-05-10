@@ -16,12 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 export function defaultSelector(state) {
-  let data = state.toJS();
+  const data = state.toJS();
 
   data.is_logged_in = !!data.current_user.id;
 
   if (data.is_logged_in) {
-    let current_user_id = data.current_user.id;
+    const current_user_id = data.current_user.id;
 
     data.current_user_tags = data.current_user.hashtags;
     data.current_user.user = data.users[current_user_id];

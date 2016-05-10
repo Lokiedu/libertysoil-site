@@ -55,7 +55,7 @@ class PostEditPage extends React.Component {
 
   static async fetchData(params, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
-    let trigger = new ActionsTrigger(client, store.dispatch);
+    const trigger = new ActionsTrigger(client, store.dispatch);
     let schoolsPromise;
 
     if (noSchoolsLoaded) {
@@ -63,7 +63,7 @@ class PostEditPage extends React.Component {
     }
 
     try {
-      let post = await client.postInfo(params.uuid);
+      const post = await client.postInfo(params.uuid);
       store.dispatch(addPost(post));
     } catch (e) {
       store.dispatch(addPost({ error: true, id: params.uuid, user: {} }));
@@ -89,17 +89,17 @@ class PostEditPage extends React.Component {
   };
 
   render() {
-    let {
+    const {
       current_user
     } = this.props;
-    let postId = this.props.params.uuid;
+    const postId = this.props.params.uuid;
 
     if (!(postId in this.props.posts)) {
       // not loaded yet
       return null;
     }
 
-    let post = this.props.posts[postId];
+    const post = this.props.posts[postId];
 
     if (post.error) {
       return <NotFound/>;
@@ -109,10 +109,10 @@ class PostEditPage extends React.Component {
       return null;
     }
 
-    let actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
-    let client = new ApiClient(API_HOST);
-    let triggers = new ActionsTrigger(client, this.props.dispatch);
-    let formState = this.props.edit_post_form;
+    const actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const formState = this.props.edit_post_form;
 
     return (
       <div>

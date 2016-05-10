@@ -59,7 +59,7 @@ class HashtagEditForm extends React.Component {
       return;
     }
 
-    let theForm = event.target;
+    const theForm = event.target;
 
     this.props.saveHandler(
       theForm.id.value,

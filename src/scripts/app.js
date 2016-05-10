@@ -31,11 +31,11 @@ import { initState } from '../store'
 bluebird.longStackTraces();
 window.Promise = bluebird;
 
-let store = initState(window.state);
+const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
 
-let authHandler = new AuthHandler(store);
-let fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
+const authHandler = new AuthHandler(store);
+const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
 
 ReactDOM.render(
   <Provider store={store}>

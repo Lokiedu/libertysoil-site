@@ -22,7 +22,7 @@ import createSelector from './createSelector';
 
 // Selects the current user and all dependencies.
 function selectCurrentUser(state) {
-  let currentUser = state.get('current_user');
+  const currentUser = state.get('current_user');
 
   return currentUser.withMutations(function (currentUser) {
     currentUser.set('user', state.getIn(['users', currentUser.get('id')]));

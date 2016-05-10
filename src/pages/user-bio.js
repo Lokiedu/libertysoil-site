@@ -31,12 +31,12 @@ import { defaultSelector } from '../selectors';
 
 class AboutUserPage extends React.Component {
   static async fetchData(params, store, client) {
-    let userInfo = client.userInfo(params.username);
+    const userInfo = client.userInfo(params.username);
     store.dispatch(addUser(await userInfo));
   }
 
   render() {
-    let page_user = _.find(this.props.users, { username: this.props.params.username });
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     let linesOfBio = <p>No information provided...</p>;
 
     if (_.isUndefined(page_user)) {

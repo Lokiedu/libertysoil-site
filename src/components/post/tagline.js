@@ -41,7 +41,7 @@ export default class TagLine extends React.Component {
   };
 
   render () {
-    let {
+    const {
       geotags,
       hashtags,
       schools

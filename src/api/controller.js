@@ -36,7 +36,7 @@ import {
 } from './db/validators';
 
 
-let bcryptAsync = bb.promisifyAll(bcrypt);
+const bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
   'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
@@ -57,8 +57,8 @@ export default class ApiController {
   };
 
   allPosts = async (ctx) => {
-    let Posts = this.bookshelf.collection('Posts');
-    let posts = new Posts();
+    const Posts = this.bookshelf.collection('Posts');
+    const posts = new Posts();
     let response = await posts.fetch({ require: false, withRelated: POST_RELATIONS });
     response = response.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -69,9 +69,9 @@ export default class ApiController {
   };
 
   userPosts = async (ctx) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let q = Post.forge()
+    const q = Post.forge()
       .query(qb => {
         qb
           .join('users', 'users.id', 'posts.user_id')
@@ -83,7 +83,7 @@ export default class ApiController {
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
 
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
 
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -95,9 +95,9 @@ export default class ApiController {
   };
 
   tagPosts = async (ctx) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let q = Post.forge()
+    const q = Post.forge()
       .query(qb => {
         qb
           .join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
@@ -108,7 +108,7 @@ export default class ApiController {
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
 
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
 
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -120,9 +120,9 @@ export default class ApiController {
   };
 
   schoolPosts = async (ctx) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let q = Post.collection()
+    const q = Post.collection()
       .query(qb => {
         qb
           .join('posts_schools', 'posts.id', 'posts_schools.post_id')
@@ -133,7 +133,7 @@ export default class ApiController {
       });
 
     let posts = await q.fetch({ withRelated: POST_RELATIONS });
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
 
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -183,7 +183,7 @@ export default class ApiController {
         })
         .fetch({ withRelated: POST_RELATIONS });
 
-      let post_comments_count = await this.countComments(posts);
+      const post_comments_count = await this.countComments(posts);
 
       posts = posts.map(post => {
         post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -204,8 +204,8 @@ export default class ApiController {
       ctx.body = { error: 'You are not authorized' };
       return;
     }
-    let Hashtag = this.bookshelf.model('Hashtag');
-    let hashtags = await Hashtag
+    const Hashtag = this.bookshelf.model('Hashtag');
+    const hashtags = await Hashtag
       .collection()
       .query(qb => {
         qb
@@ -216,8 +216,8 @@ export default class ApiController {
       })
       .fetch();
 
-    let School = this.bookshelf.model('School');
-    let schools = await School
+    const School = this.bookshelf.model('School');
+    const schools = await School
       .collection()
       .query(qb => {
         qb
@@ -228,8 +228,8 @@ export default class ApiController {
       })
       .fetch();
 
-    let Geotag = this.bookshelf.model('Geotag');
-    let geotags = await Geotag
+    const Geotag = this.bookshelf.model('Geotag');
+    const geotags = await Geotag
       .collection()
       .query(qb => {
         qb
@@ -244,10 +244,10 @@ export default class ApiController {
   };
 
   getPost = async (ctx) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
 
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
       post.attributes.comments = post.relations.post_comments.length;
@@ -267,7 +267,7 @@ export default class ApiController {
     }
 
     try {
-      let posts = await this.getLikedPosts(ctx.session.user);
+      const posts = await this.getLikedPosts(ctx.session.user);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -277,13 +277,13 @@ export default class ApiController {
 
   userLikedPosts = async (ctx) =>  {
     try {
-      let user_id = await this.bookshelf.knex
+      const user_id = await this.bookshelf.knex
         .select('id')
         .from('users')
         .where('users.username', '=', ctx.params.user)
         .map(row => row.id);
 
-      let posts = await this.getLikedPosts(user_id[0]);
+      const posts = await this.getLikedPosts(user_id[0]);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -292,15 +292,15 @@ export default class ApiController {
   };
 
   getLikedPosts = async (userId) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let likes = await this.bookshelf.knex
+    const likes = await this.bookshelf.knex
       .select('post_id')
       .from('likes')
       .where({ user_id: userId })
       .map(row => row.post_id);
 
-    let q = Post.forge()
+    const q = Post.forge()
     .query(qb => {
       qb
         .select()
@@ -317,7 +317,7 @@ export default class ApiController {
     });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.attributes.comments = post_comments_count[post.get('id')];
       return post;
@@ -334,7 +334,7 @@ export default class ApiController {
     }
 
     try {
-      let posts = await this.getFavouredPosts(ctx.session.user);
+      const posts = await this.getFavouredPosts(ctx.session.user);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -344,13 +344,13 @@ export default class ApiController {
 
   userFavouredPosts = async (ctx) => {
     try {
-      let user_id = await this.bookshelf.knex
+      const user_id = await this.bookshelf.knex
         .select('id')
         .from('users')
         .where('users.username', '=', ctx.params.user)
         .map(row => row.id);
 
-      let posts = await this.getFavouredPosts(user_id[0]);
+      const posts = await this.getFavouredPosts(user_id[0]);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -359,15 +359,15 @@ export default class ApiController {
   };
 
   getFavouredPosts = async (userId) => {
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let favourites = await this.bookshelf.knex
+    const favourites = await this.bookshelf.knex
       .select('post_id')
       .from('favourites')
       .where({ user_id: userId })
       .map(row => row.post_id);
 
-    let q = Post.forge()
+    const q = Post.forge()
     .query(qb => {
       qb
         .whereIn('id', favourites)
@@ -375,7 +375,7 @@ export default class ApiController {
     });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.attributes.comments = post_comments_count[post.get('id')];
       return post;
@@ -385,7 +385,7 @@ export default class ApiController {
   };
 
   checkSchoolExists = async (ctx) => {
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
     try {
       await School.where('name', ctx.params.name).fetch({ require: true });
@@ -397,10 +397,10 @@ export default class ApiController {
   };
 
   getSchool = async (ctx) => {
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
     try {
-      let school = await School
+      const school = await School
         .where({ url_name: ctx.params.url_name })
         .fetch({ require: true, withRelated: 'images' });
 
@@ -412,10 +412,10 @@ export default class ApiController {
   };
 
   getSchools = async (ctx) => {
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
     try {
-      let schools = await School.fetchAll({ withRelated: 'images' });
+      const schools = await School.fetchAll({ withRelated: 'images' });
       ctx.body = schools.toJSON();
     } catch (e) {
       ctx.status = 404;
@@ -427,7 +427,7 @@ export default class ApiController {
     const Geotag = this.bookshelf.model('Geotag');
 
     try {
-      let countries = await Geotag.where({ type: 'Country' }).fetchAll();
+      const countries = await Geotag.where({ type: 'Country' }).fetchAll();
       ctx.body = countries.toJSON();
     } catch (e) {
       ctx.status = 404
@@ -436,10 +436,10 @@ export default class ApiController {
   };
 
   getCountry = async (ctx) => {
-    let Country = this.bookshelf.model('Country');
+    const Country = this.bookshelf.model('Country');
 
     try {
-      let country = await Country.where({ iso_alpha2: ctx.params.code }).fetch();
+      const country = await Country.where({ iso_alpha2: ctx.params.code }).fetch();
       ctx.body = country.toJSON();
     } catch (e) {
       ctx.status = 404
@@ -448,10 +448,10 @@ export default class ApiController {
   };
 
   getCity = async (ctx) => {
-    let City = this.bookshelf.model('City');
+    const City = this.bookshelf.model('City');
 
     try {
-      let city = await City.where({ id: ctx.params.id }).fetch();
+      const city = await City.where({ id: ctx.params.id }).fetch();
       ctx.body = city.toJSON();
     } catch (e) {
       ctx.status = 404
@@ -472,7 +472,7 @@ export default class ApiController {
       return;
     }
 
-    let checkit = new Checkit(GeotagValidators.more);
+    const checkit = new Checkit(GeotagValidators.more);
 
     try {
       await checkit.run(ctx.request.body.more);
@@ -483,11 +483,11 @@ export default class ApiController {
     }
 
     try {
-      let Geotag = this.bookshelf.model('Geotag');
-      let geotag = await Geotag.where({ id: ctx.params.id }).fetch({ require: true });
+      const Geotag = this.bookshelf.model('Geotag');
+      const geotag = await Geotag.where({ id: ctx.params.id }).fetch({ require: true });
 
       let properties = {};
-      for (let fieldName in GeotagValidators.more) {
+      for (const fieldName in GeotagValidators.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -520,7 +520,7 @@ export default class ApiController {
       return;
     }
 
-    let checkit = new Checkit(HashtagValidators.more);
+    const checkit = new Checkit(HashtagValidators.more);
 
     try {
       await checkit.run(ctx.request.body.more);
@@ -531,11 +531,11 @@ export default class ApiController {
     }
 
     try {
-      let Hashtag = this.bookshelf.model('Hashtag');
-      let hashtag = await Hashtag.where({ id: ctx.params.id }).fetch({ require: true });
+      const Hashtag = this.bookshelf.model('Hashtag');
+      const hashtag = await Hashtag.where({ id: ctx.params.id }).fetch({ require: true });
 
       let properties = {};
-      for (let fieldName in HashtagValidators.more) {
+      for (const fieldName in HashtagValidators.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -568,7 +568,7 @@ export default class ApiController {
       return;
     }
 
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
     try {
       const school = await School.where({ id: ctx.params.id }).fetch({ require: true, withRelated: 'images' });
@@ -621,8 +621,8 @@ export default class ApiController {
 
       const attributesWithValues = processData(_.pick(ctx.request.body, allowedAttributes));
 
-      let properties = {};
-      for (let fieldName in SchoolValidators.more) {
+      const properties = {};
+      for (const fieldName in SchoolValidators.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -672,14 +672,14 @@ export default class ApiController {
       return;
     }
 
-    let result = { success: false };
+    const result = { success: false };
 
-    let User = this.bookshelf.model('User');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Post = this.bookshelf.model('Post');
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
 
       if (post.get('user_id') === user.id) {
         ctx.status = 403;
@@ -694,7 +694,7 @@ export default class ApiController {
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
 
-      let likes = await this.bookshelf.knex
+      const likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
         .where({ user_id: ctx.session.user });
@@ -717,14 +717,14 @@ export default class ApiController {
       return;
     }
 
-    let result = { success: false };
+    const result = { success: false };
 
-    let User = this.bookshelf.model('User');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Post = this.bookshelf.model('Post');
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
 
       await user.liked_posts().detach(post);
 
@@ -733,7 +733,7 @@ export default class ApiController {
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
 
-      let likes = await this.bookshelf.knex
+      const likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
         .where({ user_id: ctx.session.user });
@@ -756,14 +756,14 @@ export default class ApiController {
       return;
     }
 
-    let result = { success: false };
+    const result = { success: false };
 
-    let User = this.bookshelf.model('User');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Post = this.bookshelf.model('Post');
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
       if (post.get('user_id') === user.id) {
         ctx.status = 403;
@@ -775,7 +775,7 @@ export default class ApiController {
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
 
-      let favs = await this.bookshelf.knex
+      const favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
         .where({ user_id: ctx.session.user });
@@ -798,20 +798,20 @@ export default class ApiController {
       return;
     }
 
-    let result = { success: false };
+    const result = { success: false };
 
-    let User = this.bookshelf.model('User');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Post = this.bookshelf.model('Post');
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
       await user.favourited_posts().detach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
 
-      let favs = await this.bookshelf.knex
+      const favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
         .where({ user_id: ctx.session.user });
@@ -834,12 +834,12 @@ export default class ApiController {
       return;
     }
 
-    let uid = ctx.session.user;
-    let Post = this.bookshelf.model('Post');
+    const uid = ctx.session.user;
+    const Post = this.bookshelf.model('Post');
 
     const offset = ('offset' in ctx.query) ? parseInt(ctx.query.offset, 10) : 0;
 
-    let q = Post.forge()
+    const q = Post.forge()
       .query(qb => {
         qb
           .leftJoin('followers', 'followers.following_user_id', 'posts.user_id')
@@ -852,7 +852,7 @@ export default class ApiController {
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
-    let post_comments_count = await this.countComments(posts);
+    const post_comments_count = await this.countComments(posts);
     posts = posts.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
       post.attributes.comments = post_comments_count[post.get('id')];
@@ -863,7 +863,7 @@ export default class ApiController {
   };
 
   checkUserExists = async (ctx) => {
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     try {
       await User
@@ -878,7 +878,7 @@ export default class ApiController {
   };
 
   checkEmailTaken = async (ctx) => {
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     try {
       await User
@@ -893,10 +893,10 @@ export default class ApiController {
   };
 
   getAvailableUsername = async (ctx) => {
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     async function checkUserExists(username) {
-      let user = await User
+      const user = await User
         .forge()
         .where('username', username)
         .fetch();
@@ -919,9 +919,9 @@ export default class ApiController {
   };
 
   registerUser = async (ctx) => {
-    let optionalFields = ['firstName', 'lastName'];
+    const optionalFields = ['firstName', 'lastName'];
 
-    let checkit = new Checkit(UserValidators.registration);
+    const checkit = new Checkit(UserValidators.registration);
     try {
       await checkit.run(ctx.request.body);
     } catch (e) {
@@ -943,7 +943,7 @@ export default class ApiController {
     }
 
     {
-      let check = await User.where({ email: ctx.request.body.email }).fetch({ require: false });
+      const check = await User.where({ email: ctx.request.body.email }).fetch({ require: false });
       if (check) {
         ctx.status = 409;
         ctx.body = { error: 'User with this email is already registered' };
@@ -951,8 +951,8 @@ export default class ApiController {
       }
     }
 
-    let moreData = {};
-    for (let fieldName of optionalFields) {
+    const moreData = {};
+    for (const fieldName of optionalFields) {
       if (fieldName in ctx.request.body) {
         moreData[fieldName] = ctx.request.body[fieldName];
       }
@@ -991,9 +991,9 @@ export default class ApiController {
       return;
     }
 
-    let requiredFields = ['username', 'password'];
+    const requiredFields = ['username', 'password'];
 
-    for (let fieldName of requiredFields) {
+    for (const fieldName of requiredFields) {
       if (!(fieldName in ctx.request.body)) {
         ctx.status = 400;
         ctx.body = { error: 'Bad Request' };
@@ -1001,7 +1001,7 @@ export default class ApiController {
       }
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
     const username = ctx.request.body.username.toLowerCase();
 
     let user;
@@ -1015,7 +1015,7 @@ export default class ApiController {
       return
     }
 
-    let passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.password, user.get('hashed_password'));
+    const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.password, user.get('hashed_password'));
 
     if (!passwordIsValid) {
       console.warn(`Someone tried to log in as '${username}', but used wrong pasword`);  // eslint-disable-line no-console
@@ -1054,7 +1054,7 @@ export default class ApiController {
   };
 
   verifyEmail = async (ctx) => {
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     let user;
 
@@ -1094,7 +1094,7 @@ export default class ApiController {
       return;
     }
 
-    for (let fieldName of ['email']) {
+    for (const fieldName of ['email']) {
       if (!(fieldName in ctx.request.body)) {
         ctx.status = 400;
         ctx.body = { error: 'Bad Request' };
@@ -1102,7 +1102,7 @@ export default class ApiController {
       }
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     let user;
 
@@ -1116,8 +1116,8 @@ export default class ApiController {
       return;
     }
 
-    let random = Math.random().toString();
-    let sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
+    const random = Math.random().toString();
+    const sha1 = crypto.createHash('sha1').update(user.email + random).digest('hex');
 
     if (!user.get('reset_password_hash')) {
       user.set('reset_password_hash', sha1);
@@ -1145,7 +1145,7 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     let user;
 
@@ -1170,7 +1170,7 @@ export default class ApiController {
       return;
     }
 
-    let hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.password, 10);
+    const hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.password, 10);
 
     user.set('hashed_password', hashedPassword);
     user.set('reset_password_hash', '');
@@ -1232,9 +1232,9 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
-    let q = User.forge()
+    const q = User.forge()
       .query(qb => {
         qb
           .select('users.*')
@@ -1247,7 +1247,7 @@ export default class ApiController {
           .limit(20)
       })
 
-    let suggestions = await q.fetchAll({ require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
+    const suggestions = await q.fetchAll({ require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
 
     ctx.body = suggestions;
   };
@@ -1265,7 +1265,7 @@ export default class ApiController {
       return;
     }
 
-    let typeRequirements = {
+    const typeRequirements = {
       short_text: ['text'],
       long_text: ['title', 'text']
     };
@@ -1276,9 +1276,9 @@ export default class ApiController {
       return;
     }
 
-    let thisTypeRequirements = typeRequirements[ctx.request.body.type];
+    const thisTypeRequirements = typeRequirements[ctx.request.body.type];
 
-    for (let varName of thisTypeRequirements) {
+    for (const varName of thisTypeRequirements) {
       if (!(varName in ctx.request.body)) {
         ctx.status = 400;
         ctx.body = { error: `"${varName}" parameter is not given` };
@@ -1328,9 +1328,9 @@ export default class ApiController {
       geotags = _.uniq(ctx.request.body.geotags);
     }
 
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
-    let obj = new Post({
+    const obj = new Post({
       id: uuid.v4(),
       type: ctx.request.body.type,
       user_id: ctx.session.user
@@ -1399,7 +1399,7 @@ export default class ApiController {
       return;
     }
 
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
     let post_object;
 
@@ -1411,7 +1411,7 @@ export default class ApiController {
       return
     }
 
-    let type = post_object.get('type');
+    const type = post_object.get('type');
 
     let hashtags;
 
@@ -1465,7 +1465,7 @@ export default class ApiController {
       }
 
       if ('title' in ctx.request.body) {
-        let more = post_object.get('more');
+        const more = post_object.get('more');
         more.title = ctx.request.body.title;
         post_object.set('more', more);
       }
@@ -1518,10 +1518,10 @@ export default class ApiController {
       return;
     }
 
-    let Post = this.bookshelf.model('Post');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+      const post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
       if (post_object.get('user_id') != ctx.session.user) {
         ctx.status = 403;
@@ -1540,8 +1540,8 @@ export default class ApiController {
   };
 
   getUser = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let u = await User
+    const User = this.bookshelf.model('User');
+    const u = await User
       .where({ username: ctx.params.username })
       .fetch({
         require: true,
@@ -1563,8 +1563,8 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let follow_status = { success: false };
+    const User = this.bookshelf.model('User');
+    const follow_status = { success: false };
 
     try {
       let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
@@ -1595,10 +1595,10 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
-    let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['ignored_users'] });
-    let userToIgnore = await User.where({ username: ctx.params.username }).fetch({ require: true });
+    const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['ignored_users'] });
+    const userToIgnore = await User.where({ username: ctx.params.username }).fetch({ require: true });
 
     await user.ignoreUser(userToIgnore.id);
 
@@ -1612,7 +1612,7 @@ export default class ApiController {
       return;
     }
 
-    let checkit = new Checkit(UserValidators.settings.more);
+    const checkit = new Checkit(UserValidators.settings.more);
     try {
       await checkit.run(ctx.request.body.more);
     } catch (e) {
@@ -1621,14 +1621,14 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
 
       let properties = {};
 
-      for (let fieldName in UserValidators.settings.more) {
+      for (const fieldName in UserValidators.settings.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -1660,12 +1660,12 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
+    const User = this.bookshelf.model('User');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
 
-      let passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.old_password, user.get('hashed_password'));
+      const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.old_password, user.get('hashed_password'));
 
       if (!passwordIsValid) {
         ctx.status = 401;
@@ -1673,7 +1673,7 @@ export default class ApiController {
         return
       }
 
-      let hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.new_password, 10);
+      const hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.new_password, 10);
 
       user.set('hashed_password', hashedPassword);
 
@@ -1694,8 +1694,8 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let follow_status = { success: false };
+    const User = this.bookshelf.model('User');
+    const follow_status = { success: false };
 
     try {
       let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
@@ -1736,10 +1736,10 @@ export default class ApiController {
       return;
     }
 
-    let Attachment = this.bookshelf.model('Attachment');
+    const Attachment = this.bookshelf.model('Attachment');
 
     try {
-      let promises = ctx.files.map(file => {
+      const promises = ctx.files.map(file => {
         return Attachment.create(
           file.originalname,
           file.buffer,
@@ -1747,7 +1747,7 @@ export default class ApiController {
         );
       });
 
-      let attachments = await Promise.all(promises);
+      const attachments = await Promise.all(promises);
 
       ctx.body = { success: true, attachments };
     } catch (e) {
@@ -1785,14 +1785,14 @@ export default class ApiController {
       return;
     }
 
-    let Attachment = this.bookshelf.model('Attachment');
+    const Attachment = this.bookshelf.model('Attachment');
 
     try {
       let result;
-      let transforms = JSON.parse(ctx.request.body.transforms);
+      const transforms = JSON.parse(ctx.request.body.transforms);
 
       // Get the original attachment, checking ownership.
-      let original = await Attachment
+      const original = await Attachment
         .forge()
         .query(qb => {
           qb
@@ -1802,7 +1802,7 @@ export default class ApiController {
         .fetch({ require: true });
 
       // Check if the format of the attachment is supported.
-      let { supportedImageFormats } = config.attachments;
+      const { supportedImageFormats } = config.attachments;
       if (supportedImageFormats.indexOf(original.attributes.mime_type) < 0) {
         ctx.status = 400;
         ctx.body = { error: 'Image type is not supported' };
@@ -1810,15 +1810,15 @@ export default class ApiController {
       }
 
       // Download the original attachment data from s3.
-      let originalData = await original.download();
+      const originalData = await original.download();
 
       // Process the data.
-      let newImage = await processImage(originalData.Body, transforms);
-      let imageBuffer = await newImage.toBufferAsync(original.extension());
+      const newImage = await processImage(originalData.Body, transforms);
+      const imageBuffer = await newImage.toBufferAsync(original.extension());
 
       // Update the attachment specified in derived_id or create a new one.
       if (ctx.request.body.derived_id) {
-        let oldAttachment = await Attachment
+        const oldAttachment = await Attachment
           .forge()
           .query(qb => {
             qb
@@ -1859,13 +1859,13 @@ export default class ApiController {
     }
 
     try {
-      let response = await request
+      const response = await request
         .get(`https://pickpoint.io/api/v1/forward`)
         .query(Object.assign(ctx.query, { key: config.pickpoint.key }));
 
       // pickpoint answers with wrong content-type, so we do decoding manually
-      let responseText = response.text;
-      let data = JSON.parse(responseText);
+      const responseText = response.text;
+      const data = JSON.parse(responseText);
 
       ctx.body = data;
     } catch (e) {
@@ -1880,10 +1880,10 @@ export default class ApiController {
    * Each hashtag in response contains post_count.
    */
   getTagCloud = async (ctx) => {
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
     try {
-      let hashtags = await Hashtag
+      const hashtags = await Hashtag
         .collection()
         .query(qb => {
           qb
@@ -1904,10 +1904,10 @@ export default class ApiController {
   };
 
   getSchoolCloud = async (ctx) => {
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
     try {
-      let schools = await School
+      const schools = await School
         .collection()
         .query(qb => {
           qb
@@ -1953,9 +1953,9 @@ export default class ApiController {
       return;
     }
 
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
-    let hashtags = await Hashtag
+    const hashtags = await Hashtag
       .collection()
       .query(qb => {
         qb
@@ -1978,9 +1978,9 @@ export default class ApiController {
       return;
     }
 
-    let School = this.bookshelf.model('School');
+    const School = this.bookshelf.model('School');
 
-    let schools = await School
+    const schools = await School
       .collection()
       .query(qb => {
         qb
@@ -2003,9 +2003,9 @@ export default class ApiController {
       return;
     }
 
-    let Geotag = this.bookshelf.model('Geotag');
+    const Geotag = this.bookshelf.model('Geotag');
 
-    let geotags = await Geotag
+    const geotags = await Geotag
       .collection()
       .query(qb => {
         qb
@@ -2022,8 +2022,8 @@ export default class ApiController {
   };
 
   followTag = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const User = this.bookshelf.model('User');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2038,8 +2038,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
 
       await currentUser.followHashtag(hashtag.id);
 
@@ -2052,8 +2052,8 @@ export default class ApiController {
   };
 
   unfollowTag = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const User = this.bookshelf.model('User');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2068,8 +2068,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
 
       await currentUser.unfollowHashtag(hashtag.id);
 
@@ -2082,8 +2082,8 @@ export default class ApiController {
   };
 
   followSchool = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let School = this.bookshelf.model('School');
+    const User = this.bookshelf.model('User');
+    const School = this.bookshelf.model('School');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2098,8 +2098,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
 
       await currentUser.followSchool(school.id);
 
@@ -2112,8 +2112,8 @@ export default class ApiController {
   };
 
   unfollowSchool = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let School = this.bookshelf.model('School');
+    const User = this.bookshelf.model('User');
+    const School = this.bookshelf.model('School');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2128,8 +2128,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
 
       await currentUser.unfollowSchool(school.id);
 
@@ -2142,8 +2142,8 @@ export default class ApiController {
   };
 
   followGeotag = async (ctx) =>  {
-    let User = this.bookshelf.model('User');
-    let Geotag = this.bookshelf.model('Geotag');
+    const User = this.bookshelf.model('User');
+    const Geotag = this.bookshelf.model('Geotag');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2158,8 +2158,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
 
       await currentUser.followGeotag(geotag.id);
 
@@ -2172,8 +2172,8 @@ export default class ApiController {
   };
 
   unfollowGeotag = async (ctx) => {
-    let User = this.bookshelf.model('User');
-    let Geotag = this.bookshelf.model('Geotag');
+    const User = this.bookshelf.model('User');
+    const Geotag = this.bookshelf.model('Geotag');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2188,8 +2188,8 @@ export default class ApiController {
     }
 
     try {
-      let currentUser = await User.forge().where('id', ctx.session.user).fetch();
-      let geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
+      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
 
       await currentUser.unfollowGeotag(geotag.id);
 
@@ -2202,7 +2202,7 @@ export default class ApiController {
   };
 
   checkGeotagExists = async (ctx) => {
-    let Geotag = this.bookshelf.model('Geotag');
+    const Geotag = this.bookshelf.model('Geotag');
 
     try {
       await Geotag.where('name', ctx.params.name).fetch({ require: true });
@@ -2214,7 +2214,7 @@ export default class ApiController {
   };
 
   getGeotag = async (ctx) => {
-    let Geotag = this.bookshelf.model('Geotag');
+    const Geotag = this.bookshelf.model('Geotag');
 
     if (!ctx.params.url_name) {
       ctx.status = 400;
@@ -2223,7 +2223,7 @@ export default class ApiController {
     }
 
     try {
-      let geotag = await Geotag
+      const geotag = await Geotag
         .forge()
         .where('url_name', ctx.params.url_name)
         .fetch({ require: true, withRelated: ['country', 'admin1', 'city', 'continent', 'geonames_city'] });
@@ -2236,7 +2236,7 @@ export default class ApiController {
   };
 
   getHashtag = async (ctx) => {
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
     if (!ctx.params.name) {
       ctx.status = 400;
@@ -2245,7 +2245,7 @@ export default class ApiController {
     }
 
     try {
-      let hashtag = await Hashtag
+      const hashtag = await Hashtag
         .forge()
         .where('name', ctx.params.name)
         .fetch({ require: true });
@@ -2258,10 +2258,10 @@ export default class ApiController {
   };
 
   searchGeotags = async (ctx) => {
-    let Geotag = this.bookshelf.model('Geotag');
+    const Geotag = this.bookshelf.model('Geotag');
 
     try {
-      let geotags = await Geotag.collection().query(function (qb) {
+      const geotags = await Geotag.collection().query(function (qb) {
         qb
           .where('name', 'ILIKE',  `${ctx.params.query}%`)
           .limit(10);
@@ -2276,10 +2276,10 @@ export default class ApiController {
   };
 
   searchTags = async (ctx) => {
-    let Hashtag = this.bookshelf.model('Hashtag');
+    const Hashtag = this.bookshelf.model('Hashtag');
 
     try {
-      let hashtags = await Hashtag.collection().query(function (qb) {
+      const hashtags = await Hashtag.collection().query(function (qb) {
         qb
           .where('name', 'ILIKE', `${ctx.params.query}%`)
           .limit(10);
@@ -2300,23 +2300,23 @@ export default class ApiController {
       return `(${array.map(function (e) { return "'" + e + "'"; }).join(',')})`
     }
 
-    let knex = this.bookshelf.knex;
-    let Post = this.bookshelf.model('Post');
+    const knex = this.bookshelf.knex;
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let post = await Post
+      const post = await Post
         .forge()
         .where('id', ctx.params.id)
         .fetch({ withRelated: ['hashtags', 'geotags', 'schools'] });
 
-      let hashtagIds = post.related('hashtags').pluck('id');
-      let schoolIds = post.related('schools').pluck('id');
-      let geotagIds = post.related('geotags').pluck('id');
+      const hashtagIds = post.related('hashtags').pluck('id');
+      const schoolIds = post.related('schools').pluck('id');
+      const geotagIds = post.related('geotags').pluck('id');
 
       // I've tried `leftJoinRaw`, and `on(knex.raw())`.
       // Both trow `syntax error at or near "$1"`.
       let posts = await Post.collection().query(qb => {
-        let countQueries = [];
+        const countQueries = [];
 
         if (!_.isEmpty(hashtagIds)) {
           qb
@@ -2368,7 +2368,7 @@ export default class ApiController {
           qb.whereNot('posts.user_id', ctx.session.user);
         }
       }).fetch({ withRelated: POST_RELATIONS });
-      let post_comments_count = await this.countComments(posts);
+      const post_comments_count = await this.countComments(posts);
       posts = posts.map(post => {
         post.attributes.comments = post_comments_count[post.get('id')];
         return post;
@@ -2387,13 +2387,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let Hashtag = this.bookshelf.model('Hashtag');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Hashtag = this.bookshelf.model('Hashtag');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
 
       await user.liked_hashtags().detach(hashtag);
       await user.liked_hashtags().attach(hashtag);
@@ -2419,13 +2419,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let Hashtag = this.bookshelf.model('Hashtag');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Hashtag = this.bookshelf.model('Hashtag');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
 
       await user.liked_hashtags().detach(hashtag);
 
@@ -2450,13 +2450,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let School = this.bookshelf.model('School');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const School = this.bookshelf.model('School');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_schools().detach(school);
       await user.liked_schools().attach(school);
@@ -2482,13 +2482,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let School = this.bookshelf.model('School');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const School = this.bookshelf.model('School');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_schools().detach(school);
 
@@ -2513,13 +2513,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let Geotag = this.bookshelf.model('Geotag');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Geotag = this.bookshelf.model('Geotag');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_geotags().detach(geotag);
       await user.liked_geotags().attach(geotag);
@@ -2545,13 +2545,13 @@ export default class ApiController {
       return;
     }
 
-    let User = this.bookshelf.model('User');
-    let Geotag = this.bookshelf.model('Geotag');
-    let Post = this.bookshelf.model('Post');
+    const User = this.bookshelf.model('User');
+    const Geotag = this.bookshelf.model('Geotag');
+    const Post = this.bookshelf.model('Post');
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
-      let geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
+      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_geotags().detach(geotag);
 
@@ -2583,22 +2583,22 @@ export default class ApiController {
   };
 
   getPostComments = async (ctx) => {
-    let Comment = this.bookshelf.model('Comment');
-    let q = Comment.forge()
+    const Comment = this.bookshelf.model('Comment');
+    const q = Comment.forge()
       .query(qb => {
         qb
           .where('post_id', '=', ctx.params.id)
           .orderBy('created_at', 'asc')
       });
 
-    let comments = await q.fetchAll({ require: false, withRelated: ['user'] });
+    const comments = await q.fetchAll({ require: false, withRelated: ['user'] });
 
     ctx.body = comments;
   };
 
   postComment = async (ctx) => {
-    let Comment = this.bookshelf.model('Comment');
-    let Post = this.bookshelf.model('Post');
+    const Comment = this.bookshelf.model('Comment');
+    const Post = this.bookshelf.model('Post');
 
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -2621,9 +2621,9 @@ export default class ApiController {
       return;
     }
 
-    let comment_text = ctx.request.body.text.trim();
+    const comment_text = ctx.request.body.text.trim();
 
-    let comment_object = new Comment({
+    const comment_object = new Comment({
       id: uuid.v4(),
       post_id: ctx.params.id,
       user_id: ctx.session.user,
@@ -2652,8 +2652,8 @@ export default class ApiController {
       return;
     }
 
-    let Post = this.bookshelf.model('Post');
-    let Comment = this.bookshelf.model('Comment');
+    const Post = this.bookshelf.model('Post');
+    const Comment = this.bookshelf.model('Comment');
 
     let post_object;
     let comment_object;
@@ -2674,15 +2674,13 @@ export default class ApiController {
       ctx.status = 403;
     }
 
-    let comment_text;
-
     if (!('text' in ctx.request.body) || ctx.request.body.text.trim().length === 0) {
       ctx.status = 400;
       ctx.body = { error: 'Comment text cannot be empty' };
       return;
     }
 
-    comment_text = ctx.request.body.text.trim();
+    const comment_text = ctx.request.body.text.trim();
 
     comment_object.set('text', comment_text);
     comment_object.set('updated_at', new Date().toJSON());
@@ -2706,13 +2704,13 @@ export default class ApiController {
       return;
     }
 
-    let Post = this.bookshelf.model('Post');
-    let Comment = this.bookshelf.model('Comment');
+    const Post = this.bookshelf.model('Post');
+    const Comment = this.bookshelf.model('Comment');
 
     let post_object;
     try {
       post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      let comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
+      const comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
 
       if (comment_object.get('user_id') != ctx.session.user) {
         ctx.status = 403;
@@ -2734,15 +2732,15 @@ export default class ApiController {
   };
 
   countComments = async (posts) => {
-    let ids = posts.map(post => {
+    const ids = posts.map(post => {
       return post.get('id');
     });
 
     if (ids.length < 1) {
       return {};
     }
-    let Comment = this.bookshelf.model('Comment');
-    let q = Comment.forge()
+    const Comment = this.bookshelf.model('Comment');
+    const q = Comment.forge()
         .query(qb => {
           qb
               .select('post_id')
@@ -2751,15 +2749,15 @@ export default class ApiController {
               .groupBy('post_id');
         });
 
-    let raw_counts = await q.fetchAll();
+    const raw_counts = await q.fetchAll();
 
-    let mapped_counts = _.mapValues(_.keyBy(raw_counts.toJSON(), 'post_id'), (item => {
+    const mapped_counts = _.mapValues(_.keyBy(raw_counts.toJSON(), 'post_id'), (item => {
       return parseInt(item.comment_count);
     }));
 
-    let missing = _.difference(ids, _.keys(mapped_counts));
+    const missing = _.difference(ids, _.keys(mapped_counts));
 
-    let zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
+    const zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
     return _.merge(_.zipObject(missing, zeroes), mapped_counts)
   };
 }

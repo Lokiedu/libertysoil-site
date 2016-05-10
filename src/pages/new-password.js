@@ -36,7 +36,7 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-let SuccessMessage = () => {
+const SuccessMessage = () => {
   return (
     <div>
       You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
@@ -61,8 +61,8 @@ class PasswordForm extends React.Component {
   }
 
   _validatePassword() {
-    let errors = this.state.errors;
-    let password = this.refs.form.password;
+    const errors = this.state.errors;
+    const password = this.refs.form.password;
 
     if (password.value.length < 8) {
       errors.password = 'Password must be at least 8 characters';
@@ -74,8 +74,8 @@ class PasswordForm extends React.Component {
   }
 
   _validatePasswordRepeat() {
-    let errors = this.state.errors;
-    let { password, password_repeat } = this.refs.form;
+    const errors = this.state.errors;
+    const { password, password_repeat } = this.refs.form;
 
     if (password_repeat.value.length > 0 && password.value !== password_repeat.value) {
       errors.password_repeat = 'Passwords do not match';
@@ -87,7 +87,7 @@ class PasswordForm extends React.Component {
   }
 
   render() {
-    let errors = this.state.errors;
+    const errors = this.state.errors;
 
     return (
       <form className="password-form" ref="form" onSubmit={this.props.onSubmit} action="" method="post">
@@ -129,7 +129,7 @@ class Form extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -138,7 +138,7 @@ class Form extends React.Component {
   };
 
   render() {
-    let {
+    const {
       messages
     } = this.props;
 

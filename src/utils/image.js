@@ -19,14 +19,14 @@ promisifyAll(require('lwip/lib/Batch').prototype);
  * @returns {Promise}
  */
 export async function processImage(buffer, transforms) {
-  let imageType = fileType(buffer).ext;
+  const imageType = fileType(buffer).ext;
 
-  let image = await lwip.openAsync(buffer, imageType);
-  let batch = image.batch();
+  const image = await lwip.openAsync(buffer, imageType);
+  const batch = image.batch();
 
-  for (let transform of transforms) {
-    let type = Object.keys(transform)[0];
-    let params = transform[type];
+  for (const transform of transforms) {
+    const type = Object.keys(transform)[0];
+    const params = transform[type];
 
     switch (type) {
       case 'crop': {

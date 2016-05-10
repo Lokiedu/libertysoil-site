@@ -36,7 +36,7 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.SET_POSTS_TO_RIVER: {
-      let posts = action.posts.map(post => post.id);
+      const posts = action.posts.map(post => post.id);
 
       posts.forEach(postID => {
         if (!state.includes(postID)) {
@@ -48,7 +48,7 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      let idx = state.findIndex(river_post_id => (river_post_id === action.id));
+      const idx = state.findIndex(river_post_id => (river_post_id === action.id));
 
       if (idx >= 0) {
         state = state.remove(idx);

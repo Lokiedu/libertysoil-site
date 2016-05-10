@@ -44,8 +44,8 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      for (let geotagName of state.keys()) {
-        let idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.id));
+      for (const geotagName of state.keys()) {
+        const idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.id));
 
         if (idx >= 0) {
           state = state.deleteIn([geotagName, idx]);

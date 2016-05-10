@@ -55,8 +55,8 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let post = await client.postInfo(params.uuid);
-    let relatedPosts = client.relatedPosts(params.uuid);
+    const post = await client.postInfo(params.uuid);
+    const relatedPosts = client.relatedPosts(params.uuid);
 
     store.dispatch(addPost(post));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
@@ -81,8 +81,8 @@ export class PostPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let relatedPostIds = this.props.related_posts[current_post.id];
-    let relatedPosts = (relatedPostIds)
+    const relatedPostIds = this.props.related_posts[current_post.id];
+    const relatedPosts = (relatedPostIds)
                          ? relatedPostIds.map(id => this.props.posts[id])
                          : null;
 

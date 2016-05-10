@@ -44,8 +44,8 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      for (let hashtagName of state.keys()) {
-        let idx = state.get(hashtagName).findIndex(hashtagPostId => (hashtagPostId === action.id));
+      for (const hashtagName of state.keys()) {
+        const idx = state.get(hashtagName).findIndex(hashtagPostId => (hashtagPostId === action.id));
 
         if (idx >= 0) {
           state = state.deleteIn([hashtagName, idx]);

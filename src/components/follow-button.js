@@ -39,7 +39,7 @@ export default class FollowButton extends React.Component {
       return <script/>;  // do not allow to follow one's self
     }
 
-    let is_followed = (this.props.following.indexOf(user.id) != -1);
+    const is_followed = (this.props.following.indexOf(user.id) != -1);
 
     if (is_followed) {
       return <button className="button button-wide button-yellow" onClick={this.unfollowUser.bind(this)}>Following</button>;

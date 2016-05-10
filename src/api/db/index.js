@@ -35,15 +35,15 @@ const bcryptHashAsync = promisify(bcryptHash);
 promisifyAll(OnigRegExp.prototype)
 
 export function initBookshelfFromKnex(knex) {
-  let bookshelf = Bookshelf(knex);
+  const bookshelf = Bookshelf(knex);
 
   bookshelf.plugin('registry');
   bookshelf.plugin('visibility');
   bookshelf.plugin('virtuals');
 
-  let User, Post, Hashtag, School, Country, AdminDivision1, City, Attachment, Geotag, Comment, Quote;
+  //let User, Post, Hashtag, School, Country, AdminDivision1, City, Attachment, Geotag, Comment, Quote;
 
-  User = bookshelf.Model.extend({
+  const User = bookshelf.Model.extend({
     tableName: 'users',
     posts: function() {
       return this.hasMany(Post, 'user_id');
@@ -131,12 +131,12 @@ export function initBookshelfFromKnex(knex) {
 
   User.create = async function(username, password, email, moreData) {
     username = username.toLowerCase();
-    let hashed_password = await bcryptHashAsync(password, 10);
+    const hashed_password = await bcryptHashAsync(password, 10);
 
-    let random = Math.random().toString();
-    let email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
+    const random = Math.random().toString();
+    const email_check_hash = crypto.createHash('sha1').update(email + random).digest('hex');
 
-    let obj = new User({
+    const obj = new User({
       id: uuid.v4(),
       username,
       hashed_password,
@@ -153,7 +153,7 @@ export function initBookshelfFromKnex(knex) {
     return obj;
   };
 
-  Post = bookshelf.Model.extend({
+  const Post = bookshelf.Model.extend({
     tableName: 'posts',
     user: function() {
       return this.belongsTo(User, 'user_id');
@@ -186,13 +186,13 @@ export function initBookshelfFromKnex(knex) {
       return this.hasMany(Comment);
     },
     attachHashtags: async function(names, removeUnused=false) {
-      let hashtags = this.hashtags();
+      const hashtags = this.hashtags();
 
-      let hashtagsToRemove = [];
-      let hashtagNamesToKeep = [];
+      const hashtagsToRemove = [];
+      const hashtagNamesToKeep = [];
 
       (await hashtags.fetch()).map(hashtag => {
-        let name = hashtag.get('name');
+        const name = hashtag.get('name');
 
         if (names.indexOf(name) == -1) {
           hashtagsToRemove.push(hashtag);
@@ -201,20 +201,20 @@ export function initBookshelfFromKnex(knex) {
         }
       });
 
-      let hashtagNamesToAdd = [];
-      for (let name of names) {
+      const hashtagNamesToAdd = [];
+      for (const name of names) {
         if (hashtagNamesToKeep.indexOf(name) == -1) {
           hashtagNamesToAdd.push(name);
         }
       }
 
-      let tags = await Promise.all(hashtagNamesToAdd.map(tag_name => Hashtag.createOrSelect(tag_name)));
+      const tags = await Promise.all(hashtagNamesToAdd.map(tag_name => Hashtag.createOrSelect(tag_name)));
       let promises = tags.map(async (tag) => {
         await hashtags.attach(tag)
       });
 
       if (removeUnused) {
-        let morePromises = hashtagsToRemove.map(async (tag) => {
+        const morePromises = hashtagsToRemove.map(async (tag) => {
           await hashtags.detach(tag);
         });
 
@@ -228,7 +228,7 @@ export function initBookshelfFromKnex(knex) {
      * @param {Array} names
      */
     attachSchools: async function(names) {
-      let schoolsToAdd = await School.collection().query(qb => {
+      const schoolsToAdd = await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch();
 
@@ -249,17 +249,17 @@ export function initBookshelfFromKnex(knex) {
      * @param {Array} names
      */
     updateSchools: async function(names) {
-      let schools = this.schools();
-      let relatedSchools = await this.related('schools').fetch();
+      const schools = this.schools();
+      const relatedSchools = await this.related('schools').fetch();
 
-      let schoolsToDetach = await School.collection().query(qb => {
+      const schoolsToDetach = await School.collection().query(qb => {
         qb
           .innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
           .whereNotIn('schools.name', names)
           .where('posts_schools.post_id', this.id);
       }).fetch();
 
-      let schoolNamesToAdd = _.difference(names, relatedSchools.pluck('name'));
+      const schoolNamesToAdd = _.difference(names, relatedSchools.pluck('name'));
 
       await Promise.all([
         schools.detach(schoolsToDetach.pluck('id')),
@@ -278,9 +278,9 @@ export function initBookshelfFromKnex(knex) {
      * @param {Array} geotagIds
      */
     updateGeotags: async function(geotagIds) {
-      let relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
-      let geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
-      let geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
+      const relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
+      const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
+      const geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
 
       await this.geotags().detach(geotagsToDetach);
       await this.geotags().attach(geotagsToAttach);
@@ -319,7 +319,7 @@ export function initBookshelfFromKnex(knex) {
     return `${authorName}: ${first50GraphemesOfText}`;
   };
 
-  Hashtag = bookshelf.Model.extend({
+  const Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
     posts: function() {
       return this.belongsToMany(Post, 'hashtags_posts', 'hashtag_id', 'post_id');
@@ -330,7 +330,7 @@ export function initBookshelfFromKnex(knex) {
     try {
       return await Hashtag.where({ name }).fetch({ require: true });
     } catch (e) {
-      let hashtag = new Hashtag({
+      const hashtag = new Hashtag({
         id: uuid.v4(),
         name
       });
@@ -340,7 +340,7 @@ export function initBookshelfFromKnex(knex) {
     }
   };
 
-  School = bookshelf.Model.extend({
+  const School = bookshelf.Model.extend({
     tableName: 'schools',
     posts: function() {
       return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
@@ -349,9 +349,9 @@ export function initBookshelfFromKnex(knex) {
       return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id')
     },
     updateImages: async function(imageIds) {
-      let relatedImageIds = (await this.related('images').fetch()).pluck('id');
-      let imagesToDetach = _.difference(relatedImageIds, imageIds);
-      let imagesToAttach = _.difference(imageIds, relatedImageIds);
+      const relatedImageIds = (await this.related('images').fetch()).pluck('id');
+      const imagesToDetach = _.difference(relatedImageIds, imageIds);
+      const imagesToAttach = _.difference(imageIds, relatedImageIds);
 
       await this.images().detach(imagesToDetach);
       await this.images().attach(imagesToAttach);
@@ -362,7 +362,7 @@ export function initBookshelfFromKnex(knex) {
     try {
       return await School.where({ name }).fetch({ require: true });
     } catch (e) {
-      let school = new School({
+      const school = new School({
         id: uuid.v4(),
         name
       });
@@ -372,7 +372,7 @@ export function initBookshelfFromKnex(knex) {
     }
   };
 
-  Country = bookshelf.Model.extend({
+  const Country = bookshelf.Model.extend({
     tableName: 'geonames_countries',
     posts: function() {
       return this.belongsToMany(Post, 'posts_countries', 'country_id', 'post_id');
@@ -382,14 +382,14 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  AdminDivision1 = bookshelf.Model.extend({
+  const AdminDivision1 = bookshelf.Model.extend({
     tableName: 'geonames_admin1',
     geotags: function() {
       return this.hasMany(Geotag);
     }
   });
 
-  City = bookshelf.Model.extend({
+  const City = bookshelf.Model.extend({
     tableName: 'geonames_cities',
     posts: function() {
       return this.belongsToMany(Post, 'posts_cities', 'city_id', 'post_id');
@@ -399,7 +399,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  Geotag = bookshelf.Model.extend({
+  const Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
     geonames_country: function() {
       return this.belongsTo(Country, 'geonames_country_id');
@@ -424,7 +424,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  Attachment = bookshelf.Model.extend({
+  const Attachment = bookshelf.Model.extend({
     tableName: 'attachments',
     user: function() {
       return this.belongsTo(User);
@@ -443,14 +443,14 @@ export function initBookshelfFromKnex(knex) {
       return mime.extension(this.attributes.mime_type);
     },
     reupload: async function(fileName, fileData) {
-      let generatedName = generateName(fileName);
-      let typeInfo = fileType(fileData);
+      const generatedName = generateName(fileName);
+      const typeInfo = fileType(fileData);
 
       if (!typeInfo) {
         throw new Error('Unrecognized file type');
       }
 
-      let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+      const response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
 
       return this.save({
         s3_url: response.Location,
@@ -470,15 +470,15 @@ export function initBookshelfFromKnex(knex) {
    * @returns {Promise}
    */
   Attachment.create = async function create(fileName, fileData, attributes = {}) {
-    let attachment = Attachment.forge();
-    let generatedName = generateName(fileName);
-    let typeInfo = fileType(fileData);
+    const attachment = Attachment.forge();
+    const generatedName = generateName(fileName);
+    const typeInfo = fileType(fileData);
 
     if (!typeInfo) {
       throw new Error('Unrecognized file type');
     }
 
-    let response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
+    const response = await uploadAttachment(generatedName, fileData, typeInfo.mime);
 
     return await attachment.save({
       ...attributes,
@@ -490,7 +490,7 @@ export function initBookshelfFromKnex(knex) {
     });
   };
 
-  Comment = bookshelf.Model.extend({
+  const Comment = bookshelf.Model.extend({
     tableName: 'comments',
     user: function() {
       return this.belongsTo(User);
@@ -500,13 +500,11 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  Quote = bookshelf.Model.extend({
+  const Quote = bookshelf.Model.extend({
     tableName: 'quotes'
   });
 
-  let Posts;
-
-  Posts = bookshelf.Collection.extend({
+  const Posts = bookshelf.Collection.extend({
     model: Post
   });
 

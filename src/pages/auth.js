@@ -72,7 +72,7 @@ export class Auth extends React.Component {
   }
 
   render() {
-    let { current_user, is_logged_in, messages, ui } = this.props;
+    const { current_user, is_logged_in, messages, ui } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

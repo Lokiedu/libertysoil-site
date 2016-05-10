@@ -39,14 +39,14 @@ class SettingsPasswordPage extends React.Component {
       return;
     }
 
-    let currentUser = props.get('users').get(currentUserId);
+    const currentUser = props.get('users').get(currentUserId);
 
-    let userInfo = client.userInfo(currentUser.get('username'));
+    const userInfo = client.userInfo(currentUser.get('username'));
     store.dispatch(addUser(await userInfo));
   }
 
   onSave = () => {
-    let event = document.createEvent("HTMLEvents");
+    const event = document.createEvent("HTMLEvents");
     event.initEvent('submit', true, true);
     event.eventType = 'submit';
 
@@ -59,7 +59,7 @@ class SettingsPasswordPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let promise = triggers.changePassword(
+    const promise = triggers.changePassword(
       this.form.old_password.value,
       this.form.new_password.value,
       this.form.new_password_repeat.value

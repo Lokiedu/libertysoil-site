@@ -28,7 +28,7 @@ export default class SidebarLink extends React.Component {
   };
 
   render() {
-    let {
+    const {
       enabled,
       className,
       activeClassName,
@@ -40,8 +40,8 @@ export default class SidebarLink extends React.Component {
       return <Link className={className} activeClassName={activeClassName} to={to}>{children}</Link>;
     }
 
-    className = className + ' disabled';
+    const cn = className + ' disabled';
 
-    return <span className={className}>{children}</span>;
+    return <span className={cn}>{children}</span>;
   }
 }

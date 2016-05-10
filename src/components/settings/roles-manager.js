@@ -24,7 +24,7 @@ class RolesManager extends React.Component {
 
   getRolesFromInputs() {
     const { roles } = this.props;
-    let rolesFromInputs = [];
+    const rolesFromInputs = [];
 
     roles.forEach((role, i) => {
       rolesFromInputs.push([
@@ -38,7 +38,7 @@ class RolesManager extends React.Component {
 
   onRemove = (i) => {
     const { onChange } = this.props;
-    let roles = this.getRolesFromInputs();
+    const roles = this.getRolesFromInputs();
 
     roles.splice(i, 1);
 

@@ -43,7 +43,7 @@ export default class BaseUserPage extends React.Component {
   // Something is wrong with the redux state.
 
   render() {
-    let {
+    const {
       current_user,
       i_am_following,
       is_logged_in,
@@ -52,14 +52,14 @@ export default class BaseUserPage extends React.Component {
       followers
     } = this.props;
 
-    let showLikesLink = (
+    const showLikesLink = (
       !isEmpty(page_user.liked_posts) ||
       !isEmpty(page_user.liked_hashtags) ||
       !isEmpty(page_user.liked_schools) ||
       !isEmpty(page_user.liked_geotags)
     );
-    let showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
-    let showBioLink = page_user.more && !!page_user.more.bio;
+    const showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
+    const showBioLink = page_user.more && !!page_user.more.bio;
 
     let name = page_user.username;
 

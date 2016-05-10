@@ -50,8 +50,6 @@ import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
 
-let store;
-
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
   current_user,
@@ -152,6 +150,6 @@ const finalCreateStore = compose(
 )(createStore);
 
 export function initState(state=initialState) {
-  store = finalCreateStore(theReducer, i.fromJS(state));
+  const store = finalCreateStore(theReducer, i.fromJS(state));
   return store;
 }

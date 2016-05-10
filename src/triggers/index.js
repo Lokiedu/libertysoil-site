@@ -49,7 +49,7 @@ export class ActionsTrigger {
 
   likePost = async (current_user_id, post_id) => {
     try {
-      let responseBody = await this.client.like(post_id);
+      const responseBody = await this.client.like(post_id);
 
       if (responseBody.success) {
         this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
@@ -64,7 +64,7 @@ export class ActionsTrigger {
 
   unlikePost = async (current_user_id, post_id) => {
     try {
-      let responseBody = await this.client.unlike(post_id);
+      const responseBody = await this.client.unlike(post_id);
 
       if (responseBody.success) {
         this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
@@ -79,7 +79,7 @@ export class ActionsTrigger {
 
   likeHashtag = async (name) => {
     try {
-      let response = await this.client.likeHashtag(name);
+      const response = await this.client.likeHashtag(name);
 
       if (response.success) {
         this.dispatch(addLikedHashtag(response.hashtag));
@@ -93,7 +93,7 @@ export class ActionsTrigger {
 
   unlikeHashtag = async (name) => {
     try {
-      let response = await this.client.unlikeHashtag(name);
+      const response = await this.client.unlikeHashtag(name);
 
       if (response.success) {
         this.dispatch(removeLikedHashtag(response.hashtag));
@@ -107,7 +107,7 @@ export class ActionsTrigger {
 
   likeSchool = async (url_name) => {
     try {
-      let response = await this.client.likeSchool(url_name);
+      const response = await this.client.likeSchool(url_name);
 
       if (response.success) {
         this.dispatch(addLikedSchool(response.school));
@@ -121,7 +121,7 @@ export class ActionsTrigger {
 
   unlikeSchool = async (url_name) => {
     try {
-      let response = await this.client.unlikeSchool(url_name);
+      const response = await this.client.unlikeSchool(url_name);
 
       if (response.success) {
         this.dispatch(removeLikedSchool(response.school));
@@ -135,7 +135,7 @@ export class ActionsTrigger {
 
   likeGeotag = async (url_name) => {
     try {
-      let response = await this.client.likeGeotag(url_name);
+      const response = await this.client.likeGeotag(url_name);
 
       if (response.success) {
         this.dispatch(addLikedGeotag(response.geotag));
@@ -149,7 +149,7 @@ export class ActionsTrigger {
 
   unlikeGeotag = async (url_name) => {
     try {
-      let response = await this.client.unlikeGeotag(url_name);
+      const response = await this.client.unlikeGeotag(url_name);
 
       if (response.success) {
         this.dispatch(removeLikedGeotag(response.geotag));
@@ -163,7 +163,7 @@ export class ActionsTrigger {
 
   syncLikedPosts = async (current_user_id) => {
     try {
-      let likedPosts = await this.client.userLikedPosts();
+      const likedPosts = await this.client.userLikedPosts();
 
       this.dispatch(setPostsToLikesRiver(current_user_id, likedPosts));
     } catch (e) {
@@ -173,7 +173,7 @@ export class ActionsTrigger {
 
   favPost = async (current_user_id, post_id) => {
     try {
-      let responseBody = await this.client.fav(post_id);
+      const responseBody = await this.client.fav(post_id);
 
       if (responseBody.success) {
         this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
@@ -187,7 +187,7 @@ export class ActionsTrigger {
 
   unfavPost = async (current_user_id, post_id) => {
     try {
-      let responseBody = await this.client.unfav(post_id);
+      const responseBody = await this.client.unfav(post_id);
 
       if (responseBody.success) {
         this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
@@ -201,10 +201,10 @@ export class ActionsTrigger {
 
   createPost = async (type, data) => {
     try {
-      let result = await this.client.createPost(type, data);
+      const result = await this.client.createPost(type, data);
       this.dispatch(addPostToRiver(result));
 
-      let userTags = await this.client.userTags();
+      const userTags = await this.client.userTags();
       this.dispatch(setUserTags(userTags));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -214,7 +214,7 @@ export class ActionsTrigger {
   updateUserInfo = async (user) => {
     let status = false;
     try {
-      let res = await this.client.updateUser(user);
+      const res = await this.client.updateUser(user);
 
       if ('user' in res) {
         this.dispatch(addMessage('Saved successfully'));
@@ -243,7 +243,7 @@ export class ActionsTrigger {
     }
 
     try {
-      let res = await this.client.changePassword(old_password, new_password1);
+      const res = await this.client.changePassword(old_password, new_password1);
 
       if ('success' in res && res.success === true) {
         this.dispatch(addMessage('Password is changed successfully'));
@@ -260,7 +260,7 @@ export class ActionsTrigger {
 
   followUser = async (user) => {
     try {
-      let res = await this.client.follow(user.username);
+      const res = await this.client.follow(user.username);
 
       if ('user1' in res) {
         this.dispatch(addUser(res.user1));
@@ -276,7 +276,7 @@ export class ActionsTrigger {
 
   unfollowUser = async (user) => {
     try {
-      let res = await this.client.unfollow(user.username);
+      const res = await this.client.unfollow(user.username);
 
       if ('user1' in res) {
         this.dispatch(addUser(res.user1));
@@ -293,7 +293,7 @@ export class ActionsTrigger {
   ignoreUser = async (user) => {
     try {
       await this.client.ignoreUser(user.username);
-      let result = await this.client.userSuggestions();
+      const result = await this.client.userSuggestions();
 
       this.dispatch(setPersonalizedSuggestedUsers(result));
     } catch (e) {
@@ -374,7 +374,7 @@ export class ActionsTrigger {
 
     // FIXME: disable form
     try {
-      let result = await this.client.registerUser({ username, password, email, firstName, lastName });
+      const result = await this.client.registerUser({ username, password, email, firstName, lastName });
 
       if (result.success) {
         this.dispatch(registrationSuccess());
@@ -384,9 +384,9 @@ export class ActionsTrigger {
 
       if (e.response && ('error' in e.response.body)) {
         // FIXME: enable form again
-        let errors = e.response.body.error;
+        const errors = e.response.body.error;
         let message = '';
-        for (let i in errors) {
+        for (const i in errors) {
           errors[i].map((el) => {
             message += `${el}\n`;
           });
@@ -401,7 +401,7 @@ export class ActionsTrigger {
 
   setQuotes = async () => {
     try {
-      let result = await this.client.getQuotes();
+      const result = await this.client.getQuotes();
 
       this.dispatch(setQuotes(result));
     } catch (e) {
@@ -411,7 +411,7 @@ export class ActionsTrigger {
 
   deletePost = async (post_uuid) => {
     try {
-      let result = await this.client.deletePost(post_uuid);
+      const result = await this.client.deletePost(post_uuid);
 
       if (result.error) {
         throw new Error(result.error);
@@ -426,9 +426,9 @@ export class ActionsTrigger {
 
   loadUserRecentTags = async () => {
     try {
-      let geotags = await this.client.userRecentGeotags();
-      let schools = await this.client.userRecentSchools();
-      let hashtags = await this.client.userRecentHashtags();
+      const geotags = await this.client.userRecentGeotags();
+      const schools = await this.client.userRecentSchools();
+      const hashtags = await this.client.userRecentHashtags();
 
       this.dispatch(setUserRecentTags({ geotags, schools, hashtags }));
     } catch (e) {
@@ -438,7 +438,7 @@ export class ActionsTrigger {
 
   updatePost = async (post_uuid, post_fields) => {
     try {
-      let result = await this.client.updatePost(post_uuid, post_fields);
+      const result = await this.client.updatePost(post_uuid, post_fields);
       this.dispatch(addPost(result));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -447,7 +447,7 @@ export class ActionsTrigger {
 
   updateGeotag = async (geotag_uuid, geotag_fields) => {
     try {
-      let result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
+      const result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
       this.dispatch(addGeotag(result));
 
       return result;
@@ -459,7 +459,7 @@ export class ActionsTrigger {
 
   updateHashtag = async (hashtag_uuid, hashtag_fields) => {
     try {
-      let result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
+      const result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
       this.dispatch(addHashtag(result));
 
       return result;
@@ -471,7 +471,7 @@ export class ActionsTrigger {
 
   updateSchool = async (school_uuid, school_fields) => {
     try {
-      let result = await this.client.updateSchool(school_uuid, school_fields);
+      const result = await this.client.updateSchool(school_uuid, school_fields);
       this.dispatch(addSchool(result));
 
       return result;
@@ -483,7 +483,7 @@ export class ActionsTrigger {
 
   loadSchools = async () => {
     try {
-      let result = await this.client.schools();
+      const result = await this.client.schools();
       this.dispatch(setSchools(result));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -492,7 +492,7 @@ export class ActionsTrigger {
 
   loadInitialSuggestions = async () => {
     try {
-      let result = await this.client.initialSuggestions();
+      const result = await this.client.initialSuggestions();
 
       this.dispatch(setSuggestedUsers(result));
 
@@ -505,7 +505,7 @@ export class ActionsTrigger {
 
   loadPersonalizedSuggestions = async () => {
     try {
-      let result = await this.client.userSuggestions();
+      const result = await this.client.userSuggestions();
 
       this.dispatch(setPersonalizedSuggestedUsers(result));
 
@@ -520,7 +520,7 @@ export class ActionsTrigger {
     this.dispatch(setUIProgress('loadRiverInProgress', true));
 
     try {
-      let result = await this.client.subscriptions(offset);
+      const result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
       this.dispatch(setUIProgress('loadRiverInProgress', false));
       return result;
@@ -533,7 +533,7 @@ export class ActionsTrigger {
 
   loadTagCloud = async () => {
     try {
-      let result = await this.client.tagCloud();
+      const result = await this.client.tagCloud();
       this.dispatch(setTagCloud(result));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -566,7 +566,7 @@ export class ActionsTrigger {
 
   loadSchoolCloud = async () => {
     try {
-      let result = await this.client.schoolCloud();
+      const result = await this.client.schoolCloud();
       this.dispatch(setSchools(result));
       this.dispatch(setSchoolCloud(result));
     } catch (e) {
@@ -576,7 +576,7 @@ export class ActionsTrigger {
 
   loadGeotagCloud = async () => {
     try {
-      let result = await this.client.geotagCloud();
+      const result = await this.client.geotagCloud();
       this.dispatch(setGeotagCloud(result));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -585,7 +585,7 @@ export class ActionsTrigger {
 
   followTag = async (name) => {
     try {
-      let result = await this.client.followTag(name);
+      const result = await this.client.followTag(name);
       this.dispatch(addUserFollowedTag(result.hashtag));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -594,7 +594,7 @@ export class ActionsTrigger {
 
   unfollowTag = async (name) => {
     try {
-      let result = await this.client.unfollowTag(name);
+      const result = await this.client.unfollowTag(name);
       this.dispatch(removeUserFollowedTag(result.hashtag));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -603,7 +603,7 @@ export class ActionsTrigger {
 
   followSchool = async (name) => {
     try {
-      let result = await this.client.followSchool(name);
+      const result = await this.client.followSchool(name);
       this.dispatch(addUserFollowedSchool(result.school));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -612,7 +612,7 @@ export class ActionsTrigger {
 
   unfollowSchool = async (name) => {
     try {
-      let result = await this.client.unfollowSchool(name);
+      const result = await this.client.unfollowSchool(name);
       this.dispatch(removeUserFollowedSchool(result.school));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -621,7 +621,7 @@ export class ActionsTrigger {
 
   followGeotag = async (urlName) => {
     try {
-      let result = await this.client.followGeotag(urlName);
+      const result = await this.client.followGeotag(urlName);
       this.dispatch(addUserFollowedGeotag(result.geotag));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -630,7 +630,7 @@ export class ActionsTrigger {
 
   unfollowGeotag = async (urlName) => {
     try {
-      let result = await this.client.unfollowGeotag(urlName);
+      const result = await this.client.unfollowGeotag(urlName);
       this.dispatch(removeUserFollowedGeotag(result.geotag));
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -674,7 +674,7 @@ export class ActionsTrigger {
     this.dispatch(createCommentStart(postId, comment));
 
     try {
-      let responseBody = await this.client.createComment(postId, comment);
+      const responseBody = await this.client.createComment(postId, comment);
 
       if (responseBody) {
         if (responseBody.error) {
@@ -693,7 +693,7 @@ export class ActionsTrigger {
     this.dispatch(deleteCommentStart(postId, commentId));
 
     try {
-      let responseBody = await this.client.deleteComment(postId, commentId);
+      const responseBody = await this.client.deleteComment(postId, commentId);
 
       if (responseBody) {
         if (responseBody.error) {
@@ -712,7 +712,7 @@ export class ActionsTrigger {
     this.dispatch(saveCommentStart(postId, commentId));
 
     try {
-      let responseBody = await this.client.saveComment(postId, commentId, text);
+      const responseBody = await this.client.saveComment(postId, commentId, text);
 
       if (responseBody) {
         if (responseBody.error) {

@@ -33,7 +33,7 @@ export default class AddHashtagForm extends Component {
   _handleEnter = (event) => {
     event.preventDefault();
 
-    let tagName = this._input.value.trim();
+    const tagName = this._input.value.trim();
 
     this._addTag({ name: tagName });
   };
@@ -44,7 +44,7 @@ export default class AddHashtagForm extends Component {
   };
 
   _addTag = (tag) => {
-    let { addedHashtags } = this.props;
+    const { addedHashtags } = this.props;
 
     if (tag.name.length < 3) {
       return;

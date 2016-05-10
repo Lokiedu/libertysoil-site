@@ -35,7 +35,7 @@ export default class Messages extends React.Component {
     }
 
     const messages = this.props.messages.map((msg, i) => {
-      let params = { i, key: i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
+      const params = { i, key: i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
       return <Message {...params} />;
     })
 

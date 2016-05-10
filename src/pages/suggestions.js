@@ -67,7 +67,7 @@ class SuggestionsPage extends React.Component {
   static displayName = 'SuggestionsPage';
 
   static async fetchData(params, store, client) {
-    let triggers = new ActionsTrigger(client, store.dispatch);
+    const triggers = new ActionsTrigger(client, store.dispatch);
     const result = await triggers.loadPersonalizedSuggestions()
 
     if (!result) {

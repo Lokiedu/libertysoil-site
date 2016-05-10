@@ -35,12 +35,12 @@ export default class ModalSwitcher extends Component {
   };
 
   render() {
-    let {
+    const {
       activeType,
       onClose
     } = this.props;
 
-    let inactiveTags = _.filter(IMPLEMENTED_TAGS, t => t !== activeType);
+    const inactiveTags = _.filter(IMPLEMENTED_TAGS, t => t !== activeType);
 
     return (
       <div className="modal_switcher">

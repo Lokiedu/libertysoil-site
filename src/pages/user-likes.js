@@ -37,15 +37,15 @@ class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
 
   static async fetchData(params, store, client) {
-    let userInfo = await client.userInfo(params.username);
+    const userInfo = await client.userInfo(params.username);
     store.dispatch(addUser(userInfo));
 
-    let likedPosts = client.getLikedPosts(params.username);
+    const likedPosts = client.getLikedPosts(params.username);
     store.dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
   }
 
   render () {
-    let page_user = _.find(this.props.users, { username: this.props.params.username });
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,
       current_user,

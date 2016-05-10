@@ -58,7 +58,7 @@ export default class AddSchoolForm extends Component {
   };
 
   _addTag = (school) => {
-    let { addedSchools } = this.props;
+    const { addedSchools } = this.props;
 
     if (addedSchools.find(s => s.name === school.name)) {
       return;

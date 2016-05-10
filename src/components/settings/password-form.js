@@ -42,8 +42,8 @@ export default class PasswordForm extends React.Component {
   }
 
   _validateOldPassword() {
-    let errors = this.state.errors;
-    let { old_password } = this.refs.form;
+    const errors = this.state.errors;
+    const { old_password } = this.refs.form;
 
     if (old_password.value.length === 0) {
       errors.old_password = 'Enter your current password';
@@ -55,8 +55,8 @@ export default class PasswordForm extends React.Component {
   }
 
   _validateNewPassword() {
-    let errors = this.state.errors;
-    let { new_password } = this.refs.form;
+    const errors = this.state.errors;
+    const { new_password } = this.refs.form;
 
     if (new_password.value.length < 8) {
       errors.new_password = 'Password must be at least 8 characters';
@@ -68,8 +68,8 @@ export default class PasswordForm extends React.Component {
   }
 
   _validateNewPasswordRepeat() {
-    let errors = this.state.errors;
-    let { new_password, new_password_repeat } = this.refs.form;
+    const errors = this.state.errors;
+    const { new_password, new_password_repeat } = this.refs.form;
 
     if (new_password_repeat.value.length > 0 && new_password.value !== new_password_repeat.value) {
       errors.new_password_repeat = 'Passwords do not match';
@@ -81,8 +81,8 @@ export default class PasswordForm extends React.Component {
   }
 
   _handleSubmit(event) {
-    let { old_password, new_password, new_password_repeat } = this.state.errors;
-    let valid = !old_password && !new_password && !new_password_repeat;
+    const { old_password, new_password, new_password_repeat } = this.state.errors;
+    const valid = !old_password && !new_password && !new_password_repeat;
 
     if (valid) {
       this.props.onSubmit(event);
@@ -92,7 +92,7 @@ export default class PasswordForm extends React.Component {
   }
 
   render() {
-    let { errors } = this.state;
+    const { errors } = this.state;
 
     return (
       <form action="" ref="form" className="paper__page" onSubmit={this._handleSubmit.bind(this)}>

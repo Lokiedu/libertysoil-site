@@ -30,8 +30,12 @@ export default class UpdatePictureModal extends React.Component {
     onClose: PropTypes.func.isRequired
   };
 
-  state = {
-    error: ''
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      error: ''
+    };
   }
 
   validate = (crop) => {
@@ -68,10 +72,10 @@ export default class UpdatePictureModal extends React.Component {
     const { width, height } = this.props.preview;
     const wRatio = width / crop.width;
 
-    let canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    let ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
     ctx.drawImage(img,
       crop.left, crop.top, crop.width, crop.height,
@@ -93,8 +97,8 @@ export default class UpdatePictureModal extends React.Component {
       return;
     }
 
-    let img = new Image();
-    let reader = new FileReader();
+    const img = new Image();
+    const reader = new FileReader();
 
     reader.onloadend = (e) => {
       img.src = e.target.result;
@@ -103,7 +107,7 @@ export default class UpdatePictureModal extends React.Component {
     reader.readAsDataURL(avatar);
 
     img.onload = () => {
-      let newCrop = {
+      const newCrop = {
         left: crop.x * img.width,
         top: crop.y * img.height,
         right: ((crop.x + crop.width) * img.width),
@@ -117,7 +121,7 @@ export default class UpdatePictureModal extends React.Component {
         return;
       }
 
-      let pictureData = {
+      const pictureData = {
         production: { picture: avatar, crop: newCrop }
       };
 

@@ -50,7 +50,7 @@ export class TagPage extends Component {
 
   static async fetchData(params, store, client) {
     let hashtag = client.getHashtag(params.tag);
-    let tagPosts = client.tagPosts(params.tag);
+    const tagPosts = client.tagPosts(params.tag);
 
     try {
       hashtag = await hashtag;

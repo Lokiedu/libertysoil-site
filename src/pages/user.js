@@ -35,15 +35,15 @@ class UserPage extends React.Component {
   static displayName = 'UserPage';
 
   static async fetchData(params, store, client) {
-    let userInfo = await client.userInfo(params.username);
-    let userPosts = client.userPosts(params.username);
+    const userInfo = await client.userInfo(params.username);
+    const userPosts = client.userPosts(params.username);
 
     store.dispatch(addUser(userInfo));
     store.dispatch(setUserPosts(userInfo.id, await userPosts));
   }
 
   render() {
-    let page_user = _.find(this.props.users, { username: this.props.params.username });
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       ui,
       users,
@@ -62,7 +62,7 @@ class UserPage extends React.Component {
 
     //console.info(this.props);
 
-    let user_posts = this.props.user_posts[page_user.id];
+    const user_posts = this.props.user_posts[page_user.id];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

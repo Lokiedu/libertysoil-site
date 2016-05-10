@@ -24,7 +24,7 @@ export default class LoginComponent extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     this.props.onLoginUser(form.username.value, form.password.value).then(() => {
       ga('send', 'event', 'Login', 'Done');

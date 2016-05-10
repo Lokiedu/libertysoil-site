@@ -55,7 +55,7 @@ export class App extends React.Component {
     } = this.props;
 
     let gaContent = '';
-    let pageClassName = ['page'];
+    const pageClassName = ['page'];
 
     if (process.env.GOOGLE_ANALYTICS_ID) {
       gaContent = <GAInitializer />;

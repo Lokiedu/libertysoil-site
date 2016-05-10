@@ -55,7 +55,7 @@ export default class AddGeotagForm extends Component {
   }
 
   _addTag = (geotag) => {
-    let { addedGeotags } = this.props;
+    const { addedGeotags } = this.props;
 
     if (!geotag.id) {
       return;

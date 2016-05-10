@@ -60,7 +60,7 @@ export default class RegisterComponent extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     if (this.error) {
       form.username.setCustomValidity(this.error);

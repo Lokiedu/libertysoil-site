@@ -15,7 +15,7 @@ export default class Button extends React.Component {
   };
 
   render() {
-    let {
+    const {
       color,
       size,
       className,
@@ -25,23 +25,23 @@ export default class Button extends React.Component {
     } = this.props;
     let icon = null;
 
-    className = `button button-icon action ${className}`;
+    let cn = `button button-icon action ${className}`;
 
     if (color) {
-      className += ` button-${color}`;
+      cn += ` button-${color}`;
     }
 
     if (size) {
-      className += ` button-${size}`;
+      cn += ` button-${size}`;
     }
 
     if (waiting) {
-      className += ` button-waiting`;
+      cn += ` button-waiting`;
       icon = <span className="button__icon micon micon-rotate">refresh</span>;
     }
 
     return (
-      <button className={className} title={title} {...props}>
+      <button className={cn} title={title} {...props}>
         {icon}
         {title}
       </button>

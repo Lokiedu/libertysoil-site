@@ -8,7 +8,7 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
  * @returns {Array}
  */
 export function convertModelsToTags(params = {}) {
-  let allTags = [];
+  const allTags = [];
 
   if (Array.isArray(params.geotags)) {
     params.geotags.forEach(function (tag) {

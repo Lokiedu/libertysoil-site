@@ -35,26 +35,25 @@ export default class Tag extends React.Component {
   };
 
   _handleDelete = () => {
-    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+    const tag = _.pick(this.props, 'name', 'type', 'urlId');
 
     this.props.onDelete(tag);
   };
 
   _handleClick = () => {
-    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+    const tag = _.pick(this.props, 'name', 'type', 'urlId');
 
     this.props.onClick(tag);
   }
 
   render() {
-    let { urlId, name, type, truncated, size, inactive, collapsed } = this.props;
+    const { urlId, name, type, truncated, size, inactive, collapsed } = this.props;
     let tagName = name;
     let tagNameComponent;
-    let tagIcon = <TagIcon className="tag__icon" type={type} />;
+    const tagIcon = <TagIcon className="tag__icon" type={type} />;
     let className;
     let title = name;
     let url;
-    let tagBody;
 
     switch (type) {
       case TAG_HASHTAG: {
@@ -117,7 +116,7 @@ export default class Tag extends React.Component {
       title = this.props.title;
     }
 
-    tagBody = [
+    const tagBody = [
       <div key="icon" className="tag__icon_wrapper">
         {tagIcon}
       </div>,

@@ -24,7 +24,7 @@ const initialState = Map({});
 
 const clearComments = (comments) => (
   comments.map(comment => {
-    let _comment = {
+    const _comment = {
       ...comment
     };
     delete _comment.user;
@@ -53,7 +53,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_GEOTAG_POSTS:
     case a.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
-        let postCopy = cloneDeep(post);
+        const postCopy = cloneDeep(post);
 
         state = state.set(post.id, List(clearComments(postCopy.post_comments || [])));
       });

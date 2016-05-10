@@ -85,7 +85,7 @@ export default class EditPost extends React.Component {
   }
 
   componentWillMount() {
-    let newFormState = {
+    const newFormState = {
       id: this.props.post.id,
       geotags: this.props.post.geotags,
       schools: this.props.post.schools,
@@ -115,13 +115,13 @@ export default class EditPost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.form;
+    const form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
     }
 
-    let data = {
+    const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
@@ -207,12 +207,12 @@ export default class EditPost extends React.Component {
   };
 
   render() {
-    let {
+    const {
       allSchools,
       post
     } = this.props;
 
-    let {
+    const {
       addTagModalType
     } = this.state;
 

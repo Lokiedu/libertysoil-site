@@ -35,7 +35,7 @@ import Header from '../components/header';
 import Message from '../components/message';
 
 
-export let ResetForm = (props) => {
+export const ResetForm = (props) => {
   return (
     <form className="layout__grid layout__grid-responsive layout-align_end layout__space-double" onSubmit={props.submitHandler} action="" method="post">
       <div className="layout__grid_item layout__grid_item-identical">
@@ -49,7 +49,7 @@ export let ResetForm = (props) => {
    );
 };
 
-export let SuccessMessage = () => {
+export const SuccessMessage = () => {
   return (
     <Message>
       If we found this email in our database, we have just sent you a message with further steps.
@@ -68,7 +68,7 @@ export class Form extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

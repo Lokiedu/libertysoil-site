@@ -78,7 +78,7 @@ export default class Comment extends Component {
     const {
       text
     } = this.state;
-    let commentText = text.trim();
+    const commentText = text.trim();
 
     e && e.preventDefault();
 

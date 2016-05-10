@@ -73,13 +73,13 @@ export default class FollowTagButton extends React.Component {
   };
 
   render() {
-    let {
+    const {
       className = '',
       current_user,
       followed_tags,
       ...props
     } = this.props;
-    let status = this.state.status;
+    const status = this.state.status;
 
     if (!current_user) {
       return null;
@@ -100,7 +100,7 @@ export default class FollowTagButton extends React.Component {
           return null;
       }
     } else {
-      let isFollowed = !!followed_tags[this.props.tag];
+      const isFollowed = !!followed_tags[this.props.tag];
 
       if (isFollowed) {
         return <button {...props} className={`button button-yellow ${className}`} type="button" onClick={this._unfollowTag}>Following</button>;

@@ -34,15 +34,15 @@ class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
 
   static async fetchData(params, store, client) {
-    let userInfo = await client.userInfo(params.username);
+    const userInfo = await client.userInfo(params.username);
     store.dispatch(addUser(userInfo));
 
-    let favouredPosts = client.getFavouredPosts(params.username);
+    const favouredPosts = client.getFavouredPosts(params.username);
     store.dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
   }
 
   render () {
-    let page_user = _.find(this.props.users, { username: this.props.params.username });
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,
       current_user,

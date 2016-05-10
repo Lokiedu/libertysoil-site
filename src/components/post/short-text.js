@@ -20,7 +20,7 @@ import Linkify from 'react-linkify';
 
 import paragraphify from '../../utils/paragraphify';
 
-let ShortTextPost = ({ post }) => {
+const ShortTextPost = ({ post }) => {
   let text = '';
 
   if (post.text) {

@@ -30,11 +30,15 @@ export default class UpdatePictureForm extends React.Component {
     onClear: () => {}
   }
 
-  state = {
-    image: null,
-    avatar: null,
-    scale: 1
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      image: null,
+      avatar: null,
+      scale: 1
+    };
+  }
 
   _submit = () => {
     if (!this.state.image) {
@@ -51,7 +55,7 @@ export default class UpdatePictureForm extends React.Component {
   }
 
   changeHandler = (event) => {
-    let file = event.target.files[0];
+    const file = event.target.files[0];
     this.setState({
       image: URL.createObjectURL(file),
       avatar: file
@@ -69,7 +73,7 @@ export default class UpdatePictureForm extends React.Component {
   render() {
     const { preview, flexible } = this.props;
 
-    let editorStyle = { cursor: 'move' };
+    const editorStyle = { cursor: 'move' };
     if (flexible) {
       editorStyle.width = '100%';
     }

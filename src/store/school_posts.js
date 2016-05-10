@@ -44,8 +44,8 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      for (let schoolId of state.keys()) {
-        let idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
+      for (const schoolId of state.keys()) {
+        const idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
 
         if (idx >= 0) {
           state = state.deleteIn([schoolId, idx]);

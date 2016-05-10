@@ -26,7 +26,7 @@ import { API_HOST } from '../config';
 
 import Dropdown from './dropdown';
 
-let AuthBlock = (props) => {
+const AuthBlock = (props) => {
   if (props.is_logged_in) {
     const logoutUrl = '/api/v1/logout';
 
@@ -57,11 +57,12 @@ let AuthBlock = (props) => {
 export default class HeaderComponent extends React.Component {
 
   render() {
-    let {
-      children
+    const {
+      children,
+      className
     } = this.props;
 
-    let classNames = 'header page__header ' + this.props.className;
+    const classNames = 'header page__header ' + className;
 
     return (
       <div {...this.props} className={classNames}>

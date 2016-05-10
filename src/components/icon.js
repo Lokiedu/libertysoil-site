@@ -34,9 +34,9 @@ export default ({
   onClick,
   ...props
 }) => {
-  let Icon = icons[icon];
-  let classnameIcon = ['icon'];
-  let classnameIconPic = ['micon'];
+  const Icon = icons[icon];
+  const classnameIcon = ['icon'];
+  const classnameIconPic = ['micon'];
   let localOnClick = onClick;
 
   className && classnameIcon.push(className);

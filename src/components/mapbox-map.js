@@ -52,7 +52,7 @@ export default class MapboxMap extends React.Component {
   };
 
   componentDidMount() {
-    let map = this.leafletMap.leafletElement;
+    const map = this.leafletMap.leafletElement;
 
     if (this.props.frozen) {
       map.dragging.disable();
@@ -74,7 +74,7 @@ export default class MapboxMap extends React.Component {
       return null;
     }
 
-    let {
+    const {
       selectedLocation,
       viewLocation,
       mapId,

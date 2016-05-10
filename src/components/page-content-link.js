@@ -28,7 +28,7 @@ export default class PageContentLink extends React.Component {
   };
 
   render() {
-    let {
+    const {
       visible,
       className,
       activeClassName,

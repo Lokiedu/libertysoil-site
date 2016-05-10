@@ -39,9 +39,9 @@ class SettingsFollowersPage extends React.Component {
       return;
     }
 
-    let currentUser = props.get('users').get(currentUserId);
+    const currentUser = props.get('users').get(currentUserId);
 
-    let userInfo = client.userInfo(currentUser.get('username'));
+    const userInfo = client.userInfo(currentUser.get('username'));
     store.dispatch(addUser(await userInfo));
   }
 

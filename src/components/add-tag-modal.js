@@ -103,11 +103,15 @@ export default class AddTagModal extends Component {
     onSave: () => {}
   };
 
-  state = {
-    geotags: _.clone(this.props.geotags),
-    schools: _.clone(this.props.schools),
-    hashtags: _.clone(this.props.hashtags)
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      geotags: _.clone(this.props.geotags),
+      schools: _.clone(this.props.schools),
+      hashtags: _.clone(this.props.hashtags)
+    };
+  }
 
   reset = () => {
     this.setState({
@@ -122,7 +126,7 @@ export default class AddTagModal extends Component {
   };
 
   _addGeotag = (geotag) => {
-    let state = _.pick(this.state, 'geotags');
+    const state = _.pick(this.state, 'geotags');
 
     state.geotags.push(geotag);
 
@@ -130,7 +134,7 @@ export default class AddTagModal extends Component {
   };
 
   _addSchool = (school) => {
-    let state = _.pick(this.state, 'schools');
+    const state = _.pick(this.state, 'schools');
 
     state.schools.push(school);
 
@@ -138,7 +142,7 @@ export default class AddTagModal extends Component {
   };
 
   _addHashtag = (tag) => {
-    let state = _.pick(this.state, 'hashtags');
+    const state = _.pick(this.state, 'hashtags');
 
     state.hashtags.push(tag);
 
@@ -146,7 +150,7 @@ export default class AddTagModal extends Component {
   };
 
   _deleteTag = (displayTag) => {
-    let state = _.clone(this.state);
+    const state = _.clone(this.state);
 
     switch (displayTag.type) {
       case TAG_LOCATION: {
@@ -175,7 +179,7 @@ export default class AddTagModal extends Component {
   };
 
   render() {
-    let {
+    const {
       allSchools,
       type,
       onTypeChange
