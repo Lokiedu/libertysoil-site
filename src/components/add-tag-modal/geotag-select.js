@@ -33,12 +33,15 @@ export default class GeotagSelect extends Component {
     onSelect: () => {}
   };
 
+  constructor(props) {
+    super(props);
 
-  state = {
-    geotagId: '', // Autosuggest doesn't support hidden values.
-    suggestions: [],
-    value: ''
-  };
+    this.state = {
+      geotagId: '', // Autosuggest doesn't support hidden values.
+      suggestions: [],
+      value: ''
+    };
+  }
 
   getValue() {
     return this.state.value;

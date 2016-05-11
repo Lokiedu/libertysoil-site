@@ -60,7 +60,7 @@ class PasswordForm extends React.Component {
     };
   }
 
-  _validatePassword() {
+  _validatePassword = () => {
     const errors = this.state.errors;
     const password = this.refs.form.password;
 
@@ -71,9 +71,9 @@ class PasswordForm extends React.Component {
     }
 
     this.setState({ errors });
-  }
+  };
 
-  _validatePasswordRepeat() {
+  _validatePasswordRepeat = () => {
     const errors = this.state.errors;
     const { password, password_repeat } = this.refs.form;
 
@@ -84,7 +84,7 @@ class PasswordForm extends React.Component {
     }
 
     this.setState({ errors });
-  }
+  };
 
   render() {
     const errors = this.state.errors;
@@ -98,7 +98,7 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPassword"
               name="password"
-              onChange={this._validatePassword.bind(this)}
+              onChange={this._validatePassword}
               required="required"
               type="password"
             />
@@ -109,7 +109,7 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPasswordRepeat"
               name="password_repeat"
-              onChange={this._validatePasswordRepeat.bind(this)}
+              onChange={this._validatePasswordRepeat}
               required="required"
               type="password"
             />

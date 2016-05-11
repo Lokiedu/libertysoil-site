@@ -34,10 +34,14 @@ export default class HashtagSelect extends Component {
     }
   };
 
-  state = {
-    suggestions: [],
-    value: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      suggestions: [],
+      value: ''
+    };
+  }
 
   get value() {
     return this.state.value;

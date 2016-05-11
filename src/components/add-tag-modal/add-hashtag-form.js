@@ -19,7 +19,7 @@ import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
 import HashtagSelect from './hashtag-select';
-import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
+import { Tab, Tabs } from '../tabsbox';
 import TagCloud from '../tag-cloud';
 
 export default class AddHashtagForm extends Component {
@@ -69,10 +69,10 @@ export default class AddHashtagForm extends Component {
 
         <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs">
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Enter manually
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
               <form onSubmit={this._handleEnter}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
@@ -89,13 +89,13 @@ export default class AddHashtagForm extends Component {
                   </div>
                 </div>
               </form>
-            </TabContent>
+            </Tab.Content>
           </Tab>
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Used recently
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
               Used recently:
               <div className="layout__row">
                 <TagCloud
@@ -103,20 +103,20 @@ export default class AddHashtagForm extends Component {
                   onClick={this._selectRecentlyUsedHashtag}
                 />
               </div>
-            </TabContent>
+            </Tab.Content>
           </Tab>
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Popular
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
               Popular:
               <div className="layout__row">
                 <TagCloud
                   hashtags={popularHashtags}
                 />
               </div>
-            </TabContent>
+            </Tab.Content>
           </Tab>
         </Tabs>
       </div>

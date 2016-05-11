@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,14 +14,15 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { filter } from 'lodash';
 
+import ModalSwitcherItem from './modal-switcher-item';
 import TagIcon from '../tag-icon';
 import { IMPLEMENTED_TAGS } from '../../consts/tags';
 
-export default class ModalSwitcher extends Component {
+export default class ModalSwitcher extends React.Component {
   static displayName = 'ModalSwitcher';
 
   static propTypes = {
@@ -30,24 +31,19 @@ export default class ModalSwitcher extends Component {
     onTypeChange: PropTypes.func.isRequired
   };
 
-  _handleTypeChange = (newType) => {
-    this.props.onTypeChange(newType);
-  };
-
   render() {
     const {
       activeType,
-      onClose
+      onClose,
+      onTypeChange
     } = this.props;
 
-    const inactiveTags = _.filter(IMPLEMENTED_TAGS, t => t !== activeType);
+    const inactiveTags = filter(IMPLEMENTED_TAGS, t => t !== activeType);
 
     return (
       <div className="modal_switcher">
         {inactiveTags.map((tag, i) => (
-          <div className="modal_switcher__item" key={i} onClick={this._handleTypeChange.bind(this, tag)}>
-            <TagIcon className="modal_switcher__tag-inactive" type={tag} />
-          </div>
+          <ModalSwitcherItem key={i} tag={tag} onClick={onTypeChange} />
         ))}
         <div className="modal_switcher__item" onClick={onClose}>
           <TagIcon big type={activeType} />
@@ -55,5 +51,4 @@ export default class ModalSwitcher extends Component {
       </div>
     );
   }
-
 }

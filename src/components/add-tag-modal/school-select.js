@@ -36,10 +36,14 @@ export default class SchoolSelect extends Component {
     onSelect: () => {}
   };
 
-  state = {
-    suggestions: [],
-    value: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      suggestions: [],
+      value: ''
+    };
+  }
 
   reset() {
     this.setState({

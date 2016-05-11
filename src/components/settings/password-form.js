@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ export default class PasswordForm extends React.Component {
     };
   }
 
-  _validateOldPassword() {
+  _validateOldPassword = () => {
     const errors = this.state.errors;
     const { old_password } = this.refs.form;
 
@@ -52,9 +52,9 @@ export default class PasswordForm extends React.Component {
     }
 
     this.setState({ errors });
-  }
+  };
 
-  _validateNewPassword() {
+  _validateNewPassword = () => {
     const errors = this.state.errors;
     const { new_password } = this.refs.form;
 
@@ -65,9 +65,9 @@ export default class PasswordForm extends React.Component {
     }
 
     this.setState({ errors });
-  }
+  };
 
-  _validateNewPasswordRepeat() {
+  _validateNewPasswordRepeat = () => {
     const errors = this.state.errors;
     const { new_password, new_password_repeat } = this.refs.form;
 
@@ -78,9 +78,9 @@ export default class PasswordForm extends React.Component {
     }
 
     this.setState({ errors });
-  }
+  };
 
-  _handleSubmit(event) {
+  _handleSubmit = (event) => {
     const { old_password, new_password, new_password_repeat } = this.state.errors;
     const valid = !old_password && !new_password && !new_password_repeat;
 
@@ -89,13 +89,13 @@ export default class PasswordForm extends React.Component {
     } else {
       event.preventDefault();
     }
-  }
+  };
 
   render() {
     const { errors } = this.state;
 
     return (
-      <form action="" ref="form" className="paper__page" onSubmit={this._handleSubmit.bind(this)}>
+      <form action="" ref="form" className="paper__page" onSubmit={this._handleSubmit}>
         <h2 className="content__sub_title layout__row">Password</h2>
 
         <label htmlFor="old_password" className="layout__row layout__row-small">Current password</label>
@@ -103,7 +103,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="old_password"
           name="old_password"
-          onChange={this._validateOldPassword.bind(this)}
+          onChange={this._validateOldPassword}
           placeholder="secret"
           required
           type="password"
@@ -115,7 +115,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="new_password"
           name="new_password"
-          onChange={this._validateNewPassword.bind(this)}
+          onChange={this._validateNewPassword}
           placeholder="mystery"
           required
           type="password"
@@ -127,7 +127,7 @@ export default class PasswordForm extends React.Component {
           className="input input-block layout__row layout__row-small"
           id="new_password_repeat"
           name="new_password_repeat"
-          onChange={this._validateNewPasswordRepeat.bind(this)}
+          onChange={this._validateNewPasswordRepeat}
           placeholder="mystery"
           required
           type="password"

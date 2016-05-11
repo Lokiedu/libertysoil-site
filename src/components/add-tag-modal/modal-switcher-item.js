@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,4 +15,33 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export { default as RolesManager } from './roles-manager';
+import React, { PropTypes } from 'react';
+
+import TagIcon from '../tag-icon';
+
+export default class ModalSwitcherItem extends React.Component {
+  static displayName = 'ModalSwitcherItem';
+
+  static propTypes = {
+    onClick: PropTypes.func.isRequired,
+    tag: PropTypes.string.isRequired
+  };
+
+  static defaultProps = {
+    onClick: () => {}
+  };
+
+  onClick = () => {
+    this.props.onClick(this.props.tag);
+  };
+
+  render() {
+    const { tag } = this.props;
+
+    return (
+      <div className="modal_switcher__item" onClick={this.onClick}>
+        <TagIcon className="modal_switcher__tag-inactive" type={tag} />
+      </div>
+    );
+  }
+}

@@ -28,29 +28,9 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 import { RolesManager } from '../components/settings';
-import { ROLES } from '../consts/profileConstants';
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      roles: [],
-      processing: false
-    };
-  }
-
-  componentWillMount() {
-    const { current_user } = this.props;
-
-    if (current_user.id && current_user.user.more && current_user.user.more.roles) {
-      this.setState({
-        roles: current_user.user.more.roles
-      });
-    }
-  }
 
   static async fetchData(params, store, client) {
     const props = store.getState();
@@ -67,17 +47,21 @@ class SettingsPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  onChange = () => {
+  constructor(props) {
+    super(props);
 
-  };
+    this.state = {
+      processing: false
+    };
+  }
 
   onSave = async () => {
     this.setState({ processing: true });
 
-    const roles = this.state.roles;
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    const roles = this.rolesManager._getRoles();
     const processedPictures = {};
     const pictures = this.base._getNewPictures();
 
@@ -101,18 +85,6 @@ class SettingsPage extends React.Component {
     this.setState({ processing: false });
   };
 
-  addRole = () => {
-    const roles = this.state.roles;
-
-    roles.push([ROLES[0], '']);
-
-    this.setState({ roles });
-  };
-
-  onRolesChange = (roles) => {
-    this.setState({ roles });
-  };
-
   render() {
     const {
       current_user,
@@ -126,7 +98,10 @@ class SettingsPage extends React.Component {
       return false;
     }
 
-    const roles = this.state.roles;
+    let roles = [];
+    if (current_user.id && current_user.user.more && current_user.user.more.roles) {
+      roles = current_user.user.more.roles;
+    }
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -158,9 +133,8 @@ class SettingsPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Roles</h2>
           <RolesManager
+            ref={c => this.rolesManager = c}
             roles={roles}
-            onAdd={this.addRole}
-            onChange={this.onRolesChange}
           />
         </div>
       </BaseSettingsPage>

@@ -93,6 +93,13 @@ export class List extends React.Component {
     };
   }
 
+  loadPostRiverManually = async () => {
+    const { river } = this.props;
+
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    await triggers.loadPostRiver(river.length);
+  }
+
   loadMore = async (isVisible) => {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -144,7 +151,7 @@ export class List extends React.Component {
           <VisibilitySensor onChange={this.loadMore}>
             <Button
               title="Load more..." waiting={ui.progress.loadRiverInProgress}
-              onClick={triggers.loadPostRiver.bind(null, river.length)}
+              onClick={this.loadPostRiverManually}
             />
           </VisibilitySensor>
         </div>

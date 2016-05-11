@@ -176,15 +176,15 @@ export default class TagHeader extends React.Component {
 
       toolbarAlt = [
         <IndexLink
-          activeClassName="tabs__link-active"
-          className="tabs__link button button-midi"
+          activeClassName="tabs__title-active"
+          className="tabs__title tabs__title-gray button button-midi"
           to={`/${prefix}/${url_name}`}
         >
           Posts
         </IndexLink>,
         <Link
-          activeClassName="tabs__link-active"
-          className="tabs__link button button-midi"
+          activeClassName="tabs__title-active"
+          className="tabs__title tabs__title-gray button button-midi"
           to={`/${prefix}/${url_name}/edit`}
           visible
         >

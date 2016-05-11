@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,73 +14,36 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { Component, PropTypes } from 'react';
+*/
+import React, { PropTypes } from 'react';
 
-export class TabTitle extends Component {
-  static displayName = 'TabTitle';
+import TabTitle from './tab-title';
 
-  render() {
-    let className = 'tabs__title';
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
-    }
-    return <li onClick={this.props.onClick} className={className}>{this.props.children}</li>;
-  }
-}
+export default class TabsBox extends React.Component {
+  static displayName = 'TabsBox';
 
-export class TabContent extends Component {
-  static displayName = 'TabContent';
-
-  render() {
-    return <div className={this.props.className}>{this.props.children}</div>;
-  }
-}
-
-export class Tab extends Component {
-  static displayName = 'Tab';
-
-  render() {
-    let className = 'tabs__tab';
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
-    }
-    if (!this.props.active) {
-      className += ' hidden';
-    }
-
-    let content;
-    React.Children.forEach(this.props.children, child => {
-      if ((typeof child === 'object') && (child.type.displayName === 'TabContent')) {
-        content = child;
-      }
-    });
-
-    return (
-      <div className={className}>{content}</div>
-    );
-  }
-}
-
-export class Tabs extends Component {
-  static displayName = 'Tabs';
   static propTypes = {
-    onClick: PropTypes.func,
     active: PropTypes.number,
-    invert: PropTypes.bool,
+    children: PropTypes.node,
     className: PropTypes.string,
+    invert: PropTypes.bool,
     menuClassName: PropTypes.string,
+    onClick: PropTypes.func,
     panelClassName: PropTypes.string
-  };
-
-  state = {
-    active: this.props.active
   };
 
   static defaultProps = {
     active: 0,
     onClick: () => {}
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      active: props.active || 0
+    };
+  }
 
   to = (i) => {
     this.setState({ active: i });
@@ -97,6 +60,10 @@ export class Tabs extends Component {
       className += ` ${this.props.className}`;
     }
 
+    if (this.props.invert) {
+      className += ' tabs-reverse';
+    }
+
     let panelClassName = 'tabs__panel';
     if (this.props.panelClassName) {
       panelClassName += ` ${this.props.panelClassName}`;
@@ -106,13 +73,13 @@ export class Tabs extends Component {
       menuClassName += ` ${this.props.menuClassName}`;
     }
 
-    const titles = React.Children.map(this.props.children, (item, i) => {
-      const children = item.props.children;
+    const titles = React.Children.map(this.props.children, (tab, i) => {
+      const children = tab.props.children;
       let titleClassName = '';
       let content;
 
       React.Children.forEach(children, child => {
-        if ((typeof child === 'object') && (child.type.displayName === 'TabTitle')) {
+        if ((typeof child === 'object') && (child.type.displayName === 'TabBoxTitle')) {
           if (child.props.className) {
             titleClassName += ` ${child.props.className}`;
           }
@@ -125,32 +92,25 @@ export class Tabs extends Component {
       });
 
       return (
-        <TabTitle className={titleClassName} onClick={this.clickHandler.bind(null, i)} key={i}>
+        <TabTitle className={titleClassName} index={i} key={i} onClick={this.clickHandler}>
           {content}
         </TabTitle>
       );
     });
 
-    const tabs = React.Children.map(this.props.children, (item, i) => React.cloneElement(item, {
+    const tabs = React.Children.map(this.props.children, (tab, i) => React.cloneElement(tab, {
       key: i,
       active: (this.state.active === i)
     }));
 
     return (
       <div className={className}>
-        {!this.props.invert &&
-          <nav className={menuClassName}>
-            {titles}
-          </nav>
-        }
+        <nav className={menuClassName}>
+          {titles}
+        </nav>
         <div className={panelClassName}>
           {tabs}
         </div>
-        {this.props.invert &&
-          <nav className={menuClassName}>
-            {titles}
-          </nav>
-        }
       </div>
     );
   }

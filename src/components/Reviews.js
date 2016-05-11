@@ -18,7 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
-import { Tabs, Tab, TabTitle, TabContent } from './tabs';
+import { Tab, Tabs } from './tabsbox';
 import VisibilitySensor from './visibility-sensor';
 
 export default class Reviews extends Component {
@@ -122,6 +122,14 @@ export default class Reviews extends Component {
     this.clientWidth = clientWidth;
   }, 100);
 
+  onImageMouseOver = () => {
+    this.imageHovered = true;
+  };
+
+  onImageMouseOut = () => {
+    this.imageHovered = false;
+  };
+
   render() {
     const { quotes } = this.props;
 
@@ -162,18 +170,18 @@ export default class Reviews extends Component {
 
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
-          <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
+          <Tab.Title className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
             <img
-              onMouseOver={() => this.imageHovered = true}
-              onMouseOut={() => this.imageHovered = false}
+              onMouseOver={this.onImageMouseOver}
+              onMouseOut={this.onImageMouseOut}
               className="user_box__avatar"
               src={q.avatar_url}
               width="64"
               height="64"
               alt=""
             />
-          </TabTitle>
-          <TabContent>
+          </Tab.Title>
+          <Tab.Content>
             <blockquote className="review">
               <p className={reviewClassName}>
                 {q.text}
@@ -193,7 +201,7 @@ export default class Reviews extends Component {
                 </section>
               </footer>
             </blockquote>
-          </TabContent>
+          </Tab.Content>
         </Tab>
       ));
 
