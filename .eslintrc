@@ -33,6 +33,7 @@
     "prefer-const": 2,
     "prefer-template": 2,
     "strict": [2, "never"],
+    "space-before-blocks": 2,
 
     "jsx-quotes": 1,
     "react/display-name": 1,
