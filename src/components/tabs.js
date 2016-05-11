@@ -23,7 +23,7 @@ export class TabTitle extends Component {
   render() {
     let className = 'tabs__title';
     if (this.props.className) {
-      className += ' ' + this.props.className;
+      className += ` ${this.props.className}`;
     }
     return <li onClick={this.props.onClick} className={className}>{this.props.children}</li>;
   }
@@ -43,7 +43,7 @@ export class Tab extends Component {
   render() {
     let className = 'tabs__tab';
     if (this.props.className) {
-      className += ' ' + this.props.className;
+      className += ` ${this.props.className}`;
     }
     if (!this.props.active) {
       className += ' hidden';
@@ -94,16 +94,16 @@ export class Tabs extends Component {
   render() {
     let className = 'tabs';
     if (this.props.className) {
-      className += ' ' + this.props.className;
+      className += ` ${this.props.className}`;
     }
 
     let panelClassName = 'tabs__panel';
     if (this.props.panelClassName) {
-      panelClassName += ' ' + this.props.panelClassName;
+      panelClassName += ` ${this.props.panelClassName}`;
     }
     let menuClassName = 'tabs__menu';
     if (this.props.menuClassName) {
-      menuClassName += ' ' + this.props.menuClassName;
+      menuClassName += ` ${this.props.menuClassName}`;
     }
 
     const titles = React.Children.map(this.props.children, (item, i) => {
@@ -114,10 +114,10 @@ export class Tabs extends Component {
       React.Children.forEach(children, child => {
         if ((typeof child === 'object') && (child.type.displayName === 'TabTitle')) {
           if (child.props.className) {
-            titleClassName += ' ' + child.props.className;
+            titleClassName += ` ${child.props.className}`;
           }
           if ((this.state.active === i) && (child.props.classNameActive)) {
-            titleClassName += ' ' + child.props.classNameActive;
+            titleClassName += ` ${child.props.classNameActive}`;
           }
           content = child.props.children;
           return;

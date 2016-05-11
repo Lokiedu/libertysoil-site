@@ -40,8 +40,8 @@ export default class SidebarLink extends React.Component {
       return <Link className={className} activeClassName={activeClassName} to={to}>{children}</Link>;
     }
 
-    const cn = className + ' disabled';
+    const cn = `${className} disabled`;
 
-    return <span className={cn}>{children}</span>;
+    return <span className={cn.trim()}>{children}</span>;
   }
 }

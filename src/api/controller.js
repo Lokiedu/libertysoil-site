@@ -2297,7 +2297,7 @@ export default class ApiController {
    */
   getRelatedPosts = async (ctx) => {
     function formatArray(array) {
-      return `(${array.map(function (e) { return "'" + e + "'"; }).join(',')})`
+      return `(${array.map(function (e) { return `'${e}'`; }).join(',')})`
     }
 
     const knex = this.bookshelf.knex;

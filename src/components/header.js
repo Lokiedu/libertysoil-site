@@ -62,10 +62,10 @@ export default class HeaderComponent extends React.Component {
       className
     } = this.props;
 
-    const classNames = 'header page__header ' + className;
+    const classNames = `header page__header ${className}`;
 
     return (
-      <div {...this.props} className={classNames}>
+      <div {...this.props} className={classNames.trim()}>
         <div className="header__body">
           <div className="header__content">
             {!React.Children.count(children) &&

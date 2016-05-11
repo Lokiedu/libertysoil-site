@@ -31,6 +31,7 @@
     "object-curly-spacing": [2, "always"],
     "padded-blocks": [2, "never"],
     "prefer-const": 2,
+    "prefer-template": 2,
     "strict": [2, "never"],
 
     "jsx-quotes": 1,
