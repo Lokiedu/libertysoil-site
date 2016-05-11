@@ -24,7 +24,7 @@ const icons = {
   delete: _delete
 };
 
-export default ({
+const IconComponent = ({
   color,
   outline,
   icon,
@@ -69,3 +69,5 @@ export default ({
     </div>
   );
 };
+
+export default IconComponent;

@@ -28,7 +28,7 @@ const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
   );
 };
 
-export default ({
+const Panel = ({
   children,
   title,
   icon,
@@ -62,3 +62,5 @@ export default ({
     <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} />
   </div>
 );
+
+export default Panel;

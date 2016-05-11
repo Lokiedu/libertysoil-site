@@ -86,28 +86,33 @@ class ModalComponent extends Component {
   }
 }
 
-ModalComponent.Head = ({ children }) => (
+const Head = ({ children }) => (
   <div className="modal__section_head">
     {children}
   </div>
 );
 
-ModalComponent.Title = ({ children }) => (
+const Title = ({ children }) => (
   <h4 className="modal__title">
     {children}
   </h4>
 );
 
-ModalComponent.Body = ({ children }) => (
+const Body = ({ children }) => (
   <div className="modal__section_description">
     {children}
   </div>
 );
 
-ModalComponent.Actions = ({ children }) => (
+const Actions = ({ children }) => (
   <div className="modal__navigation">
     {children}
   </div>
 );
+
+ModalComponent.Head = Head;
+ModalComponent.Title = Title;
+ModalComponent.Body = Body;
+ModalComponent.Actions = Actions;
 
 export default ModalComponent;
