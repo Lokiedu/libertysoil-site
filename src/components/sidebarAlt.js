@@ -26,6 +26,6 @@ export default class SidebarAlt extends React.Component {
       <div className="page__sidebar page__sidebar-alt">
         {this.props.children}
       </div>
-    )
+    );
   }
 }

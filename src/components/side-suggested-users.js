@@ -73,7 +73,7 @@ export default class SideSuggestedUsers extends React.Component {
 
     let className = 'layout__row suggested_users';
     if (this.state.loading) {
-      className += ' suggested_users-loading'
+      className += ' suggested_users-loading';
     }
 
     return (
@@ -104,6 +104,6 @@ export default class SideSuggestedUsers extends React.Component {
           </div>
         ))}
       </div>
-    )
+    );
   }
 }

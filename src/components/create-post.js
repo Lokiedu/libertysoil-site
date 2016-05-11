@@ -167,7 +167,7 @@ export default class CreatePost extends React.Component {
   _changeAddTagModal = (newType) => {
     this.setState({
       addTagModalType: newType
-    })
+    });
   };
 
   /**
@@ -254,6 +254,6 @@ export default class CreatePost extends React.Component {
           triggers={this.props.triggers}
         />
       </div>
-    )
+    );
   }
 }

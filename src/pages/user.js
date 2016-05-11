@@ -20,14 +20,14 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import NotFound from './not-found'
-import BaseUserPage from './base/user'
+import NotFound from './not-found';
+import BaseUserPage from './base/user';
 import River from '../components/river_of_posts';
 
 import { API_HOST } from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { addUser, setUserPosts } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -57,7 +57,7 @@ class UserPage extends React.Component {
     }
 
     if (false === page_user) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
     //console.info(this.props);
@@ -88,7 +88,7 @@ class UserPage extends React.Component {
           ui={ui}
         />
       </BaseUserPage>
-    )
+    );
   }
 }
 

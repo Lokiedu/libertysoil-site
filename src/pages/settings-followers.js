@@ -25,7 +25,7 @@ import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 class SettingsFollowersPage extends React.Component {

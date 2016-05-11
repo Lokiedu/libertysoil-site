@@ -67,7 +67,7 @@ export default class User extends Component {
     const render = {};
     render.className = `user_box ${className || ''}`;
 
-    const user_url = getUrl(URL_NAMES.USER, { username: user.username })
+    const user_url = getUrl(URL_NAMES.USER, { username: user.username });
 
     if (!hideAvatar) {
       let avatarClassName = 'user_box__avatar';
@@ -175,6 +175,6 @@ export default class User extends Component {
         {render.changeAvatar}
         {render.text}
       </div>
-    )
+    );
   }
 }

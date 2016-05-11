@@ -102,7 +102,7 @@ export default class UpdatePictureModal extends React.Component {
 
     reader.onloadend = (e) => {
       img.src = e.target.result;
-    }
+    };
 
     reader.readAsDataURL(avatar);
 

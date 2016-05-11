@@ -28,7 +28,7 @@ class Dropdown extends Component {
 
     this.state = {
       isVisible: props.isVisible || false
-    }
+    };
   }
 
   onClickOutside = () => {

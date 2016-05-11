@@ -65,6 +65,6 @@ export default class LoginComponent extends React.Component {
             <button className="button button-big button-red">Log in</button>
           </div>
       </form>
-    )
+    );
   }
 }

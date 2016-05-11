@@ -224,6 +224,6 @@ export default class ProfileHeader extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

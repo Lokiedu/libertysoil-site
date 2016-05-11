@@ -32,7 +32,7 @@ export default class FollowTagButton extends React.Component {
 
     this.state = {
       status: STATUS_NOT_TOUCHED
-    }
+    };
   }
 
   componentWillReceiveProps(nextProps) {

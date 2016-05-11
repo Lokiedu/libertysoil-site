@@ -16,17 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import bluebird from 'bluebird';
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
-import { getRoutes } from '../routing'
+import { getRoutes } from '../routing';
 import { AuthHandler, FetchHandler } from '../utils/loader';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import { initState } from '../store'
+import { initState } from '../store';
 
 bluebird.longStackTraces();
 window.Promise = bluebird;

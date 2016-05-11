@@ -31,5 +31,5 @@ export default (ComposedComponent) => {
     render () {
       return <ComposedComponent ref="root" {...this.props} />;
     }
-  }
-}
+  };
+};

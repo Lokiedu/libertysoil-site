@@ -68,4 +68,4 @@ export default ({
       <Icon className={classnameIconPic.join(' ')} />
     </div>
   );
-}
+};

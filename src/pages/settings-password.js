@@ -20,12 +20,12 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import BaseSettingsPage from './base/settings'
+import BaseSettingsPage from './base/settings';
 import SettingsPasswordForm from '../components/settings/password-form';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
@@ -68,7 +68,7 @@ class SettingsPasswordPage extends React.Component {
     promise.catch(e => {
       // FIXME: this should be reported to developers instead (use Sentry?)
       console.error(e);  // eslint-disable-line no-console
-    })
+    });
   };
 
   render() {
@@ -107,7 +107,7 @@ class SettingsPasswordPage extends React.Component {
           <h2 className="content__title">Role</h2>
         </div>}
       </BaseSettingsPage>
-    )
+    );
   }
 }
 

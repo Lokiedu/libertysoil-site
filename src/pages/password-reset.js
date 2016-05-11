@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -77,7 +77,7 @@ export class Form extends React.Component {
   };
 
   render() {
-    let content = <ResetForm submitHandler={this.submitHandler} />
+    let content = <ResetForm submitHandler={this.submitHandler} />;
 
     if (this.props.ui.submitResetPassword) {
       content = <SuccessMessage />;

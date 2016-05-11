@@ -638,7 +638,7 @@ export class ActionsTrigger {
   };
 
   removeMessage = (id) => {
-    this.dispatch(removeMessage(id))
+    this.dispatch(removeMessage(id));
   };
 
   loadUserTags = async () => {

@@ -18,13 +18,13 @@
 import md5 from 'md5';
 import Knex from 'knex';
 import Bookshelf from 'bookshelf';
-import uuid from 'uuid'
-import _ from 'lodash'
+import uuid from 'uuid';
+import _ from 'lodash';
 import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import crypto from 'crypto'
+import crypto from 'crypto';
 import { break as breakGraphemes } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 
@@ -32,7 +32,7 @@ import { uploadAttachment, downloadAttachment, generateName } from '../../utils/
 
 
 const bcryptHashAsync = promisify(bcryptHash);
-promisifyAll(OnigRegExp.prototype)
+promisifyAll(OnigRegExp.prototype);
 
 export function initBookshelfFromKnex(knex) {
   const bookshelf = Bookshelf(knex);
@@ -210,7 +210,7 @@ export function initBookshelfFromKnex(knex) {
 
       const tags = await Promise.all(hashtagNamesToAdd.map(tag_name => Hashtag.createOrSelect(tag_name)));
       let promises = tags.map(async (tag) => {
-        await hashtags.attach(tag)
+        await hashtags.attach(tag);
       });
 
       if (removeUnused) {
@@ -336,7 +336,7 @@ export function initBookshelfFromKnex(knex) {
       });
 
       await hashtag.save(null, { method: 'insert' });
-      return hashtag
+      return hashtag;
     }
   };
 
@@ -346,7 +346,7 @@ export function initBookshelfFromKnex(knex) {
       return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
     },
     images: function() {
-      return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id')
+      return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id');
     },
     updateImages: async function(imageIds) {
       const relatedImageIds = (await this.related('images').fetch()).pluck('id');

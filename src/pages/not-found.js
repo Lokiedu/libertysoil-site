@@ -62,7 +62,7 @@ class NotFound extends React.Component {
             </PageMain>
           </Page>
       </div>
-    )
+    );
   }
 }
 

@@ -71,7 +71,7 @@ export class App extends React.Component {
         {this.props.children}
         {gaContent}
       </div>
-    )
+    );
   }
 }
 

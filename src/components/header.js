@@ -76,6 +76,6 @@ export default class HeaderComponent extends React.Component {
           <AuthBlock is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}/>
         </div>
       </div>
-    )
+    );
   }
 }

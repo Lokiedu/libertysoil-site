@@ -17,7 +17,7 @@
 */
 import i from 'immutable';
 import { compose, createStore } from 'redux';
-import { combineReducers } from 'redux-immutablejs'
+import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
 import current_user from './current-user';

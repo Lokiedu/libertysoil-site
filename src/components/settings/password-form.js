@@ -38,7 +38,7 @@ export default class PasswordForm extends React.Component {
         new_password: null,
         new_password_repeat: null
       }
-    }
+    };
   }
 
   _validateOldPassword() {

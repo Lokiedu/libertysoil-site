@@ -104,55 +104,55 @@ export function addUser(user) {
   return {
     type: ADD_USER,
     user
-  }
+  };
 }
 
 export function addSchool(school) {
   return {
     type: ADD_SCHOOL,
     school
-  }
+  };
 }
 
 export function addPost(post) {
   return {
     type: ADD_POST,
     post
-  }
+  };
 }
 
 export function addGeotag(geotag) {
   return {
     type: ADD_GEOTAG,
     geotag
-  }
+  };
 }
 
 export function addHashtag(hashtag) {
   return {
     type: ADD_HASHTAG,
     hashtag
-  }
+  };
 }
 
 export function addPostToRiver(post) {
   return {
     type: ADD_POST_TO_RIVER,
     post
-  }
+  };
 }
 
 export function setPostsToRiver(posts) {
   return {
     type: SET_POSTS_TO_RIVER,
     posts
-  }
+  };
 }
 
 export function clearRiver() {
   return {
     type: CLEAR_RIVER
-  }
+  };
 }
 
 export function setPostsToLikesRiver(user_id, posts) {
@@ -160,7 +160,7 @@ export function setPostsToLikesRiver(user_id, posts) {
     type: SET_POSTS_TO_LIKES_RIVER,
     user_id,
     posts
-  }
+  };
 }
 
 export function setPostsToFavouritesRiver(user_id, posts) {
@@ -168,7 +168,7 @@ export function setPostsToFavouritesRiver(user_id, posts) {
     type: SET_POSTS_TO_FAVOURITES_RIVER,
     user_id,
     posts
-  }
+  };
 }
 
 export function setRelatedPosts(post_id, posts) {
@@ -176,7 +176,7 @@ export function setRelatedPosts(post_id, posts) {
     type: SET_RELATED_POSTS,
     post_id,
     posts
-  }
+  };
 }
 
 export function setUserPosts(user_id, posts) {
@@ -184,7 +184,7 @@ export function setUserPosts(user_id, posts) {
     type: SET_USER_POSTS,
     user_id,
     posts
-  }
+  };
 }
 
 export function setUserTags(tags) {
@@ -193,21 +193,21 @@ export function setUserTags(tags) {
     hashtags: tags.hashtags,
     schools: tags.schools,
     geotags: tags.geotags
-  }
+  };
 }
 
 export function addUserFollowedTag(hashtag) {
   return {
     type: ADD_USER_FOLLOWED_TAG,
     hashtag
-  }
+  };
 }
 
 export function removeUserFollowedTag(hashtag) {
   return {
     type: REMOVE_USER_FOLLOWED_TAG,
     hashtag
-  }
+  };
 }
 
 
@@ -215,14 +215,14 @@ export function addUserFollowedSchool(school) {
   return {
     type: ADD_USER_FOLLOWED_SCHOOL,
     school
-  }
+  };
 }
 
 export function removeUserFollowedSchool(school) {
   return {
     type: REMOVE_USER_FOLLOWED_SCHOOL,
     school
-  }
+  };
 }
 
 
@@ -230,21 +230,21 @@ export function addUserFollowedGeotag(geotag) {
   return {
     type: ADD_USER_FOLLOWED_GEOTAG,
     geotag
-  }
+  };
 }
 
 export function removeUserFollowedGeotag(geotag) {
   return {
     type: REMOVE_USER_FOLLOWED_GEOTAG,
     geotag
-  }
+  };
 }
 
 export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
     recent_tags
-  }
+  };
 }
 
 export function setTagPosts(hashtag, posts) {
@@ -252,7 +252,7 @@ export function setTagPosts(hashtag, posts) {
     type: SET_TAG_POSTS,
     hashtag,
     posts
-  }
+  };
 }
 
 export function setSchoolPosts(school, posts) {
@@ -260,7 +260,7 @@ export function setSchoolPosts(school, posts) {
     type: SET_SCHOOL_POSTS,
     school,
     posts
-  }
+  };
 }
 
 export function setGeotagPosts(geotag, posts) {
@@ -268,7 +268,7 @@ export function setGeotagPosts(geotag, posts) {
     type: SET_GEOTAG_POSTS,
     geotag,
     posts
-  }
+  };
 }
 
 
@@ -276,7 +276,7 @@ export function removePost(id) {
   return {
     type: REMOVE_POST,
     id
-  }
+  };
 }
 
 export function setLikes(user_id, likes, post_id, likers) {
@@ -286,7 +286,7 @@ export function setLikes(user_id, likes, post_id, likers) {
     likes,
     post_id,
     likers
-  }
+  };
 }
 
 export function setFavourites(user_id, favourites, post_id, favourers) {
@@ -296,103 +296,103 @@ export function setFavourites(user_id, favourites, post_id, favourers) {
     favourites,
     post_id,
     favourers
-  }
+  };
 }
 
 export function setSchools(schools) {
   return {
     type: SET_SCHOOLS,
     schools
-  }
+  };
 }
 
 export function setGeotags(geotags) {
   return {
     type: SET_GEOTAGS,
     geotags
-  }
+  };
 }
 
 export function setHashtags(hashtags) {
   return {
     type: SET_HASHTAGS,
     hashtags
-  }
+  };
 }
 
 export function addError(message) {
   return {
     type: ADD_ERROR,
     message
-  }
+  };
 }
 
 export function addMessage(message) {
   return {
     type: ADD_MESSAGE,
     message
-  }
+  };
 }
 
 export function removeMessage(index) {
   return {
     type: REMOVE_MESSAGE,
     index
-  }
+  };
 }
 
 export function removeAllMessages() {
   return {
     type: REMOVE_ALL_MESSAGES
-  }
+  };
 }
 
 export function loginSuccess() {
   return {
     type: LOGIN_SUCCESS
-  }
+  };
 }
 
 export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
-  }
+  };
 }
 
 export function setSuggestedUsers(suggested_users) {
   return {
     type: SET_SUGGESTED_USERS,
     suggested_users
-  }
+  };
 }
 
 export function setPersonalizedSuggestedUsers(suggested_users) {
   return {
     type: SET_PERSONALIZED_SUGGESTED_USERS,
     suggested_users
-  }
+  };
 }
 
 export function setCountries(countries) {
   return {
     type: SET_COUNTRIES,
     countries
-  }
+  };
 }
 
 export function addCountry(country) {
   return {
     type: ADD_COUNTRY,
     country
-  }
+  };
 }
 
 export function addCity(city) {
   return {
     type: ADD_CITY,
     city
-  }
+  };
 }
 
 export function setCountryPosts(countryCode, posts) {
@@ -400,19 +400,19 @@ export function setCountryPosts(countryCode, posts) {
     type: SET_COUNTRY_POSTS,
     countryCode,
     posts
-  }
+  };
 }
 
 export function submitResetPassword() {
   return {
     type: SUBMIT_RESET_PASSWORD
-  }
+  };
 }
 
 export function submitNewPassword() {
   return {
     type: SUBMIT_NEW_PASSWORD
-  }
+  };
 }
 
 export function setCityPosts(cityId, posts) {
@@ -420,14 +420,14 @@ export function setCityPosts(cityId, posts) {
     type: SET_CITY_POSTS,
     cityId,
     posts
-  }
+  };
 }
 
 export function setTagCloud(hashtags) {
   return {
     type: SET_TAG_CLOUD,
     hashtags
-  }
+  };
 }
 
 
@@ -435,14 +435,14 @@ export function setSchoolCloud(schools) {
   return {
     type: SET_SCHOOL_CLOUD,
     schools
-  }
+  };
 }
 
 export function setGeotagCloud(geotags) {
   return {
     type: SET_GEOTAG_CLOUD,
     geotags
-  }
+  };
 }
 
 
@@ -461,76 +461,76 @@ export function showRegisterForm() {
 export function resetCreatePostForm() {
   return {
     type: RESET_CREATE_POST_FORM
-  }
+  };
 }
 
 export function updateCreatePostForm(create_post_form) {
   return {
     type: UPDATE_CREATE_POST_FORM,
     create_post_form
-  }
+  };
 }
 
 export function resetEditPostForm() {
   return {
     type: RESET_EDIT_POST_FORM
-  }
+  };
 }
 
 export function updateEditPostForm(edit_post_form) {
   return {
     type: UPDATE_EDIT_POST_FORM,
     edit_post_form
-  }
+  };
 }
 
 export function addLikedHashtag(hashtag) {
   return {
     type: ADD_LIKED_HASHTAG,
     hashtag
-  }
+  };
 }
 
 export function removeLikedHashtag(hashtag) {
   return {
     type: REMOVE_LIKED_HASHTAG,
     hashtag
-  }
+  };
 }
 
 export function addLikedSchool(school) {
   return {
     type: ADD_LIKED_SCHOOL,
     school
-  }
+  };
 }
 
 export function removeLikedSchool(school) {
   return {
     type: REMOVE_LIKED_SCHOOL,
     school
-  }
+  };
 }
 
 export function addLikedGeotag(geotag) {
   return {
     type: ADD_LIKED_GEOTAG,
     geotag
-  }
+  };
 }
 
 export function removeLikedGeotag(geotag) {
   return {
     type: REMOVE_LIKED_GEOTAG,
     geotag
-  }
+  };
 }
 
 export function setQuotes(quotes) {
   return {
     type: SET_QUOTES,
     quotes
-  }
+  };
 }
 
 export function setUIProgress(progress, value) {
@@ -538,14 +538,14 @@ export function setUIProgress(progress, value) {
     type: UI__SET_PROGRESS,
     progress,
     value
-  }
+  };
 }
 
 export function toggleUISidebar(isVisible) {
   return {
     type: UI__TOGGLE_SIDEBAR,
     isVisible
-  }
+  };
 }
 
 export function setPostComments(postId, comments) {
@@ -553,7 +553,7 @@ export function setPostComments(postId, comments) {
     type: SET_POST_COMMENTS,
     postId,
     comments
-  }
+  };
 }
 
 export function saveCommentStart(postId, commentId) {
@@ -561,7 +561,7 @@ export function saveCommentStart(postId, commentId) {
     type: SAVE_COMMENT__START,
     postId,
     commentId
-  }
+  };
 }
 
 export function saveCommentSuccess(postId, commentId) {
@@ -569,7 +569,7 @@ export function saveCommentSuccess(postId, commentId) {
     type: SAVE_COMMENT__SUCCESS,
     postId,
     commentId
-  }
+  };
 }
 
 export function saveCommentFailure(postId, commentId, message) {
@@ -578,7 +578,7 @@ export function saveCommentFailure(postId, commentId, message) {
     postId,
     commentId,
     message
-  }
+  };
 }
 
 export function deleteCommentStart(postId, commentId) {
@@ -586,7 +586,7 @@ export function deleteCommentStart(postId, commentId) {
     type: DELETE_COMMENT__START,
     postId,
     commentId
-  }
+  };
 }
 
 export function deleteCommentSuccess(postId, commentId) {
@@ -594,7 +594,7 @@ export function deleteCommentSuccess(postId, commentId) {
     type: DELETE_COMMENT__SUCCESS,
     postId,
     commentId
-  }
+  };
 }
 
 export function deleteCommentFailure(postId, commentId, message) {
@@ -603,7 +603,7 @@ export function deleteCommentFailure(postId, commentId, message) {
     postId,
     commentId,
     message
-  }
+  };
 }
 
 export function createCommentStart(postId, text) {
@@ -611,14 +611,14 @@ export function createCommentStart(postId, text) {
     type: CREATE_COMMENT__START,
     postId,
     text
-  }
+  };
 }
 
 export function createCommentSuccess(postId) {
   return {
     type: CREATE_COMMENT__SUCCESS,
     postId
-  }
+  };
 }
 
 export function createCommentFailure(postId, message) {
@@ -626,5 +626,5 @@ export function createCommentFailure(postId, message) {
     type: CREATE_COMMENT__FAILURE,
     postId,
     message
-  }
+  };
 }

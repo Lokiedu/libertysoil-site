@@ -35,6 +35,6 @@ export default class EditPostShort extends Component {
           placeholder="Share education related resources, your perspective"
         />
       </div>
-    )
+    );
   }
 }

@@ -188,6 +188,6 @@ export default class WhatIsLibertySoil extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

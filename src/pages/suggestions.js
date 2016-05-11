@@ -24,7 +24,7 @@ import BaseSuggestionsPage from './base/suggestions';
 import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -68,7 +68,7 @@ class SuggestionsPage extends React.Component {
 
   static async fetchData(params, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
-    const result = await triggers.loadPersonalizedSuggestions()
+    const result = await triggers.loadPersonalizedSuggestions();
 
     if (!result) {
       return { status: 307, redirectTo: '/' };
@@ -112,7 +112,7 @@ class SuggestionsPage extends React.Component {
           users={current_user.suggested_users}
         />
       </BaseSuggestionsPage>
-    )
+    );
   }
 }
 

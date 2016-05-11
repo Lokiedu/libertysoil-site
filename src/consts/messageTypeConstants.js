@@ -21,6 +21,6 @@ const MESSAGE = 'MESSAGE';
 
 const messageType = {
   ERROR, INFO, MESSAGE
-}
+};
 
 export default messageType;

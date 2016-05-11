@@ -35,7 +35,7 @@ export function combineHandlers(...handlers) {
         }
       }
     }
-  }
+  };
 }
 
 export function combineHandlersAsync(...handlers) {
@@ -76,7 +76,7 @@ export function combineHandlersAsync(...handlers) {
     if (callbacksTodo === 0) {
       callback();
     }
-  }
+  };
 }
 
 export class AuthHandler {

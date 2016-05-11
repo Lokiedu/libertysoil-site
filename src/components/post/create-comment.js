@@ -194,6 +194,6 @@ export default class CreateComment extends Component {
           </div>
         </div>
       </form>
-    )
+    );
   }
 }

@@ -240,6 +240,6 @@ export default class RegisterComponent extends React.Component {
         </div>
       </form>
     </div>
-    )
+    );
   }
 }

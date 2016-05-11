@@ -158,7 +158,7 @@ export default class ApiClient
   }
 
   async getSchool(school_name) {
-    const response = await this.get(`/api/v1/school/${school_name}`)
+    const response = await this.get(`/api/v1/school/${school_name}`);
     return response.body;
   }
 
@@ -478,7 +478,7 @@ export default class ApiClient
     const data = new FormData;
     images.forEach((image) => {
       data.append("files", image);
-    })
+    });
     const response = await this.postMultipart('/api/v1/upload', data);
     return response.body;
   }

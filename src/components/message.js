@@ -52,7 +52,7 @@ export default class Message extends React.Component {
     });
 
     if (type == messageType.ERROR) {
-      icon = <span className="micon message__icon">error</span>
+      icon = <span className="micon message__icon">error</span>;
     }
 
     if (removeMessage) {

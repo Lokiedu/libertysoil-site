@@ -17,7 +17,7 @@
  */
 import React, {
     Component
-} from 'react'
+} from 'react';
 
 export default class EditExtendedPost extends Component {
   render () {
@@ -30,6 +30,6 @@ export default class EditExtendedPost extends Component {
             <textarea className="input input-textarea input-block" placeholder="Share education related resources, your perspective" name="text" />
           </div>
         </div>
-    )
+    );
   }
 }

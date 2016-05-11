@@ -72,7 +72,7 @@ class SchoolEditPage extends React.Component {
 
     this.state = {
       processing: false
-    }
+    };
   }
 
   saveSchool = async (id, properties) => {

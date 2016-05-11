@@ -15,14 +15,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import _ from 'lodash'
-import bcrypt from 'bcrypt'
-import bb from 'bluebird'
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import bb from 'bluebird';
 import { countBreaks } from 'grapheme-breaker';
-import uuid from 'uuid'
+import uuid from 'uuid';
 import slug from 'slug';
 import request from 'superagent';
-import crypto from 'crypto'
+import crypto from 'crypto';
 import Checkit from 'checkit';
 
 import QueueSingleton from '../utils/queue';
@@ -103,7 +103,7 @@ export default class ApiController {
           .join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
           .join('hashtags', 'hashtags_posts.hashtag_id', 'hashtags.id')
           .where('hashtags.name', '=', ctx.params.tag)
-          .orderBy('posts.created_at', 'desc')
+          .orderBy('posts.created_at', 'desc');
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -200,7 +200,7 @@ export default class ApiController {
 
   userTags = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403
+      ctx.status = 403;
       ctx.body = { error: 'You are not authorized' };
       return;
     }
@@ -212,7 +212,7 @@ export default class ApiController {
           .join('hashtags_posts', 'hashtags_posts.hashtag_id', 'hashtags.id')
           .join('posts', 'hashtags_posts.post_id', 'posts.id')
           .where('posts.user_id', ctx.session.user)
-          .distinct()
+          .distinct();
       })
       .fetch();
 
@@ -224,7 +224,7 @@ export default class ApiController {
           .join('posts_schools', 'posts_schools.school_id', 'schools.id')
           .join('posts', 'posts_schools.post_id', 'posts.id')
           .where('posts.user_id', ctx.session.user)
-          .distinct()
+          .distinct();
       })
       .fetch();
 
@@ -236,7 +236,7 @@ export default class ApiController {
           .join('geotags_posts', 'geotags_posts.geotag_id', 'geotags.id')
           .join('posts', 'geotags_posts.post_id', 'posts.id')
           .where('posts.user_id', ctx.session.user)
-          .distinct()
+          .distinct();
       })
       .fetch();
 
@@ -261,7 +261,7 @@ export default class ApiController {
 
   currentUserLikedPosts = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403
+      ctx.status = 403;
       ctx.body = { error: 'You are not authorized' };
       return;
     }
@@ -328,7 +328,7 @@ export default class ApiController {
 
   currentUserFavouredPosts = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403
+      ctx.status = 403;
       ctx.body = { error: 'You are not authorized' };
       return;
     }
@@ -371,7 +371,7 @@ export default class ApiController {
     .query(qb => {
       qb
         .whereIn('id', favourites)
-        .orderBy('posts.updated_at', 'desc')
+        .orderBy('posts.updated_at', 'desc');
     });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -406,7 +406,7 @@ export default class ApiController {
 
       ctx.body = school.toJSON();
     } catch (e) {
-      ctx.status = 404
+      ctx.status = 404;
       return;
     }
   };
@@ -430,7 +430,7 @@ export default class ApiController {
       const countries = await Geotag.where({ type: 'Country' }).fetchAll();
       ctx.body = countries.toJSON();
     } catch (e) {
-      ctx.status = 404
+      ctx.status = 404;
       return;
     }
   };
@@ -442,7 +442,7 @@ export default class ApiController {
       const country = await Country.where({ iso_alpha2: ctx.params.code }).fetch();
       ctx.body = country.toJSON();
     } catch (e) {
-      ctx.status = 404
+      ctx.status = 404;
       return;
     }
   };
@@ -454,7 +454,7 @@ export default class ApiController {
       const city = await City.where({ id: ctx.params.id }).fetch();
       ctx.body = city.toJSON();
     } catch (e) {
-      ctx.status = 404
+      ctx.status = 404;
       return;
     }
   };
@@ -651,7 +651,7 @@ export default class ApiController {
       if (_.isArray(languages)) {
         school.set('teaching_languages', JSON.stringify(languages));
       }
-      languages = school.get('required_languages')
+      languages = school.get('required_languages');
       if (_.isArray(languages)) {
         school.set('required_languages', JSON.stringify(languages));
       }
@@ -848,7 +848,7 @@ export default class ApiController {
           .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id')
           .limit(5)
-          .offset(offset)
+          .offset(offset);
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -1012,7 +1012,7 @@ export default class ApiController {
       console.warn(`Someone tried to log in as '${username}', but there's no such user`);  // eslint-disable-line no-console
       ctx.status = 401;
       ctx.body = { success: false };
-      return
+      return;
     }
 
     const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.password, user.get('hashed_password'));
@@ -1021,7 +1021,7 @@ export default class ApiController {
       console.warn(`Someone tried to log in as '${username}', but used wrong pasword`);  // eslint-disable-line no-console
       ctx.status = 401;
       ctx.body = { success: false };
-      return
+      return;
     }
 
     if (user.get('email_check_hash')) {
@@ -1244,8 +1244,8 @@ export default class ApiController {
           .leftJoin('posts', 'users.id', 'posts.user_id')
           .groupBy('users.id')
           .orderBy('post_count', 'desc')
-          .limit(20)
-      })
+          .limit(20);
+      });
 
     const suggestions = await q.fetchAll({ require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
 
@@ -1408,7 +1408,7 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
-      return
+      return;
     }
 
     const type = post_object.get('type');
@@ -1670,7 +1670,7 @@ export default class ApiController {
       if (!passwordIsValid) {
         ctx.status = 401;
         ctx.body = { error: 'old password is incorrect' };
-        return
+        return;
       }
 
       const hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.new_password, 10);
@@ -2297,7 +2297,7 @@ export default class ApiController {
    */
   getRelatedPosts = async (ctx) => {
     function formatArray(array) {
-      return `(${array.map(function (e) { return `'${e}'`; }).join(',')})`
+      return `(${array.map(function (e) { return `'${e}'`; }).join(',')})`;
     }
 
     const knex = this.bookshelf.knex;
@@ -2588,7 +2588,7 @@ export default class ApiController {
       .query(qb => {
         qb
           .where('post_id', '=', ctx.params.id)
-          .orderBy('created_at', 'asc')
+          .orderBy('created_at', 'asc');
       });
 
     const comments = await q.fetchAll({ require: false, withRelated: ['user'] });
@@ -2667,7 +2667,7 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 404;
       ctx.body = { error: e.message };
-      return
+      return;
     }
 
     if (comment_object.get('user_id') != ctx.session.user)  {
@@ -2758,6 +2758,6 @@ export default class ApiController {
     const missing = _.difference(ids, _.keys(mapped_counts));
 
     const zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
-    return _.merge(_.zipObject(missing, zeroes), mapped_counts)
+    return _.merge(_.zipObject(missing, zeroes), mapped_counts);
   };
 }

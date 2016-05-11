@@ -34,7 +34,7 @@ export default function reducer(state=initialState, action) {
         posts = posts.unshift(action.post.id);
 
         state = state.set(tag.name, posts);
-      })
+      });
       break;
     }
 

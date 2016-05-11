@@ -54,7 +54,7 @@ export class Tab extends Component {
       if ((typeof child === 'object') && (child.type.displayName === 'TabContent')) {
         content = child;
       }
-    })
+    });
 
     return (
       <div className={className}>{content}</div>
@@ -122,7 +122,7 @@ export class Tabs extends Component {
           content = child.props.children;
           return;
         }
-      })
+      });
 
       return (
         <TabTitle className={titleClassName} onClick={this.clickHandler.bind(null, i)} key={i}>

@@ -194,7 +194,7 @@ export default class EditPost extends React.Component {
   _changeAddTagModal = (newType) => {
     this.setState({
       addTagModalType: newType
-    })
+    });
   };
 
   /**
@@ -224,7 +224,7 @@ export default class EditPost extends React.Component {
         geotags: post.geotags,
         schools: post.schools,
         hashtags: post.hashtags
-      }
+      };
     }
 
     return (
@@ -291,6 +291,6 @@ export default class EditPost extends React.Component {
           />
         }
       </div>
-    )
+    );
   }
 }

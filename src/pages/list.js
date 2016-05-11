@@ -90,7 +90,7 @@ export class List extends React.Component {
     this.state = {
       downloadAttemptsCount: 0,
       displayLoadMore: true
-    }
+    };
   }
 
   loadMore = async (isVisible) => {
@@ -200,7 +200,7 @@ export class List extends React.Component {
 
         <Footer/>
       </div>
-    )
+    );
   }
 }
 

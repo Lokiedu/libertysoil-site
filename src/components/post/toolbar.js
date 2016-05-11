@@ -138,6 +138,6 @@ export default class Toolbar extends React.Component {
           <span className="card__toolbar_item_value">{post.comments}</span>
         </Link>
       </div>
-    )
+    );
   }
 }

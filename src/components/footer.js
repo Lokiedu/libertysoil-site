@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import React from 'react';
 
 export default class FooterComponent extends React.Component {
   render () {
@@ -35,6 +35,6 @@ export default class FooterComponent extends React.Component {
         </p>
         <script async src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js" data-trackduck-id="56182f159e7749be13765442"></script>
       </footer>
-    )
+    );
   }
 }

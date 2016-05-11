@@ -29,6 +29,6 @@ const paragraphify = (text) => {
   }
 
   return text.split('\n').map((line, i) => <p key={`text-${i}`}>{line}</p>);
-}
+};
 
 export default paragraphify;

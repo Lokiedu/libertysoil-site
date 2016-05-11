@@ -28,13 +28,13 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
-import NotFound from './not-found'
+import NotFound from './not-found';
 import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import { API_HOST } from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import Sidebar from '../components/sidebar';
@@ -148,7 +148,7 @@ class PostEditPage extends React.Component {
         </Page>
         <Footer/>
       </div>
-    )
+    );
   }
 }
 

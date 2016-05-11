@@ -20,9 +20,9 @@ import { Link } from 'react-router';
 import { isEmpty } from 'lodash';
 import Time from '../time';
 
-import EditPostButton from './edit-post-button'
-import TagLine from './tagline'
-import Toolbar from './toolbar'
+import EditPostButton from './edit-post-button';
+import TagLine from './tagline';
+import Toolbar from './toolbar';
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 

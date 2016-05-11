@@ -30,15 +30,15 @@ import {
 } from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import HeaderLogo from '../components/header-logo';
-import NotFound from './not-found'
+import NotFound from './not-found';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import { ShortTextPost, PostWrapper } from '../components/post'
+import { ShortTextPost, PostWrapper } from '../components/post';
 import Sidebar from '../components/sidebar';
 import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
 import { API_HOST } from '../config';
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -67,16 +67,16 @@ export class PostPage extends React.Component {
 
     if (!(post_uuid in this.props.posts)) {
       // not loaded yet
-      return <script/>
+      return <script/>;
     }
 
     const current_post = this.props.posts[post_uuid];
 
     if (current_post === false) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
-    const author = this.props.users[current_post.user_id]
+    const author = this.props.users[current_post.user_id];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -141,7 +141,7 @@ export class PostPage extends React.Component {
 
         <Footer/>
       </div>
-    )
+    );
   }
 }
 

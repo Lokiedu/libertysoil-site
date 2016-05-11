@@ -15,10 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import React from 'react';
 
 export default class MostFollowedPeopleComponent extends React.Component {
   render() {
-    return (<p>Hi, I am showing a list of most-followed people</p>)
+    return (<p>Hi, I am showing a list of most-followed people</p>);
   }
 }

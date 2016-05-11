@@ -18,8 +18,8 @@
 import React, {
   Component,
   PropTypes
-} from 'react'
-import _ from 'lodash'
+} from 'react';
+import _ from 'lodash';
 
 import * as PostTypes  from '../consts/postTypeConstants';
 import { ShortTextPost, PostWrapper } from './post';
@@ -84,6 +84,6 @@ export default class RiverOfPostsComponent extends Component {
           }
         })}
       </div>
-    )
+    );
   }
 }
