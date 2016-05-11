@@ -31,7 +31,9 @@ export default class AddGeotagForm extends Component {
       id: PropTypes.string
     })).isRequired,
     onAddGeotag: PropTypes.func.isRequired,
-    userRecentGeotags: PropTypes.array.isRequired,
+    userRecentGeotags: PropTypes.arrayOf(PropTypes.shape({
+      url_name: PropTypes.string
+    })).isRequired,
     triggers: PropTypes.shape({
       checkGeotagExists: PropTypes.func.isRequired
     })

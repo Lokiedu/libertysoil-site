@@ -24,7 +24,7 @@ export default class UserGrid extends React.Component {
   static displayName = 'UserGrid';
 
   static propTypes = {
-    users: PropTypes.array
+    users: PropTypes.arrayOf(PropTypes.shape({}))
   };
 
   render() {

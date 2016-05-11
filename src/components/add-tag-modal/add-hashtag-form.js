@@ -27,7 +27,9 @@ export default class AddHashtagForm extends Component {
 
   static propTypes = {
     onAddHashtag: PropTypes.func.isRequired,
-    userRecentHashtags: PropTypes.array.isRequired
+    userRecentHashtags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })).isRequired
   };
 
   _handleEnter = (event) => {

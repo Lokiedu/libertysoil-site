@@ -24,8 +24,8 @@ export default class UpdatePictureModal extends React.Component {
 
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    what: PropTypes.any.isRequired,
-    where: PropTypes.any.isRequired,
+    what: PropTypes.node.isRequired,
+    where: PropTypes.node.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired
   };

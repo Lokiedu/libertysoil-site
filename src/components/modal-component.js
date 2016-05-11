@@ -15,7 +15,7 @@ class ModalComponent extends Component {
   static displayName = 'ModalComponent';
 
   static propTypes = {
-    children: PropTypes.any,
+    children: PropTypes.node,
     onHide: PropTypes.func,
     title: PropTypes.string.isRequired,
     size: PropTypes.oneOf(_.values(SIZES))

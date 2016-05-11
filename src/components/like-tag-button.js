@@ -13,7 +13,7 @@ export default class LikeTagButton extends React.Component {
     hashtag: PropTypes.string,
     is_logged_in: PropTypes.bool.isRequired,
     // {tagName: tag}
-    liked_tags: PropTypes.object,
+    liked_tags: PropTypes.shape({}),
     triggers: PropTypes.shape({
       likeTag: PropTypes.func.isRequired,
       unlikeTag: PropTypes.func.isRequired

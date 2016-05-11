@@ -25,7 +25,7 @@ export default class SidebarLink extends React.Component {
 
   static propTypes = {
     enabled: React.PropTypes.bool,
-    badge: React.PropTypes.any,
+    badge: React.PropTypes.node,
     to: React.PropTypes.string,
     icon: React.PropTypes.string,
     className: React.PropTypes.string

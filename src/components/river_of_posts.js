@@ -28,9 +28,9 @@ import TagLikePost from './tag-like-post';
 
 export default class RiverOfPostsComponent extends Component {
   static propTypes = {
-    comments: PropTypes.any.isRequired,
-    ui: PropTypes.any.isRequired,
-    river: PropTypes.any.isRequired
+    comments: PropTypes.shape({}).isRequired,
+    ui: PropTypes.shape({}).isRequired,
+    river: PropTypes.arrayOf(PropTypes.string).isRequired
   };
 
   render() {

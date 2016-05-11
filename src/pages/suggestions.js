@@ -32,8 +32,8 @@ class DiscoverGrid extends React.Component {
   static displayName = 'DiscoverGrid';
 
   static propTypes = {
-    users: PropTypes.array
-  }
+    users: PropTypes.arrayOf(PropTypes.shape({}))
+  };
 
   render() {
     const {

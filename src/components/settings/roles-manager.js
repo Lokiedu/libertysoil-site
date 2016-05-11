@@ -91,7 +91,9 @@ class RolesManager extends React.Component {
 }
 
 RolesManager.propTypes = {
-  roles: PropTypes.array,
+  roles: PropTypes.arrayOf(
+    PropTypes.arrayOf(PropTypes.string)
+  ),
   onChange: PropTypes.func,
   onAdd: PropTypes.func
 };

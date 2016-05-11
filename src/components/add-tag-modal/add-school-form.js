@@ -34,7 +34,9 @@ export default class AddSchoolForm extends Component {
       name: PropTypes.string
     })).isRequired,
     onAddSchool: PropTypes.func.isRequired,
-    userRecentSchools: PropTypes.array.isRequired,
+    userRecentSchools: PropTypes.arrayOf(PropTypes.shape({
+      url_name: PropTypes.string
+    })).isRequired,
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired
     })

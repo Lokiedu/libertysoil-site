@@ -21,8 +21,8 @@ export default class UpdatePicture extends React.Component {
   static displayName = 'UpdatePicture';
 
   static propTypes = {
-    what: PropTypes.any.isRequired,
-    where: PropTypes.any.isRequired,
+    what: PropTypes.node.isRequired,
+    where: PropTypes.node.isRequired,
     limits: PropTypes.shape({
       min: PropTypes.shape({
         width: PropTypes.number,

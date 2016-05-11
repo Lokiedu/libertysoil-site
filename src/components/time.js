@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import strftime from 'strftime';
 
 const Time = ({
@@ -46,8 +46,11 @@ const Time = ({
 };
 
 Time.propTypes = {
-  timestamp: React.PropTypes.any,
-  format: React.PropTypes.string
+  timestamp: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({})
+  ]),
+  format: PropTypes.string
 };
 
 Time.defaultProps = {

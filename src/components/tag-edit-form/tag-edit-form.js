@@ -28,7 +28,7 @@ export default class TagEditForm extends React.Component {
 
   static propTypes = {
     type: PropTypes.string.isRequired,
-    tag: PropTypes.object.isRequired,
+    tag: PropTypes.shape({}).isRequired,
     saveHandler: PropTypes.func.isRequired,
     processing: PropTypes.bool.isRequired
   };

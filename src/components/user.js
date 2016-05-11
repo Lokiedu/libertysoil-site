@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
 
@@ -26,17 +26,20 @@ import UpdatePicture from './update-picture/update-picture';
 
 export default class User extends Component {
   static propTypes = {
-    user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired,
-      username: React.PropTypes.string.isRequired,
-      avatar: React.PropTypes.string
+    user: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      username: PropTypes.string.isRequired,
+      avatar: PropTypes.string
     }).isRequired,
-    avatarSize: React.PropTypes.any.isRequired,
-    hideAvatar: React.PropTypes.bool,
-    isRound: React.PropTypes.bool,
-    hideText: React.PropTypes.bool,
-    timestamp: React.PropTypes.string,
-    timestampLink: React.PropTypes.string
+    avatarSize: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]).isRequired,
+    hideAvatar: PropTypes.bool,
+    isRound: PropTypes.bool,
+    hideText: PropTypes.bool,
+    timestamp: PropTypes.string,
+    timestampLink: PropTypes.string
   };
 
   static defaultProps = {

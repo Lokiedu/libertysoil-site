@@ -144,7 +144,7 @@ export default class BaseTagPage extends React.Component {
   static displayName = 'BaseTagPage';
 
   static propTypes = {
-    tag: PropTypes.object.isRequired,
+    tag: PropTypes.shape({}).isRequired,
     type: PropTypes.string.isRequired,
     actions: PropTypes.shape({
       resetCreatePostForm: PropTypes.func,

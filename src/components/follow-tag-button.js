@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
 
@@ -15,15 +15,15 @@ const STATUS_JUST_UNFOLLOWED = 'STATUS_JUST_UNFOLLOWED';
 export default class FollowTagButton extends React.Component {
   static displayName = 'FollowButton';
   static propTypes = {
-    current_user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired
+    current_user: PropTypes.shape({
+      id: PropTypes.string.isRequired
     }),
     // {tagName: tag}
-    followed_tags: React.PropTypes.object,
-    tag: React.PropTypes.string,
-    triggers: React.PropTypes.shape({
-      followTag: React.PropTypes.func.isRequired,
-      unfollowTag: React.PropTypes.func.isRequired
+    followed_tags: PropTypes.shape({}),
+    tag: PropTypes.string,
+    triggers: PropTypes.shape({
+      followTag: PropTypes.func.isRequired,
+      unfollowTag: PropTypes.func.isRequired
     })
   };
 

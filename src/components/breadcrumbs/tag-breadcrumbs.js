@@ -26,8 +26,8 @@ export default class TagBreadcrumbs extends React.Component {
   static displayName = 'TagBreadcrumbs';
 
   static propTypes = {
-    type: PropTypes.string.isRequired,
-    tag: PropTypes.object.isRequired
+    tag: PropTypes.shape({}).isRequired,
+    type: PropTypes.string.isRequired
   };
 
   render() {
