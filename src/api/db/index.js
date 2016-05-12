@@ -273,6 +273,17 @@ export function initBookshelfFromKnex(knex) {
      */
     attachGeotags: async function(geotagIds) {
       await this.geotags().attach(geotagIds);
+
+      await knex('geotags')
+        .whereIn('id', geotagIds)
+        .increment('post_count', 1);
+    },
+    detachGeotags: async function(geotagIds) {
+      await this.geotags().detach(geotagIds);
+
+      await knex('geotags')
+        .whereIn('id', geotagIds)
+        .decrement('post_count', 1);
     },
     /**
      * Attaches new geotags and detaches unneeded.
@@ -283,8 +294,8 @@ export function initBookshelfFromKnex(knex) {
       const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
       const geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
 
-      await this.geotags().detach(geotagsToDetach);
-      await this.geotags().attach(geotagsToAttach);
+      await this.detachGeotags(geotagsToDetach);
+      await this.attachGeotags(geotagsToAttach);
     }
   });
 
@@ -341,6 +352,15 @@ export function initBookshelfFromKnex(knex) {
     }
   };
 
+  Hashtag.updatePostCounters = async function() {
+    await knex('hashtags')
+      .update({
+        post_count: knex('hashtags_posts')
+          .where('hashtags_posts.hashtag_id', knex.raw('hashtags.id'))
+          .count()
+      });
+  };
+
   const School = bookshelf.Model.extend({
     tableName: 'schools',
     posts: function () {
@@ -371,6 +391,15 @@ export function initBookshelfFromKnex(knex) {
       await school.save(null, { method: 'insert' });
       return school;
     }
+  };
+
+  School.updatePostCounters = async function() {
+    await knex('schools')
+      .update({
+        post_count: knex('posts_schools')
+          .where('posts_schools.school_id', knex.raw('schools.id'))
+          .count()
+      });
   };
 
   const Country = bookshelf.Model.extend({
@@ -422,8 +451,20 @@ export function initBookshelfFromKnex(knex) {
     },
     continent: function () {
       return this.belongsTo(Geotag, 'continent_id');
+    },
+    posts: function () {
+      return this.belongsToMany(Post);
     }
   });
+
+  Geotag.updatePostCounters = async function() {
+    await knex('geotags')
+      .update({
+        post_count: knex('geotags_posts')
+          .where('geotags_posts.geotag_id', knex.raw('geotags.id'))
+          .count()
+      });
+  };
 
   const Attachment = bookshelf.Model.extend({
     tableName: 'attachments',
