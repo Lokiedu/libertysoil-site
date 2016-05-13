@@ -1483,11 +1483,11 @@ export default class ApiController {
       await post_object.save(null, { method: 'update' });
 
       if (_.isArray(hashtags)) {
-        await post_object.attachHashtags(hashtags, true);
+        await post_object.updateHashtags(hashtags);
       }
 
       if (_.isArray(schools)) {
-        await post_object.updateSchools(schools, true);
+        await post_object.updateSchools(schools);
       }
 
       if (_.isArray(geotags)) {

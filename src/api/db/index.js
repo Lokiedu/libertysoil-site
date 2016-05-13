@@ -186,91 +186,80 @@ export function initBookshelfFromKnex(knex) {
     post_comments: function () {
       return this.hasMany(Comment);
     },
-    attachHashtags: async function(names, removeUnused = false) {
-      const hashtags = this.hashtags();
 
-      const hashtagsToRemove = [];
-      const hashtagNamesToKeep = [];
+    // Hashtag methods
+    attachHashtags: async function(names) {
+      const hashtags = await Promise.all(names.map(name => Hashtag.createOrSelect(name)));
+      const hashtagIds = hashtags.map(hashtag => hashtag.id);
 
-      (await hashtags.fetch()).map(hashtag => {
-        const name = hashtag.get('name');
+      await this.hashtags().attach(hashtagIds);
 
-        if (names.indexOf(name) == -1) {
-          hashtagsToRemove.push(hashtag);
-        } else {
-          hashtagNamesToKeep.push(name);
-        }
-      });
-
-      const hashtagNamesToAdd = [];
-      for (const name of names) {
-        if (hashtagNamesToKeep.indexOf(name) == -1) {
-          hashtagNamesToAdd.push(name);
-        }
-      }
-
-      const tags = await Promise.all(hashtagNamesToAdd.map(tag_name => Hashtag.createOrSelect(tag_name)));
-      let promises = tags.map(async (tag) => {
-        await hashtags.attach(tag);
-      });
-
-      if (removeUnused) {
-        const morePromises = hashtagsToRemove.map(async (tag) => {
-          await hashtags.detach(tag);
-        });
-
-        promises = [...promises, ...morePromises];
-      }
-
-      await Promise.all(promises);
+      await knex('hashtags')
+        .whereIn('id', hashtagIds)
+        .increment('post_count', 1);
     },
-    /**
-     * Attaches schools to the post without checking already attached schools.
-     * @param {Array} names
-     */
+    detachHashtags: async function(names) {
+      const hashtagIds = (await Hashtag.collection().query(qb => {
+        qb.whereIn('name', names);
+      }).fetch()).pluck('id');
+
+      await this.hashtags().detach(hashtagIds);
+
+      await knex('hashtags')
+        .whereIn('id', hashtagIds)
+        .decrement('post_count', 1);
+    },
+    updateHashtags: async function(names) {
+      const relatedHashtagNames = (await this.related('hashtags').fetch()).pluck('name');
+      const hashtagsToAttach = _.difference(names, relatedHashtagNames);
+      const hashtagsToDetach = _.difference(relatedHashtagNames, names);
+
+      await Promise.all([
+        this.attachHashtags(hashtagsToAttach),
+        this.detachHashtags(hashtagsToDetach)
+      ]);
+    },
+
+    // School methods
     attachSchools: async function(names) {
-      const schoolsToAdd = await School.collection().query(qb => {
+      const schools = await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch();
+      const schoolIds = schools.pluck('id');
 
-      const attachPromise = this.schools().attach(schoolsToAdd.pluck('id'));
+      await this.schools().attach(schoolIds);
 
-      const updatedAtPromise = knex('schools')
+      await knex('schools')
         .whereIn('name', names)
         .update({ updated_at: new Date().toJSON() });
 
-      return Promise.all([
-        attachPromise,
-        updatedAtPromise
-      ]);
+      await knex('schools')
+        .whereIn('id', schoolIds)
+        .increment('post_count', 1);
     },
-    /**
-     * Attaches schools, checking if a school is already attached,
-     * and detaches schools that are not in names.
-     * @param {Array} names
-     */
+    detachSchools: async function(names) {
+      const schoolIds = (await School.collection().query(qb => {
+        qb.whereIn('name', names);
+      }).fetch()).pluck('id');
+
+      await this.schools().detach(schoolIds);
+
+      await knex('schools')
+        .whereIn('id', schoolIds)
+        .decrement('post_count', 1);
+    },
     updateSchools: async function(names) {
-      const schools = this.schools();
-      const relatedSchools = await this.related('schools').fetch();
-
-      const schoolsToDetach = await School.collection().query(qb => {
-        qb
-          .innerJoin('posts_schools', 'schools.id', 'posts_schools.school_id')
-          .whereNotIn('schools.name', names)
-          .where('posts_schools.post_id', this.id);
-      }).fetch();
-
-      const schoolNamesToAdd = _.difference(names, relatedSchools.pluck('name'));
+      const relatedSchoolNames = (await this.related('schools').fetch()).pluck('name');
+      const schoolsToAttach = _.difference(names, relatedSchoolNames);
+      const schoolsToDetach = _.difference(relatedSchoolNames, names);
 
       await Promise.all([
-        schools.detach(schoolsToDetach.pluck('id')),
-        this.attachSchools(schoolNamesToAdd)
+        this.attachSchools(schoolsToAttach),
+        this.detachSchools(schoolsToDetach)
       ]);
     },
-    /**
-     * Attaches geotags by ids.
-     * @param {Array} geotagIds
-     */
+
+    // Geotag methods
     attachGeotags: async function(geotagIds) {
       await this.geotags().attach(geotagIds);
 
@@ -285,17 +274,15 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds)
         .decrement('post_count', 1);
     },
-    /**
-     * Attaches new geotags and detaches unneeded.
-     * @param {Array} geotagIds
-     */
     updateGeotags: async function(geotagIds) {
       const relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
-      const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
       const geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
+      const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
 
-      await this.detachGeotags(geotagsToDetach);
-      await this.attachGeotags(geotagsToAttach);
+      await Promise.all([
+        this.attachGeotags(geotagsToAttach),
+        this.detachGeotags(geotagsToDetach)
+      ]);
     }
   });
 
