@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -62,7 +62,7 @@ class PasswordForm extends React.Component {
 
   _validatePassword = () => {
     const errors = this.state.errors;
-    const password = this.refs.form.password;
+    const password = this.form.password;
 
     if (password.value.length < 8) {
       errors.password = 'Password must be at least 8 characters';
@@ -75,7 +75,7 @@ class PasswordForm extends React.Component {
 
   _validatePasswordRepeat = () => {
     const errors = this.state.errors;
-    const { password, password_repeat } = this.refs.form;
+    const { password, password_repeat } = this.form;
 
     if (password_repeat.value.length > 0 && password.value !== password_repeat.value) {
       errors.password_repeat = 'Passwords do not match';
@@ -90,7 +90,7 @@ class PasswordForm extends React.Component {
     const errors = this.state.errors;
 
     return (
-      <form className="password-form" ref="form" onSubmit={this.props.onSubmit} action="" method="post">
+      <form className="password-form" ref={c => this.form = c} onSubmit={this.props.onSubmit} action="" method="post">
         <div className="layout__row">
           <div className="form__row">
             <label className="label label-block label-space" htmlFor="newPassword">New Password</label>

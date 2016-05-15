@@ -43,7 +43,7 @@ export default class PasswordForm extends React.Component {
 
   _validateOldPassword = () => {
     const errors = this.state.errors;
-    const { old_password } = this.refs.form;
+    const { old_password } = this.form;
 
     if (old_password.value.length === 0) {
       errors.old_password = 'Enter your current password';
@@ -56,7 +56,7 @@ export default class PasswordForm extends React.Component {
 
   _validateNewPassword = () => {
     const errors = this.state.errors;
-    const { new_password } = this.refs.form;
+    const { new_password } = this.form;
 
     if (new_password.value.length < 8) {
       errors.new_password = 'Password must be at least 8 characters';
@@ -69,7 +69,7 @@ export default class PasswordForm extends React.Component {
 
   _validateNewPasswordRepeat = () => {
     const errors = this.state.errors;
-    const { new_password, new_password_repeat } = this.refs.form;
+    const { new_password, new_password_repeat } = this.form;
 
     if (new_password_repeat.value.length > 0 && new_password.value !== new_password_repeat.value) {
       errors.new_password_repeat = 'Passwords do not match';
@@ -95,7 +95,7 @@ export default class PasswordForm extends React.Component {
     const { errors } = this.state;
 
     return (
-      <form action="" ref="form" className="paper__page" onSubmit={this._handleSubmit}>
+      <form action="" ref={c => this.form = c} className="paper__page" onSubmit={this._handleSubmit}>
         <h2 className="content__sub_title layout__row">Password</h2>
 
         <label htmlFor="old_password" className="layout__row layout__row-small">Current password</label>
@@ -134,7 +134,7 @@ export default class PasswordForm extends React.Component {
         />
         {errors.new_password_repeat && <div className="validation_error">{errors.new_password_repeat}</div>}
 
-        <input className="hidden" ref="submit" type="submit" />
+        <input className="hidden" ref={c => this.submit = c} type="submit" />
       </form>
     );
   }

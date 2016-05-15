@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,33 +14,39 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { cloneElement, Component } from 'react';
+*/
+import React, { cloneElement, Component, PropTypes } from 'react';
 import { throttle, isArray, compact } from 'lodash';
 
 export default class Breadcrumbs extends Component {
   static displayName = 'Breadcrumbs';
 
   static propTypes = {
-
+    children: PropTypes.node,
+    className: PropTypes.string,
+    title: PropTypes.node
   };
 
-  state = {
-    visibleCrumbs: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      visibleCrumbs: null
+    };
+  }
 
   componentDidMount() {
     window.addEventListener('resize', this.resetVisibleCrumbs);
     document.addEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
   }
 
+  componentWillReceiveProps() {
+    this.resetVisibleCrumbs();
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.resetVisibleCrumbs);
     document.removeEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
-  }
-
-  componentWillReceiveProps() {
-    this.resetVisibleCrumbs();
   }
 
   resetVisibleCrumbs = throttle(() => {
@@ -57,8 +63,8 @@ export default class Breadcrumbs extends Component {
   }, 100);
 
   updateVisibleCrumbs = () => {
-    const breadcrumbsWidth = this.refs.breadcrumbs.offsetWidth;
-    const bodyWidth = this.refs.body.offsetWidth;
+    const breadcrumbsWidth = this._breadcrumbs.offsetWidth;
+    const bodyWidth = this._body.offsetWidth;
 
     if (bodyWidth >= breadcrumbsWidth) {
       if (this.state.visibleCrumbs > 0) {
@@ -80,7 +86,7 @@ export default class Breadcrumbs extends Component {
     isCollapsed = crumbs.map(() => ((visibleCrumbs-- <= 0))).reverse();
 
     return compact(crumbs).map((crumb, i) => (
-      <div key={i} className="breadcrumbs__item">
+      <div className="breadcrumbs__item" key={i}>
         {cloneElement(crumb, {
           collapsed: isCollapsed[i]
         })}
@@ -101,14 +107,19 @@ export default class Breadcrumbs extends Component {
   render() {
     const {
       children,
-      title,
       className,
+      title,
       ...props
     } = this.props;
 
+    let cn = 'breadcrumbs header__breadcrumbs';
+    if (className) {
+      cn += ` ${className}`;
+    }
+
     return (
-      <div ref="breadcrumbs" className={`breadcrumbs header__breadcrumbs ${className}`} {...props}>
-        <div ref="body" className="breadcrumbs__body">
+      <div className={cn} ref={c => this._breadcrumbs = c} {...props}>
+        <div className="breadcrumbs__body" ref={c => this._body = c}>
           {this.renderCrumbs(children)}
           {this.renderTitle(title)}
         </div>

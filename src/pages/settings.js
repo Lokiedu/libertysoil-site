@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -71,8 +71,8 @@ class SettingsPage extends React.Component {
 
     const result = await triggers.updateUserInfo({
       more: {
-        summary: this.refs.form.summary.value,
-        bio: this.refs.form.bio.value,
+        summary: this.form.summary.value,
+        bio: this.form.bio.value,
         roles: roles,
         ...processedPictures
       }
@@ -119,7 +119,7 @@ class SettingsPage extends React.Component {
         processing={this.state.processing}
       >
         <Helmet title="Your Profile Settings on " />
-        <form ref="form" className="paper__page">
+        <form ref={c => this.form = c} className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
           <div className="layout__row">
             <label htmlFor="summary" className="layout__block layout__row layout__row-small">Summary</label>
