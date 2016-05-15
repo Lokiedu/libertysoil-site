@@ -22,7 +22,7 @@ const Continent = ({ code, count, geotags }) => {
         {name} <span className="continent__amount">({count})</span>
       </Link>
       <div className="layout__row">
-        <TagCloud geotags={geotags} />
+        <TagCloud geotags={geotags} showPostCount />
       </div>
     </div>
   );

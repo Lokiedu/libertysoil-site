@@ -34,6 +34,8 @@ export default class Tag extends React.Component {
     name: PropTypes.string,
     onClick: PropTypes.func,
     onDelete: PropTypes.func,
+    postCount: PropTypes.number,
+    showPostCount: PropTypes.bool,
     size: PropTypes.string,
     truncated: PropTypes.bool,
     type: PropTypes.oneOf([
@@ -51,7 +53,8 @@ export default class Tag extends React.Component {
 
   static defaultProps = {
     truncated: false,
-    deletable: false
+    deletable: false,
+    showPostCount: false
   };
 
   _handleDelete = () => {
@@ -142,6 +145,10 @@ export default class Tag extends React.Component {
       </div>,
       tagNameComponent
     ];
+
+    if (this.props.showPostCount) {
+      tagBody.push(<span className="tag__post_count">{this.props.postCount || 0}</span>);
+    }
 
     // FIXME: this should be reimplemented as 2 different components
     if (this.props.deletable) {
