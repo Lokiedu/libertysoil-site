@@ -57,7 +57,7 @@ function getPageCaption(type, name) {
   let caption;
   switch (type) {
     case TAG_LOCATION: {
-      caption = [`${name} `, <span className="page__caption_highlight">Education</span>];
+      caption = [`${name} `, <span className="page__caption_highlight" key="caption">Education</span>];
       break;
     }
     default:
@@ -121,12 +121,12 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flex
             <div className="layout__grid layout-align_vertical layout-align_center layout__grid-full update_picture__container">
               <div className="layout__grid_item">
                 <UpdatePicture
+                  flexible={flexible}
+                  limits={limits}
+                  preview={preview}
                   what="header image"
                   where={(<span className="font-bold">{tag.name}</span>)}
                   onSubmit={onSubmit}
-                  limits={limits}
-                  flexible={flexible}
-                  preview={preview}
                 />
               </div>
             </div>
@@ -144,27 +144,42 @@ export default class BaseTagPage extends React.Component {
   static displayName = 'BaseTagPage';
 
   static propTypes = {
-    tag: PropTypes.shape({}).isRequired,
-    type: PropTypes.string.isRequired,
     actions: PropTypes.shape({
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
-    }).isRequired
+    }).isRequired,
+    children: PropTypes.node,
+    postsAmount: PropTypes.number,
+    tag: PropTypes.shape({}).isRequired,
+    type: PropTypes.string.isRequired
   };
 
   constructor(props) {
     super(props);
 
+    this.postsAmount = null;
     this.state = {
       form: false,
       head_pic: null
     };
   }
 
-  postsAmount = null;
-
   componentWillMount() {
     this.postsAmount = this.props.postsAmount;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.form) {
+      if (this.postsAmount != nextProps.postsAmount) {
+        this.setState({ form: false });
+      }
+    }
+
+    this.postsAmount = nextProps.postsAmount;
+  }
+
+  componentWillUnmount() {
+    this.props.actions.resetCreatePostForm();
   }
 
   _getNewPictures() {
@@ -199,20 +214,6 @@ export default class BaseTagPage extends React.Component {
       this.setState({ head_pic: null });
     }
   };
-
-  componentWillReceiveProps(nextProps) {
-    if (this.state.form) {
-      if (this.postsAmount != nextProps.postsAmount) {
-        this.setState({ form: false });
-      }
-    }
-
-    this.postsAmount = nextProps.postsAmount;
-  }
-
-  componentWillUnmount() {
-    this.props.actions.resetCreatePostForm();
-  }
 
   toggleForm = () => {
     if (!this.state.form) {
@@ -282,25 +283,25 @@ export default class BaseTagPage extends React.Component {
           <PageMain className="page__main-no_space">
             {pageCaption}
             <TagPageHero
-              type={type}
-              tag={tag}
               editable={editable}
-              onSubmit={this.addPicture}
-              preview={TAG_HEADER_SIZE.PREVIEW}
               flexible
               limits={{ min: TAG_HEADER_SIZE.MIN, max: TAG_HEADER_SIZE.BIG }}
+              preview={TAG_HEADER_SIZE.PREVIEW}
+              tag={tag}
+              type={type}
               url={headerPictureUrl}
+              onSubmit={this.addPicture}
             />
             <PageBody className="page__body-up">
               <TagHeader
-                is_logged_in={is_logged_in}
-                tag={tag}
-                type={type}
                 current_user={current_user}
-                triggers={triggers}
+                editable={editable}
+                is_logged_in={is_logged_in}
                 newPost={this.toggleForm}
                 postsAmount={postsAmount}
-                editable={editable}
+                tag={tag}
+                triggers={triggers}
+                type={type}
               />
 
             </PageBody>

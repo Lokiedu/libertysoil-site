@@ -33,17 +33,21 @@ export default class Reviews extends Component {
     }))
   };
 
-  state = {
-    mobile: true,
-    sliding: false
-  };
+  constructor(props) {
+    super(props);
 
-  active = 0;
-  slideshow = null;
-  imageHovered = false;
-  length = 0;
-  delay = 5000;
-  clientWidth = 0;
+    this.state = {
+      mobile: true,
+      sliding: false
+    };
+
+    this.active = 0;
+    this.slideshow = null;
+    this.imageHovered = false;
+    this.length = 0;
+    this.delay = 5000;
+    this.clientWidth = 0;
+  }
 
   componentDidMount() {
     this.toggleMode();

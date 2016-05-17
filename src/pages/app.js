@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ga from 'react-google-analytics';
@@ -23,20 +23,15 @@ import Helmet from 'react-helmet';
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 
-
 const GAInitializer = ga.Initializer;
 
 export class App extends React.Component {
-  static propTypes = {
-    children: PropTypes.element.isRequired
-  };
+  static displayName = 'App';
 
-  componentDidMount() {
-    if (process.env.GOOGLE_ANALYTICS_ID) {
-      ga('create', process.env.GOOGLE_ANALYTICS_ID, 'auto');
-      ga('send', 'pageview');
-    }
-  }
+  static propTypes = {
+    children: PropTypes.element.isRequired,
+    ui: PropTypes.shape({})
+  };
 
   static async fetchData(params, store, client) {
     const props = store.getState();
@@ -49,26 +44,34 @@ export class App extends React.Component {
     await triggers.loadUserTags();
   }
 
+  componentDidMount() {
+    if (process.env.GOOGLE_ANALYTICS_ID) {
+      ga('create', process.env.GOOGLE_ANALYTICS_ID, 'auto');
+      ga('send', 'pageview');
+    }
+  }
+
   render() {
     const {
+      children,
       ui
     } = this.props;
 
-    let gaContent = '';
-    const pageClassName = ['page'];
+    let gaContent;
 
     if (process.env.GOOGLE_ANALYTICS_ID) {
       gaContent = <GAInitializer />;
     }
 
+    let className = 'page';
     if (ui.sidebarIsVisible) {
-      pageClassName.push('page-with_sidebar');
+      className += ' page-with_sidebar';
     }
 
     return (
-      <div className={pageClassName.join(' ')}>
+      <div className={className}>
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
-        {this.props.children}
+        {children}
         {gaContent}
       </div>
     );
