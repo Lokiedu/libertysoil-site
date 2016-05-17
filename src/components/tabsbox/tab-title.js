@@ -81,7 +81,7 @@ class TabBoxTitle extends React.Component {
     // whole TabTile content isn't the link to TabContent
     if (this.hasLinksInside()) {
       return (
-        <span className='tabs__title'>
+        <span className="tabs__title">
           {this.linkifyChildren()}
         </span>
       );

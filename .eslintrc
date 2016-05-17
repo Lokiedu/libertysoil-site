@@ -38,7 +38,7 @@
     "space-before-function-paren": [2, { "anonymous": "always", "named": "never" }],
     "space-infix-ops": 2,
 
-    "jsx-quotes": 1,
+    "jsx-quotes": 2,
     "react/display-name": 2,
     "react/forbid-prop-types": 2,
     "react/jsx-boolean-value": 1,
