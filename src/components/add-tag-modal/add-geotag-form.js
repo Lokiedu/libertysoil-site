@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,9 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import { findIndex } from 'lodash';
 
 import GeotagSelect from './geotag-select';
 import { Tab, Tabs } from '../tabsbox';
@@ -31,16 +31,16 @@ export default class AddGeotagForm extends Component {
       id: PropTypes.string
     })).isRequired,
     onAddGeotag: PropTypes.func.isRequired,
-    userRecentGeotags: PropTypes.arrayOf(PropTypes.shape({
-      url_name: PropTypes.string
-    })).isRequired,
     triggers: PropTypes.shape({
       checkGeotagExists: PropTypes.func.isRequired
-    })
+    }),
+    userRecentGeotags: PropTypes.arrayOf(PropTypes.shape({
+      url_name: PropTypes.string
+    })).isRequired
   };
 
   _selectRecentlyUsedGeotag = (tag) => {
-    const index = _.findIndex(this.props.userRecentGeotags, t => t.url_name === tag.urlId);
+    const index = findIndex(this.props.userRecentGeotags, t => t.url_name === tag.urlId);
     this._addTag(this.props.userRecentGeotags[index]);
   };
 
@@ -94,7 +94,7 @@ export default class AddGeotagForm extends Component {
                     />
                   </div>
                   <div className="layout__grid_item">
-                    <input type="submit" value="Add" className="button button-wide add_tag_modal__add_button action" />
+                    <input className="button button-wide add_tag_modal__add_button action" type="submit" value="Add" />
                   </div>
                 </div>
               </form>

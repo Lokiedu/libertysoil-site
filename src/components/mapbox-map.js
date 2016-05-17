@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { isEmpty } from 'lodash';
 
@@ -32,6 +32,7 @@ export default class MapboxMap extends React.Component {
 
   static propTypes = {
     frozen: PropTypes.bool,
+    mapId: PropTypes.string,
     noWheelZoom: PropTypes.bool,
     selectedLocation: PropTypes.shape({
       lat: PropTypes.number,
@@ -40,8 +41,7 @@ export default class MapboxMap extends React.Component {
     viewLocation: PropTypes.shape({
       lat: PropTypes.number,
       lon: PropTypes.number
-    }),
-    mapId: PropTypes.string
+    })
   };
 
   static defaultProps = {

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,9 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import { clone, differenceWith, pick, remove } from 'lodash';
 
 import ModalComponent from './modal-component';
 import ModalSwitcher from './add-tag-modal/modal-switcher';
@@ -74,25 +74,25 @@ export default class AddTagModal extends Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
-    userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
-    }).isRequired,
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    type: PropTypes.oneOf(IMPLEMENTED_TAGS),
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired,
       checkGeotagExists: PropTypes.func.isRequired
-    })
+    }),
+    type: PropTypes.oneOf(IMPLEMENTED_TAGS),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired
   };
 
   static defaultProps = {
@@ -107,26 +107,26 @@ export default class AddTagModal extends Component {
     super(props);
 
     this.state = {
-      geotags: _.clone(this.props.geotags),
-      schools: _.clone(this.props.schools),
-      hashtags: _.clone(this.props.hashtags)
+      geotags: clone(this.props.geotags),
+      schools: clone(this.props.schools),
+      hashtags: clone(this.props.hashtags)
     };
   }
 
   reset = () => {
     this.setState({
-      geotags: _.clone(this.props.geotags),
-      schools: _.clone(this.props.schools),
-      hashtags: _.clone(this.props.hashtags)
+      geotags: clone(this.props.geotags),
+      schools: clone(this.props.schools),
+      hashtags: clone(this.props.hashtags)
     });
   };
 
   _save = () => {
-    this.props.onSave(_.pick(this.state, 'geotags', 'schools', 'hashtags'));
+    this.props.onSave(pick(this.state, 'geotags', 'schools', 'hashtags'));
   };
 
   _addGeotag = (geotag) => {
-    const state = _.pick(this.state, 'geotags');
+    const state = pick(this.state, 'geotags');
 
     state.geotags.push(geotag);
 
@@ -134,7 +134,7 @@ export default class AddTagModal extends Component {
   };
 
   _addSchool = (school) => {
-    const state = _.pick(this.state, 'schools');
+    const state = pick(this.state, 'schools');
 
     state.schools.push(school);
 
@@ -142,7 +142,7 @@ export default class AddTagModal extends Component {
   };
 
   _addHashtag = (tag) => {
-    const state = _.pick(this.state, 'hashtags');
+    const state = pick(this.state, 'hashtags');
 
     state.hashtags.push(tag);
 
@@ -150,21 +150,21 @@ export default class AddTagModal extends Component {
   };
 
   _deleteTag = (displayTag) => {
-    const state = _.clone(this.state);
+    const state = clone(this.state);
 
     switch (displayTag.type) {
       case TAG_LOCATION: {
-        _.remove(state.geotags, geotag => geotag.url_name === displayTag.urlId);
+        remove(state.geotags, geotag => geotag.url_name === displayTag.urlId);
 
         break;
       }
       case TAG_SCHOOL: {
-        _.remove(state.schools, school => school.url_name === displayTag.urlId);
+        remove(state.schools, school => school.url_name === displayTag.urlId);
 
         break;
       }
       case TAG_HASHTAG: {
-        _.remove(state.hashtags, hashtag => hashtag.name === displayTag.urlId);
+        remove(state.hashtags, hashtag => hashtag.name === displayTag.urlId);
 
         break;
       }
@@ -189,11 +189,11 @@ export default class AddTagModal extends Component {
       return null;
     }
 
-    const recentGeotags = _.differenceWith(
+    const recentGeotags = differenceWith(
       this.props.userRecentTags.geotags, this.state.geotags, (a, b) => a.name === b.name);
-    const recentSchools = _.differenceWith(
+    const recentSchools = differenceWith(
       this.props.userRecentTags.schools, this.state.schools, (a, b) => a.name === b.name);
-    const recentHashtags = _.differenceWith(
+    const recentHashtags = differenceWith(
       this.props.userRecentTags.hashtags, this.state.hashtags, (a, b) => a.name === b.name);
     const userRecentTags = { geotags: recentGeotags, schools: recentSchools, hashtags: recentHashtags };
 
@@ -214,12 +214,12 @@ export default class AddTagModal extends Component {
           <AddTagForm
             addedTags={this.state}
             allSchools={allSchools}
-            userRecentTags={userRecentTags}
+            triggers={this.props.triggers}
             type={type}
+            userRecentTags={userRecentTags}
             onAddGeotag={this._addGeotag}
             onAddHashtag={this._addHashtag}
             onAddSchool={this._addSchool}
-            triggers={this.props.triggers}
           />
           <AddedTags
             addedTags={this.state}

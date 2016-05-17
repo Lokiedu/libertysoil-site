@@ -1,17 +1,20 @@
 /*
  This file is a part of libertysoil.org website
  Copyright (C) 2016  Loki Education (Social Enterprise)
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
@@ -21,8 +24,6 @@ export default class UpdatePicture extends React.Component {
   static displayName = 'UpdatePicture';
 
   static propTypes = {
-    what: PropTypes.node.isRequired,
-    where: PropTypes.node.isRequired,
     limits: PropTypes.shape({
       min: PropTypes.shape({
         width: PropTypes.number,
@@ -33,12 +34,14 @@ export default class UpdatePicture extends React.Component {
         height: PropTypes.number
       })
     }),
+    onClose: PropTypes.func,
+    onSubmit: PropTypes.func,
     preview: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
     }).isRequired,
-    onSubmit: PropTypes.func,
-    onClose: PropTypes.func
+    what: PropTypes.node.isRequired,
+    where: PropTypes.node.isRequired
   };
 
   static defaultProps = {
@@ -68,7 +71,7 @@ export default class UpdatePicture extends React.Component {
   render() {
     return (
       <div className="update_picture">
-        <button onClick={this.open} className="update_picture__camera">
+        <button className="update_picture__camera" onClick={this.open}>
           <span className="micon">camera</span>
         </button>
         <UpdatePictureModal

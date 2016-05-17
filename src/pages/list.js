@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,9 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+import { values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -60,14 +60,12 @@ export class List extends React.Component {
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
+    current_user: PropTypes.shape({}).isRequired,
+    river: PropTypes.arrayOf(PropTypes.string).isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean
       })
-    }).isRequired,
-    river: PropTypes.arrayOf(PropTypes.string).isRequired,
-    current_user: PropTypes.shape({
-
     }).isRequired
   };
 
@@ -163,7 +161,7 @@ export class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+        <Header current_user={this.props.current_user} is_logged_in={this.props.is_logged_in}>
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
@@ -175,7 +173,7 @@ export class List extends React.Component {
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={_.values(this.props.schools)}
+                  allSchools={values(this.props.schools)}
                   defaultText={this.props.create_post_form.text}
                   triggers={triggers}
                   userRecentTags={current_user.recent_tags}

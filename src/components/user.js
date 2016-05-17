@@ -156,20 +156,20 @@ const User = (props) => {
 User.displayName = 'User';
 
 User.propTypes = {
-  user: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    avatar: PropTypes.string
-  }).isRequired,
   avatarSize: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
   ]).isRequired,
   hideAvatar: PropTypes.bool,
-  isRound: PropTypes.bool,
   hideText: PropTypes.bool,
+  isRound: PropTypes.bool,
   timestamp: PropTypes.string,
-  timestampLink: PropTypes.string
+  timestampLink: PropTypes.string,
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    avatar: PropTypes.string
+  }).isRequired
 };
 
 User.defaultProps = {

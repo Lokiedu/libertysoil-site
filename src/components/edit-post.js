@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,9 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+import { pick } from 'lodash';
 
 import TagIcon from './tag-icon';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
@@ -34,36 +34,31 @@ export default class EditPost extends React.Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
-    }).isRequired,
     geotags: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
+      name: PropTypes.string
+    })),
+    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     id: PropTypes.string,
     onDelete: PropTypes.func,
     onSubmit: PropTypes.func,
     post: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string,
       geotags: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string,
         name: PropTypes.string
       })),
+      hashtags: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string
+      })),
+      id: PropTypes.string.isRequired,
       schools: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
       })),
-      hashtags: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string
-      }))
+      text: PropTypes.string
     }),
     schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
     triggers: PropTypes.shape({
@@ -72,7 +67,12 @@ export default class EditPost extends React.Component {
       loadUserRecentTags: PropTypes.func.isRequired,
       checkSchoolExists: PropTypes.func.isRequired,
       checkGeotagExists: PropTypes.func.isRequired
-    })
+    }),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired
   };
 
   constructor(props) {
@@ -216,7 +216,7 @@ export default class EditPost extends React.Component {
       addTagModalType
     } = this.state;
 
-    let allModalTags = _.pick(this.props, 'geotags', 'schools', 'hashtags');
+    let allModalTags = pick(this.props, 'geotags', 'schools', 'hashtags');
 
     // If edit_post_form is not initialized yet.
     if (!this.props.id) {
@@ -229,8 +229,8 @@ export default class EditPost extends React.Component {
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
-          <input type="hidden" name="id" value={post.id} />
+        <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
+          <input name="id" type="hidden" value={post.id} />
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
@@ -279,14 +279,14 @@ export default class EditPost extends React.Component {
         </form>
         {this.state.upToDate &&
           <AddTagModal
-            ref={(c) => this._addTagModal = c}
             allSchools={allSchools}
-            userRecentTags={this.props.userRecentTags}
+            ref={(c) => this._addTagModal = c}
+            triggers={this.props.triggers}
             type={addTagModalType}
+            userRecentTags={this.props.userRecentTags}
             onClose={this._closeAddTagModal}
             onSave={this._addTags}
             onTypeChange={this._changeAddTagModal}
-            triggers={this.props.triggers}
             {...allModalTags}
           />
         }

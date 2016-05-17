@@ -64,6 +64,7 @@ class SchoolEditForm extends React.Component {
       isValid: PropTypes.func,
       onValues: PropTypes.func
     }).isRequired,
+    processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired,
     school: PropTypes.shape({
       description: PropTypes.string,
@@ -217,7 +218,7 @@ class SchoolEditForm extends React.Component {
             {...fields.country_id}
           >
             <option value="">unknown</option>
-            {sortBy(countries, 'name').map(country => <option value={country.id} key={country.id}>{country.name}</option>)}
+            {sortBy(countries, 'name').map(country => <option key={country.id} value={country.id}>{country.name}</option>)}
           </select>
         </div>
 
@@ -274,7 +275,7 @@ class SchoolEditForm extends React.Component {
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button type="submit" className="button-green" disabled={!form.isValid()} title="Save" waiting={processing}/>
+            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing}/>
           </div>
         </div>
         <Messages messages={messages} removeMessage={triggers.removeMessage}/>

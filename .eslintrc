@@ -70,7 +70,7 @@
     "react/require-extension": 1,
     "react/self-closing-comp": 1,
     "react/sort-comp": 2,
-    "react/sort-prop-types": 1,
+    "react/sort-prop-types": 2,
     "react/wrap-multilines": 1
   }
 }
