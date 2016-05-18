@@ -76,4 +76,31 @@ describe('Hashtag', () => {
       }
     });
   });
+
+  describe('.updateUpdatedAt', () => {
+    async function setCreatedAt(hashtagId, postId, createdAt) {
+      await bookshelf.knex('hashtags_posts')
+        .where('hashtag_id', hashtagId)
+        .where('post_id', postId)
+        .update({ created_at: createdAt });
+    }
+
+    it('sets updated_at to latest created_at from hashtags_posts', async () => {
+      const hashtag = hashtags[0];
+      const dates = [
+        new Date(2000, 1, 1),
+        new Date(2016, 1, 1)
+      ];
+
+      await hashtag.posts().attach(posts.slice(0, 2));
+      await setCreatedAt(hashtag.id, posts[0].id, dates[0]);
+      await setCreatedAt(hashtag.id, posts[1].id, dates[1]);
+
+      await Hashtag.updateUpdatedAt([hashtag.get('id')]);
+
+      await hashtag.refresh();
+
+      expect(hashtag.get('updated_at'), 'to equal', dates[1]);
+    });
+  });
 });

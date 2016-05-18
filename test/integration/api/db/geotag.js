@@ -76,4 +76,31 @@ describe('Geotag', () => {
       }
     });
   });
+
+  describe('.updateUpdatedAt', () => {
+    async function setCreatedAt(geotagId, postId, createdAt) {
+      await bookshelf.knex('geotags_posts')
+        .where('geotag_id', geotagId)
+        .where('post_id', postId)
+        .update({ created_at: createdAt });
+    }
+
+    it('sets updated_at to latest created_at from geotags_posts', async () => {
+      const geotag = geotags[0];
+      const dates = [
+        new Date(2000, 1, 1),
+        new Date(2016, 1, 1)
+      ];
+
+      await geotag.posts().attach(posts.slice(0, 2));
+      await setCreatedAt(geotag.id, posts[0].id, dates[0]);
+      await setCreatedAt(geotag.id, posts[1].id, dates[1]);
+
+      await Geotag.updateUpdatedAt([geotag.id]);
+
+      await geotag.refresh();
+
+      expect(geotag.get('updated_at'), 'to equal', dates[1]);
+    });
+  });
 });

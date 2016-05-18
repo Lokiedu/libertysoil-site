@@ -76,4 +76,31 @@ describe('School', () => {
       }
     });
   });
+
+  describe('.updateUpdatedAt', () => {
+    async function setCreatedAt(schoolId, postId, createdAt) {
+      await bookshelf.knex('posts_schools')
+        .where('school_id', schoolId)
+        .where('post_id', postId)
+        .update({ created_at: createdAt });
+    }
+
+    it('sets updated_at to latest created_at from posts_schools', async () => {
+      const school = schools[0];
+      const dates = [
+        new Date(2000, 1, 1),
+        new Date(2016, 1, 1)
+      ];
+
+      await school.posts().attach(posts.slice(0, 2));
+      await setCreatedAt(school.id, posts[0].id, dates[0]);
+      await setCreatedAt(school.id, posts[1].id, dates[1]);
+
+      await School.updateUpdatedAt([school.get('id')]);
+
+      await school.refresh();
+
+      expect(school.get('updated_at'), 'to equal', dates[1]);
+    });
+  });
 });
