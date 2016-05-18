@@ -197,6 +197,8 @@ export function initBookshelfFromKnex(knex) {
       await knex('hashtags')
         .whereIn('id', hashtagIds)
         .increment('post_count', 1);
+
+      await Hashtag.updateUpdatedAt(hashtagIds);
     },
     detachHashtags: async function(names) {
       const hashtagIds = (await Hashtag.collection().query(qb => {
@@ -208,6 +210,8 @@ export function initBookshelfFromKnex(knex) {
       await knex('hashtags')
         .whereIn('id', hashtagIds)
         .decrement('post_count', 1);
+
+      await Hashtag.updateUpdatedAt(hashtagIds);
     },
     updateHashtags: async function(names) {
       const relatedHashtagNames = (await this.related('hashtags').fetch()).pluck('name');
@@ -230,12 +234,10 @@ export function initBookshelfFromKnex(knex) {
       await this.schools().attach(schoolIds);
 
       await knex('schools')
-        .whereIn('name', names)
-        .update({ updated_at: new Date().toJSON() });
-
-      await knex('schools')
         .whereIn('id', schoolIds)
         .increment('post_count', 1);
+
+      await School.updateUpdatedAt(schoolIds);
     },
     detachSchools: async function(names) {
       const schoolIds = (await School.collection().query(qb => {
@@ -247,6 +249,8 @@ export function initBookshelfFromKnex(knex) {
       await knex('schools')
         .whereIn('id', schoolIds)
         .decrement('post_count', 1);
+
+      await School.updateUpdatedAt(schoolIds);
     },
     updateSchools: async function(names) {
       const relatedSchoolNames = (await this.related('schools').fetch()).pluck('name');
@@ -266,6 +270,8 @@ export function initBookshelfFromKnex(knex) {
       await knex('geotags')
         .whereIn('id', geotagIds)
         .increment('post_count', 1);
+
+      await Geotag.updateUpdatedAt(geotagIds);
     },
     detachGeotags: async function(geotagIds) {
       await this.geotags().detach(geotagIds);
@@ -273,6 +279,8 @@ export function initBookshelfFromKnex(knex) {
       await knex('geotags')
         .whereIn('id', geotagIds)
         .decrement('post_count', 1);
+
+      await Geotag.updateUpdatedAt(geotagIds);
     },
     updateGeotags: async function(geotagIds) {
       const relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
