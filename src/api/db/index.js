@@ -348,6 +348,18 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
+  Hashtag.updateUpdatedAt = async function(ids) {
+    await knex('hashtags')
+      .whereIn('id', ids)
+      .update({
+        updated_at: knex('hashtags_posts')
+          .select('created_at')
+          .where('hashtags_posts.hashtag_id', knex.raw('hashtags.id'))
+          .orderBy('created_at', 'DESC')
+          .limit(1)
+      });
+  };
+
   const School = bookshelf.Model.extend({
     tableName: 'schools',
     posts: function () {
@@ -386,6 +398,18 @@ export function initBookshelfFromKnex(knex) {
         post_count: knex('posts_schools')
           .where('posts_schools.school_id', knex.raw('schools.id'))
           .count()
+      });
+  };
+
+  School.updateUpdatedAt = async function(ids) {
+    await knex('schools')
+      .whereIn('id', ids)
+      .update({
+        updated_at: knex('posts_schools')
+          .select('created_at')
+          .where('posts_schools.school_id', knex.raw('schools.id'))
+          .orderBy('created_at', 'DESC')
+          .limit(1)
       });
   };
 
@@ -450,6 +474,18 @@ export function initBookshelfFromKnex(knex) {
         post_count: knex('geotags_posts')
           .where('geotags_posts.geotag_id', knex.raw('geotags.id'))
           .count()
+      });
+  };
+
+  Geotag.updateUpdatedAt = async function(ids) {
+    await knex('geotags')
+      .whereIn('id', ids)
+      .update({
+        updated_at: knex('geotags_posts')
+          .select('created_at')
+          .where('geotags_posts.geotag_id', knex.raw('geotags.id'))
+          .orderBy('created_at', 'DESC')
+          .limit(1)
       });
   };
 
