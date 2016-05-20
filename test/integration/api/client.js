@@ -29,21 +29,29 @@ describe('Client test', () => {
     client = new ApiClient(API_HOST);
   });
 
-  it('Get method should work', async () => {
-    let response  = await client.get('/api/v1/test');
+  describe('Base methods', () => {
+    it('#GET', async () => {
+      let response  = await client.get('/api/v1/test');
 
-    expect(await response.text(), 'to be', 'test message in response');
+      expect(await response.text(), 'to be', 'test message in response');
+    });
+
+    it('#HEAD', async () => {
+      let response = await client.head('/api/v1/test');
+
+      expect(response.status, 'to be', 200);
+    });
   });
 
-  it('Head method should work', async () => {
-    let response = await client.head('/api/v1/test');
-
-    expect(response.status, 'to be', 200);
-  });
-
-  it('checkGeotagExists return false for non existing geotag', async () => {
+  it('#checkGeotagExists return false for non existing geotag', async () => {
     let result = await client.checkGeotagExists('nonexistingname');
 
     expect(result, 'to be false');
+  });
+
+  it('#deleteComment works', async () => {
+    let result = await client.deleteComment('nonexistingpost', 'nonexistingid');
+
+    expect(result.error, 'to be', 'You are not authorized');
   });
 });
