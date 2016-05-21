@@ -18,9 +18,10 @@
 import React, { PropTypes } from 'react';
 import { filter } from 'lodash';
 
-import ModalSwitcherItem from './modal-switcher-item';
-import TagIcon from '../tag-icon';
-import { IMPLEMENTED_TAGS } from '../../consts/tags';
+import { IMPLEMENTED_TAGS } from '../deps';
+import { TagIcon } from '../deps';
+
+import ModalSwitcherItem from './item';
 
 const ModalSwitcher = ({ activeType, onClose, onTypeChange }) => {
   const inactiveTags = filter(IMPLEMENTED_TAGS, t => t !== activeType);

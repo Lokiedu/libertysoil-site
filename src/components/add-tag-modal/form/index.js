@@ -17,10 +17,11 @@
 */
 import React, { PropTypes } from 'react';
 
-import AddGeotagForm from './add-geotag-form';
-import AddHashtagForm from './add-hashtag-form';
-import AddSchoolForm from './add-school-form';
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../../consts/tags';
+import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../deps';
+
+import AddGeotagForm from './geotag';
+import AddHashtagForm from './hashtag';
+import AddSchoolForm from './school';
 
 const AddTagForm = ({
   addedTags: { geotags, schools, hashtags },
@@ -32,11 +33,32 @@ const AddTagForm = ({
 }) => {
   switch (type) {
     case TAG_LOCATION:
-      return <AddGeotagForm addedGeotags={geotags} onAddGeotag={onAddGeotag} triggers={triggers} userRecentGeotags={userRecentTags.geotags} />;
+      return (
+        <AddGeotagForm
+          addedGeotags={geotags}
+          triggers={triggers}
+          userRecentGeotags={userRecentTags.geotags}
+          onAddGeotag={onAddGeotag}
+        />
+      );
     case TAG_HASHTAG:
-      return <AddHashtagForm addedHashtags={hashtags} onAddHashtag={onAddHashtag} userRecentHashtags={userRecentTags.hashtags} />;
+      return (
+        <AddHashtagForm
+          addedHashtags={hashtags}
+          userRecentHashtags={userRecentTags.hashtags}
+          onAddHashtag={onAddHashtag}
+        />
+      );
     case TAG_SCHOOL:
-      return <AddSchoolForm addedSchools={schools} allSchools={allSchools} onAddSchool={onAddSchool} triggers={triggers} userRecentSchools={userRecentTags.schools} />;
+      return (
+        <AddSchoolForm
+          addedSchools={schools}
+          allSchools={allSchools}
+          triggers={triggers}
+          userRecentSchools={userRecentTags.schools}
+          onAddSchool={onAddSchool}
+        />
+      );
     default:
       return false;
   }

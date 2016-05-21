@@ -18,12 +18,12 @@
 import React, { PropTypes, Component } from 'react';
 import { clone, differenceWith, pick, remove } from 'lodash';
 
-import ModalComponent from './modal-component';
-import ModalSwitcher from './add-tag-modal/modal-switcher';
-import TagCloud from './tag-cloud';
-import AddTagForm from './add-tag-modal/add-tag-form';
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../consts/tags';
+import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from './deps';
+import { ModalComponent } from './deps';
+import { TagCloud } from './deps';
 
+import ModalSwitcher from './switcher';
+import AddTagForm from './form';
 
 function AddedTags({ addedTags, onDelete }) {
   if (!addedTags.geotags.length &&

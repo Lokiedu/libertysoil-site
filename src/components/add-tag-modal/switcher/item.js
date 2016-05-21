@@ -17,7 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 
-import TagIcon from '../tag-icon';
+import { TagIcon } from '../deps';
 
 export default class ModalSwitcherItem extends React.Component {
   static displayName = 'ModalSwitcherItem';
