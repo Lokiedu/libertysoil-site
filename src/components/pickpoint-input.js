@@ -31,7 +31,7 @@ export default class PickpointInput extends React.Component {
   };
 
   static defaultProps = {
-    onSelect: function () {}
+    onSelect: () => {}
   };
 
   state = {

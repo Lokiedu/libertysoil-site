@@ -1,3 +1,4 @@
+/* eslint object-shorthand: "off" */
 /*
  This file is a part of libertysoil.org website
  Copyright (C) 2015  Loki Education (Social Enterprise)

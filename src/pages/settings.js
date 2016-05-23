@@ -73,7 +73,7 @@ class SettingsPage extends React.Component {
       more: {
         summary: this.form.summary.value,
         bio: this.form.bio.value,
-        roles: roles,
+        roles,
         ...processedPictures
       }
     });

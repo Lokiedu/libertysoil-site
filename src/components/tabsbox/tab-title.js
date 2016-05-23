@@ -61,7 +61,7 @@ class TabBoxTitle extends React.Component {
       if (is(child, 'TabBoxTitleLink')) {
         return React.cloneElement(child, {
           key: i,
-          className: className,
+          className,
           onClick: this.clickHandler
         });
       }

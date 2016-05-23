@@ -484,7 +484,11 @@ export default class ApiClient
   }
 
   async processImage(id, transforms, derived_id = null) {
-    const response = await this.postJSON('/api/v1/image', { original_id: id, transforms: JSON.stringify(transforms), derived_id: derived_id });
+    const response = await this.postJSON('/api/v1/image', {
+      original_id: id,
+      transforms: JSON.stringify(transforms),
+      derived_id
+    });
     return response.body;
   }
 

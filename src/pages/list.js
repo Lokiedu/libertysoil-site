@@ -114,9 +114,7 @@ export class List extends React.Component {
       if (res.length) { // no more posts
         displayLoadMore = true;
       }
-      this.setState({
-        displayLoadMore: displayLoadMore
-      });
+      this.setState({ displayLoadMore });
     }
 
     if (!isVisible) {

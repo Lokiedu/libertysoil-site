@@ -28,6 +28,7 @@
     "no-unneeded-ternary": 2,
     "no-var": 2,
     "no-warning-comments": 1,
+    "object-shorthand": 2,
     "object-curly-spacing": [2, "always"],
     "padded-blocks": [2, "never"],
     "prefer-const": 2,

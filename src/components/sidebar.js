@@ -83,9 +83,7 @@ class Sidebar extends React.Component {
       dispatch(toggleUISidebar(false));
     }
 
-    this.setState({
-      clientWidth: clientWidth
-    });
+    this.setState({ clientWidth });
   }, 100);
 
   render() {
