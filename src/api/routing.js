@@ -29,6 +29,7 @@ export function initApi(bookshelf, sphinx) {
 
   api.get('/test', controller.test);
   api.get('/test-sphinx', controller.testSphinx);
+  api.head('/test', controller.testHead);
   api.post('/users', controller.registerUser);
   api.post('/session', controller.login);
 

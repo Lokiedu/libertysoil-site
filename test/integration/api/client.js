@@ -23,12 +23,27 @@ import { API_HOST } from '../../../src/config';
 
 
 describe('Client test', () => {
+  let client;
 
-  it('should work', async () => {
-    let client = new ApiClient(API_HOST);
+  before(async () => {
+    client = new ApiClient(API_HOST);
+  });
+
+  it('Get method should work', async () => {
     let response  = await client.get('/api/v1/test');
 
     expect(await response.text(), 'to be', 'test message in response');
   });
 
+  it('Head method should work', async () => {
+    let response = await client.head('/api/v1/test');
+
+    expect(response.status, 'to be', 200);
+  });
+
+  it('checkGeotagExists return false for non existing geotag', async () => {
+    let result = await client.checkGeotagExists('nonexistingname');
+
+    expect(result, 'to be false');
+  });
 });

@@ -61,13 +61,19 @@ export default class ApiClient
   }
 
   async head(relativeUrl, query = {}) {
-    let req = request
-      .head(this.apiUrl(relativeUrl))
-      .query(query);
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl, query),
+      {
+        method: 'HEAD',
+        headers: defaultHeaders
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -135,23 +141,15 @@ export default class ApiClient
   }
 
   async checkUserExists(username) {
-    try {
-      await this.head(`/api/v1/user/${username}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/user/${username}`);
 
-    return true;
+    return result.ok;
   }
 
   async checkEmailTaken(email) {
-    try {
-      await this.head(`/api/v1/user/email/${email}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/user/email/${email}`);
 
-    return true;
+    return result.ok;
   }
 
   async getAvailableUsername(username) {
@@ -166,13 +164,9 @@ export default class ApiClient
   }
 
   async checkSchoolExists(name) {
-    try {
-      await this.head(`/api/v1/school/${name}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/school/${name}`);
 
-    return true;
+    return result.ok;
   }
 
   async getSchool(school_name) {
@@ -473,13 +467,9 @@ export default class ApiClient
   }
 
   async checkGeotagExists(name) {
-    try {
-      await this.head(`/api/v1/geotag/${name}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/geotag/${name}`);
 
-    return true;
+    return result.ok;
   }
 
   async getGeotag(urlName) {

@@ -63,6 +63,14 @@ export default class ApiController {
     ctx.body = indexes;
   };
 
+  testDelete = async (ctx) => {
+    ctx.body = [];
+  };
+
+  testHead = async (ctx) => {
+    ctx.body = [];
+  };
+
   allPosts = async (ctx) => {
     const Posts = this.bookshelf.collection('Posts');
     const posts = new Posts();
