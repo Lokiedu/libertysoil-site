@@ -146,15 +146,30 @@ export default class ApiClient
   }
 
   async postJSON(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {
+        'Content-Type': 'application/json'
+      },
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie'],
+        'Content-Type': 'application/json'
+      };
     }
 
     if (data !== null) {
-      req = req.send(data);
+      body = JSON.stringify(data);
     }
+
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -330,23 +345,23 @@ export default class ApiClient
 
   async updateUser(user) {
     const response = await this.postJSON(`/api/v1/user`, user);
-    return response.body;
+    return await response.json();
   }
 
   async changePassword(old_password, new_password) {
     const response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
-    return response.body;
+    return await response.json();
   }
 
   async resetPassword(email) {
     const response = await this.postJSON(`/api/v1/resetpassword`, { email });
 
-    return response.body;
+    return await response.json();
   }
 
   async newPassword(hash, password, password_repeat) {
     const response = await this.postJSON(`/api/v1/newpassword/${hash}`, { password, password_repeat });
-    return response.body;
+    return await response.json();
   }
 
   async unfollow(userName) {
@@ -397,12 +412,12 @@ export default class ApiClient
   async createPost(type, data) {
     data.type = type;
     const response = await this.postJSON(`/api/v1/posts`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updatePost(uuid, data) {
     const response = await this.postJSON(`/api/v1/post/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async deletePost(uuid) {
@@ -412,17 +427,17 @@ export default class ApiClient
 
   async updateGeotag(uuid, data) {
     const response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updateHashtag(uuid, data) {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updateSchool(uuid, data) {
     const response = await this.postJSON(`/api/v1/school/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async pickpoint(options) {
@@ -531,7 +546,7 @@ export default class ApiClient
       transforms: JSON.stringify(transforms),
       derived_id
     });
-    return response.body;
+    return await response.json();
   }
 
   async createComment(postId, text) {
