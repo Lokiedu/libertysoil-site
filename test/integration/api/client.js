@@ -47,6 +47,12 @@ describe('Client test', () => {
 
       expect(await response.text(), 'to be', 'test message in delete response');
     });
+
+    it('#POST', async () => {
+      let response = await client.post('/api/v1/test');
+
+      expect(await response.text(), 'to be', 'test message in post response');
+    });
   });
 
   it('#checkGeotagExists return false for non existing geotag', async () => {

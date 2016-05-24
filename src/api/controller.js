@@ -71,6 +71,10 @@ export default class ApiController {
     ctx.body = [];
   };
 
+  testPost = async (ctx) => {
+    ctx.body = 'test message in post response';
+  };
+
   allPosts = async (ctx) => {
     const Posts = this.bookshelf.collection('Posts');
     const posts = new Posts();

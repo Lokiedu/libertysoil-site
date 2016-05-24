@@ -18,6 +18,7 @@
 import request from 'superagent';
 import fetch from 'isomorphic-fetch';
 import { format as format_url, parse as parse_url } from 'url';
+import { stringify } from 'querystring';
 import { merge as mergeObj } from 'lodash';
 
 
@@ -97,15 +98,30 @@ export default class ApiClient
   }
 
   async post(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie'],
+        'Content-Type': 'application/x-www-form-urlencoded'
+      };
     }
 
     if (data !== null) {
-      req = req.type('form').send(data);
+      body = stringify(data);
     }
+
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -254,62 +270,62 @@ export default class ApiClient
 
   async like(postId) {
     const response = await this.post(`/api/v1/post/${postId}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlike(postId) {
     const response = await this.post(`/api/v1/post/${postId}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeHashtag(name) {
     const response = await this.post(`/api/v1/tag/${name}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeHashtag(name) {
     const response = await this.post(`/api/v1/tag/${name}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeSchool(urlName) {
     const response = await this.post(`/api/v1/school/${urlName}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeSchool(urlName) {
     const response = await this.post(`/api/v1/school/${urlName}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async fav(postId) {
     const response = await this.post(`/api/v1/post/${postId}/fav`);
-    return response.body;
+    return await response.json();
   }
 
   async unfav(postId) {
     const response = await this.post(`/api/v1/post/${postId}/unfav`);
-    return response.body;
+    return await response.json();
   }
 
   async follow(userName) {
     const response = await this.post(`/api/v1/user/${userName}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async ignoreUser(userName) {
     const response = await this.post(`/api/v1/user/${userName}/ignore`);
-    return response.body;
+    return await response.json();
   }
 
   async updateUser(user) {
@@ -335,17 +351,17 @@ export default class ApiClient
 
   async unfollow(userName) {
     const response = await this.post(`/api/v1/user/${userName}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async registerUser(userData) {
     const response = await this.post(`/api/v1/users`, userData);
-    return response.body;
+    return await response.json();
   }
 
   async login(loginData) {
     const response = await this.post(`/api/v1/session`, loginData);
-    return response.body;
+    return await response.json();
   }
 
   async userSuggestions() {
@@ -431,12 +447,12 @@ export default class ApiClient
 
   async followTag(name) {
     const response = await this.post(`/api/v1/tag/${name}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowTag(name) {
     const response = await this.post(`/api/v1/tag/${name}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async schoolCloud() {
@@ -451,12 +467,12 @@ export default class ApiClient
 
   async followSchool(name) {
     const response = await this.post(`/api/v1/school/${name}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowSchool(name) {
     const response = await this.post(`/api/v1/school/${name}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async geotagCloud() {
@@ -466,12 +482,12 @@ export default class ApiClient
 
   async followGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async checkGeotagExists(name) {
@@ -519,14 +535,10 @@ export default class ApiClient
   }
 
   async createComment(postId, text) {
-    try {
-      const response = await this.post(`/api/v1/post/${postId}/comments`, {
-        text
-      });
-      return response.body;
-    } catch (err) {
-      return err.response.body;
-    }
+    const response = await this.post(`/api/v1/post/${postId}/comments`, {
+      text
+    });
+    return await response.json();
   }
 
   async deleteComment(postId, commentId) {
