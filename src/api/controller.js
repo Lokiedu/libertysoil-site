@@ -306,7 +306,7 @@ export default class ApiController {
         .select()
         .from('posts')
         .whereIn('id', likes)
-        .union(function() {
+        .union(function () {
           this
             .select()
             .from('posts')
@@ -1207,7 +1207,7 @@ export default class ApiController {
       .query(qb => {
         qb
           .select('active_users.*')
-          .from(function() {
+          .from(function () {
             this.select('users.*')
               .count('posts.id as post_count')
               .from('users')

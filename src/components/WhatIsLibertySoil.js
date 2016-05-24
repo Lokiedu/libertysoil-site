@@ -26,7 +26,7 @@ const suppliesImg = '/images/welcome/supplies.jpg';
 const telescopeImg = '/images/welcome/telescope.png';
 
 export default class WhatIsLibertySoil extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -34,13 +34,13 @@ export default class WhatIsLibertySoil extends Component {
     };
   }
 
-  changeSlide (slideId) {
+  changeSlide(slideId) {
     this.setState({
       activeSlide: slideId
     });
   }
 
-  render () {
+  render() {
     const activeSlide = this.state.activeSlide;
     let navigation;
 

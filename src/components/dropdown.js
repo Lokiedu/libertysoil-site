@@ -23,7 +23,7 @@ import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentD
 class Dropdown extends Component {
   static displayName = 'Dropdown';
 
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -43,7 +43,7 @@ class Dropdown extends Component {
     this.setState({ isVisible: false });
   };
 
-  render () {
+  render() {
     const {
       className,
       ...props

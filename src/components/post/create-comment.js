@@ -56,7 +56,7 @@ export default class CreateComment extends Component {
     comment: ''
   };
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const {
       ui
     } = this.props;
@@ -124,7 +124,7 @@ export default class CreateComment extends Component {
     return messageComponent;
   };
 
-  render () {
+  render() {
     const {
       author,
       className,

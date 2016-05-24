@@ -42,7 +42,7 @@ class SettingsPage extends React.Component {
     };
   }
 
-  componentWillMount () {
+  componentWillMount() {
     const { current_user } = this.props;
 
     if (current_user.id && current_user.user.more && current_user.user.more.roles) {

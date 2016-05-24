@@ -50,7 +50,7 @@ export default class BaseSettingsPage extends React.Component {
     this.head._clearPreview();
   }
 
-  render () {
+  render() {
     const {
       onSave,
       children,

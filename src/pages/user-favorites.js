@@ -41,7 +41,7 @@ class UserFavoritesPage extends React.Component {
     store.dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
   }
 
-  render () {
+  render() {
     const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,

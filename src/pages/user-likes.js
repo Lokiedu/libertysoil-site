@@ -44,7 +44,7 @@ class UserLikesPage extends Component {
     store.dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
   }
 
-  render () {
+  render() {
     const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,

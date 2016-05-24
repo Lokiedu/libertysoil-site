@@ -45,31 +45,31 @@ export function initBookshelfFromKnex(knex) {
 
   const User = bookshelf.Model.extend({
     tableName: 'users',
-    posts: function() {
+    posts: function () {
       return this.hasMany(Post, 'user_id');
     },
-    following: function() {
+    following: function () {
       return this.belongsToMany(User, 'followers', 'user_id', 'following_user_id');
     },
-    followers: function() {
+    followers: function () {
       return this.belongsToMany(User, 'followers', 'following_user_id', 'user_id');
     },
-    ignored_users: function() {
+    ignored_users: function () {
       return this.belongsToMany(User, 'ignored_users', 'user_id', 'ignored_user_id');
     },
-    liked_posts: function() {
+    liked_posts: function () {
       return this.belongsToMany(Post, 'likes', 'user_id', 'post_id');
     },
-    liked_hashtags: function() {
+    liked_hashtags: function () {
       return this.belongsToMany(Hashtag, 'liked_hashtags', 'user_id', 'hashtag_id');
     },
-    liked_schools: function() {
+    liked_schools: function () {
       return this.belongsToMany(School, 'liked_schools', 'user_id', 'school_id');
     },
-    liked_geotags: function() {
+    liked_geotags: function () {
       return this.belongsToMany(Geotag, 'liked_geotags', 'user_id', 'geotag_id');
     },
-    favourited_posts: function() {
+    favourited_posts: function () {
       return this.belongsToMany(Post, 'favourites', 'user_id', 'post_id');
     },
     followed_hashtags: function () {
@@ -78,14 +78,14 @@ export function initBookshelfFromKnex(knex) {
     followed_schools: function () {
       return this.belongsToMany(School, 'followed_schools_users', 'user_id', 'school_id');
     },
-    followed_geotags: function() {
+    followed_geotags: function () {
       return this.belongsToMany(Geotag, 'followed_geotags_users', 'user_id', 'geotag_id');
     },
     virtuals: {
-      gravatarHash: function() {
+      gravatarHash: function () {
         return md5(this.get('email'));
       },
-      fullName: function() {
+      fullName: function () {
         const more = this.get('more');
 
         if (more && 'firstName' in more && 'lastName' in more) {
@@ -155,34 +155,34 @@ export function initBookshelfFromKnex(knex) {
 
   const Post = bookshelf.Model.extend({
     tableName: 'posts',
-    user: function() {
+    user: function () {
       return this.belongsTo(User, 'user_id');
     },
-    hashtags: function() {
+    hashtags: function () {
       return this.belongsToMany(Hashtag, 'hashtags_posts', 'post_id', 'hashtag_id');
     },
-    schools: function() {
+    schools: function () {
       return this.belongsToMany(School, 'posts_schools', 'post_id', 'school_id');
     },
-    geotags: function() {
+    geotags: function () {
       return this.belongsToMany(Geotag, 'geotags_posts', 'post_id', 'geotag_id');
     },
-    liked_hashtag: function() {
+    liked_hashtag: function () {
       return this.belongsTo(Hashtag, 'liked_hashtag_id');
     },
-    liked_school: function() {
+    liked_school: function () {
       return this.belongsTo(School, 'liked_school_id');
     },
-    liked_geotag: function() {
+    liked_geotag: function () {
       return this.belongsTo(Geotag, 'liked_geotag_id');
     },
-    likers: function() {
+    likers: function () {
       return this.belongsToMany(User, 'likes', 'post_id', 'user_id');
     },
-    favourers: function() {
+    favourers: function () {
       return this.belongsToMany(User, 'favourites', 'post_id', 'user_id');
     },
-    post_comments: function() {
+    post_comments: function () {
       return this.hasMany(Comment);
     },
     attachHashtags: async function(names, removeUnused=false) {
@@ -321,7 +321,7 @@ export function initBookshelfFromKnex(knex) {
 
   const Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
-    posts: function() {
+    posts: function () {
       return this.belongsToMany(Post, 'hashtags_posts', 'hashtag_id', 'post_id');
     }
   });
@@ -342,10 +342,10 @@ export function initBookshelfFromKnex(knex) {
 
   const School = bookshelf.Model.extend({
     tableName: 'schools',
-    posts: function() {
+    posts: function () {
       return this.belongsToMany(Post, 'posts_schools', 'school_id', 'post_id');
     },
-    images: function() {
+    images: function () {
       return this.belongsToMany(Attachment, 'images_schools', 'school_id', 'image_id');
     },
     updateImages: async function(imageIds) {
@@ -374,68 +374,68 @@ export function initBookshelfFromKnex(knex) {
 
   const Country = bookshelf.Model.extend({
     tableName: 'geonames_countries',
-    posts: function() {
+    posts: function () {
       return this.belongsToMany(Post, 'posts_countries', 'country_id', 'post_id');
     },
-    geotags: function() {
+    geotags: function () {
       return this.hasMany(Geotag);
     }
   });
 
   const AdminDivision1 = bookshelf.Model.extend({
     tableName: 'geonames_admin1',
-    geotags: function() {
+    geotags: function () {
       return this.hasMany(Geotag);
     }
   });
 
   const City = bookshelf.Model.extend({
     tableName: 'geonames_cities',
-    posts: function() {
+    posts: function () {
       return this.belongsToMany(Post, 'posts_cities', 'city_id', 'post_id');
     },
-    geotags: function() {
+    geotags: function () {
       return this.hasOne(Geotag);
     }
   });
 
   const Geotag = bookshelf.Model.extend({
     tableName: 'geotags',
-    geonames_country: function() {
+    geonames_country: function () {
       return this.belongsTo(Country, 'geonames_country_id');
     },
-    geonames_admin1: function() {
+    geonames_admin1: function () {
       return this.belongsTo(AdminDivision1, 'geonames_admin1_id');
     },
-    geonames_city: function() {
+    geonames_city: function () {
       return this.belongsTo(City, 'geonames_city_id');
     },
-    country: function() {
+    country: function () {
       return this.belongsTo(Geotag, 'country_id');
     },
-    admin1: function() {
+    admin1: function () {
       return this.belongsTo(Geotag, 'admin1_id');
     },
-    city: function() {
+    city: function () {
       return this.belongsTo(Geotag, 'city_id');
     },
-    continent: function() {
+    continent: function () {
       return this.belongsTo(Geotag, 'continent_id');
     }
   });
 
   const Attachment = bookshelf.Model.extend({
     tableName: 'attachments',
-    user: function() {
+    user: function () {
       return this.belongsTo(User);
     },
-    original: function() {
+    original: function () {
       return this.belongsTo(Attachment, 'original_id');
     },
     download: async function() {
       return downloadAttachment(this.attributes.s3_filename);
     },
-    extension: function() {
+    extension: function () {
       if (!this.attributes.mime_type) {
         return '';
       }
@@ -492,10 +492,10 @@ export function initBookshelfFromKnex(knex) {
 
   const Comment = bookshelf.Model.extend({
     tableName: 'comments',
-    user: function() {
+    user: function () {
       return this.belongsTo(User);
     },
-    post: function() {
+    post: function () {
       return this.belongsTo(Post);
     }
   });

@@ -35,7 +35,7 @@ export default class Comment extends Component {
     isEditMode: false
   };
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const {
       comment,
       ui
@@ -208,7 +208,7 @@ export default class Comment extends Component {
     );
   };
 
-  render () {
+  render() {
     const {
       author
     } = this.props;

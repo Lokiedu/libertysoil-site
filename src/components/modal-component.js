@@ -27,11 +27,11 @@ class ModalComponent extends Component {
     width: ''
   };
 
-  componentWillMount () {
+  componentWillMount() {
     isBrowser && window.addEventListener('keydown', this.keyHandler);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     isBrowser && window.removeEventListener('keydown', this.keyHandler);
   }
 
@@ -56,7 +56,7 @@ class ModalComponent extends Component {
     };
   }
 
-  render () {
+  render() {
     const {
       size,
       children,

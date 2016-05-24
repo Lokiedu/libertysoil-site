@@ -30,7 +30,7 @@ import Messages from '../../components/messages';
 export default class BaseSuggestionsPage extends React.Component {
   static displayName = 'BaseSuggestionsPage';
 
-  render () {
+  render() {
     const {
       children,
       is_logged_in,

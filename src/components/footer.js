@@ -18,7 +18,7 @@
 import React from 'react';
 
 export default class FooterComponent extends React.Component {
-  render () {
+  render() {
     return (
       <footer className="page__footer footer">
         {false && <nav className="footer_nav">

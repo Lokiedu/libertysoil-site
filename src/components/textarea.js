@@ -11,7 +11,7 @@ export default class Textarea extends Component {
     }
   };
 
-  render () {
+  render() {
     return (
       <div>
         <textarea

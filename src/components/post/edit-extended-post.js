@@ -20,7 +20,7 @@ import React, {
 } from 'react';
 
 export default class EditExtendedPost extends Component {
-  render () {
+  render() {
     return (
         <div className="layout__row">
           <div className="layout__row">

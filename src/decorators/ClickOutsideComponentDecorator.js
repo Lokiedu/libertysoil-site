@@ -28,7 +28,7 @@ export default (ComposedComponent) => {
       document.removeEventListener('click', this.handleClickOutside);
     };
 
-    render () {
+    render() {
       return <ComposedComponent ref="root" {...this.props} />;
     }
   };

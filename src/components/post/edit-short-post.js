@@ -19,7 +19,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 
 export default class EditPostShort extends Component {
-  render () {
+  render() {
     let value = '';
 
     if (!_.isUndefined(this.props.post)) {

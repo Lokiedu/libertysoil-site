@@ -29,17 +29,17 @@ export default class Breadcrumbs extends Component {
     visibleCrumbs: null
   };
 
-  componentDidMount () {
+  componentDidMount() {
     window.addEventListener('resize', this.resetVisibleCrumbs);
     document.addEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.resetVisibleCrumbs);
     document.removeEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
   }
 
-  componentWillReceiveProps () {
+  componentWillReceiveProps() {
     this.resetVisibleCrumbs();
   }
 
@@ -69,7 +69,7 @@ export default class Breadcrumbs extends Component {
     }
   };
 
-  renderCrumbs (crumbs = []) {
+  renderCrumbs(crumbs = []) {
     let visibleCrumbs = this.state.visibleCrumbs;
     let isCollapsed = [];
 
@@ -88,7 +88,7 @@ export default class Breadcrumbs extends Component {
     ));
   }
 
-  renderTitle (title) {
+  renderTitle(title) {
     let titleComponent = null;
 
     if (title) {
@@ -98,7 +98,7 @@ export default class Breadcrumbs extends Component {
     return titleComponent;
   }
 
-  render () {
+  render() {
     const {
       children,
       title,

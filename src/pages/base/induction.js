@@ -31,7 +31,7 @@ import Messages from '../../components/messages';
 export default class BaseInductionPage extends React.Component {
   static displayName = 'BaseInductionPage';
 
-  render () {
+  render() {
     const {
       onNext,
       next_caption,

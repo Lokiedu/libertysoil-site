@@ -38,7 +38,7 @@ export default class Queue {
    */
   createJob = async (name, data) => {
     const promise = new Promise((resolve, reject) => {
-      this.handler.create(name, data).save(function(error) {
+      this.handler.create(name, data).save(function (error) {
         if (error) {
           reject(error);
         } else {
