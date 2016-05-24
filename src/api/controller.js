@@ -64,7 +64,7 @@ export default class ApiController {
   };
 
   testDelete = async (ctx) => {
-    ctx.body = [];
+    ctx.body = 'test message in delete response';
   };
 
   testHead = async (ctx) => {

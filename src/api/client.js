@@ -79,11 +79,19 @@ export default class ApiClient
   }
 
   async del(relativeUrl) {
-    let req = request.del(this.apiUrl(relativeUrl));
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl),
+      {
+        method: 'DELETE',
+        headers: defaultHeaders
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -383,7 +391,7 @@ export default class ApiClient
 
   async deletePost(uuid) {
     const response = await this.del(`/api/v1/post/${uuid}`);
-    return response.body;
+    return await response.json();
   }
 
   async updateGeotag(uuid, data) {
@@ -522,12 +530,8 @@ export default class ApiClient
   }
 
   async deleteComment(postId, commentId) {
-    try {
-      const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
-      return response.body;
-    } catch (err) {
-      return err.response.body;
-    }
+    const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
+    return await response.json();
   }
 
   async saveComment(postId, commentId, text) {
