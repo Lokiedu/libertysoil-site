@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 
 import {
@@ -28,43 +28,43 @@ import Footer from '../../components/footer';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 
-export default class BaseInductionPage extends React.Component {
-  static displayName = 'BaseInductionPage';
+const BaseInductionPage = (props) => {
+  const {
+    onNext,
+    next_caption,
+    children,
+    is_logged_in,
+    current_user,
+    triggers,
+    messages
+  } = props;
 
-  render () {
-    const {
-      onNext,
-      next_caption,
-      children,
-      is_logged_in,
-      current_user,
-      triggers,
-      messages
-    } = this.props;
+  return (
+    <div>
+      <Header current_user={current_user} is_logged_in={is_logged_in} />
 
-    return (
-      <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}/>
+      <Page>
+        <Sidebar current_user={current_user} />
+        <PageMain>
+          <PageBody>
+            <PageContent>
+              <div className="paper">
+                {children}
+              </div>
+              <div className="void">
+                <span className="button button-green action" onClick={onNext}>{next_caption}</span>
+              </div>
+              <Messages messages={messages} removeMessage={triggers.removeMessage} />
+            </PageContent>
+          </PageBody>
+        </PageMain>
+      </Page>
 
-        <Page>
-          <Sidebar current_user={current_user} />
-          <PageMain>
-            <PageBody>
-              <PageContent>
-                <div className="paper">
-                  {children}
-                </div>
-                <div className="void">
-                  <span className="button button-green action" onClick={onNext}>{next_caption}</span>
-                </div>
-                <Messages messages={messages} removeMessage={triggers.removeMessage} />
-              </PageContent>
-            </PageBody>
-          </PageMain>
-        </Page>
+      <Footer/>
+    </div>
+  );
+};
 
-        <Footer/>
-      </div>
-    );
-  }
-}
+BaseInductionPage.displayName = 'BaseInductionPage';
+
+export default BaseInductionPage;

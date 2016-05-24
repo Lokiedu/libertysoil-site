@@ -14,15 +14,14 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 
 import * as a from '../actions';
 
-
 const initialState = i.List([]);
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_TAG_CLOUD: {
       state = i.fromJS(action.hashtags);

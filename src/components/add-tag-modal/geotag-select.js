@@ -33,12 +33,15 @@ export default class GeotagSelect extends Component {
     onSelect: () => {}
   };
 
+  constructor(props) {
+    super(props);
 
-  state = {
-    geotagId: '', // Autosuggest doesn't support hidden values.
-    suggestions: [],
-    value: ''
-  };
+    this.state = {
+      geotagId: '', // Autosuggest doesn't support hidden values.
+      suggestions: [],
+      value: ''
+    };
+  }
 
   getValue() {
     return this.state.value;
@@ -60,17 +63,17 @@ export default class GeotagSelect extends Component {
       return;
     }
 
-    let client = new ApiClient(API_HOST);
-    let response = await client.searchGeotags(value.trim());
+    const client = new ApiClient(API_HOST);
+    const response = await client.searchGeotags(value.trim());
 
-    this.setState({suggestions: response.geotags.slice(0, 5)});
+    this.setState({ suggestions: response.geotags.slice(0, 5) });
   }, 300);
 
   _getSuggestionValue = (geotag) => geotag.name;
 
   _renderSuggestion(geotag) {
     let name = geotag.name;
-    let additionalInfo = [];
+    const additionalInfo = [];
 
     if (!_.isEmpty(geotag.admin1)) {
       additionalInfo.push(geotag.admin1.name);
@@ -104,7 +107,7 @@ export default class GeotagSelect extends Component {
   };
 
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       placeholder: 'Start typing...',
       onChange: this._handleChange,

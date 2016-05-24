@@ -34,10 +34,14 @@ export default class HashtagSelect extends Component {
     }
   };
 
-  state = {
-    suggestions: [],
-    value: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      suggestions: [],
+      value: ''
+    };
+  }
 
   get value() {
     return this.state.value;
@@ -54,10 +58,10 @@ export default class HashtagSelect extends Component {
       return;
     }
 
-    let client = new ApiClient(API_HOST);
-    let response = await client.searchTags(value.trim());
+    const client = new ApiClient(API_HOST);
+    const response = await client.searchTags(value.trim());
 
-    this.setState({suggestions: response.hashtags.slice(0, 5)});
+    this.setState({ suggestions: response.hashtags.slice(0, 5) });
   }, 300);
 
   _getSuggestionValue = (tag) => tag.name;
@@ -75,7 +79,7 @@ export default class HashtagSelect extends Component {
   };
 
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       placeholder: 'Start typing...',
       onChange: this._handleChange,

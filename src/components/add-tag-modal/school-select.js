@@ -36,10 +36,14 @@ export default class SchoolSelect extends Component {
     onSelect: () => {}
   };
 
-  state = {
-    suggestions: [],
-    value: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      suggestions: [],
+      value: ''
+    };
+  }
 
   reset() {
     this.setState({
@@ -56,10 +60,10 @@ export default class SchoolSelect extends Component {
   }
 
   _getSuggestions = ({ value }) => {
-    let regex = new RegExp('^' + value.trim(), 'i');
-    let suggestions = this.props.schools.filter(school => regex.test(school.name)).slice(0, 5);
+    const regex = new RegExp(`^${value.trim()}`, 'i');
+    const suggestions = this.props.schools.filter(school => regex.test(school.name)).slice(0, 5);
 
-    this.setState({suggestions});
+    this.setState({ suggestions });
   };
 
   _handleChange = (event, { newValue }) => {
@@ -77,7 +81,7 @@ export default class SchoolSelect extends Component {
   };
 
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       name: 'school',
       onChange: this._handleChange,

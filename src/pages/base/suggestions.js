@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,8 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 
 import {
   Page,
@@ -27,37 +27,35 @@ import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Messages from '../../components/messages';
 
-export default class BaseSuggestionsPage extends React.Component {
-  static displayName = 'BaseSuggestionsPage';
+const BaseSuggestionsPage = ({ children, current_user, is_logged_in, messages, triggers }) => (
+  <div>
+    <Header current_user={current_user} is_logged_in={is_logged_in} />
 
-  render () {
-    const {
-      children,
-      is_logged_in,
-      current_user,
-      messages,
-      triggers
-    } = this.props;
+    <Page className="page__container-no_sidebar">
+      <PageMain>
+        <PageBody>
+          <PageContent>
+            <Messages messages={messages} removeMessage={triggers.removeMessage} />
+            <div className="paper">
+              {children}
+            </div>
+          </PageContent>
+        </PageBody>
+      </PageMain>
+    </Page>
 
-    return (
-      <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}/>
+    <Footer />
+  </div>
+);
 
-        <Page className="page__container-no_sidebar">
-          <PageMain>
-            <PageBody>
-              <PageContent>
-                <Messages messages={messages} removeMessage={triggers.removeMessage} />
-                <div className="paper">
-                  {children}
-                </div>
-              </PageContent>
-            </PageBody>
-          </PageMain>
-        </Page>
+BaseSuggestionsPage.displayName = 'BaseSuggestionsPage';
 
-        <Footer/>
-      </div>
-    );
-  }
-}
+BaseSuggestionsPage.propTypes = {
+  children: PropTypes.node,
+  current_user: PropTypes.shape({}),
+  is_logged_in: PropTypes.bool,
+  messages: PropTypes.arrayOf(PropTypes.shape({})),
+  triggers: PropTypes.shape({})
+};
+
+export default BaseSuggestionsPage;

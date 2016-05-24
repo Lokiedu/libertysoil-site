@@ -50,7 +50,7 @@ export default class BaseSettingsPage extends React.Component {
     this.head._clearPreview();
   }
 
-  render () {
+  render() {
     const {
       onSave,
       children,
@@ -86,7 +86,7 @@ export default class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <User user={user} avatarSize="36" isRound={true} hideText={true} isLink={false} />
+                <User user={user} avatarSize="36" isRound hideText isLink={false} />
               </div>
             </Breadcrumbs>
           </div>
@@ -103,13 +103,17 @@ export default class BaseSettingsPage extends React.Component {
                     current_user={current_user}
                     following={following}
                     followers={followers}
-                    editable={true}
+                    editable
                   />
                   <div className="page__content page__content-spacing">
                     <div className="layout__row layout-small">
                       <div className="layout__grid layout__space tabs">
-                        <div className="layout__grid_item"><IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">About</IndexLink></div>
-                        <div className="layout__grid_item"><Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link></div>
+                        <div className="layout__grid_item">
+                          <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.SETTINGS)}>About</IndexLink>
+                        </div>
+                        <div className="layout__grid_item">
+                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
+                        </div>
                       </div>
                     </div>
                     <div className="paper layout">
@@ -117,10 +121,12 @@ export default class BaseSettingsPage extends React.Component {
                           {children}
                       </div>
                       <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
-                        <div className="tabs tabs-vertical">
-                          <IndexLink to={getUrl(URL_NAMES.SETTINGS)} activeClassName="tabs__link-active" className="tabs__link">Basic info</IndexLink>
-                          <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)} activeClassName="tabs__link-active" className="tabs__link">Manage Followers</Link>
-                          <Link to={getUrl(URL_NAMES.CHANGE_PASSWORD)} activeClassName="tabs__link-active" className="tabs__link">Change password</Link>
+                        <div className="tabs tabs-theme_settings">
+                          <div className="tabs__menu">
+                            <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.SETTINGS)}>Basic info</IndexLink>
+                            <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Manage Followers</Link>
+                            <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
+                          </div>
                         </div>
                       </div>
                     </div>

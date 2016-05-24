@@ -34,10 +34,11 @@ class GeotagEditForm extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    saveHandler: PropTypes.func.isRequired,
     geotag: PropTypes.shape({
       url_name: PropTypes.string
-    }).isRequired
+    }).isRequired,
+    processing: PropTypes.bool,
+    saveHandler: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -59,7 +60,7 @@ class GeotagEditForm extends React.Component {
       return;
     }
 
-    let theForm = event.target;
+    const theForm = event.target;
 
     this.props.saveHandler(
       theForm.id.value,
@@ -101,7 +102,7 @@ class GeotagEditForm extends React.Component {
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button type="submit" className="button-green" disabled={!form.isValid()} title="Save" waiting={processing}/>
+            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing}/>
           </div>
         </div>
         <Messages messages={messages} removeMessage={triggers.removeMessage}/>

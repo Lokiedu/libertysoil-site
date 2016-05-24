@@ -14,15 +14,14 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 
 import * as a from '../actions';
 
-
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_POST_TO_RIVER: {
       const schools = action.post.schools;
@@ -35,7 +34,7 @@ export default function reducer(state=initialState, action) {
         posts = posts.unshift(action.post.id);
 
         state = state.set(tag.id, posts);
-      })
+      });
       break;
     }
 
@@ -45,8 +44,8 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      for (let schoolId of state.keys()) {
-        let idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
+      for (const schoolId of state.keys()) {
+        const idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
 
         if (idx >= 0) {
           state = state.deleteIn([schoolId, idx]);

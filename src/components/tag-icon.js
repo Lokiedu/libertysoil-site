@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,70 +14,76 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET } from '../consts/tags';
 
-export default class TagIcon extends React.Component {
-  static displayName = 'TagIcon';
+const TagIcon = ({ big, className, inactive, small, type, ...props }) => {
+  let cn = 'tag_icon';
 
-  static propTypes = {
-    big: PropTypes.bool,
-    className: PropTypes.string,
-    inactive: PropTypes.bool,
-    small: PropTypes.bool,
-    type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET]).isRequired
-  };
-
-  render() {
-    let { className, small, big, inactive, ...props } = this.props;
-
-    className = 'tag_icon';
-
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
-    }
-
-    if (small) {
-      className += ' tag_icon-small';
-    }
-
-    if (big) {
-      className += ' tag_icon-big';
-    }
-
-    if (inactive) {
-      className += ' tag_icon-inactive';
-    }
-
-    switch (this.props.type) {
-      case TAG_HASHTAG:
-        return (
-          <span className={`${className} tag_icon-hashtag`} {...props}>#</span>
-        );
-      case TAG_SCHOOL:
-        return (
-          <span className={`${className} tag_icon-school`} {...props}><span className="micon">school</span></span>
-        );
-      case TAG_MENTION:
-        return (
-          <span className={`${className} tag_icon-mention`} {...props}>@</span>
-        );
-      case TAG_LOCATION:
-        return (
-          <span className={`${className} tag_icon-location`} {...props}><span className="micon">location_on</span></span>
-        );
-      case TAG_EVENT:
-        return (
-          <span className={`${className} tag_icon-event`} {...props}><span className="micon">event</span></span>
-        );
-      case TAG_PLANET:
-        return (
-          <span className={`${className} tag_icon-planet`} {...props}><span className="micon">public</span></span>
-        );
-      default:
-        return false;
-    }
+  if (className) {
+    cn += ` ${className}`;
   }
-}
+
+  if (small) {
+    cn += ' tag_icon-small';
+  }
+
+  if (big) {
+    cn += ' tag_icon-big';
+  }
+
+  if (inactive) {
+    cn += ' tag_icon-inactive';
+  }
+
+  switch (type) {
+    case TAG_HASHTAG:
+      return (
+        <span className={`${cn} tag_icon-hashtag`} {...props}>#</span>
+      );
+    case TAG_SCHOOL:
+      return (
+        <span className={`${cn} tag_icon-school`} {...props}>
+          <span className="micon">school</span>
+        </span>
+      );
+    case TAG_MENTION:
+      return (
+        <span className={`${cn} tag_icon-mention`} {...props}>@</span>
+      );
+    case TAG_LOCATION:
+      return (
+        <span className={`${cn} tag_icon-location`} {...props}>
+          <span className="micon">location_on</span>
+        </span>
+      );
+    case TAG_EVENT:
+      return (
+        <span className={`${cn} tag_icon-event`} {...props}>
+          <span className="micon">event</span>
+        </span>
+      );
+    case TAG_PLANET:
+      return (
+        <span className={`${cn} tag_icon-planet`} {...props}>
+          <span className="micon">public</span>
+        </span>
+      );
+    default:
+      return false;
+  }
+};
+
+TagIcon.displayName = 'TagIcon';
+
+TagIcon.propTypes = {
+  big: PropTypes.bool,
+  className: PropTypes.string,
+  inactive: PropTypes.bool,
+  small: PropTypes.bool,
+  type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET]).isRequired
+};
+
+export default TagIcon;

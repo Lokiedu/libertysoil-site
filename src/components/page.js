@@ -70,4 +70,4 @@ export {
   PageCaption,
   PageBody,
   PageContent
-}
+};

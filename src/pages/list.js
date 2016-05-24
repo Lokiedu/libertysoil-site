@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,16 +14,16 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+import { values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import VisibilitySensor from 'react-visibility-sensor';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 
 import {
@@ -60,24 +60,17 @@ export class List extends React.Component {
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
+    current_user: PropTypes.shape({}).isRequired,
+    river: PropTypes.arrayOf(PropTypes.string).isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean
       })
-    }).isRequired,
-    river: PropTypes.arrayOf(PropTypes.string).isRequired,
-    current_user: PropTypes.shape({
-
     }).isRequired
   };
 
-  state = {
-    downloadAttemptsCount: 0,
-    displayLoadMore: true
-  };
-
   static async fetchData(params, store, client) {
-    let trigger = new ActionsTrigger(client, store.dispatch);
+    const trigger = new ActionsTrigger(client, store.dispatch);
 
     store.dispatch(clearRiver());
 
@@ -89,6 +82,22 @@ export class List extends React.Component {
     ]);
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      downloadAttemptsCount: 0,
+      displayLoadMore: true
+    };
+  }
+
+  loadPostRiverManually = async () => {
+    const { river } = this.props;
+
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    await triggers.loadPostRiver(river.length);
+  }
+
   loadMore = async (isVisible) => {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -96,7 +105,7 @@ export class List extends React.Component {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      let res = await triggers.loadPostRiver(this.props.river.length);
+      const res = await triggers.loadPostRiver(this.props.river.length);
 
       let displayLoadMore = false;
       if (res === false) { // bad response
@@ -105,9 +114,7 @@ export class List extends React.Component {
       if (res.length) { // no more posts
         displayLoadMore = true;
       }
-      this.setState({
-        displayLoadMore: displayLoadMore
-      });
+      this.setState({ displayLoadMore });
     }
 
     if (!isVisible) {
@@ -130,7 +137,7 @@ export class List extends React.Component {
       users
     } = this.props;
 
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let loadMore;
@@ -140,7 +147,8 @@ export class List extends React.Component {
           <VisibilitySensor onChange={this.loadMore}>
             <Button
               title="Load more..." waiting={ui.progress.loadRiverInProgress}
-              onClick={triggers.loadPostRiver.bind(null, river.length)} />
+              onClick={this.loadPostRiverManually}
+            />
           </VisibilitySensor>
         </div>
       );
@@ -151,7 +159,7 @@ export class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+        <Header current_user={this.props.current_user} is_logged_in={this.props.is_logged_in}>
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
@@ -163,7 +171,7 @@ export class List extends React.Component {
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={_.values(this.props.schools)}
+                  allSchools={values(this.props.schools)}
                   defaultText={this.props.create_post_form.text}
                   triggers={triggers}
                   userRecentTags={current_user.recent_tags}
@@ -195,11 +203,11 @@ export class List extends React.Component {
 
         <Footer/>
       </div>
-    )
+    );
   }
 }
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(List);

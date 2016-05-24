@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,12 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import { findIndex } from 'lodash';
 
 import SchoolSelect from './school-select';
-import { Tabs, Tab, TabTitle, TabContent } from '../tabs';
+import { Tab, Tabs } from '../tabsbox';
 import TagCloud from '../tag-cloud';
 
 
@@ -34,14 +34,16 @@ export default class AddSchoolForm extends Component {
       name: PropTypes.string
     })).isRequired,
     onAddSchool: PropTypes.func.isRequired,
-    userRecentSchools: PropTypes.array.isRequired,
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired
-    })
+    }),
+    userRecentSchools: PropTypes.arrayOf(PropTypes.shape({
+      url_name: PropTypes.string
+    })).isRequired
   };
 
   _selectRecentlyUsedSchool = (tag) => {
-    const index = _.findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
+    const index = findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
     this._addTag(this.props.userRecentSchools[index]);
   };
 
@@ -58,7 +60,7 @@ export default class AddSchoolForm extends Component {
   };
 
   _addTag = (school) => {
-    let { addedSchools } = this.props;
+    const { addedSchools } = this.props;
 
     if (addedSchools.find(s => s.name === school.name)) {
       return;
@@ -81,10 +83,10 @@ export default class AddSchoolForm extends Component {
 
         <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs">
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Enter manually
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
               <form onSubmit={this.submitHandler}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
@@ -96,17 +98,17 @@ export default class AddSchoolForm extends Component {
                     />
                   </div>
                   <div className="layout__grid_item">
-                    <input type="submit" value="Add" className="button button-wide add_tag_modal__add_button action" />
+                    <input className="button button-wide add_tag_modal__add_button action" type="submit" value="Add" />
                   </div>
                 </div>
               </form>
-            </TabContent>
+            </Tab.Content>
           </Tab>
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Used recently
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
               Used recently:
               <div className="layout__row">
                 <TagCloud
@@ -114,20 +116,20 @@ export default class AddSchoolForm extends Component {
                   onClick={this._selectRecentlyUsedSchool}
                 />
               </div>
-            </TabContent>
+            </Tab.Content>
           </Tab>
           <Tab>
-            <TabTitle className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
+            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
               Popular
-            </TabTitle>
-            <TabContent className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+            </Tab.Title>
+            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
               Popular:
               <div className="layout__row">
                 <TagCloud
                   schools={popularSchools}
                 />
               </div>
-            </TabContent>
+            </Tab.Content>
           </Tab>
         </Tabs>
       </div>

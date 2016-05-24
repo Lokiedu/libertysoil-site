@@ -32,7 +32,7 @@ export default function RelatedPosts({ posts, users }) {
         <h3>Related posts</h3>
       </div>
       {posts.map(post => {
-        let author = users[post.user_id];
+        const author = users[post.user_id];
         let text = 'No text...';
 
         if (post.text) {

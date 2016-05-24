@@ -60,7 +60,7 @@ export default class RegisterComponent extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     if (this.error) {
       form.username.setCustomValidity(this.error);
@@ -119,7 +119,7 @@ export default class RegisterComponent extends React.Component {
     } else if (field.getAttribute('name') === 'lastName') {
       this.last = input;
     }
-    
+
     const result = this.first + this.last;
     if (!result) {
       this.setState({ username: result });
@@ -140,7 +140,7 @@ export default class RegisterComponent extends React.Component {
 
     this.setState({ username: result });
     this.usernameManuallyChanged = true;
-    
+
     try {
       this.unavailable = await this.checkUserExists(result);
       this.error = '';
@@ -240,6 +240,6 @@ export default class RegisterComponent extends React.Component {
         </div>
       </form>
     </div>
-    )
+    );
   }
 }

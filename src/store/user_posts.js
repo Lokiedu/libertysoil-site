@@ -14,15 +14,14 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 
 import * as a from '../actions';
 
-
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_USER_POSTS: {
       state = state.set(action.user_id, i.List(action.posts.map(post => post.id)));
@@ -30,8 +29,8 @@ export default function reducer(state=initialState, action) {
     }
 
     case a.REMOVE_POST: {
-      for (let user_id of state.keys()) {
-        let idx = state.get(user_id).findIndex(user_post_id => (user_post_id === action.id));
+      for (const user_id of state.keys()) {
+        const idx = state.get(user_id).findIndex(user_post_id => (user_post_id === action.id));
 
         if (idx >= 0) {
           state = state.deleteIn([user_id, idx]);

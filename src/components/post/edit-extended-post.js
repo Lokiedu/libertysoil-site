@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,22 +14,20 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, {
-    Component
-} from 'react'
+*/
+import React from 'react';
 
-export default class EditExtendedPost extends Component {
-  render () {
-    return (
-        <div className="layout__row">
-          <div className="layout__row">
-            <input className="input input-block" type="text" placeholder="Title" />
-          </div>
-          <div className="layout__row">
-            <textarea className="input input-textarea input-block" placeholder="Share education related resources, your perspective" name="text" />
-          </div>
-        </div>
-    )
-  }
-}
+const EditExtendedPost = () => (
+  <div className="layout__row">
+    <div className="layout__row">
+      <input className="input input-block" placeholder="Title" type="text" />
+    </div>
+    <div className="layout__row">
+      <textarea className="input input-textarea input-block" name="text" placeholder="Share education related resources, your perspective" />
+    </div>
+  </div>
+);
+
+EditExtendedPost.displayName = 'EditExtendedPost';
+
+export default EditExtendedPost;

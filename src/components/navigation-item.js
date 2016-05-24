@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,56 +14,56 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import Icon from './icon';
 
-export default class SidebarLink extends React.Component {
-  static displayName = 'SidebarLink';
+const SidebarLink = ({
+  icon,
+  badge,
+  className,
+  enabled,
+  to,
+  children
+}) => {
+  let cn = 'navigation__item';
+  if (className) {
+    cn += ` ${className}`;
+  }
 
-  static propTypes = {
-    enabled: React.PropTypes.bool,
-    badge: React.PropTypes.any,
-    to: React.PropTypes.string,
-    icon: React.PropTypes.string,
-    className: React.PropTypes.string
-  };
+  if (!enabled) {
+    cn += ' navigation__item-disabled';
+  }
 
-  render() {
-    let {
-      icon,
-      badge,
-      enabled,
-      to,
-      children
-    } = this.props;
-
-    let className = 'navigation__item';
-    if (this.props.className) {
-      className += ` ${this.props.className}`;
-    }
-
-    if (!enabled) {
-      className += ' navigation__item-disabled';
-    }
-
-    let iconRender;
-    if (icon) {
-      iconRender = (
-        <div className="navigation__icon">
-          <Icon icon={icon} />
-        </div>
-      );
-    }
-
-    return (
-      <Link activeClassName="navigation__item-active" className={className} to={to}>
-        {iconRender}
-        <div className="navigation__title">{children}</div>
-        <div className="navigation__badge">{badge}</div>
-      </Link>
+  let iconRender;
+  if (icon) {
+    iconRender = (
+      <div className="navigation__icon">
+        <Icon icon={icon} />
+      </div>
     );
   }
-}
+
+  return (
+    <Link activeClassName="navigation__item-active" className={cn} to={to}>
+      {iconRender}
+      <div className="navigation__title">{children}</div>
+      <div className="navigation__badge">{badge}</div>
+    </Link>
+  );
+};
+
+SidebarLink.displayName = 'SidebarLink';
+
+SidebarLink.propTypes = {
+  badge: PropTypes.node,
+  children: PropTypes.node,
+  className: PropTypes.string,
+  enabled: PropTypes.bool,
+  icon: PropTypes.string,
+  to: PropTypes.string
+};
+
+export default SidebarLink;

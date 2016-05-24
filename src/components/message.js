@@ -34,7 +34,7 @@ export default class Message extends React.Component {
   };
 
   render() {
-    let {
+    const {
       children,
       removeMessage,
       type,
@@ -44,7 +44,7 @@ export default class Message extends React.Component {
     let icon = null;
     let close = null;
 
-    let cn = bem.makeClassName({
+    const cn = bem.makeClassName({
       block: 'message',
       modifiers: {
         error: () => (type == messageType.ERROR)
@@ -52,7 +52,7 @@ export default class Message extends React.Component {
     });
 
     if (type == messageType.ERROR) {
-      icon = <span className="micon message__icon">error</span>
+      icon = <span className="micon message__icon">error</span>;
     }
 
     if (removeMessage) {

@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import { Map, List } from 'immutable';
 import { cloneDeep } from 'lodash';
 
@@ -24,7 +24,7 @@ const initialState = Map({});
 
 const clearComments = (comments) => (
   comments.map(comment => {
-    let _comment = {
+    const _comment = {
       ...comment
     };
     delete _comment.user;
@@ -33,7 +33,7 @@ const clearComments = (comments) => (
   })
 );
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_POST_TO_RIVER:
     case a.ADD_POST: {
@@ -51,10 +51,9 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_SCHOOL_POSTS:
     case a.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS:
-    {
+    case a.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
-        let postCopy = cloneDeep(post);
+        const postCopy = cloneDeep(post);
 
         state = state.set(post.id, List(clearComments(postCopy.post_comments || [])));
       });

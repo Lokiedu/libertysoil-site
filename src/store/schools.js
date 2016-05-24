@@ -14,12 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 import { keyBy } from 'lodash';
 
 import * as a from '../actions';
-
 
 function cleanupSchoolObject(school) {
   if (school.description === null) {
@@ -39,7 +38,7 @@ function cleanupSchoolObject(school) {
 
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_SCHOOL: {
       const school = cleanupSchoolObject(action.school);

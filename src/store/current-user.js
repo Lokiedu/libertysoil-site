@@ -14,12 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 import _ from 'lodash';
 
 import * as a from '../actions';
-
 
 const initialState = i.Map({
   id: null,
@@ -40,7 +39,7 @@ const initialState = i.Map({
   })
 });
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_CURRENT_USER: {
       const oldUid = state.get('id');
@@ -67,12 +66,12 @@ export default function reducer(state=initialState, action) {
       }
 
       if (newUid) {
-        let followedTags = _.keyBy(action.user.followed_hashtags, 'name');
-        let followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
-        let followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
-        let likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
-        let likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
-        let likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
+        const followedTags = _.keyBy(action.user.followed_hashtags, 'name');
+        const followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
+        const followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
+        const likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
+        const likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
+        const likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
 
         state = state.withMutations(state => {
           state.set('followed_hashtags', i.fromJS(followedTags));

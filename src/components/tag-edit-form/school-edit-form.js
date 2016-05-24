@@ -24,8 +24,7 @@ import GeoInput from '../geo-input';
 import Messages from '../messages';
 import Message from '../message';
 
-
-const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
+const TextInputField = ({ defaultValue, field, name, title, type = 'text' }) => {
   const id = `input_${name}`;
 
   return (
@@ -65,6 +64,7 @@ class SchoolEditForm extends React.Component {
       isValid: PropTypes.func,
       onValues: PropTypes.func
     }).isRequired,
+    processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired,
     school: PropTypes.shape({
       description: PropTypes.string,
@@ -95,7 +95,7 @@ class SchoolEditForm extends React.Component {
       return;
     }
 
-    let theForm = event.target;
+    const theForm = event.target;
 
     const isOpenValue = fields.is_open.value;
     let isOpenDbValue = null;
@@ -132,7 +132,7 @@ class SchoolEditForm extends React.Component {
           australian: { is_member: null },
           eudec: { is_member: theForm.eudec.checked },
           iden: { is_member: theForm.iden.checked },
-          alternative_to_school: { is_member: theForm.alternative_to_school.checked},
+          alternative_to_school: { is_member: theForm.alternative_to_school.checked },
           wikipedia_list: { is_member: theForm.wikipedia_list.checked }
         }
       }
@@ -149,7 +149,7 @@ class SchoolEditForm extends React.Component {
       triggers,
       messages
     } = this.props;
-    const initialLocation = {lat: school.lat, lon: school.lon};
+    const initialLocation = { lat: school.lat, lon: school.lon };
 
     let is_open = 'unknown';
 
@@ -218,7 +218,7 @@ class SchoolEditForm extends React.Component {
             {...fields.country_id}
           >
             <option value="">unknown</option>
-            {sortBy(countries, 'name').map(country => <option value={country.id} key={country.id}>{country.name}</option>)}
+            {sortBy(countries, 'name').map(country => <option key={country.id} value={country.id}>{country.name}</option>)}
           </select>
         </div>
 
@@ -275,7 +275,7 @@ class SchoolEditForm extends React.Component {
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button type="submit" className="button-green" disabled={!form.isValid()} title="Save" waiting={processing}/>
+            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing}/>
           </div>
         </div>
         <Messages messages={messages} removeMessage={triggers.removeMessage}/>

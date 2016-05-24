@@ -24,52 +24,46 @@ import TagIcon from '../tag-icon';
 import Breadcrumbs from './breadcrumbs';
 import { TAG_LOCATION, TAG_PLANET } from '../../consts/tags';
 
-export default class GeotagBreadcrumbs extends React.Component {
-  static displayName = 'GeotagBreadcrumbs';
+const GeotagBreadcrumbs = ({ geotag }) => (
+  <Breadcrumbs>
+    <Link title="All Geotags" to="/geo">
+      <TagIcon inactive type={TAG_PLANET} />
+    </Link>
+    {!isEmpty(geotag.continent) &&
+      <Tag
+        inactive={geotag.type != 'Continent'}
+        name={geotag.continent.name}
+        type={TAG_LOCATION}
+        urlId={geotag.continent.url_name}
+      />
+    }
+    {!isEmpty(geotag.country) &&
+      <Tag
+        inactive={geotag.type != 'Country'}
+        name={geotag.country.name}
+        type={TAG_LOCATION}
+        urlId={geotag.country.url_name}
+      />
+    }
+    {!isEmpty(geotag.admin1) &&
+      <Tag
+        inactive={geotag.type != 'AdminDivision1'}
+        name={geotag.admin1.name}
+        type={TAG_LOCATION}
+        urlId={geotag.admin1.url_name}
+      />
+    }
+    <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
+  </Breadcrumbs>
+);
 
-  static propTypes = {
-    geotag: PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    }).isRequired
-  };
+GeotagBreadcrumbs.displayName = 'GeotagBreadcrumbs';
 
-  render() {
-    const {
-      geotag
-    } = this.props;
+GeotagBreadcrumbs.propTypes = {
+  geotag: PropTypes.shape({
+    name: PropTypes.string,
+    url_name: PropTypes.string
+  }).isRequired
+};
 
-    return (
-      <Breadcrumbs>
-        <Link title="All Geotags" to="/geo">
-          <TagIcon inactive type={TAG_PLANET} />
-        </Link>
-        {!isEmpty(geotag.continent) &&
-          <Tag
-            inactive={geotag.type != 'Continent'}
-            name={geotag.continent.name}
-            type={TAG_LOCATION}
-            urlId={geotag.continent.url_name}
-          />
-        }
-        {!isEmpty(geotag.country) &&
-          <Tag
-            inactive={geotag.type != 'Country'}
-            name={geotag.country.name}
-            type={TAG_LOCATION}
-            urlId={geotag.country.url_name}
-          />
-        }
-        {!isEmpty(geotag.admin1) &&
-          <Tag
-            inactive={geotag.type != 'AdminDivision1'}
-            name={geotag.admin1.name}
-            type={TAG_LOCATION}
-            urlId={geotag.admin1.url_name}
-          />
-        }
-        <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
-      </Breadcrumbs>
-    );
-  }
-}
+export default GeotagBreadcrumbs;

@@ -10,7 +10,7 @@ const PanelToolbarArea = (position, items) => {
   }
 
   return <noscript />;
-}
+};
 
 const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
   const primaryToolbar = PanelToolbarArea('right', toolbarPrimary);
@@ -26,9 +26,9 @@ const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
       {primaryToolbar}
     </div>
   );
-}
+};
 
-export default ({
+const Panel = ({
   children,
   title,
   icon,
@@ -61,4 +61,6 @@ export default ({
     </div>
     <PanelToolbar toolbarPrimary={toolbarPrimary} toolbarSecondary={toolbarSecondary} />
   </div>
-)
+);
+
+export default Panel;

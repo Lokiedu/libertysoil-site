@@ -20,23 +20,23 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import NotFound from './not-found'
-import BaseUserPage from './base/user'
-import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import NotFound from './not-found';
+import BaseUserPage from './base/user';
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 import { addUser } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
 class AboutUserPage extends React.Component {
   static async fetchData(params, store, client) {
-    let userInfo = client.userInfo(params.username);
+    const userInfo = client.userInfo(params.username);
     store.dispatch(addUser(await userInfo));
   }
 
   render() {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     let linesOfBio = <p>No information provided...</p>;
 
     if (_.isUndefined(page_user)) {
@@ -44,7 +44,7 @@ class AboutUserPage extends React.Component {
     }
 
     if (false === page_user) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
     const client = new ApiClient(API_HOST);
@@ -71,7 +71,7 @@ class AboutUserPage extends React.Component {
           </div>
         </div>
       </BaseUserPage>
-    )
+    );
   }
 }
 

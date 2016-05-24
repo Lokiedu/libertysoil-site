@@ -23,28 +23,22 @@ import TagIcon from '../tag-icon';
 import Breadcrumbs from './breadcrumbs';
 import { TAG_SCHOOL } from '../../consts/tags';
 
-export default class SchoolBreadcrumbs extends React.Component {
-  static displayName = 'SchoolBreadcrumbs';
+const SchoolBreadcrumbs = ({ school }) => (
+  <Breadcrumbs>
+    <Link title="All Schools" to="/s">
+      <TagIcon inactive type={TAG_SCHOOL} />
+    </Link>
+    <Tag name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
+  </Breadcrumbs>
+);
 
-  static propTypes = {
-    school: PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    }).isRequired
-  };
+SchoolBreadcrumbs.displayName = 'SchoolBreadcrumbs';
 
-  render() {
-    const {
-      school
-    } = this.props;
+SchoolBreadcrumbs.propTypes = {
+  school: PropTypes.shape({
+    name: PropTypes.string,
+    url_name: PropTypes.string
+  }).isRequired
+};
 
-    return (
-      <Breadcrumbs>
-        <Link to="/s" title="All Schools">
-          <TagIcon inactive type={TAG_SCHOOL} />
-        </Link>
-        <Tag name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
-      </Breadcrumbs>
-    );
-  }
-}
+export default SchoolBreadcrumbs;

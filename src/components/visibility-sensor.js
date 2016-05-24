@@ -14,16 +14,16 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
 
 export default class VisibilitySensor extends Component {
   static propTypes = {
+    active: PropTypes.bool,
     children: PropTypes.node.isRequired,
-    onMount: PropTypes.func,
-    onChange: PropTypes.func.isRequired,
     delay: PropTypes.number,
-    active: PropTypes.bool
+    onChange: PropTypes.func.isRequired,
+    onMount: PropTypes.func
   };
 
   static defaultProps = {
@@ -32,8 +32,12 @@ export default class VisibilitySensor extends Component {
     onMount: () => {}
   };
 
-  watch = null;
-  wasVisible = null;
+  constructor(props) {
+    super(props);
+
+    this.watch = null;
+    this.wasVisible = null;
+  }
 
   componentDidMount() {
     this.toggleCheck();
@@ -78,7 +82,7 @@ export default class VisibilitySensor extends Component {
     function check(p = 0, w = 0) {
       return ((w - p > 0) && (p - w < w));
     }
-    
+
     let isVisible;
 
     if (!pos.width) {
@@ -113,7 +117,7 @@ export default class VisibilitySensor extends Component {
 
   render() {
     return (
-      <div ref={(c) => this.node = c} className="visibility_sensor">
+      <div className="visibility_sensor" ref={(c) => this.node = c}>
         {this.props.children}
       </div>
     );

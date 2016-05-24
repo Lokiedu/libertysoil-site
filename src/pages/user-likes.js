@@ -22,14 +22,14 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import NotFound from './not-found'
-import BaseUserLikesPage from './base/user'
+import NotFound from './not-found';
+import BaseUserLikesPage from './base/user';
 import River from '../components/river_of_posts';
 
-import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 import { addUser, setPostsToLikesRiver } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -37,15 +37,15 @@ class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
 
   static async fetchData(params, store, client) {
-    let userInfo = await client.userInfo(params.username);
+    const userInfo = await client.userInfo(params.username);
     store.dispatch(addUser(userInfo));
 
-    let likedPosts = client.getLikedPosts(params.username);
+    const likedPosts = client.getLikedPosts(params.username);
     store.dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
   }
 
-  render () {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+  render() {
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,
       current_user,
@@ -61,7 +61,7 @@ class UserLikesPage extends Component {
     }
 
     if (false === page_user) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
     //console.info(this.props);
@@ -90,7 +90,7 @@ class UserLikesPage extends Component {
           ui={ui}
         />
       </BaseUserLikesPage>
-    )
+    );
   }
 }
 

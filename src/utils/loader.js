@@ -27,22 +27,22 @@ import { browserHistory } from 'react-router';
  */
 export function combineHandlers(...handlers) {
   return async (nextState, replace) => {
-    for (let handler of handlers) {
+    for (const handler of handlers) {
       if (handler) {
-        let shouldInterrupt = await handler(nextState, replace);
+        const shouldInterrupt = await handler(nextState, replace);
         if (shouldInterrupt === true) {
           break;
         }
       }
     }
-  }
+  };
 }
 
 export function combineHandlersAsync(...handlers) {
   return async (nextState, replace, callback) => {
     let callbacksTodo = 0;
 
-    let callbackDecreaser = () => {
+    const callbackDecreaser = () => {
       callbacksTodo -= 1;
 
       if (callbacksTodo === 0) {
@@ -55,17 +55,17 @@ export function combineHandlersAsync(...handlers) {
       }
     };
 
-    for (let handler of handlers) {
+    for (const handler of handlers) {
       if (handler) {
         if (handler.length >= 3) {
           callbacksTodo += 1;
 
-          let shouldInterrupt = await handler(nextState, replace, callbackDecreaser);
+          const shouldInterrupt = await handler(nextState, replace, callbackDecreaser);
           if (shouldInterrupt === true) {
             break;
           }
         } else {
-          let shouldInterrupt = await handler(nextState, replace);
+          const shouldInterrupt = await handler(nextState, replace);
           if (shouldInterrupt === true) {
             break;
           }
@@ -76,7 +76,7 @@ export function combineHandlersAsync(...handlers) {
     if (callbacksTodo === 0) {
       callback();
     }
-  }
+  };
 }
 
 export class AuthHandler {
@@ -85,7 +85,7 @@ export class AuthHandler {
   }
 
   handle = async (nextState, replace) => {
-    let state = this.store.getState();
+    const state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
       && nextState.location.pathname !== '/welcome'
@@ -108,17 +108,17 @@ export class FetchHandler {
   }
 
   handle = async (nextState) => {
-    let len = nextState.routes.length;
+    const len = nextState.routes.length;
 
     for (let i = len; i--; i >= 0) {
-      let route = nextState.routes[i];
+      const route = nextState.routes[i];
 
       if ('component' in route && 'fetchData' in route.component) {
         try {
           const response = await route.component.fetchData(nextState.params, this.store, this.apiClient);
 
           if (isPlainObject(response)) {
-            const {status, redirectTo} = response;
+            const { status, redirectTo } = response;
             this.status = status;
             this.redirectTo = redirectTo;
 

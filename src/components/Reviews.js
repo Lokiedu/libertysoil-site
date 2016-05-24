@@ -18,7 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
-import { Tabs, Tab, TabTitle, TabContent } from './tabs';
+import { Tab, Tabs } from './tabsbox';
 import VisibilitySensor from './visibility-sensor';
 
 export default class Reviews extends Component {
@@ -33,17 +33,21 @@ export default class Reviews extends Component {
     }))
   };
 
-  state = {
-    mobile: true,
-    sliding: false
-  };
+  constructor(props) {
+    super(props);
 
-  active = 0;
-  slideshow = null;
-  imageHovered = false;
-  length = 0;
-  delay = 5000;
-  clientWidth = 0;
+    this.state = {
+      mobile: true,
+      sliding: false
+    };
+
+    this.active = 0;
+    this.slideshow = null;
+    this.imageHovered = false;
+    this.length = 0;
+    this.delay = 5000;
+    this.clientWidth = 0;
+  }
 
   componentDidMount() {
     this.toggleMode();
@@ -122,6 +126,14 @@ export default class Reviews extends Component {
     this.clientWidth = clientWidth;
   }, 100);
 
+  onImageMouseOver = () => {
+    this.imageHovered = true;
+  };
+
+  onImageMouseOut = () => {
+    this.imageHovered = false;
+  };
+
   render() {
     const { quotes } = this.props;
 
@@ -142,7 +154,7 @@ export default class Reviews extends Component {
               <img className="user_box__avatar" src={q.avatar_url} width="64px" height="64px" alt=""/>
               <div className="user_box__body user_box__body-flexless">
                 <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                { q.description &&
+                {q.description &&
                   <p className="user_box__text">
                     <a href={q.link}>
                       {q.description}
@@ -162,16 +174,18 @@ export default class Reviews extends Component {
 
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
-          <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
-            <img onMouseOver={() => this.imageHovered = true}
-                 onMouseOut={() => this.imageHovered = false}
-                 className="user_box__avatar"
-                 src={q.avatar_url}
-                 width="64"
-                 height="64"
-                 alt=""/>
-          </TabTitle>
-          <TabContent>
+          <Tab.Title className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
+            <img
+              onMouseOver={this.onImageMouseOver}
+              onMouseOut={this.onImageMouseOut}
+              className="user_box__avatar"
+              src={q.avatar_url}
+              width="64"
+              height="64"
+              alt=""
+            />
+          </Tab.Title>
+          <Tab.Content>
             <blockquote className="review">
               <p className={reviewClassName}>
                 {q.text}
@@ -180,7 +194,7 @@ export default class Reviews extends Component {
                 <section className="user_box">
                   <div className="user_box__body">
                     <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                    { q.description &&
+                    {q.description &&
                       <p className="user_box__text">
                         <a href={q.link}>
                           {q.description}
@@ -191,7 +205,7 @@ export default class Reviews extends Component {
                 </section>
               </footer>
             </blockquote>
-          </TabContent>
+          </Tab.Content>
         </Tab>
       ));
 
@@ -204,7 +218,7 @@ export default class Reviews extends Component {
       );
     }
 
-    return <div>
+    return (<div>
         <div className="page__container-bg">
         <div className="page__body page__body-rows width">
           <h2 className="page__title content-center layout__space"></h2>
@@ -217,6 +231,6 @@ export default class Reviews extends Component {
           </div>
         </div>
       </div>
-    </div>;
+    </div>);
   }
 }

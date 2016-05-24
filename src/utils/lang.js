@@ -19,7 +19,7 @@ import { reduce } from 'lodash';
 
 export function toSpreadArray(obj) {
   return reduce(obj, (arr, value, key) => {
-    arr.push({[key]: value});
+    arr.push({ [key]: value });
     return arr;
   }, []);
 }

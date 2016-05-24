@@ -52,7 +52,7 @@ import Induction from './pages/induction';
 import Welcome from './pages/welcome';
 
 export function getRoutes(authHandler, fetchHandler) {
-  let withoutAuth = fetchHandler;
+  const withoutAuth = fetchHandler;
   let withAuth;
 
   if (authHandler.length >= 3 || fetchHandler.length >= 3) {

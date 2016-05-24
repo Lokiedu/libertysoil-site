@@ -14,15 +14,14 @@ export default class MoreButton extends React.Component {
   };
 
   render() {
-    let { className, ...props } = this.props;
+    const { className, ...props } = this.props;
+    const cn = `more_button micon ${className}`;
+
     let text = 'more_horiz';
-
-    className = `more_button micon ${className}`;
-
     if (this.props.expanded) {
       text = 'more_vert';
     }
 
-    return <div className={className} type="button" {...props}>{text}</div>;
+    return <div className={cn} type="button" {...props}>{text}</div>;
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
 
@@ -15,15 +15,15 @@ const STATUS_JUST_UNFOLLOWED = 'STATUS_JUST_UNFOLLOWED';
 export default class FollowTagButton extends React.Component {
   static displayName = 'FollowButton';
   static propTypes = {
-    current_user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired
+    current_user: PropTypes.shape({
+      id: PropTypes.string.isRequired
     }),
     // {tagName: tag}
-    followed_tags: React.PropTypes.object,
-    tag: React.PropTypes.string,
-    triggers: React.PropTypes.shape({
-      followTag: React.PropTypes.func.isRequired,
-      unfollowTag: React.PropTypes.func.isRequired
+    followed_tags: PropTypes.shape({}),
+    tag: PropTypes.string,
+    triggers: PropTypes.shape({
+      followTag: PropTypes.func.isRequired,
+      unfollowTag: PropTypes.func.isRequired
     })
   };
 
@@ -32,7 +32,7 @@ export default class FollowTagButton extends React.Component {
 
     this.state = {
       status: STATUS_NOT_TOUCHED
-    }
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,13 +73,13 @@ export default class FollowTagButton extends React.Component {
   };
 
   render() {
-    let {
+    const {
       className = '',
       current_user,
       followed_tags,
       ...props
     } = this.props;
-    let status = this.state.status;
+    const status = this.state.status;
 
     if (!current_user) {
       return null;
@@ -100,7 +100,7 @@ export default class FollowTagButton extends React.Component {
           return null;
       }
     } else {
-      let isFollowed = !!followed_tags[this.props.tag];
+      const isFollowed = !!followed_tags[this.props.tag];
 
       if (isFollowed) {
         return <button {...props} className={`button button-yellow ${className}`} type="button" onClick={this._unfollowTag}>Following</button>;

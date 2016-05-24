@@ -1,5 +1,22 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+import { pick } from 'lodash';
 import { Link } from 'react-router';
 
 import { truncate } from 'grapheme-utils';
@@ -11,11 +28,14 @@ export default class Tag extends React.Component {
   static displayName = 'Tag';
 
   static propTypes = {
+    collapsed: PropTypes.bool,
     deletable: PropTypes.bool,
-    truncated: PropTypes.bool,
     inactive: PropTypes.bool,
     name: PropTypes.string,
+    onClick: PropTypes.func,
+    onDelete: PropTypes.func,
     size: PropTypes.string,
+    truncated: PropTypes.bool,
     type: PropTypes.oneOf([
       TAG_HASHTAG,
       TAG_SCHOOL,
@@ -35,26 +55,25 @@ export default class Tag extends React.Component {
   };
 
   _handleDelete = () => {
-    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+    const tag = pick(this.props, 'name', 'type', 'urlId');
 
     this.props.onDelete(tag);
   };
 
   _handleClick = () => {
-    let tag = _.pick(this.props, 'name', 'type', 'urlId');
+    const tag = pick(this.props, 'name', 'type', 'urlId');
 
     this.props.onClick(tag);
   }
 
   render() {
-    let { urlId, name, type, truncated, size, inactive, collapsed } = this.props;
+    const { urlId, name, type, truncated, size, inactive, collapsed } = this.props;
     let tagName = name;
     let tagNameComponent;
-    let tagIcon = <TagIcon className="tag__icon" type={type} />;
+    const tagIcon = <TagIcon className="tag__icon" type={type} />;
     let className;
     let title = name;
     let url;
-    let tagBody;
 
     switch (type) {
       case TAG_HASHTAG: {
@@ -106,19 +125,19 @@ export default class Tag extends React.Component {
     }
 
     if (truncated) {
-      tagName = truncate(name, {length: 16});
+      tagName = truncate(name, { length: 16 });
     }
 
     if (!collapsed && tagName) {
-      tagNameComponent = <div key="name" className="tag__name">{tagName}</div>;
+      tagNameComponent = <div className="tag__name" key="name">{tagName}</div>;
     }
 
     if (!title) {
       title = this.props.title;
     }
 
-    tagBody = [
-      <div key="icon" className="tag__icon_wrapper">
+    const tagBody = [
+      <div className="tag__icon_wrapper" key="icon">
         {tagIcon}
       </div>,
       tagNameComponent
@@ -154,7 +173,7 @@ export default class Tag extends React.Component {
       //  );
       //} else {
       return (
-        <Link to={url} className={`tag ${className}`} title={title}>
+        <Link className={`tag ${className}`} title={title} to={url}>
           {tagBody}
         </Link>
       );

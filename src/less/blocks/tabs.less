@@ -1,37 +1,55 @@
 .tabs {
-  font-size: 16px;
-  
-  &-font_inherit {
-    font-size: inherit;
-  }
+  &__menu {
 
-  &__link {
-    display: block;
-    padding: 6px @space;
-    border: none;
-    border-radius: @radius-button;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &-active {
-      background: #dcd5cd;
-    }
-  }
-
-  &-vertical {
-    display: block;
-    font-size: inherit;
-    overflow: hidden;
-    border-radius: 0 @radius-button @radius-button 0;
-
-    .tabs__link {
-      padding: 10px @space;
-      border-radius: 0;
-    }
   }
 
   &__title {
     list-style: none;
+
+    &-gray {
+      &.tabs__title-active {
+        background: #dcd5cd;
+      }
+    }
+  }
+
+  &__link {
+
+  }
+
+  &__panel {
+
+  }
+
+  &__tab {
+
+  }
+
+  &__content {
+
+  }
+
+  &-theme_settings {
+    overflow: hidden;
+    border-radius: 0 @radius-button @radius-button 0;
+
+    .tabs__title {
+      display: block;
+      padding: 10px @space;
+      border: none;
+      border-radius: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &-active {
+        background: #dcd5cd;
+      }
+    }
+  }
+
+  &-reverse {
+    display: flex;
+    flex-direction: column-reverse;
   }
 }

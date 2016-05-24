@@ -42,9 +42,9 @@ export default class CreateComment extends Component {
   static displayName = 'CreateComment';
 
   static propTypes = {
-    author: PropTypes.object,
-    className:  PropTypes.string,
-    ui: PropTypes.any.isRequired
+    author: PropTypes.shape({}),
+    className: PropTypes.string,
+    ui: PropTypes.shape({}).isRequired
   };
 
   static defaultProps = {
@@ -56,7 +56,7 @@ export default class CreateComment extends Component {
     comment: ''
   };
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const {
       ui
     } = this.props;
@@ -124,7 +124,7 @@ export default class CreateComment extends Component {
     return messageComponent;
   };
 
-  render () {
+  render() {
     const {
       author,
       className,
@@ -194,6 +194,6 @@ export default class CreateComment extends Component {
           </div>
         </div>
       </form>
-    )
+    );
   }
 }

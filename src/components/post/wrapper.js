@@ -23,7 +23,7 @@ import Preview from './preview';
 import Comments from './comments';
 
 
-let PostWrapper = ({
+const PostWrapper = ({
   users,
   comments,
   post,
@@ -34,7 +34,7 @@ let PostWrapper = ({
   current_user,
   ui
 }) => {
-  let cardClassName = bem.makeClassName({
+  const cardClassName = bem.makeClassName({
     block: 'card',
     modifiers: {
 

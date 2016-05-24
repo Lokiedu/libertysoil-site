@@ -22,7 +22,7 @@ import { browserHistory } from 'react-router';
 import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
 import {
@@ -42,12 +42,12 @@ class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
 
   static async fetchData(params, store, client) {
-    let school = client.getSchool(params.school_name);
+    const school = client.getSchool(params.school_name);
 
     try {
       store.dispatch(addSchool(await school));
     } catch (e) {
-      store.dispatch(addSchool({url_name: params.school_name}));
+      store.dispatch(addSchool({ url_name: params.school_name }));
 
       return 404;
     }
@@ -67,35 +67,38 @@ class SchoolEditPage extends React.Component {
     return 200;
   }
 
-  state = {
-    processing: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      processing: false
+    };
   }
 
   saveSchool = async (id, properties) => {
-    this.setState({processing: true});
+    this.setState({ processing: true });
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = {};
+    const more = {};
     try {
-      let pictures = this.base._getNewPictures();
-      for (let name in pictures) {
-        more[name] = await triggers.uploadPicture({...pictures[name]});
+      const pictures = this.base._getNewPictures();
+      for (const name in pictures) {
+        more[name] = await triggers.uploadPicture({ ...pictures[name] });
       }
     } catch (e) {
       if (!confirm("It seems like there're problems with upload the images. Would you like to continue saving changes without them?")) {
-        this.setState({processing: false});
+        this.setState({ processing: false });
         return;
       }
     }
 
     const schoolProperties = { ...properties, more };
+
     try {
-      
-      let result = await triggers.updateSchool(id, schoolProperties);
-      browserHistory.push(getUrl(URL_NAMES.SCHOOL, {url_name: result.url_name}));
-    
+      const result = await triggers.updateSchool(id, schoolProperties);
+      browserHistory.push(getUrl(URL_NAMES.SCHOOL, { url_name: result.url_name }));
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveSchool(id, properties);
@@ -103,7 +106,7 @@ class SchoolEditPage extends React.Component {
       }
     }
 
-    this.setState({processing: false});
+    this.setState({ processing: false });
   };
 
   render() {
@@ -120,9 +123,9 @@ class SchoolEditPage extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    let school = find(schools, {url_name: this.props.params.school_name});
+    const school = find(schools, { url_name: this.props.params.school_name });
     const countries = geo.countries;
 
     if (!school) {
@@ -140,7 +143,7 @@ class SchoolEditPage extends React.Component {
     return (
       <BaseTagPage
         ref={c => this.base = c}
-        editable={true}
+        editable
         params={params}
         current_user={current_user}
         is_logged_in={is_logged_in}
@@ -172,5 +175,5 @@ class SchoolEditPage extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolEditPage);

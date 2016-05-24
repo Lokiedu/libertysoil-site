@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,76 +14,75 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, {
-  Component,
-  PropTypes
-} from 'react'
-import _ from 'lodash'
+*/
+import React, { PropTypes } from 'react';
+import { isUndefined } from 'lodash';
 
 import * as PostTypes  from '../consts/postTypeConstants';
 import { ShortTextPost, PostWrapper } from './post';
 import TagLikePost from './tag-like-post';
 
+const RiverOfPostsComponent = (props) => {
+  const {
+    comments,
+    current_user,
+    posts,
+    river,
+    triggers,
+    ui,
+    users
+  } = props;
 
-export default class RiverOfPostsComponent extends Component {
-  static propTypes = {
-    comments: PropTypes.any.isRequired,
-    ui: PropTypes.any.isRequired,
-    river: PropTypes.any.isRequired
-  };
-
-  render() {
-    const {
-      triggers,
-      current_user,
-      users,
-      river,
-      comments,
-      ui
-    } = this.props;
-
-    if (_.isUndefined(river)) {
-      return <script/>;
-    }
-
-    let posts = river.map(id => this.props.posts[id]);
-
-    return (
-      <div>
-        {posts.map((post) => {
-          switch (post.type) {
-            case PostTypes.HASHTAG_LIKE:
-            case PostTypes.SCHOOL_LIKE:
-            case PostTypes.GEOTAG_LIKE:
-              return (
-                <TagLikePost
-                  author={users[post.user_id]}
-                  key={post.id}
-                  post={post}
-                />
-              );
-            case PostTypes.SHORT_TEXT:
-            case PostTypes.LONG_TEXT:
-              return (
-                <PostWrapper
-                  author={users[post.user_id]}
-                  current_user={current_user}
-                  key={post.id}
-                  post={post}
-                  comments={comments}
-                  ui={ui}
-                  triggers={triggers}
-                  users={users}
-                >
-                  <ShortTextPost post={post}/>
-                </PostWrapper>
-              );
-            default:
-              return null;
-          }
-        })}
-      </div>
-    )
+  if (isUndefined(river)) {
+    return <script />;
   }
-}
+
+  const postsWithData = river.map(id => posts[id]);
+
+  return (
+    <div>
+      {postsWithData.map((post) => {
+        switch (post.type) {
+          case PostTypes.HASHTAG_LIKE:
+          case PostTypes.SCHOOL_LIKE:
+          case PostTypes.GEOTAG_LIKE:
+            return (
+              <TagLikePost
+                author={users[post.user_id]}
+                key={post.id}
+                post={post}
+              />
+            );
+          case PostTypes.SHORT_TEXT:
+          case PostTypes.LONG_TEXT:
+            return (
+              <PostWrapper
+                author={users[post.user_id]}
+                comments={comments}
+                current_user={current_user}
+                key={post.id}
+                post={post}
+                triggers={triggers}
+                ui={ui}
+                users={users}
+              >
+                <ShortTextPost post={post}/>
+              </PostWrapper>
+            );
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+};
+
+RiverOfPostsComponent.displayName = 'RiverOfPostsComponent';
+
+RiverOfPostsComponent.propTypes = {
+  comments: PropTypes.shape({}).isRequired,
+  river: PropTypes.arrayOf(PropTypes.string),
+  ui: PropTypes.shape({}).isRequired
+};
+
+export default RiverOfPostsComponent;

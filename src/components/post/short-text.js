@@ -20,7 +20,7 @@ import Linkify from 'react-linkify';
 
 import paragraphify from '../../utils/paragraphify';
 
-let ShortTextPost = ({ post }) => {
+const ShortTextPost = ({ post }) => {
   let text = '';
 
   if (post.text) {
@@ -28,7 +28,7 @@ let ShortTextPost = ({ post }) => {
   }
 
   return (
-    <Linkify properties={{target: '_blank'}}>
+    <Linkify properties={{ target: '_blank' }}>
       {text}
     </Linkify>
   );

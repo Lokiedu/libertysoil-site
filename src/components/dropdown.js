@@ -14,58 +14,58 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
- import React, { Component } from 'react';
+*/
+import React, { Component } from 'react';
 
- import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
+import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
- @ClickOutsideComponentDecorator
- class Dropdown extends Component {
-   static displayName = 'Dropdown';
+@ClickOutsideComponentDecorator
+class Dropdown extends Component {
+  static displayName = 'Dropdown';
 
-   constructor (props) {
-     super(props);
+  constructor(props) {
+    super(props);
 
-     this.state = {
-       isVisible: props.isVisible || false
-     }
-   }
+    this.state = {
+      isVisible: props.isVisible || false
+    };
+  }
 
-   onClickOutside = () => {
-     this.hide();
-   };
+  onClickOutside = () => {
+    this.hide();
+  };
 
-   toggleVisibility = () => {
-     this.setState({isVisible: !this.state.isVisible});
-   };
+  toggleVisibility = () => {
+    this.setState({ isVisible: !this.state.isVisible });
+  };
 
-   hide = () => {
-     this.setState({isVisible: false});
-   };
+  hide = () => {
+    this.setState({ isVisible: false });
+  };
 
-   render () {
-     const {
-       className,
-       ...props
-     } = this.props;
-     const state = this.state;
+  render() {
+    const {
+      className,
+      ...props
+    } = this.props;
+    const state = this.state;
 
-     let dropdownClassName = `dropdown ${className}`;
+    let dropdownClassName = `dropdown ${className}`;
 
-     if (state.isVisible) {
-       dropdownClassName = `${dropdownClassName} dropdown-open`;
-     }
+    if (state.isVisible) {
+      dropdownClassName = `${dropdownClassName} dropdown-open`;
+    }
 
- return (
-     <div className={dropdownClassName} {...props}>
-       <div className="dropdown__trigger action" onClick={this.toggleVisibility}>
-        <span className="micon micon-small">arrow_drop_down</span>
-       </div>
-       <div className="dropdown__body" onClick={this.toggleVisibility}>
-        {props.children}
-       </div>
-     </div>
-   )
+    return (
+      <div className={dropdownClassName} {...props}>
+        <div className="dropdown__trigger action" onClick={this.toggleVisibility}>
+          <span className="micon micon-small">arrow_drop_down</span>
+        </div>
+        <div className="dropdown__body" onClick={this.toggleVisibility}>
+          {props.children}
+        </div>
+      </div>
+    );
   }
 }
 

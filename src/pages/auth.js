@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -41,11 +41,11 @@ import Messages from '../components/messages';
 export class Auth extends React.Component {
 
   static propTypes = {
-    messages: PropTypes.arrayOf(React.PropTypes.shape({
+    is_logged_in: PropTypes.bool,
+    messages: PropTypes.arrayOf(PropTypes.shape({
       message: PropTypes.string.isRequired,
       type: PropTypes.string
     })).isRequired,
-    is_logged_in: PropTypes.bool,
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
@@ -65,14 +65,14 @@ export class Auth extends React.Component {
     const is_first_login = !more || more.get('first_login');
 
     if (is_first_login) {
-      return {status: 307, redirectTo: '/induction'};
+      return { status: 307, redirectTo: '/induction' };
     }
 
-    return {status: 307, redirectTo: '/'};
+    return { status: 307, redirectTo: '/' };
   }
 
   render() {
-    let { current_user, is_logged_in, messages, ui } = this.props;
+    const { current_user, is_logged_in, messages, ui } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,17 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import strftime from 'strftime';
 
-const Time = ({
-  title,
-  timestamp,
-  format,
-  ...props
-}) => {
+const Time = ({ title, timestamp, format, ...props }) => {
   let formattedTime = '';
   let date = new Date();
 
@@ -43,12 +37,17 @@ const Time = ({
       {formattedTime}
     </time>
   );
-
 };
 
+Time.displayName = 'Time';
+
 Time.propTypes = {
-  timestamp: React.PropTypes.any,
-  format: React.PropTypes.string
+  format: PropTypes.string,
+  timestamp: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({})
+  ]),
+  title: PropTypes.string
 };
 
 Time.defaultProps = {

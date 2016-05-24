@@ -20,14 +20,14 @@ import { Link } from 'react-router';
 import { isEmpty } from 'lodash';
 import Time from '../time';
 
-import EditPostButton from './edit-post-button'
-import TagLine from './tagline'
-import Toolbar from './toolbar'
+import EditPostButton from './edit-post-button';
+import TagLine from './tagline';
+import Toolbar from './toolbar';
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-let PostFooter = ({author, current_user, post, triggers}) => {
-  let post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
+const PostFooter = ({ author, current_user, post, triggers }) => {
+  const post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
   const hasTags = !isEmpty(post.geotags) || !isEmpty(post.hashtags) || !isEmpty(post.schools);
 
   return (

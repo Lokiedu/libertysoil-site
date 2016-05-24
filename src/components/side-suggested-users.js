@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
@@ -31,7 +31,7 @@ export default class SideSuggestedUsers extends React.Component {
       id: PropTypes.string.isRequired
     }),
     i_am_following: PropTypes.arrayOf(PropTypes.string.isRequired),
-    triggers:  PropTypes.shape({
+    triggers: PropTypes.shape({
       followUser: PropTypes.func.isRequired,
       unfollowUser: PropTypes.func.isRequired,
       ignoreUser: React.PropTypes.func.isRequired
@@ -49,14 +49,18 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
-  state = {
-    loading: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false
+    };
+  }
 
   ignoreUser = async (user) => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     await this.props.triggers.ignoreUser(user);
-    this.setState({loading: false});
+    this.setState({ loading: false });
   }
 
   render() {
@@ -68,18 +72,18 @@ export default class SideSuggestedUsers extends React.Component {
     } = this.props;
 
     if (!users.length) {
-      return null;
+      return <script />;
     }
 
     let className = 'layout__row suggested_users';
     if (this.state.loading) {
-      className += ' suggested_users-loading'
+      className += ' suggested_users-loading';
     }
 
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        { _.take(users, 3).map((user) => (
+        {_.take(users, 3).map((user) => (
           <div className={className} key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User
@@ -104,6 +108,6 @@ export default class SideSuggestedUsers extends React.Component {
           </div>
         ))}
       </div>
-    )
+    );
   }
 }

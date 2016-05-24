@@ -24,7 +24,7 @@ import { values } from 'lodash';
 
 import { defaultSelector } from '../selectors';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
 import {
@@ -42,12 +42,12 @@ class GeotagEditPage extends React.Component {
   static displayName = 'GeotagEditPage';
 
   static async fetchData(params, store, client) {
-    let geotag = client.getGeotag(params.url_name);
+    const geotag = client.getGeotag(params.url_name);
 
     try {
       store.dispatch(addGeotag(await geotag));
     } catch (e) {
-      store.dispatch(addGeotag({url_name: params.url_name}));
+      store.dispatch(addGeotag({ url_name: params.url_name }));
 
       return 404;
     }
@@ -58,22 +58,25 @@ class GeotagEditPage extends React.Component {
     return 200;
   }
 
-  state = {
-    processing: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      processing: false
+    };
   }
 
   saveGeotag = async (id, description) => {
-    this.setState({processing: true});
+    this.setState({ processing: true });
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = { description };
-    try {
+    const more = { description };
 
-      let result = await triggers.updateGeotag(id, { more });
-      browserHistory.push(getUrl(URL_NAMES.GEOTAG, {url_name: result.url_name}));
-    
+    try {
+      const result = await triggers.updateGeotag(id, { more });
+      browserHistory.push(getUrl(URL_NAMES.GEOTAG, { url_name: result.url_name }));
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveGeotag(id, description);
@@ -81,7 +84,7 @@ class GeotagEditPage extends React.Component {
       }
     }
 
-    this.setState({processing: false});
+    this.setState({ processing: false });
   };
 
   render() {
@@ -98,7 +101,7 @@ class GeotagEditPage extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
     const geotag = geotags[this.props.params.url_name];
     const title = geotag ? geotag.name : this.props.params.url_name;
@@ -113,7 +116,7 @@ class GeotagEditPage extends React.Component {
 
     return (
       <BaseTagPage
-        editable={true}
+        editable
         params={params}
         current_user={current_user}
         tag={geotag}
@@ -144,5 +147,5 @@ class GeotagEditPage extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagEditPage);
