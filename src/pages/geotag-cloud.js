@@ -31,11 +31,11 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
-import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { TAG_PLANET } from '../consts/tags';
+import Continent from '../components/continent';
 
 
 class GeotagCloudPage extends Component {
@@ -54,7 +54,11 @@ class GeotagCloudPage extends Component {
       geotag_cloud
     } = this.props;
 
-    const geotagsForCloud = geotag_cloud.map(url_name => geotags[url_name]);
+    const geotagsByContinents = geotag_cloud.map(continent => {
+      return Object.assign(continent, {
+        geotags: continent.geotags.map(urlName => geotags[urlName])
+      });
+    });
 
     return (
       <div>
@@ -74,9 +78,16 @@ class GeotagCloudPage extends Component {
             <PageBody>
               <PageContent>
                 <PageCaption>Geotag cloud</PageCaption>
-                <div className="layout__row">
-                  <TagCloud geotags={geotagsForCloud}/>
-                </div>
+                {
+                  geotagsByContinents.map(continent => (
+                    <Continent
+                      code={continent.continent_code}
+                      count={continent.geotag_count}
+                      geotags={continent.geotags}
+                      key={continent.continent_code}
+                    />
+                  ))
+                }
               </PageContent>
             </PageBody>
           </PageMain>
