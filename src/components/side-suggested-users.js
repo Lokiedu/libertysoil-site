@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
@@ -49,9 +49,13 @@ export default class SideSuggestedUsers extends React.Component {
     }))
   };
 
-  state = {
-    loading: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false
+    };
+  }
 
   ignoreUser = async (user) => {
     this.setState({ loading: true });
@@ -68,7 +72,7 @@ export default class SideSuggestedUsers extends React.Component {
     } = this.props;
 
     if (!users.length) {
-      return null;
+      return <script />;
     }
 
     let className = 'layout__row suggested_users';

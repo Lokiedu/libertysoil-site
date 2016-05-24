@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,8 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
@@ -29,7 +29,6 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
-
 
 const InductionDone = () => (
   <div className="area">
@@ -45,6 +44,15 @@ const InductionDone = () => (
 
 class InductionPage extends React.Component {
   static displayName = 'InductionPage';
+
+  static propTypes = {
+    current_user: PropTypes.shape({}),
+    dispatch: PropTypes.func,
+    i_am_following: PropTypes.arrayOf(PropTypes.string),
+    is_logged_in: PropTypes.bool,
+    messages: PropTypes.arrayOf(PropTypes.shape({})),
+    suggested_users: PropTypes.arrayOf(PropTypes.shape({}))
+  };
 
   static async fetchData(params, store, client) {
     const state = store.getState();
@@ -63,6 +71,17 @@ class InductionPage extends React.Component {
     return 200;
   }
 
+  doneInduction = () => {
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    triggers.updateUserInfo({
+      more: {
+        first_login: false
+      }
+    });
+  };
+
   render() {
     const {
       current_user,
@@ -75,18 +94,10 @@ class InductionPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const doneInduction = () => {
-      triggers.updateUserInfo({
-        more: {
-          first_login: false
-        }
-      });
-    };
-
     if (!current_user.user.more.first_login) {
       return (
         <div>
-          <Header is_logged_in={is_logged_in} current_user={current_user} />
+          <Header current_user={current_user} is_logged_in={is_logged_in} />
           <div className="page__body">
             <InductionDone />
           </div>
@@ -99,10 +110,10 @@ class InductionPage extends React.Component {
       <BaseInductionPage
         current_user={current_user}
         is_logged_in={is_logged_in}
-        onNext={doneInduction}
         messages={messages}
         next_caption="Done"
         triggers={triggers}
+        onNext={this.doneInduction}
       >
         <Helmet title="Suggested users at " />
         <div className="paper__page">

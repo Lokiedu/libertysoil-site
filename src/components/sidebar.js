@@ -35,9 +35,13 @@ import createSelector from '../selectors/createSelector';
 class Sidebar extends React.Component {
   static displayName = 'Sidebar';
 
-  state = {
-    clientWidth: 0
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      clientWidth: 0
+    };
+  }
 
   componentDidMount() {
     window.addEventListener('resize', this.toggleVisible);
@@ -93,7 +97,7 @@ class Sidebar extends React.Component {
     const sidebarClassName = ['sidebar'];
 
     if (!is_logged_in) {
-      return null;
+      return <script />;
     }
 
     if (ui.get('sidebarIsVisible')) {

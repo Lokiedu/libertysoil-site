@@ -17,38 +17,34 @@
 */
 import React, { PropTypes } from 'react';
 
+import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 import GeotagEditForm from './geotag-edit-form';
 import SchoolEditForm from './school-edit-form';
 import HashtagEditForm from './hashtag-edit-form';
-import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 
+const TagEditForm = (props) => {
+  const { countries, tag, type } = props;
 
-export default class TagEditForm extends React.Component {
-  static displayName = 'TagEditForm';
-
-  static propTypes = {
-    type: PropTypes.string.isRequired,
-    tag: PropTypes.shape({}).isRequired,
-    saveHandler: PropTypes.func.isRequired,
-    processing: PropTypes.bool.isRequired
-  };
-
-  render() {
-    const {
-      countries,
-      type,
-      tag
-    } = this.props;
-
-    switch (type) {
-      case TAG_HASHTAG:
-        return <HashtagEditForm hashtag={tag} {...this.props} />;
-      case TAG_SCHOOL:
-        return <SchoolEditForm school={tag} countries={countries} {...this.props} />;
-      case TAG_LOCATION:
-        return <GeotagEditForm geotag={tag} {...this.props} />;
-      default:
-        return <script />;
-    }
+  switch (type) {
+    case TAG_HASHTAG:
+      return <HashtagEditForm hashtag={tag} {...props} />;
+    case TAG_SCHOOL:
+      return <SchoolEditForm countries={countries} school={tag} {...props} />;
+    case TAG_LOCATION:
+      return <GeotagEditForm geotag={tag} {...props} />;
+    default:
+      return <script />;
   }
-}
+};
+
+TagEditForm.displayName = 'TagEditForm';
+
+TagEditForm.propTypes = {
+  countries: PropTypes.shape({}),
+  processing: PropTypes.bool.isRequired,
+  saveHandler: PropTypes.func.isRequired,
+  tag: PropTypes.shape({}).isRequired,
+  type: PropTypes.string.isRequired
+};
+
+export default TagEditForm;

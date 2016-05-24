@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,35 +14,35 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 
 import Message from './message';
 
-
-export default class Messages extends React.Component {
-  static propTypes = {
-    messages: PropTypes.arrayOf(PropTypes.shape({
-      message: PropTypes.string.isRequired,
-      type: PropTypes.string
-    })).isRequired,
-    removeMessage: PropTypes.func
-  };
-
-  render() {
-    if (this.props.messages.length == 0) {
-      return <script/>;
-    }
-
-    const messages = this.props.messages.map((msg, i) => {
-      const params = { i, key: i, message: msg.message, type: msg.type, removeMessage: this.props.removeMessage };
-      return <Message {...params} />;
-    });
-
-    return (
-      <div className="message__group">
-        {messages}
-      </div>
-    );
+const Messages = ({ messages, removeMessage }) => {
+  if (messages.length === 0) {
+    return <script />;
   }
-}
+
+  const messagesToRender = messages.map((msg, i) => {
+    return <Message i={i} key={i} message={msg.message} removeMessage={removeMessage} type={msg.type} />;
+  });
+
+  return (
+    <div className="message__group">
+      {messagesToRender}
+    </div>
+  );
+};
+
+Messages.displayName = 'Messages';
+
+Messages.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    message: PropTypes.string.isRequired,
+    type: PropTypes.string
+  })).isRequired,
+  removeMessage: PropTypes.func
+};
+
+export default Messages;

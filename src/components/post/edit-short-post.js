@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,27 +14,35 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { Component } from 'react';
-import _ from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { isUndefined } from 'lodash';
 
-export default class EditPostShort extends Component {
-  render() {
-    let value = '';
+const EditPostShort = ({ post }) => {
+  let value = '';
 
-    if (!_.isUndefined(this.props.post)) {
-      value = this.props.post.text;
-    }
-
-    return (
-      <div className="layout__row">
-        <textarea
-          className="input input-textarea input-block"
-          defaultValue={value}
-          name="text"
-          placeholder="Share education related resources, your perspective"
-        />
-      </div>
-    );
+  if (!isUndefined(post)) {
+    value = post.text;
   }
-}
+
+  return (
+    <div className="layout__row">
+      <textarea
+        className="input input-textarea input-block"
+        defaultValue={value}
+        name="text"
+        placeholder="Share education related resources, your perspective"
+      />
+    </div>
+  );
+};
+
+EditPostShort.displayName = 'EditPostShort';
+
+EditPostShort.propTypes = {
+  post: PropTypes.shape({
+    text: PropTypes.string
+  })
+};
+
+export default EditPostShort;

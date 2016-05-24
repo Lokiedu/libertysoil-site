@@ -22,29 +22,24 @@ import SchoolBreadcrumbs from './school-breadcrumbs';
 import HashtagBreadcrumbs from './hashtag-breadcrumbs';
 import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 
-export default class TagBreadcrumbs extends React.Component {
-  static displayName = 'TagBreadcrumbs';
-
-  static propTypes = {
-    tag: PropTypes.shape({}).isRequired,
-    type: PropTypes.string.isRequired
-  };
-
-  render() {
-    const {
-      type,
-      tag
-    } = this.props;
-
-    switch (type) {
-      case TAG_HASHTAG:
-        return <HashtagBreadcrumbs hashtag={tag} />;
-      case TAG_SCHOOL:
-        return <SchoolBreadcrumbs school={tag} />;
-      case TAG_LOCATION:
-        return <GeotagBreadcrumbs geotag={tag} />;
-      default:
-        return <script />;
-    }
+const TagBreadcrumbs = ({ tag, type }) => {
+  switch (type) {
+    case TAG_HASHTAG:
+      return <HashtagBreadcrumbs hashtag={tag} />;
+    case TAG_SCHOOL:
+      return <SchoolBreadcrumbs school={tag} />;
+    case TAG_LOCATION:
+      return <GeotagBreadcrumbs geotag={tag} />;
+    default:
+      return <script />;
   }
-}
+};
+
+TagBreadcrumbs.displayName = 'TagBreadcrumbs';
+
+TagBreadcrumbs.propTypes = {
+  tag: PropTypes.shape({}).isRequired,
+  type: PropTypes.string.isRequired
+};
+
+export default TagBreadcrumbs;

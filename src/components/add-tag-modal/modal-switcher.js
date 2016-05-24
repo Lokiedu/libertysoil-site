@@ -22,33 +22,27 @@ import ModalSwitcherItem from './modal-switcher-item';
 import TagIcon from '../tag-icon';
 import { IMPLEMENTED_TAGS } from '../../consts/tags';
 
-export default class ModalSwitcher extends React.Component {
-  static displayName = 'ModalSwitcher';
+const ModalSwitcher = ({ activeType, onClose, onTypeChange }) => {
+  const inactiveTags = filter(IMPLEMENTED_TAGS, t => t !== activeType);
 
-  static propTypes = {
-    activeType: PropTypes.oneOf(IMPLEMENTED_TAGS).isRequired,
-    onClose: PropTypes.func.isRequired,
-    onTypeChange: PropTypes.func.isRequired
-  };
-
-  render() {
-    const {
-      activeType,
-      onClose,
-      onTypeChange
-    } = this.props;
-
-    const inactiveTags = filter(IMPLEMENTED_TAGS, t => t !== activeType);
-
-    return (
-      <div className="modal_switcher">
-        {inactiveTags.map((tag, i) => (
-          <ModalSwitcherItem key={i} tag={tag} onClick={onTypeChange} />
-        ))}
-        <div className="modal_switcher__item" onClick={onClose}>
-          <TagIcon big type={activeType} />
-        </div>
+  return (
+    <div className="modal_switcher">
+      {inactiveTags.map((tag, i) => (
+        <ModalSwitcherItem key={i} tag={tag} onClick={onTypeChange} />
+      ))}
+      <div className="modal_switcher__item" onClick={onClose}>
+        <TagIcon big type={activeType} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+ModalSwitcher.displayName = 'ModalSwitcher';
+
+ModalSwitcher.propTypes = {
+  activeType: PropTypes.oneOf(IMPLEMENTED_TAGS).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onTypeChange: PropTypes.func.isRequired
+};
+
+export default ModalSwitcher;

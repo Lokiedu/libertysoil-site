@@ -41,11 +41,11 @@ import Messages from '../components/messages';
 export class Auth extends React.Component {
 
   static propTypes = {
-    messages: PropTypes.arrayOf(React.PropTypes.shape({
+    is_logged_in: PropTypes.bool,
+    messages: PropTypes.arrayOf(PropTypes.shape({
       message: PropTypes.string.isRequired,
       type: PropTypes.string
     })).isRequired,
-    is_logged_in: PropTypes.bool,
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired

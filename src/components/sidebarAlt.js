@@ -15,17 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
+const SidebarAlt = ({ children }) => (
+  <div className="page__sidebar page__sidebar-alt">
+    {children}
+  </div>
+);
 
-export default class SidebarAlt extends React.Component {
-  static displayName = 'SidebarAlt';
+SidebarAlt.displayName = 'SidebarAlt';
 
-  render() {
-    return (
-      <div className="page__sidebar page__sidebar-alt">
-        {this.props.children}
-      </div>
-    );
-  }
-}
+SidebarAlt.propTypes = {
+  children: PropTypes.node
+};
+
+export default SidebarAlt;

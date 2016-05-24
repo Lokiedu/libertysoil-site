@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,19 +14,24 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import _ from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { isUndefined } from 'lodash';
 
 import User from './user';
 
-
-export default class CurrentUser extends React.Component {
-  render() {
-    if (_.isUndefined(this.props.user)) {
-      return <script/>;
-    }
-
-    return <User {...this.props} className="user_box-small" />;
+const CurrentUser = ({ ...props }) => {
+  if (isUndefined(props.user)) {
+    return <script/>;
   }
-}
+
+  return <User {...props} className="user_box-small" />;
+};
+
+CurrentUser.displayName = 'CurrentUser';
+
+CurrentUser.propTypes = {
+  user: PropTypes.shape({})
+};
+
+export default CurrentUser;

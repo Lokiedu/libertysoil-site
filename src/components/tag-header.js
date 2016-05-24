@@ -90,135 +90,143 @@ function getTagPrefix(type) {
   }
 }
 
-export default class TagHeader extends React.Component {
-  static displayName = 'TagHeader';
+const TagHeader = (props) => {
+  const {
+    tag,
+    type,
+    current_user,
+    newPost,
+    triggers = {},
+    is_logged_in,
+    postsAmount
+  } = props;
 
-  static propTypes = {
-    is_logged_in: PropTypes.bool.isRequired,
-    tag: PropTypes.shape({
-      name: PropTypes.string
-    }).isRequired,
-    type: PropTypes.string.isRequired,
-    triggers: PropTypes.shape({
-      followSchool: PropTypes.func,
-      unfollowSchool: PropTypes.func,
-      likeSchool: PropTypes.func,
-      unlikeSchool: PropTypes.func,
-      followTag: PropTypes.func,
-      unfollowTag: PropTypes.func,
-      likeHashtag: PropTypes.func,
-      unlikeHashtag: PropTypes.func,
-      followGeotag: PropTypes.func,
-      unfollowGeotag: PropTypes.func,
-      likeGeotag: PropTypes.func,
-      unlikeGeotag: PropTypes.func
-    })
-  };
+  let toolbarPrimary = [];
+  let toolbarSecondary = [];
+  let toolbarAlt = [];
 
-  render() {
-    const {
-      tag,
-      type,
-      current_user,
-      triggers = {},
-      is_logged_in,
-      postsAmount
-    } = this.props;
+  const prefix = getTagPrefix(type);
 
-    let toolbarPrimary = [];
-    let toolbarSecondary = [];
-    let toolbarAlt = [];
-
-    const prefix = getTagPrefix(type);
-
-    let name = tag.url_name;
-    if (tag.name) {
-      name = tag.name.trim();
-    }
-
-    let url_name = tag.name;
-    if (tag.url_name) {
-      url_name = tag.url_name;
-    }
-
-    let linesOfDescription = <p>No information provided...</p>;
-    if (tag.description) {
-      linesOfDescription = tag.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
-    } else if (tag.more && tag.more.description) {
-      linesOfDescription = tag.more.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
-    }
-
-    if (is_logged_in) {
-      const followTriggers = getFollowTriggers(triggers, type);
-      const likeTriggers = getLikeTriggers(triggers, type);
-
-      toolbarSecondary = [
-        <LikeTagButton
-          is_logged_in={is_logged_in}
-          liked_tags={getLikedTags(current_user, type)}
-          tag={url_name}
-          triggers={likeTriggers}
-          outline
-          size="midl"
-        />
-      ];
-
-      toolbarPrimary = [
-        <button key="new" onClick={this.props.newPost} className="button button-midi button-light_blue" type="button">New</button>,
-        <FollowTagButton
-          current_user={current_user}
-          followed_tags={current_user ? getFollowedTags(current_user, type) : {}}
-          tag={url_name}
-          triggers={followTriggers}
-          className="button-midi"
-        />
-      ];
-
-      toolbarAlt = [
-        <IndexLink
-          activeClassName="tabs__title-active"
-          className="tabs__title tabs__title-gray button button-midi"
-          to={`/${prefix}/${url_name}`}
-        >
-          Posts
-        </IndexLink>,
-        <Link
-          activeClassName="tabs__title-active"
-          className="tabs__title tabs__title-gray button button-midi"
-          to={`/${prefix}/${url_name}/edit`}
-          visible
-        >
-          Edit
-        </Link>
-      ];
-
-      if (postsAmount) {
-        let postsWordForm = 'post';
-        if (postsAmount > 1) {
-          postsWordForm += 's';
-        }
-
-        toolbarPrimary.unshift(
-          <div key="posts" className="panel__toolbar_item-text">
-            {postsAmount} {postsWordForm}
-          </div>
-        );
-      }
-    }
-
-    return (
-      <Panel
-        title={name}
-        icon={<Tag size="BIG" type={type} urlId={url_name} />}
-        toolbarPrimary={toolbarPrimary}
-        toolbarSecondary={toolbarSecondary}
-        toolbarAlt={toolbarAlt}
-      >
-        {linesOfDescription}
-        {tag.updated_at &&
-          <p><Time timestamp={tag.updated_at} /></p>
-        }
-      </Panel>
-    );
+  let name = tag.url_name;
+  if (tag.name) {
+    name = tag.name.trim();
   }
-}
+
+  let url_name = tag.name;
+  if (tag.url_name) {
+    url_name = tag.url_name;
+  }
+
+  let linesOfDescription = <p>No information provided...</p>;
+  if (tag.description) {
+    linesOfDescription = tag.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
+  } else if (tag.more && tag.more.description) {
+    linesOfDescription = tag.more.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
+  }
+
+  if (is_logged_in) {
+    const followTriggers = getFollowTriggers(triggers, type);
+    const likeTriggers = getLikeTriggers(triggers, type);
+
+    toolbarSecondary = [
+      <LikeTagButton
+        is_logged_in={is_logged_in}
+        key="like"
+        liked_tags={getLikedTags(current_user, type)}
+        outline
+        size="midl"
+        tag={url_name}
+        triggers={likeTriggers}
+      />
+    ];
+
+    toolbarPrimary = [
+      <button className="button button-midi button-light_blue" key="new" type="button" onClick={newPost}>New</button>,
+      <FollowTagButton
+        className="button-midi"
+        current_user={current_user}
+        followed_tags={current_user ? getFollowedTags(current_user, type) : {}}
+        key="follow"
+        tag={url_name}
+        triggers={followTriggers}
+      />
+    ];
+
+    toolbarAlt = [
+      <IndexLink
+        activeClassName="tabs__title-active"
+        className="tabs__title tabs__title-gray button button-midi"
+        key="toPosts"
+        to={`/${prefix}/${url_name}`}
+      >
+        Posts
+      </IndexLink>,
+      <Link
+        activeClassName="tabs__title-active"
+        className="tabs__title tabs__title-gray button button-midi"
+        key="toEdit"
+        to={`/${prefix}/${url_name}/edit`}
+        visible
+      >
+        Edit
+      </Link>
+    ];
+
+    if (postsAmount) {
+      let postsWordForm = 'post';
+      if (postsAmount > 1) {
+        postsWordForm += 's';
+      }
+
+      toolbarPrimary.unshift(
+        <div className="panel__toolbar_item-text" key="posts">
+          {postsAmount} {postsWordForm}
+        </div>
+      );
+    }
+  }
+
+  return (
+    <Panel
+      icon={<Tag size="BIG" type={type} urlId={url_name} />}
+      title={name}
+      toolbarAlt={toolbarAlt}
+      toolbarPrimary={toolbarPrimary}
+      toolbarSecondary={toolbarSecondary}
+    >
+      {linesOfDescription}
+      {tag.updated_at &&
+        <p><Time timestamp={tag.updated_at} /></p>
+      }
+    </Panel>
+  );
+};
+
+TagHeader.displayName = 'TagHeader';
+
+TagHeader.propTypes = {
+  current_user: PropTypes.shape({}),
+  is_logged_in: PropTypes.bool.isRequired,
+  newPost: PropTypes.func,
+  postsAmount: PropTypes.number,
+  tag: PropTypes.shape({
+    name: PropTypes.string
+  }).isRequired,
+  triggers: PropTypes.shape({
+    followSchool: PropTypes.func,
+    unfollowSchool: PropTypes.func,
+    likeSchool: PropTypes.func,
+    unlikeSchool: PropTypes.func,
+    followTag: PropTypes.func,
+    unfollowTag: PropTypes.func,
+    likeHashtag: PropTypes.func,
+    unlikeHashtag: PropTypes.func,
+    followGeotag: PropTypes.func,
+    unfollowGeotag: PropTypes.func,
+    likeGeotag: PropTypes.func,
+    unlikeGeotag: PropTypes.func
+  }),
+  type: PropTypes.string.isRequired
+};
+
+export default TagHeader;

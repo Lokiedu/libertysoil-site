@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,39 +14,39 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import TagCloud from '../tag-cloud';
 
-export default class AddedTags extends React.Component {
-  static displayName = 'AddedTags';
+const AddedTags = (props) => {
+  const { geotags, hashtags, schools } = props;
 
-  static propTypes = {
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired
-    })),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      url_name: PropTypes.string.isRequired
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    }))
-  };
-
-  render() {
-    const { geotags, schools, hashtags } = this.props;
-
-    if (!geotags.length && !schools.length && !hashtags.length) {
-      return null;
-    }
-
-    return (
-      <div className="side_block">
-        <h4 className="side_block__heading">Post tags:</h4>
-        <TagCloud {...this.props} />
-      </div>
-    );
+  if (!geotags.length && !schools.length && !hashtags.length) {
+    return <script />;
   }
-}
+
+  return (
+    <div className="side_block">
+      <h4 className="side_block__heading">Post tags:</h4>
+      <TagCloud {...props} />
+    </div>
+  );
+};
+
+AddedTags.displayName = 'AddedTags';
+
+AddedTags.propTypes = {
+  geotags: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired
+  })),
+  hashtags: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired
+  })),
+  schools: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    url_name: PropTypes.string.isRequired
+  }))
+};
+
+export default AddedTags;

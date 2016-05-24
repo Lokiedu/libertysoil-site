@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,68 +14,48 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import { Link }  from 'react-router';
+*/
+import React, { PropTypes } from 'react';
 
-import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-
+import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
-import User from './user';
-import { API_HOST } from '../config';
 
-import Dropdown from './dropdown';
-
-const AuthBlock = (props) => {
-  if (props.is_logged_in) {
-    const logoutUrl = '/api/v1/logout';
-
-    return (
-      <div className="header__toolbar">
-        <div className="header__toolbar_item">
-          <User user={props.current_user.user} isRound hideText />
-          <Dropdown>
-            <Link to={getUrl(URL_NAMES.SETTINGS)} className="menu__item">Profile settings</Link>
-            <form className="menu__item" action={`${API_HOST}${logoutUrl}`} method="post">
-              <button type="submit" className="button button-transparent button-wide button-caption_left">Log out</button>
-            </form>
-          </Dropdown>
-        </div>
-      </div>
-    );
+const HeaderComponent = ({
+  children,
+  className,
+  current_user,
+  is_logged_in,
+  ...props
+}) => {
+  let cn = 'header page__header';
+  if (className) {
+    cn += ` ${className}`;
   }
 
   return (
-    <div className="header__toolbar">
-      <div className="header__toolbar_item">
-        <Link to="/auth" className="header__toolbar_item">Login</Link>
+    <div {...props} className={cn}>
+      <div className="header__body">
+        <div className="header__content">
+          {!React.Children.count(children) &&
+            <HeaderLogo small />
+          }
+          {children}
+        </div>
+        <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
       </div>
     </div>
   );
 };
 
-export default class HeaderComponent extends React.Component {
+HeaderComponent.displayName = 'HeaderComponent';
 
-  render() {
-    const {
-      children,
-      className
-    } = this.props;
+HeaderComponent.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  current_user: PropTypes.shape({
+    user: PropTypes.shape({})
+  }),
+  is_logged_in: PropTypes.bool
+};
 
-    const classNames = `header page__header ${className}`;
-
-    return (
-      <div {...this.props} className={classNames.trim()}>
-        <div className="header__body">
-          <div className="header__content">
-            {!React.Children.count(children) &&
-              <HeaderLogo small />
-            }
-            {children}
-          </div>
-          <AuthBlock is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}/>
-        </div>
-      </div>
-    );
-  }
-}
+export default HeaderComponent;

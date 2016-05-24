@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,8 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
@@ -30,40 +30,41 @@ import Header from '../components/header';
 import Sidebar from '../components/sidebar';
 
 
-class NotFound extends React.Component {
-  render() {
-    const {
-      is_logged_in,
-      current_user
-    } = this.props;
-    let pageClassName = null;
+const NotFound = ({ is_logged_in, current_user }) => {
+  let pageClassName = null;
 
-    if (!is_logged_in) {
-      pageClassName = 'page__container-no_sidebar';
-    }
-
-    return (
-      <div>
-        <Helmet title="Page not found at " />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user} />
-
-          <Page className={pageClassName}>
-            <Sidebar current_user={current_user} />
-            <PageMain>
-              <PageBody>
-                <PageContent>
-                  <section className="box">
-                    <div className="box__title">
-                      <p><strong>Page Not Found</strong></p>
-                    </div>
-                  </section>
-                </PageContent>
-              </PageBody>
-            </PageMain>
-          </Page>
-      </div>
-    );
+  if (!is_logged_in) {
+    pageClassName = 'page__container-no_sidebar';
   }
-}
+
+  return (
+    <div>
+      <Helmet title="Page not found at " />
+      <Header current_user={current_user} is_logged_in={is_logged_in} />
+
+        <Page className={pageClassName}>
+          <Sidebar current_user={current_user} />
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <section className="box">
+                  <div className="box__title">
+                    <p><strong>Page Not Found</strong></p>
+                  </div>
+                </section>
+              </PageContent>
+            </PageBody>
+          </PageMain>
+        </Page>
+    </div>
+  );
+};
+
+NotFound.displayName = 'NotFound';
+
+NotFound.propTypes = {
+  current_user: PropTypes.shape({}),
+  is_logged_in: PropTypes.bool
+};
 
 export default connect(defaultSelector)(NotFound);

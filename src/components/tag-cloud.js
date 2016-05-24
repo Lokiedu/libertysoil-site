@@ -17,48 +17,47 @@
  */
 import React, { PropTypes } from 'react';
 
-import Tag from './tag';
 import { convertModelsToTags } from '../utils/tags';
+import Tag from './tag';
 
+const TagCloud = (props) => {
+  const tags = convertModelsToTags(props)
+    .map((tag, index) => (
+      <Tag
+        deletable={props.deletable}
+        key={index}
+        truncated={props.truncated}
+        onClick={props.onClick}
+        onDelete={props.onDelete}
+        {...tag}
+      />
+    ));
 
-export default class TagCloud extends React.Component {
-  static displayName = 'TagCloud';
+  return (
+    <div className="tags">
+      {tags}
+    </div>
+  );
+};
 
-  static propTypes = {
-    truncated: PropTypes.bool,
-    deletable: PropTypes.bool,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      id: PropTypes.string
-    })),
-    onDelete: () => {},
-    onClick: () => {},
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    }))
-  };
+TagCloud.displayName = 'TagCloud';
 
-  render() {
-    const tags = convertModelsToTags(this.props)
-      .map((tag, index) => (
-        <Tag
-          truncated={this.props.truncated}
-          deletable={this.props.deletable}
-          key={index}
-          onDelete={this.props.onDelete}
-          onClick={this.props.onClick}
-          {...tag}
-        />
-      ));
+TagCloud.propTypes = {
+  deletable: PropTypes.bool,
+  geotags: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    id: PropTypes.string
+  })),
+  hashtags: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string
+  })),
+  onClick: PropTypes.func,
+  onDelete: PropTypes.func,
+  schools: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    url_name: PropTypes.string
+  })),
+  truncated: PropTypes.bool
+};
 
-    return (
-      <div className="tags">
-        {tags}
-      </div>
-    );
-  }
-}
+export default TagCloud;
