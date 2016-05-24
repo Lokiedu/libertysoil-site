@@ -16,6 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import request from 'superagent';
+import fetch from 'isomorphic-fetch';
+import { format as format_url, parse as parse_url } from 'url';
+import { merge as mergeObj } from 'lodash';
+
 
 export default class ApiClient
 {
@@ -31,14 +35,27 @@ export default class ApiClient
     return `${this.host}${relativeUrl}`;
   }
 
+  apiUrlForFetch(relativeUrl, query = {}) {
+    const urlObj = parse_url(this.apiUrl(relativeUrl));
+    urlObj.query = mergeObj(urlObj.query, query);
+
+    return format_url(urlObj);
+  }
+
   async get(relativeUrl, query = {}) {
-    let req = request
-      .get(this.apiUrl(relativeUrl))
-      .query(query);
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl, query),
+      {
+        headers: defaultHeaders,
+        credentials: 'same-origin'
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -114,7 +131,7 @@ export default class ApiClient
 
   async subscriptions(offset = 0) {
     const response = await this.get(`/api/v1/posts?offset=${offset}`);
-    return response.body;
+    return await response.json();
   }
 
   async checkUserExists(username) {
@@ -139,12 +156,13 @@ export default class ApiClient
 
   async getAvailableUsername(username) {
     const response = await this.get(`/api/v1/user/available-username/${username}`);
-    return response.body.username;
+    const json = await response.json();
+    return json.username;
   }
 
   async userInfo(username) {
     const response = await this.get(`/api/v1/user/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async checkSchoolExists(name) {
@@ -159,77 +177,77 @@ export default class ApiClient
 
   async getSchool(school_name) {
     const response = await this.get(`/api/v1/school/${school_name}`);
-    return response.body;
+    return await response.json();
   }
 
   async schools() {
     const response = await this.get('/api/v1/schools');
-    return response.body;
+    return await response.json();
   }
 
   async userPosts(username) {
     const response = await this.get(`/api/v1/posts/user/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async relatedPosts(postId) {
     const response = await this.get(`/api/v1/post/${postId}/related-posts`);
-    return response.body;
+    return await response.json();
   }
 
   async userTags() {
     const response = await this.get(`/api/v1/user/tags`);
-    return response.body;
+    return await response.json();
   }
 
   async userLikedPosts() {
     const response = await this.get(`/api/v1/posts/liked`);
-    return response.body;
+    return await response.json();
   }
 
   async schoolPosts(schoolUrlName) {
     const response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async getLikedPosts(username) {
     const response = await this.get(`/api/v1/posts/liked/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async userFavouredPosts() {
     const response = await this.get(`/api/v1/posts/favoured`);
-    return response.body;
+    return await response.json();
   }
 
   async getFavouredPosts(username) {
     const response = await this.get(`/api/v1/posts/favoured/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async tagPosts(tag) {
     const response = await this.get(`/api/v1/posts/tag/${tag}`);
-    return response.body;
+    return await response.json();
   }
 
   async geotagPosts(geotagUrlName) {
     const response = await this.get(`/api/v1/posts/geotag/${geotagUrlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async city(city_id) {
     const response = await this.get(`/api/v1/city/${city_id}`);
-    return response.body;
+    return await response.json();
   }
 
   async countries() {
     const response = await this.get(`/api/v1/countries/`);
-    return response.body;
+    return await response.json();
   }
 
   async country(country_code) {
     const response = await this.get(`/api/v1/country/${country_code}`);
-    return response.body;
+    return await response.json();
   }
 
   async like(postId) {
@@ -330,32 +348,32 @@ export default class ApiClient
 
   async userSuggestions() {
     const response = await this.get(`/api/v1/suggestions/personalized`);
-    return response.body;
+    return await response.json();
   }
 
   async userRecentHashtags() {
     const response = await this.get('/api/v1/user/recent-hashtags');
-    return response.body;
+    return await response.json();
   }
 
   async userRecentSchools() {
     const response = await this.get('/api/v1/user/recent-schools');
-    return response.body;
+    return await response.json();
   }
 
   async userRecentGeotags() {
     const response = await this.get('/api/v1/user/recent-geotags');
-    return response.body;
+    return await response.json();
   }
 
   async initialSuggestions() {
     const response = await this.get(`/api/v1/suggestions/initial`);
-    return response.body;
+    return await response.json();
   }
 
   async postInfo(uuid) {
     const response = await this.get(`/api/v1/post/${uuid}`);
-    return response.body;
+    return await response.json();
   }
 
   async createPost(type, data) {
@@ -391,7 +409,7 @@ export default class ApiClient
 
   async pickpoint(options) {
     const response = await this.get('/api/v1/pickpoint', options);
-    return response.body;
+    return await response.json();
   }
 
   async search(query) {
@@ -401,12 +419,12 @@ export default class ApiClient
 
   async tagCloud() {
     const response = await this.get('/api/v1/tag-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async searchHashtags(query) {
     const response = await this.get(`/api/v1/tags/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async followTag(name) {
@@ -421,7 +439,7 @@ export default class ApiClient
 
   async schoolCloud() {
     const response = await this.get('/api/v1/school-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async searchSchools(query) {
@@ -441,7 +459,7 @@ export default class ApiClient
 
   async geotagCloud() {
     const response = await this.get('/api/v1/geotag-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async followGeotag(urlName) {
@@ -466,22 +484,22 @@ export default class ApiClient
 
   async getGeotag(urlName) {
     const response = await this.get(`/api/v1/geotag/${urlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async getHashtag(name) {
     const response = await this.get(`/api/v1/tag/${name}`);
-    return response.body;
+    return await response.json();
   }
 
   async searchGeotags(query) {
     const response = await this.get(`/api/v1/geotags/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async getQuotes() {
     const response = await this.get('/api/v1/quotes');
-    return response.body;
+    return await response.json();
   }
 
   async uploadImage(images) {
