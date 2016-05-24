@@ -21,7 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import VisibilitySensor from 'react-visibility-sensor';
+import VisibilitySensor from '../components/visibility-sensor';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -110,8 +110,7 @@ export class List extends React.Component {
       let displayLoadMore = false;
       if (res === false) { // bad response
         displayLoadMore = true;
-      }
-      if (res.length) { // no more posts
+      } else if (res.length) { // no more posts
         displayLoadMore = true;
       }
       this.setState({ displayLoadMore });
@@ -153,7 +152,7 @@ export class List extends React.Component {
         </div>
       );
     } else {
-      loadMore = <VisibilitySensor onChange={this.loadMore} />;
+      loadMore = <script />;
     }
 
     return (
