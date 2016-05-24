@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import _ from 'lodash'
 import bcrypt from 'bcrypt'
 import bb from 'bluebird'
@@ -163,25 +163,25 @@ export default class ApiController {
              .orderBy('posts.created_at', 'desc')
              .distinct();
 
-           switch (geotag.attributes.type) {
-           case 'Planet':
+          switch (geotag.attributes.type) {
+            case 'Planet':
              // There are no planets besides Earth yet.
-             break;
-           case 'Continent':
-             qb.where('geotags.continent_code', geotag.attributes.continent_code);
-             break;
-           case 'Country':
-             qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
-             break;
-           case 'AdminDivision1':
-             qb.where('geotags.geonames_admin1_id', geotag.attributes.geonames_admin1_id);
-             break;
-           case 'City':
-             qb.where('geotags.id', geotag.id);
-             break;
-           }
-         })
-         .fetch({withRelated: POST_RELATIONS});
+              break;
+            case 'Continent':
+              qb.where('geotags.continent_code', geotag.attributes.continent_code);
+              break;
+            case 'Country':
+              qb.where('geotags.geonames_country_id', geotag.attributes.geonames_country_id);
+              break;
+            case 'AdminDivision1':
+              qb.where('geotags.geonames_admin1_id', geotag.attributes.geonames_admin1_id);
+              break;
+            case 'City':
+              qb.where('geotags.id', geotag.id);
+              break;
+          }
+        })
+        .fetch({withRelated: POST_RELATIONS});
 
       let post_comments_count = await this.countComments(posts);
 

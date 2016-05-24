@@ -20,14 +20,12 @@ import _ from 'lodash';
 
 import * as a from '../actions';
 
-
 const initialState = i.Map({});
 
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case a.ADD_POST:
-    case a.ADD_POST_TO_RIVER:
-    {
+    case a.ADD_POST_TO_RIVER: {
       let postCopy = _.cloneDeep(action.post);
 
       delete postCopy.user;
@@ -45,8 +43,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_SCHOOL_POSTS:
     case a.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS:
-    {
+    case a.SET_RELATED_POSTS: {
       let postsWithoutUsers = _.keyBy(action.posts.map(post => {
         let postCopy = _.cloneDeep(post);
 
@@ -61,8 +58,7 @@ export default function reducer(state=initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST:
-    {
+    case a.REMOVE_POST: {
       state = state.remove(action.id);
       break;
     }

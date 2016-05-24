@@ -14,12 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 import _ from 'lodash';
 
 import * as a from '../actions';
-
 
 const initialState = i.Map({});
 
@@ -77,8 +76,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_SCHOOL_POSTS:
     case a.SET_TAG_POSTS:
-    case a.SET_GEOTAG_POSTS:
-    {
+    case a.SET_GEOTAG_POSTS: {
       const authors = action.posts.map(post => post.user);
       const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
       const users = _.keyBy(_.uniq([...authors, ...comment_authors], 'id'), 'id');
@@ -87,8 +85,7 @@ export default function reducer(state=initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS:
-    {
+    case a.SET_POST_COMMENTS: {
       let users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 

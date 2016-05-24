@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import { Map, List } from 'immutable';
 import { cloneDeep } from 'lodash';
 
@@ -51,8 +51,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_TAG_POSTS:
     case a.SET_SCHOOL_POSTS:
     case a.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS:
-    {
+    case a.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
         let postCopy = cloneDeep(post);
 
