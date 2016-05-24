@@ -36,7 +36,7 @@ class ModalComponent extends Component {
   }
 
   keyHandler = (e) => {
-    if (e.keyCode ==27) {
+    if (e.keyCode == 27) {
       this.hide();
     }
   };

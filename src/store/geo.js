@@ -24,7 +24,7 @@ const initialState = i.Map({
   countries: i.Map({})  // index by id
 });
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_COUNTRIES: {
       state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'id')));

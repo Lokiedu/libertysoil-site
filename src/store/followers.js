@@ -21,7 +21,7 @@ import * as a from '../actions';
 
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_USER:
     case a.SET_CURRENT_USER: {

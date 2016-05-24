@@ -39,7 +39,7 @@ const initialState = i.Map({
   })
 });
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_CURRENT_USER: {
       const oldUid = state.get('id');

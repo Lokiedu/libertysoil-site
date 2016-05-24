@@ -185,7 +185,7 @@ export function initBookshelfFromKnex(knex) {
     post_comments: function () {
       return this.hasMany(Comment);
     },
-    attachHashtags: async function(names, removeUnused=false) {
+    attachHashtags: async function(names, removeUnused = false) {
       const hashtags = this.hashtags();
 
       const hashtagsToRemove = [];

@@ -22,7 +22,7 @@ import * as a from '../actions';
 
 const initialState = i.List([]);
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_GEOTAG_CLOUD: {
       state = i.fromJS(_.map(action.geotags, 'url_name'));

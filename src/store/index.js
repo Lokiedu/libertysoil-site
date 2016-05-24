@@ -149,7 +149,7 @@ const finalCreateStore = compose(
   browserHasDevTools ? window.devToolsExtension() : f => f
 )(createStore);
 
-export function initState(state=initialState) {
+export function initState(state = initialState) {
   const store = finalCreateStore(theReducer, i.fromJS(state));
   return store;
 }

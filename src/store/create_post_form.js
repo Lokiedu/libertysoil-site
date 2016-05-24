@@ -26,7 +26,7 @@ const initialState = i.fromJS({
   hashtags: []
 });
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.RESET_CREATE_POST_FORM: {
       state = initialState;

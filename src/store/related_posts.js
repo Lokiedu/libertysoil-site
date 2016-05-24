@@ -21,7 +21,7 @@ import * as a from '../actions';
 
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_RELATED_POSTS: {
       const posts = action.posts.map(post => post.id);

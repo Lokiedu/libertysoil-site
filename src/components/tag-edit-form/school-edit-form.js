@@ -25,7 +25,7 @@ import Messages from '../messages';
 import Message from '../message';
 
 
-const TextInputField = ({ defaultValue, field, name, title, type='text' }) => {
+const TextInputField = ({ defaultValue, field, name, title, type = 'text' }) => {
   const id = `input_${name}`;
 
   return (

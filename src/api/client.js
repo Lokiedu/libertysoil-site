@@ -22,7 +22,7 @@ export default class ApiClient
   host;
   serverReq = null;
 
-  constructor(host, serverReq=null) {
+  constructor(host, serverReq = null) {
     this.host = host;
     this.serverReq = serverReq;
   }
@@ -65,7 +65,7 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
-  async post(relativeUrl, data=null) {
+  async post(relativeUrl, data = null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -83,7 +83,7 @@ export default class ApiClient
     *post without setting content type
   */
 
-  async postMultipart(relativeUrl, data=null) {
+  async postMultipart(relativeUrl, data = null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -98,7 +98,7 @@ export default class ApiClient
     return Promise.resolve(req);
   }
 
-  async postJSON(relativeUrl, data=null) {
+  async postJSON(relativeUrl, data = null) {
     let req = request.post(this.apiUrl(relativeUrl));
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -483,7 +483,7 @@ export default class ApiClient
     return response.body;
   }
 
-  async processImage(id, transforms, derived_id=null) {
+  async processImage(id, transforms, derived_id = null) {
     const response = await this.postJSON('/api/v1/image', { original_id: id, transforms: JSON.stringify(transforms), derived_id: derived_id });
     return response.body;
   }

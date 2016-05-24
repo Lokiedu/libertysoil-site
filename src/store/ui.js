@@ -25,7 +25,7 @@ const initialState = i.Map({
   comments: i.Map({})
 });
 
-function reducer(state=initialState, action) {
+function reducer(state = initialState, action) {
   switch (action.type) {
     case a.UI__TOGGLE_SIDEBAR:
       {

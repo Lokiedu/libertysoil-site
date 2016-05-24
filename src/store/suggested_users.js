@@ -21,7 +21,7 @@ import * as a from '../actions';
 
 const initialState = i.List([]);
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.SET_SUGGESTED_USERS: {
       state = i.List(action.suggested_users);

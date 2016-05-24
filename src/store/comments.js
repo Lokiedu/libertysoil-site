@@ -33,7 +33,7 @@ const clearComments = (comments) => (
   })
 );
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_POST_TO_RIVER:
     case a.ADD_POST: {
