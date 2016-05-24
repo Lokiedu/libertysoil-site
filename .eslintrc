@@ -20,6 +20,7 @@
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-return": 2,
     "indent": [2, 2, { "SwitchCase": 1 }],
+    "key-spacing": [2, { "beforeColon": false }],
     "no-else-return": 2,
     "no-native-reassign": 2,
     "no-warning-comments": 1,

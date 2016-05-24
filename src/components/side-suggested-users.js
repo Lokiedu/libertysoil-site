@@ -31,7 +31,7 @@ export default class SideSuggestedUsers extends React.Component {
       id: PropTypes.string.isRequired
     }),
     i_am_following: PropTypes.arrayOf(PropTypes.string.isRequired),
-    triggers:  PropTypes.shape({
+    triggers: PropTypes.shape({
       followUser: PropTypes.func.isRequired,
       unfollowUser: PropTypes.func.isRequired,
       ignoreUser: React.PropTypes.func.isRequired
