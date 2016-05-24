@@ -38,7 +38,7 @@ export default class TabTitle extends React.Component {
   clickHandler = () => {
     const { index, onClick, _toggle } = this.props;
 
-    onClick();
+    onClick(index);
     _toggle(index);
   };
 

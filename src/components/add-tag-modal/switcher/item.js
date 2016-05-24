@@ -15,7 +15,33 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import Tab from './tab';
-import Tabs from './tabs';
+import React, { PropTypes } from 'react';
 
-export { Tab, Tabs };
+import { TagIcon } from '../deps';
+
+export default class ModalSwitcherItem extends React.Component {
+  static displayName = 'ModalSwitcherItem';
+
+  static propTypes = {
+    onClick: PropTypes.func.isRequired,
+    tag: PropTypes.string.isRequired
+  };
+
+  static defaultProps = {
+    onClick: () => {}
+  };
+
+  onClick = () => {
+    this.props.onClick(this.props.tag);
+  };
+
+  render() {
+    const { tag } = this.props;
+
+    return (
+      <div className="modal_switcher__item" onClick={this.onClick}>
+        <TagIcon className="modal_switcher__tag-inactive" type={tag} />
+      </div>
+    );
+  }
+}

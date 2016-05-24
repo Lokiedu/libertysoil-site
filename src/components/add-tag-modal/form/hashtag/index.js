@@ -18,9 +18,12 @@
 import React, { PropTypes, Component } from 'react';
 import { findIndex } from 'lodash';
 
-import HashtagSelect from './hashtag-select';
-import { Tab, Tabs } from '../tabsbox';
-import TagCloud from '../tag-cloud';
+import { Tab, Tabs } from '../../deps';
+import { TagCloud } from '../../deps';
+
+import HashtagSelect from './select';
+
+const TAB_TITLES = ['Enter manually', 'Used recently', 'Popular'];
 
 export default class AddHashtagForm extends Component {
   static displayName = 'AddHashtagForm';
@@ -66,16 +69,21 @@ export default class AddHashtagForm extends Component {
 
   render() {
     const popularHashtags = [];
+    const tabClassName = 'add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored';
 
     return (
       <div className="add_tag_modal add_tag_modal-hashtag">
+        <Tabs>
+          <div className="tabs-font_inherit">
+            <div className="add_tag_modal__tabs">
+              {TAB_TITLES.map((title, i) => (
+                <Tab.Title activeClassName="add_tag_modal__tab-active" className="add_tag_modal__tab" index={i} key={i}>
+                  {title}
+                </Tab.Title>
+              ))}
+            </div>
 
-        <Tabs className="tabs-font_inherit" menuClassName="add_tag_modal__tabs">
-          <Tab>
-            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
-              Enter manually
-            </Tab.Title>
-            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-colored">
+            <Tab.Content className={`${tabClassName} add_tag_modal__tab_panel-colored`} index={0}>
               <form onSubmit={this._handleEnter}>
                 <div className="layout">
                   <div className="layout__grid_item layout__grid_item-wide">
@@ -93,12 +101,8 @@ export default class AddHashtagForm extends Component {
                 </div>
               </form>
             </Tab.Content>
-          </Tab>
-          <Tab>
-            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
-              Used recently
-            </Tab.Title>
-            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+
+            <Tab.Content className={tabClassName} index={1}>
               Used recently:
               <div className="layout__row">
                 <TagCloud
@@ -107,12 +111,8 @@ export default class AddHashtagForm extends Component {
                 />
               </div>
             </Tab.Content>
-          </Tab>
-          <Tab>
-            <Tab.Title className="add_tag_modal__tab" classNameActive="add_tag_modal__tab-active">
-              Popular
-            </Tab.Title>
-            <Tab.Content className="add_tag_modal__tab_panel add_tag_modal__tab_panel-top_colored">
+
+            <Tab.Content className={tabClassName} index={2}>
               Popular:
               <div className="layout__row">
                 <TagCloud
@@ -120,10 +120,9 @@ export default class AddHashtagForm extends Component {
                 />
               </div>
             </Tab.Content>
-          </Tab>
+          </div>
         </Tabs>
       </div>
     );
   }
-
 }

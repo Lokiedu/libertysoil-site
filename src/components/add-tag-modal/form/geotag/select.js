@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,13 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import { find, isEmpty, throttle } from 'lodash';
 
-import Autosuggest from './../autosuggest';
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
+import { Autosuggest } from '../../deps';
+import { ApiClient } from '../../deps';
+import { API_HOST } from '../../deps';
 
 export default class GeotagSelect extends Component {
   static displayName = 'GeotagSelect';
@@ -48,7 +48,7 @@ export default class GeotagSelect extends Component {
   }
 
   getFirstOverlapModel() {
-    return _.find(this.state.suggestions, s => s.name === this.state.value);
+    return find(this.state.suggestions, s => s.name === this.state.value);
   }
 
   reset() {
@@ -58,7 +58,7 @@ export default class GeotagSelect extends Component {
     });
   }
 
-  _getSuggestions = _.throttle(async ({ value }) => {
+  _getSuggestions = throttle(async ({ value }) => {
     if (!value.length) {
       return;
     }
@@ -75,11 +75,11 @@ export default class GeotagSelect extends Component {
     let name = geotag.name;
     const additionalInfo = [];
 
-    if (!_.isEmpty(geotag.admin1)) {
+    if (!isEmpty(geotag.admin1)) {
       additionalInfo.push(geotag.admin1.name);
     }
 
-    if (!_.isEmpty(geotag.country)) {
+    if (!isEmpty(geotag.country)) {
       additionalInfo.push(geotag.country.name);
     }
 

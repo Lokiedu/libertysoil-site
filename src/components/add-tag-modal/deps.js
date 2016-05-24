@@ -15,39 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
+export { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../../consts/tags';
+export { default as ApiClient } from '../../api/client';
+export { API_HOST } from '../../config';
 
-import TabTitle from './tab-title';
-import TabContent from './tab-content';
-
-const Tab = ({ active, children, className }) => {
-  let cn = 'tabs__tab';
-  if (className) {
-    cn += ` ${className}`;
-  }
-  if (!active) {
-    cn += ' hidden';
-  }
-
-  let content;
-  React.Children.forEach(children, child => {
-    if ((typeof child === 'object') && (child.type.displayName === 'TabBoxContent')) {
-      content = child;
-    }
-  });
-
-  return (
-    <div className={cn}>{content}</div>
-  );
-};
-
-Tab.propTypes = {
-  active: PropTypes.bool,
-  children: PropTypes.node,
-  className: PropTypes.string
-};
-
-Tab.Title = TabTitle;
-Tab.Content = TabContent;
-
-export default Tab;
+export { Tab, Tabs } from '../tabs';
+export { default as TagIcon } from '../tag-icon';
+export { default as TagCloud } from '../tag-cloud';
+export { default as Autosuggest } from '../autosuggest';
+export { default as ModalComponent } from '../modal-component';
