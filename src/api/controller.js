@@ -473,7 +473,7 @@ export default class ApiController {
     }
 
     let checkit = new Checkit(GeotagValidators.more);
-    
+
     try {
       await checkit.run(ctx.request.body.more);
     } catch (e) {
@@ -495,7 +495,7 @@ export default class ApiController {
 
       properties.last_editor = ctx.session.user;
       properties = _.extend(geotag.get('more'), properties);
-      
+
       geotag.set('more', properties);
       await geotag.save(null, {method: 'update'});
 
@@ -521,7 +521,7 @@ export default class ApiController {
     }
 
     let checkit = new Checkit(HashtagValidators.more);
-    
+
     try {
       await checkit.run(ctx.request.body.more);
     } catch (e) {
@@ -543,7 +543,7 @@ export default class ApiController {
 
       properties.last_editor = ctx.session.user;
       properties = _.extend(hashtag.get('more'), properties);
-      
+
       hashtag.set('more', properties);
       await hashtag.save(null, {method: 'update'});
 

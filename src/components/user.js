@@ -163,7 +163,7 @@ export default class User extends Component {
         <div className="user_box__body">
           <p className="user_box__name">
             {render.name}
-          </p>   
+          </p>
           {render.timestamp}
         </div>
       );

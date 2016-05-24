@@ -80,7 +80,7 @@ class SettingsPage extends React.Component {
 
     let processedPictures = {};
     let pictures = this.base._getNewPictures();
-    
+
     for (let name in pictures) {
       processedPictures[name] = await triggers.uploadPicture({...pictures[name]});
     }

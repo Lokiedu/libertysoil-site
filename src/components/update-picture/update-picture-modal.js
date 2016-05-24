@@ -142,7 +142,7 @@ export default class UpdatePictureModal extends React.Component {
     if (!this.props.visible) {
       return <script />;
     }
-    
+
     return (
       <ModalComponent ref={c => this.modal = c} size="big" onHide={this.closeHandler}>
         <ModalComponent.Head>

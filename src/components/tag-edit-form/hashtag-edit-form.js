@@ -76,7 +76,7 @@ class HashtagEditForm extends React.Component {
       messages,
       triggers
     } = this.props;
-    
+
     let defaultDescription;
     if (hashtag.more) {
       defaultDescription = hashtag.more.description;

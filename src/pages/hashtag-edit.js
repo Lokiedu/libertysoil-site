@@ -83,7 +83,7 @@ class HashtagEditPage extends React.Component {
     }
 
     try {
-      
+
       let result = await triggers.updateHashtag(id, { more });
       browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
 

@@ -85,7 +85,7 @@ export class Tabs extends Component {
   to = (i) => {
     this.setState({active: i});
   }
-  
+
   clickHandler = (i) => {
     this.setState({ active: i });
     this.props.onClick(i);
@@ -110,7 +110,7 @@ export class Tabs extends Component {
       const children = item.props.children;
       let titleClassName = '';
       let content;
-      
+
       React.Children.forEach(children, child => {
         if ((typeof child === 'object') && (child.type.displayName === 'TabTitle')) {
           if (child.props.className) {

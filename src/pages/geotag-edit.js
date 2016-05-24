@@ -73,7 +73,7 @@ class GeotagEditPage extends React.Component {
 
       let result = await triggers.updateGeotag(id, { more });
       browserHistory.push(getUrl(URL_NAMES.GEOTAG, {url_name: result.url_name}));
-    
+
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveGeotag(id, description);

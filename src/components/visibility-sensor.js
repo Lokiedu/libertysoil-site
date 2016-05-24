@@ -78,7 +78,7 @@ export default class VisibilitySensor extends Component {
     function check(p = 0, w = 0) {
       return ((w - p > 0) && (p - w < w));
     }
-    
+
     let isVisible;
 
     if (!pos.width) {

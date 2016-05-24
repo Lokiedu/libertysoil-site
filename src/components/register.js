@@ -119,7 +119,7 @@ export default class RegisterComponent extends React.Component {
     } else if (field.getAttribute('name') === 'lastName') {
       this.last = input;
     }
-    
+
     const result = this.first + this.last;
     if (!result) {
       this.setState({ username: result });
@@ -140,7 +140,7 @@ export default class RegisterComponent extends React.Component {
 
     this.setState({ username: result });
     this.usernameManuallyChanged = true;
-    
+
     try {
       this.unavailable = await this.checkUserExists(result);
       this.error = '';

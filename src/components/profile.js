@@ -95,7 +95,7 @@ export default class ProfileHeader extends React.Component {
       following,
       followers
     } = this.props;
-    
+
     let picture = '/assets/d18659acda9afc3dea60b49d71d689ae.jpg';
     let name = user.username;
     let summary = '';
