@@ -17,6 +17,7 @@
     "node": true
   },
   "rules": {
+    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-return": 2,
     "no-else-return": 2,
     "no-native-reassign": 2,
