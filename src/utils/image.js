@@ -14,6 +14,7 @@ promisifyAll(require('lwip/lib/Batch').prototype);
  * Available transforms (add as needed):
  *   {crop: {left: Number, top: Number, right: Number, bottom: Number}}
  *   {resize: {width: Number, height: Number}}
+ *   {scale: {hRatio: Number, wRatio: Number}}
  * @param {Buffer} buffer
  * @param {Array} transforms - An array of transforms
  * @returns {Promise}
