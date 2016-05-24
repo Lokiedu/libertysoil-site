@@ -23,27 +23,21 @@ import TagIcon from '../tag-icon';
 import Breadcrumbs from './breadcrumbs';
 import { TAG_HASHTAG } from '../../consts/tags';
 
-export default class HashtagBreadcrumbs extends React.Component {
-  static displayName = 'HashtagBreadcrumbs';
+const HashtagBreadcrumbs = ({ hashtag }) => (
+  <Breadcrumbs>
+    <Link title="All Hashtags" to="/tag">
+      <TagIcon inactive type={TAG_HASHTAG} />
+    </Link>
+    <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
+  </Breadcrumbs>
+);
 
-  static propTypes = {
-    hashtag: PropTypes.shape({
-      name: PropTypes.string
-    }).isRequired
-  };
+HashtagBreadcrumbs.displayName = 'HashtagBreadcrumbs';
 
-  render() {
-    const {
-      hashtag
-    } = this.props;
+HashtagBreadcrumbs.propTypes = {
+  hashtag: PropTypes.shape({
+    name: PropTypes.string
+  }).isRequired
+};
 
-    return (
-      <Breadcrumbs>
-        <Link to="/tag" title="All Hashtags">
-          <TagIcon inactive type={TAG_HASHTAG} />
-        </Link>
-        <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
-      </Breadcrumbs>
-    );
-  }
-}
+export default HashtagBreadcrumbs;

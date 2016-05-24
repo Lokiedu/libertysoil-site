@@ -15,12 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-let User = {
+const User = {
   registration: {
     username: [
       'required',
       'maxLength:31',
-      { rule: function(val) {
+      { rule: (val) => {
         if (!val.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
           throw new Error("Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)");
         }
@@ -29,7 +29,7 @@ let User = {
     password: [
       'required',
       {
-        rule: function(val) {
+        rule: (val) => {
           if (!val.match(/^[\x20-\x7E]{8,}$/)) {
             throw new Error("Password is min. 8 characters. Password can only have ascii characters.");
           }
@@ -44,7 +44,7 @@ let User = {
     email: [
       'required',
       {
-        rule: function(val) {
+        rule: (val) => {
           if (!val.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i)) {
             throw new Error('The email must be a valid email address');
           }
@@ -67,21 +67,21 @@ let User = {
   }
 };
 
-let School = {
+const School = {
   more: {
     head_pic: ['plainObject'],
     last_editor: ['string']
   }
 };
 
-let Geotag = {
+const Geotag = {
   more: {
     description: ['string'],
     last_editor: ['string']
   }
 };
 
-let Hashtag = {
+const Hashtag = {
   more: {
     description: ['string'],
     head_pic: ['plainObject'],

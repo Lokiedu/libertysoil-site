@@ -16,7 +16,7 @@ backup:
   environment:
     - "BACKUP_DAYS_TO_KEEP=14"
     - "BACKUP_SCHEDULE=@every 24h"
-    - "BACKUP_S3_DIR=postgres-production"
+    - "BACKUP_S3_DIR=postgres-staging"
   env_file:
     - "./secrets.env"
   restart: always

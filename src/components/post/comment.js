@@ -35,7 +35,7 @@ export default class Comment extends Component {
     isEditMode: false
   };
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const {
       comment,
       ui
@@ -78,7 +78,7 @@ export default class Comment extends Component {
     const {
       text
     } = this.state;
-    let commentText = text.trim();
+    const commentText = text.trim();
 
     e && e.preventDefault();
 
@@ -208,7 +208,7 @@ export default class Comment extends Component {
     );
   };
 
-  render () {
+  render() {
     const {
       author
     } = this.props;
@@ -218,7 +218,7 @@ export default class Comment extends Component {
         <div className="comment__container">
           <header className="comment__header">
             <div className="comment__author">
-              <User user={author} avatarSize="17" hideText={true} />
+              <User user={author} avatarSize="17" hideText />
             </div>
           </header>
           {this.renderBody()}

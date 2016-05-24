@@ -20,12 +20,12 @@ import multer from 'koa-multer';
 
 import ApiController from './controller';
 
-let upload = multer({storage: multer.memoryStorage()});
+const upload = multer({ storage: multer.memoryStorage() });
 
 export function initApi(bookshelf) {
-  let controller = new ApiController(bookshelf);
+  const controller = new ApiController(bookshelf);
 
-  let api = new Router();
+  const api = new Router();
 
   api.get('/test', controller.test);
   api.post('/users', controller.registerUser);

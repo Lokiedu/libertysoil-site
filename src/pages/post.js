@@ -30,15 +30,15 @@ import {
 } from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import HeaderLogo from '../components/header-logo';
-import NotFound from './not-found'
+import NotFound from './not-found';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import { ShortTextPost, PostWrapper } from '../components/post'
+import { ShortTextPost, PostWrapper } from '../components/post';
 import Sidebar from '../components/sidebar';
 import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
-import {API_HOST} from '../config';
-import ApiClient from '../api/client'
+import { API_HOST } from '../config';
+import ApiClient from '../api/client';
 import { addPost, setRelatedPosts } from '../actions';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -55,8 +55,8 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(params, store, client) {
-    let post = await client.postInfo(params.uuid);
-    let relatedPosts = client.relatedPosts(params.uuid);
+    const post = await client.postInfo(params.uuid);
+    const relatedPosts = client.relatedPosts(params.uuid);
 
     store.dispatch(addPost(post));
     store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
@@ -67,26 +67,26 @@ export class PostPage extends React.Component {
 
     if (!(post_uuid in this.props.posts)) {
       // not loaded yet
-      return <script/>
+      return <script/>;
     }
 
     const current_post = this.props.posts[post_uuid];
 
     if (current_post === false) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
-    const author = this.props.users[current_post.user_id]
+    const author = this.props.users[current_post.user_id];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let relatedPostIds = this.props.related_posts[current_post.id];
-    let relatedPosts = (relatedPostIds)
+    const relatedPostIds = this.props.related_posts[current_post.id];
+    const relatedPosts = (relatedPostIds)
                          ? relatedPostIds.map(id => this.props.posts[id])
                          : null;
 
-    const authorUrl = getUrl(URL_NAMES.USER, {username: author.username});
+    const authorUrl = getUrl(URL_NAMES.USER, { username: author.username });
     let authorName = author.username;
 
     if (author.more && (author.more.firstName || author.more.lastName)) {
@@ -98,7 +98,7 @@ export class PostPage extends React.Component {
         <Helmet title={`${current_post.more.pageTitle} on `} />
         <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
           <HeaderLogo small />
-          <Breadcrumbs title={truncate(current_post.text, {length: 16})}>
+          <Breadcrumbs title={truncate(current_post.text, { length: 16 })}>
             <Link
               className="user_box__avatar user_box__avatar-round"
               title={authorName}
@@ -121,7 +121,7 @@ export class PostPage extends React.Component {
                   post={current_post}
                   comments={this.props.comments}
                   ui={this.props.ui}
-                  showAllComments={true}
+                  showAllComments
                   triggers={triggers}
                 >
                   <ShortTextPost post={current_post}/>
@@ -141,7 +141,7 @@ export class PostPage extends React.Component {
 
         <Footer/>
       </div>
-    )
+    );
   }
 }
 

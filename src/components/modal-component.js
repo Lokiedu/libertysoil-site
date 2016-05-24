@@ -1,5 +1,22 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import { values } from 'lodash';
 
 import bem from '../utils/bemClassNames';
 
@@ -15,10 +32,11 @@ class ModalComponent extends Component {
   static displayName = 'ModalComponent';
 
   static propTypes = {
-    children: PropTypes.any,
+    children: PropTypes.node,
+    className: PropTypes.string,
     onHide: PropTypes.func,
-    title: PropTypes.string.isRequired,
-    size: PropTypes.oneOf(_.values(SIZES))
+    size: PropTypes.oneOf(values(SIZES)),
+    title: PropTypes.string.isRequired
   };
 
   static defaultProps = {
@@ -27,16 +45,16 @@ class ModalComponent extends Component {
     width: ''
   };
 
-  componentWillMount () {
+  componentWillMount() {
     isBrowser && window.addEventListener('keydown', this.keyHandler);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     isBrowser && window.removeEventListener('keydown', this.keyHandler);
   }
 
   keyHandler = (e) => {
-    if (e.keyCode ==27) {
+    if (e.keyCode == 27) {
       this.hide();
     }
   };
@@ -56,7 +74,7 @@ class ModalComponent extends Component {
     };
   }
 
-  render () {
+  render() {
     const {
       size,
       children,
@@ -73,12 +91,12 @@ class ModalComponent extends Component {
     });
 
     if (className) {
-      cn = `${cn} ${className}`;
+      cn += ` ${className}`;
     }
 
     return (
       <div className={cn} {...props} onClick={this.hide}>
-        <div ref={c => this.body = c} className="modal__section" onClick={this.clickHandler}>
+        <div className="modal__section" ref={c => this.body = c} onClick={this.clickHandler}>
             {children}
         </div>
       </div>
@@ -86,28 +104,33 @@ class ModalComponent extends Component {
   }
 }
 
-ModalComponent.Head = ({ children }) => (
+const Head = ({ children }) => (
   <div className="modal__section_head">
     {children}
   </div>
 );
 
-ModalComponent.Title = ({ children }) => (
+const Title = ({ children }) => (
   <h4 className="modal__title">
     {children}
   </h4>
 );
 
-ModalComponent.Body = ({ children }) => (
+const Body = ({ children }) => (
   <div className="modal__section_description">
     {children}
   </div>
 );
 
-ModalComponent.Actions = ({ children }) => (
+const Actions = ({ children }) => (
   <div className="modal__navigation">
     {children}
   </div>
 );
+
+ModalComponent.Head = Head;
+ModalComponent.Title = Title;
+ModalComponent.Body = Body;
+ModalComponent.Actions = Actions;
 
 export default ModalComponent;

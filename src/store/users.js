@@ -14,24 +14,23 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 import _ from 'lodash';
 
 import * as a from '../actions';
 
-
 const initialState = i.Map({});
 
 const cleanUser = user => {
-  let users = {};
+  const users = {};
 
   if (!user) {
     return users;
   }
 
   if (user.following) {
-    for (let followed_user of user.following) {
+    for (const followed_user of user.following) {
       users[followed_user.id] = followed_user;
     }
 
@@ -40,7 +39,7 @@ const cleanUser = user => {
   }
 
   if (user.followers) {
-    for (let follower of user.followers) {
+    for (const follower of user.followers) {
       users[follower.id] = follower;
     }
 
@@ -53,7 +52,7 @@ const cleanUser = user => {
   return users;
 };
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.ADD_USER:
     case a.SET_CURRENT_USER: {
@@ -77,8 +76,7 @@ export default function reducer(state=initialState, action) {
     case a.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_SCHOOL_POSTS:
     case a.SET_TAG_POSTS:
-    case a.SET_GEOTAG_POSTS:
-    {
+    case a.SET_GEOTAG_POSTS: {
       const authors = action.posts.map(post => post.user);
       const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
       const users = _.keyBy(_.uniq([...authors, ...comment_authors], 'id'), 'id');
@@ -87,9 +85,8 @@ export default function reducer(state=initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS:
-    {
-      let users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
+    case a.SET_POST_COMMENTS: {
+      const users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;

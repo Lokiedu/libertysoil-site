@@ -15,11 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
+import Message from './message';
 
 class SuccessContent extends Component {
 
@@ -43,52 +45,69 @@ class SuccessContent extends Component {
   }
 }
 
-export default class RegisterComponent extends React.Component {
+class Register extends React.Component {
+  static displayName = 'Register';
+
+  static propTypes = {
+    fields: PropTypes.shape({
+      username: PropTypes.shape({
+        error: PropTypes.string
+      }).isRequired,
+      password: PropTypes.shape({
+        error: PropTypes.string
+      }).isRequired,
+      passwordRepeat: PropTypes.shape({
+        error: PropTypes.string
+      }).isRequired,
+      email: PropTypes.shape({
+        error: PropTypes.string
+      }).isRequired,
+      agree: PropTypes.shape({
+        error: PropTypes.string
+      }).isRequired
+    }).isRequired,
+    form: PropTypes.shape({
+      forceValidate: PropTypes.func.isRequired,
+      isValid: PropTypes.func.isRequired,
+      onValues: PropTypes.func.isRequired
+    }).isRequired
+  };
+
   constructor() {
     super();
 
     this.first = '';
     this.last = '';
-    this.error = '';
-    this.unavailable = false;
     this.usernameManuallyChanged = false;
-    this.state = {
-      username: ''
-    };
+  }
+
+  componentDidMount() {
+    this.username.addEventListener('input', this.inputUsername);
+  }
+
+  componentWillUnmount() {
+    this.username.removeEventListener('input', this.inputUsername);
   }
 
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const { form } = this.props;
 
-    if (this.error) {
-      form.username.setCustomValidity(this.error);
+    form.forceValidate();
+
+    if (!form.isValid()) {
       return;
     }
 
-    if (this.unavailable) {
-      return;
-    }
-
-    if (form.password.value != form.password_repeat.value) {
-      form.password_repeat.setCustomValidity("Passwords don't match");
-      return;
-    }
-
-    form.password_repeat.setCustomValidity('');
-
-    if (!form.agree.checked) {
-      form.agree.setCustomValidity('You have to agree to Terms before registering');
-      return;
-    }
+    const theForm = event.target;
 
     this.props.onRegisterUser(
       form.username.value,
       form.password.value,
       form.email.value,
-      form.firstName.value,
-      form.lastName.value
+      theForm.firstName.value,
+      theForm.lastName.value
     );
   };
 
@@ -97,103 +116,52 @@ export default class RegisterComponent extends React.Component {
     return await client.getAvailableUsername(username);
   }
 
-  async checkUserExists(username) {
-    const client = new ApiClient(API_HOST);
-    return await client.checkUserExists(username);
-  }
-
-  async checkEmailTaken(email) {
-    const client = new ApiClient(API_HOST);
-    return await client.checkEmailTaken(email);
-  }
-
-  inputHandler = async (event) => {
-    if (this.usernameManuallyChanged)
+  changeName = async (event) => {
+    if (this.usernameManuallyChanged) {
       return;
+    }
 
     const field = event.target;
     const input = field.value.replace(/\W|\d/g, '');
+    field.value = input;
 
     if (field.getAttribute('name') === 'firstName') {
       this.first = input;
     } else if (field.getAttribute('name') === 'lastName') {
       this.last = input;
     }
-    
+
     const result = this.first + this.last;
     if (!result) {
-      this.setState({ username: result });
+      this.username.value = result;
       return;
     }
 
     try {
-      this.setState({ username: await this.getAvailableUsername(result) });
-      this.unavailable = false;
+      this.username.value = await this.getAvailableUsername(result);
       this.error = '';
     } catch (e) {
       this.error = e.message;
     }
   };
 
-  usernameInputHandler = async (event) => {
-    const result = event.target.value.replace(/\s|\W/g, '');
+  inputUsername = (event) => {
+    const field = event.target;
+    const result = field.value.replace(/\s|\W/g, '');
 
-    this.setState({ username: result });
+    field.value = result;
     this.usernameManuallyChanged = true;
-    
-    try {
-      this.unavailable = await this.checkUserExists(result);
-      this.error = '';
-    } catch (e) {
-      this.error = e.message;
-    }
-
-    if (this.unavailable) {
-      this.username.setCustomValidity('Username is taken');
-    } else {
-      this.username.setCustomValidity('');
-    }
-  };
-
-  emailValidation = async (event) => {
-    const result = event.target.value.trim();
-
-    let unavailable;
-    try {
-      unavailable = await this.checkEmailTaken(result);
-      this.error = '';
-    } catch (e) {
-      this.error = e.message;
-    }
-
-    if (unavailable) {
-      this.email.setCustomValidity('Email is taken');
-    } else {
-      this.email.setCustomValidity('');
-    }
-  }
-
-  passwordValidation = () => {
-    const pass = this.password;
-    const passRepeat = this.passwordRepeat;
-
-    if (!passRepeat.value || pass.value === passRepeat.value) {
-      pass.setCustomValidity('');
-      passRepeat.setCustomValidity('');
-    } else {
-      pass.setCustomValidity("Passwords don't match");
-      passRepeat.setCustomValidity("Passwords don't match");
-    }
   };
 
   render() {
+    const { fields, form } = this.props;
+
     if (this.props.registration_success) {
       ga('send', 'event', 'Reg', 'Done');
       return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
     }
 
     const reset = ((e) => e.target.setCustomValidity(''));
-
     return (
     <div id="register" className="div">
       <header className="layout__row layout__row-double">
@@ -206,40 +174,104 @@ export default class RegisterComponent extends React.Component {
       <form action="" onSubmit={this.submitHandler} className="layout__row">
           <div className="layout__row"><div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input onBlur={reset} onInput={this.inputHandler} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
+            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
           </div>
           <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerUsername">Username</label>
-            <input ref={(c) => this.username = c} onChange={this.usernameInputHandler} className="input input-gray input-big input-block" type="text" placeholder="Username" id="registerUsername" name="username" required="required" value={this.state.username} />
+            <label className="label label-before_input" htmlFor="username">Username</label>
+            <input ref={(c) => this.username = c} className="input input-gray input-big input-block" type="text" placeholder="Username" id="username" name="username" required="required" {...fields.username}/>
+            {fields.username.error &&
+              <Message message={fields.username.error} />
+            }
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input ref={(c) => this.password = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" />
+            <input ref={(c) => this.password = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" {...fields.password} />
+            {fields.password.error &&
+              <Message message={fields.password.error} />
+            }
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input ref={(c) => this.passwordRepeat = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" />
+            <input ref={(c) => this.passwordRepeat = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" {...fields.passwordRepeat} />
+            {fields.passwordRepeat.error &&
+              <Message message={fields.passwordRepeat.error} />
+            }
           </div>
           <div className="layout__row layout__row-double">
             <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input ref={(c) => this.email = c} onChange={this.emailValidation} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" />
+            <input ref={(c) => this.email = c} onChange={this.emailValidation} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" {...fields.email} />
+            {fields.email.error &&
+              <Message message={fields.email.error} />
+            }
           </div>
         </div>
         <div className="layout__row layout__row-double">
+          {fields.agree.error &&
+            <Message message={fields.agree.error} />
+          }
           <div className="layout__grid layout__grid-big layout-align_vertical">
             <button className="button button-big button-green">Sign up</button>
             <label className="action checkbox">
-              <input name="agree" required="required" type="checkbox" />
+              <input name="agree" required="required" type="checkbox" {...fields.agree} />
               <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
             </label>
           </div>
         </div>
       </form>
     </div>
-    )
+    );
   }
 }
+
+const checkEmailNotTaken = (email) => {
+  const client = new ApiClient(API_HOST);
+  return client.checkEmailTaken(email).then(taken => !taken);
+};
+
+const checkUsernameNotTaken = (username) => {
+  const client = new ApiClient(API_HOST);
+  return client.checkUserExists(username).then(exists => !exists);
+};
+
+const validatePassword = (password) => {
+  if (password && password.length < 8) {
+    return false;
+  }
+  return true;
+};
+
+const validatePasswordRepeat = (passwordRepeat, form) => {
+  if (form.password !== passwordRepeat) {
+    return false;
+  }
+  return true;
+};
+
+const WrappedRegister = inform(from({
+  username: {
+    'You must enter username to continue': u => u,
+    'Username is taken': checkUsernameNotTaken
+  },
+  email: {
+    'You must enter email to continue': e => e,
+    'Email is taken': checkEmailNotTaken
+  },
+  password: {
+    'You must enter password to continue': p => p,
+    'Password must contain at least 8 symbols': validatePassword
+  },
+  passwordRepeat: {
+    'You must enter your password again to continue': p => p,
+    'Passwords don\'t match': validatePasswordRepeat
+  },
+  agree: {
+    'You have to agree to Terms before registering': a => a
+  }
+}))(Register);
+
+export default WrappedRegister;
+

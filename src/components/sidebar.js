@@ -35,16 +35,20 @@ import createSelector from '../selectors/createSelector';
 class Sidebar extends React.Component {
   static displayName = 'Sidebar';
 
-  state = {
-    clientWidth: 0
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount () {
+    this.state = {
+      clientWidth: 0
+    };
+  }
+
+  componentDidMount() {
     window.addEventListener('resize', this.toggleVisible);
     document.addEventListener('DOMContentLoaded', this.toggleVisible);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.toggleVisible);
     document.removeEventListener('DOMContentLoaded', this.toggleVisible);
   }
@@ -79,9 +83,7 @@ class Sidebar extends React.Component {
       dispatch(toggleUISidebar(false));
     }
 
-    this.setState({
-      clientWidth: clientWidth
-    });
+    this.setState({ clientWidth });
   }, 100);
 
   render() {
@@ -90,30 +92,30 @@ class Sidebar extends React.Component {
       is_logged_in,
       routing
     } = this.props;
-    let sidebarClassName = ['sidebar'];
+    const sidebarClassName = ['sidebar'];
 
     if (!is_logged_in) {
-      return null;
+      return <script />;
     }
 
     if (ui.get('sidebarIsVisible')) {
       sidebarClassName.push('sidebar-visible');
     }
 
-    let current_user = this.props.current_user.toJS();
+    const current_user = this.props.current_user.toJS();
 
-    let followedTags = values(current_user.followed_hashtags);
-    let followedSchools = values(current_user.followed_schools);
-    let followedGeotags = values(current_user.followed_geotags);
+    const followedTags = values(current_user.followed_hashtags);
+    const followedSchools = values(current_user.followed_schools);
+    const followedGeotags = values(current_user.followed_geotags);
 
-    let showLikes =
+    const showLikes =
       (current_user.likes && current_user.likes.length)
       || this.props.current_user.get('liked_hashtags').size
       || this.props.current_user.get('liked_geotags').size
       || this.props.current_user.get('liked_schools').size;
-    let showFavorites = (current_user.favourites && current_user.favourites.length > 0);
-    let showFollowedTags = followedTags.length || followedSchools.length || followedGeotags.length;
-    let showUsedTags = current_user.hashtags.length || current_user.geotags.length || current_user.schools.length;
+    const showFavorites = (current_user.favourites && current_user.favourites.length > 0);
+    const showFollowedTags = followedTags.length || followedSchools.length || followedGeotags.length;
+    const showUsedTags = current_user.hashtags.length || current_user.geotags.length || current_user.schools.length;
 
     let followedTagsSection;
     if (showFollowedTags) {

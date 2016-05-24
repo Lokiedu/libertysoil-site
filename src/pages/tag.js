@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -41,21 +41,21 @@ export class TagPage extends Component {
   static displayName = 'TagPage';
 
   static propTypes = {
-    tag_posts: PropTypes.shape().isRequired,
     hashtags: PropTypes.shape().isRequired,
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
-    })
+    }),
+    tag_posts: PropTypes.shape().isRequired
   };
 
   static async fetchData(params, store, client) {
     let hashtag = client.getHashtag(params.tag);
-    let tagPosts = client.tagPosts(params.tag);
+    const tagPosts = client.tagPosts(params.tag);
 
     try {
       hashtag = await hashtag;
     } catch (e) {
-      store.dispatch(addHashtag({name: params.tag}));
+      store.dispatch(addHashtag({ name: params.tag }));
 
       return 404;
     }
@@ -90,7 +90,7 @@ export class TagPage extends Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
     const tag = hashtags[params.tag];
 
@@ -106,26 +106,26 @@ export class TagPage extends Component {
 
     return (
       <BaseTagPage
-        params={this.props.params}
-        current_user={current_user}
-        tag={tag}
-        type={TAG_HASHTAG}
-        is_logged_in={is_logged_in}
         actions={actions}
-        triggers={triggers}
-        schools={values(schools)}
-        postsAmount={thisTagPosts.length}
         create_post_form={this.props.create_post_form}
+        current_user={current_user}
+        is_logged_in={is_logged_in}
+        params={this.props.params}
+        postsAmount={thisTagPosts.length}
+        schools={values(schools)}
+        tag={tag}
+        triggers={triggers}
+        type={TAG_HASHTAG}
       >
         <Helmet title={`"${tag.name}" posts on `} />
         <River
+          comments={comments}
           current_user={current_user}
           posts={posts}
           river={thisTagPosts}
           triggers={triggers}
-          users={users}
-          comments={comments}
           ui={ui}
+          users={users}
         />
       </BaseTagPage>
     );
@@ -134,5 +134,5 @@ export class TagPage extends Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(TagPage);

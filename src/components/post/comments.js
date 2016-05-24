@@ -42,7 +42,7 @@ class Comments extends Component {
     showAllComments: false
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,12 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import ApiClient from '../api/client'
+import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
@@ -36,7 +36,7 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-let SuccessMessage = () => {
+const SuccessMessage = () => {
   return (
     <div>
       You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
@@ -60,9 +60,9 @@ class PasswordForm extends React.Component {
     };
   }
 
-  _validatePassword() {
-    let errors = this.state.errors;
-    let password = this.refs.form.password;
+  _validatePassword = () => {
+    const errors = this.state.errors;
+    const password = this.form.password;
 
     if (password.value.length < 8) {
       errors.password = 'Password must be at least 8 characters';
@@ -70,12 +70,12 @@ class PasswordForm extends React.Component {
       errors.password = null;
     }
 
-    this.setState({errors});
-  }
+    this.setState({ errors });
+  };
 
-  _validatePasswordRepeat() {
-    let errors = this.state.errors;
-    let { password, password_repeat } = this.refs.form;
+  _validatePasswordRepeat = () => {
+    const errors = this.state.errors;
+    const { password, password_repeat } = this.form;
 
     if (password_repeat.value.length > 0 && password.value !== password_repeat.value) {
       errors.password_repeat = 'Passwords do not match';
@@ -83,14 +83,14 @@ class PasswordForm extends React.Component {
       errors.password_repeat = null;
     }
 
-    this.setState({errors});
-  }
+    this.setState({ errors });
+  };
 
   render() {
-    let errors = this.state.errors;
+    const errors = this.state.errors;
 
     return (
-      <form className="password-form" ref="form" onSubmit={this.props.onSubmit} action="" method="post">
+      <form className="password-form" ref={c => this.form = c} onSubmit={this.props.onSubmit} action="" method="post">
         <div className="layout__row">
           <div className="form__row">
             <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
@@ -98,7 +98,7 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPassword"
               name="password"
-              onChange={this._validatePassword.bind(this)}
+              onChange={this._validatePassword}
               required="required"
               type="password"
             />
@@ -109,7 +109,7 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPasswordRepeat"
               name="password_repeat"
-              onChange={this._validatePasswordRepeat.bind(this)}
+              onChange={this._validatePasswordRepeat}
               required="required"
               type="password"
             />
@@ -129,7 +129,7 @@ class Form extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    let form = event.target;
+    const form = event.target;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -138,11 +138,11 @@ class Form extends React.Component {
   };
 
   render() {
-    let {
+    const {
       messages
     } = this.props;
 
-    let content = <PasswordForm onSubmit={this.submitHandler} />
+    let content = <PasswordForm onSubmit={this.submitHandler} />;
 
     if (this.props.ui.submitNewPassword) {
       content = <SuccessMessage />;

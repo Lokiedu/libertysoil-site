@@ -24,7 +24,7 @@ import { values } from 'lodash';
 
 import { defaultSelector } from '../selectors';
 
-import {API_HOST} from '../config';
+import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
 import {
@@ -41,12 +41,12 @@ class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
 
   static async fetchData(params, store, client) {
-    let hashtag = client.getHashtag(params.tag);
+    const hashtag = client.getHashtag(params.tag);
 
     try {
       store.dispatch(addHashtag(await hashtag));
     } catch (e) {
-      store.dispatch(addHashtag({name: params.tag}));
+      store.dispatch(addHashtag({ name: params.tag }));
 
       return 404;
     }
@@ -57,36 +57,37 @@ class HashtagEditPage extends React.Component {
     return 200;
   }
 
-  state = {
-    processing: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      processing: false
+    };
   }
 
   saveHashtag = async (id, description) => {
-    this.setState({processing: true});
+    this.setState({ processing: true });
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let more = { description };
+    const more = { description };
+
     try {
-
       const pictures = this.base._getNewPictures();
-      for (let name in pictures) {
-        more[name] = await triggers.uploadPicture({...pictures[name]});
+      for (const name in pictures) {
+        more[name] = await triggers.uploadPicture({ ...pictures[name] });
       }
-
     } catch (e) {
       if (!confirm("It seems like there're problems with upload the images. Would you like to continue saving changes without them?")) {
-        this.setState({processing: false});
+        this.setState({ processing: false });
         return;
       }
     }
 
     try {
-      
-      let result = await triggers.updateHashtag(id, { more });
-      browserHistory.push(getUrl(URL_NAMES.HASHTAG, {name: result.name}));
-
+      const result = await triggers.updateHashtag(id, { more });
+      browserHistory.push(getUrl(URL_NAMES.HASHTAG, { name: result.name }));
     } catch (e) {
       if (confirm("Saving changes failed. Would you like to try again?")) {
         this.saveHashtag(id, description);
@@ -94,7 +95,7 @@ class HashtagEditPage extends React.Component {
       }
     }
 
-    this.setState({processing: false});
+    this.setState({ processing: false });
   };
 
   render() {
@@ -111,7 +112,7 @@ class HashtagEditPage extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const actions = {resetCreatePostForm, updateCreatePostForm};
+    const actions = { resetCreatePostForm, updateCreatePostForm };
 
     const tag = hashtags[params.tag];
 
@@ -122,7 +123,7 @@ class HashtagEditPage extends React.Component {
     return (
       <BaseTagPage
         ref={c => this.base = c}
-        editable={true}
+        editable
         params={params}
         current_user={current_user}
         tag={tag}
@@ -142,7 +143,8 @@ class HashtagEditPage extends React.Component {
               messages={messages}
               triggers={triggers}
               saveHandler={this.saveHashtag}
-              processing={this.state.processing} />
+              processing={this.state.processing}
+            />
           </div>
         </div>
       </BaseTagPage>
@@ -152,5 +154,5 @@ class HashtagEditPage extends React.Component {
 
 export default connect(defaultSelector, dispatch => ({
   dispatch,
-  ...bindActionCreators({resetCreatePostForm, updateCreatePostForm}, dispatch)
+  ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(HashtagEditPage);

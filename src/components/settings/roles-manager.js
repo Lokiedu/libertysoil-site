@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,92 +14,104 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
+import { uniqueId, pick } from 'lodash';
 
+import Role from './role';
 import { ROLES } from '../../consts/profileConstants';
 
-class RolesManager extends React.Component {
+export default class RolesManager extends React.Component {
   static displayName = 'RolesManager';
 
-  getRolesFromInputs() {
-    const { roles } = this.props;
-    let rolesFromInputs = [];
+  static propTypes = {
+    roles: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string,
+        description: PropTypes.string
+      })
+    )
+  };
 
-    roles.forEach((role, i) => {
-      rolesFromInputs.push([
-        this.refs[`role${i}_key`].value,
-        this.refs[`role${i}_value`].value
-      ]);
-    });
+  static defaultProps = {
+    roles: []
+  };
 
-    return rolesFromInputs;
+  constructor(props) {
+    super(props);
+
+    this.roles = [];
+    this.state = {
+      rolesAmount: 0
+    };
   }
 
-  onRemove = (i) => {
-    const { onChange } = this.props;
-    let roles = this.getRolesFromInputs();
+  componentWillMount() {
+    this.roles = this.props.roles;
+    this.roles.forEach(role => {
+      role.id = uniqueId();
+    });
+  }
 
-    roles.splice(i, 1);
+  componentDidMount() {
+    // generate roles on client because of unique keys for Role components
+    this.setState({ rolesAmount: this.roles.length });
+  }
 
-    onChange(roles);
+  _getRoles = () => {
+    const roles = this.roles.map(role =>
+      pick(role, ['title', 'description'])
+    );
+
+    return roles;
   };
 
-  onChange = () => {
-    const { onChange } = this.props;
-
-    onChange(this.getRolesFromInputs());
+  onRemove = (index) => {
+    this.roles.splice(index, 1);
+    this.setState({ rolesAmount: this.state.rolesAmount - 1 });
   };
+
+  onChange = ({ index, name, value }) => {
+    this.roles[index][name] = value;
+  };
+
+  onAdd = () => {
+    this.roles.push({
+      title: ROLES[0],
+      description: '',
+      id: uniqueId()
+    });
+    this.setState({ rolesAmount: this.state.rolesAmount + 1 });
+  }
 
   render() {
-    const { roles, onAdd } = this.props;
+    let roles;
+    if (this.state.rolesAmount) {
+      roles = this.roles.map((role, i) => (
+        <Role
+          description={role.description}
+          index={i}
+          key={role.id}
+          title={role.title}
+          onChange={this.onChange}
+          onRemove={this.onRemove}
+        />
+      ));
+    } else {
+      roles = (
+        <div className="layout__row">
+          No roles...
+        </div>
+      );
+    }
 
     return (
       <div>
-        {roles.map((role, i) => (
-          <div key={i} className="layout__row">
-            <label htmlFor="role1" className="layout__block layout__row layout__row-small">Role</label>
-            <div className="layout__row layout__row-small layout layout-align_vertical">
-              <div className="layout__grid_item layout__grid_item-wide">
-                <select ref={`role${i}_key`} id="role1" defaultValue={role[0]} onChange={this.onChange} className="input input-block input-select">
-                  {ROLES.map(role => (
-                    <option key={role} value={role}>{role}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="layout__grid_item layout">
-                <div onClick={this.onRemove.bind(null, i)} className="button action button-icon button-transparent">
-                  <span className="micon micon-small button__icon">close</span>Remove role
-                </div>
-              </div>
-            </div>
-            <div className="layout__row">
-              <label className="layout__block layout__row layout__row-small">Description</label>
-              <textarea ref={`role${i}_value`} onChange={this.onChange} value={role[1]} className="layout__row layout__row-small input input-block input-textarea input-textarea_small"></textarea>
-            </div>
-          </div>
-        ))}
-        {!roles.length && <div className="layout__row">
-          No roles...
-        </div>}
+        {roles}
         <div className="layout__row layout__row-double">
-          <span onClick={onAdd} className="button button-blue action">Add role</span>
+          <span className="button button-blue action" onClick={this.onAdd}>Add role</span>
         </div>
       </div>
     );
   }
 }
-
-RolesManager.propTypes = {
-  roles: PropTypes.array,
-  onChange: PropTypes.func,
-  onAdd: PropTypes.func
-};
-
-RolesManager.getDefaultProps = {
-  roles: [],
-  onChange: () => {},
-  onAdd: () => {}
-};
-
-export default RolesManager;

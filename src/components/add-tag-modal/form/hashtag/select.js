@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,32 +14,38 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import { throttle } from 'lodash';
 
-import Autosuggest from './../autosuggest';
+import { Autosuggest } from '../../deps';
+import { ApiClient } from '../../deps';
+import { API_HOST } from '../../deps';
 
-
-export default class SchoolSelect extends Component {
-  static displayName = 'SchoolSelect';
+export default class HashtagSelect extends Component {
+  static displayName = 'HashtagSelect';
 
   static propTypes = {
-    onSelect: PropTypes.func,
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    }))
+    onSelect: PropTypes.func
   };
 
   static defaultProps = {
-    schools: [],
-    onSelect: () => {}
+    onSelect: () => {
+    }
   };
 
-  state = {
-    suggestions: [],
-    value: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      suggestions: [],
+      value: ''
+    };
+  }
+
+  get value() {
+    return this.state.value;
+  }
 
   reset() {
     this.setState({
@@ -47,19 +53,23 @@ export default class SchoolSelect extends Component {
     });
   }
 
-  getValue() {
-    return this.state.value;
-  }
+  _getSuggestions = throttle(async ({ value }) => {
+    if (value.length < 2) {
+      return;
+    }
 
-  getFirstOverlapModel() {
-    return _.find(this.state.suggestions, s => s.name === this.state.value);
-  }
+    const client = new ApiClient(API_HOST);
+    const response = await client.searchTags(value.trim());
 
-  _getSuggestions = ({ value }) => {
-    let regex = new RegExp('^' + value.trim(), 'i');
-    let suggestions = this.props.schools.filter(school => regex.test(school.name)).slice(0, 5);
+    this.setState({ suggestions: response.hashtags.slice(0, 5) });
+  }, 300);
 
-    this.setState({suggestions});
+  _getSuggestionValue = (tag) => tag.name;
+
+  _handleSelect = (event, { suggestion }) => {
+    event.preventDefault();
+
+    this.props.onSelect(suggestion);
   };
 
   _handleChange = (event, { newValue }) => {
@@ -68,20 +78,11 @@ export default class SchoolSelect extends Component {
     });
   };
 
-  _getSuggestionValue = (school) => school.name;
-
-  _handleSelect = (event, { suggestion }) => {
-    event.preventDefault();
-
-    this.props.onSelect(suggestion);
-  };
-
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
-      name: 'school',
-      onChange: this._handleChange,
       placeholder: 'Start typing...',
+      onChange: this._handleChange,
       value: this.state.value
     };
 

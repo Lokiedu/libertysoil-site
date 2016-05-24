@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 
 import * as a from '../actions';
@@ -25,8 +25,7 @@ const initialState = i.Map({
   comments: i.Map({})
 });
 
-function reducer (state=initialState, action) {
-
+function reducer(state = initialState, action) {
   switch (action.type) {
     case a.UI__TOGGLE_SIDEBAR:
       {

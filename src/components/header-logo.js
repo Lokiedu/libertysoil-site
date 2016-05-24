@@ -39,7 +39,7 @@ class HeaderLogo extends Component {
       current_user,
       small
     } = this.props;
-    let className = ['logo'];
+    const className = ['logo'];
     let logoBody = null;
 
     if (small) {

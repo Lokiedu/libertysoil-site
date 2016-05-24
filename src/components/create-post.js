@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
 import TagIcon from './tag-icon';
@@ -41,29 +41,33 @@ export default class CreatePost extends React.Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
     hashtags: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })),
-    userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
-    }).isRequired,
+    schools: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string
+    })),
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
       loadUserRecentTags: PropTypes.func.isRequired,
       checkSchoolExists: PropTypes.func.isRequired,
       checkGeotagExists: PropTypes.func.isRequired
-    })
+    }),
+    userRecentTags: PropTypes.shape({
+      geotags: PropTypes.array.isRequired,
+      schools: PropTypes.array.isRequired,
+      hashtags: PropTypes.array.isRequired
+    }).isRequired
   };
 
-  state = {
-    expanded: false,
-    addTagModalType: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      expanded: false,
+      addTagModalType: null
+    };
+  }
 
   _stopPropagation = (e) => {
     if (e) {
@@ -73,7 +77,7 @@ export default class CreatePost extends React.Component {
   };
 
   onClickOutside = () => {
-    let form = this.form;
+    const form = this.form;
 
     if (!form.text.value.trim().length) {
       this.setState({
@@ -85,13 +89,13 @@ export default class CreatePost extends React.Component {
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    let form = this.form;
+    const form = this.form;
 
     if (!form.text.value.trim().length) {
       return;
     }
 
-    let data = {
+    const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
@@ -167,7 +171,7 @@ export default class CreatePost extends React.Component {
   _changeAddTagModal = (newType) => {
     this.setState({
       addTagModalType: newType
-    })
+    });
   };
 
   /**
@@ -180,14 +184,14 @@ export default class CreatePost extends React.Component {
   };
 
   render() {
-    let {
+    const {
       addTagModalType,
       expanded
     } = this.state;
 
     return (
       <div className="box box-post box-space_bottom create_post">
-        <form ref={c => this.form = c} onSubmit={this._handleSubmit} onKeyDown={this._handleKeydown}>
+        <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
@@ -241,19 +245,19 @@ export default class CreatePost extends React.Component {
           </div>
         </form>
         <AddTagModal
-          ref={(c) => this._addTagModal = c}
           allSchools={this.props.allSchools}
           geotags={this.props.geotags}
           hashtags={this.props.hashtags}
+          ref={(c) => this._addTagModal = c}
           schools={this.props.schools}
-          userRecentTags={this.props.userRecentTags}
+          triggers={this.props.triggers}
           type={addTagModalType}
+          userRecentTags={this.props.userRecentTags}
           onClose={this._closeAddTagModal}
           onSave={this._addTags}
           onTypeChange={this._changeAddTagModal}
-          triggers={this.props.triggers}
         />
       </div>
-    )
+    );
   }
 }

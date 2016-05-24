@@ -14,19 +14,17 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 
 import * as a from '../actions';
 
-
 const initialState = i.Map({});
 
-export default function reducer(state=initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_RELATED_POSTS:
-    {
-      let posts = action.posts.map(post => post.id);
+    case a.SET_RELATED_POSTS: {
+      const posts = action.posts.map(post => post.id);
 
       state = state.set(action.post_id, i.List(posts));
 

@@ -46,7 +46,7 @@ export default class GeoInput extends React.Component {
   }
 
   componentDidMount() {
-    let { initialLocation } = this.props;
+    const { initialLocation } = this.props;
 
     // Autodetect location
     if (!initialLocation || !initialLocation.lat || !initialLocation.lon) {
@@ -55,7 +55,7 @@ export default class GeoInput extends React.Component {
   }
 
   _handlePickpointSelect = (event) => {
-    let location = {
+    const location = {
       lat: event.lat,
       lon: event.lon
     };
@@ -67,7 +67,7 @@ export default class GeoInput extends React.Component {
   };
 
   _handleLocationFound = (event) => {
-    let location = {
+    const location = {
       lat: event.latitude,
       lon: event.longitude
     };
@@ -79,7 +79,7 @@ export default class GeoInput extends React.Component {
   };
 
   _handleClickOnMap = (event) => {
-    let location = {
+    const location = {
       lat: event.latlng.lat,
       lon: event.latlng.lng
     };
@@ -90,12 +90,12 @@ export default class GeoInput extends React.Component {
   };
 
   render() {
-    let selectedLocation = {
+    const selectedLocation = {
       lat: parseFloat(this.state.selectedLocation.lat) || 0,
       lon: parseFloat(this.state.selectedLocation.lon) || 0
     };
 
-    let viewLocation = {
+    const viewLocation = {
       lat: parseFloat(this.state.viewLocation.lat) || 0,
       lon: parseFloat(this.state.viewLocation.lon) || 0
     };

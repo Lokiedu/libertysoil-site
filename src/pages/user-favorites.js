@@ -20,13 +20,13 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import NotFound from './not-found'
-import BaseUserFavoritesPage from './base/user'
+import NotFound from './not-found';
+import BaseUserFavoritesPage from './base/user';
 import River from '../components/river_of_posts';
-import ApiClient from '../api/client'
-import {API_HOST} from '../config';
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 import { addUser, setPostsToFavouritesRiver } from '../actions';
-import { ActionsTrigger } from '../triggers'
+import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
 
@@ -34,15 +34,15 @@ class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
 
   static async fetchData(params, store, client) {
-    let userInfo = await client.userInfo(params.username);
+    const userInfo = await client.userInfo(params.username);
     store.dispatch(addUser(userInfo));
 
-    let favouredPosts = client.getFavouredPosts(params.username);
+    const favouredPosts = client.getFavouredPosts(params.username);
     store.dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
   }
 
-  render () {
-    let page_user = _.find(this.props.users, {username: this.props.params.username});
+  render() {
+    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
       posts,
       current_user,
@@ -60,7 +60,7 @@ class UserFavoritesPage extends React.Component {
     }
 
     if (false === page_user) {
-      return <NotFound/>
+      return <NotFound/>;
     }
 
     //console.info(this.props);
@@ -89,7 +89,7 @@ class UserFavoritesPage extends React.Component {
           ui={ui}
         />
       </BaseUserFavoritesPage>
-    )
+    );
   }
 }
 

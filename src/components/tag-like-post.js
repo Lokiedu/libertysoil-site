@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 
 import * as PostTypes  from '../consts/postTypeConstants';
@@ -23,81 +23,77 @@ import User from './user';
 import Tag from './tag';
 import Time from './time';
 
+const TagLikePost = ({ author, post }) => {
+  let tag;
 
-export default class TagLikePost extends React.Component {
-  static propTypes = {
-    author: PropTypes.shape(),
-    post: PropTypes.shape({
-      liked_hashtag: PropTypes.shape({
-        name: PropTypes.string
-      }),
-      liked_school: PropTypes.shape({
-        name: PropTypes.string,
-        url_name: PropTypes.string
-      }),
-      liked_geotag: PropTypes.shape({
-        name: PropTypes.string,
-        url_name: PropTypes.string
-      })
-    })
-  };
-
-  render() {
-    let {
-      author,
-      post
-    } = this.props;
-
-    let tag;
-
-    switch (post.type) {
-      case PostTypes.HASHTAG_LIKE:
-        tag = (
-          <Tag
-            name={post.liked_hashtag.name}
-            type={TagTypes.TAG_HASHTAG}
-            urlId={post.liked_hashtag.name}
-          />
-        );
-        break;
-      case PostTypes.SCHOOL_LIKE:
-        tag = (
-          <Tag
-            name={post.liked_school.name}
-            type={TagTypes.TAG_SCHOOL}
-            urlId={post.liked_school.url_name}
-          />
-        );
-        break;
-      case PostTypes.GEOTAG_LIKE:
-        tag = (
-          <Tag
-            name={post.liked_geotag.name}
-            type={TagTypes.TAG_LOCATION}
-            urlId={post.liked_geotag.url_name}
-          />
-        );
-        break;
-    }
-
-    return (
-      <section className="card card-padded card-with_bg">
-        <div className="layout__grid layout-align_vertical">
-          <div className="layout__grid_item">
-            {tag}
-          </div>
-          <div className="layout__grid_item">
-            was liked by
-          </div>
-          <div className="layout__grid_item">
-            <User avatarSize="32" user={author} />
-          </div>
-          <div className="layout__grid_item layout__grid_item-wide"></div>
-          <div className="layout__grid_item">
-            <Time timestamp={post.created_at} className="card__timestamp" />
-          </div>
-        </div>
-      </section>
-    );
+  switch (post.type) {
+    case PostTypes.HASHTAG_LIKE:
+      tag = (
+        <Tag
+          name={post.liked_hashtag.name}
+          type={TagTypes.TAG_HASHTAG}
+          urlId={post.liked_hashtag.name}
+        />
+      );
+      break;
+    case PostTypes.SCHOOL_LIKE:
+      tag = (
+        <Tag
+          name={post.liked_school.name}
+          type={TagTypes.TAG_SCHOOL}
+          urlId={post.liked_school.url_name}
+        />
+      );
+      break;
+    case PostTypes.GEOTAG_LIKE:
+      tag = (
+        <Tag
+          name={post.liked_geotag.name}
+          type={TagTypes.TAG_LOCATION}
+          urlId={post.liked_geotag.url_name}
+        />
+      );
+      break;
   }
-}
+
+  return (
+    <section className="card card-padded card-with_bg">
+      <div className="layout__grid layout-align_vertical">
+        <div className="layout__grid_item">
+          {tag}
+        </div>
+        <div className="layout__grid_item">
+          was liked by
+        </div>
+        <div className="layout__grid_item">
+          <User avatarSize="32" user={author} />
+        </div>
+        <div className="layout__grid_item layout__grid_item-wide"></div>
+        <div className="layout__grid_item">
+          <Time className="card__timestamp" timestamp={post.created_at} />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+TagLikePost.displayName = 'TagLikePost';
+
+TagLikePost.propTypes = {
+  author: PropTypes.shape(),
+  post: PropTypes.shape({
+    liked_hashtag: PropTypes.shape({
+      name: PropTypes.string
+    }),
+    liked_school: PropTypes.shape({
+      name: PropTypes.string,
+      url_name: PropTypes.string
+    }),
+    liked_geotag: PropTypes.shape({
+      name: PropTypes.string,
+      url_name: PropTypes.string
+    })
+  })
+};
+
+export default TagLikePost;

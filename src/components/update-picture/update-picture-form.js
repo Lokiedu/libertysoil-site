@@ -1,17 +1,20 @@
 /*
  This file is a part of libertysoil.org website
  Copyright (C) 2016  Loki Education (Social Enterprise)
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import Editor from '../../external/react-avatar-editor';
 
@@ -19,6 +22,9 @@ export default class UpdatePictureForm extends React.Component {
   static displayName = 'UpdatePictureForm';
 
   static propTypes = {
+    flexible: PropTypes.bool,
+    onChange: PropTypes.func,
+    onClear: PropTypes.func,
     preview: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number
@@ -30,11 +36,15 @@ export default class UpdatePictureForm extends React.Component {
     onClear: () => {}
   }
 
-  state = {
-    image: null,
-    avatar: null,
-    scale: 1
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      image: null,
+      avatar: null,
+      scale: 1
+    };
+  }
 
   _submit = () => {
     if (!this.state.image) {
@@ -45,13 +55,13 @@ export default class UpdatePictureForm extends React.Component {
   }
 
   clearHandler = () => {
-    this.setState({image: null});
+    this.setState({ image: null });
 
     this.props.onClear();
   }
 
   changeHandler = (event) => {
-    let file = event.target.files[0];
+    const file = event.target.files[0];
     this.setState({
       image: URL.createObjectURL(file),
       avatar: file
@@ -69,7 +79,7 @@ export default class UpdatePictureForm extends React.Component {
   render() {
     const { preview, flexible } = this.props;
 
-    let editorStyle = { cursor: 'move' };
+    const editorStyle = { cursor: 'move' };
     if (flexible) {
       editorStyle.width = '100%';
     }
@@ -79,14 +89,14 @@ export default class UpdatePictureForm extends React.Component {
         <div className="layout__row">
           <div className="update_picture__editor">
             <Editor
-              ref={c => this.editor = c}
               border={50}
               color={[255, 255, 255, 0.6]}
-              width={preview.width}
               height={preview.height}
               image={this.state.image}
+              ref={c => this.editor = c}
               scale={this.state.scale}
               style={editorStyle}
+              width={preview.width}
             />
           </div>
           <div className="layout layout__row layout-align_center">

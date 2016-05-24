@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,32 +14,32 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-export default class PageContentLink extends React.Component {
-  static displayName = 'PageContentLink';
-  static propTypes = {
-    visible: React.PropTypes.bool,
-    className: React.PropTypes.string,
-    activeClassName: React.PropTypes.string,
-    to: React.PropTypes.string
-  };
-
-  render() {
-    let {
-      visible,
-      className,
-      activeClassName,
-      to,
-      children
-    } = this.props;
-
-    if (visible) {
-      return <Link className={className} activeClassName={activeClassName} to={to}>{children}</Link>;
-    }
-
-    return false;
+const PageContentLink = ({
+  visible,
+  className,
+  activeClassName,
+  to,
+  children
+}) => {
+  if (visible) {
+    return <Link activeClassName={activeClassName} className={className} to={to}>{children}</Link>;
   }
-}
+
+  return false;
+};
+
+PageContentLink.displayName = 'PageContentLink';
+
+PageContentLink.propTypes = {
+  activeClassName: PropTypes.string,
+  children: PropTypes.node,
+  className: PropTypes.string,
+  to: PropTypes.string,
+  visible: PropTypes.bool
+};
+
+export default PageContentLink;

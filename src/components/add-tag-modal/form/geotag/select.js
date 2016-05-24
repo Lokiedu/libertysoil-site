@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,13 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import { find, isEmpty, throttle } from 'lodash';
 
-import Autosuggest from './../autosuggest';
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
+import { Autosuggest } from '../../deps';
+import { ApiClient } from '../../deps';
+import { API_HOST } from '../../deps';
 
 export default class GeotagSelect extends Component {
   static displayName = 'GeotagSelect';
@@ -33,19 +33,22 @@ export default class GeotagSelect extends Component {
     onSelect: () => {}
   };
 
+  constructor(props) {
+    super(props);
 
-  state = {
-    geotagId: '', // Autosuggest doesn't support hidden values.
-    suggestions: [],
-    value: ''
-  };
+    this.state = {
+      geotagId: '', // Autosuggest doesn't support hidden values.
+      suggestions: [],
+      value: ''
+    };
+  }
 
   getValue() {
     return this.state.value;
   }
 
   getFirstOverlapModel() {
-    return _.find(this.state.suggestions, s => s.name === this.state.value);
+    return find(this.state.suggestions, s => s.name === this.state.value);
   }
 
   reset() {
@@ -55,28 +58,28 @@ export default class GeotagSelect extends Component {
     });
   }
 
-  _getSuggestions = _.throttle(async ({ value }) => {
+  _getSuggestions = throttle(async ({ value }) => {
     if (!value.length) {
       return;
     }
 
-    let client = new ApiClient(API_HOST);
-    let response = await client.searchGeotags(value.trim());
+    const client = new ApiClient(API_HOST);
+    const response = await client.searchGeotags(value.trim());
 
-    this.setState({suggestions: response.geotags.slice(0, 5)});
+    this.setState({ suggestions: response.geotags.slice(0, 5) });
   }, 300);
 
   _getSuggestionValue = (geotag) => geotag.name;
 
   _renderSuggestion(geotag) {
     let name = geotag.name;
-    let additionalInfo = [];
+    const additionalInfo = [];
 
-    if (!_.isEmpty(geotag.admin1)) {
+    if (!isEmpty(geotag.admin1)) {
       additionalInfo.push(geotag.admin1.name);
     }
 
-    if (!_.isEmpty(geotag.country)) {
+    if (!isEmpty(geotag.country)) {
       additionalInfo.push(geotag.country.name);
     }
 
@@ -104,7 +107,7 @@ export default class GeotagSelect extends Component {
   };
 
   render() {
-    let inputProps = {
+    const inputProps = {
       className: 'input input-block input-transparent input-button_height autosuggest__input',
       placeholder: 'Start typing...',
       onChange: this._handleChange,

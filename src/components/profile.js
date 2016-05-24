@@ -29,15 +29,19 @@ import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      avatar: null,
+      head_pic: null
+    };
+  }
+
   unsaved = false;
 
-  state = {
-    avatar: null,
-    head_pic: null
-  };
-
   _getNewPictures() {
-    let pictures = {};
+    const pictures = {};
     if (this.state.avatar) {
       pictures.avatar = this.state.avatar.production;
     }
@@ -54,22 +58,22 @@ export default class ProfileHeader extends React.Component {
 
   addAvatar = async ({ production, preview }) => {
     if (production) {
-      let _production = {
+      const _production = {
         picture: production.picture,
         crop: pick(production.crop, ['left', 'top', 'right', 'bottom'])
       };
 
       _production.resize = { width: AVATAR_SIZE.width, height: AVATAR_SIZE.height };
 
-      this.setState({avatar: {production: _production, preview}});
+      this.setState({ avatar: { production: _production, preview } });
     } else {
-      this.setState({avatar: {production: null, preview: null}});
+      this.setState({ avatar: { production: null, preview: null } });
     }
   };
 
   addHeaderPicture = async ({ production, preview }) => {
     if (production) {
-      let _production = { picture: production.picture };
+      const _production = { picture: production.picture };
 
       // properties assign order is important
       _production.crop = pick(production.crop, ['left', 'top', 'right', 'bottom']);
@@ -80,9 +84,9 @@ export default class ProfileHeader extends React.Component {
         _production.scale = { wRatio: PROFILE_HEADER_SIZE.NORMAL.width / production.crop.width };
       }
 
-      this.setState({head_pic: {production: _production, preview}});
+      this.setState({ head_pic: { production: _production, preview } });
     } else {
-      this.setState({head_pic: {production: null, preview: null}});
+      this.setState({ head_pic: { production: null, preview: null } });
     }
   };
 
@@ -95,7 +99,7 @@ export default class ProfileHeader extends React.Component {
       following,
       followers
     } = this.props;
-    
+
     let picture = '/assets/d18659acda9afc3dea60b49d71d689ae.jpg';
     let name = user.username;
     let summary = '';
@@ -148,7 +152,6 @@ export default class ProfileHeader extends React.Component {
           </div>
         );
       }
-
     }
 
     if (followers && followers[user.id] && followers[user.id].length) {
@@ -169,24 +172,23 @@ export default class ProfileHeader extends React.Component {
           </div>
         );
       }
-
     }
 
     name = name.trim();
 
     return (
-      <div ref={c => this.root = c} className="profile" style={{backgroundImage: `url('${picture}')`}}>
+      <div ref={c => this.root = c} className="profile" style={{ backgroundImage: `url('${picture}')` }}>
         <div className="profile__body">
           <div className="layout__row">
             <div className="layout__grid">
               <div className="layout__grid_item layout__grid_item-wide">
                 <User
                   user={user}
-                  editorConfig={editable ? {flexible: false, onUpdateAvatar: this.addAvatar} : false}
+                  editorConfig={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
                   avatarPreview={avatarPreview}
                   avatarSize="120"
-                  isRound={true}
-                  hideText={true}
+                  isRound
+                  hideText
                 />
               </div>
               {editable &&
@@ -195,8 +197,8 @@ export default class ProfileHeader extends React.Component {
                     what="profile background"
                     where={modalName}
                     preview={PROFILE_HEADER_SIZE.PREVIEW}
-                    flexible={true}
-                    limits={{min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG}}
+                    flexible
+                    limits={{ min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG }}
                     onSubmit={this.addHeaderPicture}
                   />
                 </div>
@@ -222,6 +224,6 @@ export default class ProfileHeader extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

@@ -14,10 +14,10 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import i from 'immutable';
 import { compose, createStore } from 'redux';
-import { combineReducers } from 'redux-immutablejs'
+import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
 import current_user from './current-user';
@@ -49,8 +49,6 @@ import edit_post_form from './edit_post_form';
 import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
-
-let store;
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -151,7 +149,7 @@ const finalCreateStore = compose(
   browserHasDevTools ? window.devToolsExtension() : f => f
 )(createStore);
 
-export function initState(state=initialState) {
-  store = finalCreateStore(theReducer, i.fromJS(state));
+export function initState(state = initialState) {
+  const store = finalCreateStore(theReducer, i.fromJS(state));
   return store;
 }

@@ -231,6 +231,24 @@ describe('api v.1', () => {
         });
       });
 
+      describe('Change password', () => {
+        it('/user/password should work', async () => {
+          await expect(
+            {
+              url: `/api/v1/user/password`,
+              session: sessionId,
+              method: 'POST',
+              body: {old_password: 'secret', new_password: 'barsecret'}
+            }
+            , 'to open successfully');
+          await user.refresh();
+          expect(
+            await bcryptAsync.compareAsync('barsecret', user.get('hashed_password')),
+            'to be true'
+          );
+        });
+      });
+
       describe('Posts', () => {
         let post;
 

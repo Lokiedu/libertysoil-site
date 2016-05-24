@@ -14,11 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
-import { Tabs, Tab, TabTitle, TabContent } from './tabs';
+import { Tab, Tabs } from './tabs';
 import VisibilitySensor from './visibility-sensor';
 
 export default class Reviews extends Component {
@@ -33,17 +33,21 @@ export default class Reviews extends Component {
     }))
   };
 
-  state = {
-    mobile: true,
-    sliding: false
-  };
+  constructor(props) {
+    super(props);
 
-  active = 0;
-  slideshow = null;
-  imageHovered = false;
-  length = 0;
-  delay = 5000;
-  clientWidth = 0;
+    this.state = {
+      mobile: true,
+      sliding: false
+    };
+
+    this.active = 0;
+    this.slideshow = null;
+    this.imageHovered = false;
+    this.length = 0;
+    this.delay = 5000;
+    this.clientWidth = 0;
+  }
 
   componentDidMount() {
     this.toggleMode();
@@ -122,6 +126,14 @@ export default class Reviews extends Component {
     this.clientWidth = clientWidth;
   }, 100);
 
+  onImageMouseOver = () => {
+    this.imageHovered = true;
+  };
+
+  onImageMouseOut = () => {
+    this.imageHovered = false;
+  };
+
   render() {
     const { quotes } = this.props;
 
@@ -133,16 +145,16 @@ export default class Reviews extends Component {
     let preparedQuotes;
     if (this.state.mobile) {
       preparedQuotes = quotes.map((q, i) => (
-        <blockquote key={i} className="review">
+        <blockquote className="review" key={i}>
           <p className="review__body content">
             {q.text}
           </p>
           <footer className="review__author">
             <section className="user_box">
-              <img className="user_box__avatar" src={q.avatar_url} width="64px" height="64px" alt=""/>
+              <img alt="" className="user_box__avatar" height="64px" src={q.avatar_url} width="64px" />
               <div className="user_box__body user_box__body-flexless">
                 <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                { q.description &&
+                {q.description &&
                   <p className="user_box__text">
                     <a href={q.link}>
                       {q.description}
@@ -160,63 +172,73 @@ export default class Reviews extends Component {
         reviewClassName += ' review__body-sliding';
       }
 
-      const tabs = quotes.map((q, i) => (
-        <Tab key={i}>
-          <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
-            <img onMouseOver={() => this.imageHovered = true}
-                 onMouseOut={() => this.imageHovered = false}
-                 className="user_box__avatar"
-                 src={q.avatar_url}
-                 width="64"
-                 height="64"
-                 alt=""/>
-          </TabTitle>
-          <TabContent>
-            <blockquote className="review">
-              <p className={reviewClassName}>
-                {q.text}
-              </p>
-              <footer className="review__author">
-                <section className="user_box">
-                  <div className="user_box__body">
-                    <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                    { q.description &&
-                      <p className="user_box__text">
-                        <a href={q.link}>
-                          {q.description}
-                        </a>
-                      </p>
-                    }
-                  </div>
-                </section>
-              </footer>
-            </blockquote>
-          </TabContent>
-        </Tab>
-      ));
+      const tabs = (
+        <Tabs ref={c => this.panel = c}>
+          <div>
+            {quotes.map((q, i) => (
+              <Tab.Content index={i} key={i}>
+                <blockquote className="review">
+                  <p className={reviewClassName}>
+                    {q.text}
+                  </p>
+                  <footer className="review__author">
+                    <section className="user_box">
+                      <div className="user_box__body">
+                        <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
+                        {q.description &&
+                          <p className="user_box__text">
+                            <a href={q.link}>
+                              {q.description}
+                            </a>
+                          </p>
+                        }
+                      </div>
+                    </section>
+                  </footer>
+                </blockquote>
+              </Tab.Content>
+            ))}
+          </div>
+          <div className="review_group__navigation page__body width">
+            {quotes.map((q, i) => (
+              <Tab.Title activeClassName="review_group__navigation_item-active" className="review_group__navigation_item" index={i} key={i} onClick={this.clickHandler}>
+                <img
+                  alt=""
+                  className="user_box__avatar"
+                  height="64"
+                  src={q.avatar_url}
+                  width="64"
+                  onMouseOut={this.onImageMouseOut}
+                  onMouseOver={this.onImageMouseOver}
+                />
+              </Tab.Title>
+            ))}
+          </div>
+        </Tabs>
+      );
 
       preparedQuotes = (
-        <VisibilitySensor onMount={this.toggleSlideshow} onChange={this.toggleSlideshow}>
-          <Tabs ref={c => this.panel = c} onClick={this.clickHandler} invert menuClassName="review_group__navigation page__body width">
-            {tabs}
-          </Tabs>
+        <VisibilitySensor onChange={this.toggleSlideshow} onMount={this.toggleSlideshow}>
+          {tabs}
         </VisibilitySensor>
       );
     }
 
-    return <div>
+    return (
+      <div>
         <div className="page__container-bg">
-        <div className="page__body page__body-rows width">
-          <h2 className="page__title content-center layout__space"></h2>
+          <div className="page__body page__body-rows width">
+            <h2 className="page__title content-center layout__space"></h2>
+          </div>
         </div>
-      </div>
-      <div className="review_group">
-        <div className="page__body page__body-rows width">
-          <div className="review_group__reviews">
-            {preparedQuotes}
+        <div className="review_group">
+          <div className="page__body page__body-rows width">
+            <div className="review_group__reviews">
+              {preparedQuotes}
+            </div>
           </div>
         </div>
       </div>
-    </div>;
+    );
   }
 }
