@@ -163,7 +163,8 @@ export default class Reviews extends Component {
       const tabs = quotes.map((q, i) => (
         <Tab key={i}>
           <TabTitle className="review_group__navigation_item" classNameActive="review_group__navigation_item-active">
-            <img onMouseOver={() => this.imageHovered = true}
+            <img
+              onMouseOver={() => this.imageHovered = true}
               onMouseOut={() => this.imageHovered = false}
               className="user_box__avatar"
               src={q.avatar_url}

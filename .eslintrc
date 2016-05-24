@@ -44,6 +44,7 @@
     "react/jsx-boolean-value": 1,
     "react/jsx-closing-bracket-location": 2,
     "react/jsx-curly-spacing": 1,
+    "react/jsx-first-prop-new-line": [2, "multiline"],
     "react/jsx-indent-props": [1, 2],
     "react/jsx-key": 1,
     "react/jsx-no-bind": 1,
