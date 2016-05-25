@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 
 import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
+import Search from './search';
 
 const HeaderComponent = ({
   children,
@@ -41,7 +42,12 @@ const HeaderComponent = ({
           }
           {children}
         </div>
-        <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+        <div className="header__toolbar">
+          <div className="header__toolbar_item header__toolbar_item-right_space">
+            <Search />
+          </div>
+          <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+        </div>
       </div>
     </div>
   );

@@ -34,7 +34,8 @@ import {
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
   setUIProgress, setUserRecentTags, setQuotes,
-  setCountries
+  setCountries,
+  setSearchResults
 } from '../actions';
 
 
@@ -733,6 +734,15 @@ export class ActionsTrigger {
       this.dispatch(setCountries(response));
     } catch (e) {
       console.error(`Failed to fetch countries: ${e}`);  // eslint-disable-line no-console
+    }
+  }
+
+  search = async (query) => {
+    try {
+      const response = await this.client.search(query);
+      this.dispatch(setSearchResults(response));
+    } catch (e) {
+      this.dispatch(addError(e.message));
     }
   }
 }

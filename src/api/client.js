@@ -394,12 +394,17 @@ export default class ApiClient
     return response.body;
   }
 
+  async search(query) {
+    const response = await this.get(`/api/v1/search/${query}`);
+    return response.body;
+  }
+
   async tagCloud() {
     const response = await this.get('/api/v1/tag-cloud');
     return response.body;
   }
 
-  async searchTags(query) {
+  async searchHashtags(query) {
     const response = await this.get(`/api/v1/tags/search/${query}`);
     return response.body;
   }
@@ -416,6 +421,11 @@ export default class ApiClient
 
   async schoolCloud() {
     const response = await this.get('/api/v1/school-cloud');
+    return response.body;
+  }
+
+  async searchSchools(query) {
+    const response = await this.get(`/api/v1/schools/search/${query}`);
     return response.body;
   }
 

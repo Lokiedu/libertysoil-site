@@ -10,6 +10,8 @@ import link from 'react-icons/lib/md/link';
 import edit from 'react-icons/lib/md/edit';
 import close from 'react-icons/lib/md/close';
 import _delete from 'react-icons/lib/md/delete';
+import search from 'react-icons/lib/md/search';
+import refresh from 'react-icons/lib/md/refresh';
 
 const icons = {
   favorite,
@@ -21,17 +23,20 @@ const icons = {
   link,
   edit,
   close,
-  delete: _delete
+  delete: _delete,
+  search,
+  refresh
 };
 
 const IconComponent = ({
-  color,
-  outline,
-  icon,
-  size,
   className,
+  color,
   disabled,
+  icon,
   onClick,
+  outline,
+  spin,
+  size,
   ...props
 }) => {
   const Icon = icons[icon];
@@ -56,6 +61,10 @@ const IconComponent = ({
   if (disabled) {
     classnameIcon.push(`icon-disabled`);
     localOnClick = null;
+  }
+
+  if (spin) {
+    classnameIcon.push(`micon-rotate`);
   }
 
   return (
