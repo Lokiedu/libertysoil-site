@@ -44,6 +44,7 @@ async function countries() {
       postalcode: attrs[13],
       postalcoderegex: attrs[14],
       languages: JSON.stringify(attrs[15].split(',')),
+      id: attrs[16],
       neighbors: JSON.stringify(attrs[17].split(','))
     });
   }
