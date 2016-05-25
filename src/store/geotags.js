@@ -31,7 +31,15 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_GEOTAG_CLOUD:
+    case a.SET_GEOTAG_CLOUD: {
+      const geotags = action.continents.reduce((acc, next) => {
+        return acc.concat(next.geotags);
+      }, []);
+      state = i.fromJS(_.keyBy(geotags, 'url_name'));
+
+      break;
+    }
+
     case a.SET_GEOTAGS: {
       const geotags = _.keyBy(action.geotags, 'url_name');
       state = i.fromJS(geotags);

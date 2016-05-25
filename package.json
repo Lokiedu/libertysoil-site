@@ -24,7 +24,8 @@
     "webpack:build:dev": "webpack --config webpack.dev.config.js",
     "webpack:build:prod": "NODE_ENV=production webpack --config webpack.prod.config.js",
     "db:migrate": "knex migrate:latest",
-    "db:rollback": "knex migrate:rollback"
+    "db:rollback": "knex migrate:rollback",
+    "update-post-counters": "babel-node bin/postCounters.js"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
