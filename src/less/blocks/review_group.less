@@ -29,12 +29,25 @@
 
     &_item {
       margin: 2px;
+      width: 80px;
+      height: 80px;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
       opacity: 0.7;
       cursor: pointer;
+      transition: opacity 0.5s ease;
 
       &-active {
         opacity: 1;
       }
+    }
+
+    &_pic {
+      transition: width 0.5s ease,
+        height 0.5s ease;
     }
   }
 }
