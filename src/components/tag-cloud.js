@@ -20,12 +20,14 @@ import React, { PropTypes } from 'react';
 import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
 
+
 const TagCloud = (props) => {
   const tags = convertModelsToTags(props)
     .map((tag, index) => (
       <Tag
         deletable={props.deletable}
         key={index}
+        showPostCount={props.showPostCount}
         truncated={props.truncated}
         onClick={props.onClick}
         onDelete={props.onDelete}
@@ -57,6 +59,7 @@ TagCloud.propTypes = {
     name: PropTypes.string,
     url_name: PropTypes.string
   })),
+  showPostCount: PropTypes.bool,
   truncated: PropTypes.bool
 };
 

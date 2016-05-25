@@ -1483,11 +1483,11 @@ export default class ApiController {
       await post_object.save(null, { method: 'update' });
 
       if (_.isArray(hashtags)) {
-        await post_object.attachHashtags(hashtags, true);
+        await post_object.updateHashtags(hashtags);
       }
 
       if (_.isArray(schools)) {
-        await post_object.updateSchools(schools, true);
+        await post_object.updateSchools(schools);
       }
 
       if (_.isArray(geotags)) {
@@ -1887,11 +1887,8 @@ export default class ApiController {
         .collection()
         .query(qb => {
           qb
-            .select('hashtags.*')
-            .count('hashtags_posts.* as post_count')
-            .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
-            .groupBy('hashtags.id')
-            .orderBy('post_count', 'DESC');
+            .where('post_count', '>', '0')
+            .orderByRaw('post_count DESC, name ASC');
         })
         .fetch({ require: true });
 
@@ -1911,11 +1908,8 @@ export default class ApiController {
         .collection()
         .query(qb => {
           qb
-            .select('schools.*')
-            .count('posts_schools.* as post_count')
-            .join('posts_schools', 'schools.id', 'posts_schools.school_id')
-            .groupBy('schools.id')
-            .orderBy('post_count', 'DESC')
+            .where('post_count', '>', '0')
+            .orderByRaw('post_count DESC, name ASC')
             .limit(50);
         })
         .fetch({ require: true });
@@ -1951,13 +1945,10 @@ export default class ApiController {
         .collection()
         .query(qb => {
           qb
-            .select('geotags.*')
             .where('continent_code', code)
+            .where('post_count', '>', '0')
             .whereNot('type', 'Continent')
-            .count('geotags_posts.* as post_count')
-            .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
-            .groupBy('geotags.id')
-            .orderBy('post_count', 'DESC')
+            .orderByRaw('post_count DESC, name ASC')
             .limit(10);
         })
         .fetch();

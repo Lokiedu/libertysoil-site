@@ -633,6 +633,7 @@ describe('api v.1', () => {
             { url: `/api/v1/posts/tag/foo` },
             'body to satisfy', [{text: post.get('text')}]
           );
+          await post.detachHashtags(['foo']);
         });
 
         describe('Favorites', () => {

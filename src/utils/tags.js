@@ -15,6 +15,7 @@ export function convertModelsToTags(params = {}) {
       allTags.push({
         urlId: tag.url_name,
         name: tag.name,
+        postCount: tag.post_count,
         type: TAG_LOCATION
       });
     });
@@ -25,6 +26,7 @@ export function convertModelsToTags(params = {}) {
       allTags.push({
         urlId: school.url_name,
         name: school.name,
+        postCount: school.post_count,
         type: TAG_SCHOOL
       });
     });
@@ -35,6 +37,7 @@ export function convertModelsToTags(params = {}) {
       allTags.push({
         urlId: tag.name,
         name: tag.name,
+        postCount: tag.post_count,
         type: TAG_HASHTAG
       });
     });
