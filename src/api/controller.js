@@ -58,6 +58,11 @@ export default class ApiController {
     ctx.body = 'test message in response';
   };
 
+  testSphinx = async (ctx) => {
+    const indexes = await this.sphinx.ql.raw(`SHOW TABLES`);
+    ctx.body = indexes;
+  };
+
   allPosts = async (ctx) => {
     const Posts = this.bookshelf.collection('Posts');
     const posts = new Posts();

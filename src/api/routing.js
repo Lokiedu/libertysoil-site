@@ -28,6 +28,7 @@ export function initApi(bookshelf, sphinx) {
   const api = new Router();
 
   api.get('/test', controller.test);
+  api.get('/test-sphinx', controller.testSphinx);
   api.post('/users', controller.registerUser);
   api.post('/session', controller.login);
 
