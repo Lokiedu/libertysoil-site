@@ -2358,6 +2358,22 @@ export default class ApiController {
     return await this.sphinx.ql.insert(data).into(rt_index_name);
   };
 
+  updateInSearchIndex = async (index, data) => {
+    const rt_index_name = `${index}sRT`;
+    const Model = this.bookshelf.model(index);
+    const user = await Model.where({ id: data.id }).fetch({ require: true });
+
+    const id = user.get('_sphinx_id');
+
+    data.uuid = data.id;
+    data.id = id;
+    data.type = index;
+
+    const q = this.sphinx.ql.insert(data).into(rt_index_name).toString();
+
+    return await this.sphinx.ql.raw(q.replace(/insert into/i, 'replace into'));
+  };
+
   searchGeotags = async (ctx) => {
     const query = ctx.params.query;
 
