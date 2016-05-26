@@ -32,7 +32,7 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
   let currentOffest = 0;
 
   while (true) { // eslint-disable-line no-constant-condition
-    let sparql = getSparqlQuery({
+    const sparql = getSparqlQuery({
       condition: wikidataCondition,
       offset: currentOffest,
       limit: batchSize
@@ -48,7 +48,7 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
 
     const json = JSON.parse(await response.text());
     const items = json.results.bindings.map(item => {
-      let object = {
+      const object = {
         geonames_id: item.geonamesId.value
       };
 
@@ -98,4 +98,4 @@ execute()
   .catch(e => {
     process.stderr.write(e.stack);  // eslint-disable-line no-console
     process.exit(1);
-  })
+  });
