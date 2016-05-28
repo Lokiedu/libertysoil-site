@@ -18,7 +18,7 @@ function getSparqlQuery(options = {}) {
 
 async function bulkUpdate(items) {
   const queries = items
-    .map(item => knex.raw(`EXECUTE updateGeotag(?, ?);`, [item.geonames_id, item.more || {}]).toString())
+    .map(item => knex.raw(`EXECUTE updateGeotag(?, ?);`, [item.geonames_id, item.more]).toString())
     .join('\n');
 
   return knex.raw(queries);
@@ -52,10 +52,9 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
         geonames_id: item.geonamesId.value
       };
 
+      object.more = {};
       if (item.itemDescription) {
-        object.more = {
-          description: item.itemDescription.value
-        };
+        object.more.description = item.itemDescription.value;
       }
 
       return object;
@@ -73,7 +72,7 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
 }
 
 async function execute() {
-  await knex.raw('PREPARE updateGeotag(integer, jsonb) AS UPDATE geotags SET more = $2 WHERE geonames_id = $1');
+  await knex.raw(`PREPARE updateGeotag(integer, jsonb) AS UPDATE geotags SET more = coalesce(more, '{}') || to_jsonb($2) WHERE geonames_id = $1`);
 
   // wdt:P31 <type> - instance of <type>
   // wdt:P31/wdt:P279* <type> - instance of subclasses of <type>
