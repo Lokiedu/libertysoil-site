@@ -17,118 +17,69 @@
 */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import Gravatar from 'react-gravatar';
+
+import Avatar from './avatar';
+import AvatarEditor from './avatar-editor';
+import UserText from './user-text';
 
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
-import { AVATAR_SIZE } from '../../consts/profileConstants';
-import UpdatePicture from '../update-picture/update-picture';
 
 const User = (props) => {
   const {
-    user,
-    avatarPreview,
-    hideAvatar,
-    editorConfig,
-    hideText,
-    isRound,
-    avatarSize,
+    avatar,
+    avatarEditor,
     className,
-    isLink
+    text,
+    isLink,
+    user
   } = props;
 
+  const userUrl = getUrl(URL_NAMES.USER, { username: user.username });
   const render = {};
-  render.className = `user_box ${className || ''}`;
 
-  const user_url = getUrl(URL_NAMES.USER, { username: user.username });
-
-  if (!hideAvatar) {
-    let avatarClassName = 'user_box__avatar';
-
-    if (isRound) {
-      avatarClassName += ' user_box__avatar-round';
-    }
-
-    let avatar;
-    if (avatarPreview) {
-      avatar = (
-        <img height={parseInt(avatarSize, 10)} src={avatarPreview.url} width={parseInt(avatarSize, 10)} />
-      );
-    } else if (user.more && user.more.avatar) {
-      avatar = (
-        <img height={parseInt(avatarSize, 10)} src={user.more.avatar.url} width={parseInt(avatarSize, 10)} />
-      );
-    } else {
-      avatar = (
-        <Gravatar default="retro" md5={user.gravatarHash} size={parseInt(avatarSize, 10)} />
-      );
-    }
-
-    if (isLink) {
-      render.avatar = (
-        <Link className={avatarClassName} to={user_url}>
-          {avatar}
-        </Link>
-      );
-    } else {
-      render.avatar = (
-        <div className={avatarClassName}>
-          {avatar}
-        </div>
-      );
-    }
+  render.className = 'user_box';
+  if (className) {
+    render.className += ` ${className}`;
   }
 
-  if (editorConfig) {
-    let modalName = <span className="font-bold">{user.username}</span>;
+  if (!avatar.hide) {
+    let needLink;
 
-    if (user.more) {
-      if (user.more.firstName || user.more.lastName) {
-        modalName = [
-          <span className="font-bold" key="name">{user.more.firstName} {user.more.lastName}</span>,
-          ` (${user.username})`
-        ];
-      }
+    if (!isLink && avatar.isLink) {
+      needLink = true;
     }
 
-    render.changeAvatar = (
-      <UpdatePicture
-        flexible={editorConfig.flexible}
-        limits={{ min: AVATAR_SIZE }}
-        preview={AVATAR_SIZE}
-        what="profile picture"
-        where={modalName}
-        onSubmit={editorConfig.onUpdateAvatar}
-      />
-    );
+    render.avatar = <Avatar {...avatar} isLink={needLink} user={user} userUrl={userUrl} />;
   }
 
-  if (!hideText) {
-    let name = user.username;
+  if (avatarEditor) {
+    render.avatarEditor = <AvatarEditor user={user} {...avatarEditor} />;
+  }
 
-    if (user.more && user.more.firstName && user.more.lastName) {
-      name = `${user.more.firstName} ${user.more.lastName}`;
-    }
-    name = name.trim();
+  if (!text.hide) {
+    let needLink;
 
-    if (isLink) {
-      render.name = (<Link className="link" to={user_url}>{name}</Link>);
-    } else {
-      render.name = name;
+    if (!isLink && text.isLink) {
+      needLink = true;
     }
 
-    render.text = (
-      <div className="user_box__body">
-        <p className="user_box__name">
-          {render.name}
-        </p>
-      </div>
+    render.text = <UserText {...text} isLink={needLink} user={user} userUrl={userUrl} />;
+  }
+
+  if (isLink) {
+    return (
+      <Link className={render.className} to={userUrl}>
+        {render.avatar}
+        {render.avatarEditor}
+        {render.text}
+      </Link>
     );
   }
 
   return (
     <div className={render.className}>
       {render.avatar}
-      {render.changeAvatar}
+      {render.avatarEditor}
       {render.text}
     </div>
   );
@@ -137,13 +88,14 @@ const User = (props) => {
 User.displayName = 'User';
 
 User.propTypes = {
-  avatarSize: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]).isRequired,
-  hideAvatar: PropTypes.bool,
-  hideText: PropTypes.bool,
-  isRound: PropTypes.bool,
+  avatar: PropTypes.shape({}),
+  avatarEditor: PropTypes.oneOfType([
+    PropTypes.shape({}),
+    PropTypes.bool
+  ]),
+  className: PropTypes.string,
+  isLink: PropTypes.bool,
+  text: PropTypes.shape({}),
   user: PropTypes.shape({
     id: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
@@ -152,11 +104,15 @@ User.propTypes = {
 };
 
 User.defaultProps = {
-  hideAvatar: false,
-  hideText: false,
-  isRound: true,
-  avatarSize: 24,
-  isLink: true
+  avatar: {
+    hide: false,
+    isLink: false
+  },
+  isLink: true,
+  text: {
+    hide: false,
+    isLink: false
+  }
 };
 
 export default User;
