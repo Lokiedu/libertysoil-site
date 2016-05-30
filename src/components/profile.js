@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { Link } from 'react-router';
 import { pick } from 'lodash';
@@ -109,7 +109,7 @@ export default class ProfileHeader extends React.Component {
       if (user.more.firstName || user.more.lastName) {
         name = `${user.more.firstName} ${user.more.lastName}`;
         modalName = [
-          <span className="font-bold">{name}</span>,
+          <span className="font-bold" key="modalName">{name}</span>,
           ` (${user.username})`
         ];
       }
@@ -177,33 +177,33 @@ export default class ProfileHeader extends React.Component {
     name = name.trim();
 
     return (
-      <div ref={c => this.root = c} className="profile" style={{ backgroundImage: `url('${picture}')` }}>
+      <div className="profile" ref={c => this.root = c} style={{ backgroundImage: `url('${picture}')` }}>
         <div className="profile__body">
           <div className="layout__row">
             <div className="layout__grid">
               <div className="layout__grid_item layout__grid_item-wide">
                 <User
-                  user={user}
-                  editorConfig={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
                   avatarPreview={avatarPreview}
                   avatarSize="120"
-                  isRound
+                  editorConfig={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
                   hideText
+                  isRound
+                  user={user}
                 />
               </div>
               {editable &&
                 <div className="layout__grid_item layout__grid_item-wide layout-align_right update_picture__container">
                   <UpdatePicture
-                    what="profile background"
-                    where={modalName}
-                    preview={PROFILE_HEADER_SIZE.PREVIEW}
                     flexible
                     limits={{ min: PROFILE_HEADER_SIZE.MIN, max: PROFILE_HEADER_SIZE.BIG }}
+                    preview={PROFILE_HEADER_SIZE.PREVIEW}
+                    what="profile background"
+                    where={modalName}
                     onSubmit={this.addHeaderPicture}
                   />
                 </div>
-               }
-             </div>
+              }
+            </div>
           </div>
           <div className="layout__row">
             <div className="layout__grid">
@@ -218,7 +218,12 @@ export default class ProfileHeader extends React.Component {
                 {followersCount}
               </div>
               <div className="layout__grid_item">
-                <FollowButton active_user={current_user} user={user} following={i_am_following} triggers={this.props.triggers} />
+                <FollowButton
+                  active_user={current_user}
+                  following={i_am_following}
+                  triggers={this.props.triggers}
+                  user={user}
+                />
               </div>
             </div>
           </div>

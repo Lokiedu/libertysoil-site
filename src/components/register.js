@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
@@ -24,7 +24,6 @@ import { API_HOST } from '../config';
 import Message from './message';
 
 class SuccessContent extends Component {
-
   clickHandler = (event) => {
     event.preventDefault();
     this.props.onShowRegisterForm();
@@ -34,12 +33,12 @@ class SuccessContent extends Component {
     return (
       <div className="box box-middle">
         <header className="box__title">Registration success</header>
-          <div className="box__body">
-            <div className="layout__row">
-        <div>Please check your email for further instructions. Or <a href="#" className="link" onClick={this.clickHandler}>display register form.</a></div>
+        <div className="box__body">
+          <div className="layout__row">
+            <div>Please check your email for further instructions. Or <a className="link" href="#" onClick={this.clickHandler}>display register form.</a>
             </div>
-
           </div>
+        </div>
       </div>
     );
   }
@@ -70,7 +69,10 @@ class Register extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    onRegisterUser: PropTypes.func.isRequired,
+    onShowRegisterForm: PropTypes.func.isRequired,
+    registration_success: PropTypes.bool
   };
 
   constructor() {
@@ -78,34 +80,37 @@ class Register extends React.Component {
 
     this.first = '';
     this.last = '';
+    this.usernameFocused = false;
     this.usernameManuallyChanged = false;
   }
 
   componentDidMount() {
+    this.username.addEventListener('focus', this.usernameFocusHandler);
+    this.username.addEventListener('blur', this.usernameBlurHandler);
     this.username.addEventListener('input', this.inputUsername);
   }
 
   componentWillUnmount() {
+    this.username.removeEventListener('focus', this.usernameFocusHandler);
+    this.username.removeEventListener('blur', this.usernameBlurHandler);
     this.username.removeEventListener('input', this.inputUsername);
   }
 
   submitHandler = (event) => {
     event.preventDefault();
 
-    const { form } = this.props;
+    const { form, fields } = this.props;
 
     form.forceValidate();
-
     if (!form.isValid()) {
       return;
     }
 
     const theForm = event.target;
-
     this.props.onRegisterUser(
-      form.username.value,
-      form.password.value,
-      form.email.value,
+      fields.username.value,
+      fields.password.value,
+      fields.email.value,
       theForm.firstName.value,
       theForm.lastName.value
     );
@@ -132,16 +137,19 @@ class Register extends React.Component {
     }
 
     const result = this.first + this.last;
+    const simulatedInput = new Event('input', { bubbles: true }); // to notify react-inform about changes
+
     if (!result) {
       this.username.value = result;
+      this.username.dispatchEvent(simulatedInput);
       return;
     }
 
     try {
       this.username.value = await this.getAvailableUsername(result);
-      this.error = '';
+      this.username.dispatchEvent(simulatedInput);
     } catch (e) {
-      this.error = e.message;
+      // do nothing
     }
   };
 
@@ -150,7 +158,17 @@ class Register extends React.Component {
     const result = field.value.replace(/\s|\W/g, '');
 
     field.value = result;
-    this.usernameManuallyChanged = true;
+    if (this.usernameFocused) {
+      this.usernameManuallyChanged = true;
+    }
+  };
+
+  usernameFocusHandler = () => {
+    this.usernameFocused = true;
+  };
+
+  usernameBlurHandler = () => {
+    this.usernameFocused = false;
   };
 
   render() {
@@ -158,71 +176,72 @@ class Register extends React.Component {
 
     if (this.props.registration_success) {
       ga('send', 'event', 'Reg', 'Done');
-      return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
+      return <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} />;
     }
 
     const reset = ((e) => e.target.setCustomValidity(''));
     return (
-    <div id="register" className="div">
-      <header className="layout__row layout__row-double">
-        <p className="layout__row content content-small">Create new account</p>
-        <div className="layout__row content__head">Be the change</div>
-        <div className="layout__row content content-small">
-          <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
-        </div>
-      </header>
-      <form action="" onSubmit={this.submitHandler} className="layout__row">
-          <div className="layout__row"><div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Firstname" id="registerFirstName" name="firstName" />
+      <div className="div" id="register">
+        <header className="layout__row layout__row-double">
+          <p className="layout__row content content-small">Create new account</p>
+          <div className="layout__row content__head">Be the change</div>
+          <div className="layout__row content content-small">
+            <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
+          </div>
+        </header>
+        <form action="" className="layout__row" onSubmit={this.submitHandler}>
+          <div className="layout__row">
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
+              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} />
+            </div>
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
+              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} />
+            </div>
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input" htmlFor="username">Username</label>
+              <input className="input input-gray input-big input-block" id="username" name="username" placeholder="Username" ref={(c) => this.username = c} required="required" type="text" {...fields.username} />
+              {fields.username.error &&
+                <Message message={fields.username.error} />
+              }
+            </div>
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input" htmlFor="registerPassword">Password</label>
+              <input className="input input-gray input-big input-block" id="registerPassword" name="password" ref={(c) => this.password = c} required="required" type="password" {...fields.password} />
+              {fields.password.error &&
+                <Message message={fields.password.error} />
+              }
+            </div>
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
+              <input className="input input-gray input-big input-block" id="registerPasswordRepeat" name="password_repeat" ref={(c) => this.passwordRepeat = c} required="required" type="password" {...fields.passwordRepeat} />
+              {fields.passwordRepeat.error &&
+                <Message message={fields.passwordRepeat.error} />
+              }
+            </div>
+            <div className="layout__row layout__row-double">
+              <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
+              <input className="input input-gray input-big input-block" id="registerEmail" name="email" placeholder="email.address@example.com" ref={(c) => this.email = c} required="required" type="email" {...fields.email} />
+              {fields.email.error &&
+                <Message message={fields.email.error} />
+              }
+            </div>
           </div>
           <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input onBlur={reset} onChange={this.changeName} className="input input-gray input-big input-block" type="text" placeholder="Lastname" id="registerLastName" name="lastName" />
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="username">Username</label>
-            <input ref={(c) => this.username = c} className="input input-gray input-big input-block" type="text" placeholder="Username" id="username" name="username" required="required" {...fields.username}/>
-            {fields.username.error &&
-              <Message message={fields.username.error} />
+            {fields.agree.error &&
+              <Message message={fields.agree.error} />
             }
+            <div className="layout__grid layout__grid-big layout-align_vertical">
+              <button className="button button-big button-green">Sign up</button>
+              <label className="action checkbox">
+                <input name="agree" required="required" type="checkbox" {...fields.agree} />
+                <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
+              </label>
+            </div>
           </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input ref={(c) => this.password = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPassword" name="password" required="required" {...fields.password} />
-            {fields.password.error &&
-              <Message message={fields.password.error} />
-            }
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input ref={(c) => this.passwordRepeat = c} onInput={this.passwordValidation} className="input input-gray input-big input-block" type="password" id="registerPasswordRepeat" name="password_repeat" required="required" {...fields.passwordRepeat} />
-            {fields.passwordRepeat.error &&
-              <Message message={fields.passwordRepeat.error} />
-            }
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input ref={(c) => this.email = c} onChange={this.emailValidation} className="input input-gray input-big input-block" type="email" placeholder="email.address@example.com" id="registerEmail" name="email" required="required" {...fields.email} />
-            {fields.email.error &&
-              <Message message={fields.email.error} />
-            }
-          </div>
-        </div>
-        <div className="layout__row layout__row-double">
-          {fields.agree.error &&
-            <Message message={fields.agree.error} />
-          }
-          <div className="layout__grid layout__grid-big layout-align_vertical">
-            <button className="button button-big button-green">Sign up</button>
-            <label className="action checkbox">
-              <input name="agree" required="required" type="checkbox" {...fields.agree} />
-              <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
-            </label>
-          </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
     );
   }
 }
@@ -274,4 +293,3 @@ const WrappedRegister = inform(from({
 }))(Register);
 
 export default WrappedRegister;
-

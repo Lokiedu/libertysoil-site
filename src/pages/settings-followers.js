@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -89,24 +89,24 @@ class SettingsFollowersPage extends React.Component {
             <UserGrid
               current_user={current_user}
               i_am_following={i_am_following}
+              notFoundMessage="You are not following any users"
               triggers={triggers}
               users={followingUsers}
-              notFoundMessage="You are not following any users"
             />
           </div>
         </div>
 
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Following you</h2>
-            <div className="layout__row layout__row-double">
-              <UserGrid
-                current_user={current_user}
-                i_am_following={i_am_following}
-                triggers={triggers}
-                users={followersUsers}
-                notFoundMessage="No one follows you yet"
-              />
-            </div>
+          <div className="layout__row layout__row-double">
+            <UserGrid
+              current_user={current_user}
+              i_am_following={i_am_following}
+              notFoundMessage="No one follows you yet"
+              triggers={triggers}
+              users={followersUsers}
+            />
+          </div>
         </div>
       </BaseSettingsPage>
     );
