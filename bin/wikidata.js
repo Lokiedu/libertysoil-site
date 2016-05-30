@@ -18,7 +18,7 @@ function getSparqlQuery(options = {}) {
 
 async function bulkUpdate(items) {
   const queries = items
-    .map(item => knex.raw(`EXECUTE updateGeotag(?, ?);`, [item.geonames_id, item.more || {}]).toString())
+    .map(item => knex.raw(`EXECUTE updateGeotag(?, ?);`, [item.geonames_id, item.more]).toString())
     .join('\n');
 
   return knex.raw(queries);
@@ -32,7 +32,7 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
   let currentOffest = 0;
 
   while (true) { // eslint-disable-line no-constant-condition
-    let sparql = getSparqlQuery({
+    const sparql = getSparqlQuery({
       condition: wikidataCondition,
       offset: currentOffest,
       limit: batchSize
@@ -48,14 +48,13 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
 
     const json = JSON.parse(await response.text());
     const items = json.results.bindings.map(item => {
-      let object = {
+      const object = {
         geonames_id: item.geonamesId.value
       };
 
+      object.more = {};
       if (item.itemDescription) {
-        object.more = {
-          description: item.itemDescription.value
-        };
+        object.more.description = item.itemDescription.value;
       }
 
       return object;
@@ -73,7 +72,7 @@ async function importDescriptions(wikidataCondition, batchSize = 1000) {
 }
 
 async function execute() {
-  await knex.raw('PREPARE updateGeotag(integer, jsonb) AS UPDATE geotags SET more = $2 WHERE geonames_id = $1');
+  await knex.raw(`PREPARE updateGeotag(integer, jsonb) AS UPDATE geotags SET more = coalesce(more, '{}') || to_jsonb($2) WHERE geonames_id = $1`);
 
   // wdt:P31 <type> - instance of <type>
   // wdt:P31/wdt:P279* <type> - instance of subclasses of <type>
@@ -98,4 +97,4 @@ execute()
   .catch(e => {
     process.stderr.write(e.stack);  // eslint-disable-line no-console
     process.exit(1);
-  })
+  });
