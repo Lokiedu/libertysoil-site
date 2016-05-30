@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
@@ -36,15 +36,17 @@ import Header from '../components/header';
 import Messages from '../components/messages';
 
 
-const SuccessMessage = () => {
-  return (
-    <div>
-      You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
-    </div>
-  );
-};
+const SuccessMessage = () => (
+  <div>
+    You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
+  </div>
+);
 
 class PasswordForm extends React.Component {
+  static propTypes = {
+    onSubmit: PropTypes.func
+  };
+
   static defaultProps = {
     onSubmit: () => {}
   };
@@ -90,7 +92,7 @@ class PasswordForm extends React.Component {
     const errors = this.state.errors;
 
     return (
-      <form className="password-form" ref={c => this.form = c} onSubmit={this.props.onSubmit} action="" method="post">
+      <form action="" className="password-form" method="post" ref={c => this.form = c} onSubmit={this.props.onSubmit}>
         <div className="layout__row">
           <div className="form__row">
             <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
@@ -98,9 +100,9 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPassword"
               name="password"
-              onChange={this._validatePassword}
               required="required"
               type="password"
+              onChange={this._validatePassword}
             />
             {errors.password && <div className="validation_error">{errors.password}</div>}
 
@@ -109,15 +111,15 @@ class PasswordForm extends React.Component {
               className="input input-block"
               id="newPasswordRepeat"
               name="password_repeat"
-              onChange={this._validatePasswordRepeat}
               required="required"
               type="password"
+              onChange={this._validatePasswordRepeat}
             />
             {errors.password_repeat && <div className="validation_error">{errors.password_repeat}</div>}
           </div>
         </div>
         <div className="layout__row layout layout-align_vertical layout-align_justify">
-          <button type="submit" className="button button-wide button-green">Submit</button>
+          <button className="button button-wide button-green" type="submit">Submit</button>
         </div>
       </form>
     );
@@ -165,9 +167,9 @@ class Form extends React.Component {
                   <div className="area__body layout-align_start">
                     <div className="box box-middle">
                       <header className="box__title">Set new password</header>
-                        <div className="box__body">
-                          {content}
-                        </div>
+                      <div className="box__body">
+                        {content}
+                      </div>
                     </div>
                   </div>
                 </div>

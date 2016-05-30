@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 
@@ -81,7 +81,7 @@ export default class BaseSettingsPage extends React.Component {
 
     return (
       <div>
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
@@ -94,48 +94,48 @@ export default class BaseSettingsPage extends React.Component {
 
         <Page>
           <Sidebar current_user={current_user} />
-            <PageMain>
-              <PageBody>
-                <PageContent>
-                  <ProfileHeader
-                    ref={c => this.head = c}
-                    user={current_user.user}
-                    current_user={current_user}
-                    following={following}
-                    followers={followers}
-                    editable
-                  />
-                  <div className="page__content page__content-spacing">
-                    <div className="layout__row layout-small">
-                      <div className="layout__grid layout__space tabs">
-                        <div className="layout__grid_item">
-                          <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.SETTINGS)}>About</IndexLink>
-                        </div>
-                        <div className="layout__grid_item">
-                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
-                        </div>
+          <PageMain>
+            <PageBody>
+              <PageContent>
+                <ProfileHeader
+                  current_user={current_user}
+                  editable
+                  followers={followers}
+                  following={following}
+                  ref={c => this.head = c}
+                  user={current_user.user}
+                />
+                <div className="page__content page__content-spacing">
+                  <div className="layout__row layout-small">
+                    <div className="layout__grid layout__space tabs">
+                      <div className="layout__grid_item">
+                        <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.SETTINGS)}>About</IndexLink>
+                      </div>
+                      <div className="layout__grid_item">
+                        <Link activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
                       </div>
                     </div>
-                    <div className="paper layout">
-                      <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                          {children}
-                      </div>
-                      <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
-                        <div className="tabs tabs-theme_settings">
-                          <div className="tabs__menu">
-                            <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.SETTINGS)}>Basic info</IndexLink>
-                            <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Manage Followers</Link>
-                            <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {saveButton}
-                    <Messages messages={messages} removeMessage={triggers.removeMessage}/>
                   </div>
-                </PageContent>
-              </PageBody>
-            </PageMain>
+                  <div className="paper layout">
+                    <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
+                        {children}
+                    </div>
+                    <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
+                      <div className="tabs tabs-theme_settings">
+                        <div className="tabs__menu">
+                          <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.SETTINGS)}>Basic info</IndexLink>
+                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Manage Followers</Link>
+                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {saveButton}
+                  <Messages messages={messages} removeMessage={triggers.removeMessage}/>
+                </div>
+              </PageContent>
+            </PageBody>
+          </PageMain>
         </Page>
         <Footer/>
       </div>
