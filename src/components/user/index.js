@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
 
-import Time from '../time';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 import { AVATAR_SIZE } from '../../consts/profileConstants';
 import UpdatePicture from '../update-picture/update-picture';
@@ -33,8 +32,6 @@ const User = (props) => {
     hideText,
     isRound,
     avatarSize,
-    timestamp,
-    timestampLink,
     className,
     isLink
   } = props;
@@ -54,21 +51,21 @@ const User = (props) => {
     let avatar;
     if (avatarPreview) {
       avatar = (
-        <img src={avatarPreview.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
+        <img height={parseInt(avatarSize, 10)} src={avatarPreview.url} width={parseInt(avatarSize, 10)} />
       );
     } else if (user.more && user.more.avatar) {
       avatar = (
-        <img src={user.more.avatar.url} height={parseInt(avatarSize, 10)} width={parseInt(avatarSize, 10)} />
+        <img height={parseInt(avatarSize, 10)} src={user.more.avatar.url} width={parseInt(avatarSize, 10)} />
       );
     } else {
       avatar = (
-        <Gravatar md5={user.gravatarHash} size={parseInt(avatarSize, 10)} default="retro" />
+        <Gravatar default="retro" md5={user.gravatarHash} size={parseInt(avatarSize, 10)} />
       );
     }
 
     if (isLink) {
       render.avatar = (
-        <Link to={user_url} className={avatarClassName}>
+        <Link className={avatarClassName} to={user_url}>
           {avatar}
         </Link>
       );
@@ -87,7 +84,7 @@ const User = (props) => {
     if (user.more) {
       if (user.more.firstName || user.more.lastName) {
         modalName = [
-          <span className="font-bold">{user.more.firstName} {user.more.lastName}</span>,
+          <span className="font-bold" key="name">{user.more.firstName} {user.more.lastName}</span>,
           ` (${user.username})`
         ];
       }
@@ -95,11 +92,11 @@ const User = (props) => {
 
     render.changeAvatar = (
       <UpdatePicture
-        what="profile picture"
-        where={modalName}
+        flexible={editorConfig.flexible}
         limits={{ min: AVATAR_SIZE }}
         preview={AVATAR_SIZE}
-        flexible={editorConfig.flexible}
+        what="profile picture"
+        where={modalName}
         onSubmit={editorConfig.onUpdateAvatar}
       />
     );
@@ -119,27 +116,11 @@ const User = (props) => {
       render.name = name;
     }
 
-    let time;
-    if (timestamp.length > 0) {
-      time = <Time timestamp={timestamp} />;
-
-      if (isLink && timestampLink.length > 0) {
-        time = <Link to={timestampLink}>{time}</Link>;
-      }
-
-      render.timestamp = (
-        <p className="user_box__text">
-          {time}
-        </p>
-      );
-    }
-
     render.text = (
       <div className="user_box__body">
         <p className="user_box__name">
           {render.name}
         </p>
-        {render.timestamp}
       </div>
     );
   }
@@ -163,8 +144,6 @@ User.propTypes = {
   hideAvatar: PropTypes.bool,
   hideText: PropTypes.bool,
   isRound: PropTypes.bool,
-  timestamp: PropTypes.string,
-  timestampLink: PropTypes.string,
   user: PropTypes.shape({
     id: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
@@ -177,8 +156,6 @@ User.defaultProps = {
   hideText: false,
   isRound: true,
   avatarSize: 24,
-  timestamp: '',
-  timestampLink: '',
   isLink: true
 };
 
