@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -49,6 +49,7 @@ import edit_post_form from './edit_post_form';
 import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
+import search from './search';
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -80,7 +81,8 @@ export const theReducer = combineReducers(i.Map({
   geotag_cloud,
   related_posts,
   comments,
-  quotes
+  quotes,
+  search
 }));
 
 const initialState = i.Map({
@@ -141,7 +143,14 @@ const initialState = i.Map({
   user_posts: i.Map({}),
   users: i.Map({}),
   ui: ui.initialState,
-  quotes: i.List([])
+  quotes: i.List([]),
+  search: i.Map({
+    results: i.Map({
+      geotags: i.List([]),
+      hashtags: i.List([]),
+      schools: i.List([])
+    })
+  })
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';

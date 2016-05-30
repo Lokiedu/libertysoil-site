@@ -45,15 +45,22 @@ const POST_RELATIONS = Object.freeze([
 
 export default class ApiController {
   bookshelf;
+  sphinx;
   queue;
 
-  constructor(bookshelf) {
+  constructor(bookshelf, sphinx) {
     this.bookshelf = bookshelf;
+    this.sphinx = { api: bb.promisifyAll(sphinx.api), ql: sphinx.ql };
     this.queue = new QueueSingleton;
   }
 
   test = async (ctx) => {
     ctx.body = 'test message in response';
+  };
+
+  testSphinx = async (ctx) => {
+    const indexes = await this.sphinx.ql.raw(`SHOW TABLES`);
+    ctx.body = indexes;
   };
 
   allPosts = async (ctx) => {
@@ -2269,44 +2276,177 @@ export default class ApiController {
 
       ctx.body = hashtag;
     } catch (e) {
-      ctx.status = 404;
+      ctx.body = [];
       ctx.body = { error: e.message };
     }
   };
 
-  searchGeotags = async (ctx) => {
-    const Geotag = this.bookshelf.model('Geotag');
+
+  searchStats = async (ctx) => {
+    const q = ctx.params.query;
+
+    this.sphinx.api.SetMatchMode(4); //SPH_MATCH_EXTENDED
+    this.sphinx.api.SetLimits(0, 100, 100, 100);
 
     try {
-      const geotags = await Geotag.collection().query(function (qb) {
-        qb
-          .where('name', 'ILIKE',  `${ctx.params.query}%`)
-          .limit(10);
-      }).fetch({ withRelated: ['country', 'admin1'] });
+      const result = await this.sphinx.api.QueryAsync(`*${q}*`, 'PostsRT,UsersRT,HashtagsRT,GeotagsRT,SchoolsRT,CommentsRT');
+
+      if ('matches' in result) {
+        const result_count = _.countBy(result.matches, (value) => {
+          const valueType = value.attrs.type.toLowerCase();
+          return `${valueType}s`;
+        });
+        ctx.body = result_count;
+      } else {
+        ctx.body = {};
+      }
+    } catch (err) {
+      ctx.status = 500;
+      ctx.body = { error: JSON.stringify(err) };
+    }
+  };
+
+  search = async (ctx) => {
+    const q = ctx.params.query;
+
+    this.sphinx.api.SetMatchMode(4); //SPH_MATCH_EXTENDED
+    this.sphinx.api.SetLimits(0, 100, 100, 100);
+
+    const result = await this.sphinx.api.QueryAsync(`*${q}*`, 'PostsRT,UsersRT,HashtagsRT,GeotagsRT,SchoolsRT,CommentsRT');
+
+    try {
+      if ('matches' in result) {
+        const result_groups = _.groupBy(result.matches, 'attrs.type');
+
+        const grouped_result_objects = {};
+
+        for (const result_type in result_groups) {
+          const group_ids = _.map(result_groups[result_type], 'attrs.uuid');
+
+          const ResultGroup = this.bookshelf.model(result_type);
+          const q = ResultGroup.forge()
+            .query(qb => {
+              qb.where('id', 'IN', group_ids);
+            });
+
+          grouped_result_objects[result_type] = await q.fetchAll();
+        }
+
+        ctx.body = _.mapKeys(grouped_result_objects, (value, key) => {
+          return `${key.toLowerCase()}s`;
+        });
+      } else {
+        ctx.body = {};
+        return;
+      }
+    } catch (err) {
+      ctx.status = 500;
+      ctx.body = { error: JSON.stringify(err.message) };
+    }
+  };
+
+  addToSearchIndex = async (index, data) => {
+    const rt_index_name = `${index}sRT`;
+    const next_index_meta = await this.sphinx.ql.raw(`SHOW INDEX ${rt_index_name} STATUS`);
+
+    const next_id = ++next_index_meta[0][1]['Value'];
+
+    data.uuid = data.id;
+    data.id = next_id;
+    data.type = index;
+
+    return await this.sphinx.ql.insert(data).into(rt_index_name);
+  };
+
+  updateInSearchIndex = async (index, data) => {
+    const rt_index_name = `${index}sRT`;
+    const Model = this.bookshelf.model(index);
+    const user = await Model.where({ id: data.id }).fetch({ require: true });
+
+    const id = user.get('_sphinx_id');
+
+    data.uuid = data.id;
+    data.id = id;
+    data.type = index;
+
+    const q = this.sphinx.ql.insert(data).into(rt_index_name).toString();
+
+    return await this.sphinx.ql.raw(q.replace(/insert into/i, 'replace into'));
+  };
+
+  searchGeotags = async (ctx) => {
+    const query = ctx.params.query;
+
+    try {
+      const geotags = await this.getSimilarGeotags(query);
 
       ctx.body = { geotags };
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
-      return;
     }
   };
 
-  searchTags = async (ctx) => {
-    const Hashtag = this.bookshelf.model('Hashtag');
+  searchHashtags = async (ctx) => {
+    const query = ctx.params.query;
 
     try {
-      const hashtags = await Hashtag.collection().query(function (qb) {
-        qb
-          .where('name', 'ILIKE', `${ctx.params.query}%`)
-          .limit(10);
-      }).fetch();
+      const hashtags = await this.getSimilarHashtags(query);
 
       ctx.body = { hashtags };
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
     }
+  };
+
+  searchSchools = async (ctx) => {
+    const query = ctx.params.query;
+
+    try {
+      const schools = await this.getSimilarSchools(query);
+
+      ctx.body = { schools };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  getSimilarGeotags = async (query) => {
+    const Geotag = this.bookshelf.model('Geotag');
+
+    const geotags = await Geotag.collection().query(function (qb) {
+      qb
+        .where('name', 'ILIKE',  `${query}%`)
+        .limit(10);
+    }).fetch({ withRelated: ['country', 'admin1'] });
+
+    return geotags;
+  };
+
+  getSimilarHashtags = async (query) => {
+    const Hashtag = this.bookshelf.model('Hashtag');
+
+    const hashtags = await Hashtag.collection().query(function (qb) {
+      qb
+        .where('name', 'ILIKE', `${query}%`)
+        .limit(10);
+    }).fetch();
+
+    return hashtags;
+  };
+
+  getSimilarSchools = async (query) => {
+    const School = this.bookshelf.model('School');
+
+    const schools = await School.collection().query(function (qb) {
+      qb
+        .where('name', 'ILIKE', `${query}%`)
+        .limit(10);
+    }).fetch();
+
+    return schools;
   };
 
   /**
@@ -2652,6 +2792,8 @@ export default class ApiController {
     try {
       await comment_object.save(null, { method: 'insert' });
       await post_object.save(null, { method: 'update' });
+
+      await this.addToSearchIndex('Comment', comment_object.toJSON());
 
       this.queue.createJob('on-comment', { commentId: comment_object.id });
 

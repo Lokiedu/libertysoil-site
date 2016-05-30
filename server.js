@@ -47,6 +47,7 @@ import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
 import {initApi} from './src/api/routing'
 import initBookshelf from './src/api/db';
+import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
 import ApiClient from './src/api/client'
 
@@ -65,7 +66,8 @@ let app = new Koa();
 
 let knexConfig = db_config[exec_env];
 let bookshelf = initBookshelf(knexConfig);
-let api = initApi(bookshelf);
+let sphinx = initSphinx();
+let api = initApi(bookshelf, sphinx);
 let matchPromisified = promisify(match, { multiArgs: true });
 let templatePath = path.join(__dirname, '/src/views/index.ejs');
 let template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), {filename: templatePath});

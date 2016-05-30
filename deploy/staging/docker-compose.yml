@@ -23,6 +23,12 @@ backup:
 redis:
   image: "redis:3.0"
   restart: always
+sphinx:
+  image: "quay.io/dipstudio/libertysoil-sphinx:latest"
+  ports:
+    - "9312:9312"
+    - "9306:9306"
+  restart: always
 app:
   image: "quay.io/dipstudio/libertysoil:master"
   ports:
@@ -30,6 +36,7 @@ app:
   links:
     - db
     - redis
+    - sphinx
   environment:
     - "API_HOST=http://alpha.libertysoil.org"
     - "VIRTUAL_HOST=alpha.libertysoil.org"
