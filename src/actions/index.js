@@ -100,6 +100,9 @@ export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
 export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
 
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -626,5 +629,18 @@ export function createCommentFailure(postId, message) {
     type: CREATE_COMMENT__FAILURE,
     postId,
     message
+  };
+}
+
+export function setSearchResults(results) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results
+  };
+}
+
+export function clearSearchResults() {
+  return {
+    type: CLEAR_SEARCH_RESULTS
   };
 }

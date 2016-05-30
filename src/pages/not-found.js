@@ -41,21 +41,20 @@ const NotFound = ({ is_logged_in, current_user }) => {
     <div>
       <Helmet title="Page not found at " />
       <Header current_user={current_user} is_logged_in={is_logged_in} />
-
-        <Page className={pageClassName}>
-          <Sidebar current_user={current_user} />
-          <PageMain>
-            <PageBody>
-              <PageContent>
-                <section className="box">
-                  <div className="box__title">
-                    <p><strong>Page Not Found</strong></p>
-                  </div>
-                </section>
-              </PageContent>
-            </PageBody>
-          </PageMain>
-        </Page>
+      <Page className={pageClassName}>
+        <Sidebar current_user={current_user} />
+        <PageMain>
+          <PageBody>
+            <PageContent>
+              <section className="box">
+                <div className="box__title">
+                  <p><strong>Page Not Found</strong></p>
+                </div>
+              </section>
+            </PageContent>
+          </PageBody>
+        </PageMain>
+      </Page>
     </div>
   );
 };

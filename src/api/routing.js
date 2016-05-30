@@ -22,12 +22,13 @@ import ApiController from './controller';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-export function initApi(bookshelf) {
-  const controller = new ApiController(bookshelf);
+export function initApi(bookshelf, sphinx) {
+  const controller = new ApiController(bookshelf, sphinx);
 
   const api = new Router();
 
   api.get('/test', controller.test);
+  api.get('/test-sphinx', controller.testSphinx);
   api.post('/users', controller.registerUser);
   api.post('/session', controller.login);
 
@@ -60,6 +61,7 @@ export function initApi(bookshelf) {
 
   api.get('/school-cloud', controller.getSchoolCloud);
   api.get('/schools', controller.getSchools);
+  api.get('/schools/:query', controller.searchSchools);
   api.head('/school/:name', controller.checkSchoolExists);
   api.get('/school/:url_name', controller.getSchool);
   api.post('/school/:id', controller.updateSchool);
@@ -102,7 +104,7 @@ export function initApi(bookshelf) {
   api.get('/pickpoint', controller.pickpoint);
 
   api.get('/tag-cloud', controller.getTagCloud);
-  api.get('/tags/search/:query', controller.searchTags);
+  api.get('/tags/search/:query', controller.searchHashtags);
   api.get('/tag/:name', controller.getHashtag);
   api.post('/tag/:id', controller.updateHashtag);
   api.post('/tag/:name/follow', controller.followTag);
@@ -121,6 +123,9 @@ export function initApi(bookshelf) {
   api.post('/geotag/:url_name/unlike', controller.unlikeGeotag);
 
   api.get('/quotes', controller.getQuotes);
+
+  api.get('/search/:query', controller.search);
+  api.get('/search-quick/:query', controller.searchStats);
 
 
   return api.routes();
