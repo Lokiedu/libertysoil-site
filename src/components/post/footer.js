@@ -34,7 +34,7 @@ const PostFooter = ({ author, current_user, post, triggers }) => {
     <div>
       <div className="card__meta">
         <div className="card__owner">
-          <User avatarSize="39" user={author} />
+          <User avatar={{ size: 39 }} user={author} />
         </div>
         <div className="card__timestamp">
           <Link to={post_url}>

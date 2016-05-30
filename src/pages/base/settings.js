@@ -86,7 +86,12 @@ export default class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <User user={user} avatarSize="36" isRound hideText isLink={false} />
+                <User
+                  avatar={{ size: 36, isRound: true }}
+                  isLink={false}
+                  text={{ hide: true }}
+                  user={user}
+                />
               </div>
             </Breadcrumbs>
           </div>
