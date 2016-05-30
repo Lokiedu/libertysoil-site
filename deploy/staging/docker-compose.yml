@@ -36,6 +36,7 @@ app:
   links:
     - db
     - redis
+    - sphinx
   environment:
     - "API_HOST=http://alpha.libertysoil.org"
     - "VIRTUAL_HOST=alpha.libertysoil.org"

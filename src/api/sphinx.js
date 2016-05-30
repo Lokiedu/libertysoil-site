@@ -22,15 +22,18 @@ import knex from 'knex';
 export default function initSphinx() {
   const client = new SphinxClient();
 
-  client.SetServer('127.0.0.1', 3312);
+  client.SetServer(
+    process.env.SPHINX_PORT_3312_TCP_ADDR || '127.0.0.1',
+    process.env.SPHINX_PORT_3312_TCP_PORT || 3312
+  );
 
   return {
     api: client,
     ql: knex({
       client: 'mysql2',
       connection: {
-        host: '127.0.0.1',
-        port: 9306
+        host: process.env.SPHINX_PORT_9306_TCP_ADDR || '127.0.0.1',
+        port: process.env.SPHINX_PORT_9306_TCP_PORT || 9306
       }
     })
   };
