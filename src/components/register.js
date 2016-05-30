@@ -24,7 +24,6 @@ import { API_HOST } from '../config';
 import Message from './message';
 
 class SuccessContent extends Component {
-
   clickHandler = (event) => {
     event.preventDefault();
     this.props.onShowRegisterForm();
@@ -81,34 +80,37 @@ class Register extends React.Component {
 
     this.first = '';
     this.last = '';
+    this.usernameFocused = false;
     this.usernameManuallyChanged = false;
   }
 
   componentDidMount() {
+    this.username.addEventListener('focus', this.usernameFocusHandler);
+    this.username.addEventListener('blur', this.usernameBlurHandler);
     this.username.addEventListener('input', this.inputUsername);
   }
 
   componentWillUnmount() {
+    this.username.removeEventListener('focus', this.usernameFocusHandler);
+    this.username.removeEventListener('blur', this.usernameBlurHandler);
     this.username.removeEventListener('input', this.inputUsername);
   }
 
   submitHandler = (event) => {
     event.preventDefault();
 
-    const { form } = this.props;
+    const { form, fields } = this.props;
 
     form.forceValidate();
-
     if (!form.isValid()) {
       return;
     }
 
     const theForm = event.target;
-
     this.props.onRegisterUser(
-      form.username.value,
-      form.password.value,
-      form.email.value,
+      fields.username.value,
+      fields.password.value,
+      fields.email.value,
       theForm.firstName.value,
       theForm.lastName.value
     );
@@ -135,16 +137,19 @@ class Register extends React.Component {
     }
 
     const result = this.first + this.last;
+    const simulatedInput = new Event('input', { bubbles: true }); // to notify react-inform about changes
+
     if (!result) {
       this.username.value = result;
+      this.username.dispatchEvent(simulatedInput);
       return;
     }
 
     try {
       this.username.value = await this.getAvailableUsername(result);
-      this.error = '';
+      this.username.dispatchEvent(simulatedInput);
     } catch (e) {
-      this.error = e.message;
+      // do nothing
     }
   };
 
@@ -153,7 +158,17 @@ class Register extends React.Component {
     const result = field.value.replace(/\s|\W/g, '');
 
     field.value = result;
-    this.usernameManuallyChanged = true;
+    if (this.usernameFocused) {
+      this.usernameManuallyChanged = true;
+    }
+  };
+
+  usernameFocusHandler = () => {
+    this.usernameFocused = true;
+  };
+
+  usernameBlurHandler = () => {
+    this.usernameFocused = false;
   };
 
   render() {
@@ -161,7 +176,7 @@ class Register extends React.Component {
 
     if (this.props.registration_success) {
       ga('send', 'event', 'Reg', 'Done');
-      return ( <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} /> );
+      return <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} />;
     }
 
     const reset = ((e) => e.target.setCustomValidity(''));
