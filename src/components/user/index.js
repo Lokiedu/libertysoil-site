@@ -14,15 +14,15 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
 
-import Time from './time';
-import { URL_NAMES, getUrl } from '../utils/urlGenerator';
-import { AVATAR_SIZE } from '../consts/profileConstants';
-import UpdatePicture from './update-picture/update-picture';
+import Time from '../time';
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
+import { AVATAR_SIZE } from '../../consts/profileConstants';
+import UpdatePicture from '../update-picture/update-picture';
 
 const User = (props) => {
   const {
