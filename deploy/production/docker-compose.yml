@@ -25,9 +25,13 @@ redis:
   restart: always
 sphinx:
   image: "quay.io/dipstudio/libertysoil-sphinx:latest"
+  links:
+    - "db:postgres"
+  environment:
+    - "POSTGRES_PASSWORD=Laik7akoh2ai"
   ports:
-    - "9312:9312"
-    - "9306:9306"
+    - "127.0.0.1:9312:9312"
+    - "127.0.0.1:9306:9306"
   restart: always
 app:
   image: "quay.io/dipstudio/libertysoil:1.5.0"
