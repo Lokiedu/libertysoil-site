@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,8 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
@@ -34,12 +34,26 @@ import { defaultSelector } from '../selectors';
 class UserPage extends React.Component {
   static displayName = 'UserPage';
 
+  static propTypes = {
+    location: PropTypes.shape({}).isRequired
+  };
+
+  static childContextTypes = {
+    routeLocation: PropTypes.shape({}).isRequired // not jush 'location' to prevent misleading warnings
+  };
+
   static async fetchData(params, store, client) {
     const userInfo = await client.userInfo(params.username);
     const userPosts = client.userPosts(params.username);
 
     store.dispatch(addUser(userInfo));
     store.dispatch(setUserPosts(userInfo.id, await userPosts));
+  }
+
+  getChildContext() {
+    const { location } = this.props;
+
+    return { routeLocation: location };
   }
 
   render() {
@@ -59,8 +73,6 @@ class UserPage extends React.Component {
     if (false === page_user) {
       return <NotFound/>;
     }
-
-    //console.info(this.props);
 
     const user_posts = this.props.user_posts[page_user.id];
 
