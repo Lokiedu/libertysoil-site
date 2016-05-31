@@ -23,7 +23,9 @@ import Time from './time';
 import FollowTagButton from './follow-tag-button';
 import Tag from './tag';
 import LikeTagButton from './like-tag-button';
+import TagDescription from './tag-description';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../consts/tags';
+
 
 function getLikeTriggers(triggers, type) {
   switch (type) {
@@ -117,12 +119,7 @@ const TagHeader = (props) => {
     url_name = tag.url_name;
   }
 
-  let linesOfDescription = <p>No information provided...</p>;
-  if (tag.description) {
-    linesOfDescription = tag.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
-  } else if (tag.more && tag.more.description) {
-    linesOfDescription = tag.more.description.split("\n").map((line, i) => <p key={`tag-${i}`}>{line}</p>);
-  }
+  const description = tag.description || (tag.more && tag.more.description);
 
   if (is_logged_in) {
     const followTriggers = getFollowTriggers(triggers, type);
@@ -194,7 +191,7 @@ const TagHeader = (props) => {
       toolbarPrimary={toolbarPrimary}
       toolbarSecondary={toolbarSecondary}
     >
-      {linesOfDescription}
+      <TagDescription description={description} />
       {tag.updated_at &&
         <p><Time timestamp={tag.updated_at} /></p>
       }
