@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { Link } from 'react-router';
 
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 import User from '../user';
-
 
 const ShortPost = ({ post, author }) => (
   <div className="short_post short_post-spacing" key={post.id}>
@@ -28,7 +27,7 @@ const ShortPost = ({ post, author }) => (
       {post.text}
     </Link>
     <div className="short_post__author">
-      <User avatarSize="20" user={author} />
+      <User avatar={{ size: 20 }} user={author} />
     </div>
   </div>
 );

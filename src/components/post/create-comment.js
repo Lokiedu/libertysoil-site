@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, {
-    Component,
-    PropTypes
-} from 'react';
+*/
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import bem from '../../utils/bemClassNames';
@@ -51,10 +48,14 @@ export default class CreateComment extends Component {
     className: ''
   };
 
-  state = {
-    isExpanded: false,
-    comment: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isExpanded: false,
+      comment: ''
+    };
+  }
 
   componentWillReceiveProps(nextProps) {
     const {
@@ -159,8 +160,8 @@ export default class CreateComment extends Component {
         <div className="layout">
           <div className="layout__grid_item">
             <User
-              avatarSize="32"
-              hideText
+              avatar={{ size: 32 }}
+              text={{ hide: true }}
               user={author}
             />
           </div>

@@ -16,42 +16,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React, PropTypes } from '../../../test-helpers/expect-unit';
+import { mount, shallow } from 'enzyme';
 
+import { expect, React } from '../../../test-helpers/expect-unit';
 import { SchoolPage } from '../../../src/pages/school';
 import { TAG_SCHOOL } from '../../../src/consts/tags';
 import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
 
-describe('School page', function() {
+describe('School page', () => {
+  it('renders <Script /> if school not yet loaded', () => {
+    const wrapper = shallow(<SchoolPage params={{ school_name: 'test' }} school_posts={{}} />);
 
-  it('MUST renders <Script /> if school not yet loaded', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolPage params={{school_name: 'test'}} school_posts={{}} />);
-
-    return expect(renderer, 'to have rendered', <script />);
+    return expect(wrapper.contains(<script />), 'to be true');
   });
 
-  it('MUST renders <NotFound /> if no school found', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<SchoolPage params={{school_name: 'test'}} schools={[{url_name: 'test'}]} school_posts={{}} />);
+  it('renders <NotFound /> if no school found', () => {
+    const wrapper = shallow(<SchoolPage params={{ school_name: 'test' }} school_posts={{}} schools={[{ url_name: 'test' }]} />);
 
-    return expect(renderer, 'to have rendered', <NotFound />);
+    expect(wrapper.contains(<NotFound />), 'to be true');
   });
 
-  it('MUST renders default school description if no description provided', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<TagHeader type={TAG_SCHOOL} tag={{url_name: 'test', id: "1", name: "test"}} is_logged_in={false} />);
+  it('renders default school description if no description provided', () => {
+    const wrapper = mount(<TagHeader is_logged_in={false} tag={{ url_name: 'test', id: '1', name: "test" }} type={TAG_SCHOOL} />);
 
-    return expect(renderer, 'to contain', "No information provided...");
+    expect(wrapper.text(), 'to contain', 'No information provided...');
   });
 
-  it('MUST renders school description', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<TagHeader type={TAG_SCHOOL} tag={{url_name: 'test', id: "1", description: 'test description'}} is_logged_in={false} />);
+  it('renders school description', () => {
+    const wrapper = mount(<TagHeader is_logged_in={false} tag={{ url_name: 'test', id: '1', description: 'test description' }} type={TAG_SCHOOL} />);
 
-    return expect(renderer, 'to contain', "test description");
+    expect(wrapper.text(), 'to contain', 'test description');
   });
-
 });

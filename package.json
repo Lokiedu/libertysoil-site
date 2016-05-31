@@ -124,6 +124,7 @@
     "coveralls": "^2.11.9",
     "css-loader": "^0.23.1",
     "csv": "~1.1.0",
+    "enzyme": "^2.3.0",
     "eslint": "^2.10.2",
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^1.0.1",

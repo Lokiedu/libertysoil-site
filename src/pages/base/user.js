@@ -74,10 +74,9 @@ const BaseUserPage = (props) => {
         <div className="header__breadcrumbs">
           <Breadcrumbs title={name}>
             <User
-              avatarSize="36"
-              hideText
+              avatar={{ size: 36, isRound: true }}
               isLink={false}
-              isRound
+              text={{ hide: true }}
               user={page_user}
             />
           </Breadcrumbs>

@@ -116,7 +116,7 @@ const validate = values => {
   const { description } = values;
   const errors = {};
 
-  if (description && description.length > 100) {
+  if (description && description.length > 5000) {
     errors.description = 'There are too many symbols in the description';
   }
 

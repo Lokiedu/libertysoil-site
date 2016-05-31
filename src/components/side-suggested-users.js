@@ -16,12 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+import { take } from 'lodash';
 
 import FollowButton from './follow-button';
 import IgnoreButton from './ignore-button';
 import User from './user';
-
 
 export default class SideSuggestedUsers extends React.Component {
   static displayName = 'SideSuggestedUsers';
@@ -83,11 +82,11 @@ export default class SideSuggestedUsers extends React.Component {
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        {_.take(users, 3).map((user) => (
+        {take(users, 3).map((user) => (
           <div className={className} key={`user-${user.id}`}>
             <div className="layout__row layout__row-small">
               <User
-                avatarSize="32"
+                avatar={{ size: 32 }}
                 user={user}
               />
             </div>
@@ -101,8 +100,8 @@ export default class SideSuggestedUsers extends React.Component {
               />
               <IgnoreButton
                 active_user={current_user}
-                onClick={this.ignoreUser}
                 user={user}
+                onClick={this.ignoreUser}
               />
             </div>
           </div>
