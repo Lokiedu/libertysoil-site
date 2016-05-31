@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import React, {
-  Component
-} from 'react';
+*/
+import React, { Component } from 'react';
 
 import Time from '../time';
 import User from '../user';
@@ -30,10 +27,14 @@ import MenuItem from '../menu-item';
 import paragraphify from '../../utils/paragraphify';
 
 export default class Comment extends Component {
-  state = {
-    text: '',
-    isEditMode: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      text: '',
+      isEditMode: false
+    };
+  }
 
   componentWillReceiveProps(nextProps) {
     const {
@@ -174,20 +175,20 @@ export default class Comment extends Component {
           </div>
           <div className="layout__row layout">
             <Button
-              disabled={!text.trim() || (commentUi && commentUi.isSaveInProgress)}
-              type="submit"
-              size="midi"
               className="layout__grid_item"
-              title="Save Comment"
               color="light_blue"
+              disabled={!text.trim() || (commentUi && commentUi.isSaveInProgress)}
+              size="midi"
+              title="Save Comment"
+              type="submit"
             />
             <Button
-              disabled={commentUi && commentUi.isSaveInProgress}
-              onClick={this.disableEditingComment}
               className="layout__grid_item"
-              title="Cancel"
               color="transparent"
+              disabled={commentUi && commentUi.isSaveInProgress}
               size="midi"
+              title="Cancel"
+              onClick={this.disableEditingComment}
             />
           </div>
         </form>
@@ -218,7 +219,7 @@ export default class Comment extends Component {
         <div className="comment__container">
           <header className="comment__header">
             <div className="comment__author">
-              <User user={author} avatarSize="17" hideText />
+              <User avatar={{ size: 17 }} text={{ hide: true }} user={author} />
             </div>
           </header>
           {this.renderBody()}

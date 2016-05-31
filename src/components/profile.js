@@ -183,11 +183,10 @@ export default class ProfileHeader extends React.Component {
             <div className="layout__grid">
               <div className="layout__grid_item layout__grid_item-wide">
                 <User
-                  avatarPreview={avatarPreview}
-                  avatarSize="120"
-                  editorConfig={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
-                  hideText
-                  isRound
+                  avatar={{ url: avatarPreview && avatarPreview.url, size: 120, isRound: true }}
+                  avatarEditor={editable ? { flexible: false, onUpdateAvatar: this.addAvatar } : false}
+                  isLink={!editable}
+                  text={{ hide: true }}
                   user={user}
                 />
               </div>

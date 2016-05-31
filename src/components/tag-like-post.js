@@ -66,7 +66,7 @@ const TagLikePost = ({ author, post }) => {
           was liked by
         </div>
         <div className="layout__grid_item">
-          <User avatarSize="32" user={author} />
+          <User avatar={{ size: 32 }} user={author} />
         </div>
         <div className="layout__grid_item layout__grid_item-wide"></div>
         <div className="layout__grid_item">

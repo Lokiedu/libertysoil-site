@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import {
-  values,
-  throttle
-} from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { values, throttle } from 'lodash';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
 import { toggleUISidebar } from '../actions';
 
@@ -34,6 +32,14 @@ import createSelector from '../selectors/createSelector';
 
 class Sidebar extends React.Component {
   static displayName = 'Sidebar';
+
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired
+  };
+
+  static contextTypes = {
+    routeLocation: PropTypes.shape({})
+  };
 
   constructor(props) {
     super(props);
@@ -87,10 +93,10 @@ class Sidebar extends React.Component {
   }, 100);
 
   render() {
+    const { routeLocation } = this.context;
     const {
       ui,
-      is_logged_in,
-      routing
+      is_logged_in
     } = this.props;
     const sidebarClassName = ['sidebar'];
 
@@ -162,9 +168,9 @@ class Sidebar extends React.Component {
           <h4 className="sidebar__heading">I post to</h4>
           <div className="sidebar__user_tags">
             <TagCloud
+              geotags={current_user.geotags}
               hashtags={current_user.hashtags}
               schools={current_user.schools}
-              geotags={current_user.geotags}
               truncated
             />
           </div>
@@ -175,24 +181,25 @@ class Sidebar extends React.Component {
     const username = current_user.user.username;
     const test = RegExp(`user\/${username}\/?$`);
     let currentUser;
-    if (routing && routing.locationBeforeTransitions.pathname.match(test)) {
+
+    if (routeLocation && routeLocation.pathname.match(test)) {
       currentUser = (
-        <NavigationItem enabled to={`/user/${username}`} className="sidebar__user">
-          <CurrentUser user={current_user.user} isLink={false} />
+        <NavigationItem className="sidebar__user" enabled to={`/user/${username}`}>
+          <CurrentUser isLink={false} user={current_user.user} />
         </NavigationItem>
       );
     } else {
       currentUser = (
-        <div className="navigation__item sidebar__user">
-          <CurrentUser user={current_user.user} />
-        </div>
+        <Link className="navigation__item sidebar__user" to={`/user/${username}`}>
+          <CurrentUser isLink={false} user={current_user.user} />
+        </Link>
       );
     }
 
     return (
       <div className={sidebarClassName.join(' ')}>
         <Navigation className="navigation-first">
-          <NavigationItem enabled to="/" icon="public">News Feed</NavigationItem>
+          <NavigationItem enabled icon="public" to="/">News Feed</NavigationItem>
           {currentUser}
           {likesSection}
           {favouritesSection}
@@ -208,11 +215,9 @@ class Sidebar extends React.Component {
 const selector = createSelector(
   state => state.get('ui'),
   currentUserSelector,
-  state => state.get('routing'),
-  (ui, current_user, routing) => ({
+  (ui, current_user) => ({
     ui,
-    ...current_user,
-    routing
+    ...current_user
   })
 );
 
