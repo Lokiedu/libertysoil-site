@@ -23,8 +23,8 @@ export default function initSphinx() {
   const client = new SphinxClient();
 
   client.SetServer(
-    process.env.SPHINX_PORT_3312_TCP_ADDR || '127.0.0.1',
-    process.env.SPHINX_PORT_3312_TCP_PORT || 3312
+    process.env.SPHINX_PORT_9312_TCP_ADDR || '127.0.0.1',
+    process.env.SPHINX_PORT_9312_TCP_PORT || 9312
   );
 
   return {
