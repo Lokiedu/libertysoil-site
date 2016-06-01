@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
@@ -29,6 +29,10 @@ import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
+
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const props = store.getState();
@@ -98,13 +102,15 @@ class SettingsPasswordPage extends React.Component {
       >
         <Helmet title="Change Password for " />
         <SettingsPasswordForm
-          onSubmit={this.save}
           ref={c => this.form = c}
+          onSubmit={this.save}
         />
 
-        {false && <div className="paper__page">
-          <h2 className="content__title">Role</h2>
-        </div>}
+        {false &&
+          <div className="paper__page">
+            <h2 className="content__title">Role</h2>
+          </div>
+        }
       </BaseSettingsPage>
     );
   }

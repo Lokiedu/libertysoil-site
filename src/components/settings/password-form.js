@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 
 // TODO: Consider using redux-form or formsy-react or  another form library.
@@ -95,42 +95,42 @@ export default class PasswordForm extends React.Component {
     const { errors } = this.state;
 
     return (
-      <form action="" ref={c => this.form = c} className="paper__page" onSubmit={this._handleSubmit}>
+      <form action="" className="paper__page" ref={c => this.form = c} onSubmit={this._handleSubmit}>
         <h2 className="content__sub_title layout__row">Password</h2>
 
-        <label htmlFor="old_password" className="layout__row layout__row-small">Current password</label>
+        <label className="layout__row layout__row-small" htmlFor="old_password">Current password</label>
         <input
           className="input input-block layout__row layout__row-small"
           id="old_password"
           name="old_password"
-          onChange={this._validateOldPassword}
           placeholder="secret"
           required
           type="password"
+          onChange={this._validateOldPassword}
         />
         {errors.old_password && <div className="validation_error">{errors.old_password}</div>}
 
-        <label htmlFor="new_password" className="layout__row layout__row-small">New password</label>
+        <label className="layout__row layout__row-small" htmlFor="new_password">New password</label>
         <input
           className="input input-block layout__row layout__row-small"
           id="new_password"
           name="new_password"
-          onChange={this._validateNewPassword}
           placeholder="mystery"
           required
           type="password"
+          onChange={this._validateNewPassword}
         />
         {errors.new_password && <div className="validation_error">{errors.new_password}</div>}
 
-        <label htmlFor="new_password_repeat" className="layout__row layout__row-small">Repeat new password...</label>
+        <label className="layout__row layout__row-small" htmlFor="new_password_repeat">Repeat new password...</label>
         <input
           className="input input-block layout__row layout__row-small"
           id="new_password_repeat"
           name="new_password_repeat"
-          onChange={this._validateNewPasswordRepeat}
           placeholder="mystery"
           required
           type="password"
+          onChange={this._validateNewPasswordRepeat}
         />
         {errors.new_password_repeat && <div className="validation_error">{errors.new_password_repeat}</div>}
 
