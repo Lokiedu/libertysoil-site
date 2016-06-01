@@ -26,7 +26,7 @@ import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import createSelector from '../selectors/createSelector';
 
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../consts/tags';
+import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 import { clearSearchResults } from '../actions';
 
 import Icon from './icon';
@@ -159,30 +159,42 @@ class Search extends Component {
     return (
       <div className="search__result">
         {tags.map((tag, i) => {
-          let type, url;
+          let icon, name, url;
 
           switch (tag.tagType) {
             case 'geotags': {
-              type = TAG_LOCATION;
+              icon = <TagIcon big type={TAG_LOCATION} />;
+              name = tag.name;
               url = `/geo/${tag.url_name}`;
               break;
             }
             case 'hashtags': {
-              type = TAG_HASHTAG;
+              icon = <TagIcon big type={TAG_HASHTAG} />;
+              name = tag.name;
               url = `/tag/${tag.name}`;
               break;
             }
             case 'schools': {
-              type = TAG_SCHOOL;
+              icon = <TagIcon big type={TAG_SCHOOL} />;
+              name = tag.name;
               url = `/s/${tag.url_name}`;
               break;
             }
+            case 'posts': {
+              icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
+              name = tag.more.pageTitle;
+              url = `/post/${tag.id}`;
+              break;
+            }
+            default:
+              console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
+              return <noscript/>;
           }
 
           return (
             <Link key={i} to={url}>
-              <ListItem icon={<TagIcon big type={type} />}>
-                {tag.name}
+              <ListItem icon={icon}>
+                {name}
               </ListItem>
             </Link>
           );
