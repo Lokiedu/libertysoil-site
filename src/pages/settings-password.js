@@ -49,23 +49,25 @@ class SettingsPasswordPage extends React.Component {
   }
 
   onSave = () => {
-    const event = document.createEvent("HTMLEvents");
-    event.initEvent('submit', true, true);
-    event.eventType = 'submit';
+    const form = this.form.formProps();
 
-    this.form.dispatchEvent(event);
+    form.forceValidate();
+    if (form.isValid()) {
+      this.save();
+    }
   };
 
-  save = (e) => {
-    e && e.preventDefault();
-
+  save = () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    const form = this.form.formProps();
+    const fields = form.values();
+
     const promise = triggers.changePassword(
-      this.form.old_password.value,
-      this.form.new_password.value,
-      this.form.new_password_repeat.value
+      fields.oldPassword,
+      fields.newPassword,
+      fields.newPasswordRepeat
     );
 
     promise.catch(e => {
@@ -101,10 +103,7 @@ class SettingsPasswordPage extends React.Component {
         onSave={this.onSave}
       >
         <Helmet title="Change Password for " />
-        <SettingsPasswordForm
-          ref={c => this.form = c}
-          onSubmit={this.save}
-        />
+        <SettingsPasswordForm ref={c => this.form = c} />
 
         {false &&
           <div className="paper__page">
