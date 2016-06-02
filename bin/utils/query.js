@@ -8,12 +8,10 @@ import knex from './knex';
  * @param {number} batchSize
  * @returns {Promise}
  */
-export function executeQueries(queries, batchSize = 1000) {
-  return Promise.all(
-    _.chunk(queries, batchSize).map((batch, i) => {
-      return knex.raw(batch.join('\n'));
-    })
-  );
+async function executeQueries(queries, batchSize = 1000) {
+  for (const batch of _.chunk(queries, batchSize)) {
+    await knex.raw(batch.join('\n'));
+  }
 }
 
 /**
