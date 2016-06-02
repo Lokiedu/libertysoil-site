@@ -6,7 +6,8 @@ module.exports = {
   cache: true,
 
   entry: [
-    'webpack-hot-middleware/client?path=/__webpack_hmr',
+    'webpack-dev-server/client?http://localhost:8000/',
+    'webpack/hot/dev-server',
     'babel-polyfill',
     './src/scripts/app.js',
     './src/less/styles.less'
