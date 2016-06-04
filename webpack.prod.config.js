@@ -1,7 +1,7 @@
-var path = require('path');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var autoprefixer = require('autoprefixer');
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: [
@@ -46,11 +46,11 @@ module.exports = {
           ]
         }
       },
-      {test: /\.json$/, loader: 'json'},
-      {test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css!postcss')},
-      {test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css!postcss!less')},
-      {test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
-      {test: /\.(png|jpg|svg)$/, loader: 'file?name=[hash].[ext]'}
+      { test: /\.json$/, loader: 'json' },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css!postcss') },
+      { test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css!postcss!less') },
+      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000' },
+      { test: /\.(png|jpg|svg)$/, loader: 'file?name=[hash].[ext]' }
     ]
   },
 
@@ -67,7 +67,7 @@ module.exports = {
     })
   ],
 
-  postcss: function () {
+  postcss: () => {
     return [autoprefixer];
   }
 };
