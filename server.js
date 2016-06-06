@@ -29,58 +29,56 @@ import cors from 'kcors';
 import serve from 'koa-static';
 import bodyParser from 'koa-bodyparser';
 import mount from 'koa-mount';
-import knexLogger from 'knex-logger';
 import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 
 import React from 'react';
-import { renderToString } from 'react-dom/server'
-import { createMemoryHistory } from 'history'
+import { renderToString } from 'react-dom/server';
+import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
-import { Router, RouterContext, match, useRouterHistory } from 'react-router'
+import { Router, RouterContext, match, useRouterHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import Helmet from 'react-helmet';
 import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
-import {initApi} from './src/api/routing'
+import { initApi } from './src/api/routing';
 import initBookshelf from './src/api/db';
 import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
-import ApiClient from './src/api/client'
+import ApiClient from './src/api/client';
 
 import { initState } from './src/store';
 import {
-  setCurrentUser, setLikes, setFavourites, setUserFollowedTags,
-  setUserFollowedSchools, setUserFollowedGeotags
+  setCurrentUser, setLikes, setFavourites
 } from './src/actions';
 
 import db_config from './knexfile';
 
 
-let exec_env = process.env.DB_ENV || 'development';
+const exec_env = process.env.DB_ENV || 'development';
 
-let app = new Koa();
+const app = new Koa();
 
-let knexConfig = db_config[exec_env];
-let bookshelf = initBookshelf(knexConfig);
-let sphinx = initSphinx();
-let api = initApi(bookshelf, sphinx);
-let matchPromisified = promisify(match, { multiArgs: true });
-let templatePath = path.join(__dirname, '/src/views/index.ejs');
-let template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), {filename: templatePath});
+const knexConfig = db_config[exec_env];
+const bookshelf = initBookshelf(knexConfig);
+const sphinx = initSphinx();
+const api = initApi(bookshelf, sphinx);
+const matchPromisified = promisify(match, { multiArgs: true });
+const templatePath = path.join(__dirname, '/src/views/index.ejs');
+const template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), { filename: templatePath });
 
 if (exec_env === 'development') {
-  let webpackDevMiddleware = require('webpack-koa-dev-middleware').default;
-  let webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
-  let webpack = require('webpack');
-  let webpackConfig = require('./webpack.dev.config');
-  let compiler = webpack(webpackConfig);
+  const webpackDevMiddleware = require('koa-webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
+  const webpack = require('webpack');
+  const webpackConfig = require('./webpack.dev.config');
+  const compiler = webpack(webpackConfig);
 
   app.use(convert(webpackDevMiddleware(compiler, {
-    log: console.log,
+    log: console.log, // eslint-disable-line no-console
     path: '/__webpack_hmr',
     publicPath: webpackConfig.output.publicPath,
     stats: {
@@ -94,10 +92,10 @@ if (exec_env === 'development') {
   // Do "hot-reloading" of express stuff on the server
   // Throw away cached modules and re-require next time
   // Ensure there's no important state in there!
-  var watcher = chokidar.watch('./src/api');
+  const watcher = chokidar.watch('./src/api');
   watcher.on('ready', function () {
     watcher.on('all', function () {
-      console.log('Clearing /src/api/ cache from server');
+      console.log('Clearing /src/api/ cache from server'); // eslint-disable-line no-console
       Object.keys(require.cache).forEach(function (id) {
         if (/\/src\/api\//.test(id)) delete require.cache[id];
       });
@@ -107,10 +105,10 @@ if (exec_env === 'development') {
   // Do "hot-reloading" of react stuff on the server
   // Throw away the cached client modules and let them be re-required next time
   compiler.plugin('done', function () {
-    console.log('Clearing /src/ cache from server');
+    console.log('Clearing /src/ cache from server'); // eslint-disable-line no-console
     Object.keys(require.cache).forEach(function (id) {
-        if (/\/src\//.test(id)) delete require.cache[id];
-      });
+      if (/\/src\//.test(id)) delete require.cache[id];
+    });
   });
 }
 
@@ -135,7 +133,7 @@ app.use(convert(session({
     }
   ),
   key: 'connect.sid',
-  cookie: {signed: false}
+  cookie: { signed: false }
 })));
 
 app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
@@ -145,8 +143,8 @@ app.use(convert(cors({
 })));
 
 if (indexOf(['test', 'travis'], exec_env) !== -1) {
-  let warn = console.error; // eslint-disable-line no-console
-  console.error = function(warning) { // eslint-disable-line no-console
+  const warn = console.error; // eslint-disable-line no-console
+  console.error = function (warning) { // eslint-disable-line no-console
     if (/(Invalid prop|Failed propType)/.test(warning)) {
       throw new Error(warning);
     }
@@ -158,14 +156,14 @@ app.use(mount('/api/v1', api));
 
 app.use(convert(serve(`${__dirname}/public/`, { index: false, defer: false })));
 
-app.use(async function reactMiddleware(ctx, next) {
+app.use(async function reactMiddleware(ctx) {
   const store = initState();
 
   if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
     try {
-      let user = await bookshelf
+      const user = await bookshelf
         .model('User')
-        .where({id: ctx.session.user})
+        .where({ id: ctx.session.user })
         .fetch({
           require: true,
           withRelated: [
@@ -179,23 +177,23 @@ app.use(async function reactMiddleware(ctx, next) {
           ]
         });
 
-      let data = user.toJSON();
+      const data = user.toJSON();
 
-      let likes = await bookshelf.knex
+      const likes = await bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({user_id: ctx.session.user});
+        .where({ user_id: ctx.session.user });
 
-      let favourites = await bookshelf.knex
+      const favourites = await bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({user_id: ctx.session.user});
+        .where({ user_id: ctx.session.user });
 
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
       store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
     } catch (e) {
-      console.log(`dispatch failed: ${e.stack}`);
+      console.log(`dispatch failed: ${e.stack}`); // eslint-disable-line no-console
     }
   }
 
@@ -211,10 +209,10 @@ app.use(async function reactMiddleware(ctx, next) {
 
   const memoryHistory = useRouterHistory(createMemoryHistory)();
   const history = syncHistoryWithStore(memoryHistory, store, { selectLocationState: state => state.get('routing') });
-  let routes = makeRoutes(history);
+  const routes = makeRoutes(history);
 
   try {
-    const [ redirectLocation, renderProps ] = await matchPromisified({ routes, location: ctx.url });
+    const [redirectLocation, renderProps] = await matchPromisified({ routes, location: ctx.url });
 
     if (redirectLocation) {
       ctx.status = 307;
@@ -235,12 +233,12 @@ app.use(async function reactMiddleware(ctx, next) {
     }
 
     try {
-      let html = renderToString(
+      const html = renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps}/>
         </Provider>
       );
-      let state = JSON.stringify(store.getState().toJS());
+      const state = JSON.stringify(store.getState().toJS());
 
       if (fetchHandler.status !== null) {
         ctx.status = fetchHandler.status;
@@ -249,14 +247,14 @@ app.use(async function reactMiddleware(ctx, next) {
       const metadata = ExecutionEnvironment.canUseDOM ? Helmet.peek() : Helmet.rewind();
 
       ctx.staus = 200;
-      ctx.body = template({state, html, metadata});
+      ctx.body = template({ state, html, metadata });
     } catch (e) {
-      console.error(e.stack);
+      console.error(e.stack); // eslint-disable-line no-console
       ctx.status = 500;
       ctx.body = e.message;
     }
   } catch (e) {
-    console.error(e.stack);
+    console.error(e.stack); // eslint-disable-line no-console
     ctx.status = 500;
     ctx.body = e.message;
   }

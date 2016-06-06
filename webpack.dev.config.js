@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var autoprefixer = require('autoprefixer');
+const path = require('path');
+const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   cache: true,
@@ -54,11 +54,11 @@ module.exports = {
           }
         }
       },
-      {test: /\.json$/, loader: 'json'},
-      {test: /\.css$/, loader: 'style?sourceMap!css?sourceMap!postcss'},
-      {test: /\.less$/, loader: 'style?sourceMap!css?sourceMap!postcss!less?sourceMap'},
-      {test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000'},
-      {test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000'}
+      { test: /\.json$/, loader: 'json' },
+      { test: /\.css$/, loader: 'style?sourceMap!css?sourceMap!postcss' },
+      { test: /\.less$/, loader: 'style?sourceMap!css?sourceMap!postcss!less?sourceMap' },
+      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000' },
+      { test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000' }
     ]
   },
 
@@ -75,7 +75,7 @@ module.exports = {
     })
   ],
 
-  postcss: function () {
+  postcss: () => {
     return [autoprefixer];
   },
 
