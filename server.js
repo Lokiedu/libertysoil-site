@@ -71,7 +71,7 @@ const templatePath = path.join(__dirname, '/src/views/index.ejs');
 const template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), { filename: templatePath });
 
 if (exec_env === 'development') {
-  const webpackDevMiddleware = require('webpack-koa-dev-middleware').default;
+  const webpackDevMiddleware = require('koa-webpack-dev-middleware');
   const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
   const webpack = require('webpack');
   const webpackConfig = require('./webpack.dev.config');
