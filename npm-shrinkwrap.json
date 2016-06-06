@@ -1,6 +1,6 @@
 {
   "name": "libertysoil",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "dependencies": {
     "abab": {
       "version": "1.0.3",
@@ -6092,6 +6092,11 @@
       "version": "2.0.1",
       "from": "webidl-conversions@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-2.0.1.tgz"
+    },
+    "webpack-dev-middleware": {
+      "version": "1.6.1",
+      "from": "webpack-dev-middleware@>=1.5.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-1.6.1.tgz"
     },
     "webpack-sources": {
       "version": "0.1.2",
