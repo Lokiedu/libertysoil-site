@@ -114,8 +114,9 @@ if (exec_env === 'development') {
 
 app.use(async (ctx, next) => {
   const { hostname } = parseUrl(API_HOST);
-  if (isString(ctx.req.hostname) && ctx.req.hostname !== hostname) {
-    const newUri = `${API_HOST}${ctx.req.originalUrl}`;
+
+  if (isString(ctx.request.hostname) && ctx.request.hostname !== hostname) {
+    const newUri = `${API_HOST}${ctx.request.originalUrl}`;
     ctx.status = 301;
     ctx.redirect(newUri);
     return;
