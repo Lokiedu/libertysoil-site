@@ -2793,14 +2793,19 @@ export default class ApiController {
       await comment_object.save(null, { method: 'insert' });
       await post_object.save(null, { method: 'update' });
 
-      await this.addToSearchIndex('Comment', comment_object.toJSON());
-
       this.queue.createJob('on-comment', { commentId: comment_object.id });
 
       await this.getPostComments(ctx);
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
+    }
+
+    // FIXME: this should be moved to kue-task
+    try {
+      await this.addToSearchIndex('Comment', comment_object.toJSON());
+    } catch (e) {
+      console.error(`Failed to add comment to search-index: ${e}`);  // eslint-disable-line no-console
     }
   };
 

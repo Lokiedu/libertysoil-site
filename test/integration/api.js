@@ -418,6 +418,15 @@ describe('api v.1', () => {
             );
           });
         });
+
+        describe('Comments', () => {
+          it('CAN comment on post', async () => {
+            await expect(
+              { url: `/api/v1/post/${post.id}/comments`, session: sessionId, method: 'POST', body: { text: 'This is a test comment' } },
+              'to open successfully'
+            );
+          });
+        });
       });
 
       describe('Hashtags', () => {
