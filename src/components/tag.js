@@ -147,7 +147,7 @@ export default class Tag extends React.Component {
     ];
 
     if (this.props.showPostCount) {
-      tagBody.push(<span className="tag__post_count">{this.props.postCount || 0}</span>);
+      tagBody.push(<span className="tag__post_count" key="counter">{this.props.postCount || 0}</span>);
     }
 
     // FIXME: this should be reimplemented as 2 different components
