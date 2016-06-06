@@ -1737,7 +1737,7 @@ export default class ApiController {
       return;
     }
 
-    if (!ctx.files || !ctx.files.length) {
+    if (!ctx.req.files || !ctx.req.files.length) {
       ctx.status = 400;
       ctx.body = { error: '"files" parameter is not provided' };
       return;
@@ -1746,7 +1746,7 @@ export default class ApiController {
     const Attachment = this.bookshelf.model('Attachment');
 
     try {
-      const promises = ctx.files.map(file => {
+      const promises = ctx.req.files.map(file => {
         return Attachment.create(
           file.originalname,
           file.buffer,
@@ -1759,8 +1759,9 @@ export default class ApiController {
       ctx.body = { success: true, attachments };
     } catch (e) {
       ctx.status = 500;
-      ctx.body = { error: `Upload failed: ${e.stack}` };
-      return;
+      ctx.body = { error: `Upload failed: ${e.message}` };
+
+      console.error(e);  // eslint-disable-line no-console
     }
   };
 
