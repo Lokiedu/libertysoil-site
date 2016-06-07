@@ -57,23 +57,22 @@ class SettingsPasswordPage extends React.Component {
     }
   };
 
-  save = () => {
+  save = async () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     const form = this.form.formProps();
     const fields = form.values();
 
-    const promise = triggers.changePassword(
+    const success = await triggers.changePassword(
       fields.oldPassword,
       fields.newPassword,
       fields.newPasswordRepeat
     );
 
-    promise.catch(e => {
-      // FIXME: this should be reported to developers instead (use Sentry?)
-      console.error(e);  // eslint-disable-line no-console
-    });
+    if (success) {
+      form.onValues({});
+    }
   };
 
   render() {
