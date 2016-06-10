@@ -11,6 +11,12 @@
       "jsx": true
     },
   },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "15.0"
+    }
+  },
   "env": {
     "browser": true,
     "es6": true,
@@ -48,16 +54,18 @@
     "jsx-quotes": 2,
     "react/display-name": 2,
     "react/forbid-prop-types": 2,
-    "react/jsx-boolean-value": 1,
+    "react/jsx-boolean-value": 2,
     "react/jsx-closing-bracket-location": 2,
     "react/jsx-curly-spacing": 2,
     "react/jsx-equals-spacing": 2,
     "react/jsx-first-prop-new-line": [2, "multiline"],
+    "react/jsx-handler-names": 1,
     "react/jsx-indent": [2, 2],
     "react/jsx-indent-props": [2, 2],
     "react/jsx-key": 2,
     "react/jsx-no-bind": [2, { "ignoreRefs": true }],
     "react/jsx-no-duplicate-props": 1,
+    "react/jsx-no-target-blank": 2,
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
     "react/jsx-sort-props": [1, { "callbacksLast": true }],
@@ -79,6 +87,8 @@
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
     "react/require-extension": 1,
+    "react/require-optimization": 1,
+    "react/require-render-return": 2,
     "react/self-closing-comp": 2,
     "react/sort-comp": 2,
     "react/sort-prop-types": 2,
