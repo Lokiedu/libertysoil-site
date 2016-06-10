@@ -67,13 +67,13 @@ export class PostPage extends React.Component {
 
     if (!(post_uuid in this.props.posts)) {
       // not loaded yet
-      return <script/>;
+      return <script />;
     }
 
     const current_post = this.props.posts[post_uuid];
 
     if (current_post === false) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const author = this.props.users[current_post.user_id];
@@ -124,7 +124,7 @@ export class PostPage extends React.Component {
                   showAllComments
                   triggers={triggers}
                 >
-                  <ShortTextPost post={current_post}/>
+                  <ShortTextPost post={current_post} />
                 </PostWrapper>
               </PageContent>
               <SidebarAlt>
@@ -139,7 +139,7 @@ export class PostPage extends React.Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

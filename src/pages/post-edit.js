@@ -102,7 +102,7 @@ class PostEditPage extends React.Component {
     const post = this.props.posts[postId];
 
     if (post.error) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     if (post.user_id != this.props.current_user.id) {
@@ -146,7 +146,7 @@ class PostEditPage extends React.Component {
             </PageBody>
           </PageMain>
         </Page>
-        <Footer/>
+        <Footer />
       </div>
     );
   }

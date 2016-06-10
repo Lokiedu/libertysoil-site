@@ -40,7 +40,7 @@ export const ResetForm = (props) => {
     <form className="layout__grid layout__grid-responsive layout-align_end layout__space-double" onSubmit={props.submitHandler} action="" method="post">
       <div className="layout__grid_item layout__grid_item-identical">
         <label className="label label-before_input" htmlFor="resetPasswordEmail">Email</label>
-        <input className="input input-big input-block" id="resetPasswordEmail" required="required" type="email" name="email"/>
+        <input className="input input-big input-block" id="resetPasswordEmail" required="required" type="email" name="email" />
       </div>
       <div className="layout__grid_item">
         <button type="submit" className="button button-big button-green">Submit</button>
@@ -109,7 +109,7 @@ export class Form extends React.Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

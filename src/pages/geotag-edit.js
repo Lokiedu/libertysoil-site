@@ -111,7 +111,7 @@ class GeotagEditPage extends React.Component {
     }
 
     if (!geotag.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     return (

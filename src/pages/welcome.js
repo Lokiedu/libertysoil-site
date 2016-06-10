@@ -157,7 +157,7 @@ export default class Welcome extends React.Component {
             </div>*/}
           </div>
           {reviews}
-          <Footer/>
+          <Footer />
         </div>
       </div>
     );

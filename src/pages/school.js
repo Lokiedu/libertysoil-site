@@ -95,7 +95,7 @@ export class SchoolPage extends React.Component {
     }
 
     if (!school.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const schoolPosts = school_posts[school.id] || [];

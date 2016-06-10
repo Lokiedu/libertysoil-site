@@ -67,11 +67,11 @@ class UserPage extends React.Component {
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script/>;  // not loaded yet
+      return <script />;  // not loaded yet
     }
 
     if (false === page_user) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const user_posts = this.props.user_posts[page_user.id];

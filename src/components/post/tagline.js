@@ -29,7 +29,7 @@ const TagLine = ({ geotags, hashtags, schools }) => {
   if (geotags) {
     geotagBlocks = geotags.map(school => {
       return (
-        <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name}/>
+        <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name} />
       );
     });
   }
@@ -38,7 +38,7 @@ const TagLine = ({ geotags, hashtags, schools }) => {
   if (schools) {
     schoolBlocks = schools.map(school => {
       return (
-        <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name}/>
+        <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
       );
     });
   }

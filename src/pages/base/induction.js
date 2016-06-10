@@ -60,7 +60,7 @@ const BaseInductionPage = (props) => {
         </PageMain>
       </Page>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 };

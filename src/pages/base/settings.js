@@ -74,7 +74,7 @@ export default class BaseSettingsPage extends React.Component {
     if (onSave) {
       saveButton = (
         <div className="void">
-          <Button className="button-green" title="Save changes" waiting={processing} onClick={onSave}/>
+          <Button className="button-green" title="Save changes" waiting={processing} onClick={onSave} />
         </div>
       );
     }
@@ -136,13 +136,13 @@ export default class BaseSettingsPage extends React.Component {
                     </div>
                   </div>
                   {saveButton}
-                  <Messages messages={messages} removeMessage={triggers.removeMessage}/>
+                  <Messages messages={messages} removeMessage={triggers.removeMessage} />
                 </div>
               </PageContent>
             </PageBody>
           </PageMain>
         </Page>
-        <Footer/>
+        <Footer />
       </div>
     );
   }

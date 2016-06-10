@@ -99,7 +99,7 @@ export class TagPage extends Component {
     }
 
     if (!tag.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const thisTagPosts = tag_posts[tag.name] || [];

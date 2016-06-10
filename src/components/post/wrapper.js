@@ -48,7 +48,7 @@ const PostWrapper = ({
 
   return (
     <section className={cardClassName}>
-      <Preview post={post}/>
+      <Preview post={post} />
 
       <div className="card__content">
         {children}

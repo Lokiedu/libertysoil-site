@@ -100,7 +100,7 @@ export class GeotagPage extends Component {
     }
 
     if (!geotag.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const geotagPosts = geotag_posts[this.props.params.url_name] || [];

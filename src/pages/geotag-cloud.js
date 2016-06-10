@@ -93,7 +93,7 @@ class GeotagCloudPage extends Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

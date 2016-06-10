@@ -101,7 +101,7 @@ class InductionPage extends React.Component {
           <div className="page__body">
             <InductionDone />
           </div>
-          <Footer/>
+          <Footer />
         </div>
       );
     }

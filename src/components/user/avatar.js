@@ -67,9 +67,9 @@ export default class Avatar extends React.Component {
 
     let avatar;
     if (finalUrl) {
-      avatar = <img height={finalSize} src={finalUrl} width={finalSize}/>;
+      avatar = <img height={finalSize} src={finalUrl} width={finalSize} />;
     } else {
-      avatar = <Gravatar default="retro" md5={user.gravatarHash} size={finalSize}/>;
+      avatar = <Gravatar default="retro" md5={user.gravatarHash} size={finalSize} />;
     }
 
     let cn = 'user_box__avatar';

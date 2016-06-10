@@ -76,7 +76,7 @@ class TagCloudPage extends Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

@@ -133,7 +133,7 @@ const WhatIsLibertySoil = () => (
                   </div>
                   <div className="layout__grid_item layout__grid_item-identical">
                     <div className="void">
-                      <img height="300" src={tab.image} width="400"/>
+                      <img height="300" src={tab.image} width="400" />
                     </div>
                   </div>
                 </div>

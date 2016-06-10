@@ -148,7 +148,7 @@ const BaseUserPage = (props) => {
           </PageBody>
         </PageMain>
       </Page>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

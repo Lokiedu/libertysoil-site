@@ -236,7 +236,7 @@ app.use(async function reactMiddleware(ctx) {
     try {
       const html = renderToString(
         <Provider store={store}>
-          <RouterContext {...renderProps}/>
+          <RouterContext {...renderProps} />
         </Provider>
       );
       const state = JSON.stringify(store.getState().toJS());

@@ -137,7 +137,7 @@ class SchoolEditPage extends React.Component {
     }
 
     if (!school.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     return (

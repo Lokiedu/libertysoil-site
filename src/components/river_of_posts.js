@@ -66,7 +66,7 @@ const RiverOfPostsComponent = (props) => {
                 ui={ui}
                 users={users}
               >
-                <ShortTextPost post={post}/>
+                <ShortTextPost post={post} />
               </PostWrapper>
             );
           default:

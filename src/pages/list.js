@@ -200,7 +200,7 @@ export class List extends React.Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }
