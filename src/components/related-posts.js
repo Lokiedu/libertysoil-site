@@ -43,11 +43,12 @@ export default function RelatedPosts({ posts, users }) {
 
         return (
           <ShortPost
+            author={author}
+            key={post.id}
             post={{
               ...post,
               text
             }}
-            author={author}
           />
         );
       })}

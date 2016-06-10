@@ -40,7 +40,7 @@ export default class Role extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
       title: { id: uniqueId() },
       description: { id: uniqueId() }
