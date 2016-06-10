@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
@@ -29,6 +29,10 @@ import { defaultSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
+
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const props = store.getState();
@@ -45,29 +49,30 @@ class SettingsPasswordPage extends React.Component {
   }
 
   onSave = () => {
-    const event = document.createEvent("HTMLEvents");
-    event.initEvent('submit', true, true);
-    event.eventType = 'submit';
+    const form = this.form.formProps();
 
-    this.form.dispatchEvent(event);
+    form.forceValidate();
+    if (form.isValid()) {
+      this.save();
+    }
   };
 
-  save = (e) => {
-    e && e.preventDefault();
-
+  save = async () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const promise = triggers.changePassword(
-      this.form.old_password.value,
-      this.form.new_password.value,
-      this.form.new_password_repeat.value
+    const form = this.form.formProps();
+    const fields = form.values();
+
+    const success = await triggers.changePassword(
+      fields.oldPassword,
+      fields.newPassword,
+      fields.newPasswordRepeat
     );
 
-    promise.catch(e => {
-      // FIXME: this should be reported to developers instead (use Sentry?)
-      console.error(e);  // eslint-disable-line no-console
-    });
+    if (success) {
+      form.onValues({});
+    }
   };
 
   render() {
@@ -97,14 +102,13 @@ class SettingsPasswordPage extends React.Component {
         onSave={this.onSave}
       >
         <Helmet title="Change Password for " />
-        <SettingsPasswordForm
-          onSubmit={this.save}
-          ref={c => this.form = c}
-        />
+        <SettingsPasswordForm ref={c => this.form = c} />
 
-        {false && <div className="paper__page">
-          <h2 className="content__title">Role</h2>
-        </div>}
+        {false &&
+          <div className="paper__page">
+            <h2 className="content__title">Role</h2>
+          </div>
+        }
       </BaseSettingsPage>
     );
   }

@@ -234,20 +234,22 @@ export class ActionsTrigger {
 
   changePassword = async (old_password, new_password1, new_password2) => {
     if (old_password.trim() == '' || new_password1.trim() == '' || new_password2.trim() == '') {
-      this.dispatch(addError('some of the fields are empty'));
-      return;
+      this.dispatch(addError('Some of the fields are empty'));
+      return false;
     }
 
     if (new_password1 !== new_password2) {
-      this.dispatch(addError('passwords do not match'));
-      return;
+      this.dispatch(addError('Passwords do not match'));
+      return false;
     }
 
+    let success = false;
     try {
       const res = await this.client.changePassword(old_password, new_password1);
 
       if ('success' in res && res.success === true) {
         this.dispatch(addMessage('Password is changed successfully'));
+        success = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
@@ -256,6 +258,8 @@ export class ActionsTrigger {
         this.dispatch(addError(e.message));
       }
     }
+
+    return success;
   };
 
 
