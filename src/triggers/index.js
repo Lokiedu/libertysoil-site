@@ -23,10 +23,10 @@ import * as a from '../actions';
 import {
   addUser, setCurrentUser,
   setLikes, setFavourites,
-  setUserTags, setSuggestedUsers, setPersonalizedSuggestedUsers,
+  setSuggestedUsers, setPersonalizedSuggestedUsers,
   submitResetPassword, submitNewPassword,
   registrationSuccess,
-  setUserRecentTags, setQuotes,
+  setQuotes,
   setCountries
 } from '../actions';
 
@@ -198,7 +198,7 @@ export class ActionsTrigger {
       this.dispatch(a.river.addPostToRiver(result));
 
       const userTags = await this.client.userTags();
-      this.dispatch(setUserTags(userTags));
+      this.dispatch(a.tags.setUserTags(userTags));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -427,7 +427,7 @@ export class ActionsTrigger {
       const schools = await this.client.userRecentSchools();
       const hashtags = await this.client.userRecentHashtags();
 
-      this.dispatch(setUserRecentTags({ geotags, schools, hashtags }));
+      this.dispatch(a.tags.setUserRecentTags({ geotags, schools, hashtags }));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -640,7 +640,7 @@ export class ActionsTrigger {
 
   loadUserTags = async () => {
     const userTags = await this.client.userTags();
-    this.dispatch(setUserTags(userTags));
+    this.dispatch(a.tags.setUserTags(userTags));
   };
 
   showRegisterForm = async () => {

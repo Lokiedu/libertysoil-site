@@ -19,6 +19,7 @@ export const ui = require('./ui');
 export const search = require('./search');
 export const messages = require('./messages');
 
+export const tags = require('./tags');
 export const hashtags = require('./hashtags');
 export const geotags = require('./geotags');
 export const schools = require('./schools');
@@ -28,8 +29,6 @@ export const river = require('./river');
 export const comments = require('./comments');
 
 export const ADD_USER = 'ADD_USER';
-
-export const SET_USER_TAGS = 'SET_USER_TAGS';
 
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
@@ -47,30 +46,12 @@ export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 
-export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
-
 export const SET_QUOTES = 'SET_QUOTES';
 
 export function addUser(user) {
   return {
     type: ADD_USER,
     user
-  };
-}
-
-export function setUserTags(tags) {
-  return {
-    type: SET_USER_TAGS,
-    hashtags: tags.hashtags,
-    schools: tags.schools,
-    geotags: tags.geotags
-  };
-}
-
-export function setUserRecentTags(recent_tags) {
-  return {
-    type: SET_USER_RECENT_TAGS,
-    recent_tags
   };
 }
 

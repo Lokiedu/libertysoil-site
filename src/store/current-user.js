@@ -86,7 +86,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_USER_TAGS: {
+    case a.tags.SET_USER_TAGS: {
       const hashtags = _.take(action.hashtags, 5);
       const schools = _.take(action.schools, 5);
       const geotags = _.take(action.geotags, 5);
@@ -112,7 +112,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_USER_RECENT_TAGS: {
+    case a.tags.SET_USER_RECENT_TAGS: {
       state = state.set('recent_tags', i.fromJS(action.recent_tags));
 
       break;
