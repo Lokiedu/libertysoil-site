@@ -23,12 +23,9 @@ import * as a from '../actions';
 import {
   addUser, addPost, setCurrentUser, removePost,
   setLikes, setFavourites,
-  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
-  submitResetPassword, submitNewPassword, setSchoolCloud,
-  addUserFollowedSchool, removeUserFollowedSchool,
+  setUserTags, setSuggestedUsers, setPersonalizedSuggestedUsers,
+  submitResetPassword, submitNewPassword,
   registrationSuccess,
-  addLikedSchool,
-  removeLikedSchool,
   setUserRecentTags, setQuotes,
   setCountries
 } from '../actions';
@@ -106,7 +103,7 @@ export class ActionsTrigger {
       const response = await this.client.likeSchool(url_name);
 
       if (response.success) {
-        this.dispatch(addLikedSchool(response.school));
+        this.dispatch(a.schools.addLikedSchool(response.school));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -120,7 +117,7 @@ export class ActionsTrigger {
       const response = await this.client.unlikeSchool(url_name);
 
       if (response.success) {
-        this.dispatch(removeLikedSchool(response.school));
+        this.dispatch(a.schools.removeLikedSchool(response.school));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -472,7 +469,7 @@ export class ActionsTrigger {
   updateSchool = async (school_uuid, school_fields) => {
     try {
       const result = await this.client.updateSchool(school_uuid, school_fields);
-      this.dispatch(addSchool(result));
+      this.dispatch(a.schools.addSchool(result));
 
       return result;
     } catch (e) {
@@ -484,7 +481,7 @@ export class ActionsTrigger {
   loadSchools = async () => {
     try {
       const result = await this.client.schools();
-      this.dispatch(setSchools(result));
+      this.dispatch(a.schools.setSchools(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -567,8 +564,8 @@ export class ActionsTrigger {
   loadSchoolCloud = async () => {
     try {
       const result = await this.client.schoolCloud();
-      this.dispatch(setSchools(result));
-      this.dispatch(setSchoolCloud(result));
+      this.dispatch(a.schools.setSchools(result));
+      this.dispatch(a.schools.setSchoolCloud(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -604,7 +601,7 @@ export class ActionsTrigger {
   followSchool = async (name) => {
     try {
       const result = await this.client.followSchool(name);
-      this.dispatch(addUserFollowedSchool(result.school));
+      this.dispatch(a.schools.addUserFollowedSchool(result.school));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -613,7 +610,7 @@ export class ActionsTrigger {
   unfollowSchool = async (name) => {
     try {
       const result = await this.client.unfollowSchool(name);
-      this.dispatch(removeUserFollowedSchool(result.school));
+      this.dispatch(a.schools.removeUserFollowedSchool(result.school));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

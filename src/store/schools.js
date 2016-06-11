@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@
 import i from 'immutable';
 import { keyBy } from 'lodash';
 
-import * as a from '../actions';
+import { schools as s } from '../actions';
 
 function cleanupSchoolObject(school) {
   if (school.description === null) {
@@ -40,14 +40,14 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_SCHOOL: {
+    case s.ADD_SCHOOL: {
       const school = cleanupSchoolObject(action.school);
       state = state.set(school.id, i.fromJS(school));
 
       break;
     }
 
-    case a.SET_SCHOOLS: {
+    case s.SET_SCHOOLS: {
       const schools = keyBy(action.schools.map(school => cleanupSchoolObject(school)), 'id');
       state = state.merge(i.fromJS(schools));
 

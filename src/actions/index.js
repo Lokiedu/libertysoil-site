@@ -23,9 +23,9 @@ export const messages = require('./messages');
 
 export const hashtags = require('./hashtags');
 export const geotags = require('./geotags');
+export const schools = require('./schools');
 
 export const ADD_USER = 'ADD_USER';
-export const ADD_SCHOOL = 'ADD_SCHOOL';
 
 export const ADD_POST = 'ADD_POST';
 export const SET_RELATED_POSTS = 'SET_RELATED_POSTS';
@@ -33,10 +33,6 @@ export const SET_USER_POSTS = 'SET_USER_POSTS';
 
 export const SET_USER_TAGS = 'SET_USER_TAGS';
 
-export const ADD_USER_FOLLOWED_SCHOOL = 'ADD_USER_FOLLOWED_SCHOOL';
-export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
-export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
-export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -46,8 +42,6 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
 export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
-export const ADD_LIKED_SCHOOL = 'ADD_LIKED_SCHOOL';
-export const REMOVE_LIKED_SCHOOL = 'REMOVE_LIKED_SCHOOL';
 
 export const SET_COUNTRIES = 'SET_COUNTRIES';
 export const ADD_COUNTRY = 'ADD_COUNTRY';
@@ -59,7 +53,6 @@ export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 
 export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
-export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 
 export const SET_QUOTES = 'SET_QUOTES';
 
@@ -72,13 +65,6 @@ export function addUser(user) {
   return {
     type: ADD_USER,
     user
-  };
-}
-
-export function addSchool(school) {
-  return {
-    type: ADD_SCHOOL,
-    school
   };
 }
 
@@ -114,32 +100,10 @@ export function setUserTags(tags) {
   };
 }
 
-export function addUserFollowedSchool(school) {
-  return {
-    type: ADD_USER_FOLLOWED_SCHOOL,
-    school
-  };
-}
-
-export function removeUserFollowedSchool(school) {
-  return {
-    type: REMOVE_USER_FOLLOWED_SCHOOL,
-    school
-  };
-}
-
 export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
     recent_tags
-  };
-}
-
-export function setSchoolPosts(school, posts) {
-  return {
-    type: SET_SCHOOL_POSTS,
-    school,
-    posts
   };
 }
 
@@ -167,13 +131,6 @@ export function setFavourites(user_id, favourites, post_id, favourers) {
     favourites,
     post_id,
     favourers
-  };
-}
-
-export function setSchools(schools) {
-  return {
-    type: SET_SCHOOLS,
-    schools
   };
 }
 
@@ -253,13 +210,6 @@ export function setCityPosts(cityId, posts) {
   };
 }
 
-export function setSchoolCloud(schools) {
-  return {
-    type: SET_SCHOOL_CLOUD,
-    schools
-  };
-}
-
 export function registrationSuccess() {
   return {
     type: REGISTRATION_SUCCESS
@@ -289,20 +239,6 @@ export function updateEditPostForm(edit_post_form) {
   return {
     type: UPDATE_EDIT_POST_FORM,
     edit_post_form
-  };
-}
-
-export function addLikedSchool(school) {
-  return {
-    type: ADD_LIKED_SCHOOL,
-    school
-  };
-}
-
-export function removeLikedSchool(school) {
-  return {
-    type: REMOVE_LIKED_SCHOOL,
-    school
   };
 }
 

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -130,13 +130,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_SCHOOL: {
+    case a.schools.ADD_USER_FOLLOWED_SCHOOL: {
       state = state.setIn(['followed_schools', action.school.url_name], i.fromJS(action.school));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_SCHOOL: {
+    case a.schools.REMOVE_USER_FOLLOWED_SCHOOL: {
       state = state.deleteIn(['followed_schools', action.school.url_name]);
 
       break;
@@ -172,13 +172,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_LIKED_SCHOOL: {
+    case a.schools.ADD_LIKED_SCHOOL: {
       state = state.setIn(['liked_schools', action.school.url_name], i.fromJS(action.school));
 
       break;
     }
 
-    case a.REMOVE_LIKED_SCHOOL: {
+    case a.schools.REMOVE_LIKED_SCHOOL: {
       state = state.deleteIn(['liked_schools', action.school.url_name]);
 
       break;

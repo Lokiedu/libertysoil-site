@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -18,13 +18,13 @@
 import i from 'immutable';
 import _ from 'lodash';
 
-import * as a from '../actions';
+import { schools } from '../actions';
 
 const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_SCHOOL_CLOUD: {
+    case schools.SET_SCHOOL_CLOUD: {
       state = i.fromJS(_.map(action.schools, 'id'));
       break;
     }

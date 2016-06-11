@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,8 @@ import { connect } from 'react-redux';
 import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
 
-import {
-  setSchoolPosts,
-  addSchool,
-  resetCreatePostForm,
-  updateCreatePostForm
-} from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { setSchoolPosts, addSchool } from '../actions/schools';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import NotFound from './not-found';
