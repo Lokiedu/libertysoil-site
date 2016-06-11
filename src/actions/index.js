@@ -19,6 +19,7 @@ export const ui = require('./ui');
 export const comments = require('./comments');
 export const search = require('./search');
 export const river = require('./river');
+export const messages = require('./messages');
 
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
@@ -45,11 +46,6 @@ export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
-
-export const ADD_ERROR = 'ADD_ERROR';
-export const ADD_MESSAGE = 'ADD_MESSAGE';
-export const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
-export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
@@ -264,33 +260,6 @@ export function setHashtags(hashtags) {
   return {
     type: SET_HASHTAGS,
     hashtags
-  };
-}
-
-export function addError(message) {
-  return {
-    type: ADD_ERROR,
-    message
-  };
-}
-
-export function addMessage(message) {
-  return {
-    type: ADD_MESSAGE,
-    message
-  };
-}
-
-export function removeMessage(index) {
-  return {
-    type: REMOVE_MESSAGE,
-    index
-  };
-}
-
-export function removeAllMessages() {
-  return {
-    type: REMOVE_ALL_MESSAGES
   };
 }
 

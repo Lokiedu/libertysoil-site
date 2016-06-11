@@ -21,13 +21,12 @@ import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
 import {
-  addError, addMessage, removeAllMessages,
   addUser, addPost, setCurrentUser, removePost,
   setLikes, setFavourites,
   setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
-  removeMessage, registrationSuccess,
+  registrationSuccess,
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
@@ -53,10 +52,10 @@ export class ActionsTrigger {
         this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
         await this.syncLikedPosts(current_user_id);
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -68,10 +67,10 @@ export class ActionsTrigger {
         this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
         await this.syncLikedPosts(current_user_id);
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -82,10 +81,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(addLikedHashtag(response.hashtag));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -96,10 +95,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(removeLikedHashtag(response.hashtag));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -110,10 +109,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(addLikedSchool(response.school));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -124,10 +123,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(removeLikedSchool(response.school));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -138,10 +137,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(addLikedGeotag(response.geotag));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -152,10 +151,10 @@ export class ActionsTrigger {
       if (response.success) {
         this.dispatch(removeLikedGeotag(response.geotag));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -165,7 +164,7 @@ export class ActionsTrigger {
 
       this.dispatch(a.river.setPostsToLikesRiver(current_user_id, likedPosts));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -176,10 +175,10 @@ export class ActionsTrigger {
       if (responseBody.success) {
         this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -190,10 +189,10 @@ export class ActionsTrigger {
       if (responseBody.success) {
         this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
       } else {
-        this.dispatch(addError('internal server error. please try later'));
+        this.dispatch(a.messages.addError('internal server error. please try later'));
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -205,7 +204,7 @@ export class ActionsTrigger {
       const userTags = await this.client.userTags();
       this.dispatch(setUserTags(userTags));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -215,15 +214,15 @@ export class ActionsTrigger {
       const res = await this.client.updateUser(user);
 
       if ('user' in res) {
-        this.dispatch(addMessage('Saved successfully'));
+        this.dispatch(a.messages.addMessage('Saved successfully'));
         this.dispatch(addUser(res.user));
         status = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(addError(e.response.body.error));
+        this.dispatch(a.messages.addError(e.response.body.error));
       } else {
-        this.dispatch(addError(e.message));
+        this.dispatch(a.messages.addError(e.message));
       }
     }
     return status;
@@ -231,12 +230,12 @@ export class ActionsTrigger {
 
   changePassword = async (old_password, new_password1, new_password2) => {
     if (old_password.trim() == '' || new_password1.trim() == '' || new_password2.trim() == '') {
-      this.dispatch(addError('Some of the fields are empty'));
+      this.dispatch(a.messages.addError('Some of the fields are empty'));
       return false;
     }
 
     if (new_password1 !== new_password2) {
-      this.dispatch(addError('Passwords do not match'));
+      this.dispatch(a.messages.addError('Passwords do not match'));
       return false;
     }
 
@@ -245,14 +244,14 @@ export class ActionsTrigger {
       const res = await this.client.changePassword(old_password, new_password1);
 
       if ('success' in res && res.success === true) {
-        this.dispatch(addMessage('Password is changed successfully'));
+        this.dispatch(a.messages.addMessage('Password is changed successfully'));
         success = true;
       }
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(addError(e.response.body.error));
+        this.dispatch(a.messages.addError(e.response.body.error));
       } else {
-        this.dispatch(addError(e.message));
+        this.dispatch(a.messages.addError(e.message));
       }
     }
 
@@ -272,7 +271,7 @@ export class ActionsTrigger {
       this.dispatch(a.river.clearRiver());
       this.loadPostRiver();
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -288,7 +287,7 @@ export class ActionsTrigger {
       this.dispatch(a.river.clearRiver());
       this.loadPostRiver();
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -299,12 +298,12 @@ export class ActionsTrigger {
 
       this.dispatch(setPersonalizedSuggestedUsers(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
   login = async (username, password) => {
-    this.dispatch(removeAllMessages());
+    this.dispatch(a.messages.removeAllMessages());
 
     let user = null;
 
@@ -313,7 +312,7 @@ export class ActionsTrigger {
 
       if (!result.success) {
         this.dispatch(setCurrentUser(null));
-        this.dispatch(addError('Invalid username or password'));
+        this.dispatch(a.messages.addError('Invalid username or password'));
         return;
       }
 
@@ -322,13 +321,13 @@ export class ActionsTrigger {
       this.dispatch(setCurrentUser(null));
 
       if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(addError(e.response.body.error));
+        this.dispatch(a.messages.addError(e.response.body.error));
       } else if (e.status === 401) {
-        this.dispatch(addError('Invalid username or password'));
+        this.dispatch(a.messages.addError('Invalid username or password'));
       } else {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.warn(e);  // eslint-disable-line no-console
-        this.dispatch(addError('Server error: please retry later'));
+        this.dispatch(a.messages.addError('Server error: please retry later'));
       }
 
       return;
@@ -345,7 +344,7 @@ export class ActionsTrigger {
         browserHistory.push('/suggestions');
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -354,7 +353,7 @@ export class ActionsTrigger {
       await this.client.resetPassword(email);
       this.dispatch(submitResetPassword());
     } catch (e) {
-      this.dispatch(addError('Invalid username or password'));
+      this.dispatch(a.messages.addError('Invalid username or password'));
     }
   };
 
@@ -364,15 +363,15 @@ export class ActionsTrigger {
       this.dispatch(submitNewPassword());
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(addError(e.response.body.error));
+        this.dispatch(a.messages.addError(e.response.body.error));
       } else {
-        this.dispatch(addError(e.message));
+        this.dispatch(a.messages.addError(e.message));
       }
     }
   };
 
   registerUser = async (username, password, email, firstName, lastName) => {
-    this.dispatch(removeAllMessages());
+    this.dispatch(a.messages.removeAllMessages());
 
     // FIXME: disable form
     try {
@@ -394,9 +393,9 @@ export class ActionsTrigger {
           });
         }
 
-        this.dispatch(addError(message));
+        this.dispatch(a.messages.addError(message));
       } else {
-        this.dispatch(addError('Server seems to have problems. Retry later, please'));
+        this.dispatch(a.messages.addError('Server seems to have problems. Retry later, please'));
       }
     }
   };
@@ -407,7 +406,7 @@ export class ActionsTrigger {
 
       this.dispatch(setQuotes(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   }
 
@@ -421,7 +420,7 @@ export class ActionsTrigger {
 
       this.dispatch(removePost(post_uuid));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       throw e;
     }
   };
@@ -434,7 +433,7 @@ export class ActionsTrigger {
 
       this.dispatch(setUserRecentTags({ geotags, schools, hashtags }));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -443,7 +442,7 @@ export class ActionsTrigger {
       const result = await this.client.updatePost(post_uuid, post_fields);
       this.dispatch(addPost(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -454,7 +453,7 @@ export class ActionsTrigger {
 
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       throw e;
     }
   };
@@ -466,7 +465,7 @@ export class ActionsTrigger {
 
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       throw e;
     }
   };
@@ -478,7 +477,7 @@ export class ActionsTrigger {
 
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       throw e;
     }
   };
@@ -488,7 +487,7 @@ export class ActionsTrigger {
       const result = await this.client.schools();
       this.dispatch(setSchools(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -500,7 +499,7 @@ export class ActionsTrigger {
 
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       return false;
     }
   };
@@ -513,7 +512,7 @@ export class ActionsTrigger {
 
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       return false;
     }
   };
@@ -527,7 +526,7 @@ export class ActionsTrigger {
       this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
       return result;
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
       return false;
     }
@@ -538,7 +537,7 @@ export class ActionsTrigger {
       const result = await this.client.tagCloud();
       this.dispatch(setTagCloud(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -547,7 +546,7 @@ export class ActionsTrigger {
     try {
       exists = await this.client.checkSchoolExists(name);
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       return false;
     }
 
@@ -559,7 +558,7 @@ export class ActionsTrigger {
     try {
       exists = await this.client.checkGeotagExists(name);
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       return false;
     }
 
@@ -572,7 +571,7 @@ export class ActionsTrigger {
       this.dispatch(setSchools(result));
       this.dispatch(setSchoolCloud(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -581,7 +580,7 @@ export class ActionsTrigger {
       const result = await this.client.geotagCloud();
       this.dispatch(setGeotagCloud(result));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -590,7 +589,7 @@ export class ActionsTrigger {
       const result = await this.client.followTag(name);
       this.dispatch(addUserFollowedTag(result.hashtag));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -599,7 +598,7 @@ export class ActionsTrigger {
       const result = await this.client.unfollowTag(name);
       this.dispatch(removeUserFollowedTag(result.hashtag));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -608,7 +607,7 @@ export class ActionsTrigger {
       const result = await this.client.followSchool(name);
       this.dispatch(addUserFollowedSchool(result.school));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -617,7 +616,7 @@ export class ActionsTrigger {
       const result = await this.client.unfollowSchool(name);
       this.dispatch(removeUserFollowedSchool(result.school));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -626,7 +625,7 @@ export class ActionsTrigger {
       const result = await this.client.followGeotag(urlName);
       this.dispatch(addUserFollowedGeotag(result.geotag));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -635,12 +634,12 @@ export class ActionsTrigger {
       const result = await this.client.unfollowGeotag(urlName);
       this.dispatch(removeUserFollowedGeotag(result.geotag));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
   removeMessage = (id) => {
-    this.dispatch(removeMessage(id));
+    this.dispatch(a.messages.removeMessage(id));
   };
 
   loadUserTags = async () => {
@@ -665,7 +664,7 @@ export class ActionsTrigger {
         url: processed.attachment.s3_url
       };
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
       throw e;
     }
 
@@ -687,7 +686,7 @@ export class ActionsTrigger {
         }
       }
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -743,7 +742,7 @@ export class ActionsTrigger {
       const response = await this.client.search(query);
       this.dispatch(a.search.setSearchResults(response));
     } catch (e) {
-      this.dispatch(addError(e.message));
+      this.dispatch(a.messages.addError(e.message));
     }
   }
 }
