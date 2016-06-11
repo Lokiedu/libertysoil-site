@@ -26,8 +26,7 @@ import {
   setSuggestedUsers, setPersonalizedSuggestedUsers,
   submitResetPassword, submitNewPassword,
   registrationSuccess,
-  setQuotes,
-  setCountries
+  setQuotes
 } from '../actions';
 
 
@@ -727,7 +726,7 @@ export class ActionsTrigger {
   getCountries = async () => {
     try {
       const response = await this.client.countries();
-      this.dispatch(setCountries(response));
+      this.dispatch(a.geo.setCountries(response));
     } catch (e) {
       console.error(`Failed to fetch countries: ${e}`);  // eslint-disable-line no-console
     }

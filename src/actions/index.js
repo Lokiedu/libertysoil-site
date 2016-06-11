@@ -24,6 +24,8 @@ export const hashtags = require('./hashtags');
 export const geotags = require('./geotags');
 export const schools = require('./schools');
 
+export const geo = require('./geo');
+
 export const posts = require('./posts');
 export const river = require('./river');
 export const comments = require('./comments');
@@ -37,10 +39,6 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
 export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
-
-export const SET_COUNTRIES = 'SET_COUNTRIES';
-export const ADD_COUNTRY = 'ADD_COUNTRY';
-export const ADD_CITY = 'ADD_CITY';
 
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
@@ -99,27 +97,6 @@ export function setPersonalizedSuggestedUsers(suggested_users) {
   return {
     type: SET_PERSONALIZED_SUGGESTED_USERS,
     suggested_users
-  };
-}
-
-export function setCountries(countries) {
-  return {
-    type: SET_COUNTRIES,
-    countries
-  };
-}
-
-export function addCountry(country) {
-  return {
-    type: ADD_COUNTRY,
-    country
-  };
-}
-
-export function addCity(city) {
-  return {
-    type: ADD_CITY,
-    city
   };
 }
 
