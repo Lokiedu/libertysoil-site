@@ -85,7 +85,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS: {
+    case a.comments.SET_POST_COMMENTS: {
       const users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 

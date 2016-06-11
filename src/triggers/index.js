@@ -23,10 +23,6 @@ import * as a from '../actions';
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
-  setPostComments,
-  saveCommentStart, saveCommentSuccess, saveCommentFailure,
-  deleteCommentStart, deleteCommentSuccess, deleteCommentFailure,
-  createCommentStart, createCommentSuccess, createCommentFailure,
   setLikes, setFavourites, setPostsToLikesRiver,
   setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
@@ -678,17 +674,17 @@ export class ActionsTrigger {
   };
 
   createComment = async (postId, comment) => {
-    this.dispatch(createCommentStart(postId, comment));
+    this.dispatch(a.comments.createCommentStart(postId, comment));
 
     try {
       const responseBody = await this.client.createComment(postId, comment);
 
       if (responseBody) {
         if (responseBody.error) {
-          this.dispatch(createCommentFailure(postId, responseBody.error));
+          this.dispatch(a.comments.createCommentFailure(postId, responseBody.error));
         } else {
-          this.dispatch(setPostComments(postId, responseBody));
-          this.dispatch(createCommentSuccess(postId));
+          this.dispatch(a.comments.setPostComments(postId, responseBody));
+          this.dispatch(a.comments.createCommentSuccess(postId));
         }
       }
     } catch (e) {
@@ -697,40 +693,40 @@ export class ActionsTrigger {
   };
 
   deleteComment = async (postId, commentId) => {
-    this.dispatch(deleteCommentStart(postId, commentId));
+    this.dispatch(a.comments.deleteCommentStart(postId, commentId));
 
     try {
       const responseBody = await this.client.deleteComment(postId, commentId);
 
       if (responseBody) {
         if (responseBody.error) {
-          this.dispatch(deleteCommentFailure(postId, commentId, responseBody.error));
+          this.dispatch(a.comments.deleteCommentFailure(postId, commentId, responseBody.error));
         } else {
-          this.dispatch(setPostComments(postId, responseBody));
-          this.dispatch(deleteCommentSuccess(postId, commentId));
+          this.dispatch(a.comments.setPostComments(postId, responseBody));
+          this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
         }
       }
     } catch (e) {
-      this.dispatch(deleteCommentFailure(postId, commentId, e.message));
+      this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
     }
   };
 
   saveComment = async (postId, commentId, text) => {
-    this.dispatch(saveCommentStart(postId, commentId));
+    this.dispatch(a.comments.saveCommentStart(postId, commentId));
 
     try {
       const responseBody = await this.client.saveComment(postId, commentId, text);
 
       if (responseBody) {
         if (responseBody.error) {
-          this.dispatch(saveCommentFailure(postId, commentId, responseBody.error));
+          this.dispatch(a.comments.saveCommentFailure(postId, commentId, responseBody.error));
         } else {
-          this.dispatch(setPostComments(postId, responseBody));
-          this.dispatch(saveCommentSuccess(postId, commentId));
+          this.dispatch(a.comments.setPostComments(postId, responseBody));
+          this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
         }
       }
     } catch (e) {
-      this.dispatch(saveCommentFailure(postId, commentId, e.message));
+      this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
     }
   };
 

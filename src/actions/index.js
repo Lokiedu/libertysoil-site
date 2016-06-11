@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const ui = require('./ui');
+export const comments = require('./comments');
 
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
@@ -44,19 +45,6 @@ export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const SET_HASHTAGS = 'SET_HASHTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
-export const SET_POST_COMMENTS = 'SET_POST_COMMENTS';
-
-export const SAVE_COMMENT__START = 'SAVE_COMMENT__START';
-export const SAVE_COMMENT__FAILURE = 'SAVE_COMMENT__FAILURE';
-export const SAVE_COMMENT__SUCCESS = 'SAVE_COMMENT__SUCCESS';
-
-export const DELETE_COMMENT__START = 'DELETE_COMMENT__START';
-export const DELETE_COMMENT__FAILURE = 'DELETE_COMMENT__FAILURE';
-export const DELETE_COMMENT__SUCCESS = 'DELETE_COMMENT__SUCCESS';
-
-export const CREATE_COMMENT__START = 'CREATE_COMMENT__START';
-export const CREATE_COMMENT__FAILURE = 'CREATE_COMMENT__FAILURE';
-export const CREATE_COMMENT__SUCCESS = 'CREATE_COMMENT__SUCCESS';
 
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
@@ -525,87 +513,6 @@ export function setQuotes(quotes) {
   return {
     type: SET_QUOTES,
     quotes
-  };
-}
-
-export function setPostComments(postId, comments) {
-  return {
-    type: SET_POST_COMMENTS,
-    postId,
-    comments
-  };
-}
-
-export function saveCommentStart(postId, commentId) {
-  return {
-    type: SAVE_COMMENT__START,
-    postId,
-    commentId
-  };
-}
-
-export function saveCommentSuccess(postId, commentId) {
-  return {
-    type: SAVE_COMMENT__SUCCESS,
-    postId,
-    commentId
-  };
-}
-
-export function saveCommentFailure(postId, commentId, message) {
-  return {
-    type: SAVE_COMMENT__FAILURE,
-    postId,
-    commentId,
-    message
-  };
-}
-
-export function deleteCommentStart(postId, commentId) {
-  return {
-    type: DELETE_COMMENT__START,
-    postId,
-    commentId
-  };
-}
-
-export function deleteCommentSuccess(postId, commentId) {
-  return {
-    type: DELETE_COMMENT__SUCCESS,
-    postId,
-    commentId
-  };
-}
-
-export function deleteCommentFailure(postId, commentId, message) {
-  return {
-    type: DELETE_COMMENT__FAILURE,
-    postId,
-    commentId,
-    message
-  };
-}
-
-export function createCommentStart(postId, text) {
-  return {
-    type: CREATE_COMMENT__START,
-    postId,
-    text
-  };
-}
-
-export function createCommentSuccess(postId) {
-  return {
-    type: CREATE_COMMENT__SUCCESS,
-    postId
-  };
-}
-
-export function createCommentFailure(postId, message) {
-  return {
-    type: CREATE_COMMENT__FAILURE,
-    postId,
-    message
   };
 }
 

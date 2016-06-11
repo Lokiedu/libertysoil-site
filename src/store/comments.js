@@ -61,7 +61,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS: {
+    case a.comments.SET_POST_COMMENTS: {
       state = state.set(action.postId, List(clearComments(action.comments)));
 
       break;
