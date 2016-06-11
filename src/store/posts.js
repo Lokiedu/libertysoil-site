@@ -63,7 +63,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_LIKES: {
+    case a.users.SET_LIKES: {
       // FIXME: move to separate reducer?
       if (action.post_id) {
         state = state.setIn([action.post_id, 'likers'], action.likers);
@@ -71,7 +71,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_FAVOURITES: {
+    case a.users.SET_FAVOURITES: {
       // FIXME: move to separate reducer?
       if (action.post_id) {
         state = state.setIn([action.post_id, 'favourers'], action.favourers);

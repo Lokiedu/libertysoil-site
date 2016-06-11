@@ -23,7 +23,7 @@ import BaseSettingsPage from './base/settings';
 import SettingsPasswordForm from '../components/settings/password-form';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { addUser } from '../actions';
+import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 

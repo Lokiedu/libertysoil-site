@@ -17,14 +17,14 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { users } from '../actions';
 
 const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_USER:
-    case a.SET_CURRENT_USER: {
+    case users.ADD_USER:
+    case users.SET_CURRENT_USER: {
       if (action.user && action.user.following) {
         state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
       }

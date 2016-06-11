@@ -21,7 +21,7 @@ import i from 'immutable';
 
 import expect from '../../../test-helpers/expect';
 import { theReducer } from '../../../src/store';
-import { SET_CURRENT_USER } from '../../../src/actions';
+import { SET_CURRENT_USER } from '../../../src/actions/users';
 
 
 describe('combined reducer "theReducer"', function() {

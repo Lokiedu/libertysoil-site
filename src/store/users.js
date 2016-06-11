@@ -54,8 +54,8 @@ const cleanUser = user => {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_USER:
-    case a.SET_CURRENT_USER: {
+    case a.users.ADD_USER:
+    case a.users.SET_CURRENT_USER: {
       state = state.mergeDeep(i.fromJS(cleanUser(action.user)));
 
       break;

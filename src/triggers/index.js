@@ -21,11 +21,6 @@ import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
 import {
-  addUser, setCurrentUser,
-  setLikes, setFavourites,
-  setSuggestedUsers, setPersonalizedSuggestedUsers,
-  submitResetPassword, submitNewPassword,
-  registrationSuccess,
   setQuotes
 } from '../actions';
 
@@ -44,7 +39,7 @@ export class ActionsTrigger {
       const responseBody = await this.client.like(post_id);
 
       if (responseBody.success) {
-        this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+        this.dispatch(a.users.setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
         await this.syncLikedPosts(current_user_id);
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
@@ -59,7 +54,7 @@ export class ActionsTrigger {
       const responseBody = await this.client.unlike(post_id);
 
       if (responseBody.success) {
-        this.dispatch(setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
+        this.dispatch(a.users.setLikes(current_user_id, responseBody.likes, post_id, responseBody.likers));
         await this.syncLikedPosts(current_user_id);
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
@@ -168,7 +163,7 @@ export class ActionsTrigger {
       const responseBody = await this.client.fav(post_id);
 
       if (responseBody.success) {
-        this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
+        this.dispatch(a.users.setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -182,7 +177,7 @@ export class ActionsTrigger {
       const responseBody = await this.client.unfav(post_id);
 
       if (responseBody.success) {
-        this.dispatch(setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
+        this.dispatch(a.users.setFavourites(current_user_id, responseBody.favourites, post_id, responseBody.favourers));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -210,7 +205,7 @@ export class ActionsTrigger {
 
       if ('user' in res) {
         this.dispatch(a.messages.addMessage('Saved successfully'));
-        this.dispatch(addUser(res.user));
+        this.dispatch(a.users.addUser(res.user));
         status = true;
       }
     } catch (e) {
@@ -259,8 +254,8 @@ export class ActionsTrigger {
       const res = await this.client.follow(user.username);
 
       if ('user1' in res) {
-        this.dispatch(addUser(res.user1));
-        this.dispatch(addUser(res.user2));
+        this.dispatch(a.users.addUser(res.user1));
+        this.dispatch(a.users.addUser(res.user2));
       }
 
       this.dispatch(a.river.clearRiver());
@@ -275,8 +270,8 @@ export class ActionsTrigger {
       const res = await this.client.unfollow(user.username);
 
       if ('user1' in res) {
-        this.dispatch(addUser(res.user1));
-        this.dispatch(addUser(res.user2));
+        this.dispatch(a.users.addUser(res.user1));
+        this.dispatch(a.users.addUser(res.user2));
       }
 
       this.dispatch(a.river.clearRiver());
@@ -291,7 +286,7 @@ export class ActionsTrigger {
       await this.client.ignoreUser(user.username);
       const result = await this.client.userSuggestions();
 
-      this.dispatch(setPersonalizedSuggestedUsers(result));
+      this.dispatch(a.users.setPersonalizedSuggestedUsers(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -306,14 +301,14 @@ export class ActionsTrigger {
       const result = await this.client.login({ username, password });
 
       if (!result.success) {
-        this.dispatch(setCurrentUser(null));
+        this.dispatch(a.users.setCurrentUser(null));
         this.dispatch(a.messages.addError('Invalid username or password'));
         return;
       }
 
       user = result.user;
     } catch (e) {
-      this.dispatch(setCurrentUser(null));
+      this.dispatch(a.users.setCurrentUser(null));
 
       if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
         this.dispatch(a.messages.addError(e.response.body.error));
@@ -329,9 +324,9 @@ export class ActionsTrigger {
     }
 
     try {
-      this.dispatch(setCurrentUser(user));
-      this.dispatch(setLikes(user.id, user.liked_posts.map(like => like.id)));
-      this.dispatch(setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
+      this.dispatch(a.users.setCurrentUser(user));
+      this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
+      this.dispatch(a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
 
       if (!user.more || user.more.first_login) {
         browserHistory.push('/induction');
@@ -346,7 +341,7 @@ export class ActionsTrigger {
   resetPassword = async (email) => {
     try {
       await this.client.resetPassword(email);
-      this.dispatch(submitResetPassword());
+      this.dispatch(a.users.submitResetPassword());
     } catch (e) {
       this.dispatch(a.messages.addError('Invalid username or password'));
     }
@@ -355,7 +350,7 @@ export class ActionsTrigger {
   newPassword = async (hash, password, password_repeat) => {
     try {
       await this.client.newPassword(hash, password, password_repeat);
-      this.dispatch(submitNewPassword());
+      this.dispatch(a.users.submitNewPassword());
     } catch (e) {
       if (('body' in e.response) && ('error' in e.response.body)) {
         this.dispatch(a.messages.addError(e.response.body.error));
@@ -373,7 +368,7 @@ export class ActionsTrigger {
       const result = await this.client.registerUser({ username, password, email, firstName, lastName });
 
       if (result.success) {
-        this.dispatch(registrationSuccess());
+        this.dispatch(a.users.registrationSuccess());
       }
     } catch (e) {
       // FIXME: enable form again
@@ -490,7 +485,7 @@ export class ActionsTrigger {
     try {
       const result = await this.client.initialSuggestions();
 
-      this.dispatch(setSuggestedUsers(result));
+      this.dispatch(a.users.setSuggestedUsers(result));
 
       return result;
     } catch (e) {
@@ -503,7 +498,7 @@ export class ActionsTrigger {
     try {
       const result = await this.client.userSuggestions();
 
-      this.dispatch(setPersonalizedSuggestedUsers(result));
+      this.dispatch(a.users.setPersonalizedSuggestedUsers(result));
 
       return result;
     } catch (e) {

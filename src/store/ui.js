@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -44,17 +44,17 @@ function reducer(state = initialState, action) {
         state = state.setIn(['progress', action.progress], action.value);
         break;
       }
-    case a.SUBMIT_RESET_PASSWORD:
+    case a.users.SUBMIT_RESET_PASSWORD:
       {
         state = state.set('submitResetPassword', true);
         break;
       }
-    case a.SUBMIT_NEW_PASSWORD:
+    case a.users.SUBMIT_NEW_PASSWORD:
       {
         state = state.set('submitNewPassword', true);
         break;
       }
-    case a.REGISTRATION_SUCCESS:
+    case a.users.REGISTRATION_SUCCESS:
       {
         state = state.set('registrationSuccess', true);
         break;

@@ -41,7 +41,7 @@ const initialState = i.Map({
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_CURRENT_USER: {
+    case a.users.SET_CURRENT_USER: {
       const oldUid = state.get('id');
       const newUid = action.user ? action.user.id : null;
 
@@ -142,7 +142,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_PERSONALIZED_SUGGESTED_USERS: {
+    case a.users.SET_PERSONALIZED_SUGGESTED_USERS: {
       state = state.set('suggested_users', i.fromJS(action.suggested_users));
 
       break;
