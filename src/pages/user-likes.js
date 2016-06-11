@@ -28,7 +28,8 @@ import River from '../components/river_of_posts';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { addUser, setPostsToLikesRiver } from '../actions';
+import { addUser } from '../actions';
+import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 

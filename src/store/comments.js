@@ -35,7 +35,7 @@ const clearComments = (comments) => (
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST_TO_RIVER:
+    case a.river.ADD_POST_TO_RIVER:
     case a.ADD_POST: {
       const comments = action.post.post_comments || [];
 
@@ -44,9 +44,9 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER:
-    case a.SET_POSTS_TO_LIKES_RIVER:
-    case a.SET_POSTS_TO_FAVOURITES_RIVER:
+    case a.river.SET_POSTS_TO_RIVER:
+    case a.river.SET_POSTS_TO_LIKES_RIVER:
+    case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_USER_POSTS:
     case a.SET_TAG_POSTS:
     case a.SET_SCHOOL_POSTS:

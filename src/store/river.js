@@ -23,19 +23,19 @@ const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.CLEAR_RIVER: {
+    case a.river.CLEAR_RIVER: {
       state = i.List([]);
 
       break;
     }
 
-    case a.ADD_POST_TO_RIVER: {
+    case a.river.ADD_POST_TO_RIVER: {
       state = state.unshift(action.post.id);
 
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER: {
+    case a.river.SET_POSTS_TO_RIVER: {
       const posts = action.posts.map(post => post.id);
 
       posts.forEach(postID => {

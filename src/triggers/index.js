@@ -22,9 +22,9 @@ import * as a from '../actions';
 
 import {
   addError, addMessage, removeAllMessages,
-  addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
-  setLikes, setFavourites, setPostsToLikesRiver,
-  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
+  addUser, addPost, setCurrentUser, removePost,
+  setLikes, setFavourites,
+  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
   removeMessage, registrationSuccess,
@@ -163,7 +163,7 @@ export class ActionsTrigger {
     try {
       const likedPosts = await this.client.userLikedPosts();
 
-      this.dispatch(setPostsToLikesRiver(current_user_id, likedPosts));
+      this.dispatch(a.river.setPostsToLikesRiver(current_user_id, likedPosts));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
@@ -200,7 +200,7 @@ export class ActionsTrigger {
   createPost = async (type, data) => {
     try {
       const result = await this.client.createPost(type, data);
-      this.dispatch(addPostToRiver(result));
+      this.dispatch(a.river.addPostToRiver(result));
 
       const userTags = await this.client.userTags();
       this.dispatch(setUserTags(userTags));
@@ -269,7 +269,7 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user2));
       }
 
-      this.dispatch(clearRiver());
+      this.dispatch(a.river.clearRiver());
       this.loadPostRiver();
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -285,7 +285,7 @@ export class ActionsTrigger {
         this.dispatch(addUser(res.user2));
       }
 
-      this.dispatch(clearRiver());
+      this.dispatch(a.river.clearRiver());
       this.loadPostRiver();
     } catch (e) {
       this.dispatch(addError(e.message));
@@ -523,7 +523,7 @@ export class ActionsTrigger {
 
     try {
       const result = await this.client.subscriptions(offset);
-      this.dispatch(setPostsToRiver(result));
+      this.dispatch(a.river.setPostsToRiver(result));
       this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
       return result;
     } catch (e) {

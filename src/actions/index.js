@@ -18,6 +18,7 @@
 export const ui = require('./ui');
 export const comments = require('./comments');
 export const search = require('./search');
+export const river = require('./river');
 
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
@@ -25,11 +26,6 @@ export const ADD_GEOTAG = 'ADD_GEOTAG';
 export const ADD_HASHTAG = 'ADD_HASHTAG';
 
 export const ADD_POST = 'ADD_POST';
-export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
-export const CLEAR_RIVER = 'CLEAR_RIVER';
-export const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
-export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
-export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 export const SET_RELATED_POSTS = 'SET_RELATED_POSTS';
 export const SET_USER_POSTS = 'SET_USER_POSTS';
 export const SET_USER_TAGS = 'SET_USER_TAGS';
@@ -119,42 +115,6 @@ export function addHashtag(hashtag) {
   return {
     type: ADD_HASHTAG,
     hashtag
-  };
-}
-
-export function addPostToRiver(post) {
-  return {
-    type: ADD_POST_TO_RIVER,
-    post
-  };
-}
-
-export function setPostsToRiver(posts) {
-  return {
-    type: SET_POSTS_TO_RIVER,
-    posts
-  };
-}
-
-export function clearRiver() {
-  return {
-    type: CLEAR_RIVER
-  };
-}
-
-export function setPostsToLikesRiver(user_id, posts) {
-  return {
-    type: SET_POSTS_TO_LIKES_RIVER,
-    user_id,
-    posts
-  };
-}
-
-export function setPostsToFavouritesRiver(user_id, posts) {
-  return {
-    type: SET_POSTS_TO_FAVOURITES_RIVER,
-    user_id,
-    posts
   };
 }
 
