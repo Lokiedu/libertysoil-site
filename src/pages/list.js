@@ -48,7 +48,7 @@ import { defaultSelector } from '../selectors';
 import {
   resetCreatePostForm,
   updateCreatePostForm
-} from '../actions';
+} from '../actions/posts';
 import { clearRiver } from '../actions/river';
 
 const client = new ApiClient(API_HOST);

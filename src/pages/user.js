@@ -26,7 +26,8 @@ import River from '../components/river_of_posts';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import { addUser, setUserPosts } from '../actions';
+import { addUser } from '../actions';
+import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 

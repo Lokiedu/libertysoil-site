@@ -25,7 +25,7 @@ import Helmet from 'react-helmet';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
-import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addSchool } from '../actions/schools';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';

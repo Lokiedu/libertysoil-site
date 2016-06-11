@@ -27,7 +27,7 @@ import { defaultSelector } from '../selectors';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
-import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addGeotag } from '../actions/geotags';
 import { ActionsTrigger } from '../triggers';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';

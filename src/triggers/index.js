@@ -21,7 +21,7 @@ import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
 import {
-  addUser, addPost, setCurrentUser, removePost,
+  addUser, setCurrentUser,
   setLikes, setFavourites,
   setUserTags, setSuggestedUsers, setPersonalizedSuggestedUsers,
   submitResetPassword, submitNewPassword,
@@ -414,7 +414,7 @@ export class ActionsTrigger {
         throw new Error(result.error);
       }
 
-      this.dispatch(removePost(post_uuid));
+      this.dispatch(a.posts.removePost(post_uuid));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
       throw e;
@@ -436,7 +436,7 @@ export class ActionsTrigger {
   updatePost = async (post_uuid, post_fields) => {
     try {
       const result = await this.client.updatePost(post_uuid, post_fields);
-      this.dispatch(addPost(result));
+      this.dispatch(a.posts.addPost(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

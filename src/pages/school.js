@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
 
-import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';

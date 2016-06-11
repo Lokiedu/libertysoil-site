@@ -24,7 +24,7 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST:
+    case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
       const postCopy = _.cloneDeep(action.post);
 
@@ -39,11 +39,11 @@ export default function reducer(state = initialState, action) {
     case a.river.SET_POSTS_TO_RIVER:
     case a.river.SET_POSTS_TO_LIKES_RIVER:
     case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
-    case a.SET_USER_POSTS:
+    case a.posts.SET_USER_POSTS:
     case a.hashtags.SET_HASHTAG_POSTS:
     case a.schools.SET_SCHOOL_POSTS:
     case a.geotags.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS: {
+    case a.posts.SET_RELATED_POSTS: {
       const postsWithoutUsers = _.keyBy(action.posts.map(post => {
         const postCopy = _.cloneDeep(post);
 
@@ -58,7 +58,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       state = state.remove(action.id);
       break;
     }

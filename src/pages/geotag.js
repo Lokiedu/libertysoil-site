@@ -23,7 +23,7 @@ import { values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addGeotag, setGeotagPosts } from '../actions/geotags';
 
 import NotFound from './not-found';

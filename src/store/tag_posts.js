@@ -43,7 +43,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       for (const hashtagName of state.keys()) {
         const idx = state.get(hashtagName).findIndex(hashtagPostId => (hashtagPostId === action.id));
 

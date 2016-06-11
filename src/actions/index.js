@@ -16,24 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const ui = require('./ui');
-export const comments = require('./comments');
 export const search = require('./search');
-export const river = require('./river');
 export const messages = require('./messages');
 
 export const hashtags = require('./hashtags');
 export const geotags = require('./geotags');
 export const schools = require('./schools');
 
+export const posts = require('./posts');
+export const river = require('./river');
+export const comments = require('./comments');
+
 export const ADD_USER = 'ADD_USER';
 
-export const ADD_POST = 'ADD_POST';
-export const SET_RELATED_POSTS = 'SET_RELATED_POSTS';
-export const SET_USER_POSTS = 'SET_USER_POSTS';
-
 export const SET_USER_TAGS = 'SET_USER_TAGS';
-
-export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
 export const SET_FAVOURITES = 'SET_FAVOURITES';
@@ -46,8 +42,7 @@ export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USER
 export const SET_COUNTRIES = 'SET_COUNTRIES';
 export const ADD_COUNTRY = 'ADD_COUNTRY';
 export const ADD_CITY = 'ADD_CITY';
-export const SET_COUNTRY_POSTS = 'SET_COUNTRY_POSTS';
-export const SET_CITY_POSTS = 'SET_CITY_POSTS';
+
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
@@ -56,38 +51,10 @@ export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 
 export const SET_QUOTES = 'SET_QUOTES';
 
-export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
-export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
-export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
-export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
-
 export function addUser(user) {
   return {
     type: ADD_USER,
     user
-  };
-}
-
-export function addPost(post) {
-  return {
-    type: ADD_POST,
-    post
-  };
-}
-
-export function setRelatedPosts(post_id, posts) {
-  return {
-    type: SET_RELATED_POSTS,
-    post_id,
-    posts
-  };
-}
-
-export function setUserPosts(user_id, posts) {
-  return {
-    type: SET_USER_POSTS,
-    user_id,
-    posts
   };
 }
 
@@ -104,13 +71,6 @@ export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
     recent_tags
-  };
-}
-
-export function removePost(id) {
-  return {
-    type: REMOVE_POST,
-    id
   };
 }
 
@@ -182,14 +142,6 @@ export function addCity(city) {
   };
 }
 
-export function setCountryPosts(countryCode, posts) {
-  return {
-    type: SET_COUNTRY_POSTS,
-    countryCode,
-    posts
-  };
-}
-
 export function submitResetPassword() {
   return {
     type: SUBMIT_RESET_PASSWORD
@@ -202,43 +154,9 @@ export function submitNewPassword() {
   };
 }
 
-export function setCityPosts(cityId, posts) {
-  return {
-    type: SET_CITY_POSTS,
-    cityId,
-    posts
-  };
-}
-
 export function registrationSuccess() {
   return {
     type: REGISTRATION_SUCCESS
-  };
-}
-
-export function resetCreatePostForm() {
-  return {
-    type: RESET_CREATE_POST_FORM
-  };
-}
-
-export function updateCreatePostForm(create_post_form) {
-  return {
-    type: UPDATE_CREATE_POST_FORM,
-    create_post_form
-  };
-}
-
-export function resetEditPostForm() {
-  return {
-    type: RESET_EDIT_POST_FORM
-  };
-}
-
-export function updateEditPostForm(edit_post_form) {
-  return {
-    type: UPDATE_EDIT_POST_FORM,
-    edit_post_form
   };
 }
 

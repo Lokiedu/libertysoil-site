@@ -61,7 +61,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_POST:
+    case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
       const user = action.post.user;
       const comment_authors = action.post.post_comments.map(comment => comment.user);
@@ -92,7 +92,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_RELATED_POSTS: {
+    case a.posts.SET_RELATED_POSTS: {
       const users = _.keyBy(action.posts.map(post => post.user), 'id');
 
       state = state.mergeDeep(i.fromJS(users));

@@ -43,7 +43,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       for (const geotagName of state.keys()) {
         const idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.id));
 
