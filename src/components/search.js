@@ -27,7 +27,7 @@ import { ActionsTrigger } from '../triggers';
 import createSelector from '../selectors/createSelector';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
-import { clearSearchResults } from '../actions';
+import { clearSearchResults } from '../actions/search';
 
 import Icon from './icon';
 import ListItem from './list-item';

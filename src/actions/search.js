@@ -15,28 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Map, List, fromJS } from 'immutable';
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
-import { search } from '../actions';
+export function setSearchResults(results) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results
+  };
+}
 
-const initialState = Map({
-  results: Map({
-    geotags: List([]),
-    hashtags: List([]),
-    schools: List([])
-  })
-});
-
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case search.SET_SEARCH_RESULTS:
-      state = state.set('results', fromJS(action.results));
-      break;
-
-    case search.CLEAR_SEARCH_RESULTS:
-      state = state.set('results', initialState.get('results'));
-      break;
-  }
-
-  return state;
+export function clearSearchResults() {
+  return {
+    type: CLEAR_SEARCH_RESULTS
+  };
 }

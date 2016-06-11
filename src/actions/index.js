@@ -17,6 +17,7 @@
 */
 export const ui = require('./ui');
 export const comments = require('./comments');
+export const search = require('./search');
 
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
@@ -85,9 +86,6 @@ export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
-
-export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
-export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
 export function addUser(user) {
   return {
@@ -513,18 +511,5 @@ export function setQuotes(quotes) {
   return {
     type: SET_QUOTES,
     quotes
-  };
-}
-
-export function setSearchResults(results) {
-  return {
-    type: SET_SEARCH_RESULTS,
-    results
-  };
-}
-
-export function clearSearchResults() {
-  return {
-    type: CLEAR_SEARCH_RESULTS
   };
 }

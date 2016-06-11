@@ -32,8 +32,7 @@ import {
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
   setUserRecentTags, setQuotes,
-  setCountries,
-  setSearchResults
+  setCountries
 } from '../actions';
 
 
@@ -742,7 +741,7 @@ export class ActionsTrigger {
   search = async (query) => {
     try {
       const response = await this.client.search(query);
-      this.dispatch(setSearchResults(response));
+      this.dispatch(a.search.setSearchResults(response));
     } catch (e) {
       this.dispatch(addError(e.message));
     }
