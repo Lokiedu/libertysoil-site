@@ -18,20 +18,20 @@
 import i from 'immutable';
 import _ from 'lodash';
 
-import * as a from '../actions';
+import { hashtags as h } from '../actions';
 
 const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_HASHTAG: {
+    case h.ADD_HASHTAG: {
       const hashtag = action.hashtag;
       state = state.set(hashtag.name, i.fromJS(hashtag));
 
       break;
     }
 
-    case a.SET_HASHTAGS: {
+    case h.SET_HASHTAGS: {
       const hashtags = _.keyBy(action.hashtags, 'name');
       state = state.merge(i.fromJS(hashtags));
 

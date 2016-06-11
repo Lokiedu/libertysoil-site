@@ -27,11 +27,8 @@ import { defaultSelector } from '../selectors';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
-import {
-  addHashtag,
-  resetCreatePostForm,
-  updateCreatePostForm
-} from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions';
+import { addHashtag } from '../actions/hashtags';
 import { ActionsTrigger } from '../triggers';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';

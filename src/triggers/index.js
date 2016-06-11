@@ -23,13 +23,13 @@ import * as a from '../actions';
 import {
   addUser, addPost, setCurrentUser, removePost,
   setLikes, setFavourites,
-  setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
-  submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
-  removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
+  setUserTags, setSchools, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
+  submitResetPassword, submitNewPassword, setSchoolCloud, setGeotagCloud,
+  addUserFollowedSchool, removeUserFollowedSchool,
   registrationSuccess,
   addUserFollowedGeotag, removeUserFollowedGeotag,
-  addLikedHashtag, addLikedSchool, addLikedGeotag,
-  removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
+  addLikedSchool, addLikedGeotag,
+  removeLikedSchool, removeLikedGeotag,
   setUserRecentTags, setQuotes,
   setCountries
 } from '../actions';
@@ -79,7 +79,7 @@ export class ActionsTrigger {
       const response = await this.client.likeHashtag(name);
 
       if (response.success) {
-        this.dispatch(addLikedHashtag(response.hashtag));
+        this.dispatch(a.hashtags.addLikedHashtag(response.hashtag));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -93,7 +93,7 @@ export class ActionsTrigger {
       const response = await this.client.unlikeHashtag(name);
 
       if (response.success) {
-        this.dispatch(removeLikedHashtag(response.hashtag));
+        this.dispatch(a.hashtags.removeLikedHashtag(response.hashtag));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -461,7 +461,7 @@ export class ActionsTrigger {
   updateHashtag = async (hashtag_uuid, hashtag_fields) => {
     try {
       const result = await this.client.updateHashtag(hashtag_uuid, hashtag_fields);
-      this.dispatch(addHashtag(result));
+      this.dispatch(a.hashtags.addHashtag(result));
 
       return result;
     } catch (e) {
@@ -535,7 +535,7 @@ export class ActionsTrigger {
   loadTagCloud = async () => {
     try {
       const result = await this.client.tagCloud();
-      this.dispatch(setTagCloud(result));
+      this.dispatch(a.hashtags.setHashtagCloud(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -587,7 +587,7 @@ export class ActionsTrigger {
   followTag = async (name) => {
     try {
       const result = await this.client.followTag(name);
-      this.dispatch(addUserFollowedTag(result.hashtag));
+      this.dispatch(a.hashtags.addUserFollowedHashtag(result.hashtag));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -596,7 +596,7 @@ export class ActionsTrigger {
   unfollowTag = async (name) => {
     try {
       const result = await this.client.unfollowTag(name);
-      this.dispatch(removeUserFollowedTag(result.hashtag));
+      this.dispatch(a.hashtags.removeUserFollowedHashtag(result.hashtag));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

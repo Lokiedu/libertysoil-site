@@ -21,27 +21,26 @@ export const search = require('./search');
 export const river = require('./river');
 export const messages = require('./messages');
 
+export const hashtags = require('./hashtags');
+
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
 export const ADD_GEOTAG = 'ADD_GEOTAG';
-export const ADD_HASHTAG = 'ADD_HASHTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const SET_RELATED_POSTS = 'SET_RELATED_POSTS';
 export const SET_USER_POSTS = 'SET_USER_POSTS';
+
 export const SET_USER_TAGS = 'SET_USER_TAGS';
-export const ADD_USER_FOLLOWED_TAG = 'ADD_USER_FOLLOWED_TAG';
-export const REMOVE_USER_FOLLOWED_TAG = 'REMOVE_USER_FOLLOWED_TAG';
+
 export const ADD_USER_FOLLOWED_SCHOOL = 'ADD_USER_FOLLOWED_SCHOOL';
 export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
 export const ADD_USER_FOLLOWED_GEOTAG = 'ADD_USER_FOLLOWED_GEOTAG';
 export const REMOVE_USER_FOLLOWED_GEOTAG = 'REMOVE_USER_FOLLOWED_GEOTAG';
-export const SET_TAG_POSTS = 'SET_TAG_POSTS';
 export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
 export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
 export const SET_GEOTAGS = 'SET_GEOTAGS';
-export const SET_HASHTAGS = 'SET_HASHTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -51,8 +50,6 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
 export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
-export const ADD_LIKED_HASHTAG = 'ADD_LIKED_HASHTAG';
-export const REMOVE_LIKED_HASHTAG = 'REMOVE_LIKED_HASHTAG';
 export const ADD_LIKED_SCHOOL = 'ADD_LIKED_SCHOOL';
 export const REMOVE_LIKED_SCHOOL = 'REMOVE_LIKED_SCHOOL';
 export const ADD_LIKED_GEOTAG = 'ADD_LIKED_GEOTAG';
@@ -68,7 +65,6 @@ export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 
 export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
-export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
 export const SET_GEOTAG_CLOUD = 'SET_GEOTAG_CLOUD';
 
@@ -107,13 +103,6 @@ export function addGeotag(geotag) {
   };
 }
 
-export function addHashtag(hashtag) {
-  return {
-    type: ADD_HASHTAG,
-    hashtag
-  };
-}
-
 export function setRelatedPosts(post_id, posts) {
   return {
     type: SET_RELATED_POSTS,
@@ -138,21 +127,6 @@ export function setUserTags(tags) {
     geotags: tags.geotags
   };
 }
-
-export function addUserFollowedTag(hashtag) {
-  return {
-    type: ADD_USER_FOLLOWED_TAG,
-    hashtag
-  };
-}
-
-export function removeUserFollowedTag(hashtag) {
-  return {
-    type: REMOVE_USER_FOLLOWED_TAG,
-    hashtag
-  };
-}
-
 
 export function addUserFollowedSchool(school) {
   return {
@@ -187,14 +161,6 @@ export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
     recent_tags
-  };
-}
-
-export function setTagPosts(hashtag, posts) {
-  return {
-    type: SET_TAG_POSTS,
-    hashtag,
-    posts
   };
 }
 
@@ -253,13 +219,6 @@ export function setGeotags(geotags) {
   return {
     type: SET_GEOTAGS,
     geotags
-  };
-}
-
-export function setHashtags(hashtags) {
-  return {
-    type: SET_HASHTAGS,
-    hashtags
   };
 }
 
@@ -339,14 +298,6 @@ export function setCityPosts(cityId, posts) {
   };
 }
 
-export function setTagCloud(hashtags) {
-  return {
-    type: SET_TAG_CLOUD,
-    hashtags
-  };
-}
-
-
 export function setSchoolCloud(schools) {
   return {
     type: SET_SCHOOL_CLOUD,
@@ -391,20 +342,6 @@ export function updateEditPostForm(edit_post_form) {
   return {
     type: UPDATE_EDIT_POST_FORM,
     edit_post_form
-  };
-}
-
-export function addLikedHashtag(hashtag) {
-  return {
-    type: ADD_LIKED_HASHTAG,
-    hashtag
-  };
-}
-
-export function removeLikedHashtag(hashtag) {
-  return {
-    type: REMOVE_LIKED_HASHTAG,
-    hashtag
   };
 }
 

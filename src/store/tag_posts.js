@@ -38,7 +38,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_TAG_POSTS: {
+    case a.hashtags.SET_HASHTAG_POSTS: {
       state = state.set(action.hashtag, i.List(action.posts.map(post => post.id)));
       break;
     }

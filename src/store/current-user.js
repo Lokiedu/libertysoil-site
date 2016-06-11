@@ -118,13 +118,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_TAG: {
+    case a.hashtags.ADD_USER_FOLLOWED_HASHTAG: {
       state = state.setIn(['followed_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_TAG: {
+    case a.hashtags.REMOVE_USER_FOLLOWED_HASHTAG: {
       state = state.deleteIn(['followed_hashtags', action.hashtag.name]);
 
       break;
@@ -160,13 +160,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_LIKED_HASHTAG: {
+    case a.hashtags.ADD_LIKED_HASHTAG: {
       state = state.setIn(['liked_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
 
       break;
     }
 
-    case a.REMOVE_LIKED_HASHTAG: {
+    case a.hashtags.REMOVE_LIKED_HASHTAG: {
       state = state.deleteIn(['liked_hashtags', action.hashtag.name]);
 
       break;
