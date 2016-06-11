@@ -23,13 +23,12 @@ import * as a from '../actions';
 import {
   addUser, addPost, setCurrentUser, removePost,
   setLikes, setFavourites,
-  setUserTags, setSchools, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
-  submitResetPassword, submitNewPassword, setSchoolCloud, setGeotagCloud,
+  setUserTags, setSchools, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers,
+  submitResetPassword, submitNewPassword, setSchoolCloud,
   addUserFollowedSchool, removeUserFollowedSchool,
   registrationSuccess,
-  addUserFollowedGeotag, removeUserFollowedGeotag,
-  addLikedSchool, addLikedGeotag,
-  removeLikedSchool, removeLikedGeotag,
+  addLikedSchool,
+  removeLikedSchool,
   setUserRecentTags, setQuotes,
   setCountries
 } from '../actions';
@@ -135,7 +134,7 @@ export class ActionsTrigger {
       const response = await this.client.likeGeotag(url_name);
 
       if (response.success) {
-        this.dispatch(addLikedGeotag(response.geotag));
+        this.dispatch(a.geotags.addLikedGeotag(response.geotag));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -149,7 +148,7 @@ export class ActionsTrigger {
       const response = await this.client.unlikeGeotag(url_name);
 
       if (response.success) {
-        this.dispatch(removeLikedGeotag(response.geotag));
+        this.dispatch(a.geotags.removeLikedGeotag(response.geotag));
       } else {
         this.dispatch(a.messages.addError('internal server error. please try later'));
       }
@@ -449,7 +448,7 @@ export class ActionsTrigger {
   updateGeotag = async (geotag_uuid, geotag_fields) => {
     try {
       const result = await this.client.updateGeotag(geotag_uuid, geotag_fields);
-      this.dispatch(addGeotag(result));
+      this.dispatch(a.geotags.addGeotag(result));
 
       return result;
     } catch (e) {
@@ -578,7 +577,7 @@ export class ActionsTrigger {
   loadGeotagCloud = async () => {
     try {
       const result = await this.client.geotagCloud();
-      this.dispatch(setGeotagCloud(result));
+      this.dispatch(a.geotags.setGeotagCloud(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -623,7 +622,7 @@ export class ActionsTrigger {
   followGeotag = async (urlName) => {
     try {
       const result = await this.client.followGeotag(urlName);
-      this.dispatch(addUserFollowedGeotag(result.geotag));
+      this.dispatch(a.geotags.addUserFollowedGeotag(result.geotag));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -632,7 +631,7 @@ export class ActionsTrigger {
   unfollowGeotag = async (urlName) => {
     try {
       const result = await this.client.unfollowGeotag(urlName);
-      this.dispatch(removeUserFollowedGeotag(result.geotag));
+      this.dispatch(a.geotags.removeUserFollowedGeotag(result.geotag));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

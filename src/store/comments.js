@@ -50,7 +50,7 @@ export default function reducer(state = initialState, action) {
     case a.SET_USER_POSTS:
     case a.hashtags.SET_HASHTAG_POSTS:
     case a.SET_SCHOOL_POSTS:
-    case a.SET_GEOTAG_POSTS:
+    case a.geotags.SET_GEOTAG_POSTS:
     case a.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
         const postCopy = cloneDeep(post);

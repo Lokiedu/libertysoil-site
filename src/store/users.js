@@ -76,7 +76,7 @@ export default function reducer(state = initialState, action) {
     case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
     case a.SET_SCHOOL_POSTS:
     case a.hashtags.SET_HASHTAG_POSTS:
-    case a.SET_GEOTAG_POSTS: {
+    case a.geotags.SET_GEOTAG_POSTS: {
       const authors = action.posts.map(post => post.user);
       const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
       const users = _.keyBy(_.uniq([...authors, ...comment_authors], 'id'), 'id');

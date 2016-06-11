@@ -148,13 +148,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_GEOTAG: {
+    case a.geotags.ADD_USER_FOLLOWED_GEOTAG: {
       state = state.setIn(['followed_geotags', action.geotag.url_name], i.fromJS(action.geotag));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_GEOTAG: {
+    case a.geotags.REMOVE_USER_FOLLOWED_GEOTAG: {
       state = state.deleteIn(['followed_geotags', action.geotag.url_name]);
 
       break;
@@ -184,13 +184,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_LIKED_GEOTAG: {
+    case a.geotags.ADD_LIKED_GEOTAG: {
       state = state.setIn(['liked_geotags', action.geotag.url_name], i.fromJS(action.geotag));
 
       break;
     }
 
-    case a.REMOVE_LIKED_GEOTAG: {
+    case a.geotags.REMOVE_LIKED_GEOTAG: {
       state = state.deleteIn(['liked_geotags', action.geotag.url_name]);
 
       break;

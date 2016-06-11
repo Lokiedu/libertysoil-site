@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -18,20 +18,20 @@
 import i from 'immutable';
 import _ from 'lodash';
 
-import * as a from '../actions';
+import { geotags as g } from '../actions';
 
 const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_GEOTAG: {
+    case g.ADD_GEOTAG: {
       const geotag = action.geotag;
       state = state.set(geotag.url_name, i.fromJS(geotag));
 
       break;
     }
 
-    case a.SET_GEOTAG_CLOUD: {
+    case g.SET_GEOTAG_CLOUD: {
       const geotags = action.continents.reduce((acc, next) => {
         return acc.concat(next.geotags);
       }, []);
@@ -40,7 +40,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_GEOTAGS: {
+    case g.SET_GEOTAGS: {
       const geotags = _.keyBy(action.geotags, 'url_name');
       state = i.fromJS(geotags);
 

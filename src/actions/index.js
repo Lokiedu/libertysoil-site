@@ -22,10 +22,10 @@ export const river = require('./river');
 export const messages = require('./messages');
 
 export const hashtags = require('./hashtags');
+export const geotags = require('./geotags');
 
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
-export const ADD_GEOTAG = 'ADD_GEOTAG';
 
 export const ADD_POST = 'ADD_POST';
 export const SET_RELATED_POSTS = 'SET_RELATED_POSTS';
@@ -35,12 +35,8 @@ export const SET_USER_TAGS = 'SET_USER_TAGS';
 
 export const ADD_USER_FOLLOWED_SCHOOL = 'ADD_USER_FOLLOWED_SCHOOL';
 export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
-export const ADD_USER_FOLLOWED_GEOTAG = 'ADD_USER_FOLLOWED_GEOTAG';
-export const REMOVE_USER_FOLLOWED_GEOTAG = 'REMOVE_USER_FOLLOWED_GEOTAG';
 export const SET_SCHOOL_POSTS = 'SET_SCHOOL_POSTS';
-export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_SCHOOLS = 'SET_SCHOOLS';
-export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const REMOVE_POST = 'REMOVE_POST';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -52,8 +48,6 @@ export const SET_SUGGESTED_USERS = 'SET_SUGGESTED_USERS';
 export const SET_PERSONALIZED_SUGGESTED_USERS = 'SET_PERSONALIZED_SUGGESTED_USERS';
 export const ADD_LIKED_SCHOOL = 'ADD_LIKED_SCHOOL';
 export const REMOVE_LIKED_SCHOOL = 'REMOVE_LIKED_SCHOOL';
-export const ADD_LIKED_GEOTAG = 'ADD_LIKED_GEOTAG';
-export const REMOVE_LIKED_GEOTAG = 'REMOVE_LIKED_GEOTAG';
 
 export const SET_COUNTRIES = 'SET_COUNTRIES';
 export const ADD_COUNTRY = 'ADD_COUNTRY';
@@ -66,7 +60,6 @@ export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
 
 export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_SCHOOL_CLOUD = 'SET_SCHOOL_CLOUD';
-export const SET_GEOTAG_CLOUD = 'SET_GEOTAG_CLOUD';
 
 export const SET_QUOTES = 'SET_QUOTES';
 
@@ -93,13 +86,6 @@ export function addPost(post) {
   return {
     type: ADD_POST,
     post
-  };
-}
-
-export function addGeotag(geotag) {
-  return {
-    type: ADD_GEOTAG,
-    geotag
   };
 }
 
@@ -142,21 +128,6 @@ export function removeUserFollowedSchool(school) {
   };
 }
 
-
-export function addUserFollowedGeotag(geotag) {
-  return {
-    type: ADD_USER_FOLLOWED_GEOTAG,
-    geotag
-  };
-}
-
-export function removeUserFollowedGeotag(geotag) {
-  return {
-    type: REMOVE_USER_FOLLOWED_GEOTAG,
-    geotag
-  };
-}
-
 export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
@@ -171,15 +142,6 @@ export function setSchoolPosts(school, posts) {
     posts
   };
 }
-
-export function setGeotagPosts(geotag, posts) {
-  return {
-    type: SET_GEOTAG_POSTS,
-    geotag,
-    posts
-  };
-}
-
 
 export function removePost(id) {
   return {
@@ -212,13 +174,6 @@ export function setSchools(schools) {
   return {
     type: SET_SCHOOLS,
     schools
-  };
-}
-
-export function setGeotags(geotags) {
-  return {
-    type: SET_GEOTAGS,
-    geotags
   };
 }
 
@@ -305,14 +260,6 @@ export function setSchoolCloud(schools) {
   };
 }
 
-export function setGeotagCloud(continents) {
-  return {
-    type: SET_GEOTAG_CLOUD,
-    continents
-  };
-}
-
-
 export function registrationSuccess() {
   return {
     type: REGISTRATION_SUCCESS
@@ -356,20 +303,6 @@ export function removeLikedSchool(school) {
   return {
     type: REMOVE_LIKED_SCHOOL,
     school
-  };
-}
-
-export function addLikedGeotag(geotag) {
-  return {
-    type: ADD_LIKED_GEOTAG,
-    geotag
-  };
-}
-
-export function removeLikedGeotag(geotag) {
-  return {
-    type: REMOVE_LIKED_GEOTAG,
-    geotag
   };
 }
 
