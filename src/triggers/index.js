@@ -20,11 +20,6 @@ import { toSpreadArray } from '../utils/lang';
 
 import * as a from '../actions';
 
-import {
-  setQuotes
-} from '../actions';
-
-
 export class ActionsTrigger {
   client;
   dispatch;
@@ -394,7 +389,7 @@ export class ActionsTrigger {
     try {
       const result = await this.client.getQuotes();
 
-      this.dispatch(setQuotes(result));
+      this.dispatch(a.quotes.setQuotes(result));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
