@@ -18,6 +18,8 @@
 import { browserHistory } from 'react-router';
 import { toSpreadArray } from '../utils/lang';
 
+import * as a from '../actions';
+
 import {
   addError, addMessage, removeAllMessages,
   addUser, addPost, addPostToRiver, setCurrentUser, removePost, clearRiver,
@@ -29,11 +31,11 @@ import {
   setUserTags, setSchools, addHashtag, addGeotag, addSchool, setSuggestedUsers, setPersonalizedSuggestedUsers, setPostsToRiver,
   submitResetPassword, submitNewPassword, setTagCloud, setSchoolCloud, setGeotagCloud, addUserFollowedTag,
   removeUserFollowedTag, addUserFollowedSchool, removeUserFollowedSchool,
-  removeMessage, registrationSuccess, showRegisterForm,
+  removeMessage, registrationSuccess,
   addUserFollowedGeotag, removeUserFollowedGeotag,
   addLikedHashtag, addLikedSchool, addLikedGeotag,
   removeLikedHashtag, removeLikedSchool, removeLikedGeotag,
-  setUIProgress, setUserRecentTags, setQuotes,
+  setUserRecentTags, setQuotes,
   setCountries,
   setSearchResults
 } from '../actions';
@@ -522,16 +524,16 @@ export class ActionsTrigger {
   };
 
   loadPostRiver = async (offset) => {
-    this.dispatch(setUIProgress('loadRiverInProgress', true));
+    this.dispatch(a.ui.setProgress('loadRiverInProgress', true));
 
     try {
       const result = await this.client.subscriptions(offset);
       this.dispatch(setPostsToRiver(result));
-      this.dispatch(setUIProgress('loadRiverInProgress', false));
+      this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
       return result;
     } catch (e) {
       this.dispatch(addError(e.message));
-      this.dispatch(setUIProgress('loadRiverInProgress', false));
+      this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
       return false;
     }
   };
@@ -652,7 +654,7 @@ export class ActionsTrigger {
   };
 
   showRegisterForm = async () => {
-    this.dispatch(showRegisterForm());
+    this.dispatch(a.ui.showRegisterForm());
   };
 
   uploadPicture = async ({ picture, ...options }) => {

@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+export const ui = require('./ui');
+
 export const ADD_USER = 'ADD_USER';
 export const ADD_SCHOOL = 'ADD_SCHOOL';
 export const ADD_GEOTAG = 'ADD_GEOTAG';
@@ -83,7 +85,6 @@ export const SET_CITY_POSTS = 'SET_CITY_POSTS';
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS';
-export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
 export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export const SET_TAG_CLOUD = 'SET_TAG_CLOUD';
@@ -96,9 +97,6 @@ export const RESET_CREATE_POST_FORM = 'RESET_CREATE_POST_FORM';
 export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
-
-export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
-export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
 
 export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
@@ -455,12 +453,6 @@ export function registrationSuccess() {
   };
 }
 
-export function showRegisterForm() {
-  return {
-    type: SHOW_REGISTER_FORM
-  };
-}
-
 export function resetCreatePostForm() {
   return {
     type: RESET_CREATE_POST_FORM
@@ -533,21 +525,6 @@ export function setQuotes(quotes) {
   return {
     type: SET_QUOTES,
     quotes
-  };
-}
-
-export function setUIProgress(progress, value) {
-  return {
-    type: UI__SET_PROGRESS,
-    progress,
-    value
-  };
-}
-
-export function toggleUISidebar(isVisible) {
-  return {
-    type: UI__TOGGLE_SIDEBAR,
-    isVisible
   };
 }
 

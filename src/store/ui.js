@@ -27,7 +27,7 @@ const initialState = i.Map({
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.UI__TOGGLE_SIDEBAR:
+    case a.ui.UI__TOGGLE_SIDEBAR:
       {
         let isVisible = !state.get('sidebarIsVisible');
 
@@ -39,7 +39,7 @@ function reducer(state = initialState, action) {
 
         break;
       }
-    case a.UI__SET_PROGRESS:
+    case a.ui.UI__SET_PROGRESS:
       {
         state = state.setIn(['progress', action.progress], action.value);
         break;
@@ -59,7 +59,7 @@ function reducer(state = initialState, action) {
         state = state.set('registrationSuccess', true);
         break;
       }
-    case a.SHOW_REGISTER_FORM:
+    case a.ui.SHOW_REGISTER_FORM:
       {
         state = state.set('registrationSuccess', false);
         break;
