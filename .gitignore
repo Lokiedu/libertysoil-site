@@ -8,3 +8,4 @@ public/assets
 /.idea
 /deploy/production/secrets.env
 /deploy/staging/secrets.env
+dump.rdb
