@@ -60,12 +60,16 @@ import {
 import db_config from './knexfile';
 
 
-const streams = [
-  {
+const exec_env = process.env.DB_ENV || 'development';
+
+const streams = [];
+
+if (exec_env !== 'test') {
+  streams.push({
     stream: process.stderr,
     level: 'info'
-  }
-];
+  });
+}
 
 try {
   accessSync('/var/log', fs.W_OK)
@@ -88,8 +92,6 @@ export const logger = createLogger({
 });
 
 
-
-const exec_env = process.env.DB_ENV || 'development';
 
 const app = new Koa();
 app.logger = logger;
