@@ -7,5 +7,6 @@
   "plugins": [
     ["lodash"],
     ["transform-decorators-legacy"]
-  ]
+  ],
+  retainLines: true
 }
