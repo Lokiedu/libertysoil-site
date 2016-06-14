@@ -72,7 +72,7 @@ if (exec_env !== 'test') {
 }
 
 try {
-  accessSync('/var/log', fs.W_OK)
+  accessSync('/var/log', fs.W_OK);
 
   streams.push({
     type: 'rotating-file',
@@ -82,6 +82,7 @@ try {
     count: 3        // keep 3 back copies
   });
 } catch (e) {
+  // do nothing
 }
 
 export const logger = createLogger({
