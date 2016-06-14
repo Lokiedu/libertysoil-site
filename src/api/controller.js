@@ -992,9 +992,10 @@ export default class ApiController {
 
   login = async (ctx) => {
     if (!ctx.session) {
+      ctx.app.emit('error', 'Session engine is not available, have you started redis service?');
+
       ctx.status = 500;
       ctx.body = { error: 'Internal Server Error' };
-      console.error('Session engine is not available, have you started redis service?');  // eslint-disable-line no-console
       return;
     }
 
@@ -1016,7 +1017,7 @@ export default class ApiController {
     try {
       user = await new User({ username }).fetch({ require: true });
     } catch (e) {
-      console.warn(`Someone tried to log in as '${username}', but there's no such user`);  // eslint-disable-line no-console
+      ctx.app.logger.warn(`Someone tried to log in as '${username}', but there's no such user`);
       ctx.status = 401;
       ctx.body = { success: false };
       return;
@@ -1025,14 +1026,14 @@ export default class ApiController {
     const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.password, user.get('hashed_password'));
 
     if (!passwordIsValid) {
-      console.warn(`Someone tried to log in as '${username}', but used wrong pasword`);  // eslint-disable-line no-console
+      ctx.app.logger.warn(`Someone tried to log in as '${username}', but used wrong pasword`);
       ctx.status = 401;
       ctx.body = { success: false };
       return;
     }
 
     if (user.get('email_check_hash')) {
-      console.warn(`user '${username}' has not validated email`); // eslint-disable-line no-console
+      ctx.app.logger.warn(`user '${username}' has not validated email`);
       ctx.status = 401;
       ctx.body = { success: false, error: 'Please follow the instructions mailed to you during registration.' };
       return;
@@ -1068,7 +1069,7 @@ export default class ApiController {
     try {
       user = await new User({ email_check_hash: ctx.params.hash }).fetch({ require: true });
     } catch (e) {
-      console.warn(`Someone tried to verify email, but used invalid hash`);  // eslint-disable-line no-console
+      ctx.app.logger.warn(`Someone tried to verify email, but used invalid hash`);
       ctx.status = 401;
       ctx.body = { success: false };
       return;
@@ -1159,7 +1160,7 @@ export default class ApiController {
     try {
       user = await new User({ reset_password_hash: ctx.params.hash }).fetch({ require: true });
     } catch (e) {
-      console.warn(`Someone tried to reset password using unknown reset-hash`);  // eslint-disable-line no-console
+      ctx.app.logger.warn(`Someone tried to reset password using unknown reset-hash`);
       ctx.status = 401;
       ctx.body = { success: false };
       return;
@@ -1761,7 +1762,7 @@ export default class ApiController {
       ctx.status = 500;
       ctx.body = { error: `Upload failed: ${e.message}` };
 
-      console.error(e);  // eslint-disable-line no-console
+      ctx.app.logger.error(e);
     }
   };
 
@@ -2313,9 +2314,9 @@ export default class ApiController {
     this.sphinx.api.SetMatchMode(4); //SPH_MATCH_EXTENDED
     this.sphinx.api.SetLimits(0, 100, 100, 100);
 
-    const result = await this.sphinx.api.QueryAsync(`*${q}*`, 'PostsRT,UsersRT,HashtagsRT,GeotagsRT,SchoolsRT,CommentsRT');
-
     try {
+      const result = await this.sphinx.api.QueryAsync(`*${q}*`, 'PostsRT,UsersRT,HashtagsRT,GeotagsRT,SchoolsRT,CommentsRT');
+
       if ('matches' in result) {
         const result_groups = _.groupBy(result.matches, 'attrs.type');
 
@@ -2341,8 +2342,10 @@ export default class ApiController {
         return;
       }
     } catch (err) {
+      ctx.app.emit('error', err);
+
       ctx.status = 500;
-      ctx.body = { error: JSON.stringify(err.message) };
+      ctx.body = { error: `Search failed` };
     }
   };
 
@@ -2806,7 +2809,7 @@ export default class ApiController {
     try {
       await this.addToSearchIndex('Comment', comment_object.toJSON());
     } catch (e) {
-      console.error(`Failed to add comment to search-index: ${e}`);  // eslint-disable-line no-console
+      ctx.app.logger.error(`Failed to add comment to search-index: ${e}`);
     }
   };
 

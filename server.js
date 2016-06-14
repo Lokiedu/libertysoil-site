@@ -18,7 +18,7 @@
 /*eslint-env node */
 import { parse as parseUrl } from 'url';
 import path from 'path';
-import fs from 'fs';
+import fs, { accessSync, readFileSync } from 'fs';
 
 import Koa from 'koa';
 import { isString, indexOf } from 'lodash';
@@ -32,7 +32,7 @@ import mount from 'koa-mount';
 import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
-import { createLogger } from 'bunyan';
+import Logger, { createLogger } from 'bunyan';
 import koaLogger from 'koa-bunyan';
 
 import React from 'react';
@@ -59,13 +59,40 @@ import {
 
 import db_config from './knexfile';
 
-export const logger = createLogger({ name: "libertysoil" });
+
+const streams = [
+  {
+    stream: process.stderr,
+    level: 'info'
+  }
+];
+
+try {
+  accessSync('/var/log', fs.W_OK)
+
+  streams.push({
+    type: 'rotating-file',
+    path: '/var/log/libertysoil.log',
+    level: 'warn',
+    period: '1d',   // daily rotation
+    count: 3        // keep 3 back copies
+  });
+} catch (e) {
+}
+
+export const logger = createLogger({
+  name: "libertysoil",
+  serializers: Logger.stdSerializers,
+  src: true,
+  streams
+});
 
 
 
 const exec_env = process.env.DB_ENV || 'development';
 
 const app = new Koa();
+app.logger = logger;
 
 const knexConfig = db_config[exec_env];
 const bookshelf = initBookshelf(knexConfig);
@@ -73,7 +100,7 @@ const sphinx = initSphinx();
 const api = initApi(bookshelf, sphinx);
 const matchPromisified = promisify(match, { multiArgs: true });
 const templatePath = path.join(__dirname, '/src/views/index.ejs');
-const template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), { filename: templatePath });
+const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
 
 app.use(koaLogger(logger, { level: 'info' }));
 app.on('error', (e) => {
