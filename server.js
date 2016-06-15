@@ -55,7 +55,7 @@ import ApiClient from './src/api/client';
 import { initState } from './src/store';
 import {
   setCurrentUser, setLikes, setFavourites
-} from './src/actions';
+} from './src/actions/users';
 
 import db_config from './knexfile';
 

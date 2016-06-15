@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,28 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
+export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
 
-import { users } from '../actions';
+export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
-const initialState = i.Map({});
+export function setProgress(progress, value) {
+  return {
+    type: UI__SET_PROGRESS,
+    progress,
+    value
+  };
+}
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
-      }
+export function toggleSidebar(isVisible) {
+  return {
+    type: UI__TOGGLE_SIDEBAR,
+    isVisible
+  };
+}
 
-      break;
-    }
-  }
-
-  return state;
+export function showRegisterForm() {
+  return {
+    type: SHOW_REGISTER_FORM
+  };
 }

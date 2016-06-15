@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
-import { users } from '../actions';
+export function setSearchResults(results) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results
+  };
+}
 
-const initialState = i.Map({});
-
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
-      }
-
-      break;
-    }
-  }
-
-  return state;
+export function clearSearchResults() {
+  return {
+    type: CLEAR_SEARCH_RESULTS
+  };
 }

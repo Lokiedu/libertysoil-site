@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+export const SET_USER_TAGS = 'SET_USER_TAGS';
+export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 
-import { users } from '../actions';
+export function setUserTags(tags) {
+  return {
+    type: SET_USER_TAGS,
+    hashtags: tags.hashtags,
+    schools: tags.schools,
+    geotags: tags.geotags
+  };
+}
 
-const initialState = i.Map({});
-
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
-      }
-
-      break;
-    }
-  }
-
-  return state;
+export function setUserRecentTags(recent_tags) {
+  return {
+    type: SET_USER_RECENT_TAGS,
+    recent_tags
+  };
 }

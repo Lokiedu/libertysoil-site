@@ -47,9 +47,9 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import {
   resetCreatePostForm,
-  updateCreatePostForm,
-  clearRiver
-} from '../actions';
+  updateCreatePostForm
+} from '../actions/posts';
+import { clearRiver } from '../actions/river';
 
 const client = new ApiClient(API_HOST);
 

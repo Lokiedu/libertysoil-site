@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ const initialState = i.Map({
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_CURRENT_USER: {
+    case a.users.SET_CURRENT_USER: {
       const oldUid = state.get('id');
       const newUid = action.user ? action.user.id : null;
 
@@ -86,7 +86,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_USER_TAGS: {
+    case a.tags.SET_USER_TAGS: {
       const hashtags = _.take(action.hashtags, 5);
       const schools = _.take(action.schools, 5);
       const geotags = _.take(action.geotags, 5);
@@ -112,85 +112,85 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_USER_RECENT_TAGS: {
+    case a.tags.SET_USER_RECENT_TAGS: {
       state = state.set('recent_tags', i.fromJS(action.recent_tags));
 
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_TAG: {
+    case a.hashtags.ADD_USER_FOLLOWED_HASHTAG: {
       state = state.setIn(['followed_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_TAG: {
+    case a.hashtags.REMOVE_USER_FOLLOWED_HASHTAG: {
       state = state.deleteIn(['followed_hashtags', action.hashtag.name]);
 
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_SCHOOL: {
+    case a.schools.ADD_USER_FOLLOWED_SCHOOL: {
       state = state.setIn(['followed_schools', action.school.url_name], i.fromJS(action.school));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_SCHOOL: {
+    case a.schools.REMOVE_USER_FOLLOWED_SCHOOL: {
       state = state.deleteIn(['followed_schools', action.school.url_name]);
 
       break;
     }
 
-    case a.SET_PERSONALIZED_SUGGESTED_USERS: {
+    case a.users.SET_PERSONALIZED_SUGGESTED_USERS: {
       state = state.set('suggested_users', i.fromJS(action.suggested_users));
 
       break;
     }
 
-    case a.ADD_USER_FOLLOWED_GEOTAG: {
+    case a.geotags.ADD_USER_FOLLOWED_GEOTAG: {
       state = state.setIn(['followed_geotags', action.geotag.url_name], i.fromJS(action.geotag));
 
       break;
     }
 
-    case a.REMOVE_USER_FOLLOWED_GEOTAG: {
+    case a.geotags.REMOVE_USER_FOLLOWED_GEOTAG: {
       state = state.deleteIn(['followed_geotags', action.geotag.url_name]);
 
       break;
     }
 
-    case a.ADD_LIKED_HASHTAG: {
+    case a.hashtags.ADD_LIKED_HASHTAG: {
       state = state.setIn(['liked_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
 
       break;
     }
 
-    case a.REMOVE_LIKED_HASHTAG: {
+    case a.hashtags.REMOVE_LIKED_HASHTAG: {
       state = state.deleteIn(['liked_hashtags', action.hashtag.name]);
 
       break;
     }
 
-    case a.ADD_LIKED_SCHOOL: {
+    case a.schools.ADD_LIKED_SCHOOL: {
       state = state.setIn(['liked_schools', action.school.url_name], i.fromJS(action.school));
 
       break;
     }
 
-    case a.REMOVE_LIKED_SCHOOL: {
+    case a.schools.REMOVE_LIKED_SCHOOL: {
       state = state.deleteIn(['liked_schools', action.school.url_name]);
 
       break;
     }
 
-    case a.ADD_LIKED_GEOTAG: {
+    case a.geotags.ADD_LIKED_GEOTAG: {
       state = state.setIn(['liked_geotags', action.geotag.url_name], i.fromJS(action.geotag));
 
       break;
     }
 
-    case a.REMOVE_LIKED_GEOTAG: {
+    case a.geotags.REMOVE_LIKED_GEOTAG: {
       state = state.deleteIn(['liked_geotags', action.geotag.url_name]);
 
       break;

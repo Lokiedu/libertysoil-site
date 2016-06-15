@@ -17,13 +17,13 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { river } from '../actions';
 
 const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_POSTS_TO_FAVOURITES_RIVER: {
+    case river.SET_POSTS_TO_FAVOURITES_RIVER: {
       const posts = i.List(action.posts.map(post => post.id));
       state = state.set(action.user_id, posts);
       break;

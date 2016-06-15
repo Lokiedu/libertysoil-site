@@ -17,7 +17,7 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { posts } from '../actions';
 
 const initialState = i.fromJS({
   text: '',
@@ -28,12 +28,12 @@ const initialState = i.fromJS({
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.RESET_CREATE_POST_FORM: {
+    case posts.RESET_CREATE_POST_FORM: {
       state = initialState;
       break;
     }
 
-    case a.UPDATE_CREATE_POST_FORM: {
+    case posts.UPDATE_CREATE_POST_FORM: {
       state = state.merge(action.create_post_form);
       break;
     }

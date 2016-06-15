@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST_TO_RIVER: {
+    case a.river.ADD_POST_TO_RIVER: {
       const geotags = action.post.geotags;
 
       geotags.forEach(tag => {
@@ -38,12 +38,12 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_GEOTAG_POSTS: {
+    case a.geotags.SET_GEOTAG_POSTS: {
       state = state.set(action.geotag, i.List(action.posts.map(post => post.id)));
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       for (const geotagName of state.keys()) {
         const idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.id));
 

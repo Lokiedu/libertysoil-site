@@ -19,7 +19,7 @@
 import i from 'immutable';
 
 import userReducer from '../../../src/store/current-user';
-import { setCurrentUser } from '../../../src/actions';
+import { setCurrentUser } from '../../../src/actions/users';
 
 import { expect } from '../../../test-helpers/expect-unit';
 

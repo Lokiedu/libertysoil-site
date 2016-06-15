@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -35,8 +35,8 @@ const clearComments = (comments) => (
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST_TO_RIVER:
-    case a.ADD_POST: {
+    case a.river.ADD_POST_TO_RIVER:
+    case a.posts.ADD_POST: {
       const comments = action.post.post_comments || [];
 
       state = state.set(action.post.id, List(clearComments(comments)));
@@ -44,14 +44,14 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER:
-    case a.SET_POSTS_TO_LIKES_RIVER:
-    case a.SET_POSTS_TO_FAVOURITES_RIVER:
-    case a.SET_USER_POSTS:
-    case a.SET_TAG_POSTS:
-    case a.SET_SCHOOL_POSTS:
-    case a.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS: {
+    case a.river.SET_POSTS_TO_RIVER:
+    case a.river.SET_POSTS_TO_LIKES_RIVER:
+    case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
+    case a.posts.SET_USER_POSTS:
+    case a.hashtags.SET_HASHTAG_POSTS:
+    case a.schools.SET_SCHOOL_POSTS:
+    case a.geotags.SET_GEOTAG_POSTS:
+    case a.posts.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
         const postCopy = cloneDeep(post);
 
@@ -61,13 +61,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS: {
+    case a.comments.SET_POST_COMMENTS: {
       state = state.set(action.postId, List(clearComments(action.comments)));
 
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       state = state.delete(action.id);
 
       break;

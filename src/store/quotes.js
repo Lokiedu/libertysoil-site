@@ -17,13 +17,13 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { quotes } from '../actions';
 
 const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_QUOTES: {
+    case quotes.SET_QUOTES: {
       state = i.fromJS(action.quotes);
     }
   }

@@ -23,7 +23,7 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST_TO_RIVER: {
+    case a.river.ADD_POST_TO_RIVER: {
       const hashtags = action.post.hashtags;
 
       hashtags.forEach(tag => {
@@ -38,12 +38,12 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_TAG_POSTS: {
+    case a.hashtags.SET_HASHTAG_POSTS: {
       state = state.set(action.hashtag, i.List(action.posts.map(post => post.id)));
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       for (const hashtagName of state.keys()) {
         const idx = state.get(hashtagName).findIndex(hashtagPostId => (hashtagPostId === action.id));
 

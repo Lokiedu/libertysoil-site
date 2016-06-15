@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,35 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+export const ADD_ERROR = 'ADD_ERROR';
+export const ADD_MESSAGE = 'ADD_MESSAGE';
 
-import { users } from '../actions';
+export const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
+export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
-const initialState = i.Map({});
+export function addError(message) {
+  return {
+    type: ADD_ERROR,
+    message
+  };
+}
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
-      }
+export function addMessage(message) {
+  return {
+    type: ADD_MESSAGE,
+    message
+  };
+}
 
-      break;
-    }
-  }
+export function removeMessage(index) {
+  return {
+    type: REMOVE_MESSAGE,
+    index
+  };
+}
 
-  return state;
+export function removeAllMessages() {
+  return {
+    type: REMOVE_ALL_MESSAGES
+  };
 }

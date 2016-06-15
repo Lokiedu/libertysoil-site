@@ -23,12 +23,8 @@ import { values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import {
-  addHashtag,
-  setTagPosts,
-  resetCreatePostForm,
-  updateCreatePostForm
-} from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
+import { addHashtag, setHashtagPosts } from '../actions/hashtags';
 
 import NotFound from './not-found';
 import River                from '../components/river_of_posts';
@@ -61,7 +57,7 @@ export class TagPage extends Component {
     }
 
     store.dispatch(addHashtag(hashtag));
-    store.dispatch(setTagPosts(params.tag, await tagPosts));
+    store.dispatch(setHashtagPosts(params.tag, await tagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
     Promise.all([

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+export const SET_COUNTRIES = 'SET_COUNTRIES';
+export const ADD_COUNTRY = 'ADD_COUNTRY';
+export const ADD_CITY = 'ADD_CITY';
 
-import { users } from '../actions';
+export function setCountries(countries) {
+  return {
+    type: SET_COUNTRIES,
+    countries
+  };
+}
 
-const initialState = i.Map({});
+export function addCountry(country) {
+  return {
+    type: ADD_COUNTRY,
+    country
+  };
+}
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
-      }
-
-      break;
-    }
-  }
-
-  return state;
+export function addCity(city) {
+  return {
+    type: ADD_CITY,
+    city
+  };
 }
