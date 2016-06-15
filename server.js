@@ -33,7 +33,7 @@ import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
-import koaLogger from 'koa-bunyan';
+import createRequestLogger from './src/utils/bunyan-koa-request';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -105,7 +105,6 @@ const matchPromisified = promisify(match, { multiArgs: true });
 const templatePath = path.join(__dirname, '/src/views/index.ejs');
 const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
 
-app.use(koaLogger(logger, { level: 'info' }));
 app.on('error', (e) => {
   logger.warn(e);
 });
@@ -168,6 +167,12 @@ app.use(async (ctx, next) => {
 
 app.keys = ['libertysoil'];
 
+app.use(convert(cors({
+  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+})));
+
+app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
+
 app.use(convert(session({
   store: redisStore(
     {
@@ -179,11 +184,7 @@ app.use(convert(session({
   cookie: { signed: false }
 })));
 
-app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
-
-app.use(convert(cors({
-  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-})));
+app.use(createRequestLogger({ level: 'info', logger }));
 
 if (indexOf(['test', 'travis'], exec_env) !== -1) {
   const warn = console.error; // eslint-disable-line no-console

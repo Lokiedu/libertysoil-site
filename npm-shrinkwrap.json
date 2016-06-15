@@ -3494,11 +3494,6 @@
       "from": "koa-bodyparser@>=3.0.0 <4.0.0",
       "resolved": "https://registry.npmjs.org/koa-bodyparser/-/koa-bodyparser-3.1.0.tgz"
     },
-    "koa-bunyan": {
-      "version": "1.0.0",
-      "from": "koa-bunyan@latest",
-      "resolved": "https://registry.npmjs.org/koa-bunyan/-/koa-bunyan-1.0.0.tgz"
-    },
     "koa-compose": {
       "version": "3.1.0",
       "from": "koa-compose@>=3.0.0 <4.0.0",

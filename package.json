@@ -57,7 +57,6 @@
     "knex-logger": "^0.1.0",
     "koa": "^2.0.0-alpha.3",
     "koa-bodyparser": "^3.0.0",
-    "koa-bunyan": "^1.0.0",
     "koa-convert": "^1.2.0",
     "koa-generic-session": "^1.10.1",
     "koa-mount": "^2.0.0",
