@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
+import Button from './button';
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
@@ -64,6 +65,7 @@ export default class CreatePost extends React.Component {
     super(props);
 
     this.state = {
+      isSubmitting: false,
       expanded: false,
       addTagModalType: null
     };
@@ -88,6 +90,9 @@ export default class CreatePost extends React.Component {
 
   _handleSubmit = async (event) => {
     event.preventDefault();
+    if (this.state.isSubmitting) {
+      return;
+    }
 
     const form = this.form;
 
@@ -95,6 +100,7 @@ export default class CreatePost extends React.Component {
       return;
     }
 
+    this.setState({ isSubmitting: true });
     const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
@@ -111,6 +117,7 @@ export default class CreatePost extends React.Component {
 
     form.text.value = '';
     this._addTagModal.reset();
+    this.setState({ isSubmitting: false });
   };
 
   _handleFocus = () => {
@@ -225,7 +232,12 @@ export default class CreatePost extends React.Component {
             {expanded &&
               <div className="layout__row layout layout-align_vertical">
                 <div className="layout__grid_item">
-                  <button className="button button-wide button-red" type="submit">Publish</button>
+                  <Button
+                    className="button button-red"
+                    waiting={this.state.isSubmitting}
+                    title="Publish"
+                    type="submit"
+                  />
                 </div>
                 <div className="layout__grid_item layout__grid_item-wide">
                   {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
