@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -38,7 +38,7 @@ export default class Toolbar extends React.Component {
     })
   };
 
-  likePost(event) {
+  likePost = (event) => {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -47,9 +47,9 @@ export default class Toolbar extends React.Component {
     }
 
     this.props.triggers.likePost(this.props.current_user.id, this.props.post.id);
-  }
+  };
 
-  unlikePost(event) {
+  unlikePost = (event) => {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -58,9 +58,9 @@ export default class Toolbar extends React.Component {
     }
 
     this.props.triggers.unlikePost(this.props.current_user.id, this.props.post.id);
-  }
+  };
 
-  addPostToFavourites(event) {
+  addPostToFavourites = (event) => {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -69,9 +69,9 @@ export default class Toolbar extends React.Component {
     }
 
     this.props.triggers.favPost(this.props.current_user.id, this.props.post.id);
-  }
+  };
 
-  removePostFromFavourites(event) {
+  removePostFromFavourites = (event) => {
     event.preventDefault();
 
     if (!this.props.current_user) {
@@ -80,7 +80,7 @@ export default class Toolbar extends React.Component {
     }
 
     this.props.triggers.unfavPost(this.props.current_user.id, this.props.post.id);
-  }
+  };
 
   render() {
     const {
@@ -92,8 +92,8 @@ export default class Toolbar extends React.Component {
     let favIcon = 'star_border';
     let favClass = '';
 
-    let like_action = this.likePost.bind(this);
-    let fav_action = this.addPostToFavourites.bind(this);
+    let like_action = this.likePost;
+    let fav_action = this.addPostToFavourites;
 
     const isPostAuthor = (current_user && post.user_id == current_user.id);
 
@@ -102,14 +102,14 @@ export default class Toolbar extends React.Component {
         // current user liked this post
         likeIcon = 'favorite';
         likeClass = 'color-red';
-        like_action = this.unlikePost.bind(this);
+        like_action = this.unlikePost;
       }
 
       if (current_user.favourites.indexOf(post.id) > -1) {
         // current user faved this post
         favIcon = 'star';
         favClass = 'color-yellow';
-        fav_action = this.removePostFromFavourites.bind(this);
+        fav_action = this.removePostFromFavourites;
       }
     }
 
