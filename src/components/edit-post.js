@@ -78,6 +78,7 @@ export default class EditPost extends React.Component {
     super(props);
 
     this.state = {
+      hasText: false,
       addTagModalType: null,
       upToDate: false
     };
@@ -96,7 +97,12 @@ export default class EditPost extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.id === nextProps.post.id) {
-      this.setState({ upToDate: true });
+      let hasText = false;
+      if (nextProps.post.text.trim()) {
+        hasText = true;
+      }
+
+      this.setState({ upToDate: true, hasText });
     }
   }
 
@@ -111,15 +117,23 @@ export default class EditPost extends React.Component {
     }
   };
 
+  _handleTextChange = (event) => {
+    let hasText = false;
+    if (event.target.value.trim()) {
+      hasText = true;
+    }
+
+    this.setState({ hasText });
+  };
+
   _handleSubmit = async (event) => {
     event.preventDefault();
 
-    const form = this.form;
-
-    if (!form.text.value.trim().length) {
+    if (!this.state.hasText) {
       return;
     }
 
+    const form = this.form;
     const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
@@ -240,6 +254,7 @@ export default class EditPost extends React.Component {
                     name="text"
                     placeholder="Make a contribution to education change"
                     rows={10}
+                    onChange={this._handleTextChange}
                   />
                 </div>
               </div>
@@ -255,7 +270,13 @@ export default class EditPost extends React.Component {
             </div>
             <div className="layout__row layout layout-align_vertical">
               <div className="layout layout__grid layout__grid_item-wide">
-                <button className="button button-wide button-red" type="submit">Save</button>
+                <button
+                  className="button button-wide button-red"
+                  disabled={!this.state.hasText}
+                  type="submit"
+                >
+                  Save
+                </button>
                 <button className="button button-red" type="button" onClick={this._handleDelete}>
                   <span className="fa fa-trash-o" />
                 </button>
