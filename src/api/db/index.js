@@ -291,6 +291,18 @@ export function initBookshelfFromKnex(knex) {
         this.attachGeotags(geotagsToAttach),
         this.detachGeotags(geotagsToDetach)
       ]);
+    },
+
+    /**
+     * Detach all attached tags from a post and decrements post counters.
+     * Call before destroing a post.
+     */
+    detachAllTags: async function () {
+      return Promise.all([
+        this.updateHashtags([]),
+        this.updateSchools([]),
+        this.updateGeotags([])
+      ]);
     }
   });
 
