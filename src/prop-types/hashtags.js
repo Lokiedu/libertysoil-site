@@ -17,12 +17,12 @@
 */
 import { PropTypes } from 'react';
 
-import { mapOfValues } from './common';
+import { mapOfValues, uuid } from './common';
 import { TagMore } from './tags';
 
 export const Hashtag = PropTypes.shape({
   created_at: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  id: uuid.isRequired,
   name: PropTypes.string.isRequired,
   more: TagMore,
   post_count: PropTypes.number.isRequired,

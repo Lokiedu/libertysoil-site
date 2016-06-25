@@ -19,7 +19,7 @@ import { PropTypes } from 'react';
 
 import CONTINENTS from '../consts/continents';
 
-import { mapOfValues } from './common';
+import { mapOfValues, uuid } from './common';
 import { TagMore } from './tags';
 
 const continentCodes = Object.keys(CONTINENTS);
@@ -27,19 +27,19 @@ const continentCodes = Object.keys(CONTINENTS);
 export const Geotag = PropTypes.shape({
   admin: Geotag,
   admin1_code: PropTypes.string,
-  admin1_id: PropTypes.string,
+  admin1_id: uuid,
   continent: Geotag,
   continent_code: PropTypes.oneOf(continentCodes),
-  continent_id: PropTypes.string, // TODO: uuid prop type
+  continent_id: uuid,
   country: Geotag,
   country_code: PropTypes.string,
-  country_id: PropTypes.string,
+  country_id: uuid,
   created_at: PropTypes.string, // TODO: date string prop type
   geonames_admin1_id: PropTypes.number,
   geonames_city_id: PropTypes.number,
   geonames_country_id: PropTypes.number,
   geonames_id: PropTypes.string,
-  id: PropTypes.string.isRequired,
+  id: uuid.isRequired,
   land_mass: PropTypes.number,
   lat: PropTypes.number,
   lon: PropTypes.number,

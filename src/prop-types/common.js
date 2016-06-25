@@ -147,3 +147,22 @@ export const mapOf = (keyCheckType, valueCheckType) => (
     }
   )
 );
+
+export const uuid = createSimplifiedRequirableTypeChecker(
+  (propValue, propFullName, componentName, location) => {
+    const expectedType = 'string';
+    if (typeof propValue !== expectedType) {
+      return getTypeError(propValue, expectedType, propFullName, componentName, location);
+    }
+
+    const test = RegExp(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    if (!propValue.match(test)) {
+      return new Error(
+        `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +
+        `supplied to \`${componentName}\` doesn't match the UUID pattern.`
+      );
+    }
+
+    return null;
+  }
+);
