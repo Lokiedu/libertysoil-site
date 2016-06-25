@@ -1537,6 +1537,8 @@ export default class ApiController {
         return;
       }
 
+      // reset post counters on attached tags and then destroy
+      await post_object.detachAllTags();
       post_object.destroy();
     } catch (e) {
       ctx.status = 500;
