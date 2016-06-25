@@ -166,3 +166,24 @@ export const uuid = createSimplifiedRequirableTypeChecker(
     return null;
   }
 );
+
+export const date = createSimplifiedRequirableTypeChecker(
+  (propValue, propFullName, componentName, location) => {
+    const expectedType = 'string';
+    if (typeof propValue !== expectedType) {
+      return getTypeError(propValue, expectedType, propFullName, componentName, location);
+    }
+
+    const date = new Date(propValue);
+    const dateString = date.toString();
+
+    if (dateString === 'Invalid date') {
+      return new Error(
+        `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +
+        `supplied to \`${componentName}\` is invalid date string representation.`
+      );
+    }
+
+    return null;
+  }
+);

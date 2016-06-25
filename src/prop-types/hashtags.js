@@ -17,16 +17,16 @@
 */
 import { PropTypes } from 'react';
 
-import { mapOfValues, uuid } from './common';
+import { mapOfValues, uuid, date } from './common';
 import { TagMore } from './tags';
 
 export const Hashtag = PropTypes.shape({
-  created_at: PropTypes.string.isRequired,
+  created_at: date.isRequired,
   id: uuid.isRequired,
   name: PropTypes.string.isRequired,
   more: TagMore,
   post_count: PropTypes.number.isRequired,
-  updated_at: PropTypes.string.isRequired
+  updated_at: date.isRequired
 });
 
 export const ArrayOfHashtags = PropTypes.arrayOf(Hashtag);
