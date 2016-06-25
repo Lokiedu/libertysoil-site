@@ -102,10 +102,10 @@ class GeotagEditForm extends React.Component {
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing}/>
+            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing} />
           </div>
         </div>
-        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
+        <Messages messages={messages} removeMessage={triggers.removeMessage} />
       </form>
     );
   }

@@ -18,7 +18,7 @@
 /*eslint-env node */
 import { parse as parseUrl } from 'url';
 import path from 'path';
-import fs from 'fs';
+import fs, { accessSync, readFileSync } from 'fs';
 
 import Koa from 'koa';
 import { isString, indexOf } from 'lodash';
@@ -32,6 +32,8 @@ import mount from 'koa-mount';
 import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
+import Logger, { createLogger } from 'bunyan';
+import createRequestLogger from './src/utils/bunyan-koa-request';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -53,14 +55,47 @@ import ApiClient from './src/api/client';
 import { initState } from './src/store';
 import {
   setCurrentUser, setLikes, setFavourites
-} from './src/actions';
+} from './src/actions/users';
 
 import db_config from './knexfile';
 
 
 const exec_env = process.env.DB_ENV || 'development';
 
+const streams = [];
+
+if (exec_env !== 'test') {
+  streams.push({
+    stream: process.stderr,
+    level: 'info'
+  });
+}
+
+try {
+  accessSync('/var/log', fs.W_OK);
+
+  streams.push({
+    type: 'rotating-file',
+    path: '/var/log/libertysoil.log',
+    level: 'warn',
+    period: '1d',   // daily rotation
+    count: 3        // keep 3 back copies
+  });
+} catch (e) {
+  // do nothing
+}
+
+export const logger = createLogger({
+  name: "libertysoil",
+  serializers: Logger.stdSerializers,
+  src: true,
+  streams
+});
+
+
+
 const app = new Koa();
+app.logger = logger;
 
 const knexConfig = db_config[exec_env];
 const bookshelf = initBookshelf(knexConfig);
@@ -68,9 +103,15 @@ const sphinx = initSphinx();
 const api = initApi(bookshelf, sphinx);
 const matchPromisified = promisify(match, { multiArgs: true });
 const templatePath = path.join(__dirname, '/src/views/index.ejs');
-const template = ejs.compile(fs.readFileSync(templatePath, 'utf8'), { filename: templatePath });
+const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
+
+app.on('error', (e) => {
+  logger.warn(e);
+});
 
 if (exec_env === 'development') {
+  logger.level('debug');
+
   const webpackDevMiddleware = require('koa-webpack-dev-middleware');
   const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
   const webpack = require('webpack');
@@ -78,7 +119,7 @@ if (exec_env === 'development') {
   const compiler = webpack(webpackConfig);
 
   app.use(convert(webpackDevMiddleware(compiler, {
-    log: console.log, // eslint-disable-line no-console
+    log: logger.debug,
     path: '/__webpack_hmr',
     publicPath: webpackConfig.output.publicPath,
     stats: {
@@ -95,7 +136,7 @@ if (exec_env === 'development') {
   const watcher = chokidar.watch('./src/api');
   watcher.on('ready', function () {
     watcher.on('all', function () {
-      console.log('Clearing /src/api/ cache from server'); // eslint-disable-line no-console
+      logger.debug('Clearing /src/api/ cache from server');
       Object.keys(require.cache).forEach(function (id) {
         if (/\/src\/api\//.test(id)) delete require.cache[id];
       });
@@ -105,7 +146,7 @@ if (exec_env === 'development') {
   // Do "hot-reloading" of react stuff on the server
   // Throw away the cached client modules and let them be re-required next time
   compiler.plugin('done', function () {
-    console.log('Clearing /src/ cache from server'); // eslint-disable-line no-console
+    logger.debug('Clearing /src/ cache from server');
     Object.keys(require.cache).forEach(function (id) {
       if (/\/src\//.test(id)) delete require.cache[id];
     });
@@ -114,8 +155,9 @@ if (exec_env === 'development') {
 
 app.use(async (ctx, next) => {
   const { hostname } = parseUrl(API_HOST);
-  if (isString(ctx.req.hostname) && ctx.req.hostname !== hostname) {
-    const newUri = `${API_HOST}${ctx.req.originalUrl}`;
+
+  if (isString(ctx.request.hostname) && ctx.request.hostname !== hostname) {
+    const newUri = `${API_HOST}${ctx.request.originalUrl}`;
     ctx.status = 301;
     ctx.redirect(newUri);
     return;
@@ -124,6 +166,12 @@ app.use(async (ctx, next) => {
 });
 
 app.keys = ['libertysoil'];
+
+app.use(convert(cors({
+  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+})));
+
+app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
 
 app.use(convert(session({
   store: redisStore(
@@ -136,11 +184,7 @@ app.use(convert(session({
   cookie: { signed: false }
 })));
 
-app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
-
-app.use(convert(cors({
-  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-})));
+app.use(createRequestLogger({ level: 'info', logger }));
 
 if (indexOf(['test', 'travis'], exec_env) !== -1) {
   const warn = console.error; // eslint-disable-line no-console
@@ -193,7 +237,7 @@ app.use(async function reactMiddleware(ctx) {
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
       store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
     } catch (e) {
-      console.log(`dispatch failed: ${e.stack}`); // eslint-disable-line no-console
+      logger.error(`dispatch failed: ${e.stack}`);
     }
   }
 
@@ -235,7 +279,7 @@ app.use(async function reactMiddleware(ctx) {
     try {
       const html = renderToString(
         <Provider store={store}>
-          <RouterContext {...renderProps}/>
+          <RouterContext {...renderProps} />
         </Provider>
       );
       const state = JSON.stringify(store.getState().toJS());
@@ -249,12 +293,12 @@ app.use(async function reactMiddleware(ctx) {
       ctx.staus = 200;
       ctx.body = template({ state, html, metadata });
     } catch (e) {
-      console.error(e.stack); // eslint-disable-line no-console
+      logger.error(e);
       ctx.status = 500;
       ctx.body = e.message;
     }
   } catch (e) {
-    console.error(e.stack); // eslint-disable-line no-console
+    logger.error(e);
     ctx.status = 500;
     ctx.body = e.message;
   }

@@ -320,7 +320,7 @@ export default class BaseTagPage extends React.Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

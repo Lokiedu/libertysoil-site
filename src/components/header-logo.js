@@ -21,7 +21,7 @@ import React, {
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
-import { toggleUISidebar } from '../actions';
+import { toggleSidebar } from '../actions/ui';
 import currentUserSelector from '../selectors/currentUser';
 import createSelector from '../selectors/createSelector';
 
@@ -31,7 +31,7 @@ class HeaderLogo extends Component {
       dispatch
     } = this.props;
 
-    dispatch(toggleUISidebar());
+    dispatch(toggleSidebar());
   };
 
   render() {

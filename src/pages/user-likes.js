@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,8 @@ import River from '../components/river_of_posts';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { addUser, setPostsToLikesRiver } from '../actions';
+import { addUser } from '../actions/users';
+import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -57,11 +58,11 @@ class UserLikesPage extends Component {
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script/>;  // not loaded yet
+      return <script />;  // not loaded yet
     }
 
     if (false === page_user) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     //console.info(this.props);

@@ -17,7 +17,7 @@
 */
 import { Map, List, fromJS } from 'immutable';
 
-import * as a from '../actions';
+import { search } from '../actions';
 
 const initialState = Map({
   results: Map({
@@ -29,11 +29,11 @@ const initialState = Map({
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_SEARCH_RESULTS:
+    case search.SET_SEARCH_RESULTS:
       state = state.set('results', fromJS(action.results));
       break;
 
-    case a.CLEAR_SEARCH_RESULTS:
+    case search.CLEAR_SEARCH_RESULTS:
       state = state.set('results', initialState.get('results'));
       break;
   }

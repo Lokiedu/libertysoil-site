@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -17,13 +17,13 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { users } from '../actions';
 
 const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.SET_LIKES: {
+    case users.SET_LIKES: {
       state = state.set(action.user_id, i.List(action.likes));
       break;
     }

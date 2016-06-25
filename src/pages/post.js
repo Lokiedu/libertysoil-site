@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ import RelatedPosts from '../components/related-posts';
 import SidebarAlt from '../components/sidebarAlt';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import { addPost, setRelatedPosts } from '../actions';
+import { addPost, setRelatedPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
@@ -67,13 +67,13 @@ export class PostPage extends React.Component {
 
     if (!(post_uuid in this.props.posts)) {
       // not loaded yet
-      return <script/>;
+      return <script />;
     }
 
     const current_post = this.props.posts[post_uuid];
 
     if (current_post === false) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const author = this.props.users[current_post.user_id];
@@ -124,7 +124,7 @@ export class PostPage extends React.Component {
                   showAllComments
                   triggers={triggers}
                 >
-                  <ShortTextPost post={current_post}/>
+                  <ShortTextPost post={current_post} />
                 </PostWrapper>
               </PageContent>
               <SidebarAlt>
@@ -139,7 +139,7 @@ export class PostPage extends React.Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }

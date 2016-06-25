@@ -17,25 +17,25 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { posts, river } from '../actions';
 
 const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.CLEAR_RIVER: {
+    case river.CLEAR_RIVER: {
       state = i.List([]);
 
       break;
     }
 
-    case a.ADD_POST_TO_RIVER: {
+    case river.ADD_POST_TO_RIVER: {
       state = state.unshift(action.post.id);
 
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER: {
+    case river.SET_POSTS_TO_RIVER: {
       const posts = action.posts.map(post => post.id);
 
       posts.forEach(postID => {
@@ -47,7 +47,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST: {
+    case posts.REMOVE_POST: {
       const idx = state.findIndex(river_post_id => (river_post_id === action.id));
 
       if (idx >= 0) {

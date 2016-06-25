@@ -26,7 +26,8 @@ import River from '../components/river_of_posts';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import { addUser, setUserPosts } from '../actions';
+import { addUser } from '../actions/users';
+import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -67,11 +68,11 @@ class UserPage extends React.Component {
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script/>;  // not loaded yet
+      return <script />;  // not loaded yet
     }
 
     if (false === page_user) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const user_posts = this.props.user_posts[page_user.id];

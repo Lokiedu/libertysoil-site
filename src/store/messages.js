@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -18,14 +18,14 @@
 import i from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
-import * as a from '../actions';
+import { messages } from '../actions';
 import messageType from '../consts/messageTypeConstants';
 
 const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_ERROR: {
+    case messages.ADD_ERROR: {
       state = state.push({
         type: messageType.ERROR,
         message: action.message
@@ -33,7 +33,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.ADD_MESSAGE: {
+    case messages.ADD_MESSAGE: {
       const index = state.findIndex(item => item.message === action.message);
       if (index !== -1) {
         state = state.delete(index);
@@ -46,13 +46,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_MESSAGE: {
+    case messages.REMOVE_MESSAGE: {
       state = state.remove(action.index);
       break;
     }
 
     case LOCATION_CHANGE:
-    case a.REMOVE_ALL_MESSAGES: {
+    case messages.REMOVE_ALL_MESSAGES: {
       state = state.clear();
       break;
     }

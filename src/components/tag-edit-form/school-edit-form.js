@@ -243,11 +243,11 @@ class SchoolEditForm extends React.Component {
           <div className="layout__row">Membership:</div>
 
           <div className="layout__row">
-            <label>ADEC <input defaultChecked={values.adec} name="adec" type="checkbox" {...fields.adec} value="true"/></label>
+            <label>ADEC <input defaultChecked={values.adec} name="adec" type="checkbox" {...fields.adec} value="true" /></label>
           </div>
 
           <div className="layout__row">
-            <label>AERO <input defaultChecked={values.aero} name="aero" type="checkbox" {...fields.aero} value="true"/></label>
+            <label>AERO <input defaultChecked={values.aero} name="aero" type="checkbox" {...fields.aero} value="true" /></label>
           </div>
 
           {/*
@@ -257,28 +257,28 @@ class SchoolEditForm extends React.Component {
           */}
 
           <div className="layout__row">
-            <label>EUDEC <input defaultChecked={values.eudec} name="eudec" type="checkbox" {...fields.eudec} value="true"/></label>
+            <label>EUDEC <input defaultChecked={values.eudec} name="eudec" type="checkbox" {...fields.eudec} value="true" /></label>
           </div>
 
           <div className="layout__row">
-            <label>IDEN <input defaultChecked={values.iden} name="iden" type="checkbox" {...fields.iden} value="true"/></label>
+            <label>IDEN <input defaultChecked={values.iden} name="iden" type="checkbox" {...fields.iden} value="true" /></label>
           </div>
 
           <div className="layout__row">
-            <label>AlternativeToSchool.com entry <input defaultChecked={values.alternative_to_school} name="alternative_to_school" type="checkbox" {...fields.alternative_to_school} value="true"/></label>
+            <label>AlternativeToSchool.com entry <input defaultChecked={values.alternative_to_school} name="alternative_to_school" type="checkbox" {...fields.alternative_to_school} value="true" /></label>
           </div>
 
           <div className="layout__row">
-            <label>Wikipedia list of schools entry <input defaultChecked={values.wikipedia_list} name="wikipedia_list" type="checkbox" {...fields.wikipedia_list} value="true"/></label>
+            <label>Wikipedia list of schools entry <input defaultChecked={values.wikipedia_list} name="wikipedia_list" type="checkbox" {...fields.wikipedia_list} value="true" /></label>
           </div>
         </div>
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing}/>
+            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing} />
           </div>
         </div>
-        <Messages messages={messages} removeMessage={triggers.removeMessage}/>
+        <Messages messages={messages} removeMessage={triggers.removeMessage} />
       </form>
     );
   }

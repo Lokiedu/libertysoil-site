@@ -24,8 +24,8 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_POST:
-    case a.ADD_POST_TO_RIVER: {
+    case a.posts.ADD_POST:
+    case a.river.ADD_POST_TO_RIVER: {
       const postCopy = _.cloneDeep(action.post);
 
       delete postCopy.user;
@@ -36,14 +36,14 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER:
-    case a.SET_POSTS_TO_LIKES_RIVER:
-    case a.SET_POSTS_TO_FAVOURITES_RIVER:
-    case a.SET_USER_POSTS:
-    case a.SET_TAG_POSTS:
-    case a.SET_SCHOOL_POSTS:
-    case a.SET_GEOTAG_POSTS:
-    case a.SET_RELATED_POSTS: {
+    case a.river.SET_POSTS_TO_RIVER:
+    case a.river.SET_POSTS_TO_LIKES_RIVER:
+    case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
+    case a.posts.SET_USER_POSTS:
+    case a.hashtags.SET_HASHTAG_POSTS:
+    case a.schools.SET_SCHOOL_POSTS:
+    case a.geotags.SET_GEOTAG_POSTS:
+    case a.posts.SET_RELATED_POSTS: {
       const postsWithoutUsers = _.keyBy(action.posts.map(post => {
         const postCopy = _.cloneDeep(post);
 
@@ -58,12 +58,12 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.REMOVE_POST: {
+    case a.posts.REMOVE_POST: {
       state = state.remove(action.id);
       break;
     }
 
-    case a.SET_LIKES: {
+    case a.users.SET_LIKES: {
       // FIXME: move to separate reducer?
       if (action.post_id) {
         state = state.setIn([action.post_id, 'likers'], action.likers);
@@ -71,7 +71,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_FAVOURITES: {
+    case a.users.SET_FAVOURITES: {
       // FIXME: move to separate reducer?
       if (action.post_id) {
         state = state.setIn([action.post_id, 'favourers'], action.favourers);
@@ -79,7 +79,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS: {
+    case a.comments.SET_POST_COMMENTS: {
       if (action.postId && action.comments) {
         state = state.setIn([action.postId, 'comments'], action.comments.length);
       }

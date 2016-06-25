@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,6 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import { addPost } from '../actions';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
@@ -45,9 +44,10 @@ import AddedTags from '../components/post/added-tags';
 import { defaultSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import {
+  addPost,
   resetEditPostForm,
   updateEditPostForm
-} from '../actions';
+} from '../actions/posts';
 
 
 class PostEditPage extends React.Component {
@@ -102,7 +102,7 @@ class PostEditPage extends React.Component {
     const post = this.props.posts[postId];
 
     if (post.error) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     if (post.user_id != this.props.current_user.id) {
@@ -146,7 +146,7 @@ class PostEditPage extends React.Component {
             </PageBody>
           </PageMain>
         </Page>
-        <Footer/>
+        <Footer />
       </div>
     );
   }

@@ -51,10 +51,7 @@ export default class RolesManager extends React.Component {
     this.roles.forEach(role => {
       role.id = uniqueId();
     });
-  }
 
-  componentDidMount() {
-    // generate roles on client because of unique keys for Role components
     this.setState({ rolesAmount: this.roles.length });
   }
 

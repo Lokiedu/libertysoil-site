@@ -27,11 +27,8 @@ import { defaultSelector } from '../selectors';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
-import {
-  addGeotag,
-  resetCreatePostForm,
-  updateCreatePostForm
-} from '../actions';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
+import { addGeotag } from '../actions/geotags';
 import { ActionsTrigger } from '../triggers';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
@@ -111,7 +108,7 @@ class GeotagEditPage extends React.Component {
     }
 
     if (!geotag.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     return (

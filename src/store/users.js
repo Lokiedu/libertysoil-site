@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -54,15 +54,15 @@ const cleanUser = user => {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ADD_USER:
-    case a.SET_CURRENT_USER: {
+    case a.users.ADD_USER:
+    case a.users.SET_CURRENT_USER: {
       state = state.mergeDeep(i.fromJS(cleanUser(action.user)));
 
       break;
     }
 
-    case a.ADD_POST:
-    case a.ADD_POST_TO_RIVER: {
+    case a.posts.ADD_POST:
+    case a.river.ADD_POST_TO_RIVER: {
       const user = action.post.user;
       const comment_authors = action.post.post_comments.map(comment => comment.user);
       const users = _.keyBy(_.uniq([user, ...comment_authors], 'id'), 'id');
@@ -71,12 +71,12 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POSTS_TO_RIVER:
-    case a.SET_POSTS_TO_LIKES_RIVER:
-    case a.SET_POSTS_TO_FAVOURITES_RIVER:
-    case a.SET_SCHOOL_POSTS:
-    case a.SET_TAG_POSTS:
-    case a.SET_GEOTAG_POSTS: {
+    case a.river.SET_POSTS_TO_RIVER:
+    case a.river.SET_POSTS_TO_LIKES_RIVER:
+    case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
+    case a.schools.SET_SCHOOL_POSTS:
+    case a.hashtags.SET_HASHTAG_POSTS:
+    case a.geotags.SET_GEOTAG_POSTS: {
       const authors = action.posts.map(post => post.user);
       const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
       const users = _.keyBy(_.uniq([...authors, ...comment_authors], 'id'), 'id');
@@ -85,14 +85,14 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.SET_POST_COMMENTS: {
+    case a.comments.SET_POST_COMMENTS: {
       const users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;
     }
 
-    case a.SET_RELATED_POSTS: {
+    case a.posts.SET_RELATED_POSTS: {
       const users = _.keyBy(action.posts.map(post => post.user), 'id');
 
       state = state.mergeDeep(i.fromJS(users));

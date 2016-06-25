@@ -34,7 +34,7 @@ sphinx:
     - "127.0.0.1:9306:9306"
   restart: always
 app:
-  image: "quay.io/dipstudio/libertysoil:1.6.0"
+  image: "quay.io/dipstudio/libertysoil:1.6.3"
   ports:
     - "127.0.0.1:8000:8000"
   links:
@@ -49,7 +49,7 @@ app:
     - "./secrets.env"
   restart: always
 queue:
-  image: "quay.io/dipstudio/libertysoil:1.6.0"
+  image: "quay.io/dipstudio/libertysoil:1.6.3"
   links:
     - db
     - redis

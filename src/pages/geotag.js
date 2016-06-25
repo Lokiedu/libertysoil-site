@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -23,14 +23,10 @@ import { values } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import {
-  setGeotagPosts,
-  addGeotag,
-  resetCreatePostForm,
-  updateCreatePostForm
-} from '../actions';
-import NotFound from './not-found';
+import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
+import { addGeotag, setGeotagPosts } from '../actions/geotags';
 
+import NotFound from './not-found';
 import River from '../components/river_of_posts';
 import BaseTagPage from './base/tag';
 
@@ -100,7 +96,7 @@ export class GeotagPage extends Component {
     }
 
     if (!geotag.id) {
-      return <NotFound/>;
+      return <NotFound />;
     }
 
     const geotagPosts = geotag_posts[this.props.params.url_name] || [];

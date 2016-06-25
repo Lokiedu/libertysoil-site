@@ -26,7 +26,7 @@ import Header from '../components/header';
 import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { addUser } from '../actions';
+import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -101,7 +101,7 @@ class InductionPage extends React.Component {
           <div className="page__body">
             <InductionDone />
           </div>
-          <Footer/>
+          <Footer />
         </div>
       );
     }

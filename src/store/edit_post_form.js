@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { posts } from '../actions';
 
 const initialState = i.fromJS({
   id: null,
@@ -28,7 +28,7 @@ const initialState = i.fromJS({
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.RESET_EDIT_POST_FORM: {
+    case posts.RESET_EDIT_POST_FORM: {
       state.set(action.post_id, {
         geotags: [],
         schools: [],
@@ -38,7 +38,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.UPDATE_EDIT_POST_FORM: {
+    case posts.UPDATE_EDIT_POST_FORM: {
       state = state.merge(i.fromJS(action.edit_post_form));
 
       break;

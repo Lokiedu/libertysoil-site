@@ -22,7 +22,7 @@ import User from './user';
 
 const CurrentUser = ({ ...props }) => {
   if (isUndefined(props.user)) {
-    return <script/>;
+    return <script />;
   }
 
   return <User {...props} className="user_box-small" />;

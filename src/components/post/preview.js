@@ -7,7 +7,7 @@ const Preview = (props) => {
   const urls = twtxt.extractUrlsWithIndices(text);
 
   if (urls.length === 0) {
-    return <script/>;
+    return <script />;
   }
 
   return <a className="embedly-card" data-card-width="100%" href={urls[0].url}></a>;

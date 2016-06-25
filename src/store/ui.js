@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ const initialState = i.Map({
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.UI__TOGGLE_SIDEBAR:
+    case a.ui.UI__TOGGLE_SIDEBAR:
       {
         let isVisible = !state.get('sidebarIsVisible');
 
@@ -39,77 +39,77 @@ function reducer(state = initialState, action) {
 
         break;
       }
-    case a.UI__SET_PROGRESS:
+    case a.ui.UI__SET_PROGRESS:
       {
         state = state.setIn(['progress', action.progress], action.value);
         break;
       }
-    case a.SUBMIT_RESET_PASSWORD:
+    case a.users.SUBMIT_RESET_PASSWORD:
       {
         state = state.set('submitResetPassword', true);
         break;
       }
-    case a.SUBMIT_NEW_PASSWORD:
+    case a.users.SUBMIT_NEW_PASSWORD:
       {
         state = state.set('submitNewPassword', true);
         break;
       }
-    case a.REGISTRATION_SUCCESS:
+    case a.users.REGISTRATION_SUCCESS:
       {
         state = state.set('registrationSuccess', true);
         break;
       }
-    case a.SHOW_REGISTER_FORM:
+    case a.ui.SHOW_REGISTER_FORM:
       {
         state = state.set('registrationSuccess', false);
         break;
       }
-    case a.SAVE_COMMENT__START:
+    case a.comments.SAVE_COMMENT__START:
       {
         state = state.setIn(['comments', action.commentId, 'error'], '');
         state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], true);
         break;
       }
-    case a.DELETE_COMMENT__START:
+    case a.comments.DELETE_COMMENT__START:
       {
         state = state.setIn(['comments', action.commentId, 'error'], '');
         state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], true);
         break;
       }
-    case a.CREATE_COMMENT__START:
+    case a.comments.CREATE_COMMENT__START:
       {
         state = state.setIn(['comments', 'new', 'error'], '');
         state = state.setIn(['comments', 'new', 'isCreateInProgress'], true);
         break;
       }
-    case a.SAVE_COMMENT__SUCCESS:
+    case a.comments.SAVE_COMMENT__SUCCESS:
       {
         state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
         break;
       }
-    case a.CREATE_COMMENT__SUCCESS:
+    case a.comments.CREATE_COMMENT__SUCCESS:
       {
         state = state.setIn(['comments', 'new', 'isCreateInProgress'], false);
         break;
       }
-    case a.DELETE_COMMENT__SUCCESS:
+    case a.comments.DELETE_COMMENT__SUCCESS:
       {
         state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], false);
         break;
       }
-    case a.SAVE_COMMENT__FAILURE:
+    case a.comments.SAVE_COMMENT__FAILURE:
       {
         state = state.setIn(['comments', action.commentId, 'error'], action.message);
         state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
         break;
       }
-    case a.CREATE_COMMENT__FAILURE:
+    case a.comments.CREATE_COMMENT__FAILURE:
       {
         state = state.setIn(['comments', 'new', 'error'], action.message);
         state = state.setIn(['comments', 'new', 'isCreateInProgress'], false);
         break;
       }
-    case a.DELETE_COMMENT__FAILURE:
+    case a.comments.DELETE_COMMENT__FAILURE:
       {
         state = state.setIn(['comments', action.commentId, 'error'], action.message);
         state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], false);

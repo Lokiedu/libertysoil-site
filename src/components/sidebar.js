@@ -20,7 +20,7 @@ import { values, throttle } from 'lodash';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { toggleUISidebar } from '../actions';
+import { toggleSidebar } from '../actions/ui';
 
 import Navigation from './navigation';
 import NavigationItem from './navigation-item';
@@ -77,16 +77,16 @@ class Sidebar extends React.Component {
     }
 
     if (ui.get('sidebarIsVisible') && (clientWidth <= breakpointWidth) && (clientWidth < this.state.clientWidth)) {
-      dispatch(toggleUISidebar(false));
+      dispatch(toggleSidebar(false));
     }
 
     if (!ui.get('sidebarIsVisible') && (clientWidth >= breakpointWidth) && (clientWidth > this.state.clientWidth)) {
-      dispatch(toggleUISidebar(true));
+      dispatch(toggleSidebar(true));
     }
 
     // If DOMContentLoaded event and small screen width
     if (this.state.clientWidth == 0 && clientWidth <= breakpointWidth) {
-      dispatch(toggleUISidebar(false));
+      dispatch(toggleSidebar(false));
     }
 
     this.setState({ clientWidth });

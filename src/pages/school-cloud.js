@@ -82,7 +82,7 @@ class SchoolCloudPage extends Component {
           </PageMain>
         </Page>
 
-        <Footer/>
+        <Footer />
       </div>
     );
   }
