@@ -24,7 +24,7 @@ import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 const EditPostButton = (props) => {
   if (!props.current_user || props.current_user.id !== props.post.user_id) {
-    return <script />;
+    return null;
   }
 
   const post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });

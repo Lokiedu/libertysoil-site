@@ -188,7 +188,7 @@ class Search extends Component {
             }
             default:
               console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
-              return <noscript />;
+              return null;
           }
 
           return (

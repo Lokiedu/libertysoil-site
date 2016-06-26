@@ -136,7 +136,7 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flex
     case TAG_LOCATION:
       return <GeotagPageHero geotag={tag} />;
     default:
-      return <script />;
+      return null;
   }
 }
 

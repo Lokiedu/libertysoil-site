@@ -71,7 +71,7 @@ export default class MapboxMap extends React.Component {
 
   render() {
     if (!Leaflet) {
-      return <script />;
+      return null;
     }
 
     const {

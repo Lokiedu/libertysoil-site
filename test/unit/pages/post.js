@@ -16,19 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { shallow } from 'enzyme';
 
+import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import { PostPage } from '../../../src/pages/post';
 import NotFound from '../../../src/pages/not-found';
 
 
 describe('Post page', function() {
 
-  it('MUST renders as empty script when post is not yet fetched', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<PostPage params={{uuid: 'xxx'}} posts={{}} />);
+  it('MUST renders nothing when post is not yet fetched', function() {
+    const wrapper = shallow(<PostPage params={{ uuid: 'xxx' }} posts={{}} />);
 
-    return expect(renderer, 'to have rendered', <script />);
+    return expect(wrapper.equals(null), 'to be true');
   });
 
   it('MUST renders as <NotFound /> page when post is not exist', function() {

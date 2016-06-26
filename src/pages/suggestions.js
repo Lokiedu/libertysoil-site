@@ -30,7 +30,7 @@ import { defaultSelector } from '../selectors';
 
 const DiscoverGrid = ({ current_user, i_am_following, triggers, users }) => {
   if (users.length === 0) {
-    return <script />;
+    return null;
   }
 
   return (

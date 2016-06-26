@@ -150,7 +150,7 @@ export default class UpdatePictureModal extends React.Component {
     const { what, where } = this.props;
 
     if (!this.props.visible) {
-      return <script />;
+      return null;
     }
 
     return (

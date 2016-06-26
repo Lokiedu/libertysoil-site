@@ -101,7 +101,7 @@ class Sidebar extends React.Component {
     const sidebarClassName = ['sidebar'];
 
     if (!is_logged_in) {
-      return <script />;
+      return null;
     }
 
     if (ui.get('sidebarIsVisible')) {

@@ -9,7 +9,7 @@ const PanelToolbarArea = (position, items) => {
     );
   }
 
-  return <noscript />;
+  return null;
 };
 
 const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
@@ -17,7 +17,7 @@ const PanelToolbar = ({ toolbarPrimary, toolbarSecondary }) => {
   const secondaryToolbar = PanelToolbarArea('left', toolbarSecondary);
 
   if (!primaryToolbar && !secondaryToolbar) {
-    return <noscript />;
+    return null;
   }
 
   return (

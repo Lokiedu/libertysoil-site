@@ -29,7 +29,7 @@ function AddedTags({ addedTags, onDelete }) {
   if (!addedTags.geotags.length &&
       !addedTags.schools.length &&
       !addedTags.hashtags.length) {
-    return <noscript />;
+    return null;
   }
 
   return (

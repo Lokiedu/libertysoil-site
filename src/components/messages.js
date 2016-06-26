@@ -21,7 +21,7 @@ import Message from './message';
 
 const Messages = ({ messages, removeMessage }) => {
   if (messages.length === 0) {
-    return <script />;
+    return null;
   }
 
   const messagesToRender = messages.map((msg, i) => {
