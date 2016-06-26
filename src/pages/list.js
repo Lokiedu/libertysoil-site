@@ -188,7 +188,7 @@ export class List extends React.Component {
                 {loadMore}
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...this.props.create_post_form} />
+                <AddedTags {...this.props.create_post_form} truncated />
                 <SideSuggestedUsers
                   current_user={current_user}
                   i_am_following={i_am_following}
