@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
+import Button from './button';
 import TagIcon from './tag-icon';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import AddTagModal from './add-tag-modal';
@@ -78,6 +79,7 @@ export default class EditPost extends React.Component {
     super(props);
 
     this.state = {
+      isSubmitting: false,
       hasText: false,
       addTagModalType: null,
       upToDate: false
@@ -133,6 +135,8 @@ export default class EditPost extends React.Component {
       return;
     }
 
+    this.setState({ isSubmitting: true });
+
     const form = this.form;
     const data = {
       text: form.text.value,
@@ -145,9 +149,9 @@ export default class EditPost extends React.Component {
     await this.props.triggers.updatePost(this.props.post.id, data);
     await this.props.triggers.loadUserRecentTags();
 
-    this.props.onSubmit(event);
-
     this.props.actions.resetEditPostForm();
+    this.setState({ isSubmitting: false });
+    this.props.onSubmit(event);
   };
 
   _handleKeydown = (e) => {
@@ -270,13 +274,13 @@ export default class EditPost extends React.Component {
             </div>
             <div className="layout__row layout layout-align_vertical">
               <div className="layout layout__grid layout__grid_item-wide">
-                <button
+                <Button
                   className="button button-wide button-red"
                   disabled={!this.state.hasText}
+                  title="Save"
                   type="submit"
-                >
-                  Save
-                </button>
+                  waiting={this.state.isSubmitting}
+                />
                 <button className="button button-red" type="button" onClick={this._handleDelete}>
                   <span className="fa fa-trash-o" />
                 </button>

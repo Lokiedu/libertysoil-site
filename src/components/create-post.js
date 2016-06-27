@@ -244,7 +244,7 @@ export default class CreatePost extends React.Component {
               <div className="layout__row layout layout-align_vertical">
                 <div className="layout__grid_item">
                   <Button
-                    className="button button-red"
+                    className="button button-wide button-red"
                     disabled={!this.state.hasText}
                     title="Publish"
                     type="submit"

@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 
 const Button = ({ color, size, className, waiting, title, ...props }) => {
   let icon = null;
-  let cn = 'button button-icon action';
+  let cn = 'button action';
 
   if (className) {
     cn += ` ${className}`;
@@ -36,6 +36,10 @@ const Button = ({ color, size, className, waiting, title, ...props }) => {
   if (waiting) {
     cn += ` button-waiting`;
     icon = <span className="button__icon micon micon-rotate">refresh</span>;
+  }
+
+  if (icon) {
+    cn += ' button-icon';
   }
 
   return (
