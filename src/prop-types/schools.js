@@ -17,7 +17,7 @@
 */
 import { PropTypes } from 'react';
 
-import { mapOf, uuid, date } from './common';
+import { mapOf, uuid, date, url } from './common';
 import { Attachment } from './attachments';
 import { TagMore } from './tags';
 
@@ -51,14 +51,14 @@ export const School = PropTypes.shape({
   teaching_languages: PropTypes.arrayOf(PropTypes.string),
   twitter: PropTypes.string,
   updated_at: date.isRequired,
-  url_name: PropTypes.string.isRequired,
+  url_name: url.isRequired,
   website: PropTypes.string,
   wikipedia: PropTypes.string
 });
 
 export const LightSchool = PropTypes.shape({
   id: uuid.isRequired,
-  url_name: PropTypes.string.isRequired,
+  url_name: url.isRequired,
   name: PropTypes.string.isRequired
 });
 

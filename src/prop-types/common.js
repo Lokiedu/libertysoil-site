@@ -187,3 +187,22 @@ export const date = createSimplifiedRequirableTypeChecker(
     return null;
   }
 );
+
+export const url = createSimplifiedRequirableTypeChecker(
+  (propValue, propFullName, componentName, location) => {
+    const expectedType = 'string';
+    if (typeof propValue !== expectedType) {
+      return getTypeError(propValue, expectedType, propFullName, componentName, location);
+    }
+
+    const test = RegExp(/^[a-z0-9_-]+$/i);
+    if (!propValue.match(test)) {
+      return new Error(
+        `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +
+        `supplied to \`${componentName}\` is invalid URL representation.`
+      );
+    }
+
+    return null;
+  }
+);

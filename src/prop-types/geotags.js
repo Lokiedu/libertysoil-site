@@ -19,7 +19,7 @@ import { PropTypes } from 'react';
 
 import CONTINENTS from '../consts/continents';
 
-import { mapOfValues, uuid, date } from './common';
+import { mapOfValues, uuid, date, url } from './common';
 import { TagMore } from './tags';
 
 const continentCodes = Object.keys(CONTINENTS);
@@ -48,7 +48,7 @@ export const Geotag = PropTypes.shape({
   post_count: PropTypes.number.isRequired,
   type: PropTypes.string, // oneOf("Country", ...)
   updated_at: date.isRequired,
-  url_name: PropTypes.string // url formatted string
+  url_name: url.isRequired
 });
 
 export const ArrayOfGeotags = PropTypes.arrayOf(Geotag);
