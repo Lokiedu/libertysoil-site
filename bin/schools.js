@@ -108,12 +108,12 @@ async function action() {
   const csvText = fs.readFileSync(`${root}/schools.csv`);
 
   spinner.text = 'parsing data';
-  let data = await asyncParse(csvText);
+  const data = await asyncParse(csvText);
 
   spinner.text = 'connecting to DB';
   const Knex = knex(knexConfig[exec_env]);
 
-  const countryRows = await Knex.select('name', 'id').from('geotags').where({type: 'Country'});
+  const countryRows = await Knex.select('name', 'id').from('geotags').where({ type: 'Country' });
   const countries = _.mapValues(_.keyBy(countryRows, 'name'), 'id');
 
   spinner.text = 'preprocessing data';
@@ -169,8 +169,8 @@ async function action() {
 
           url_name = slug(pieces[selectedIdx]);
         } else {
-          console.warn(`\nCouldn't generate proper urlname for ${name}`)
-          return false
+          console.warn(`\nCouldn't generate proper urlname for ${name}`); // eslint-disable-line no-console
+          return false;
         }
       }
 
@@ -210,9 +210,9 @@ async function action() {
             return { is_member: true };
           } else if (field === 'No') {
             return { is_member: false };
-          } else {
-            return null;
           }
+
+          return null;
         };
 
         const csvToJson = (jsonb_name, csv_name) => {
@@ -244,7 +244,7 @@ async function action() {
         foundation_day, foundation_month, foundation_year,
         principal_name, principal_surname,
         org_membership
-      }
+      };
     })
     .filter(Boolean);
 
@@ -252,10 +252,10 @@ async function action() {
   const usedNames = [];
 
   for (const rowData of insertData) {
-    let result = await Knex('schools').first('id').where({url_name: rowData.url_name});
+    let result = await Knex('schools').first('id').where({ url_name: rowData.url_name });
 
     if (_.isUndefined(result) && !usedNames.includes(rowData.names)) {
-      result = await Knex('schools').first('id').where({name: rowData.name})
+      result = await Knex('schools').first('id').where({ name: rowData.name });
     }
 
     usedNames.push(rowData.names);

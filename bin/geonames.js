@@ -3,29 +3,28 @@ import fs from 'fs';
 
 import AdmZip from 'adm-zip';
 import fetch from 'node-fetch';
-import { wait as waitForStream } from 'promise-streams'
+import { wait as waitForStream } from 'promise-streams';
 import tmp from 'tmp';
 import { bulkUpsert } from './utils/query';
 
 
 async function countries() {
-  
   process.stdout.write("=== DOWNLOADING COUNTRIES DATA ===\n");
   const response = await fetch('http://download.geonames.org/export/dump/countryInfo.txt');
 
   process.stdout.write("=== PARSING COUNTRIES DATA ===\n");
-  let lines = (await response.text())
+  const lines = (await response.text())
     .split('\n');
 
-  let objects = [];
-  
-  for (let line of lines) {
+  const objects = [];
+
+  for (const line of lines) {
     // There can be empty strings and comments. Filter them out.
     if (!line.length || line[0] == '#') {
       continue;
     }
 
-    let attrs = line.split('\t');
+    const attrs = line.split('\t');
 
     objects.push({
       iso_alpha2: attrs[0],
@@ -51,8 +50,8 @@ async function countries() {
 
   process.stdout.write("=== IMPORTING/UPDATING COUNTRIES ===\n");
   return bulkUpsert('geonames_countries', objects, attrs => {
-    return {iso_alpha2: attrs.iso_alpha2}
-  })
+    return { iso_alpha2: attrs.iso_alpha2 };
+  });
 }
 
 async function adminDivisions() {
@@ -60,55 +59,55 @@ async function adminDivisions() {
   const response = await fetch('http://download.geonames.org/export/dump/admin1CodesASCII.txt');
 
   process.stdout.write("=== PARSING ADMIN DIVISIONS DATA ===\n");
-  let lines = (await response.text())
+  const lines = (await response.text())
     .split('\n');
 
-  let objects = [];
+  const objects = [];
 
-  for (let line of lines) {
+  for (const line of lines) {
     if (!line.length) {
       continue;
     }
 
-    let attrs = line.split('\t');
-    let [countryCode, code] = attrs[0].split('.');
+    const attrs = line.split('\t');
+    const [countryCode, code] = attrs[0].split('.');
 
     objects.push({
       id: attrs[3],
       asciiname: attrs[2],
+      code,
       name: attrs[1],
-      code: code,
       country_code: countryCode
     });
   }
 
   process.stdout.write("=== IMPORTING/UPDATING ADMIN DIVISIONS ===\n");
   return bulkUpsert('geonames_admin1', objects, attrs => {
-    return {id: attrs.id};
+    return { id: attrs.id };
   });
 }
 
 async function cities() {
   process.stdout.write("=== DOWNLOADING CITIES DATA ===\n");
-  let tmpFile = tmp.fileSync();
-  let output = fs.createWriteStream(tmpFile.name, {flags: 'w'});
+  const tmpFile = tmp.fileSync();
+  const output = fs.createWriteStream(tmpFile.name, { flags: 'w' });
 
-  let response = await fetch('http://download.geonames.org/export/dump/cities1000.zip');
+  const response = await fetch('http://download.geonames.org/export/dump/cities1000.zip');
   await waitForStream(response.body.pipe(output));
 
   process.stdout.write("=== UNPACKING CITIES DATA ===\n");
-  let zip = new AdmZip(tmpFile.name);
-  let lines = zip.readAsText("cities1000.txt")
+  const zip = new AdmZip(tmpFile.name);
+  const lines = zip.readAsText("cities1000.txt")
     .split('\n');
 
-  let objects = [];
+  const objects = [];
 
-  for (let line of lines) {
+  for (const line of lines) {
     if (!line || !line.length) {
       continue;
     }
 
-    let attrs = line.split('\t');
+    const attrs = line.split('\t');
 
     objects.push({
       id: attrs[0],
@@ -135,7 +134,7 @@ async function cities() {
 
   process.stdout.write("=== IMPORTING/UPDATING CITIES ===\n");
   return bulkUpsert('geonames_cities', objects, attrs => {
-    return {id: attrs.id};
+    return { id: attrs.id };
   });
 }
 
