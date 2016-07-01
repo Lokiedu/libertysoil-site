@@ -364,6 +364,12 @@ describe('api v1', async () => {
         await expect({ url: `/api/v1/pickpoint` }, 'not to open authorized');
       });
 
+      it('NOT AUTHORIZED to upload files', async () => {
+        await expect(
+          { url: `/api/v1/upload`, method: 'POST' }
+          , 'not to open authorized');
+      });
+
     });
 
     describe('When user logged in it', () => {
