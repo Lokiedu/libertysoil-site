@@ -65,6 +65,7 @@ class CreatePost extends React.Component {
 
     this.state = {
       isSubmitting: false,
+      hasText: false,
       expanded: false,
       addTagModalType: null
     };
@@ -93,13 +94,13 @@ class CreatePost extends React.Component {
       return;
     }
 
-    const form = this.form;
-
-    if (!form.text.value.trim().length) {
+    if (!this.state.hasText) {
       return;
     }
 
     this.setState({ isSubmitting: true });
+
+    const form = this.form;
     const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
@@ -116,7 +117,16 @@ class CreatePost extends React.Component {
 
     form.text.value = '';
     this._addTagModal.reset();
-    this.setState({ isSubmitting: false });
+    this.setState({ isSubmitting: false, hasText: false });
+  };
+
+  _handleTextChange = (event) => {
+    let hasText = false;
+    if (event.target.value.trim()) {
+      hasText = true;
+    }
+
+    this.setState({ hasText });
   };
 
   _handleFocus = () => {
@@ -211,6 +221,7 @@ class CreatePost extends React.Component {
                     name="text"
                     placeholder="Make a contribution to education change"
                     rows={(this.state.expanded) ? 10 : 1}
+                    onChange={this._handleTextChange}
                     onFocus={this._handleFocus}
                   />
                 </div>
@@ -232,10 +243,11 @@ class CreatePost extends React.Component {
               <div className="layout__row layout layout-align_vertical">
                 <div className="layout__grid_item">
                   <Button
-                    className="button button-red"
-                    waiting={this.state.isSubmitting}
+                    className="button button-wide button-red"
+                    disabled={!this.state.hasText}
                     title="Publish"
                     type="submit"
+                    waiting={this.state.isSubmitting}
                   />
                 </div>
                 <div className="layout__grid_item layout__grid_item-wide">
