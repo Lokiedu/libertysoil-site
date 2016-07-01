@@ -26,7 +26,7 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
       return <div>{notFoundMessage}</div>;
     }
 
-    return <script />;
+    return null;
   }
 
   const usersToShow = users.map((user) => (

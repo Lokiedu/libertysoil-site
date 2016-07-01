@@ -114,7 +114,7 @@ class HashtagEditPage extends React.Component {
     const tag = hashtags[params.tag];
 
     if (!tag) {
-      return <script />;
+      return null;
     }
 
     return (

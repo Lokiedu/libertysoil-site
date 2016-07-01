@@ -71,7 +71,7 @@ export default class SideSuggestedUsers extends React.Component {
     } = this.props;
 
     if (!users.length) {
-      return <script />;
+      return null;
     }
 
     let className = 'layout__row suggested_users';

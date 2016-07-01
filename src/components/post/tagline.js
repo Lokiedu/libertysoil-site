@@ -22,7 +22,7 @@ import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../consts/tags';
 
 const TagLine = ({ geotags, hashtags, schools }) => {
   if ((geotags && hashtags && schools) && (!geotags.length && !hashtags.length && !schools.length)) {
-    return <script />;
+    return null;
   }
 
   let geotagBlocks;

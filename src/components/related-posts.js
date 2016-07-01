@@ -23,7 +23,7 @@ import { ShortPost } from './post';
 
 export default function RelatedPosts({ posts, users }) {
   if (!posts || !posts.length) {
-    return <noscript />;
+    return null;
   }
 
   return (

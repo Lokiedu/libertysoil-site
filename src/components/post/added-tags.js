@@ -22,7 +22,7 @@ const AddedTags = (props) => {
   const { geotags, hashtags, schools } = props;
 
   if (!geotags.length && !schools.length && !hashtags.length) {
-    return <script />;
+    return null;
   }
 
   return (

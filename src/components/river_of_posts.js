@@ -34,7 +34,7 @@ const RiverOfPostsComponent = (props) => {
   } = props;
 
   if (isUndefined(river)) {
-    return <script />;
+    return null;
   }
 
   const postsWithData = river.map(id => posts[id]);

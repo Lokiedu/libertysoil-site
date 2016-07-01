@@ -87,7 +87,7 @@ export class SchoolPage extends React.Component {
     const school = find(schools, { url_name: this.props.params.school_name });
 
     if (!school) {
-      return <script />; // not loaded yet
+      return null; // not loaded yet
     }
 
     if (!school.id) {

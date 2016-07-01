@@ -67,7 +67,7 @@ export class PostPage extends React.Component {
 
     if (!(post_uuid in this.props.posts)) {
       // not loaded yet
-      return <script />;
+      return null;
     }
 
     const current_post = this.props.posts[post_uuid];

@@ -26,10 +26,10 @@ import NotFound from '../../../src/pages/not-found';
 
 
 describe('School page', () => {
-  it('renders <Script /> if school not yet loaded', () => {
+  it('renders nothing if school not yet loaded', () => {
     const wrapper = shallow(<SchoolPage params={{ school_name: 'test' }} school_posts={{}} />);
 
-    return expect(wrapper.contains(<script />), 'to be true');
+    return expect(wrapper.equals(null), 'to be true');
   });
 
   it('renders <NotFound /> if no school found', () => {

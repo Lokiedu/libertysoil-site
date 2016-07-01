@@ -104,7 +104,7 @@ class GeotagEditPage extends React.Component {
     const title = geotag ? geotag.name : this.props.params.url_name;
 
     if (!geotag) {
-      return <script />;
+      return null;
     }
 
     if (!geotag.id) {

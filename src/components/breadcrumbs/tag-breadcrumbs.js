@@ -31,7 +31,7 @@ const TagBreadcrumbs = ({ tag, type }) => {
     case TAG_LOCATION:
       return <GeotagBreadcrumbs geotag={tag} />;
     default:
-      return <script />;
+      return null;
   }
 };
 

@@ -16,19 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { shallow } from 'enzyme';
 
+import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import { GeotagPage } from '../../../src/pages/geotag';
 import NotFound from '../../../src/pages/not-found';
 
 
 describe('GeotagPage', function() {
 
-  it('MUST render <script /> when geotag is not yet loaded', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<GeotagPage geotag_posts={{}} geotags={{}} params={{url_name: 'test'}}  />);
+  it('MUST render nothing when geotag is not yet loaded', function() {
+    const wrapper = shallow(<GeotagPage geotag_posts={{}} geotags={{}} params={{ url_name: 'test' }} />);
 
-    return expect(renderer, 'to have rendered', <script />);
+    return expect(wrapper.equals(null), 'to be true');
   });
 
 

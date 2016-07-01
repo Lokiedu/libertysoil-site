@@ -152,7 +152,7 @@ export class List extends React.Component {
         </div>
       );
     } else {
-      loadMore = <script />;
+      loadMore = null;
     }
 
     return (

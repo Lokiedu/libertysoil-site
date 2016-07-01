@@ -57,7 +57,7 @@ class UserFavoritesPage extends React.Component {
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script />;  // not loaded yet
+      return null;  // not loaded yet
     }
 
     if (false === page_user) {
