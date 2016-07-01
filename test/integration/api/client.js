@@ -86,18 +86,28 @@ describe('Client test', () => {
 });
 
 describe('Authenticated client test', () => {
+  let user,
+    sessionId;
+
+  before(async () => {
+    const userAttrs = UserFactory.build();
+    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+
+    user.set('email_check_hash', null);
+    await user.save(null, { method: 'update' });
+    sessionId = await login(userAttrs.username, userAttrs.password);
+  });
+
+  after(async () => {
+    await user.destroy();
+  });
+
   it('#uploadImage works', async () => {
     AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
 
     const file = fs.createReadStream('./test-helpers/bulb.png');
     // const result = await client.uploadImage([file]);
 
-    const userAttrs = UserFactory.build();
-    const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-
-    user.set('email_check_hash', null);
-    await user.save(null, { method: 'update' });
-    const sessionId = await login(userAttrs.username, userAttrs.password);
     const headers = {
       "cookie": serialize('connect.sid', sessionId)
     };

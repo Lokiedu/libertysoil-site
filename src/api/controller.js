@@ -1268,7 +1268,7 @@ export default class ApiController {
           .limit(20);
       });
 
-    const suggestions = await q.fetchAll({ require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
+    const suggestions = await q.fetchAll({ withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
 
     ctx.body = suggestions;
   };

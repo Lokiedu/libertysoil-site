@@ -42,6 +42,15 @@ let subjectToRequest = (subject) => {
   throw new Error('Unexpected format of test-subject')
 };
 
+expect.addAssertion('to have body an array', function (expect, subject, value) {
+  return expect(subjectToRequest(subject), 'to yield response', {
+  }).then(function (context) {
+    var body = context.httpResponse.body;
+
+    expect(body, 'to be an', 'array');
+  });
+});
+
 expect.addAssertion('to have body array length', function (expect, subject, value) {
   return expect(subjectToRequest(subject), 'to yield response', {
   }).then(function (context) {
