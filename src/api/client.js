@@ -15,8 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import request from 'superagent';
 import fetch from 'isomorphic-fetch';
+import FormData from 'form-data';
 import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
 import { merge as mergeObj } from 'lodash';
@@ -53,8 +53,8 @@ export default class ApiClient
     const req = fetch(
       this.apiUrlForFetch(relativeUrl, query),
       {
-        headers: defaultHeaders,
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        headers: defaultHeaders
       }
     );
 
@@ -71,6 +71,7 @@ export default class ApiClient
     const req = fetch(
       this.apiUrlForFetch(relativeUrl, query),
       {
+        credentials: 'same-origin',
         method: 'HEAD',
         headers: defaultHeaders
       }
@@ -89,6 +90,7 @@ export default class ApiClient
     const req = fetch(
       this.apiUrlForFetch(relativeUrl),
       {
+        credentials: 'same-origin',
         method: 'DELETE',
         headers: defaultHeaders
       }
@@ -117,6 +119,7 @@ export default class ApiClient
     const req = fetch(
       this.apiUrl(relativeUrl),
       {
+        credentials: 'same-origin',
         method: 'POST',
         headers,
         body
@@ -131,16 +134,29 @@ export default class ApiClient
   */
 
   async postMultipart(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {},
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie']
+      };
     }
 
     if (data !== null) {
-      req = req.send(data);
+      body = data;
+      headers = mergeObj(headers, data.getHeaders());
     }
 
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -165,6 +181,7 @@ export default class ApiClient
     const req = fetch(
       this.apiUrl(relativeUrl),
       {
+        credentials: 'same-origin',
         method: 'POST',
         headers,
         body
@@ -537,7 +554,8 @@ export default class ApiClient
       data.append("files", image);
     });
     const response = await this.postMultipart('/api/v1/upload', data);
-    return response.body;
+
+    return await response.json();
   }
 
   async processImage(id, transforms, derived_id = null) {

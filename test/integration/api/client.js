@@ -17,10 +17,20 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
+import fs from 'fs';
+import { serialize } from 'cookie';
+import AWS from 'mock-aws';
+
 import expect from '../../../test-helpers/expect';
+import { login } from '../../../test-helpers/api';
+import initBookshelf from '../../../src/api/db';
 import ApiClient from '../../../src/api/client';
 import { API_HOST } from '../../../src/config';
+import UserFactory from '../../../test-helpers/factories/user';
 
+
+let bookshelf = initBookshelf($dbConfig);
+let User = bookshelf.model('User');
 
 describe('Client test', () => {
   let client;
@@ -71,5 +81,30 @@ describe('Client test', () => {
     let result = await client.deleteComment('nonexistingpost', 'nonexistingid');
 
     expect(result.error, 'to be', 'You are not authorized');
+  });
+
+});
+
+describe('Authenticated client test', () => {
+  it('#uploadImage works', async () => {
+    AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
+
+    const file = fs.createReadStream('./test-helpers/bulb.png');
+    // const result = await client.uploadImage([file]);
+
+    const userAttrs = UserFactory.build();
+    const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+
+    user.set('email_check_hash', null);
+    await user.save(null, { method: 'update' });
+    const sessionId = await login(userAttrs.username, userAttrs.password);
+    const headers = {
+      "cookie": serialize('connect.sid', sessionId)
+    };
+
+    const client = new ApiClient(API_HOST, { headers });
+    const result = await client.uploadImage([file]);
+
+    expect(result.success, 'to be', true);
   });
 });
