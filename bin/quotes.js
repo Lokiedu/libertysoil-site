@@ -12,7 +12,7 @@ async function loadQuotes() {
   const csvText = fs.readFileSync(`${root}/quotes.csv`);
   const data = await asyncParse(csvText);
 
-  for (let line of data) {
+  for (const line of data) {
     const attributes = {
       id: line[0],
       first_name: line[1],
@@ -22,12 +22,12 @@ async function loadQuotes() {
       description: line[5],
       link: line[6]
     };
-    
+
     try {
       await knex('quotes').insert(attributes);
     } catch (e) {
       await knex('quotes')
-        .where({id: attributes.id})
+        .where({ id: attributes.id })
         .update(attributes);
     }
   }

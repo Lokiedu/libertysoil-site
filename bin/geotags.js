@@ -28,14 +28,14 @@ async function planets() {
 }
 
 async function continents() {
-  let continentAttributes = [
-    {continent_code: 'AF', name: 'Africa', lat: 8.5, lon: 25},
-    {continent_code: 'AS', name: 'Asia', lat: 42, lon: 100},
-    {continent_code: 'EU', name: 'Europe', lat: 47, lon: 8},
-    {continent_code: 'NA', name: 'North America', lat: 41, lon: -100},
-    {continent_code: 'OC', name: 'Oceania', lat: 1, lon: 125},
-    {continent_code: 'SA', name: 'South America', lat: -12, lon: -55},
-    {continent_code: 'AN', name: 'Antarctica', lat: -75, lon: 60}
+  const continentAttributes = [
+    { continent_code: 'AF', name: 'Africa', lat: 8.5, lon: 25 },
+    { continent_code: 'AS', name: 'Asia', lat: 42, lon: 100 },
+    { continent_code: 'EU', name: 'Europe', lat: 47, lon: 8 },
+    { continent_code: 'NA', name: 'North America', lat: 41, lon: -100 },
+    { continent_code: 'OC', name: 'Oceania', lat: 1, lon: 125 },
+    { continent_code: 'SA', name: 'South America', lat: -12, lon: -55 },
+    { continent_code: 'AN', name: 'Antarctica', lat: -75, lon: 60 }
   ].map(attrs => {
     attrs.url_name = slug(attrs.name);
     attrs.type = 'Continent';
@@ -43,20 +43,20 @@ async function continents() {
   });
 
   return bulkUpsert('geotags', continentAttributes, attrs => {
-    return {continent_code: attrs.continent_code, type: 'Continent'};
+    return { continent_code: attrs.continent_code, type: 'Continent' };
   });
 }
 
 async function countries() {
   const geocodeCountries = await getGeocodeCountries();
-  const continents = await knex('geotags').where({type: 'Continent'});
+  const continents = await knex('geotags').where({ type: 'Continent' });
   const geonamesCountries = await knex
     .select('id', 'name', 'continent', 'iso_alpha2')
     .from('geonames_countries');
 
-  let countryObjects = [];
+  const countryObjects = [];
 
-  for (let country of geonamesCountries) {
+  for (const country of geonamesCountries) {
     let geocodeCountry = geocodeCountries.find(geocodeCountry => geocodeCountry.ISO3166A2 == country.iso_alpha2);
     if (!geocodeCountry) {
       geocodeCountry = {};
@@ -81,18 +81,18 @@ async function countries() {
   }
 
   return bulkUpsert('geotags', countryObjects, attrs => {
-    return {country_code: attrs.country_code, type: 'Country'};
+    return { country_code: attrs.country_code, type: 'Country' };
   });
 }
 
 async function adminDivisions() {
   const geocodeAdminDivisions = await getGeocodeAdminDivisions();
-  const countries = await knex('geotags').where({type: 'Country'});
+  const countries = await knex('geotags').where({ type: 'Country' });
 
-  let adminObjects = [];
+  const adminObjects = [];
 
-  let geonamesAdminDivisions = await knex('geonames_admin1');
-  for (let admin of geonamesAdminDivisions) {
+  const geonamesAdminDivisions = await knex('geonames_admin1');
+  for (const admin of geonamesAdminDivisions) {
     let geocodeAdmin = geocodeAdminDivisions.find(geocodeAdmin => {
       const isoCountries = ['US', 'CH', 'BE', 'ME'];
       let geocodeAdminCode;
@@ -136,16 +136,16 @@ async function adminDivisions() {
   }
 
   return bulkUpsert('geotags', adminObjects, attrs => {
-    return {geonames_admin1_id: attrs.geonames_admin1_id, type: 'AdminDivision1'}
+    return { geonames_admin1_id: attrs.geonames_admin1_id, type: 'AdminDivision1' };
   });
 }
 
 async function cities() {
-  const countries = await knex('geotags').where({type: 'Country'});
-  const adminDivisions = await knex('geotags').where({type: 'AdminDivision1'});
+  const countries = await knex('geotags').where({ type: 'Country' });
+  const adminDivisions = await knex('geotags').where({ type: 'AdminDivision1' });
 
   // Create an index of url_name to optimize checking for existence.
-  let urlNames = (await knex('geotags').select('url_name').whereNot({type: 'City'}))
+  const urlNames = (await knex('geotags').select('url_name').whereNot({ type: 'City' }))
     .reduce((acc, geotag) => {
       acc[geotag.url_name] = true;
       return acc;
@@ -155,7 +155,7 @@ async function cities() {
     return urlNames[urlName];
   }
 
-  let geonamesCities = await knex
+  const geonamesCities = await knex
     .select(knex.raw(`
       cities.id,
       cities.asciiname,
@@ -172,9 +172,9 @@ async function cities() {
     .groupBy('cities.id')
     .orderBy('population', 'DESC');
 
-  let cityObjects = [];
+  const cityObjects = [];
 
-  for (let city of geonamesCities) {
+  for (const city of geonamesCities) {
     const country = countries.find(country => country.country_code === city.country);
 
     let admin1 = adminDivisions.find(admin => (
@@ -232,7 +232,7 @@ async function cities() {
   }
 
   return bulkUpsert('geotags', cityObjects, attrs => {
-    return {geonames_city_id: attrs.geonames_city_id, type: 'City'}
+    return { geonames_city_id: attrs.geonames_city_id, type: 'City' };
   });
 }
 
