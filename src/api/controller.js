@@ -21,9 +21,10 @@ import bb from 'bluebird';
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid';
 import slug from 'slug';
-import request from 'superagent';
+import fetch from 'node-fetch';
 import crypto from 'crypto';
 import Checkit from 'checkit';
+import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
 import { processImage } from '../utils/image';
@@ -1882,13 +1883,11 @@ export default class ApiController {
     }
 
     try {
-      const response = await request
-        .get(`https://pickpoint.io/api/v1/forward`)
-        .query(Object.assign(ctx.query, { key: config.pickpoint.key }));
+      const urlObj = parse_url(`https://pickpoint.io/api/v1/forward`);
+      urlObj.query = Object.assign(ctx.query, { key: config.pickpoint.key });
 
-      // pickpoint answers with wrong content-type, so we do decoding manually
-      const responseText = response.text;
-      const data = JSON.parse(responseText);
+      const response = await fetch(format_url(urlObj));
+      const data = await response.json();
 
       ctx.body = data;
     } catch (e) {
