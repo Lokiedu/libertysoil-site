@@ -141,7 +141,7 @@ class PostEditPage extends React.Component {
                 />
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...formState} />
+                <AddedTags {...formState} truncated />
               </SidebarAlt>
             </PageBody>
           </PageMain>
