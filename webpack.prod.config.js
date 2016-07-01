@@ -39,10 +39,7 @@ module.exports = {
           presets: [
             'es2015-webpack',
             'react',
-            'stage-0'
-          ],
-          plugins: [
-            ['transform-decorators-legacy']
+            'stage-1'
           ]
         }
       },

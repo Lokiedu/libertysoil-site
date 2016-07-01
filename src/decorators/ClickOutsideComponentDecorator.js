@@ -24,10 +24,8 @@ import ReactDOM from 'react-dom';
 * @param ComposedComponent
 * @returns {*}
 */
-export default (ComposedComponent) => {
-  return class ClickOutsideComponentDecorator extends Component {
-    static displayName = 'ProfileHeader';
-
+const ClickOutsideComponentDecorator = (ComposedComponent) => {
+  return class ClickOutsideComponentWrapper extends Component {
     handleClickOutside = (e) => {
       const component = this.root;
       const el = ReactDOM.findDOMNode(component);
@@ -50,3 +48,5 @@ export default (ComposedComponent) => {
     }
   };
 };
+
+export default ClickOutsideComponentDecorator;

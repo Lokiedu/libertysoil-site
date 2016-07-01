@@ -19,7 +19,6 @@ import React, { Component } from 'react';
 
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-@ClickOutsideComponentDecorator
 class Dropdown extends Component {
   static displayName = 'Dropdown';
 
@@ -69,4 +68,5 @@ class Dropdown extends Component {
   }
 }
 
-export default Dropdown;
+const DecoratedDropdown = ClickOutsideComponentDecorator(Dropdown);
+export default DecoratedDropdown;

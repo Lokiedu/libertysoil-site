@@ -26,8 +26,7 @@ import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentD
 import AddTagModal from './add-tag-modal';
 
 
-@ClickOutsideComponentDecorator
-export default class CreatePost extends React.Component {
+class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
     actions: PropTypes.shape({
@@ -273,3 +272,6 @@ export default class CreatePost extends React.Component {
     );
   }
 }
+
+const DecoratedCreatePost = ClickOutsideComponentDecorator(CreatePost);
+export default DecoratedCreatePost;
