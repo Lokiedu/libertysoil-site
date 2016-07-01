@@ -35,7 +35,6 @@ import TagIcon from './tag-icon';
 import bem from '../utils/bemClassNames';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-@ClickOutsideComponentDecorator
 class Search extends Component {
   static displayName = 'Search';
 
@@ -269,7 +268,10 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector, dispatch => ({
+const DecoratedSearch = ClickOutsideComponentDecorator(Search);
+const ConnectedSearch = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ clearSearchResults }, dispatch)
-}))(Search);
+}))(DecoratedSearch);
+
+export default ConnectedSearch;
