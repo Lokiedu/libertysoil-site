@@ -15,7 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import request from 'superagent';
+import fetch from 'isomorphic-fetch';
+import FormData from 'form-data';
+import { format as format_url, parse as parse_url } from 'url';
+import { stringify } from 'querystring';
+import { merge as mergeObj } from 'lodash';
+
 
 export default class ApiClient
 {
@@ -31,50 +36,95 @@ export default class ApiClient
     return `${this.host}${relativeUrl}`;
   }
 
+  apiUrlForFetch(relativeUrl, query = {}) {
+    const urlObj = parse_url(this.apiUrl(relativeUrl));
+    urlObj.query = mergeObj(urlObj.query, query);
+
+    return format_url(urlObj);
+  }
+
   async get(relativeUrl, query = {}) {
-    let req = request
-      .get(this.apiUrl(relativeUrl))
-      .query(query);
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl, query),
+      {
+        credentials: 'same-origin',
+        headers: defaultHeaders
+      }
+    );
 
     return Promise.resolve(req);
   }
 
   async head(relativeUrl, query = {}) {
-    let req = request
-      .head(this.apiUrl(relativeUrl))
-      .query(query);
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl, query),
+      {
+        credentials: 'same-origin',
+        method: 'HEAD',
+        headers: defaultHeaders
+      }
+    );
 
     return Promise.resolve(req);
   }
 
   async del(relativeUrl) {
-    let req = request.del(this.apiUrl(relativeUrl));
+    let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
+
+    const req = fetch(
+      this.apiUrlForFetch(relativeUrl),
+      {
+        credentials: 'same-origin',
+        method: 'DELETE',
+        headers: defaultHeaders
+      }
+    );
 
     return Promise.resolve(req);
   }
 
   async post(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie'],
+        'Content-Type': 'application/x-www-form-urlencoded'
+      };
     }
 
     if (data !== null) {
-      req = req.type('form').send(data);
+      body = stringify(data);
     }
+
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
@@ -84,314 +134,332 @@ export default class ApiClient
   */
 
   async postMultipart(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {},
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie']
+      };
     }
 
     if (data !== null) {
-      req = req.send(data);
+      body = data;
+      headers = mergeObj(headers, data.getHeaders());
     }
 
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
 
   async postJSON(relativeUrl, data = null) {
-    let req = request.post(this.apiUrl(relativeUrl));
+    let headers = {
+        'Content-Type': 'application/json'
+      },
+      body;
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
-      req = req.set('Cookie', this.serverReq.headers['cookie']);
+      headers = {
+        Cookie: this.serverReq.headers['cookie'],
+        'Content-Type': 'application/json'
+      };
     }
 
     if (data !== null) {
-      req = req.send(data);
+      body = JSON.stringify(data);
     }
+
+    const req = fetch(
+      this.apiUrl(relativeUrl),
+      {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers,
+        body
+      }
+    );
 
     return Promise.resolve(req);
   }
 
   async subscriptions(offset = 0) {
     const response = await this.get(`/api/v1/posts?offset=${offset}`);
-    return response.body;
+    return await response.json();
   }
 
   async checkUserExists(username) {
-    try {
-      await this.head(`/api/v1/user/${username}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/user/${username}`);
 
-    return true;
+    return result.ok;
   }
 
   async checkEmailTaken(email) {
-    try {
-      await this.head(`/api/v1/user/email/${email}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/user/email/${email}`);
 
-    return true;
+    return result.ok;
   }
 
   async getAvailableUsername(username) {
     const response = await this.get(`/api/v1/user/available-username/${username}`);
-    return response.body.username;
+    const json = await response.json();
+    return json.username;
   }
 
   async userInfo(username) {
     const response = await this.get(`/api/v1/user/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async checkSchoolExists(name) {
-    try {
-      await this.head(`/api/v1/school/${name}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/school/${name}`);
 
-    return true;
+    return result.ok;
   }
 
   async getSchool(school_name) {
     const response = await this.get(`/api/v1/school/${school_name}`);
-    return response.body;
+    return await response.json();
   }
 
   async schools() {
     const response = await this.get('/api/v1/schools');
-    return response.body;
+    return await response.json();
   }
 
   async userPosts(username) {
     const response = await this.get(`/api/v1/posts/user/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async relatedPosts(postId) {
     const response = await this.get(`/api/v1/post/${postId}/related-posts`);
-    return response.body;
+    return await response.json();
   }
 
   async userTags() {
     const response = await this.get(`/api/v1/user/tags`);
-    return response.body;
+    return await response.json();
   }
 
   async userLikedPosts() {
     const response = await this.get(`/api/v1/posts/liked`);
-    return response.body;
+    return await response.json();
   }
 
   async schoolPosts(schoolUrlName) {
     const response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async getLikedPosts(username) {
     const response = await this.get(`/api/v1/posts/liked/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async userFavouredPosts() {
     const response = await this.get(`/api/v1/posts/favoured`);
-    return response.body;
+    return await response.json();
   }
 
   async getFavouredPosts(username) {
     const response = await this.get(`/api/v1/posts/favoured/${username}`);
-    return response.body;
+    return await response.json();
   }
 
   async tagPosts(tag) {
     const response = await this.get(`/api/v1/posts/tag/${tag}`);
-    return response.body;
+    return await response.json();
   }
 
   async geotagPosts(geotagUrlName) {
     const response = await this.get(`/api/v1/posts/geotag/${geotagUrlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async city(city_id) {
     const response = await this.get(`/api/v1/city/${city_id}`);
-    return response.body;
+    return await response.json();
   }
 
   async countries() {
     const response = await this.get(`/api/v1/countries/`);
-    return response.body;
+    return await response.json();
   }
 
   async country(country_code) {
     const response = await this.get(`/api/v1/country/${country_code}`);
-    return response.body;
+    return await response.json();
   }
 
   async like(postId) {
     const response = await this.post(`/api/v1/post/${postId}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlike(postId) {
     const response = await this.post(`/api/v1/post/${postId}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeHashtag(name) {
     const response = await this.post(`/api/v1/tag/${name}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeHashtag(name) {
     const response = await this.post(`/api/v1/tag/${name}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeSchool(urlName) {
     const response = await this.post(`/api/v1/school/${urlName}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeSchool(urlName) {
     const response = await this.post(`/api/v1/school/${urlName}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async likeGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/like`);
-    return response.body;
+    return await response.json();
   }
 
   async unlikeGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/unlike`);
-    return response.body;
+    return await response.json();
   }
 
   async fav(postId) {
     const response = await this.post(`/api/v1/post/${postId}/fav`);
-    return response.body;
+    return await response.json();
   }
 
   async unfav(postId) {
     const response = await this.post(`/api/v1/post/${postId}/unfav`);
-    return response.body;
+    return await response.json();
   }
 
   async follow(userName) {
     const response = await this.post(`/api/v1/user/${userName}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async ignoreUser(userName) {
     const response = await this.post(`/api/v1/user/${userName}/ignore`);
-    return response.body;
+    return await response.json();
   }
 
   async updateUser(user) {
     const response = await this.postJSON(`/api/v1/user`, user);
-    return response.body;
+    return await response.json();
   }
 
   async changePassword(old_password, new_password) {
     const response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
-    return response.body;
+    return await response.json();
   }
 
   async resetPassword(email) {
     const response = await this.postJSON(`/api/v1/resetpassword`, { email });
 
-    return response.body;
+    return await response.json();
   }
 
   async newPassword(hash, password, password_repeat) {
     const response = await this.postJSON(`/api/v1/newpassword/${hash}`, { password, password_repeat });
-    return response.body;
+    return await response.json();
   }
 
   async unfollow(userName) {
     const response = await this.post(`/api/v1/user/${userName}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async registerUser(userData) {
     const response = await this.post(`/api/v1/users`, userData);
-    return response.body;
+    return await response.json();
   }
 
   async login(loginData) {
     const response = await this.post(`/api/v1/session`, loginData);
-    return response.body;
+    return await response.json();
   }
 
   async userSuggestions() {
     const response = await this.get(`/api/v1/suggestions/personalized`);
-    return response.body;
+    return await response.json();
   }
 
   async userRecentHashtags() {
     const response = await this.get('/api/v1/user/recent-hashtags');
-    return response.body;
+    return await response.json();
   }
 
   async userRecentSchools() {
     const response = await this.get('/api/v1/user/recent-schools');
-    return response.body;
+    return await response.json();
   }
 
   async userRecentGeotags() {
     const response = await this.get('/api/v1/user/recent-geotags');
-    return response.body;
+    return await response.json();
   }
 
   async initialSuggestions() {
     const response = await this.get(`/api/v1/suggestions/initial`);
-    return response.body;
+    return await response.json();
   }
 
   async postInfo(uuid) {
     const response = await this.get(`/api/v1/post/${uuid}`);
-    return response.body;
+    return await response.json();
   }
 
   async createPost(type, data) {
     data.type = type;
     const response = await this.postJSON(`/api/v1/posts`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updatePost(uuid, data) {
     const response = await this.postJSON(`/api/v1/post/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async deletePost(uuid) {
     const response = await this.del(`/api/v1/post/${uuid}`);
-    return response.body;
+    return await response.json();
   }
 
   async updateGeotag(uuid, data) {
     const response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updateHashtag(uuid, data) {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async updateSchool(uuid, data) {
     const response = await this.postJSON(`/api/v1/school/${uuid}`, data);
-    return response.body;
+    return await response.json();
   }
 
   async pickpoint(options) {
     const response = await this.get('/api/v1/pickpoint', options);
-    return response.body;
+    return await response.json();
   }
 
   async search(query) {
@@ -401,27 +469,27 @@ export default class ApiClient
 
   async tagCloud() {
     const response = await this.get('/api/v1/tag-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async searchHashtags(query) {
     const response = await this.get(`/api/v1/tags/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async followTag(name) {
     const response = await this.post(`/api/v1/tag/${name}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowTag(name) {
     const response = await this.post(`/api/v1/tag/${name}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async schoolCloud() {
     const response = await this.get('/api/v1/school-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async searchSchools(query) {
@@ -431,57 +499,53 @@ export default class ApiClient
 
   async followSchool(name) {
     const response = await this.post(`/api/v1/school/${name}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowSchool(name) {
     const response = await this.post(`/api/v1/school/${name}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async geotagCloud() {
     const response = await this.get('/api/v1/geotag-cloud');
-    return response.body;
+    return await response.json();
   }
 
   async followGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/follow`);
-    return response.body;
+    return await response.json();
   }
 
   async unfollowGeotag(urlName) {
     const response = await this.post(`/api/v1/geotag/${urlName}/unfollow`);
-    return response.body;
+    return await response.json();
   }
 
   async checkGeotagExists(name) {
-    try {
-      await this.head(`/api/v1/geotag/${name}`);
-    } catch (e) {
-      return false;
-    }
+    const result = await this.head(`/api/v1/geotag/${name}`);
 
-    return true;
+    return result.ok;
   }
 
   async getGeotag(urlName) {
     const response = await this.get(`/api/v1/geotag/${urlName}`);
-    return response.body;
+    return await response.json();
   }
 
   async getHashtag(name) {
     const response = await this.get(`/api/v1/tag/${name}`);
-    return response.body;
+    return await response.json();
   }
 
   async searchGeotags(query) {
     const response = await this.get(`/api/v1/geotags/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async getQuotes() {
     const response = await this.get('/api/v1/quotes');
-    return response.body;
+    return await response.json();
   }
 
   async uploadImage(images) {
@@ -490,7 +554,8 @@ export default class ApiClient
       data.append("files", image);
     });
     const response = await this.postMultipart('/api/v1/upload', data);
-    return response.body;
+
+    return await response.json();
   }
 
   async processImage(id, transforms, derived_id = null) {
@@ -499,27 +564,19 @@ export default class ApiClient
       transforms: JSON.stringify(transforms),
       derived_id
     });
-    return response.body;
+    return await response.json();
   }
 
   async createComment(postId, text) {
-    try {
-      const response = await this.post(`/api/v1/post/${postId}/comments`, {
-        text
-      });
-      return response.body;
-    } catch (err) {
-      return err.response.body;
-    }
+    const response = await this.post(`/api/v1/post/${postId}/comments`, {
+      text
+    });
+    return await response.json();
   }
 
   async deleteComment(postId, commentId) {
-    try {
-      const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
-      return response.body;
-    } catch (err) {
-      return err.response.body;
-    }
+    const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
+    return await response.json();
   }
 
   async saveComment(postId, commentId, text) {
