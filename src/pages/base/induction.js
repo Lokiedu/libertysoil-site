@@ -17,6 +17,8 @@
 */
 import React from 'react';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+
 import {
   Page,
   PageMain,
@@ -66,5 +68,9 @@ const BaseInductionPage = (props) => {
 };
 
 BaseInductionPage.displayName = 'BaseInductionPage';
+
+BaseInductionPage.propTypes = {
+  messages: ArrayOfMessagesPropType
+};
 
 export default BaseInductionPage;

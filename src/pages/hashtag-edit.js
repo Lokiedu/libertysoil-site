@@ -22,6 +22,8 @@ import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import { defaultSelector } from '../selectors';
 
 import { API_HOST } from '../config';
@@ -36,6 +38,10 @@ import { TAG_HASHTAG } from '../consts/tags';
 
 class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType
+  };
 
   static async fetchData(params, store, client) {
     const hashtag = client.getHashtag(params.tag);

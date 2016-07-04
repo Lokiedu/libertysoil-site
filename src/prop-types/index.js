@@ -15,33 +15,4 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
-
-import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
-
-import Message from './message';
-
-const Messages = ({ messages, removeMessage }) => {
-  if (messages.length === 0) {
-    return null;
-  }
-
-  const messagesToRender = messages.map((msg, i) => {
-    return <Message i={i} key={i} message={msg.message} removeMessage={removeMessage} type={msg.type} />;
-  });
-
-  return (
-    <div className="message__group">
-      {messagesToRender}
-    </div>
-  );
-};
-
-Messages.displayName = 'Messages';
-
-Messages.propTypes = {
-  messages: ArrayOfMessagesPropType.isRequired,
-  removeMessage: PropTypes.func
-};
-
-export default Messages;
+export const messages = require('./messages');

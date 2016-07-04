@@ -22,6 +22,8 @@ import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import { defaultSelector } from '../selectors';
 
 import { API_HOST } from '../config';
@@ -37,6 +39,10 @@ import { TAG_LOCATION } from '../consts/tags';
 
 class GeotagEditPage extends React.Component {
   static displayName = 'GeotagEditPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType
+  };
 
   static async fetchData(params, store, client) {
     const geotag = client.getGeotag(params.url_name);

@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 import { each, pick, sortBy } from 'lodash';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+
 import Button from '../button';
 import GeoInput from '../geo-input';
 import Messages from '../messages';
@@ -64,6 +66,7 @@ class SchoolEditForm extends React.Component {
       isValid: PropTypes.func,
       onValues: PropTypes.func
     }).isRequired,
+    messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired,
     school: PropTypes.shape({
