@@ -2,6 +2,7 @@
   "extends": "eslint:recommended",
   "parser": "babel-eslint",
   "plugins": [
+    "babel",
     "react"
   ],
   "parserOptions": {
@@ -23,7 +24,7 @@
     "node": true
   },
   "rules": {
-    "array-bracket-spacing": [2, "never"],
+    "babel/array-bracket-spacing": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-return": 2,
     "eol-last": 2,
@@ -38,11 +39,12 @@
     "no-unneeded-ternary": 2,
     "no-var": 2,
     "no-warning-comments": 1,
-    "object-curly-spacing": [2, "always"],
-    "object-shorthand": 2,
+    "babel/object-curly-spacing": [2, "always"],
+    "babel/object-shorthand": 2,
     "padded-blocks": [2, "never"],
     "prefer-const": 2,
     "prefer-template": 2,
+    "require-yield": 0,
     "semi": 2,
     "strict": [2, "never"],
     "space-before-blocks": 2,
