@@ -85,13 +85,18 @@ export default class Breadcrumbs extends Component {
 
     isCollapsed = crumbs.map(() => ((visibleCrumbs-- <= 0))).reverse();
 
-    return compact(crumbs).map((crumb, i) => (
-      <div className="breadcrumbs__item" key={i}>
-        {cloneElement(crumb, {
-          collapsed: isCollapsed[i]
-        })}
-      </div>
-    ));
+    return compact(crumbs).map((crumb, i) => {
+      const props = {};
+      if (crumb.type instanceof Function) {
+        props.collapsed = isCollapsed[i];
+      }
+
+      return (
+        <div className="breadcrumbs__item" key={i}>
+          {cloneElement(crumb, props)}
+        </div>
+      );
+    });
   }
 
   renderTitle(title) {

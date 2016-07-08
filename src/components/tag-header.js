@@ -165,7 +165,6 @@ const TagHeader = (props) => {
         className="tabs__title tabs__title-gray button button-midi"
         key="toEdit"
         to={`/${prefix}/${url_name}/edit`}
-        visible
       >
         Edit
       </Link>
