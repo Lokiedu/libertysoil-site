@@ -15,11 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { sortBy } from 'lodash';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
 
 import SidebarFollowedTag from './sidebar-followed-tag';
 import { convertModelsToTags } from '../utils/tags';
@@ -30,10 +31,7 @@ export default class SidebarFollowedTags extends React.Component {
   static propTypes = {
     geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    }))
+    schools: ArrayOfSchoolsPropType
   };
 
   _collectTags() {

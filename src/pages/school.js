@@ -14,12 +14,14 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
+
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
@@ -34,13 +36,13 @@ import { TAG_SCHOOL } from '../consts/tags';
 
 
 export class SchoolPage extends React.Component {
-
   static propTypes = {
     params: PropTypes.shape({
       school_name: PropTypes.string.isRequired
     }),
     school_posts: PropTypes.shape(
-    ).isRequired
+    ).isRequired,
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

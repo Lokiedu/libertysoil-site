@@ -22,6 +22,8 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+
 import {
   Page,
   PageMain,
@@ -52,6 +54,10 @@ import {
 
 class PostEditPage extends React.Component {
   static displayName = 'PostEditPage';
+
+  static propTypes = {
+    schools: MapOfSchoolsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();

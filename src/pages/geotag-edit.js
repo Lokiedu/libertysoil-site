@@ -22,8 +22,9 @@ import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
-import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import { defaultSelector } from '../selectors';
 
@@ -43,7 +44,8 @@ class GeotagEditPage extends React.Component {
 
   static propTypes = {
     geotags: MapOfGeotagsPropType.isRequired,
-    messages: ArrayOfMessagesPropType
+    messages: ArrayOfMessagesPropType,
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

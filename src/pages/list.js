@@ -21,6 +21,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+
 import VisibilitySensor from '../components/visibility-sensor';
 
 import { API_HOST } from '../config';
@@ -62,6 +64,7 @@ export class List extends React.Component {
     }),
     current_user: PropTypes.shape({}).isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
+    schools: MapOfSchoolsPropType.isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean

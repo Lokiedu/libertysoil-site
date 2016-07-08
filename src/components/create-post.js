@@ -20,6 +20,7 @@ import ga from 'react-google-analytics';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
 
 import Button from './button';
 import TagIcon from './tag-icon';
@@ -28,7 +29,6 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddTagModal from './add-tag-modal';
 
-
 class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
@@ -36,15 +36,11 @@ class CreatePost extends React.Component {
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
     }),
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType,
     defaultText: PropTypes.string,
     geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    schools: ArrayOfSchoolsPropType,
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
       loadUserRecentTags: PropTypes.func.isRequired,
@@ -53,7 +49,7 @@ class CreatePost extends React.Component {
     }),
     userRecentTags: PropTypes.shape({
       geotags: ArrayOfGeotagsPropType.isRequired,
-      schools: PropTypes.array.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired,
       hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired
   };

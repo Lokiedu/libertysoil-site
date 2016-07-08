@@ -20,6 +20,7 @@ import { form as inform } from 'react-inform';
 import { each, pick, sortBy } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { School as SchoolPropType } from '../../prop-types/schools';
 
 import Button from '../button';
 import GeoInput from '../geo-input';
@@ -69,13 +70,7 @@ class SchoolEditForm extends React.Component {
     messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired,
-    school: PropTypes.shape({
-      description: PropTypes.string,
-      id: PropTypes.string,
-      lat: PropTypes.number,
-      lon: PropTypes.number,
-      name: PropTypes.string
-    }).isRequired
+    school: SchoolPropType.isRequired
   };
 
   componentDidMount() {

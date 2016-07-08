@@ -23,3 +23,4 @@ export const messages = require('./messages');
 export const tags = require('./tags');
 export const geotags = require('./geotags');
 export const hashtags = require('./hashtags');
+export const schools = require('./schools');

@@ -22,6 +22,7 @@ import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
 import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -44,7 +45,8 @@ export class GeotagPage extends Component {
     geotags: MapOfGeotagsPropType.isRequired,
     params: PropTypes.shape({
       url_name: PropTypes.string.isRequired
-    })
+    }),
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

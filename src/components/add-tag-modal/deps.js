@@ -21,6 +21,10 @@ export { API_HOST } from '../../config';
 
 export { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../../prop-types/geotags';
 export { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
+export {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../../prop-types/schools';
 
 export { Tab, Tabs } from '../tabs';
 export { default as TagIcon } from '../tag-icon';

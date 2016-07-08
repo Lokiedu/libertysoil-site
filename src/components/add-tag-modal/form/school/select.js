@@ -18,6 +18,8 @@
 import React, { Component, PropTypes } from 'react';
 import { find } from 'lodash';
 
+import { ArrayOfSchoolsPropType } from '../../deps';
+
 import { Autosuggest } from '../../deps';
 
 export default class SchoolSelect extends Component {
@@ -25,9 +27,7 @@ export default class SchoolSelect extends Component {
 
   static propTypes = {
     onSelect: PropTypes.func,
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    }))
+    schools: ArrayOfSchoolsPropType
   };
 
   static defaultProps = {

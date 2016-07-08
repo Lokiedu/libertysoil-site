@@ -19,6 +19,10 @@ import React, { PropTypes } from 'react';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
+import {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../../prop-types/schools';
 
 import TagCloud from '../tag-cloud';
 
@@ -42,10 +46,10 @@ AddedTags.displayName = 'AddedTags';
 AddedTags.propTypes = {
   geotags: ArrayOfGeotagsPropType,
   hashtags: ArrayOfHashtagsPropType,
-  schools: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    url_name: PropTypes.string.isRequired
-  }))
+  schools: PropTypes.oneOfType([
+    ArrayOfLightSchoolsPropType,
+    ArrayOfSchoolsPropType
+  ])
 };
 
 export default AddedTags;

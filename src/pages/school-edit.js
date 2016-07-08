@@ -23,6 +23,7 @@ import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -41,7 +42,8 @@ class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
 
   static propTypes = {
-    messages: ArrayOfMessagesPropType
+    messages: ArrayOfMessagesPropType,
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

@@ -20,6 +20,10 @@ import { pick } from 'lodash';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../prop-types/schools';
 
 import Button from './button';
 import TagIcon from './tag-icon';
@@ -34,9 +38,7 @@ export default class EditPost extends React.Component {
       resetEditPostForm: PropTypes.func,
       updateEditPostForm: PropTypes.func
     }),
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType,
     geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     id: PropTypes.string,
@@ -46,14 +48,10 @@ export default class EditPost extends React.Component {
       geotags: ArrayOfGeotagsPropType,
       hashtags: ArrayOfHashtagsPropType,
       id: PropTypes.string.isRequired,
-      schools: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string
-      })),
+      schools: ArrayOfLightSchoolsPropType,
       text: PropTypes.string
     }),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    schools: ArrayOfLightSchoolsPropType,
     triggers: PropTypes.shape({
       updatePost: PropTypes.func.isRequired,
       deletePost: PropTypes.func.isRequired,
@@ -63,8 +61,8 @@ export default class EditPost extends React.Component {
     }),
     userRecentTags: PropTypes.shape({
       geotags: ArrayOfGeotagsPropType.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: ArrayOfHashtagsPropType.isRequired
+      hashtags: ArrayOfHashtagsPropType.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired
     }).isRequired
   };
 

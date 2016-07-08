@@ -22,6 +22,7 @@ import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
 import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -43,6 +44,7 @@ export class TagPage extends Component {
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
     }),
+    schools: MapOfSchoolsPropType.isRequired,
     tag_posts: PropTypes.shape().isRequired
   };
 

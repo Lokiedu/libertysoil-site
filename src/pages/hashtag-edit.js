@@ -24,6 +24,7 @@ import { values } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 
 import { defaultSelector } from '../selectors';
 
@@ -42,7 +43,8 @@ class HashtagEditPage extends React.Component {
 
   static propTypes = {
     hashtags: MapOfHashtagsPropType.isRequired,
-    messages: ArrayOfMessagesPropType
+    messages: ArrayOfMessagesPropType,
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

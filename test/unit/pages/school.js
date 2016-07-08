@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 /*eslint-env node, mocha */
 import { mount, shallow } from 'enzyme';
 
@@ -24,28 +24,78 @@ import { TAG_SCHOOL } from '../../../src/consts/tags';
 import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
-
 describe('School page', () => {
   it('renders nothing if school not yet loaded', () => {
-    const wrapper = shallow(<SchoolPage params={{ school_name: 'test' }} school_posts={{}} />);
+    const wrapper = shallow(
+      <SchoolPage
+        params={{ school_name: 'test' }}
+        school_posts={{}}
+        schools={{}}
+      />
+    );
 
     return expect(wrapper.equals(null), 'to be true');
   });
 
-  it('renders <NotFound /> if no school found', () => {
-    const wrapper = shallow(<SchoolPage params={{ school_name: 'test' }} school_posts={{}} schools={[{ url_name: 'test' }]} />);
+  it('MUST report an error for invalid school object', () => {
+    let errorCalls = 0;
 
+    try {
+      shallow(
+        <SchoolPage
+          params={{ school_name: 'test' }}
+          school_posts={{}}
+          schools={[{ url_name: 'test' }]}
+        />
+      );
+    } catch (e) {
+      ++errorCalls;
+    }
+
+    expect(errorCalls, 'to be', 1);
+  });
+
+  it('renders <NotFound /> if no school found', () => {
+    let errorCalls = 0;
+
+    const error = console.error;
+    // consider using Sinon (spy) or Jasmine (spyOn) instead
+    console.error = () => { ++errorCalls; };
+
+    // schools[0] doesn't satisfy SchoolPage.propTypes
+    // shallow() throws an exception after normal console.error
+    const wrapper = shallow(
+      <SchoolPage
+        params={{ school_name: 'test' }}
+        school_posts={{}}
+        schools={[{ url_name: 'test', name: 'test' }]}
+      />
+    );
+
+    console.error = error;
     expect(wrapper.contains(<NotFound />), 'to be true');
   });
 
   it('renders default school description if no description provided', () => {
-    const wrapper = mount(<TagHeader is_logged_in={false} tag={{ url_name: 'test', id: '1', name: "test" }} type={TAG_SCHOOL} />);
+    const wrapper = mount(
+      <TagHeader
+        is_logged_in={false}
+        tag={{ url_name: 'test', id: '1', name: "test" }}
+        type={TAG_SCHOOL}
+      />
+    );
 
     expect(wrapper.text(), 'to contain', 'No information provided...');
   });
 
   it('renders school description', () => {
-    const wrapper = mount(<TagHeader is_logged_in={false} tag={{ url_name: 'test', id: '1', description: 'test description' }} type={TAG_SCHOOL} />);
+    const wrapper = mount(
+      <TagHeader
+        is_logged_in={false}
+        tag={{ url_name: 'test', id: '1', description: 'test description' }}
+        type={TAG_SCHOOL}
+      />
+    );
 
     expect(wrapper.text(), 'to contain', 'test description');
   });

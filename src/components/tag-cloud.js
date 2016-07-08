@@ -19,6 +19,10 @@ import React, { PropTypes } from 'react';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../prop-types/schools';
 
 import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
@@ -52,10 +56,10 @@ TagCloud.propTypes = {
   hashtags: ArrayOfHashtagsPropType,
   onClick: PropTypes.func,
   onDelete: PropTypes.func,
-  schools: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    url_name: PropTypes.string
-  })),
+  schools: PropTypes.oneOfType([
+    ArrayOfLightSchoolsPropType,
+    ArrayOfSchoolsPropType
+  ]),
   showPostCount: PropTypes.bool,
   truncated: PropTypes.bool
 };
