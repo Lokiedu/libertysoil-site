@@ -236,14 +236,14 @@
       "resolved": "https://registry.npmjs.org/async-each/-/async-each-1.0.0.tgz"
     },
     "autoprefixer": {
-      "version": "6.3.6",
-      "from": "autoprefixer@>=6.3.1 <7.0.0",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-6.3.6.tgz"
+      "version": "6.3.7",
+      "from": "autoprefixer@6.3.7",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-6.3.7.tgz"
     },
     "aws-sdk": {
-      "version": "2.4.4",
-      "from": "aws-sdk@>=2.2.20 <3.0.0",
-      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.4.4.tgz"
+      "version": "2.4.6",
+      "from": "aws-sdk@2.4.6",
+      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.4.6.tgz"
     },
     "aws-sign2": {
       "version": "0.6.0",
@@ -894,9 +894,9 @@
       "resolved": "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz"
     },
     "caniuse-db": {
-      "version": "1.0.30000488",
-      "from": "caniuse-db@>=1.0.30000444 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000488.tgz"
+      "version": "1.0.30000505",
+      "from": "caniuse-db@>=1.0.30000488 <2.0.0",
+      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000505.tgz"
     },
     "cardinal": {
       "version": "0.7.0",
@@ -3971,9 +3971,9 @@
       }
     },
     "moment": {
-      "version": "2.13.0",
-      "from": "moment@>=2.10.6 <3.0.0",
-      "resolved": "https://registry.npmjs.org/moment/-/moment-2.13.0.tgz"
+      "version": "2.14.1",
+      "from": "moment@2.14.1",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.14.1.tgz"
     },
     "ms": {
       "version": "0.7.1",
@@ -4013,9 +4013,9 @@
       "resolved": "https://registry.npmjs.org/mv/-/mv-2.1.1.tgz"
     },
     "mysql2": {
-      "version": "1.0.0-rc.6",
-      "from": "mysql2@>=1.0.0-rc.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/mysql2/-/mysql2-1.0.0-rc.6.tgz"
+      "version": "1.0.0-rc.7",
+      "from": "mysql2@1.0.0-rc.7",
+      "resolved": "https://registry.npmjs.org/mysql2/-/mysql2-1.0.0-rc.7.tgz"
     },
     "mz": {
       "version": "2.4.0",
@@ -4213,9 +4213,16 @@
       "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-1.0.9.tgz"
     },
     "object.assign": {
-      "version": "4.0.3",
+      "version": "4.0.4",
       "from": "object.assign@>=4.0.3 <5.0.0",
-      "resolved": "https://registry.npmjs.org/object.assign/-/object.assign-4.0.3.tgz"
+      "resolved": "https://registry.npmjs.org/object.assign/-/object.assign-4.0.4.tgz",
+      "dependencies": {
+        "object-keys": {
+          "version": "1.0.11",
+          "from": "object-keys@>=1.0.10 <2.0.0",
+          "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-1.0.11.tgz"
+        }
+      }
     },
     "object.omit": {
       "version": "2.0.0",
@@ -4766,9 +4773,9 @@
       "resolved": "https://registry.npmjs.org/raw-body/-/raw-body-2.1.7.tgz"
     },
     "react": {
-      "version": "15.1.0",
-      "from": "react@>=15.1.0 <16.0.0",
-      "resolved": "https://registry.npmjs.org/react/-/react-15.1.0.tgz"
+      "version": "15.2.0",
+      "from": "react@15.2.0",
+      "resolved": "https://registry.npmjs.org/react/-/react-15.2.0.tgz"
     },
     "react-autosuggest": {
       "version": "3.7.4",
@@ -4786,9 +4793,9 @@
       "resolved": "https://registry.npmjs.org/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz"
     },
     "react-dom": {
-      "version": "15.1.0",
-      "from": "react-dom@>=15.1.0 <16.0.0",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.1.0.tgz"
+      "version": "15.2.0",
+      "from": "react-dom@15.2.0",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.2.0.tgz"
     },
     "react-google-analytics": {
       "version": "0.2.0",
@@ -4796,9 +4803,16 @@
       "resolved": "https://registry.npmjs.org/react-google-analytics/-/react-google-analytics-0.2.0.tgz"
     },
     "react-gravatar": {
-      "version": "2.4.3",
-      "from": "react-gravatar@>=2.2.2 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-gravatar/-/react-gravatar-2.4.3.tgz"
+      "version": "2.4.4",
+      "from": "react-gravatar@2.4.4",
+      "resolved": "https://registry.npmjs.org/react-gravatar/-/react-gravatar-2.4.4.tgz",
+      "dependencies": {
+        "query-string": {
+          "version": "4.2.2",
+          "from": "query-string@>=4.2.2 <5.0.0",
+          "resolved": "https://registry.npmjs.org/query-string/-/query-string-4.2.2.tgz"
+        }
+      }
     },
     "react-helmet": {
       "version": "3.1.0",
@@ -4806,14 +4820,14 @@
       "resolved": "https://registry.npmjs.org/react-helmet/-/react-helmet-3.1.0.tgz"
     },
     "react-icon-base": {
-      "version": "2.0.0",
-      "from": "react-icon-base@2.0.0",
-      "resolved": "https://registry.npmjs.org/react-icon-base/-/react-icon-base-2.0.0.tgz"
+      "version": "2.0.2",
+      "from": "react-icon-base@2.0.2",
+      "resolved": "https://registry.npmjs.org/react-icon-base/-/react-icon-base-2.0.2.tgz"
     },
     "react-icons": {
-      "version": "2.1.0",
-      "from": "react-icons@>=2.1.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-icons/-/react-icons-2.1.0.tgz"
+      "version": "2.2.0",
+      "from": "react-icons@2.2.0",
+      "resolved": "https://registry.npmjs.org/react-icons/-/react-icons-2.2.0.tgz"
     },
     "react-inform": {
       "version": "0.1.1",
@@ -4858,9 +4872,9 @@
       "resolved": "https://registry.npmjs.org/react-render-hook/-/react-render-hook-0.1.4.tgz"
     },
     "react-router": {
-      "version": "2.5.1",
-      "from": "react-router@>=2.4.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-router/-/react-router-2.5.1.tgz"
+      "version": "2.5.2",
+      "from": "react-router@2.5.2",
+      "resolved": "https://registry.npmjs.org/react-router/-/react-router-2.5.2.tgz"
     },
     "react-router-redux": {
       "version": "4.0.5",
@@ -5095,9 +5109,9 @@
       "resolved": "https://registry.npmjs.org/require-uncached/-/require-uncached-1.0.2.tgz"
     },
     "reselect": {
-      "version": "2.5.1",
-      "from": "reselect@>=2.0.3 <3.0.0",
-      "resolved": "https://registry.npmjs.org/reselect/-/reselect-2.5.1.tgz"
+      "version": "2.5.3",
+      "from": "reselect@2.5.3",
+      "resolved": "https://registry.npmjs.org/reselect/-/reselect-2.5.3.tgz"
     },
     "resolve": {
       "version": "1.1.7",
