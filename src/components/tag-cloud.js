@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 
 import { convertModelsToTags } from '../utils/tags';
@@ -47,10 +48,7 @@ TagCloud.displayName = 'TagCloud';
 
 TagCloud.propTypes = {
   deletable: PropTypes.bool,
-  geotags: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.string
-  })),
+  geotags: ArrayOfGeotagsPropType,
   hashtags: ArrayOfHashtagsPropType,
   onClick: PropTypes.func,
   onDelete: PropTypes.func,

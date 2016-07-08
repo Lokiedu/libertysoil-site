@@ -21,6 +21,8 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
+import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
@@ -39,7 +41,7 @@ export class GeotagPage extends Component {
 
   static propTypes = {
     geotag_posts: PropTypes.shape().isRequired,
-    geotags: PropTypes.shape().isRequired,
+    geotags: MapOfGeotagsPropType.isRequired,
     params: PropTypes.shape({
       url_name: PropTypes.string.isRequired
     })

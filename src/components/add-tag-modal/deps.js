@@ -19,6 +19,7 @@ export { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../../c
 export { default as ApiClient } from '../../api/client';
 export { API_HOST } from '../../config';
 
+export { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../../prop-types/geotags';
 export { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
 
 export { Tab, Tabs } from '../tabs';

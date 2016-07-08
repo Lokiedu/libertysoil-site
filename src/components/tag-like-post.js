@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 
+import { Geotag as GeotagPropType } from '../prop-types/geotags';
 import { Hashtag as HashtagPropType } from '../prop-types/hashtags';
 
 import * as PostTypes  from '../consts/postTypeConstants';
@@ -84,12 +85,9 @@ TagLikePost.displayName = 'TagLikePost';
 TagLikePost.propTypes = {
   author: PropTypes.shape(),
   post: PropTypes.shape({
+    liked_geotag: GeotagPropType,
     liked_hashtag: HashtagPropType,
     liked_school: PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    }),
-    liked_geotag: PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string
     })

@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { sortBy } from 'lodash';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 
 import SidebarFollowedTag from './sidebar-followed-tag';
@@ -27,10 +28,7 @@ export default class SidebarFollowedTags extends React.Component {
   static displayName = 'SidebarFollowedTags';
 
   static propTypes = {
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      url_name: PropTypes.string
-    })),
+    geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,

@@ -22,6 +22,7 @@ import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
+import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
 import { defaultSelector } from '../selectors';
@@ -41,6 +42,7 @@ class GeotagEditPage extends React.Component {
   static displayName = 'GeotagEditPage';
 
   static propTypes = {
+    geotags: MapOfGeotagsPropType.isRequired,
     messages: ArrayOfMessagesPropType
   };
 

@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 
 import Button from './button';
@@ -39,10 +40,7 @@ class CreatePost extends React.Component {
       name: PropTypes.string
     })),
     defaultText: PropTypes.string,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
+    geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
@@ -54,7 +52,7 @@ class CreatePost extends React.Component {
       checkGeotagExists: PropTypes.func.isRequired
     }),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
+      geotags: ArrayOfGeotagsPropType.isRequired,
       schools: PropTypes.array.isRequired,
       hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired

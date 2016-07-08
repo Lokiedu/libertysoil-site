@@ -18,6 +18,7 @@
 import React, { PropTypes, Component } from 'react';
 import { clone, differenceWith, pick, remove } from 'lodash';
 
+import { ArrayOfGeotagsPropType } from './deps';
 import { ArrayOfHashtagsPropType } from './deps';
 
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from './deps';
@@ -72,10 +73,7 @@ export default class AddTagModal extends Component {
     allSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })).isRequired,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
+    geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
@@ -89,7 +87,7 @@ export default class AddTagModal extends Component {
     }),
     type: PropTypes.oneOf(IMPLEMENTED_TAGS),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
+      geotags: ArrayOfGeotagsPropType.isRequired,
       schools: PropTypes.array.isRequired,
       hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired

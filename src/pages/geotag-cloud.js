@@ -19,6 +19,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
+
 import {
   Page,
   PageMain,
@@ -37,9 +39,12 @@ import { defaultSelector } from '../selectors';
 import { TAG_PLANET } from '../consts/tags';
 import Continent from '../components/continent';
 
-
 class GeotagCloudPage extends Component {
   static displayName = 'GeotagCloudPage';
+
+  static propTypes = {
+    geotags: MapOfGeotagsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
