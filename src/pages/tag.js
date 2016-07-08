@@ -21,6 +21,8 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
+import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
@@ -37,7 +39,7 @@ export class TagPage extends Component {
   static displayName = 'TagPage';
 
   static propTypes = {
-    hashtags: PropTypes.shape().isRequired,
+    hashtags: MapOfHashtagsPropType.isRequired,
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
     }),

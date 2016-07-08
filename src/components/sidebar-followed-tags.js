@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { sortBy } from 'lodash';
 
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+
 import SidebarFollowedTag from './sidebar-followed-tag';
 import { convertModelsToTags } from '../utils/tags';
 
@@ -29,9 +31,7 @@ export default class SidebarFollowedTags extends React.Component {
       name: PropTypes.string,
       url_name: PropTypes.string
     })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    hashtags: ArrayOfHashtagsPropType,
     schools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string

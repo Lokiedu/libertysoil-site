@@ -14,12 +14,13 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
+
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 
 import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
-
 
 const TagCloud = (props) => {
   const tags = convertModelsToTags(props)
@@ -50,9 +51,7 @@ TagCloud.propTypes = {
     name: PropTypes.string,
     id: PropTypes.string
   })),
-  hashtags: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string
-  })),
+  hashtags: ArrayOfHashtagsPropType,
   onClick: PropTypes.func,
   onDelete: PropTypes.func,
   schools: PropTypes.arrayOf(PropTypes.shape({

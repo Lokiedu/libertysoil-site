@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
+import { Hashtag as HashtagPropType } from '../prop-types/hashtags';
+
 import * as PostTypes  from '../consts/postTypeConstants';
 import * as TagTypes from '../consts/tags';
 import User from './user';
@@ -82,9 +84,7 @@ TagLikePost.displayName = 'TagLikePost';
 TagLikePost.propTypes = {
   author: PropTypes.shape(),
   post: PropTypes.shape({
-    liked_hashtag: PropTypes.shape({
-      name: PropTypes.string
-    }),
+    liked_hashtag: HashtagPropType,
     liked_school: PropTypes.shape({
       name: PropTypes.string,
       url_name: PropTypes.string

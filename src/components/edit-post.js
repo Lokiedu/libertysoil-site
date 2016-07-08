@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+
 import Button from './button';
 import TagIcon from './tag-icon';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
@@ -38,9 +40,7 @@ export default class EditPost extends React.Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    hashtags: ArrayOfHashtagsPropType,
     id: PropTypes.string,
     onDelete: PropTypes.func,
     onSubmit: PropTypes.func,
@@ -49,9 +49,7 @@ export default class EditPost extends React.Component {
         id: PropTypes.string,
         name: PropTypes.string
       })),
-      hashtags: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string
-      })),
+      hashtags: ArrayOfHashtagsPropType,
       id: PropTypes.string.isRequired,
       schools: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string
@@ -71,7 +69,7 @@ export default class EditPost extends React.Component {
     userRecentTags: PropTypes.shape({
       geotags: PropTypes.array.isRequired,
       schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired
   };
 

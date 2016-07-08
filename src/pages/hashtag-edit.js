@@ -23,6 +23,7 @@ import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
 
 import { defaultSelector } from '../selectors';
 
@@ -40,6 +41,7 @@ class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
 
   static propTypes = {
+    hashtags: MapOfHashtagsPropType.isRequired,
     messages: ArrayOfMessagesPropType
   };
 

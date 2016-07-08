@@ -16,4 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const common = require('./common');
+
+export const attachments = require('./attachments');
 export const messages = require('./messages');
+
+export const tags = require('./tags');
+export const hashtags = require('./hashtags');

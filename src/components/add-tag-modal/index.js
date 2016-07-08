@@ -18,6 +18,8 @@
 import React, { PropTypes, Component } from 'react';
 import { clone, differenceWith, pick, remove } from 'lodash';
 
+import { ArrayOfHashtagsPropType } from './deps';
+
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from './deps';
 import { ModalComponent } from './deps';
 import { TagCloud } from './deps';
@@ -74,9 +76,7 @@ export default class AddTagModal extends Component {
       id: PropTypes.string,
       name: PropTypes.string
     })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    hashtags: ArrayOfHashtagsPropType,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
@@ -91,7 +91,7 @@ export default class AddTagModal extends Component {
     userRecentTags: PropTypes.shape({
       geotags: PropTypes.array.isRequired,
       schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired
   };
 

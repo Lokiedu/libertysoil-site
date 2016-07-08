@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
+
 import TagCloud from '../tag-cloud';
 
 const AddedTags = (props) => {
@@ -40,9 +43,7 @@ AddedTags.propTypes = {
     name: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired
   })),
-  hashtags: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired
-  })),
+  hashtags: ArrayOfHashtagsPropType,
   schools: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url_name: PropTypes.string.isRequired
