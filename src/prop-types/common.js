@@ -148,14 +148,14 @@ export const mapOf = (keyCheckType, valueCheckType) => (
   )
 );
 
-export const uuid = createSimplifiedRequirableTypeChecker(
+export const uuid4 = createSimplifiedRequirableTypeChecker(
   (propValue, propFullName, componentName, location) => {
     const expectedType = 'string';
     if (typeof propValue !== expectedType) {
       return getTypeError(propValue, expectedType, propFullName, componentName, location);
     }
 
-    const test = RegExp(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    const test = RegExp(/^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$/i);
     if (!propValue.match(test)) {
       return new Error(
         `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +

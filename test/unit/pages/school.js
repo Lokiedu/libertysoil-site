@@ -25,10 +25,11 @@ import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
 describe('School page', () => {
-  it('renders nothing if school not yet loaded', () => {
+  it('renders nothing if school hasn\'t been loaded yet', () => {
     const wrapper = shallow(
       <SchoolPage
         params={{ school_name: 'test' }}
+        posts={{}}
         school_posts={{}}
         schools={{}}
       />

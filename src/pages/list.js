@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 
 import VisibilitySensor from '../components/visibility-sensor';
 
@@ -63,6 +64,7 @@ export class List extends React.Component {
       text: PropTypes.string.isRequired
     }),
     current_user: PropTypes.shape({}).isRequired,
+    posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
     schools: MapOfSchoolsPropType.isRequired,
     ui: PropTypes.shape({

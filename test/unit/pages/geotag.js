@@ -29,6 +29,7 @@ describe('GeotagPage', () => {
         geotag_posts={{}}
         geotags={{}}
         params={{ url_name: 'test' }}
+        posts={{}}
         schools={{}}
       />
     );
@@ -44,6 +45,7 @@ describe('GeotagPage', () => {
         geotag_posts={{}}
         geotags={{ test: {} }}
         params={{ url_name: 'test' }}
+        posts={{}}
         schools={{}}
       />
     );

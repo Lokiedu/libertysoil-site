@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 /*eslint-env node, mocha */
 import { shallow } from 'enzyme';
 
@@ -22,20 +22,34 @@ import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import { PostPage } from '../../../src/pages/post';
 import NotFound from '../../../src/pages/not-found';
 
+describe('Post page', () => {
+  const uuid4Example = '550e8400-e29b-41d4-a716-446655440000';
 
-describe('Post page', function() {
-
-  it('MUST renders nothing when post is not yet fetched', function() {
-    const wrapper = shallow(<PostPage params={{ uuid: 'xxx' }} posts={{}} />);
+  it('MUST render nothing when post hasn\'t been fetched yet', () => {
+    const wrapper = shallow(
+      <PostPage
+        params={{ uuid: uuid4Example }}
+        posts={{}}
+      />
+    );
 
     return expect(wrapper.equals(null), 'to be true');
   });
 
-  it('MUST renders as <NotFound /> page when post is not exist', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<PostPage params={{uuid: 'xxx'}} posts={{'xxx': false}} />);
+  it('MUST render as <NotFound /> page when post doesn\'t exist', () => {
+    let errorCalls = 0;
+    const error = console.error;
+    console.error = () => { ++errorCalls; };
 
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <PostPage
+        params={{ uuid: uuid4Example }}
+        posts={{ [uuid4Example]: false }}
+      />
+    );
+
+    console.error = error;
     return expect(renderer, 'to have rendered', <NotFound />);
   });
-
 });

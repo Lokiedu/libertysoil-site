@@ -16,12 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-
 import { truncate } from 'grapheme-utils';
+
+import { ArrayOfPosts as ArrayOfPostsPropType } from '../prop-types/posts';
 
 import { ShortPost } from './post';
 
-export default function RelatedPosts({ posts, users }) {
+const RelatedPosts = ({ posts, users }) => {
   if (!posts || !posts.length) {
     return null;
   }
@@ -54,4 +55,12 @@ export default function RelatedPosts({ posts, users }) {
       })}
     </div>
   );
-}
+};
+
+RelatedPosts.displayName = 'RelatedPosts';
+
+RelatedPosts.propTypes = {
+  posts: ArrayOfPostsPropType.isRequired
+};
+
+export default RelatedPosts;

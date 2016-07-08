@@ -14,13 +14,16 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import Gravatar from 'react-gravatar';
 import { truncate } from 'grapheme-utils';
 import { Link } from 'react-router';
+
+import { uuid4 as uuid4PropType } from '../prop-types/common';
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 
 import {
   Page,
@@ -44,14 +47,12 @@ import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
-
 export class PostPage extends React.Component {
-
   static propTypes = {
     params: PropTypes.shape({
-      uuid: PropTypes.string.isRequired
+      uuid: uuid4PropType.isRequired
     }).isRequired,
-    posts: PropTypes.shape().isRequired
+    posts: MapOfPostsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

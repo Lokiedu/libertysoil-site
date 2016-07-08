@@ -39,6 +39,7 @@ describe('List page with redux', () => {
         comments={{}}
         create_post_form={{ text: 'foo' }}
         current_user={{ id: '1' }}
+        posts={{}}
         river={[]}
         schools={{}}
         ui={{ progress: {} }}

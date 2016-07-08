@@ -21,8 +21,16 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
+import {
+  url as urlPropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
 import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -41,11 +49,12 @@ export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
 
   static propTypes = {
-    geotag_posts: PropTypes.shape().isRequired,
+    geotag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired,
     geotags: MapOfGeotagsPropType.isRequired,
     params: PropTypes.shape({
       url_name: PropTypes.string.isRequired
     }),
+    posts: MapOfPostsPropType.isRequired,
     schools: MapOfSchoolsPropType.isRequired
   };
 

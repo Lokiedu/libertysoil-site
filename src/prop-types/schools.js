@@ -17,7 +17,7 @@
 */
 import { PropTypes } from 'react';
 
-import { mapOf, uuid, date, url } from './common';
+import { mapOf, uuid4, date, url } from './common';
 import { Attachment } from './attachments';
 import { TagMore } from './tags';
 
@@ -25,7 +25,7 @@ export const School = PropTypes.shape({
   address1: PropTypes.string,
   address2: PropTypes.string,
   city: PropTypes.string,
-  country_id: uuid,
+  country_id: uuid4,
   created_at: date.isRequired,
   description: PropTypes.string,
   facebook: PropTypes.string,
@@ -33,7 +33,7 @@ export const School = PropTypes.shape({
   foundation_month: PropTypes.number,
   foundation_year: PropTypes.number,
   house: PropTypes.string,
-  id: uuid.isRequired,
+  id: uuid4.isRequired,
   images: PropTypes.arrayOf(Attachment),
   is_open: PropTypes.bool,
   lat: PropTypes.number,
@@ -57,7 +57,7 @@ export const School = PropTypes.shape({
 });
 
 export const LightSchool = PropTypes.shape({
-  id: uuid.isRequired,
+  id: uuid4.isRequired,
   url_name: url.isRequired,
   name: PropTypes.string.isRequired
 });
@@ -66,6 +66,6 @@ export const ArrayOfSchools = PropTypes.arrayOf(School);
 
 export const ArrayOfLightSchools = PropTypes.arrayOf(LightSchool);
 
-export const MapOfSchools = mapOf(uuid, School);
+export const MapOfSchools = mapOf(uuid4, School);
 
-export const SchoolCloud = PropTypes.arrayOf(uuid);
+export const SchoolCloud = PropTypes.arrayOf(uuid4);

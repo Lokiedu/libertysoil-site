@@ -21,7 +21,15 @@ import { connect } from 'react-redux';
 import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
 
+import {
+  uuid4 as uuid4PropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
 
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
@@ -40,8 +48,8 @@ export class SchoolPage extends React.Component {
     params: PropTypes.shape({
       school_name: PropTypes.string.isRequired
     }),
-    school_posts: PropTypes.shape(
-    ).isRequired,
+    posts: MapOfPostsPropType.isRequired,
+    school_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
     schools: MapOfSchoolsPropType.isRequired
   };
 

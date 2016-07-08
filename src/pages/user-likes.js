@@ -22,6 +22,15 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
+import {
+  uuid4 as uuid4PropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
+import {
+  MapOfPosts as MapOfPostsPropType,
+  ArrayOfPostsId as ArrayOfPostsIdPropType
+} from '../prop-types/posts';
+
 import NotFound from './not-found';
 import BaseUserLikesPage from './base/user';
 import River from '../components/river_of_posts';
@@ -36,6 +45,11 @@ import { defaultSelector } from '../selectors';
 
 class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
+
+  static propTypes = {
+    likes_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
+    posts: MapOfPostsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const userInfo = await client.userInfo(params.username);
@@ -54,7 +68,8 @@ class UserLikesPage extends Component {
       comments,
       ui,
       following,
-      followers
+      followers,
+      likes_river
     } = this.props;
 
     if (_.isUndefined(page_user)) {
@@ -70,6 +85,11 @@ class UserLikesPage extends Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    let userLikesRiver = likes_river[page_user.id];
+    if (!userLikesRiver) {
+      userLikesRiver = [];
+    }
+
     return (
       <BaseUserLikesPage
         current_user={this.props.current_user}
@@ -84,7 +104,7 @@ class UserLikesPage extends Component {
         <River
           current_user={current_user}
           posts={posts}
-          river={this.props.likes_river[page_user.id]}
+          river={userLikesRiver}
           triggers={triggers}
           users={users}
           comments={comments}

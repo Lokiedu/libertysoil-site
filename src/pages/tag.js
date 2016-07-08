@@ -21,8 +21,16 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
+import {
+  url as urlPropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
 import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -44,8 +52,9 @@ export class TagPage extends Component {
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
     }),
+    posts: MapOfPostsPropType.isRequired,
     schools: MapOfSchoolsPropType.isRequired,
-    tag_posts: PropTypes.shape().isRequired
+    tag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired
   };
 
   static async fetchData(params, store, client) {

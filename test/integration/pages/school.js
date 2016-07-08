@@ -1,3 +1,20 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2015  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
@@ -10,11 +27,10 @@ import PostFactory from '../../../test-helpers/factories/post.js';
 import SchoolFactory from '../../../test-helpers/factories/school.js';
 import initBookshelf from '../../../src/api/db';
 
-let bookshelf = initBookshelf($dbConfig);
-let Post = bookshelf.model('Post');
-let User = bookshelf.model('User');
-let School = bookshelf.model('School');
-
+const bookshelf = initBookshelf($dbConfig);
+const Post = bookshelf.model('Post');
+const User = bookshelf.model('User');
+const School = bookshelf.model('School');
 
 describe('School page', () => {
   describe('when user is logged in', () => {
@@ -24,7 +40,7 @@ describe('School page', () => {
     before(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
-      await user.save({'email_check_hash': ''},{require:true});
+      await user.save({ 'email_check_hash': '' },{ require: true });
 
       sessionId = await login('test', 'test');
     });
@@ -33,8 +49,9 @@ describe('School page', () => {
       await user.destroy();
     });
 
-    describe('Check counters', () => {
-      let author, post1, post2, school;
+    describe('Check counters', async () => {
+      let author, school;
+      const posts = new Array(2);
 
       before(async () => {
         await bookshelf.knex('posts').del();
@@ -43,35 +60,61 @@ describe('School page', () => {
         const userAttrs = UserFactory.build();
 
         author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-        school = await new School(SchoolFactory.build()).save(null, {method: 'insert'});
+        school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
 
-        post1 = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
-        post2 = await new Post(PostFactory.build({user_id: author.id})).save(null, {method: 'insert'});
+        for (let i = 0; i < posts.length; ++i) {
+          const uuid4Example = uuid4();
+
+          posts[i] = await new Post(PostFactory.build({
+            id: uuid4Example,
+            url_name: uuid4Example, // approximate analog of actual post.url_name
+            user_id: author.id
+          })).save(null, { method: 'insert' });
+        }
       });
 
       after(async () => {
-        await post1.destroy();
-        await post2.destroy();
+        for (let i = 0; i < posts.length; ++i) {
+          await posts[i].destroy();
+        }
+
         await school.destroy();
         await author.destroy();
       });
 
       it('displays posts counter', async () => {
-        await post1.attachSchools([school.get('name')]);
+        await posts[0].attachSchools([school.get('name')]);
         {
-          let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
+          const context = await expect({
+            url: `/s/${school.get('url_name')}`,
+            session: sessionId
+          }, 'to open successfully');
 
-          let document = jsdom(context.httpResponse.body);
-          let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
+          const document = jsdom(context.httpResponse.body);
+
+          const content = await expect(
+            document.body,
+            'queried for first',
+            '#content .panel__toolbar_item-text'
+          );
           await expect(content, 'to have text', '1 post');
         }
 
-        await post2.attachSchools([school.get('name')]);
+        await posts[1].attachSchools([school.get('name')]);
         {
-          let context = await expect({ url: `/s/${school.get('url_name')}`, session: sessionId }, 'to open successfully');
+          const context = await expect({
+            url: `/s/${school.get('url_name')}`,
+            session: sessionId
+          }, 'to open successfully');
 
-          let document = jsdom(context.httpResponse.body);
-          let content = await expect(document.body, 'queried for first', '#content .panel__toolbar_item-text');
+          const document = jsdom(context.httpResponse.body);
+
+          const content = await expect(
+            document.body,
+            'queried for first',
+            '#content .panel__toolbar_item-text'
+          );
+
           await expect(content, 'to have text', '2 posts');
         }
       });
