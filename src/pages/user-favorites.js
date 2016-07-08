@@ -28,10 +28,12 @@ import {
   MapOfPosts as MapOfPostsPropType,
   ArrayOfPostsId as ArrayOfPostsIdPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import NotFound from './not-found';
 import BaseUserFavoritesPage from './base/user';
 import River from '../components/river_of_posts';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
@@ -43,6 +45,7 @@ class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     favourites_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
     posts: MapOfPostsPropType.isRequired
   };
@@ -100,12 +103,12 @@ class UserFavoritesPage extends React.Component {
       >
         <Helmet title={`Favorites of ${page_user.fullName} on `} />
         <River
+          comments={comments}
           current_user={current_user}
           posts={posts}
           river={userFavouritesRiver}
           triggers={triggers}
           users={users}
-          comments={comments}
           ui={ui}
         />
       </BaseUserFavoritesPage>

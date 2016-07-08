@@ -30,6 +30,7 @@ import {
   MapOfPosts as MapOfPostsPropType,
   ArrayOfPostsId as ArrayOfPostsIdPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import NotFound from './not-found';
 import BaseUserLikesPage from './base/user';
@@ -47,6 +48,7 @@ class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     likes_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
     posts: MapOfPostsPropType.isRequired
   };

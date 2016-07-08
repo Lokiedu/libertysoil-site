@@ -22,8 +22,15 @@ import Gravatar from 'react-gravatar';
 import { truncate } from 'grapheme-utils';
 import { Link } from 'react-router';
 
-import { uuid4 as uuid4PropType } from '../prop-types/common';
-import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import {
+  uuid4 as uuid4PropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import {
   Page,
@@ -49,10 +56,12 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export class PostPage extends React.Component {
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     params: PropTypes.shape({
       uuid: uuid4PropType.isRequired
     }).isRequired,
-    posts: MapOfPostsPropType.isRequired
+    posts: MapOfPostsPropType.isRequired,
+    related_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType)
   };
 
   static async fetchData(params, store, client) {
@@ -64,27 +73,38 @@ export class PostPage extends React.Component {
   }
 
   render() {
-    const post_uuid = this.props.params.uuid;
+    const {
+      comments,
+      current_user,
+      is_logged_in,
+      params,
+      posts,
+      related_posts,
+      ui,
+      users
+    } = this.props;
 
-    if (!(post_uuid in this.props.posts)) {
+    const post_uuid = params.uuid;
+
+    if (!(post_uuid in posts)) {
       // not loaded yet
       return null;
     }
 
-    const current_post = this.props.posts[post_uuid];
+    const current_post = posts[post_uuid];
 
     if (current_post === false) {
       return <NotFound />;
     }
 
-    const author = this.props.users[current_post.user_id];
+    const author = users[current_post.user_id];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const relatedPostIds = this.props.related_posts[current_post.id];
+    const relatedPostIds = related_posts[current_post.id];
     const relatedPosts = (relatedPostIds)
-                         ? relatedPostIds.map(id => this.props.posts[id])
+                         ? relatedPostIds.map(id => posts[id])
                          : null;
 
     const authorUrl = getUrl(URL_NAMES.USER, { username: author.username });
@@ -97,7 +117,7 @@ export class PostPage extends React.Component {
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />
-        <Header is_logged_in={this.props.is_logged_in} current_user={this.props.current_user}>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
           <Breadcrumbs title={truncate(current_post.text, { length: 16 })}>
             <Link
@@ -111,17 +131,17 @@ export class PostPage extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={this.props.current_user} />
+          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <PostWrapper
                   author={author}
-                  current_user={this.props.current_user}
-                  users={this.props.users}
+                  current_user={current_user}
+                  users={users}
                   post={current_post}
-                  comments={this.props.comments}
-                  ui={this.props.ui}
+                  comments={comments}
+                  ui={ui}
                   showAllComments
                   triggers={triggers}
                 >
@@ -130,10 +150,10 @@ export class PostPage extends React.Component {
               </PageContent>
               <SidebarAlt>
                 <RelatedPosts
-                  current_user={this.props.current_user}
+                  current_user={current_user}
                   posts={relatedPosts}
                   triggers={triggers}
-                  users={this.props.users}
+                  users={users}
                 />
               </SidebarAlt>
             </PageBody>

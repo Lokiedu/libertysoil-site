@@ -30,6 +30,7 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType,
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
@@ -45,6 +46,7 @@ import { TAG_SCHOOL } from '../consts/tags';
 
 export class SchoolPage extends React.Component {
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     params: PropTypes.shape({
       school_name: PropTypes.string.isRequired
     }),

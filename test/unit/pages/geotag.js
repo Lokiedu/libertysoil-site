@@ -26,6 +26,7 @@ describe('GeotagPage', () => {
   it('MUST render nothing when geotag is not yet loaded', () => {
     const wrapper = shallow(
       <GeotagPage
+        comments={{}}
         geotag_posts={{}}
         geotags={{}}
         params={{ url_name: 'test' }}
@@ -42,6 +43,7 @@ describe('GeotagPage', () => {
 
     renderer.render(
       <GeotagPage
+        comments={{}}
         geotag_posts={{}}
         geotags={{ test: {} }}
         params={{ url_name: 'test' }}

@@ -21,6 +21,7 @@ import _ from 'lodash';
 import Helmet from 'react-helmet';
 
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import NotFound from './not-found';
 import BaseUserPage from './base/user';
@@ -38,6 +39,7 @@ class UserPage extends React.Component {
   static displayName = 'UserPage';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     location: PropTypes.shape({}).isRequired,
     posts: MapOfPostsPropType.isRequired
   };
@@ -96,12 +98,12 @@ class UserPage extends React.Component {
       >
         <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River
+          comments={comments}
           current_user={this.props.current_user}
           posts={posts}
           river={user_posts}
           triggers={triggers}
           users={users}
-          comments={comments}
           ui={ui}
         />
       </BaseUserPage>

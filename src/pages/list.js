@@ -21,6 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 
@@ -60,6 +61,7 @@ export class List extends React.Component {
   static displayName = 'List';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),

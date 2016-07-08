@@ -15,15 +15,17 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const common = require('./common');
+import { PropTypes } from 'react';
 
-export const attachments = require('./attachments');
-export const messages = require('./messages');
+import { date, uuid4, mapOf } from '../prop-types/common';
 
-export const tags = require('./tags');
-export const geotags = require('./geotags');
-export const hashtags = require('./hashtags');
-export const schools = require('./schools');
+export const Comment = PropTypes.shape({
+  created_at: date.isRequired,
+  id: uuid4.isRequired,
+  post_id: uuid4.isRequired,
+  text: PropTypes.string.isRequired,
+  updated_at: date.isRequired,
+  user_id: uuid4.isRequired
+});
 
-export const posts = require('./posts');
-export const comments = require('./comments');
+export const CommentsByCategory = mapOf(uuid4, PropTypes.arrayOf(Comment));

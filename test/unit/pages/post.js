@@ -28,6 +28,7 @@ describe('Post page', () => {
   it('MUST render nothing when post hasn\'t been fetched yet', () => {
     const wrapper = shallow(
       <PostPage
+        comments={{}}
         params={{ uuid: uuid4Example }}
         posts={{}}
       />
@@ -44,6 +45,7 @@ describe('Post page', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <PostPage
+        comments={{}}
         params={{ uuid: uuid4Example }}
         posts={{ [uuid4Example]: false }}
       />

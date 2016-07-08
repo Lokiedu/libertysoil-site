@@ -31,6 +31,7 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType,
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -48,6 +49,7 @@ export class TagPage extends Component {
   static displayName = 'TagPage';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     hashtags: MapOfHashtagsPropType.isRequired,
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
@@ -83,6 +85,7 @@ export class TagPage extends Component {
 
   render() {
     const {
+      comments,
       is_logged_in,
       current_user,
       posts,
@@ -93,8 +96,7 @@ export class TagPage extends Component {
       params,
       hashtags,
       schools,
-      ui,
-      comments
+      ui
     } = this.props;
 
     const client = new ApiClient(API_HOST);

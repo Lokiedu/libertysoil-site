@@ -28,6 +28,7 @@ describe('School page', () => {
   it('renders nothing if school hasn\'t been loaded yet', () => {
     const wrapper = shallow(
       <SchoolPage
+        comments={{}}
         params={{ school_name: 'test' }}
         posts={{}}
         school_posts={{}}
@@ -44,6 +45,7 @@ describe('School page', () => {
     try {
       shallow(
         <SchoolPage
+          comments={{}}
           params={{ school_name: 'test' }}
           school_posts={{}}
           schools={[{ url_name: 'test' }]}
@@ -67,6 +69,7 @@ describe('School page', () => {
     // shallow() throws an exception after normal console.error
     const wrapper = shallow(
       <SchoolPage
+        comments={{}}
         params={{ school_name: 'test' }}
         school_posts={{}}
         schools={[{ url_name: 'test', name: 'test' }]}

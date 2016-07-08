@@ -31,6 +31,7 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType,
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -49,6 +50,7 @@ export class GeotagPage extends Component {
   static displayName = 'GeotagPage';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     geotag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired,
     geotags: MapOfGeotagsPropType.isRequired,
     params: PropTypes.shape({

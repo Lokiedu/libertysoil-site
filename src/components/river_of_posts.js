@@ -22,6 +22,7 @@ import {
   MapOfPosts as MapOfPostsPropType,
   ArrayOfPostsId as ArrayOfPostsIdPropType
 } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import * as PostTypes  from '../consts/postTypeConstants';
 import { ShortTextPost, PostWrapper } from './post';
@@ -85,7 +86,7 @@ const RiverOfPostsComponent = (props) => {
 RiverOfPostsComponent.displayName = 'RiverOfPostsComponent';
 
 RiverOfPostsComponent.propTypes = {
-  comments: PropTypes.shape({}).isRequired,
+  comments: CommentsByCategoryPropType.isRequired,
   posts: MapOfPostsPropType.isRequired,
   river: ArrayOfPostsIdPropType.isRequired,
   ui: PropTypes.shape({}).isRequired
