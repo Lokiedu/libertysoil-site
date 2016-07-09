@@ -15,7 +15,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { getTypeError, createSimplifiedRequirableTypeChecker } from './utils';
+import i from 'immutable';
+import { assign } from 'lodash';
+
+import {
+  getTypeError,
+  createRequirableTypeChecker,
+  createSimplifiedRequirableTypeChecker
+} from './utils';
 
 function checkKeys(keyCheckType, propValue, propFullName, componentName, location) {
   const fields = Object.keys(propValue);
@@ -143,6 +150,50 @@ export const mapOf = (keyCheckType, valueCheckType) => (
         propFullName,
         componentName,
         location
+      );
+    }
+  )
+);
+
+export const Immutable = (checkType) => (
+  createRequirableTypeChecker(
+    (props, propName, componentName, location, propFullName) => {
+      const propValue = props[propName];
+
+      // all Immutable date types are subclasses of Immutable.Iterable
+      if (i.Iterable.isIterable(propValue)) {
+        const preparedPropValue = propValue.toJS();
+        const preraredProps = assign({}, props, { [propName]: preparedPropValue });
+
+        // vanilla instance of PropTypes' checkType()
+        // or result of createRequirableTypeChecker()
+        if (checkType.length === 5) {
+          return checkType(
+            preraredProps,
+            propName,
+            componentName,
+            location,
+            propFullName
+          );
+        }
+
+        // result of createSimplifiedRequirableTypeChecker()
+        let fullName = propName;
+        if (propFullName) {
+          fullName = propFullName;
+        }
+
+        return checkType(
+          preparedPropValue,
+          fullName,
+          componentName,
+          location
+        );
+      }
+
+      return new Error(
+        `Invalid prop \`${propFullName}\` of type \`${typeof propValue}\` ` +
+        `supplied to \`${componentName}\` isn't an instance of any Immutable data type.`
       );
     }
   )
