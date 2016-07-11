@@ -93,6 +93,7 @@ class GeotagEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
+            name="description"
             {...fields.description}
           />
 
