@@ -80,6 +80,13 @@ class PostEditPage extends React.Component {
     return 200;
   }
 
+  componentDidMount() {
+    if (window) {
+      // make top anchor to be default
+      window.scrollTo(0, 0);
+    }
+  }
+
   _handleSubmit = () => {
     browserHistory.push(getUrl(URL_NAMES.POST, { uuid: this.props.params.uuid }));
   };
