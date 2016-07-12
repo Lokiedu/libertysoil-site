@@ -87,8 +87,23 @@ export class List extends React.Component {
 
     this.state = {
       downloadAttemptsCount: 0,
-      displayLoadMore: true
+      displayLoadMore: false
     };
+  }
+
+  componentWillMount() {
+    if (this.props.river.length > 4) {
+      this.setState({ displayLoadMore: true });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let displayLoadMore = false;
+    if (nextProps.river.length > 4) {
+      displayLoadMore = true;
+    }
+
+    this.setState({ displayLoadMore });
   }
 
   loadPostRiverManually = async () => {
@@ -99,13 +114,15 @@ export class List extends React.Component {
   }
 
   loadMore = async (isVisible) => {
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const { dispatch, river, ui } = this.props;
 
-    if (isVisible && !this.props.ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+    const triggers = new ActionsTrigger(client, dispatch);
+
+    if (isVisible && !ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      const res = await triggers.loadPostRiver(this.props.river.length);
+      const res = await triggers.loadPostRiver(river.length);
 
       let displayLoadMore = false;
       if (res === false) { // bad response
