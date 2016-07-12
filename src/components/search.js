@@ -21,6 +21,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { debounce, take } from 'lodash';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
@@ -35,7 +38,6 @@ import TagIcon from './tag-icon';
 import bem from '../utils/bemClassNames';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-@ClickOutsideComponentDecorator
 class Search extends Component {
   static displayName = 'Search';
 
@@ -43,8 +45,8 @@ class Search extends Component {
     clearSearchResults: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     results: PropTypes.shape({
-      geotags: PropTypes.arrayOf(PropTypes.shape({})),
-      hashtags: PropTypes.arrayOf(PropTypes.shape({}))
+      geotags: ArrayOfGeotagsPropType,
+      hashtags: ArrayOfHashtagsPropType
     })
   };
 
@@ -188,7 +190,7 @@ class Search extends Component {
             }
             default:
               console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
-              return <noscript />;
+              return null;
           }
 
           return (
@@ -269,7 +271,10 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector, dispatch => ({
+const DecoratedSearch = ClickOutsideComponentDecorator(Search);
+const ConnectedSearch = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ clearSearchResults }, dispatch)
-}))(Search);
+}))(DecoratedSearch);
+
+export default ConnectedSearch;

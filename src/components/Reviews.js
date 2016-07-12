@@ -148,7 +148,7 @@ export default class Reviews extends Component {
     const { quotes } = this.props;
 
     if (!quotes || !quotes.length) {
-      return <script />;
+      return null;
     }
 
     this.length = quotes.length;

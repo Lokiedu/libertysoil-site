@@ -22,6 +22,10 @@ import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
 import { values } from 'lodash';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+
 import { defaultSelector } from '../selectors';
 
 import { API_HOST } from '../config';
@@ -36,6 +40,12 @@ import { TAG_HASHTAG } from '../consts/tags';
 
 class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
+
+  static propTypes = {
+    hashtags: MapOfHashtagsPropType.isRequired,
+    messages: ArrayOfMessagesPropType,
+    schools: MapOfSchoolsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const hashtag = client.getHashtag(params.tag);
@@ -114,7 +124,7 @@ class HashtagEditPage extends React.Component {
     const tag = hashtags[params.tag];
 
     if (!tag) {
-      return <script />;
+      return null;
     }
 
     return (

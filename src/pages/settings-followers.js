@@ -19,6 +19,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import BaseSettingsPage from './base/settings';
 import UserGrid from '../components/user-grid';
 
@@ -30,6 +32,10 @@ import { defaultSelector } from '../selectors';
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType
+  };
 
   static async fetchData(params, store, client) {
     const props = store.getState();

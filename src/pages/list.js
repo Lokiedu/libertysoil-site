@@ -21,6 +21,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+
 import VisibilitySensor from '../components/visibility-sensor';
 
 import { API_HOST } from '../config';
@@ -57,11 +61,14 @@ export class List extends React.Component {
   static displayName = 'List';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
     current_user: PropTypes.shape({}).isRequired,
+    posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
+    schools: MapOfSchoolsPropType.isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean
@@ -87,8 +94,23 @@ export class List extends React.Component {
 
     this.state = {
       downloadAttemptsCount: 0,
-      displayLoadMore: true
+      displayLoadMore: false
     };
+  }
+
+  componentWillMount() {
+    if (this.props.river.length > 4) {
+      this.setState({ displayLoadMore: true });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let displayLoadMore = false;
+    if (nextProps.river.length > 4) {
+      displayLoadMore = true;
+    }
+
+    this.setState({ displayLoadMore });
   }
 
   loadPostRiverManually = async () => {
@@ -99,13 +121,15 @@ export class List extends React.Component {
   }
 
   loadMore = async (isVisible) => {
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    const { dispatch, river, ui } = this.props;
 
-    if (isVisible && !this.props.ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+    const triggers = new ActionsTrigger(client, dispatch);
+
+    if (isVisible && !ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      const res = await triggers.loadPostRiver(this.props.river.length);
+      const res = await triggers.loadPostRiver(river.length);
 
       let displayLoadMore = false;
       if (res === false) { // bad response
@@ -152,7 +176,7 @@ export class List extends React.Component {
         </div>
       );
     } else {
-      loadMore = <script />;
+      loadMore = null;
     }
 
     return (
@@ -188,7 +212,7 @@ export class List extends React.Component {
                 {loadMore}
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...this.props.create_post_form} />
+                <AddedTags {...this.props.create_post_form} truncated />
                 <SideSuggestedUsers
                   current_user={current_user}
                   i_am_following={i_am_following}

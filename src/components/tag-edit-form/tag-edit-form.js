@@ -33,7 +33,7 @@ const TagEditForm = (props) => {
     case TAG_LOCATION:
       return <GeotagEditForm geotag={tag} {...props} />;
     default:
-      return <script />;
+      return null;
   }
 };
 

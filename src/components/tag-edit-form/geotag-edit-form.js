@@ -18,6 +18,9 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { Geotag as GeotagPropType } from '../../prop-types/geotags';
+
 import Button from '../button';
 import Messages from '../messages';
 import Message from '../message';
@@ -34,9 +37,8 @@ class GeotagEditForm extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    geotag: PropTypes.shape({
-      url_name: PropTypes.string
-    }).isRequired,
+    geotag: GeotagPropType.isRequired,
+    messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired
   };
@@ -45,9 +47,16 @@ class GeotagEditForm extends React.Component {
     const {
       form,
       geotag
-     } = this.props;
+    } = this.props;
 
-    form.onValues(geotag);
+    const initialValues = {};
+    if (geotag) {
+      if (geotag.more) {
+        initialValues.description = geotag.more.description;
+      }
+    }
+
+    form.onValues(initialValues);
   }
 
   submitHandler = (event) => {
@@ -78,11 +87,6 @@ class GeotagEditForm extends React.Component {
       messages
     } = this.props;
 
-    let defaultDescription;
-    if (geotag.more) {
-      defaultDescription = geotag.more.description;
-    }
-
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={geotag.id} />
@@ -91,7 +95,7 @@ class GeotagEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
-            defaultValue={defaultDescription}
+            name="description"
             {...fields.description}
           />
 

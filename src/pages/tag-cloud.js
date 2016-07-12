@@ -19,6 +19,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+
 import {
   Page,
   PageMain,
@@ -41,6 +43,10 @@ import { TAG_HASHTAG } from '../consts/tags';
 class TagCloudPage extends Component {
   static displayName = 'TagCloudPage';
 
+  static propTypes = {
+    tag_cloud: ArrayOfHashtagsPropType.isRequired
+  };
+
   static async fetchData(params, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
     await triggers.loadTagCloud();
@@ -49,7 +55,8 @@ class TagCloudPage extends Component {
   render() {
     const {
       is_logged_in,
-      current_user
+      current_user,
+      tag_cloud
     } = this.props;
 
     return (
@@ -63,13 +70,13 @@ class TagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={this.props.current_user} />
+          <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud hashtags={this.props.tag_cloud} showPostCount />
+                  <TagCloud hashtags={tag_cloud} showPostCount />
                 </div>
               </PageContent>
             </PageBody>

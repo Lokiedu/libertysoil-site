@@ -46,8 +46,10 @@ class PasswordForm extends React.Component {
     const { fields, form } = this.props;
 
     return (
-      <form action="" className="paper__page">
+      <form action="" className="paper__page" autoComplete={false}>
         <h2 className="content__sub_title layout__row">Password</h2>
+
+        <input name="autofillWorkaround" style={{ display: 'none' }} type="password" />
 
         <div className="layout__row">
           <label className="layout__row layout__row-small" htmlFor="oldPassword">Current password</label>

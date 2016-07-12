@@ -20,6 +20,9 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+
 import NotFound from './not-found';
 import BaseUserPage from './base/user';
 import River from '../components/river_of_posts';
@@ -36,7 +39,9 @@ class UserPage extends React.Component {
   static displayName = 'UserPage';
 
   static propTypes = {
-    location: PropTypes.shape({}).isRequired
+    comments: CommentsByCategoryPropType.isRequired,
+    location: PropTypes.shape({}).isRequired,
+    posts: MapOfPostsPropType.isRequired
   };
 
   static childContextTypes = {
@@ -64,11 +69,12 @@ class UserPage extends React.Component {
       users,
       comments,
       following,
-      followers
+      followers,
+      posts
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script />;  // not loaded yet
+      return null;  // not loaded yet
     }
 
     if (false === page_user) {
@@ -92,12 +98,12 @@ class UserPage extends React.Component {
       >
         <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River
+          comments={comments}
           current_user={this.props.current_user}
-          posts={this.props.posts}
+          posts={posts}
           river={user_posts}
           triggers={triggers}
           users={users}
-          comments={comments}
           ui={ui}
         />
       </BaseUserPage>

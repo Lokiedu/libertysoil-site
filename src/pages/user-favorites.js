@@ -20,9 +20,20 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
+import {
+  uuid4 as uuid4PropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
+import {
+  MapOfPosts as MapOfPostsPropType,
+  ArrayOfPostsId as ArrayOfPostsIdPropType
+} from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+
 import NotFound from './not-found';
 import BaseUserFavoritesPage from './base/user';
 import River from '../components/river_of_posts';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
@@ -30,9 +41,14 @@ import { setPostsToFavouritesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
-
 class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
+
+  static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
+    favourites_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
+    posts: MapOfPostsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const userInfo = await client.userInfo(params.username);
@@ -53,11 +69,12 @@ class UserFavoritesPage extends React.Component {
       i_am_following,
       is_logged_in,
       following,
-      followers
+      followers,
+      favourites_river
     } = this.props;
 
     if (_.isUndefined(page_user)) {
-      return <script />;  // not loaded yet
+      return null;  // not loaded yet
     }
 
     if (false === page_user) {
@@ -68,6 +85,11 @@ class UserFavoritesPage extends React.Component {
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    let userFavouritesRiver = favourites_river[page_user.id];
+    if (!userFavouritesRiver) {
+      userFavouritesRiver = [];
+    }
 
     return (
       <BaseUserFavoritesPage
@@ -81,12 +103,12 @@ class UserFavoritesPage extends React.Component {
       >
         <Helmet title={`Favorites of ${page_user.fullName} on `} />
         <River
+          comments={comments}
           current_user={current_user}
           posts={posts}
-          river={this.props.favourites_river[page_user.id]}
+          river={userFavouritesRiver}
           triggers={triggers}
           users={users}
-          comments={comments}
           ui={ui}
         />
       </BaseUserFavoritesPage>

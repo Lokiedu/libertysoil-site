@@ -40,7 +40,7 @@ class AboutUserPage extends React.Component {
     let linesOfBio = <p>No information provided...</p>;
 
     if (_.isUndefined(page_user)) {
-      return <script />;  // not loaded yet
+      return null;  // not loaded yet
     }
 
     if (false === page_user) {

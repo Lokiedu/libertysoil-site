@@ -19,6 +19,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import BaseSettingsPage from './base/settings';
 
 import ApiClient from '../api/client';
@@ -31,6 +33,10 @@ import { RolesManager } from '../components/settings';
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType
+  };
 
   static async fetchData(params, store, client) {
     const props = store.getState();

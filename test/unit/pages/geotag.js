@@ -14,29 +14,44 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*eslint-env node, mocha */
+*/
+/* eslint-env node, mocha */
+import { shallow } from 'enzyme';
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 
 import { GeotagPage } from '../../../src/pages/geotag';
 import NotFound from '../../../src/pages/not-found';
 
+describe('GeotagPage', () => {
+  it('MUST render nothing when geotag is not yet loaded', () => {
+    const wrapper = shallow(
+      <GeotagPage
+        comments={{}}
+        geotag_posts={{}}
+        geotags={{}}
+        params={{ url_name: 'test' }}
+        posts={{}}
+        schools={{}}
+      />
+    );
 
-describe('GeotagPage', function() {
-
-  it('MUST render <script /> when geotag is not yet loaded', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<GeotagPage geotag_posts={{}} geotags={{}} params={{url_name: 'test'}}  />);
-
-    return expect(renderer, 'to have rendered', <script />);
+    return expect(wrapper.equals(null), 'to be true');
   });
 
+  it('MUST render <NotFound /> for non existing geotag', () => {
+    const renderer = TestUtils.createRenderer();
 
-  it('MUST render <NotFound /> for non existing geotag', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<GeotagPage geotag_posts={{}} geotags={{test: {}}} params={{url_name: 'test'}}  />);
+    renderer.render(
+      <GeotagPage
+        comments={{}}
+        geotag_posts={{}}
+        geotags={{ test: {} }}
+        params={{ url_name: 'test' }}
+        posts={{}}
+        schools={{}}
+      />
+    );
 
     return expect(renderer, 'to have rendered', <NotFound />);
   });
-
 });

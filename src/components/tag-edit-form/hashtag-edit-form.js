@@ -18,6 +18,9 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
+
 import Button from '../button';
 import Message from '../message';
 import Messages from '../messages';
@@ -34,9 +37,8 @@ class HashtagEditForm extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    hashtag: PropTypes.shape({
-      name: PropTypes.string
-    }).isRequired,
+    hashtag: HashtagPropType.isRequired,
+    messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired
   };
@@ -45,9 +47,16 @@ class HashtagEditForm extends React.Component {
     const {
       form,
       hashtag
-     } = this.props;
+    } = this.props;
 
-    form.onValues(hashtag);
+    const initialValues = {};
+    if (hashtag) {
+      if (hashtag.more) {
+        initialValues.description = hashtag.more.description;
+      }
+    }
+
+    form.onValues(initialValues);
   }
 
   submitHandler = (event) => {
@@ -78,11 +87,6 @@ class HashtagEditForm extends React.Component {
       triggers
     } = this.props;
 
-    let defaultDescription;
-    if (hashtag.more) {
-      defaultDescription = hashtag.more.description;
-    }
-
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={hashtag.id} />
@@ -91,7 +95,7 @@ class HashtagEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
-            defaultValue={defaultDescription}
+            name="description"
             {...fields.description}
           />
 

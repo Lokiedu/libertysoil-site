@@ -18,6 +18,8 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+
 import {
   Page,
   PageMain,
@@ -37,6 +39,10 @@ import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType
+  }
 
   static defaultProps = {
     onSave: false

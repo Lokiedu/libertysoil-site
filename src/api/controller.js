@@ -21,12 +21,13 @@ import bb from 'bluebird';
 import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid';
 import slug from 'slug';
-import request from 'superagent';
+import fetch from 'node-fetch';
 import crypto from 'crypto';
 import Checkit from 'checkit';
+import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
-import { processImage } from '../utils/image';
+import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
   User as UserValidators,
@@ -61,6 +62,18 @@ export default class ApiController {
   testSphinx = async (ctx) => {
     const indexes = await this.sphinx.ql.raw(`SHOW TABLES`);
     ctx.body = indexes;
+  };
+
+  testDelete = async (ctx) => {
+    ctx.body = 'test message in delete response';
+  };
+
+  testHead = async (ctx) => {
+    ctx.body = [];
+  };
+
+  testPost = async (ctx) => {
+    ctx.body = 'test message in post response';
   };
 
   allPosts = async (ctx) => {
@@ -1255,7 +1268,7 @@ export default class ApiController {
           .limit(20);
       });
 
-    const suggestions = await q.fetchAll({ require: true, withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
+    const suggestions = await q.fetchAll({ withRelated: ['following', 'followers', 'liked_posts', 'favourited_posts'] });
 
     ctx.body = suggestions;
   };
@@ -1824,7 +1837,7 @@ export default class ApiController {
       const originalData = await original.download();
 
       // Process the data.
-      const newImage = await processImage(originalData.Body, transforms);
+      const newImage = await processImageUtil(originalData.Body, transforms);
       const imageBuffer = await newImage.toBufferAsync(original.extension());
 
       // Update the attachment specified in derived_id or create a new one.
@@ -1870,13 +1883,11 @@ export default class ApiController {
     }
 
     try {
-      const response = await request
-        .get(`https://pickpoint.io/api/v1/forward`)
-        .query(Object.assign(ctx.query, { key: config.pickpoint.key }));
+      const urlObj = parse_url(`https://pickpoint.io/api/v1/forward`);
+      urlObj.query = Object.assign(ctx.query, { key: config.pickpoint.key });
 
-      // pickpoint answers with wrong content-type, so we do decoding manually
-      const responseText = response.text;
-      const data = JSON.parse(responseText);
+      const response = await fetch(format_url(urlObj));
+      const data = await response.json();
 
       ctx.body = data;
     } catch (e) {

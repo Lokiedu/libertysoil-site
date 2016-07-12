@@ -20,6 +20,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import BaseSuggestionsPage from './base/suggestions';
 import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
@@ -30,7 +32,7 @@ import { defaultSelector } from '../selectors';
 
 const DiscoverGrid = ({ current_user, i_am_following, triggers, users }) => {
   if (users.length === 0) {
-    return <script />;
+    return null;
   }
 
   return (
@@ -96,10 +98,7 @@ SuggestionsPage.propTypes = {
   dispatch: PropTypes.func,
   i_am_following: PropTypes.arrayOf(PropTypes.string),
   is_logged_in: PropTypes.bool,
-  messages: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.string,
-    type: PropTypes.string
-  }))
+  messages: ArrayOfMessagesPropType
 };
 
 SuggestionsPage.fetchData = async (params, store, client) => {

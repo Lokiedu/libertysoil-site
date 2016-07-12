@@ -15,8 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
+
+import { School as SchoolPropType } from '../../prop-types/schools';
 
 import Tag from '../tag';
 import TagIcon from '../tag-icon';
@@ -35,10 +37,7 @@ const SchoolBreadcrumbs = ({ school }) => (
 SchoolBreadcrumbs.displayName = 'SchoolBreadcrumbs';
 
 SchoolBreadcrumbs.propTypes = {
-  school: PropTypes.shape({
-    name: PropTypes.string,
-    url_name: PropTypes.string
-  }).isRequired
+  school: SchoolPropType.isRequired
 };
 
 export default SchoolBreadcrumbs;

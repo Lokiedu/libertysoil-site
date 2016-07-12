@@ -24,9 +24,9 @@ import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let Post = bookshelf.model('Post');
-let School = bookshelf.model('School');
+const bookshelf = initBookshelf($dbConfig);
+const Post = bookshelf.model('Post');
+const School = bookshelf.model('School');
 
 describe('School Cloud page', () => {
   let post, school;
@@ -43,11 +43,12 @@ describe('School Cloud page', () => {
 
     school = new School({
       id: uuid4(),
-      name: 'foo-school'
+      name: 'foo-school',
+      url_name: 'foo-school'
     });
 
-    await post.save(null, {method: 'insert'});
-    await school.save(null, {method: 'insert'});
+    await post.save(null, { method: 'insert' });
+    await school.save(null, { method: 'insert' });
     await post.attachSchools(['foo-school']);
   });
 
@@ -57,15 +58,13 @@ describe('School Cloud page', () => {
   });
 
   it('can open school page and see cloud', async () => {
-    let context = await expect({ url: '/s' }, 'to open successfully');
+    const context = await expect({ url: '/s' }, 'to open successfully');
 
-    let document = jsdom(context.httpResponse.body);
-    let tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
+    const document = jsdom(context.httpResponse.body);
+    const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
     await expect(tagsContent, 'to have child', '.tag__name');
 
-    let tag = await expect(tagsContent, 'queried for first', '.tag__name');
+    const tag = await expect(tagsContent, 'queried for first', '.tag__name');
     await expect(tag, 'to have text', 'foo-school');
-
   });
-
 });

@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { values, pick } from 'lodash';
 
+import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../../prop-types/schools';
+
 import {
   Page,
   PageMain,
@@ -136,7 +138,7 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flex
     case TAG_LOCATION:
       return <GeotagPageHero geotag={tag} />;
     default:
-      return <script />;
+      return null;
   }
 }
 
@@ -150,6 +152,7 @@ export default class BaseTagPage extends React.Component {
     }).isRequired,
     children: PropTypes.node,
     postsAmount: PropTypes.number,
+    schools: ArrayOfSchoolsPropType.isRequired,
     tag: PropTypes.shape({}).isRequired,
     type: PropTypes.string.isRequired
   };

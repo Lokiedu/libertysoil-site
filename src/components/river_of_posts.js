@@ -18,6 +18,12 @@
 import React, { PropTypes } from 'react';
 import { isUndefined } from 'lodash';
 
+import {
+  MapOfPosts as MapOfPostsPropType,
+  ArrayOfPostsId as ArrayOfPostsIdPropType
+} from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+
 import * as PostTypes  from '../consts/postTypeConstants';
 import { ShortTextPost, PostWrapper } from './post';
 import TagLikePost from './tag-like-post';
@@ -34,7 +40,7 @@ const RiverOfPostsComponent = (props) => {
   } = props;
 
   if (isUndefined(river)) {
-    return <script />;
+    return null;
   }
 
   const postsWithData = river.map(id => posts[id]);
@@ -80,8 +86,9 @@ const RiverOfPostsComponent = (props) => {
 RiverOfPostsComponent.displayName = 'RiverOfPostsComponent';
 
 RiverOfPostsComponent.propTypes = {
-  comments: PropTypes.shape({}).isRequired,
-  river: PropTypes.arrayOf(PropTypes.string),
+  comments: CommentsByCategoryPropType.isRequired,
+  posts: MapOfPostsPropType.isRequired,
+  river: ArrayOfPostsIdPropType.isRequired,
   ui: PropTypes.shape({}).isRequired
 };
 

@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+
 import {
   Page,
   PageMain,
@@ -54,7 +56,7 @@ BaseSuggestionsPage.propTypes = {
   children: PropTypes.node,
   current_user: PropTypes.shape({}),
   is_logged_in: PropTypes.bool,
-  messages: PropTypes.arrayOf(PropTypes.shape({})),
+  messages: ArrayOfMessagesPropType,
   triggers: PropTypes.shape({})
 };
 

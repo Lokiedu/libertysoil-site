@@ -19,6 +19,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  MapOfSchools as MapOfSchoolsPropType,
+  SchoolCloud as SchoolCloudPropType
+} from '../prop-types/schools';
+
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
@@ -40,6 +45,11 @@ import {
 
 class SchoolCloudPage extends Component {
   static displayName = 'TagCloudPage';
+
+  static propTypes = {
+    school_cloud: SchoolCloudPropType.isRequired,
+    schools: MapOfSchoolsPropType.isRequired
+  }
 
   static async fetchData(params, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);

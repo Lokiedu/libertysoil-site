@@ -45,7 +45,7 @@ const AuthBlock = ({ current_user, is_logged_in }) => {
 
   return (
     <div className="header__toolbar">
-      <div className="header__toolbar_item">
+      <div className="header__toolbar_item header__toolbar_item-right_space">
         <Link className="header__toolbar_item" to="/auth">Login</Link>
       </div>
     </div>

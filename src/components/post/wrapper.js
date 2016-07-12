@@ -17,11 +17,12 @@
  */
 import React from 'react';
 
+import { CommentsByCategory as CommentsByCategoryPropType } from '../../prop-types/comments';
+
 import bem from '../../utils/bemClassNames';
 import PostFooter from './footer';
 import Preview from './preview';
 import Comments from './comments';
-
 
 const PostWrapper = ({
   users,
@@ -67,6 +68,10 @@ const PostWrapper = ({
 
     </section>
   );
+};
+
+PostWrapper.propTypes = {
+  comments: CommentsByCategoryPropType.isRequired
 };
 
 export default PostWrapper;

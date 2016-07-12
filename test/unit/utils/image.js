@@ -10,7 +10,7 @@ describe('processImage', () => {
      image sample https://commons.wikimedia.org/wiki/File:Simple_light_bulb_graphic.png
      with a free license.
     */
-    let buffer = fs.readFileSync('test/unit/utils/bulb.png');
+    let buffer = fs.readFileSync('test-helpers/bulb.png');
     let image;
     // cropping
     image = await processImage(buffer, [{crop: {left: 0, top: 0, right: 4, bottom:9}}]);

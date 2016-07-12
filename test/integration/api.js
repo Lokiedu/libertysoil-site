@@ -20,6 +20,9 @@
 import { v4 as uuid4 } from 'uuid';
 import bcrypt from 'bcrypt'
 import bb from 'bluebird'
+import FormData from 'form-data';
+import fs from 'fs';
+import AWS from 'mock-aws';
 
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
@@ -35,6 +38,7 @@ let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 let Hashtag = bookshelf.model('Hashtag');
 let Geotag = bookshelf.model('Geotag');
+let Attachment = bookshelf.model('Attachment');
 
 const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
 
@@ -209,6 +213,7 @@ describe('api v.1', () => {
 
       before(async () => {
         await bookshelf.knex('users').del();
+        await bookshelf.knex('attachments').del();
         user = await User.create('mary', 'secret', 'mary@example.com');
         await user.save({email_check_hash: ''}, {require: true});
 
@@ -231,6 +236,44 @@ describe('api v.1', () => {
         });
       });
 
+      describe('Upload files', () => {
+
+        before(() => {
+          // mocking S3
+          AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
+        });
+
+        after(() => {
+          AWS.restore('S3');
+        });
+
+        it('validation works', async () => {
+          await expect(
+            { url: `/api/v1/upload`, session: sessionId, method: 'POST' }
+            , 'to fail validation with', '"files" parameter is not provided');
+        });
+
+        it('works', async () => {
+          let formData = new FormData;
+          formData.append('files', fs.createReadStream('./test-helpers/bulb.png') );
+
+          await expect(
+            {
+              url: `/api/v1/upload`,
+              session: sessionId,
+              method: 'POST',
+              headers: formData.getHeaders(),
+              body: formData
+            },
+            'to open successfully'
+          );
+          const attachment = await Attachment.where({ filename: 'bulb.png' }).count();
+
+          expect(attachment, 'to equal', '1');
+        });
+
+      });
+
       describe('Change password', () => {
         it('/user/password should work', async () => {
           await expect(
@@ -238,7 +281,7 @@ describe('api v.1', () => {
               url: `/api/v1/user/password`,
               session: sessionId,
               method: 'POST',
-              body: {old_password: 'secret', new_password: 'barsecret'}
+              body: { old_password: 'secret', new_password: 'barsecret' }
             }
             , 'to open successfully');
           await user.refresh();

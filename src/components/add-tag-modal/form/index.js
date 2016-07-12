@@ -17,6 +17,10 @@
 */
 import React, { PropTypes } from 'react';
 
+import { ArrayOfGeotagsPropType } from '../deps';
+import { ArrayOfHashtagsPropType } from '../deps';
+import { ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType } from '../deps';
+
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../deps';
 
 import AddGeotagForm from './geotag';
@@ -68,20 +72,11 @@ AddTagForm.displayName = 'AddTagForm';
 
 AddTagForm.propTypes = {
   addedTags: PropTypes.shape({
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    }))
+    geotags: ArrayOfGeotagsPropType,
+    hashtags: ArrayOfHashtagsPropType,
+    schools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType])
   }),
-  allSchools: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string
-  })),
+  allSchools: ArrayOfSchoolsPropType,
   onAddGeotag: PropTypes.func.isRequired,
   onAddHashtag: PropTypes.func.isRequired,
   onAddSchool: PropTypes.func.isRequired,
@@ -91,9 +86,9 @@ AddTagForm.propTypes = {
   }),
   type: PropTypes.oneOf(IMPLEMENTED_TAGS).isRequired,
   userRecentTags: PropTypes.shape({
-    geotags: PropTypes.array.isRequired,
-    schools: PropTypes.array.isRequired,
-    hashtags: PropTypes.array.isRequired
+    geotags: ArrayOfGeotagsPropType.isRequired,
+    hashtags: ArrayOfHashtagsPropType.isRequired,
+    schools: ArrayOfSchoolsPropType.isRequired
   }).isRequired
 };
 

@@ -18,6 +18,10 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
+
 import Button from './button';
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
@@ -25,29 +29,18 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddTagModal from './add-tag-modal';
 
-
-@ClickOutsideComponentDecorator
-export default class CreatePost extends React.Component {
+class CreatePost extends React.Component {
   static displayName = 'CreatePost';
   static propTypes = {
     actions: PropTypes.shape({
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
     }),
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType,
     defaultText: PropTypes.string,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    geotags: ArrayOfGeotagsPropType,
+    hashtags: ArrayOfHashtagsPropType,
+    schools: ArrayOfSchoolsPropType,
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
       loadUserRecentTags: PropTypes.func.isRequired,
@@ -55,9 +48,9 @@ export default class CreatePost extends React.Component {
       checkGeotagExists: PropTypes.func.isRequired
     }),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      geotags: ArrayOfGeotagsPropType.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired,
+      hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired
   };
 
@@ -66,6 +59,7 @@ export default class CreatePost extends React.Component {
 
     this.state = {
       isSubmitting: false,
+      hasText: false,
       expanded: false,
       addTagModalType: null
     };
@@ -94,13 +88,13 @@ export default class CreatePost extends React.Component {
       return;
     }
 
-    const form = this.form;
-
-    if (!form.text.value.trim().length) {
+    if (!this.state.hasText) {
       return;
     }
 
     this.setState({ isSubmitting: true });
+
+    const form = this.form;
     const data = {
       text: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
@@ -117,7 +111,16 @@ export default class CreatePost extends React.Component {
 
     form.text.value = '';
     this._addTagModal.reset();
-    this.setState({ isSubmitting: false });
+    this.setState({ isSubmitting: false, hasText: false });
+  };
+
+  _handleTextChange = (event) => {
+    let hasText = false;
+    if (event.target.value.trim()) {
+      hasText = true;
+    }
+
+    this.setState({ hasText });
   };
 
   _handleFocus = () => {
@@ -212,6 +215,7 @@ export default class CreatePost extends React.Component {
                     name="text"
                     placeholder="Make a contribution to education change"
                     rows={(this.state.expanded) ? 10 : 1}
+                    onChange={this._handleTextChange}
                     onFocus={this._handleFocus}
                   />
                 </div>
@@ -233,10 +237,11 @@ export default class CreatePost extends React.Component {
               <div className="layout__row layout layout-align_vertical">
                 <div className="layout__grid_item">
                   <Button
-                    className="button button-red"
-                    waiting={this.state.isSubmitting}
+                    className="button button-wide button-red"
+                    disabled={!this.state.hasText}
                     title="Publish"
                     type="submit"
+                    waiting={this.state.isSubmitting}
                   />
                 </div>
                 <div className="layout__grid_item layout__grid_item-wide">
@@ -273,3 +278,6 @@ export default class CreatePost extends React.Component {
     );
   }
 }
+
+const DecoratedCreatePost = ClickOutsideComponentDecorator(CreatePost);
+export default DecoratedCreatePost;
