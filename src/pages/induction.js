@@ -20,6 +20,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import BaseInductionPage from './base/induction';
 import Footer from '../components/footer';
 import Header from '../components/header';
@@ -50,7 +52,7 @@ class InductionPage extends React.Component {
     dispatch: PropTypes.func,
     i_am_following: PropTypes.arrayOf(PropTypes.string),
     is_logged_in: PropTypes.bool,
-    messages: PropTypes.arrayOf(PropTypes.shape({})),
+    messages: ArrayOfMessagesPropType,
     suggested_users: PropTypes.arrayOf(PropTypes.shape({}))
   };
 

@@ -31,18 +31,21 @@ import Breadcrumbs from '../../../src/components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../../../src/components/side-suggested-users';
 import CreatePost from '../../../src/components/create-post';
 
-describe('List page with redux', function() {
-
-  it('MUST render important components', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<List comments={{}} create_post_form={{text: 'foo'}} current_user={{id: '1'}} river={[]} ui={{progress: {}}} />);
-
-    return expect(
-      renderer,
-      'to have rendered',
-      <div>
-      </div>
+describe('List page with redux', () => {
+  it('MUST render important components', () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <List
+        comments={{}}
+        create_post_form={{ text: 'foo' }}
+        current_user={{ id: '1' }}
+        posts={{}}
+        river={[]}
+        schools={{}}
+        ui={{ progress: {} }}
+      />
     );
-  });
 
+    return expect(renderer, 'to have rendered', <div></div>);
+  });
 });

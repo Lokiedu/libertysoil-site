@@ -18,6 +18,9 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
+
 import Button from '../button';
 import Message from '../message';
 import Messages from '../messages';
@@ -34,9 +37,8 @@ class HashtagEditForm extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    hashtag: PropTypes.shape({
-      name: PropTypes.string
-    }).isRequired,
+    hashtag: HashtagPropType.isRequired,
+    messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired
   };

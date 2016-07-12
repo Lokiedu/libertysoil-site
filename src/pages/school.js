@@ -14,12 +14,23 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
+
+import {
+  uuid4 as uuid4PropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
@@ -34,13 +45,14 @@ import { TAG_SCHOOL } from '../consts/tags';
 
 
 export class SchoolPage extends React.Component {
-
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     params: PropTypes.shape({
       school_name: PropTypes.string.isRequired
     }),
-    school_posts: PropTypes.shape(
-    ).isRequired
+    posts: MapOfPostsPropType.isRequired,
+    school_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
+    schools: MapOfSchoolsPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

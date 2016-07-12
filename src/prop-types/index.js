@@ -14,30 +14,16 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import { Link } from 'react-router';
+*/
+export const common = require('./common');
 
-import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
+export const attachments = require('./attachments');
+export const messages = require('./messages');
 
-import Tag from '../tag';
-import TagIcon from '../tag-icon';
-import Breadcrumbs from './breadcrumbs';
-import { TAG_HASHTAG } from '../../consts/tags';
+export const tags = require('./tags');
+export const geotags = require('./geotags');
+export const hashtags = require('./hashtags');
+export const schools = require('./schools');
 
-const HashtagBreadcrumbs = ({ hashtag }) => (
-  <Breadcrumbs>
-    <Link title="All Hashtags" to="/tag">
-      <TagIcon inactive type={TAG_HASHTAG} />
-    </Link>
-    <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
-  </Breadcrumbs>
-);
-
-HashtagBreadcrumbs.displayName = 'HashtagBreadcrumbs';
-
-HashtagBreadcrumbs.propTypes = {
-  hashtag: HashtagPropType.isRequired
-};
-
-export default HashtagBreadcrumbs;
+export const posts = require('./posts');
+export const comments = require('./comments');

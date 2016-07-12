@@ -18,6 +18,9 @@
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { Geotag as GeotagPropType } from '../../prop-types/geotags';
+
 import Button from '../button';
 import Messages from '../messages';
 import Message from '../message';
@@ -34,9 +37,8 @@ class GeotagEditForm extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    geotag: PropTypes.shape({
-      url_name: PropTypes.string
-    }).isRequired,
+    geotag: GeotagPropType.isRequired,
+    messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired
   };

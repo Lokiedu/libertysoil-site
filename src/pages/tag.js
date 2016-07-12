@@ -21,6 +21,18 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { values } from 'lodash';
 
+import {
+  url as urlPropType,
+  mapOf as mapOfPropType
+} from '../prop-types/common';
+import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
@@ -37,11 +49,14 @@ export class TagPage extends Component {
   static displayName = 'TagPage';
 
   static propTypes = {
-    hashtags: PropTypes.shape().isRequired,
+    comments: CommentsByCategoryPropType.isRequired,
+    hashtags: MapOfHashtagsPropType.isRequired,
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
     }),
-    tag_posts: PropTypes.shape().isRequired
+    posts: MapOfPostsPropType.isRequired,
+    schools: MapOfSchoolsPropType.isRequired,
+    tag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -70,6 +85,7 @@ export class TagPage extends Component {
 
   render() {
     const {
+      comments,
       is_logged_in,
       current_user,
       posts,
@@ -80,8 +96,7 @@ export class TagPage extends Component {
       params,
       hashtags,
       schools,
-      ui,
-      comments
+      ui
     } = this.props;
 
     const client = new ApiClient(API_HOST);

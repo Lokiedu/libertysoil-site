@@ -4707,11 +4707,6 @@
       "from": "punycode@>=1.2.4 <2.0.0",
       "resolved": "https://registry.npmjs.org/punycode/-/punycode-1.4.1.tgz"
     },
-    "put": {
-      "version": "0.0.6",
-      "from": "put@latest",
-      "resolved": "https://registry.npmjs.org/put/-/put-0.0.6.tgz"
-    },
     "q": {
       "version": "1.4.1",
       "from": "q@>=1.1.2 <2.0.0",
@@ -4828,6 +4823,11 @@
       "version": "2.2.0",
       "from": "react-icons@2.2.0",
       "resolved": "https://registry.npmjs.org/react-icons/-/react-icons-2.2.0.tgz"
+    },
+    "react-immutable-proptypes": {
+      "version": "1.7.1",
+      "from": "react-immutable-proptypes@latest",
+      "resolved": "https://registry.npmjs.org/react-immutable-proptypes/-/react-immutable-proptypes-1.7.1.tgz"
     },
     "react-inform": {
       "version": "0.1.1",
@@ -5403,7 +5403,14 @@
     "sphinxapi": {
       "version": "1.2.1",
       "from": "sphinxapi@>=1.2.1 <1.3.0",
-      "resolved": "https://registry.npmjs.org/sphinxapi/-/sphinxapi-1.2.1.tgz"
+      "resolved": "https://registry.npmjs.org/sphinxapi/-/sphinxapi-1.2.1.tgz",
+      "dependencies": {
+        "put": {
+          "version": "0.0.6",
+          "from": "put@latest",
+          "resolved": "https://registry.npmjs.org/put/-/put-0.0.6.tgz"
+        }
+      }
     },
     "spin.js": {
       "version": "2.3.2",

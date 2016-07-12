@@ -18,13 +18,16 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
+
 import Button from './button';
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddTagModal from './add-tag-modal';
-
 
 class CreatePost extends React.Component {
   static displayName = 'CreatePost';
@@ -33,20 +36,11 @@ class CreatePost extends React.Component {
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
     }),
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType,
     defaultText: PropTypes.string,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    geotags: ArrayOfGeotagsPropType,
+    hashtags: ArrayOfHashtagsPropType,
+    schools: ArrayOfSchoolsPropType,
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
       loadUserRecentTags: PropTypes.func.isRequired,
@@ -54,9 +48,9 @@ class CreatePost extends React.Component {
       checkGeotagExists: PropTypes.func.isRequired
     }),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      geotags: ArrayOfGeotagsPropType.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired,
+      hashtags: ArrayOfHashtagsPropType.isRequired
     }).isRequired
   };
 

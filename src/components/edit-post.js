@@ -18,6 +18,13 @@
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../prop-types/schools';
+
 import Button from './button';
 import TagIcon from './tag-icon';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
@@ -31,36 +38,20 @@ export default class EditPost extends React.Component {
       resetEditPostForm: PropTypes.func,
       updateEditPostForm: PropTypes.func
     }),
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType,
+    geotags: ArrayOfGeotagsPropType,
+    hashtags: ArrayOfHashtagsPropType,
     id: PropTypes.string,
     onDelete: PropTypes.func,
     onSubmit: PropTypes.func,
     post: PropTypes.shape({
-      geotags: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string
-      })),
-      hashtags: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string
-      })),
+      geotags: ArrayOfGeotagsPropType,
+      hashtags: ArrayOfHashtagsPropType,
       id: PropTypes.string.isRequired,
-      schools: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string
-      })),
+      schools: ArrayOfLightSchoolsPropType,
       text: PropTypes.string
     }),
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    schools: ArrayOfLightSchoolsPropType,
     triggers: PropTypes.shape({
       updatePost: PropTypes.func.isRequired,
       deletePost: PropTypes.func.isRequired,
@@ -69,9 +60,9 @@ export default class EditPost extends React.Component {
       checkGeotagExists: PropTypes.func.isRequired
     }),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      geotags: ArrayOfGeotagsPropType.isRequired,
+      hashtags: ArrayOfHashtagsPropType.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired
     }).isRequired
   };
 

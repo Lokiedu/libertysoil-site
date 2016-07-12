@@ -18,6 +18,10 @@
 import React, { PropTypes, Component } from 'react';
 import { clone, differenceWith, pick, remove } from 'lodash';
 
+import { ArrayOfGeotagsPropType } from './deps';
+import { ArrayOfHashtagsPropType } from './deps';
+import { ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType } from './deps';
+
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from './deps';
 import { ModalComponent } from './deps';
 import { TagCloud } from './deps';
@@ -67,31 +71,22 @@ export default class AddTagModal extends Component {
   static displayName = 'AddTagModal';
 
   static propTypes = {
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })).isRequired,
-    geotags: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    })),
-    hashtags: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    allSchools: ArrayOfSchoolsPropType.isRequired,
+    geotags: ArrayOfGeotagsPropType,
+    hashtags: ArrayOfHashtagsPropType,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
-    schools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })),
+    schools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType]),
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired,
       checkGeotagExists: PropTypes.func.isRequired
     }),
     type: PropTypes.oneOf(IMPLEMENTED_TAGS),
     userRecentTags: PropTypes.shape({
-      geotags: PropTypes.array.isRequired,
-      schools: PropTypes.array.isRequired,
-      hashtags: PropTypes.array.isRequired
+      geotags: ArrayOfGeotagsPropType.isRequired,
+      hashtags: ArrayOfHashtagsPropType.isRequired,
+      schools: ArrayOfSchoolsPropType.isRequired
     }).isRequired
   };
 

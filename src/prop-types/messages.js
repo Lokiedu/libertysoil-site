@@ -14,30 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import { Link } from 'react-router';
+*/
+import { PropTypes } from 'react';
 
-import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
+export const Message = PropTypes.shape({
+  message: PropTypes.string.isRequired,
+  type: PropTypes.string
+});
 
-import Tag from '../tag';
-import TagIcon from '../tag-icon';
-import Breadcrumbs from './breadcrumbs';
-import { TAG_HASHTAG } from '../../consts/tags';
-
-const HashtagBreadcrumbs = ({ hashtag }) => (
-  <Breadcrumbs>
-    <Link title="All Hashtags" to="/tag">
-      <TagIcon inactive type={TAG_HASHTAG} />
-    </Link>
-    <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
-  </Breadcrumbs>
-);
-
-HashtagBreadcrumbs.displayName = 'HashtagBreadcrumbs';
-
-HashtagBreadcrumbs.propTypes = {
-  hashtag: HashtagPropType.isRequired
-};
-
-export default HashtagBreadcrumbs;
+export const ArrayOfMessages = PropTypes.arrayOf(Message);

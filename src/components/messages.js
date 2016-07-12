@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import Message from './message';
 
 const Messages = ({ messages, removeMessage }) => {
@@ -38,10 +40,7 @@ const Messages = ({ messages, removeMessage }) => {
 Messages.displayName = 'Messages';
 
 Messages.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.string.isRequired,
-    type: PropTypes.string
-  })).isRequired,
+  messages: ArrayOfMessagesPropType.isRequired,
   removeMessage: PropTypes.func
 };
 

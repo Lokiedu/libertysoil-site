@@ -15,12 +15,16 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
+
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import { uuid4 as uuid4PropType } from '../prop-types/common';
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 
 import {
   Page,
@@ -49,9 +53,16 @@ import {
   updateEditPostForm
 } from '../actions/posts';
 
-
 class PostEditPage extends React.Component {
   static displayName = 'PostEditPage';
+
+  static propTypes = {
+    params: PropTypes.shape({
+      uuid: uuid4PropType.isRequired
+    }),
+    posts: MapOfPostsPropType.isRequired,
+    schools: MapOfSchoolsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
@@ -97,22 +108,23 @@ class PostEditPage extends React.Component {
 
   render() {
     const {
-      current_user
+      current_user,
+      posts
     } = this.props;
     const postId = this.props.params.uuid;
 
-    if (!(postId in this.props.posts)) {
+    if (!(postId in posts)) {
       // not loaded yet
       return null;
     }
 
-    const post = this.props.posts[postId];
+    const post = posts[postId];
 
     if (post.error) {
       return <NotFound />;
     }
 
-    if (post.user_id != this.props.current_user.id) {
+    if (post.user_id != current_user.id) {
       return null;
     }
 
@@ -126,13 +138,13 @@ class PostEditPage extends React.Component {
         <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
         <Header
           is_logged_in={this.props.is_logged_in}
-          current_user={this.props.current_user}
+          current_user={current_user}
         >
           <HeaderLogo small />
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
-          <Sidebar current_user={this.props.current_user} />
+          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
               <PageContent>

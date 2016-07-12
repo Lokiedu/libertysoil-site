@@ -15,9 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { isEmpty } from 'lodash';
 import { Link } from 'react-router';
+
+import { Geotag as GeotagPropType } from '../../prop-types/geotags';
 
 import Tag from '../tag';
 import TagIcon from '../tag-icon';
@@ -60,10 +62,7 @@ const GeotagBreadcrumbs = ({ geotag }) => (
 GeotagBreadcrumbs.displayName = 'GeotagBreadcrumbs';
 
 GeotagBreadcrumbs.propTypes = {
-  geotag: PropTypes.shape({
-    name: PropTypes.string,
-    url_name: PropTypes.string
-  }).isRequired
+  geotag: GeotagPropType.isRequired
 };
 
 export default GeotagBreadcrumbs;

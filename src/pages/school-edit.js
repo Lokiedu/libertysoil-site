@@ -22,6 +22,9 @@ import { browserHistory } from 'react-router';
 import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import BaseTagPage from './base/tag';
@@ -37,6 +40,11 @@ import { TAG_SCHOOL } from '../consts/tags';
 
 class SchoolEditPage extends React.Component {
   static displayName = 'SchoolEditPage';
+
+  static propTypes = {
+    messages: ArrayOfMessagesPropType,
+    schools: MapOfSchoolsPropType.isRequired
+  };
 
   static async fetchData(params, store, client) {
     const school = client.getSchool(params.school_name);

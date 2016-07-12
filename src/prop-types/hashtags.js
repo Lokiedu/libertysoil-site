@@ -14,30 +14,21 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import { Link } from 'react-router';
+*/
+import { PropTypes } from 'react';
 
-import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
+import { mapOfValues, uuid4, date, url } from './common';
+import { TagMore } from './tags';
 
-import Tag from '../tag';
-import TagIcon from '../tag-icon';
-import Breadcrumbs from './breadcrumbs';
-import { TAG_HASHTAG } from '../../consts/tags';
+export const Hashtag = PropTypes.shape({
+  created_at: date.isRequired,
+  id: uuid4.isRequired,
+  name: url.isRequired,
+  more: TagMore,
+  post_count: PropTypes.number.isRequired,
+  updated_at: date.isRequired
+});
 
-const HashtagBreadcrumbs = ({ hashtag }) => (
-  <Breadcrumbs>
-    <Link title="All Hashtags" to="/tag">
-      <TagIcon inactive type={TAG_HASHTAG} />
-    </Link>
-    <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
-  </Breadcrumbs>
-);
+export const ArrayOfHashtags = PropTypes.arrayOf(Hashtag);
 
-HashtagBreadcrumbs.displayName = 'HashtagBreadcrumbs';
-
-HashtagBreadcrumbs.propTypes = {
-  hashtag: HashtagPropType.isRequired
-};
-
-export default HashtagBreadcrumbs;
+export const MapOfHashtags = mapOfValues(Hashtag);

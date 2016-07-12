@@ -21,6 +21,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { debounce, take } from 'lodash';
 
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
@@ -42,8 +45,8 @@ class Search extends Component {
     clearSearchResults: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     results: PropTypes.shape({
-      geotags: PropTypes.arrayOf(PropTypes.shape({})),
-      hashtags: PropTypes.arrayOf(PropTypes.shape({}))
+      geotags: ArrayOfGeotagsPropType,
+      hashtags: ArrayOfHashtagsPropType
     })
   };
 

@@ -16,6 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+
+import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../../prop-types/geotags';
+import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
+import {
+  ArrayOfSchools as ArrayOfSchoolsPropType,
+  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
+} from '../../prop-types/schools';
+
 import TagCloud from '../tag-cloud';
 
 const AddedTags = (props) => {
@@ -36,17 +44,12 @@ const AddedTags = (props) => {
 AddedTags.displayName = 'AddedTags';
 
 AddedTags.propTypes = {
-  geotags: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired
-  })),
-  hashtags: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired
-  })),
-  schools: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    url_name: PropTypes.string.isRequired
-  }))
+  geotags: ArrayOfGeotagsPropType,
+  hashtags: ArrayOfHashtagsPropType,
+  schools: PropTypes.oneOfType([
+    ArrayOfLightSchoolsPropType,
+    ArrayOfSchoolsPropType
+  ])
 };
 
 export default AddedTags;

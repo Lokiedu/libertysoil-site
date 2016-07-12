@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import BaseSettingsPage from './base/settings';
 import SettingsPasswordForm from '../components/settings/password-form';
 import ApiClient from '../api/client';
@@ -31,7 +33,8 @@ class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
 
   static propTypes = {
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    messages: ArrayOfMessagesPropType
   };
 
   static async fetchData(params, store, client) {

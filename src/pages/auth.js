@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
@@ -37,15 +39,11 @@ import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
-
 export class Auth extends React.Component {
 
   static propTypes = {
     is_logged_in: PropTypes.bool,
-    messages: PropTypes.arrayOf(PropTypes.shape({
-      message: PropTypes.string.isRequired,
-      type: PropTypes.string
-    })).isRequired,
+    messages: ArrayOfMessagesPropType.isRequired,
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired

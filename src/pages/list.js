@@ -21,6 +21,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
+import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+
 import VisibilitySensor from '../components/visibility-sensor';
 
 import { API_HOST } from '../config';
@@ -57,11 +61,14 @@ export class List extends React.Component {
   static displayName = 'List';
 
   static propTypes = {
+    comments: CommentsByCategoryPropType.isRequired,
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
     current_user: PropTypes.shape({}).isRequired,
+    posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
+    schools: MapOfSchoolsPropType.isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean

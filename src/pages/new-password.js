@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { defaultSelector } from '../selectors';
@@ -35,7 +37,6 @@ import Footer from '../components/footer';
 import Header from '../components/header';
 import Messages from '../components/messages';
 
-
 const SuccessMessage = () => (
   <div>
     You have successfully changed your password. Please proceed into our <Link className="link" to="/auth">login form </Link>.
@@ -44,6 +45,7 @@ const SuccessMessage = () => (
 
 class PasswordForm extends React.Component {
   static propTypes = {
+    messages: ArrayOfMessagesPropType,
     onSubmit: PropTypes.func
   };
 
@@ -128,6 +130,10 @@ class PasswordForm extends React.Component {
 
 
 class Form extends React.Component {
+  static propTypes = {
+    messages: ArrayOfMessagesPropType.isRequired
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
 
