@@ -27,7 +27,7 @@ import Checkit from 'checkit';
 import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
-import { processImage } from '../utils/image';
+import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
   User as UserValidators,
@@ -1837,7 +1837,7 @@ export default class ApiController {
       const originalData = await original.download();
 
       // Process the data.
-      const newImage = await processImage(originalData.Body, transforms);
+      const newImage = await processImageUtil(originalData.Body, transforms);
       const imageBuffer = await newImage.toBufferAsync(original.extension());
 
       // Update the attachment specified in derived_id or create a new one.
