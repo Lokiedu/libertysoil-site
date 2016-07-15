@@ -25,6 +25,7 @@ import { API_HOST } from '../../../src/config';
 import ApiClient from '../../../src/api/client';
 import { ActionsTrigger } from '../../../src/triggers';
 import Login from '../../../src/components/login';
+import { Register } from '../../../src/components/register';
 import initBookshelf from '../../../src/api/db';
 import { initState } from '../../../src/store';
 import expect from '../../../test-helpers/expect';
@@ -58,6 +59,42 @@ describe('Auth page', () => {
     setTimeout(() => {
       expect(user.get('id'), 'to equal', store.getState().getIn(['current_user', 'id']));
       done();
-    }, 1000);
+    }, 200);
+  });
+
+  describe('Register component', () => {
+    it('availableUsername should work', (done) => {
+      const testComponent =
+              <Register
+      fields={
+        {
+          username: {},
+          password: {},
+          passwordRepeat: {},
+          email: {},
+          agree: {}
+        }
+      }
+      form={{
+        forceValidate: () => {},
+        isValid: () => {},
+        onValues: () => {},
+        onRegisterUser: () => {},
+        onShowRegisterForm: () => {}
+      }}
+      onRegisterUser={() => {}}
+      onShowRegisterForm={() => {}}
+        />;
+      const wrapper = mount(testComponent);
+      wrapper.find('#registerFirstName').node.value = 'test_firstname';
+      wrapper.find('#registerLastName').node.value = 'test_lastname';
+      wrapper.find('#registerFirstName').simulate('change');
+      wrapper.find('#registerLastName').simulate('change');
+
+      setTimeout(() => {
+        expect(wrapper.find('#username').node.value, 'to be non-empty');
+        done();
+      }, 50);
+    });
   });
 });
