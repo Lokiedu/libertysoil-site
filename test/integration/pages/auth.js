@@ -86,6 +86,8 @@ describe('Auth page', () => {
       onShowRegisterForm={() => {}}
         />;
       const wrapper = mount(testComponent);
+      expect(wrapper.find('#username').node.value, 'to be empty');
+
       wrapper.find('#registerFirstName').node.value = 'test_firstname';
       wrapper.find('#registerLastName').node.value = 'test_lastname';
       wrapper.find('#registerFirstName').simulate('change');
