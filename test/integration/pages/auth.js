@@ -49,6 +49,10 @@ describe('Auth page', () => {
     triggers = new ActionsTrigger(client, store.dispatch);
   });
 
+  after(async () => {
+    await user.destroy();
+  });
+
   it('Login component should work', async (done) => {
     const testComponent = <Login onLoginUser={triggers.login} />;
     const wrapper = mount(testComponent);
