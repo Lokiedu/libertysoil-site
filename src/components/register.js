@@ -189,7 +189,7 @@ export class Register extends React.Component {
             <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
           </div>
         </header>
-        <form action="" className="layout__row" onSubmit={this.submitHandler}>
+        <form action="" className="layout__row" id="registerForm" onSubmit={this.submitHandler}>
           <div className="layout__row">
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerFirstName">First name</label>

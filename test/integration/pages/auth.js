@@ -25,7 +25,7 @@ import { API_HOST } from '../../../src/config';
 import ApiClient from '../../../src/api/client';
 import { ActionsTrigger } from '../../../src/triggers';
 import Login from '../../../src/components/login';
-import { Register } from '../../../src/components/register';
+import WrappedRegister, { Register } from '../../../src/components/register';
 import initBookshelf from '../../../src/api/db';
 import { initState } from '../../../src/store';
 import expect from '../../../test-helpers/expect';
@@ -101,6 +101,38 @@ describe('Auth page', () => {
         expect(wrapper.find('#username').node.value, 'to be non-empty');
         done();
       }, 50);
+    });
+  });
+
+  describe('Wrapped Register component', () => {
+    let userAttrs, user;
+    const email = 'test@example.com';
+
+    before(async () => {
+      userAttrs = UserFactory.build();
+      user = await User.create(userAttrs.username, userAttrs.password, email);
+    });
+
+    after(async () => {
+      await user.destroy();
+    });
+
+    it('should check on email currently taken', (done) => {
+      const testComponent = (
+        <WrappedRegister
+          onRegisterUser={() => {}}
+          onShowRegisterForm={() => {}}
+          />
+      );
+      const wrapper = mount(testComponent);
+
+      wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
+      wrapper.find('#registerForm').simulate('submit');
+
+      setTimeout(() => {
+        expect(wrapper.state().errors.email, 'to equal', 'Email is taken');
+        done();
+      }, 100);
     });
   });
 });
