@@ -24,7 +24,7 @@ import FormData from 'form-data';
 import fs from 'fs';
 import AWS from 'mock-aws';
 
-import expect from '../../test-helpers/expect';
+import expect, { subjectToRequest } from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 import QueueSingleton from '../../src/utils/queue';
@@ -460,6 +460,63 @@ describe('api v.1', () => {
               'not to open authorized'
             );
           });
+
+          describe('likers list', () => {
+            const users = [];
+            const userSessions = [];
+
+            beforeEach(async () => {
+              for (let i = 0; i < 2; ++i) {
+                users[i] = await User.create(`likes_test${i}`, 'testPassword', `likes_test${i}@example.com`);
+                await users[i].save({ email_check_hash: '' },{ require: true });
+
+                userSessions[i] = await login(`likes_test${i}`, 'testPassword');
+
+                await expect(
+                  { url: `/api/v1/post/${post.id}/like`, session: userSessions[i], method: 'POST' },
+                  'to open successfully'
+                );
+              }
+            });
+
+            afterEach(async () => {
+              for (let i = 0; i < 2; ++i) {
+                await expect(
+                  { url: `/api/v1/post/${post.id}/unlike`, session: userSessions[i], method: 'POST' },
+                  'to open successfully'
+                );
+
+                await users[i].destroy();
+              }
+            });
+
+            it('non-author MUST see only his like', async () => {
+              await expect(
+                { url: `/api/v1/post/${post.id}`, session: sessionId, method: 'GET' },
+                'body to satisfy',
+                { likers: [] }
+              );
+
+              await expect(
+                { url: `/api/v1/post/${post.id}/like`, session: sessionId, method: 'POST' },
+                'to open successfully'
+              );
+
+              let localUser = await User.where({ id: user.id }).fetch({ require: true, withRelated: ['liked_posts'] });
+              localUser = await localUser.toJSON();
+
+              await expect(
+                { url: `/api/v1/post/${post.id}`, session: sessionId, method: 'GET' },
+                'body to satisfy',
+                { likers: [{ id: localUser.id }] }
+              );
+
+              await expect(
+                { url: `/api/v1/post/${post.id}/unlike`, session: sessionId, method: 'POST' },
+                'to open successfully'
+              );
+            });
+          });
         });
 
         describe('Comments', () => {
@@ -726,6 +783,34 @@ describe('api v.1', () => {
             await expect(
               { url: `/api/v1/posts/liked/${user.get('username')}` },
               'body to satisfy', [{text: post.get('text')}]
+            );
+          });
+
+          it('Anonymous user MUST NOT see post\'s likers list', async () => {
+            await user.save({ email_check_hash: '' },{ require: true });
+            const session = await login('mary', 'secret');
+
+            await expect(
+              { url: `/api/v1/post/${post.get('id')}/like`, session, method: 'POST' },
+              'to open successfully'
+            );
+
+            // Mary actually liked the post
+            await expect(
+              { url: `/api/v1/post/${post.get('id')}`, session, method: 'GET' },
+              'body to satisfy',
+              { likers: [{ id: user.get('id') }] }
+            );
+
+            await expect(
+              { url: `/api/v1/post/${post.get('id')}`, method: 'GET' },
+              'body to satisfy',
+              { likers: [] }
+            );
+
+            await expect(
+              { url: `/api/v1/post/${post.get('id')}/unlike`, session, method: 'POST' },
+              'to open successfully'
             );
           });
         });
