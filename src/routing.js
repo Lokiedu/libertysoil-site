@@ -36,6 +36,7 @@ import AboutUserPage from './pages/user-bio';
 import SchoolPage from './pages/school';
 import SchoolEditPage from './pages/school-edit';
 import SettingsPage from './pages/settings';
+import SettingsEmailPage from './pages/settings-email';
 import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
@@ -79,6 +80,7 @@ export function getRoutes(authHandler, fetchHandler) {
       </Route>
       <Route path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
+        <Route component={SettingsEmailPage} path="email" onEnter={withAuth} />
         <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
         <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
       </Route>

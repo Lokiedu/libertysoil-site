@@ -78,7 +78,7 @@ queue.process('on-comment', async function(job, done) {
     const post = comment.related('post');
     const postAuthor = comment.related('post').related('user');
 
-    if (commentAuthor.id !== postAuthor.id) {
+    if (!commentAuthor.get('more').mute_all_posts && commentAuthor.id !== postAuthor.id) {
       queue.create('new-comment-email', {
         comment: comment.attributes,
         commentAuthor: commentAuthor.attributes,
