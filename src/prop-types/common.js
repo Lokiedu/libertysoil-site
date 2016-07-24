@@ -220,6 +220,10 @@ export const uuid4 = createSimplifiedRequirableTypeChecker(
 
 export const date = createSimplifiedRequirableTypeChecker(
   (propValue, propFullName, componentName, location) => {
+    if (propValue instanceof Date) {
+      return null;
+    }
+
     const expectedType = 'string';
     if (typeof propValue !== expectedType) {
       return getTypeError(propValue, expectedType, propFullName, componentName, location);
