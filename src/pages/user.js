@@ -20,8 +20,21 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import {
+  mapOf as mapOfPropType,
+  url as urlPropType,
+  uuid4 as uuid4PropType
+} from '../prop-types/common';
+import {
+  ArrayOfPostsId as ArrayOfPostsIdPropType,
+  MapOfPosts as MapOfPostsPropType
+} from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  MapOfUsers as MapOfUsersPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
 
 import NotFound from './not-found';
 import BaseUserPage from './base/user';
@@ -34,14 +47,23 @@ import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
-
 class UserPage extends React.Component {
   static displayName = 'UserPage';
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    i_am_following: ArrayOfUsersIdPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     location: PropTypes.shape({}).isRequired,
-    posts: MapOfPostsPropType.isRequired
+    params: PropTypes.shape({
+      username: urlPropType.isRequired
+    }).isRequired,
+    posts: MapOfPostsPropType.isRequired,
+    user_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static childContextTypes = {
@@ -63,16 +85,21 @@ class UserPage extends React.Component {
   }
 
   render() {
-    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
-      ui,
-      users,
       comments,
-      following,
+      current_user,
       followers,
-      posts
+      following,
+      i_am_following,
+      is_logged_in,
+      params,
+      posts,
+      ui,
+      user_posts,
+      users
     } = this.props;
 
+    const page_user = _.find(users, { username: params.username });
     if (_.isUndefined(page_user)) {
       return null;  // not loaded yet
     }
@@ -81,30 +108,33 @@ class UserPage extends React.Component {
       return <NotFound />;
     }
 
-    const user_posts = this.props.user_posts[page_user.id];
+    let userPostsRiver = user_posts[page_user.id];
+    if (!userPostsRiver) {
+      userPostsRiver = [];
+    }
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <BaseUserPage
-        current_user={this.props.current_user}
-        following={following}
+        current_user={current_user}
         followers={followers}
-        i_am_following={this.props.i_am_following}
-        is_logged_in={this.props.is_logged_in}
+        following={following}
+        i_am_following={i_am_following}
+        is_logged_in={is_logged_in}
         page_user={page_user}
         triggers={triggers}
       >
         <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River
           comments={comments}
-          current_user={this.props.current_user}
+          current_user={current_user}
           posts={posts}
-          river={user_posts}
+          river={userPostsRiver}
           triggers={triggers}
-          users={users}
           ui={ui}
+          users={users}
         />
       </BaseUserPage>
     );

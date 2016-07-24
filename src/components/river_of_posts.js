@@ -23,6 +23,10 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import * as PostTypes  from '../consts/postTypeConstants';
 import { ShortTextPost, PostWrapper } from './post';
@@ -87,9 +91,11 @@ RiverOfPostsComponent.displayName = 'RiverOfPostsComponent';
 
 RiverOfPostsComponent.propTypes = {
   comments: CommentsByCategoryPropType.isRequired,
+  current_user: CurrentUserPropType,
   posts: MapOfPostsPropType.isRequired,
   river: ArrayOfPostsIdPropType.isRequired,
-  ui: PropTypes.shape({}).isRequired
+  ui: PropTypes.shape({}).isRequired,
+  users: MapOfUsersPropType.isRequired
 };
 
 export default RiverOfPostsComponent;

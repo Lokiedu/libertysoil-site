@@ -32,6 +32,10 @@ import {
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -51,13 +55,16 @@ export class GeotagPage extends Component {
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
     geotag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired,
     geotags: MapOfGeotagsPropType.isRequired,
+    is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       url_name: PropTypes.string.isRequired
     }),
     posts: MapOfPostsPropType.isRequired,
-    schools: MapOfSchoolsPropType.isRequired
+    schools: MapOfSchoolsPropType.isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -118,11 +125,11 @@ export class GeotagPage extends Component {
 
     return (
       <BaseTagPage
-        params={this.props.params}
         current_user={current_user}
+        is_logged_in={is_logged_in}
+        params={this.props.params}
         tag={geotag}
         type={TAG_LOCATION}
-        is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
         schools={values(schools)}
@@ -135,9 +142,9 @@ export class GeotagPage extends Component {
           posts={posts}
           river={geotagPosts}
           triggers={triggers}
-          users={users}
           comments={comments}
           ui={ui}
+          users={users}
         />
       </BaseTagPage>
     );

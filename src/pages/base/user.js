@@ -20,6 +20,16 @@ import { IndexLink } from 'react-router';
 import { isEmpty } from 'lodash';
 
 import {
+  mapOf as mapOfPropType,
+  uuid4 as uuid4PropType
+} from '../../prop-types/common';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  User as UserPropType
+} from '../../prop-types/users';
+
+import {
   Page,
   PageMain,
   PageBody,
@@ -157,9 +167,12 @@ BaseUserPage.displayName = 'BaseUserPage';
 
 BaseUserPage.propTypes = {
   children: PropTypes.node,
-  current_user: PropTypes.shape({}),
-  i_am_following: PropTypes.arrayOf(PropTypes.string),
-  page_user: PropTypes.shape({})
+  current_user: CurrentUserPropType,
+  followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
+  following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
+  i_am_following: ArrayOfUsersIdPropType,
+  is_logged_in: PropTypes.bool.isRequired,
+  page_user: UserPropType.isRequired
 };
 
 export default BaseUserPage;

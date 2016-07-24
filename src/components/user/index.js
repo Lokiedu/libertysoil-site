@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
+import { User as UserPropType } from '../../prop-types/users';
+
 import Avatar from './avatar';
 import AvatarEditor from './avatar-editor';
 import UserText from './user-text';
@@ -96,11 +98,12 @@ User.propTypes = {
   className: PropTypes.string,
   isLink: PropTypes.bool,
   text: PropTypes.shape({}),
-  user: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    avatar: PropTypes.string
-  }).isRequired
+  user: UserPropType.isRequired
+  // user: PropTypes.shape({
+  //   id: PropTypes.string.isRequired,
+  //   username: PropTypes.string.isRequired,
+  //   avatar: PropTypes.string
+  // }).isRequired
 };
 
 User.defaultProps = {

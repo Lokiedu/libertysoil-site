@@ -15,12 +15,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { isUndefined } from 'lodash';
+
+import { User as UserPropType } from '../prop-types/users';
 
 import User from './user';
 
-const CurrentUser = ({ ...props }) => {
+const CurrentUser = (props) => {
   if (isUndefined(props.user)) {
     return null;
   }
@@ -31,7 +33,7 @@ const CurrentUser = ({ ...props }) => {
 CurrentUser.displayName = 'CurrentUser';
 
 CurrentUser.propTypes = {
-  user: PropTypes.shape({})
+  user: UserPropType
 };
 
 export default CurrentUser;

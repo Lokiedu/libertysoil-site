@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -42,6 +43,7 @@ import Messages from '../components/messages';
 export class Auth extends React.Component {
 
   static propTypes = {
+    current_user: CurrentUserPropType,
     is_logged_in: PropTypes.bool,
     messages: ArrayOfMessagesPropType.isRequired,
     ui: PropTypes.shape({
@@ -70,7 +72,12 @@ export class Auth extends React.Component {
   }
 
   render() {
-    const { current_user, is_logged_in, messages, ui } = this.props;
+    const {
+      current_user,
+      is_logged_in,
+      messages,
+      ui
+    } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);

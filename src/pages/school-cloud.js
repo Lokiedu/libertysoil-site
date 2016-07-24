@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
@@ -23,6 +23,7 @@ import {
   MapOfSchools as MapOfSchoolsPropType,
   SchoolCloud as SchoolCloudPropType
 } from '../prop-types/schools';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
@@ -42,11 +43,12 @@ import {
   PageMain
 } from '../components/page';
 
-
 class SchoolCloudPage extends Component {
   static displayName = 'TagCloudPage';
 
   static propTypes = {
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     school_cloud: SchoolCloudPropType.isRequired,
     schools: MapOfSchoolsPropType.isRequired
   }

@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+
 import {
   Page,
   PageMain,
@@ -62,8 +64,8 @@ const NotFound = ({ is_logged_in, current_user }) => {
 NotFound.displayName = 'NotFound';
 
 NotFound.propTypes = {
-  current_user: PropTypes.shape({}),
-  is_logged_in: PropTypes.bool
+  current_user: CurrentUserPropType,
+  is_logged_in: PropTypes.bool.isRequired
 };
 
 export default connect(defaultSelector)(NotFound);

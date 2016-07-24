@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
+import { User as UserPropType } from '../../prop-types/users';
+
 import { AVATAR_SIZE } from '../../consts/profileConstants';
 import UpdatePicture from '../update-picture/update-picture';
 
@@ -28,9 +30,7 @@ export default class AvatarEditor extends React.Component {
     limits: PropTypes.shape({}),
     onUpdateAvatar: PropTypes.func,
     preview: PropTypes.shape({}),
-    user: PropTypes.shape({
-      username: PropTypes.string
-    }).isRequired
+    user: UserPropType.isRequired
   };
 
   static defaultProps = {

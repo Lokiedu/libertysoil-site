@@ -31,6 +31,10 @@ import {
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
@@ -47,12 +51,15 @@ import { TAG_SCHOOL } from '../consts/tags';
 export class SchoolPage extends React.Component {
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       school_name: PropTypes.string.isRequired
     }),
     posts: MapOfPostsPropType.isRequired,
     school_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
-    schools: MapOfSchoolsPropType.isRequired
+    schools: MapOfSchoolsPropType.isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

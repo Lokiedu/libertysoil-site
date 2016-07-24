@@ -19,6 +19,16 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { pick } from 'lodash';
 
+import {
+  mapOf as mapOfPropType,
+  uuid4 as uuid4PropType
+} from '../prop-types/common';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  User as UserPropType
+} from '../prop-types/users';
+
 import User from './user';
 import FollowButton from './follow-button';
 import UpdatePicture from './update-picture/update-picture';
@@ -31,12 +41,17 @@ export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
   static propTypes = {
+    current_user: CurrentUserPropType,
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
+    i_am_following: ArrayOfUsersIdPropType,
     onChange: PropTypes.func.isRequired,
     triggers: PropTypes.shape({
       addError: PropTypes.func.isRequired,
       updateUserInfo: PropTypes.func.isRequired,
       uploadPicture: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    user: UserPropType.isRequired
   };
 
   constructor(props) {
