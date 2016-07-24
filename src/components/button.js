@@ -17,9 +17,14 @@
 */
 import React, { PropTypes } from 'react';
 
-const Button = ({ color, size, className, waiting, title, ...props }) => {
+const Button = ({ color, size, className, waiting, title, type, ...props }) => {
   let icon = null;
   let cn = 'button action';
+  let t = 'button';
+
+  if (type) {
+    t = type;
+  }
 
   if (className) {
     cn += ` ${className}`;
@@ -43,7 +48,7 @@ const Button = ({ color, size, className, waiting, title, ...props }) => {
   }
 
   return (
-    <button className={cn} title={title} {...props}>
+    <button className={cn} title={title} type={t} {...props}>
       {icon}
       {title}
     </button>
@@ -57,6 +62,7 @@ Button.propTypes = {
   color: PropTypes.string,
   size: PropTypes.string,
   title: PropTypes.string,
+  type: PropTypes.oneOf(['button', 'reset', 'submit']),
   waiting: PropTypes.bool
 };
 
