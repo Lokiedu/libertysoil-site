@@ -99,7 +99,7 @@ export default class BaseSettingsPage extends React.Component {
         const command = this.commands[i];
 
         if (command.status) {
-          const result = await command.run.apply(command.args);
+          const result = await command.run.apply(null, command.args);
 
           if (result.redo) {
             ++i;
@@ -173,6 +173,7 @@ export default class BaseSettingsPage extends React.Component {
                   followers={followers}
                   following={following}
                   ref={c => this.head = c}
+                  triggers={triggers}
                   user={current_user.user}
                   onChange={this.handleChange}
                 />
