@@ -623,8 +623,16 @@ export class ActionsTrigger {
     }
   };
 
+  addError = (message) => {
+    this.dispatch(a.messages.addError(message));
+  };
+
   removeMessage = (id) => {
     this.dispatch(a.messages.removeMessage(id));
+  };
+
+  removeAllMessages = () => {
+    this.dispatch(a.messages.removeAllMessages());
   };
 
   loadUserTags = async () => {
