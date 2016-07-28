@@ -23,8 +23,11 @@ import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messag
 
 import BaseSettingsPage from './base/settings';
 import SettingsPasswordForm from '../components/settings/password-form';
+
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
+import { Command } from '../utils/command';
+import { addError } from '../actions/messages';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
@@ -51,31 +54,46 @@ class SettingsPasswordPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  onSave = () => {
-    const form = this.form.formProps();
+  handleChange = (values) => {
+    if (this.base) {
+      const command = new Command(
+        'password-form',
+        this.handleSave,
+        { status: !!Object.keys(values).length }
+      );
 
-    form.forceValidate();
-    if (form.isValid()) {
-      this.save();
+      this.base.handleChange(command);
     }
   };
 
-  save = async () => {
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+  handleSave = async () => {
+    let success = false;
 
     const form = this.form.formProps();
+    form.forceValidate();
+    if (!form.isValid()) {
+      return { success };
+    }
+
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
     const fields = form.values();
 
-    const success = await triggers.changePassword(
+    const result = await triggers.changePassword(
       fields.oldPassword,
       fields.newPassword,
       fields.newPasswordRepeat
     );
 
-    if (success) {
+    if (result.success) {
       form.onValues({});
+      success = true;
+    } else if (result.error) {
+      this.props.dispatch(addError(result.error));
+      success = false;
     }
+
+    return { success };
   };
 
   render() {
@@ -101,11 +119,15 @@ class SettingsPasswordPage extends React.Component {
         following={following}
         is_logged_in={is_logged_in}
         messages={messages}
+        ref={c => this.base = c}
         triggers={triggers}
-        onSave={this.onSave}
+        onSave={this.handleSave}
       >
         <Helmet title="Change Password for " />
-        <SettingsPasswordForm ref={c => this.form = c} />
+        <SettingsPasswordForm
+          ref={c => this.form = c}
+          onChange={this.handleChange}
+        />
 
         {false &&
           <div className="paper__page">
