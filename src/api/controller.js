@@ -178,10 +178,10 @@ export default class ApiController {
         .collection()
         .query(qb => {
           qb
-             .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-             .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-             .orderBy('posts.created_at', 'desc')
-             .distinct();
+            .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+            .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+            .orderBy('posts.created_at', 'desc')
+            .distinct();
 
           switch (geotag.attributes.type) {
             case 'Planet':
@@ -321,20 +321,20 @@ export default class ApiController {
       .map(row => row.post_id);
 
     const q = Post.forge()
-    .query(qb => {
-      qb
-        .select()
-        .from('posts')
-        .whereIn('id', likes)
-        .union(function () {
-          this
-            .select()
-            .from('posts')
-            .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
-            .andWhere('user_id', userId);
-        })
-        .orderBy('updated_at', 'desc');
-    });
+      .query(qb => {
+        qb
+          .select()
+          .from('posts')
+          .whereIn('id', likes)
+          .union(function () {
+            this
+              .select()
+              .from('posts')
+              .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
+              .andWhere('user_id', userId);
+          })
+          .orderBy('updated_at', 'desc');
+      });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
     const post_comments_count = await this.countComments(posts);
@@ -388,11 +388,11 @@ export default class ApiController {
       .map(row => row.post_id);
 
     const q = Post.forge()
-    .query(qb => {
-      qb
-        .whereIn('id', favourites)
-        .orderBy('posts.updated_at', 'desc');
-    });
+      .query(qb => {
+        qb
+          .whereIn('id', favourites)
+          .orderBy('posts.updated_at', 'desc');
+      });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
     const post_comments_count = await this.countComments(posts);
@@ -2922,13 +2922,13 @@ export default class ApiController {
     }
     const Comment = this.bookshelf.model('Comment');
     const q = Comment.forge()
-        .query(qb => {
-          qb
-              .select('post_id')
-              .count('id as comment_count')
-              .where('post_id', 'IN', ids)
-              .groupBy('post_id');
-        });
+      .query(qb => {
+        qb
+          .select('post_id')
+          .count('id as comment_count')
+          .where('post_id', 'IN', ids)
+          .groupBy('post_id');
+      });
 
     const raw_counts = await q.fetchAll();
 
