@@ -15,8 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
+import { find, findIndex } from 'lodash';
+
+import { Command } from '../../utils/command';
+import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 
@@ -35,18 +39,31 @@ import ProfileHeader from '../../components/profile';
 import User from '../../components/user';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
-import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 
 export default class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
 
   static propTypes = {
-    messages: ArrayOfMessagesPropType
+    children: PropTypes.node,
+    messages: ArrayOfMessagesPropType,
+    triggers: PropTypes.shape({
+      addError: PropTypes.func.isRequired,
+      removeMessage: PropTypes.func.isRequired,
+      removeAllMessages: PropTypes.func.isRequired
+    })
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.commands = [];
+    this.state = {
+      processing: false,
+      unsaved: false
+    };
   }
 
-  static defaultProps = {
-    onSave: false
-  }
+  processing = () => this.state.processing;
 
   _getNewPictures() {
     return this.head._getNewPictures();
@@ -56,17 +73,68 @@ export default class BaseSettingsPage extends React.Component {
     this.head._clearPreview();
   }
 
+  handleChange = (command) => {
+    if (command instanceof Command) {
+      const index = findIndex(this.commands, { name: command.name });
+
+      if (index >= 0) {
+        this.commands[index] = command;
+      } else {
+        this.commands.push(command);
+      }
+    }
+
+    if (find(this.commands, { status: true })) {
+      this.props.triggers.removeAllMessages();
+      this.setState({ unsaved: true });
+    }
+  };
+
+  handleSave = async () => {
+    this.setState({ processing: true });
+    let success = true;
+
+    const processQueue = async () => {
+      for (let i = this.commands.length - 1; i >= 0; --i) {
+        const command = this.commands[i];
+
+        if (command.status) {
+          const result = await command.run.apply(command.args);
+
+          if (result.redo) {
+            ++i;
+            continue;
+          }
+
+          if (result.success) {
+            this.commands.splice(i, 1);
+          } else {
+            success = !!result.success;
+          }
+        }
+      }
+    };
+
+    await processQueue();
+    if (success) {
+      this.commands = [];
+    }
+
+    this.setState({
+      processing: false,
+      unsaved: !success
+    });
+  };
+
   render() {
     const {
-      onSave,
       children,
       is_logged_in,
       current_user,
       following,
       followers,
       messages,
-      triggers,
-      processing
+      triggers
     } = this.props;
 
     const user = current_user.user;
@@ -74,15 +142,6 @@ export default class BaseSettingsPage extends React.Component {
     let name = user.username;
     if (user.more && (user.more.firstName || user.more.lastName)) {
       name = `${user.more.firstName} ${user.more.lastName}`;
-    }
-
-    let saveButton;
-    if (onSave) {
-      saveButton = (
-        <div className="void">
-          <Button className="button-green" title="Save changes" waiting={processing} onClick={onSave} />
-        </div>
-      );
     }
 
     return (
@@ -115,6 +174,7 @@ export default class BaseSettingsPage extends React.Component {
                   following={following}
                   ref={c => this.head = c}
                   user={current_user.user}
+                  onChange={this.handleChange}
                 />
                 <div className="page__content page__content-spacing">
                   <div className="layout__row layout-small">
@@ -141,8 +201,22 @@ export default class BaseSettingsPage extends React.Component {
                       </div>
                     </div>
                   </div>
-                  {saveButton}
-                  <Messages messages={messages} removeMessage={triggers.removeMessage} />
+                  <div className="layout__row">
+                    <Messages
+                      messages={messages}
+                      removeMessage={triggers.removeMessage}
+                    />
+                  </div>
+                  {this.state.unsaved &&
+                    <div className="void">
+                      <Button
+                        className="button-green"
+                        title="Save changes"
+                        waiting={this.state.processing}
+                        onClick={this.handleSave}
+                      />
+                    </div>
+                  }
                 </div>
               </PageContent>
             </PageBody>
