@@ -23,9 +23,20 @@ import messageType from '../consts/messageTypeConstants';
 
 const initialState = i.List([]);
 
+function removeDuplicate(state, action) {
+  const index = state.findIndex(item => item.message === action.message);
+
+  if (index >= 0) {
+    return state.delete(index);
+  }
+  return state;
+}
+
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case messages.ADD_ERROR: {
+      state = removeDuplicate(state, action);
+
       state = state.push({
         type: messageType.ERROR,
         message: action.message
@@ -34,10 +45,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case messages.ADD_MESSAGE: {
-      const index = state.findIndex(item => item.message === action.message);
-      if (index !== -1) {
-        state = state.delete(index);
-      }
+      state = removeDuplicate(state, action);
 
       state = state.push({
         type: messageType.MESSAGE,
