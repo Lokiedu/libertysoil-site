@@ -51,6 +51,7 @@ describe('Auth page', () => {
 
   after(async () => {
     await user.destroy();
+    await bookshelf.knex.raw('DELETE FROM users;');
   });
 
   it('Login component should work', async (done) => {
@@ -131,7 +132,35 @@ describe('Auth page', () => {
 
       setTimeout(() => {
         expect(wrapper.state().errors.email, 'to equal', 'Email is taken');
+
         done();
+      }, 100);
+    });
+
+    it('Should call "registerUser" trigger with no validation error', (done) => {
+      const username = 'test2';
+      const testComponent = (
+        <WrappedRegister
+          onRegisterUser={triggers.registerUser}
+          onShowRegisterForm={() => {}}
+          />
+      );
+      const wrapper = mount(testComponent);
+
+      wrapper.find('#username').simulate('change', { target: { value: username } });
+      wrapper.find('#registerPassword').simulate('change', { target: { value: 'test2password' } });
+      wrapper.find('#registerPasswordRepeat').simulate('change', { target: { value: 'test2password' } });
+      wrapper.find('#registerEmail').simulate('change', { target: { value: 'test2@example.com' } });
+      wrapper.find('#registerAgree').simulate('change', { target: { value: true } });
+
+      setTimeout(async () => {
+        wrapper.find('#registerForm').simulate('submit');
+
+        setTimeout(async () => {
+          expect(await User.where({ username }).fetch({ require: true }), 'not to be empty');
+
+          done();
+        }, 100);
       }, 100);
     });
   });

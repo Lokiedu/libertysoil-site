@@ -98,7 +98,6 @@ export class Register extends React.Component {
 
   submitHandler = (event) => {
     event.preventDefault();
-
     const { form, fields } = this.props;
 
     form.forceValidate();
@@ -106,13 +105,12 @@ export class Register extends React.Component {
       return;
     }
 
-    const theForm = event.target;
     this.props.onRegisterUser(
       fields.username.value,
       fields.password.value,
       fields.email.value,
-      theForm.firstName.value,
-      theForm.lastName.value
+      this.firstName.value,
+      this.lastName.value
     );
   };
 
@@ -193,11 +191,11 @@ export class Register extends React.Component {
           <div className="layout__row">
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} />
+              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.firstName = c} />
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} />
+              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.lastName = c} />
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="username">Username</label>
@@ -235,7 +233,7 @@ export class Register extends React.Component {
             <div className="layout__grid layout__grid-big layout-align_vertical">
               <button className="button button-big button-green">Sign up</button>
               <label className="action checkbox">
-                <input name="agree" required="required" type="checkbox" {...fields.agree} />
+                <input id="registerAgree" name="agree" required="required" type="checkbox" {...fields.agree} />
                 <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
               </label>
             </div>
