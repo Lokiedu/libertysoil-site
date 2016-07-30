@@ -82,6 +82,9 @@ export function initBookshelfFromKnex(knex) {
     followed_geotags() {
       return this.belongsToMany(Geotag, 'followed_geotags_users', 'user_id', 'geotag_id');
     },
+    post_subscriptions() {
+      return this.belongsToMany(Post, 'post_subscriptions');
+    },
     virtuals: {
       gravatarHash() {
         return md5(this.get('email'));
@@ -185,6 +188,9 @@ export function initBookshelfFromKnex(knex) {
     },
     post_comments() {
       return this.hasMany(Comment);
+    },
+    subscribers() {
+      return this.belongsToMany(User, 'post_subscriptions');
     },
 
     // Hashtag methods

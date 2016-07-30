@@ -46,6 +46,8 @@ export function initApi(bookshelf, sphinx) {
   api.post('/post/:id/fav', controller.favPost);
   api.post('/post/:id/unfav', controller.unfavPost);
   api.get('/post/:id/related-posts', controller.getRelatedPosts);
+  api.post('/post/:id/subscribe', controller.subscribeToPost);
+  api.post('/post/:id/unsubscribe', controller.unsubscribeFromPost);
 
   api.get('/post/:id/comments', controller.getPostComments);
   api.post('/post/:id/comments', controller.postComment);

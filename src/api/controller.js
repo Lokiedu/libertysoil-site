@@ -1396,6 +1396,9 @@ export default class ApiController {
         await obj.attachGeotags(geotags);
       }
 
+      // Add the author to the list of subscribers by default.
+      obj.subscribers().attach(ctx.session.user);
+
       await obj.fetch({ require: true, withRelated: POST_RELATIONS });
       obj.relations.schools = obj.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
 
@@ -1560,6 +1563,68 @@ export default class ApiController {
     }
     ctx.status = 200;
     ctx.body = { success: true };
+  };
+
+  /**
+   * Subscribes the current user to the specified post.
+   * If subscribed, the current user recieves notifications about new comments on the post.
+   */
+  subscribeToPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('id' in ctx.params)) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().attach(ctx.session.user);
+
+      ctx.status = 200;
+      ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+  };
+
+  unsubscribeFromPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('id' in ctx.params)) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().detach(ctx.session.user);
+
+      ctx.status = 200;
+      ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
   };
 
   getUser = async (ctx) => {
