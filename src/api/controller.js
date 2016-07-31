@@ -1627,6 +1627,30 @@ export default class ApiController {
     }
   };
 
+  getUnsubscribeFromPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.redirect('/');
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().detach(ctx.session.user);
+
+      ctx.redirect(`/post/${post.id}`);
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = 'Something went wrong';
+
+      ctx.app.logger.error(e);
+
+      return;
+    }
+  }
+
   getUser = async (ctx) => {
     const User = this.bookshelf.model('User');
     const u = await User
