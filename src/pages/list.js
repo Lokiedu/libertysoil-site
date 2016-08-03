@@ -189,6 +189,15 @@ export class List extends React.Component {
       loadMore = null;
     }
 
+    // return (
+    //   <div className="layout-v2">
+    //     <div className="col col-xs col-s-8" style={{ background: 'yellow' }}></div>
+    //     <div className="col col-xs col-s-3 col-m-8" style={{ background: 'tomato' }}></div>
+    //     <div className="col col-xl-5 col-s-4 col-l-8" style={{ background: 'lightgreen' }}></div>
+    //     <div className="col col-xl-100pct col-s-1 col-l-100pct" style={{ background: 'lightgrey' }}></div>
+    //   </div>
+    // );
+
     return (
       <div>
         <Helmet title="News Feed of " />
