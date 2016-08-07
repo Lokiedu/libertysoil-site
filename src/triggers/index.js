@@ -403,6 +403,8 @@ export class ActionsTrigger {
         throw new Error(result.error);
       }
 
+      const userTags = await this.client.userTags();
+      this.dispatch(a.tags.setUserTags(userTags));
       this.dispatch(a.posts.removePost(post_uuid));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
