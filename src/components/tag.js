@@ -72,6 +72,7 @@ export default class Tag extends React.Component {
 
   render() {
     const { urlId, name, type, truncated, size, inactive, collapsed } = this.props;
+
     let tagName = name;
     let tagNameComponent;
     const tagIcon = <TagIcon className="tag__icon" type={type} />;
