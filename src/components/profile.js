@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { pick } from 'lodash';
 
@@ -23,11 +23,21 @@ import User from './user';
 import FollowButton from './follow-button';
 import UpdatePicture from './update-picture/update-picture';
 
+import { Command } from '../utils/command';
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
+
+  static propTypes = {
+    onChange: PropTypes.func.isRequired,
+    triggers: PropTypes.shape({
+      addError: PropTypes.func.isRequired,
+      updateUserInfo: PropTypes.func.isRequired,
+      uploadPicture: PropTypes.func.isRequired
+    }).isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -56,6 +66,28 @@ export default class ProfileHeader extends React.Component {
     this.setState({ avatar: null, head_pic: null });
   }
 
+  handleSave = async (name) => {
+    const { triggers } = this.props;
+    const processedPicture = {};
+    const pictures = this._getNewPictures();
+
+    let success = false;
+    if (!(name in pictures)) {
+      return { success };
+    }
+
+    try {
+      processedPicture[name] = await triggers.uploadPicture({ ...pictures[name] });
+
+      success = await triggers.updateUserInfo({ more: { ...processedPicture } });
+    } catch (e) {
+      await triggers.addError(e.message);
+      success = false;
+    }
+
+    return { success };
+  };
+
   addAvatar = async ({ production, preview }) => {
     if (production) {
       const _production = {
@@ -69,6 +101,12 @@ export default class ProfileHeader extends React.Component {
     } else {
       this.setState({ avatar: { production: null, preview: null } });
     }
+
+    const command = new Command('avatar', this.handleSave, {
+      status: !!production,
+      args: ['avatar']
+    });
+    this.props.onChange(command);
   };
 
   addHeaderPicture = async ({ production, preview }) => {
@@ -88,6 +126,12 @@ export default class ProfileHeader extends React.Component {
     } else {
       this.setState({ head_pic: { production: null, preview: null } });
     }
+
+    const command = new Command('head_pic', this.handleSave, {
+      status: !!production,
+      args: ['head_pic']
+    });
+    this.props.onChange(command);
   };
 
   render() {
