@@ -23,6 +23,7 @@ import Icon from './icon';
 const SidebarLink = ({
   icon,
   badge,
+  activeClassName,
   className,
   enabled,
   to,
@@ -37,6 +38,11 @@ const SidebarLink = ({
     cn += ' navigation__item-disabled';
   }
 
+  let cnActive = 'navigation__item-active';
+  if (activeClassName) {
+    cnActive += ` ${activeClassName}`;
+  }
+
   let iconRender;
   if (icon) {
     iconRender = (
@@ -47,7 +53,7 @@ const SidebarLink = ({
   }
 
   return (
-    <Link activeClassName="navigation__item-active" className={cn} to={to}>
+    <Link activeClassName={cnActive} className={cn} to={to}>
       {iconRender}
       <div className="navigation__title">{children}</div>
       <div className="navigation__badge">{badge}</div>
@@ -58,6 +64,7 @@ const SidebarLink = ({
 SidebarLink.displayName = 'SidebarLink';
 
 SidebarLink.propTypes = {
+  activeClassName: PropTypes.string,
   badge: PropTypes.node,
   children: PropTypes.node,
   className: PropTypes.string,
