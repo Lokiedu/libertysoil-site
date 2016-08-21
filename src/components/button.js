@@ -20,11 +20,6 @@ import React, { PropTypes } from 'react';
 const Button = ({ color, size, className, waiting, title, type, ...props }) => {
   let icon = null;
   let cn = 'button action';
-  let t = 'button';
-
-  if (type) {
-    t = type;
-  }
 
   if (className) {
     cn += ` ${className}`;
@@ -48,7 +43,7 @@ const Button = ({ color, size, className, waiting, title, type, ...props }) => {
   }
 
   return (
-    <button className={cn} title={title} type={t} {...props}>
+    <button className={cn} title={title} type={type} {...props}>
       {icon}
       {title}
     </button>
@@ -67,7 +62,8 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-  color: 'green'
+  color: 'green',
+  type: 'button'
 };
 
 export default Button;
