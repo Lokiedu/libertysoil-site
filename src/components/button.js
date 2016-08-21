@@ -17,7 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 
-const Button = ({ color, size, className, waiting, title, ...props }) => {
+const Button = ({ color, size, className, waiting, title, type, ...props }) => {
   let icon = null;
   let cn = 'button action';
 
@@ -43,7 +43,7 @@ const Button = ({ color, size, className, waiting, title, ...props }) => {
   }
 
   return (
-    <button className={cn} title={title} {...props}>
+    <button className={cn} title={title} type={type} {...props}>
       {icon}
       {title}
     </button>
@@ -57,11 +57,13 @@ Button.propTypes = {
   color: PropTypes.string,
   size: PropTypes.string,
   title: PropTypes.string,
+  type: PropTypes.oneOf(['button', 'reset', 'submit']),
   waiting: PropTypes.bool
 };
 
 Button.defaultProps = {
-  color: 'green'
+  color: 'green',
+  type: 'button'
 };
 
 export default Button;
