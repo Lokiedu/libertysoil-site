@@ -27,6 +27,7 @@ import Checkit from 'checkit';
 import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
+import { hidePostsData } from '../utils/posts';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
@@ -85,6 +86,7 @@ export default class ApiController {
       return post;
     });
 
+    response = await hidePostsData(response, ctx, this.bookshelf.knex);
     ctx.body = response;
   };
 
@@ -111,6 +113,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -136,6 +139,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -161,6 +165,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -211,6 +216,7 @@ export default class ApiController {
         return post;
       });
 
+      posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 404;
@@ -267,12 +273,13 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
 
     try {
-      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
+      let post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
 
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
       post.attributes.comments = post.relations.post_comments.length;
 
-      ctx.body = post.toJSON();
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      ctx.body = post;
     } catch (e) {
       ctx.status = 404;
       return;
@@ -343,6 +350,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
     return posts;
   };
 
@@ -401,6 +409,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
     return posts;
   };
 
@@ -713,6 +722,7 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -721,7 +731,7 @@ export default class ApiController {
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
-      result.likers = post.relations.likers;
+      result.likers = post.likers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -752,6 +762,7 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -760,7 +771,7 @@ export default class ApiController {
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
-      result.likers = post.relations.likers;
+      result.likers = post.likers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -794,6 +805,7 @@ export default class ApiController {
       await user.favourited_posts().attach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -802,7 +814,7 @@ export default class ApiController {
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
-      result.favourers = post.relations.favourers;
+      result.favourers = post.favourers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -830,6 +842,7 @@ export default class ApiController {
       await user.favourited_posts().detach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -838,7 +851,7 @@ export default class ApiController {
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
-      result.favourers = post.relations.favourers;
+      result.favourers = post.favourers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -879,6 +892,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
