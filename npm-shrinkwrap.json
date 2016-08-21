@@ -478,6 +478,11 @@
       "from": "chokidar@>=1.4.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-1.6.0.tgz"
     },
+    "classnames": {
+      "version": "2.2.5",
+      "from": "classnames@latest",
+      "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
+    },
     "clean-css": {
       "version": "3.4.19",
       "from": "clean-css@>=3.1.9 <4.0.0",
