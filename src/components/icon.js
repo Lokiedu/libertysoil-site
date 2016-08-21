@@ -1,32 +1,15 @@
 import React from 'react';
 
-import favorite from 'react-icons/lib/md/favorite';
-import favorite_border from 'react-icons/lib/md/favorite-border';
-import _public from 'react-icons/lib/md/public';
-import star from 'react-icons/lib/md/star';
-import star_border from 'react-icons/lib/md/star-border';
-import chat_bubble_outline from 'react-icons/lib/md/chat-bubble-outline';
-import link from 'react-icons/lib/md/link';
-import edit from 'react-icons/lib/md/edit';
-import close from 'react-icons/lib/md/close';
-import _delete from 'react-icons/lib/md/delete';
-import search from 'react-icons/lib/md/search';
-import refresh from 'react-icons/lib/md/refresh';
+import * as MdIconPack from 'react-icons/lib/md';
 
-const icons = {
-  favorite,
-  favorite_border,
-  public: _public,
-  star,
-  star_border,
-  chat_bubble_outline,
-  link,
-  edit,
-  close,
-  delete: _delete,
-  search,
-  refresh
-};
+function findIcon(iconName) {
+  const camelized = iconName.replace(/(?:^|[-_])(\w)/g, (match, c) =>
+    c ? c.toUpperCase() : ''
+  );
+
+  const query = `Md${camelized.charAt(0).toUpperCase() + camelized.slice(1)}`;
+  return MdIconPack[query];
+}
 
 const IconComponent = ({
   className,
@@ -39,7 +22,11 @@ const IconComponent = ({
   size,
   ...props
 }) => {
-  const Icon = icons[icon];
+  const Icon = findIcon(icon);
+  if (!Icon) {
+    return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
+  }
+
   const classnameIcon = ['icon'];
   const classnameIconPic = ['micon'];
   let localOnClick = onClick;
@@ -48,10 +35,6 @@ const IconComponent = ({
   outline && classnameIcon.push('icon-outline');
 
   color && classnameIconPic.push(`color-${color}`);
-
-  if (!Icon) {
-    return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
-  }
 
   if (size) {
     classnameIcon.push(`icon-${size}`);
@@ -67,18 +50,12 @@ const IconComponent = ({
     classnameIcon.push(`micon-rotate`);
   }
 
-  const divProps = { ...props };
-  delete divProps.is_logged_in;
-  delete divProps.liked_tags;
-  delete divProps.tag;
-  delete divProps.triggers;
-
   return (
     <div
-      {...divProps}
+      {...props}
+      className={classnameIcon.join(' ')}
       disabled={disabled}
       onClick={localOnClick}
-      className={classnameIcon.join(' ')}
     >
       <Icon className={classnameIconPic.join(' ')} />
     </div>
