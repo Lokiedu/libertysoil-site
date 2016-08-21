@@ -145,7 +145,6 @@ export default class ApiClient
 
     if (data !== null) {
       body = data;
-      headers = mergeObj(headers, data.getHeaders());
     }
 
     const req = fetch(
