@@ -43,16 +43,11 @@
 @after-base: ~"(min-width: 1024px)";
 @after-wide: ~"(min-width: 1200px)";
 
-html {
-  color: @color__text;
-  font: @font__size sans-serif;
-  background: @color__page_background;
-  text-rendering: optimizeLegibility;
-}
 
 @import '../../node_modules/font-awesome/css/font-awesome.css';
 
 @import 'blocks/normalize';
+@import 'blocks/global';
 @import 'blocks/color';
 @import 'blocks/layout';
 @import 'blocks/font';
