@@ -46,6 +46,7 @@ import SchoolCloudPage from './pages/school-cloud';
 import GeotagCloudPage from './pages/geotag-cloud';
 import GeotagPage from './pages/geotag';
 import GeotagEditPage from './pages/geotag-edit';
+import BaseToolsPage from './pages/base/tools';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -104,6 +105,8 @@ export function getRoutes(authHandler, fetchHandler) {
       </Route>
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
+      <Route component={BaseToolsPage} path="/tools">
+      </Route>
     </Route>
   );
 }
