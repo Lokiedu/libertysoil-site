@@ -50,6 +50,7 @@ import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
 import search from './search';
+import tools from './tools';
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -82,7 +83,8 @@ export const theReducer = combineReducers(i.Map({
   related_posts,
   comments,
   quotes,
-  search
+  search,
+  tools
 }));
 
 const initialState = i.Map({
@@ -150,7 +152,8 @@ const initialState = i.Map({
       hashtags: i.List([]),
       schools: i.List([])
     })
-  })
+  }),
+  tools: tools.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,28 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ui = require('./ui');
-export const search = require('./search');
-export const messages = require('./messages');
+import i from 'immutable';
 
-export const tags = require('./tags');
-export const hashtags = require('./hashtags');
-export const geotags = require('./geotags');
-export const schools = require('./schools');
+import { tools } from '../actions';
 
-export const geo = require('./geo');
 
-export const posts = require('./posts');
-export const river = require('./river');
-export const comments = require('./comments');
+const initialState = i.fromJS({
+  schools_river: []
+});
 
-export const users = require('./users');
+export default function reducer(state = initialState, action) {
+  switch (action.type) {
+    case tools.TOOLS__ADD_SCHOOLS_TO_RIVER: {
+      const ids = i.List(action.schools.map(school => school.id));
+      state = state.update('schools_river', schools_river => schools_river.concat(ids));
+      break;
+    }
 
-export const quotes = require('./quotes');
+    case tools.TOOLS__SET_SCHOOLS_RIVER: {
+      state = state.set('schools_river', i.List(action.schools.map(school => school.id)));
+      break;
+    }
+  }
 
-export const tools = require('./tools');
+  return state;
+}

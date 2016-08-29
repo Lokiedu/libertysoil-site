@@ -86,8 +86,7 @@ export const toolsMenu = new MenuTree([
     name: 'Tags',
     path: '/tools/tags',
     children: [
-      { name: 'Hashtags', path: '/tools/tags/hashtags', children: [{ name: 'Something', path: '/something' }, { name: 'Something 2', path: '/something2' }] },
-      { name: 'Schools', path: '/tools/tags/schools' }
+      { name: 'Schools', path: '/tools/schools' }
     ]
   }
 ]);
