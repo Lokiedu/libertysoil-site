@@ -17,7 +17,8 @@
  */
 import {
   Route,
-  IndexRoute
+  IndexRoute,
+  Redirect
 } from 'react-router';
 import React from 'react';
 
@@ -47,6 +48,8 @@ import SchoolCloudPage from './pages/school-cloud';
 import GeotagCloudPage from './pages/geotag-cloud';
 import GeotagPage from './pages/geotag';
 import GeotagEditPage from './pages/geotag-edit';
+import SchoolsToolPage from './pages/tools/schools-tool';
+import BaseToolsPage from './pages/base/tools';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -106,6 +109,10 @@ export function getRoutes(authHandler, fetchHandler) {
       </Route>
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
+      <Route component={BaseToolsPage} path="/tools">
+        <Redirect from="tags" to="schools" />
+        <Route component={SchoolsToolPage} path="schools" onEnter={withAuth} />
+      </Route>
     </Route>
   );
 }

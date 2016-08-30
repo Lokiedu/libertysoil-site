@@ -43,16 +43,10 @@
 @after-base: ~"(min-width: 1024px)";
 @after-wide: ~"(min-width: 1200px)";
 
-html {
-  color: @color__text;
-  font: @font__size 'Open Sans';
-  background: @color__page_background;
-  text-rendering: optimizeLegibility;
-}
-
 @import '../../node_modules/font-awesome/css/font-awesome.css';
 
 @import 'blocks/normalize';
+@import 'blocks/global';
 @import 'blocks/color';
 @import 'blocks/layout';
 @import 'blocks/font';
@@ -128,3 +122,7 @@ html {
 @import 'blocks/search';
 @import 'blocks/list_item';
 @import 'blocks/invisible';
+@import 'blocks/tools/tools_page';
+@import 'blocks/tools/tools_menu_1';
+@import 'blocks/tools/tools_menu_2';
+@import 'blocks/tools/schools_tool';

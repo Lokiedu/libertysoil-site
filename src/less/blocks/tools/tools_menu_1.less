@@ -15,23 +15,46 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ui = require('./ui');
-export const search = require('./search');
-export const messages = require('./messages');
+.tools_menu_1 {
+  box-sizing: border-box;
+  display: flex;
+  position: relative;
+  background-color: #E4E4E4;
 
-export const tags = require('./tags');
-export const hashtags = require('./hashtags');
-export const geotags = require('./geotags');
-export const schools = require('./schools');
+  &__dropdown {
+    box-sizing: border-box;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid #E4E4E4;
+  }
 
-export const geo = require('./geo');
+  &__item {
+    display: block;
+    padding: 20px;
 
-export const posts = require('./posts');
-export const river = require('./river');
-export const comments = require('./comments');
+    &:hover {
+      background-color: #E4E4E4;
+    }
+  }
 
-export const users = require('./users');
+  &__caption {
+    flex: auto 1;
+  }
 
-export const quotes = require('./quotes');
+  &__toggle_dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    color: white;
 
-export const tools = require('./tools');
+    &:hover {
+      cursor: pointer;
+      background-color: #E8E8E8;
+    }
+  }
+}

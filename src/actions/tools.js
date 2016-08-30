@@ -15,23 +15,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ui = require('./ui');
-export const search = require('./search');
-export const messages = require('./messages');
+export const TOOLS__SET_USER_POST = 'TOOLS__SET_USER_POST';
+export const TOOLS__ADD_USER_POST = 'TOOLS__ADD_USER_POST';
 
-export const tags = require('./tags');
-export const hashtags = require('./hashtags');
-export const geotags = require('./geotags');
-export const schools = require('./schools');
+export const TOOLS__ADD_SCHOOLS_TO_RIVER = 'TOOLS__ADD_SCHOOLS_TO_RIVER';
+export const TOOLS__SET_SCHOOLS_RIVER = 'TOOLS__SET_SCHOOLS_RIVER';
 
-export const geo = require('./geo');
 
-export const posts = require('./posts');
-export const river = require('./river');
-export const comments = require('./comments');
+export function addSchoolsToRiver(schools) {
+  return {
+    type: TOOLS__ADD_SCHOOLS_TO_RIVER,
+    schools
+  };
+}
 
-export const users = require('./users');
-
-export const quotes = require('./quotes');
-
-export const tools = require('./tools');
+export function setSchoolsRiver(schools) {
+  return {
+    type: TOOLS__SET_SCHOOLS_RIVER,
+    schools
+  };
+}
