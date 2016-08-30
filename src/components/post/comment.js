@@ -26,7 +26,7 @@ import Dropdown from '../dropdown';
 import MenuItem from '../menu-item';
 import paragraphify from '../../utils/paragraphify';
 
-export default class Comment extends Component {
+class Comment extends Component {
   constructor(props) {
     super(props);
 
