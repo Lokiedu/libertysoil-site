@@ -54,7 +54,7 @@ describe('AddTagModal', () => {
       }
     });
 
-    it('shows suggestions', (done) => {
+    xit('shows suggestions', (done) => {
       const wrapper = mount(<HashtagSelect />);
       const query = 'kno';
 
@@ -91,7 +91,7 @@ describe('AddTagModal', () => {
       }
     });
 
-    it('shows suggestions', (done) => {
+    xit('shows suggestions', (done) => {
       const wrapper = mount(<GeotagSelect />);
       const query = 'New';
 
