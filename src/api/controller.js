@@ -2677,6 +2677,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'hashtag_like',
         liked_hashtag_id: hashtag.id,
         user_id: user.id
@@ -2740,6 +2741,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'school_like',
         liked_school_id: school.id,
         user_id: user.id
@@ -2803,6 +2805,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'geotag_like',
         liked_geotag_id: geotag.id,
         user_id: user.id
