@@ -115,6 +115,7 @@ export default class AddSchoolForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
+                  addable
                   schools={this.props.userRecentSchools}
                   onClick={this._selectRecentlyUsedSchool}
                 />
@@ -124,7 +125,10 @@ export default class AddSchoolForm extends Component {
             <Tab.Content className={tabClassName} index={2}>
               Popular:
               <div className="layout__row">
-                <TagCloud schools={popularSchools} />
+                <TagCloud
+                  addable
+                  schools={popularSchools}
+                />
               </div>
             </Tab.Content>
           </div>

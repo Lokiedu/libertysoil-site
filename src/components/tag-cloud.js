@@ -31,6 +31,7 @@ const TagCloud = (props) => {
   const tags = convertModelsToTags(props)
     .map((tag, index) => (
       <Tag
+        addable={props.addable}
         deletable={props.deletable}
         key={index}
         showPostCount={props.showPostCount}
@@ -51,6 +52,7 @@ const TagCloud = (props) => {
 TagCloud.displayName = 'TagCloud';
 
 TagCloud.propTypes = {
+  addable: PropTypes.bool,
   deletable: PropTypes.bool,
   geotags: ArrayOfGeotagsPropType,
   hashtags: ArrayOfHashtagsPropType,
