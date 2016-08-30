@@ -1,4 +1,7 @@
-global.Promise = require('bluebird')
+require('babel-register');
+require('babel-polyfill');
+
+global.Promise = require('bluebird');
 global.Promise.onPossiblyUnhandledRejection((e) => { throw e; });
 
 global.Promise.config({
@@ -12,10 +15,5 @@ global.Promise.config({
 
 // First require your DOM emulation file (see below)
 require('./emulateDom.js');
-
-import db_config from '../knexfile';
-
-let exec_env = process.env.DB_ENV || 'test';
-global.$dbConfig = db_config[exec_env];
 
 process.env.NODE_ENV = 'test';

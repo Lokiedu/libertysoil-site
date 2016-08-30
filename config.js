@@ -16,15 +16,5 @@ module.exports = {
   },
   pickpoint: {
     key: process.env.PICKPOINT_API_KEY
-  },
-  kue: {
-    redis: {
-      host: '127.0.0.1',
-      port: 6379,
-      db: 1 // if provided select a non-default redis db
-      // options: {
-      //   // see https://github.com/mranney/node_redis#rediscreateclient
-      // }
-    }
   }
 };

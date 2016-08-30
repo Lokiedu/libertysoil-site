@@ -6,6 +6,6 @@ describe('urlGenerator', () => {
 
   it('Should work well ', () => {
 
-    expect(getApiUrl('USERS'), 'to equal', 'http://localhost:8000/api/v1/users');
+    expect(getApiUrl('USERS'), 'to equal', 'http://localhost:8001/api/v1/users');
   });
 });

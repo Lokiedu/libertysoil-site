@@ -22,14 +22,8 @@ import fs, { accessSync, readFileSync } from 'fs';
 
 import Koa from 'koa';
 import { isString, indexOf } from 'lodash';
-import session from 'koa-generic-session';
-import redisStore from 'koa-redis';
 import convert from 'koa-convert';
-import cors from 'kcors';
 import serve from 'koa-static';
-import bodyParser from 'koa-bodyparser';
-import mount from 'koa-mount';
-import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
@@ -46,9 +40,6 @@ import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
-import { initApi } from './src/api/routing';
-import initBookshelf from './src/api/db';
-import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
 import ApiClient from './src/api/client';
 
@@ -56,8 +47,6 @@ import { initState } from './src/store';
 import {
   setCurrentUser, setLikes, setFavourites
 } from './src/actions/users';
-
-import db_config from './knexfile';
 
 
 const exec_env = process.env.DB_ENV || 'development';
@@ -76,7 +65,7 @@ try {
 
   streams.push({
     type: 'rotating-file',
-    path: '/var/log/libertysoil.log',
+    path: '/var/log/libertysoil-react.log',
     level: 'warn',
     period: '1d',   // daily rotation
     count: 3        // keep 3 back copies
@@ -86,7 +75,7 @@ try {
 }
 
 export const logger = createLogger({
-  name: "libertysoil",
+  name: "libertysoil-react",
   serializers: Logger.stdSerializers,
   src: true,
   streams
@@ -97,10 +86,6 @@ export const logger = createLogger({
 const app = new Koa();
 app.logger = logger;
 
-const knexConfig = db_config[exec_env];
-const bookshelf = initBookshelf(knexConfig);
-const sphinx = initSphinx();
-const api = initApi(bookshelf, sphinx);
 const matchPromisified = promisify(match, { multiArgs: true });
 const templatePath = path.join(__dirname, '/src/views/index.ejs');
 const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
@@ -130,19 +115,6 @@ if (exec_env === 'development') {
 
   // Taken from https://github.com/glenjamin/ultimate-hot-reloading-example/blob/master/server.js
 
-  // Do "hot-reloading" of express stuff on the server
-  // Throw away cached modules and re-require next time
-  // Ensure there's no important state in there!
-  const watcher = chokidar.watch('./src/api');
-  watcher.on('ready', function () {
-    watcher.on('all', function () {
-      logger.debug('Clearing /src/api/ cache from server');
-      Object.keys(require.cache).forEach(function (id) {
-        if (/\/src\/api\//.test(id)) delete require.cache[id];
-      });
-    });
-  });
-
   // Do "hot-reloading" of react stuff on the server
   // Throw away the cached client modules and let them be re-required next time
   compiler.plugin('done', function () {
@@ -166,24 +138,6 @@ app.use(async (ctx, next) => {
 });
 
 app.keys = ['libertysoil'];
-
-app.use(convert(cors({
-  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-})));
-
-app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
-
-app.use(convert(session({
-  store: redisStore(
-    {
-      host: '127.0.0.1',
-      port: 6379
-    }
-  ),
-  key: 'connect.sid',
-  cookie: { signed: false }
-})));
-
 app.use(createRequestLogger({ level: 'info', logger }));
 
 if (indexOf(['test', 'travis'], exec_env) !== -1) {
@@ -196,14 +150,13 @@ if (indexOf(['test', 'travis'], exec_env) !== -1) {
   };
 }
 
-app.use(mount('/api/v1', api));
-
 app.use(convert(serve(`${__dirname}/public/`, { index: false, defer: false })));
 
 app.use(async function reactMiddleware(ctx) {
   const store = initState();
 
-  if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
+  if (false /*ctx.session && ctx.session.user && isString(ctx.session.user)*/) {
+    // FIXME: reimplement via API-call
     try {
       const user = await bookshelf
         .model('User')

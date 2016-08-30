@@ -1,7 +1,6 @@
 import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
-import AWS from 'mock-aws';
 
 import app from '../index';
 
