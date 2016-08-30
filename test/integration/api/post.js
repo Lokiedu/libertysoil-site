@@ -17,6 +17,8 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
+import _ from 'lodash';
+
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
@@ -24,9 +26,11 @@ import SchoolFactory from '../../../test-helpers/factories/school';
 import GeotagFactory from '../../../test-helpers/factories/geotag';
 import PostFactory from '../../../test-helpers/factories/post';
 import UserFactory from '../../../test-helpers/factories/user';
+import { login } from '../../../test-helpers/api';
 
 
 const bookshelf = initBookshelf($dbConfig);
+const knex = bookshelf.knex;
 const Post = bookshelf.model('Post');
 const User = bookshelf.model('User');
 const Hashtag = bookshelf.model('Hashtag');
@@ -48,7 +52,7 @@ describe('Post', () => {
       await post.destroy();
       await user.destroy();
     });
-    
+
     describe('/api/v1/post/:id', () => {
       describe('when post exists', () => {
         it('responds with post', async () => {
@@ -153,6 +157,73 @@ describe('Post', () => {
           'to have body array length',
           0
         );
+      });
+    });
+
+    describe('subscriptions', () => {
+      let post;
+      let user;
+      let sessionId;
+
+      async function countPostSubscriptions(user_id, post_id) {
+        const result = await knex('post_subscriptions').where({ user_id, post_id }).count();
+
+        return parseInt(result[0].count);
+      }
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await new User().save(_.omit(userAttrs, 'password'), { method: 'insert', require: true });
+        sessionId = await login(userAttrs.username, userAttrs.password);
+
+        post = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
+      });
+
+      after(async () => {
+        user.destroy();
+        post.destroy();
+      });
+
+      afterEach(async () => {
+        await knex('post_subscriptions').del();
+      });
+
+      describe('/api/v1/post/:id/subscribe', () => {
+        it('subscribes the current user', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/post/${post.id}/subscribe`,
+              method: 'POST',
+              body: {
+                action: 'subscribe'
+              }
+            },
+            'to open successfully'
+          );
+
+          expect(await countPostSubscriptions(user.id, post.id), 'to be', 1);
+        });
+      });
+
+      describe('/api/v1/post/:id/unsubscribe', () => {
+        it('unsubscribes the current user', async () => {
+          await post.subscribers().attach(user.id);
+
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/post/${post.id}/unsubscribe`,
+              method: 'POST',
+              body: {
+                action: 'unsubscribe'
+              }
+            },
+            'to open successfully'
+          );
+
+          expect(await countPostSubscriptions(user.id, post.id), 'to be', 0);
+        });
       });
     });
   });

@@ -196,6 +196,7 @@ export default class BaseSettingsPage extends React.Component {
                       <div className="tabs tabs-theme_settings">
                         <div className="tabs__menu">
                           <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.SETTINGS)}>Basic info</IndexLink>
+                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.EMAIL_SETTINGS)}>Email settings</Link>
                           <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Manage Followers</Link>
                           <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
                         </div>

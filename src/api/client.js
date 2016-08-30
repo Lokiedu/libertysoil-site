@@ -594,4 +594,14 @@ export default class ApiClient
       return err.response.body;
     }
   }
+
+  async subscribeToPost(postId) {
+    const response = await this.post(`/api/v1/post/${postId}/subscribe`);
+    return await response.json();
+  }
+
+  async unsubscribeFromPost(postId) {
+    const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
+    return await response.json();
+  }
 }

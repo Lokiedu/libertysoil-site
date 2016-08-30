@@ -217,7 +217,8 @@ app.use(async function reactMiddleware(ctx) {
             'followed_geotags',
             'liked_hashtags',
             'liked_geotags',
-            'liked_schools'
+            'liked_schools',
+            'post_subscriptions'
           ]
         });
 

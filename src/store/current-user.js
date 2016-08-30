@@ -32,6 +32,7 @@ const initialState = i.Map({
   liked_schools: i.Map({}),
   liked_geotags: i.Map({}),
   suggested_users: i.List([]),
+  post_subscriptions: i.List([]),
   recent_tags: i.Map({
     hashtags: i.List([]),
     schools: i.List([]),
@@ -60,6 +61,7 @@ export default function reducer(state = initialState, action) {
             .set('liked_hashtags', i.Map({}))
             .set('liked_schools', i.Map({}))
             .set('liked_geotags', i.Map({}))
+            .set('post_subscriptions', i.List([]))
             .set('suggested_users', i.List([]))
             .set('recent_tags', i.fromJS({ hashtags: [], schools: [], geotags: [] }));
         });
@@ -72,6 +74,7 @@ export default function reducer(state = initialState, action) {
         const likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
         const likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
         const likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
+        const postSubscriptions = _.map(action.user.post_subscriptions, 'id');
 
         state = state.withMutations(state => {
           state.set('followed_hashtags', i.fromJS(followedTags));
@@ -80,6 +83,7 @@ export default function reducer(state = initialState, action) {
           state.set('liked_hashtags', i.fromJS(likedHashtags));
           state.set('liked_schools', i.fromJS(likedSchools));
           state.set('liked_geotags', i.fromJS(likedGeotags));
+          state.set('post_subscriptions', i.fromJS(postSubscriptions));
         });
       }
 
@@ -192,6 +196,22 @@ export default function reducer(state = initialState, action) {
 
     case a.geotags.REMOVE_LIKED_GEOTAG: {
       state = state.deleteIn(['liked_geotags', action.geotag.url_name]);
+
+      break;
+    }
+
+    case a.users.SUBSCRIBE_TO_POST: {
+      state = state.updateIn(['post_subscriptions'], val => {
+        return val.push(action.post_id);
+      });
+
+      break;
+    }
+
+    case a.users.UNSUBSCRIBE_FROM_POST: {
+      state = state.updateIn(['post_subscriptions'], val => {
+        return val.delete(val.indexOf(action.post_id));
+      });
 
       break;
     }
