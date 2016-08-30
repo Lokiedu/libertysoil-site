@@ -62,8 +62,8 @@ export default class Avatar extends React.Component {
       userUrl
     } = this.props;
 
-    let finalSize = parseInt(size, 10);
-    let finalUrl = this.getImgUrl(url);
+    const finalSize = parseInt(size, 10);
+    const finalUrl = this.getImgUrl(url);
 
     let avatar;
     if (finalUrl) {
