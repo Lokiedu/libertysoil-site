@@ -53,7 +53,6 @@ export default class UserText extends React.Component {
     let name = this.getName();
 
     if (isLink) {
-      console.log(userUrl);
       name = <Link className="link" to={userUrl}>{name}</Link>;
     }
 
