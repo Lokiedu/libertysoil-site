@@ -444,7 +444,16 @@ export default class ApiController {
     const School = this.bookshelf.model('School');
 
     try {
-      const schools = await School.fetchAll({ withRelated: 'images' });
+      const schools = await School.collection().query(qb => {
+        qb.limit(ctx.query.limit);
+        qb.offset(ctx.query.offset);
+        this.applySortQuery(qb, ctx.query);
+
+        if (ctx.query.havePosts) {
+          qb.where('post_count', '>', 0);
+        }
+      }).fetch({ withRelated: 'images' });
+
       ctx.body = schools.toJSON();
     } catch (e) {
       ctx.status = 404;
@@ -3018,6 +3027,8 @@ export default class ApiController {
     await this.getPostComments(ctx);
   };
 
+  // ========== Helpers ==========
+
   countComments = async (posts) => {
     const ids = posts.map(post => {
       return post.get('id');
@@ -3047,4 +3058,25 @@ export default class ApiController {
     const zeroes = _.fill(_.clone(missing), 0, 0, missing.length);
     return _.merge(_.zipObject(missing, zeroes), mapped_counts);
   };
+
+  /**
+   * Sets 'order by' for the {@link qb} depending on the 'sort' query parameter.
+   * Syntax: `?sort=column` for ASC or `?sort=-column` for DESC.
+   * Doesn't support multiple columns at this point.
+   * @param qb Knex query builder.
+   * @param {Object} query An object containing query parameters.
+   */
+  applySortQuery(qb, query) {
+    if ('sort' in query) {
+      let column = query.sort;
+      let order = 'ASC';
+
+      if (column[0] == '-') {
+        column = column.substring(1);
+        order = 'DESC';
+      }
+
+      qb.orderBy(column, order);
+    }
+  }
 }

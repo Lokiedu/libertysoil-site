@@ -1,0 +1,70 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+.tools_page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__body {
+    display: flex;
+    flex-flow: row nowrap;
+    flex: 1 0 auto;
+    padding-top: @headerHeight;
+    background-color: #FBFBFB;
+  }
+
+  &__header,
+  &__footer {
+    flex: none;
+  }
+
+  &__footer {
+    box-sizing: border-box;
+    height: @headerHeight;
+    padding: @space;
+    background: @color__block_background;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  &__menu-col {
+    width: 250px;
+    border-right: 1px solid #EDEDED;
+  }
+
+  &__content-col {
+    flex: auto 1;
+  }
+
+  &__content {
+    padding: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding-left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+
+    &-current {
+      background-color: #FD9315;
+      color: white;
+    }
+  }
+}

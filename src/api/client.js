@@ -229,8 +229,8 @@ export default class ApiClient
     return await response.json();
   }
 
-  async schools() {
-    const response = await this.get('/api/v1/schools');
+  async schools(query = {}) {
+    const response = await this.get('/api/v1/schools', query);
     return await response.json();
   }
 

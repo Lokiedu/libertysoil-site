@@ -479,6 +479,28 @@ export class ActionsTrigger {
     }
   };
 
+  toolsLoadSchoolsRiver = async (query = {}) => {
+    this.dispatch(a.ui.setProgress('loadingSchoolsRiver', true));
+
+    let result;
+    try {
+      result = await this.client.schools(Object.assign({ havePosts: true }, query));
+      this.dispatch(a.schools.setSchools(result));
+
+      if (!query.offset) {
+        this.dispatch(a.tools.setSchoolsRiver(result));
+      } else {
+        this.dispatch(a.tools.addSchoolsToRiver(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadingSchoolsRiver', false));
+
+    return result;
+  }
+
   loadInitialSuggestions = async () => {
     try {
       const result = await this.client.initialSuggestions();
