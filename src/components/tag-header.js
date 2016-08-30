@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
 
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+
 import Panel from './panel';
 import Time from './time';
 import FollowTagButton from './follow-tag-button';
@@ -163,7 +165,6 @@ const TagHeader = (props) => {
         className="tabs__title tabs__title-gray button button-midi"
         key="toEdit"
         to={`/${prefix}/${url_name}/edit`}
-        visible
       >
         Edit
       </Link>
@@ -202,7 +203,7 @@ const TagHeader = (props) => {
 TagHeader.displayName = 'TagHeader';
 
 TagHeader.propTypes = {
-  current_user: PropTypes.shape({}),
+  current_user: CurrentUserPropType,
   is_logged_in: PropTypes.bool.isRequired,
   newPost: PropTypes.func,
   postsAmount: PropTypes.number,

@@ -17,6 +17,12 @@
 */
 import React, { PropTypes } from 'react';
 
+import {
+  ArrayOfUsers as ArrayOfUsersPropType,
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
+
 import FollowButton from './follow-button';
 import User from './user';
 
@@ -59,11 +65,11 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
 UserGrid.displayName = 'UserGrid';
 
 UserGrid.propTypes = {
-  current_user: PropTypes.shape({}),
-  i_am_following: PropTypes.arrayOf(PropTypes.string),
+  current_user: CurrentUserPropType,
+  i_am_following: ArrayOfUsersIdPropType,
   notFoundMessage: PropTypes.node,
   triggers: PropTypes.shape({}),
-  users: PropTypes.arrayOf(PropTypes.shape({}))
+  users: ArrayOfUsersPropType
 };
 
 export default UserGrid;

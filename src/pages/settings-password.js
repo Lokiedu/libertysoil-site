@@ -19,7 +19,16 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  mapOf as mapOfPropType,
+  uuid4 as uuid4PropType
+} from '../prop-types/common';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import BaseSettingsPage from './base/settings';
 import SettingsPasswordForm from '../components/settings/password-form';
@@ -36,8 +45,13 @@ class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
 
   static propTypes = {
+    current_user: CurrentUserPropType,
     dispatch: PropTypes.func.isRequired,
-    messages: ArrayOfMessagesPropType
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    is_logged_in: PropTypes.bool.isRequired,
+    messages: ArrayOfMessagesPropType,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

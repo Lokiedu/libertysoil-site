@@ -15,12 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
 import {
+  url as urlPropType,
   uuid4 as uuid4PropType,
   mapOf as mapOfPropType
 } from '../prop-types/common';
@@ -29,6 +30,11 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  MapOfUsers as MapOfUsersPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
 
 import NotFound from './not-found';
 import BaseUserFavoritesPage from './base/user';
@@ -46,8 +52,17 @@ class UserFavoritesPage extends React.Component {
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
     favourites_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
-    posts: MapOfPostsPropType.isRequired
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    i_am_following: ArrayOfUsersIdPropType,
+    is_logged_in: PropTypes.bool.isRequired,
+    params: PropTypes.shape({
+      username: urlPropType.isRequired
+    }).isRequired,
+    posts: MapOfPostsPropType.isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -59,20 +74,21 @@ class UserFavoritesPage extends React.Component {
   }
 
   render() {
-    const page_user = _.find(this.props.users, { username: this.props.params.username });
     const {
-      posts,
-      current_user,
-      users,
       comments,
-      ui,
+      current_user,
+      favourites_river,
+      followers,
+      following,
       i_am_following,
       is_logged_in,
-      following,
-      followers,
-      favourites_river
+      params,
+      posts,
+      ui,
+      users
     } = this.props;
 
+    const page_user = _.find(users, { username: params.username });
     if (_.isUndefined(page_user)) {
       return null;  // not loaded yet
     }
@@ -80,8 +96,6 @@ class UserFavoritesPage extends React.Component {
     if (false === page_user) {
       return <NotFound />;
     }
-
-    //console.info(this.props);
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -94,8 +108,8 @@ class UserFavoritesPage extends React.Component {
     return (
       <BaseUserFavoritesPage
         current_user={current_user}
-        following={following}
         followers={followers}
+        following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
         page_user={page_user}
@@ -108,8 +122,8 @@ class UserFavoritesPage extends React.Component {
           posts={posts}
           river={userFavouritesRiver}
           triggers={triggers}
-          users={users}
           ui={ui}
+          users={users}
         />
       </BaseUserFavoritesPage>
     );

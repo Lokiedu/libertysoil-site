@@ -21,6 +21,11 @@ import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import {
+  ArrayOfUsers as ArrayOfUsersPropType,
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
 
 import BaseInductionPage from './base/induction';
 import Footer from '../components/footer';
@@ -48,12 +53,12 @@ class InductionPage extends React.Component {
   static displayName = 'InductionPage';
 
   static propTypes = {
-    current_user: PropTypes.shape({}),
+    current_user: CurrentUserPropType,
     dispatch: PropTypes.func,
-    i_am_following: PropTypes.arrayOf(PropTypes.string),
-    is_logged_in: PropTypes.bool,
+    i_am_following: ArrayOfUsersIdPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     messages: ArrayOfMessagesPropType,
-    suggested_users: PropTypes.arrayOf(PropTypes.shape({}))
+    suggested_users: ArrayOfUsersPropType
   };
 
   static async fetchData(params, store, client) {

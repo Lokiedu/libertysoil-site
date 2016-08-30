@@ -32,6 +32,10 @@ import {
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -50,13 +54,16 @@ export class TagPage extends Component {
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
     hashtags: MapOfHashtagsPropType.isRequired,
+    is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       tag: PropTypes.string.isRequired
     }),
     posts: MapOfPostsPropType.isRequired,
     schools: MapOfSchoolsPropType.isRequired,
-    tag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired
+    tag_posts: mapOfPropType(urlPropType, ArrayOfPostsIdPropType).isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

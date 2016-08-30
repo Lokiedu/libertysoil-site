@@ -29,10 +29,12 @@ describe('School page', () => {
     const wrapper = shallow(
       <SchoolPage
         comments={{}}
+        is_logged_in={false}
         params={{ school_name: 'test' }}
         posts={{}}
         school_posts={{}}
         schools={{}}
+        users={{}}
       />
     );
 
@@ -46,9 +48,11 @@ describe('School page', () => {
       shallow(
         <SchoolPage
           comments={{}}
+          is_logged_in={false}
           params={{ school_name: 'test' }}
           school_posts={{}}
           schools={[{ url_name: 'test' }]}
+          users={{}}
         />
       );
     } catch (e) {
@@ -70,9 +74,11 @@ describe('School page', () => {
     const wrapper = shallow(
       <SchoolPage
         comments={{}}
+        is_logged_in={false}
         params={{ school_name: 'test' }}
         school_posts={{}}
         schools={[{ url_name: 'test', name: 'test' }]}
+        users={{}}
       />
     );
 
@@ -86,6 +92,7 @@ describe('School page', () => {
         is_logged_in={false}
         tag={{ url_name: 'test', id: '1', name: "test" }}
         type={TAG_SCHOOL}
+        users={{}}
       />
     );
 
@@ -98,6 +105,7 @@ describe('School page', () => {
         is_logged_in={false}
         tag={{ url_name: 'test', id: '1', description: 'test description' }}
         type={TAG_SCHOOL}
+        users={{}}
       />
     );
 

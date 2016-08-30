@@ -15,11 +15,20 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  mapOf as mapOfPropType,
+  uuid4 as uuid4PropType
+} from '../prop-types/common';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import BaseSettingsPage from './base/settings';
 import BasicInfoForm from '../components/settings/basic-info-form';
@@ -38,7 +47,12 @@ class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
 
   static propTypes = {
-    messages: ArrayOfMessagesPropType
+    current_user: CurrentUserPropType,
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    is_logged_in: PropTypes.bool.isRequired,
+    messages: ArrayOfMessagesPropType,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

@@ -24,6 +24,11 @@ import Helmet from 'react-helmet';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  MapOfUsers as MapOfUsersPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
 
 import VisibilitySensor from '../components/visibility-sensor';
 
@@ -65,7 +70,9 @@ export class List extends React.Component {
     create_post_form: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
-    current_user: PropTypes.shape({}).isRequired,
+    current_user: CurrentUserPropType.isRequired,
+    i_am_following: ArrayOfUsersIdPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
     schools: MapOfSchoolsPropType.isRequired,
@@ -73,7 +80,8 @@ export class List extends React.Component {
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean
       })
-    }).isRequired
+    }).isRequired,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -149,14 +157,16 @@ export class List extends React.Component {
 
   render() {
     const {
+      comments,
       current_user,
       i_am_following,
-      resetCreatePostForm,
-      updateCreatePostForm,
-      ui,
-      river,
+      is_logged_in,
       posts,
-      comments,
+      resetCreatePostForm,
+      river,
+      schools,
+      ui,
+      updateCreatePostForm,
       users
     } = this.props;
 
@@ -182,19 +192,19 @@ export class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header current_user={this.props.current_user} is_logged_in={this.props.is_logged_in}>
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
 
         <Page>
-          <Sidebar current_user={this.props.current_user} />
+          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={values(this.props.schools)}
+                  allSchools={values(schools)}
                   defaultText={this.props.create_post_form.text}
                   triggers={triggers}
                   userRecentTags={current_user.recent_tags}

@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
+import { CurrentUser as CurrentUserPropType } from '../../prop-types/users';
 
 import {
   Page,
@@ -54,8 +55,8 @@ BaseSuggestionsPage.displayName = 'BaseSuggestionsPage';
 
 BaseSuggestionsPage.propTypes = {
   children: PropTypes.node,
-  current_user: PropTypes.shape({}),
-  is_logged_in: PropTypes.bool,
+  current_user: CurrentUserPropType,
+  is_logged_in: PropTypes.bool.isRequired,
   messages: ArrayOfMessagesPropType,
   triggers: PropTypes.shape({})
 };

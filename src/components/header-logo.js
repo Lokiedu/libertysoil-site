@@ -15,17 +15,24 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+
+import { Immutable as ImmutablePropType } from '../prop-types/common';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import { toggleSidebar } from '../actions/ui';
 import currentUserSelector from '../selectors/currentUser';
 import createSelector from '../selectors/createSelector';
 
 class HeaderLogo extends Component {
+  static displayName = 'HeaderLogo';
+
+  static propTypes = {
+    current_user: ImmutablePropType(CurrentUserPropType)
+  };
+
   handleClick = () => {
     const {
       dispatch

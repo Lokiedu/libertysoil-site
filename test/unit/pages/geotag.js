@@ -29,9 +29,11 @@ describe('GeotagPage', () => {
         comments={{}}
         geotag_posts={{}}
         geotags={{}}
+        is_logged_in={false}
         params={{ url_name: 'test' }}
         posts={{}}
         schools={{}}
+        users={{}}
       />
     );
 
@@ -46,9 +48,11 @@ describe('GeotagPage', () => {
         comments={{}}
         geotag_posts={{}}
         geotags={{ test: {} }}
+        is_logged_in={false}
         params={{ url_name: 'test' }}
         posts={{}}
         schools={{}}
+        users={{}}
       />
     );
 
