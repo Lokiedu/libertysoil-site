@@ -111,6 +111,7 @@ export default class AddGeotagForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
+                  addable
                   geotags={this.props.userRecentGeotags}
                   onClick={this._selectRecentlyUsedGeotag}
                 />
@@ -121,6 +122,7 @@ export default class AddGeotagForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
+                  addable
                   geotags={popularGeotags}
                 />
               </div>

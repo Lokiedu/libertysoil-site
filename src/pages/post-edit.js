@@ -25,6 +25,7 @@ import Helmet from 'react-helmet';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { uuid4 as uuid4PropType } from '../prop-types/common';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import {
   Page,
@@ -57,6 +58,8 @@ class PostEditPage extends React.Component {
   static displayName = 'PostEditPage';
 
   static propTypes = {
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       uuid: uuid4PropType.isRequired
     }),
@@ -109,6 +112,7 @@ class PostEditPage extends React.Component {
   render() {
     const {
       current_user,
+      is_logged_in,
       posts
     } = this.props;
     const postId = this.props.params.uuid;
@@ -137,7 +141,7 @@ class PostEditPage extends React.Component {
       <div>
         <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
         <Header
-          is_logged_in={this.props.is_logged_in}
+          is_logged_in={is_logged_in}
           current_user={current_user}
         >
           <HeaderLogo small />

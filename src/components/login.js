@@ -29,9 +29,7 @@ export default class LoginComponent extends React.Component {
   submitHandler = (event) => {
     event.preventDefault();
 
-    const form = event.target;
-
-    this.props.onLoginUser(form.username.value, form.password.value).then(() => {
+    this.props.onLoginUser(this.usernameInput.value, this.passwordInput.value).then(() => {
       ga('send', 'event', 'Login', 'Done');
     });
   };
@@ -51,6 +49,9 @@ export default class LoginComponent extends React.Component {
                 id="loginUsername"
                 name="username"
                 placeholder="Username"
+                ref={(input) => {
+                  return this.usernameInput = input;
+                }}
                 required="required"
                 type="text"
               />
@@ -61,7 +62,17 @@ export default class LoginComponent extends React.Component {
           <label className="label label-before_input" htmlFor="loginPassword">Password</label>
           <div className="input_group">
             <div className="input_group__input">
-              <input className="input input-big input-block" id="loginPassword" name="password" placeholder="Password" required="required" type="password" />
+              <input
+                className="input input-big input-block"
+                id="loginPassword"
+                name="password"
+                placeholder="Password"
+                ref={(input) => {
+                  return this.passwordInput = input;
+                }}
+                required="required"
+                type="password"
+              />
             </div>
             <Link className="link input_group__after input_group__after-outside_bottom" to="/resetpassword">Forgot your password?</Link>
           </div>

@@ -21,6 +21,11 @@ import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import BaseSuggestionsPage from './base/suggestions';
 import UserGrid from '../components/user-grid';
@@ -53,11 +58,11 @@ const DiscoverGrid = ({ current_user, i_am_following, triggers, users }) => {
 DiscoverGrid.displayName = 'DiscoverGrid';
 
 DiscoverGrid.propTypes = {
-  current_user: PropTypes.shape({}),
-  i_am_following: PropTypes.arrayOf(PropTypes.string),
-  is_logged_in: PropTypes.bool,
+  current_user: CurrentUserPropType,
+  i_am_following: ArrayOfUsersIdPropType,
+  is_logged_in: PropTypes.bool.isRequired,
   triggers: PropTypes.shape({}),
-  users: PropTypes.arrayOf(PropTypes.shape({}))
+  users: MapOfUsersPropType.isRequired
 };
 
 const SuggestionsPage = ({ current_user, dispatch, is_logged_in, i_am_following, messages }) => {
@@ -94,10 +99,10 @@ const SuggestionsPage = ({ current_user, dispatch, is_logged_in, i_am_following,
 SuggestionsPage.displayName = 'SuggestionsPage';
 
 SuggestionsPage.propTypes = {
-  current_user: PropTypes.shape({}),
+  current_user: CurrentUserPropType,
   dispatch: PropTypes.func,
-  i_am_following: PropTypes.arrayOf(PropTypes.string),
-  is_logged_in: PropTypes.bool,
+  i_am_following: ArrayOfUsersIdPropType,
+  is_logged_in: PropTypes.bool.isRequired,
   messages: ArrayOfMessagesPropType
 };
 

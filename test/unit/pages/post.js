@@ -29,8 +29,10 @@ describe('Post page', () => {
     const wrapper = shallow(
       <PostPage
         comments={{}}
+        is_logged_in={false}
         params={{ uuid: uuid4Example }}
         posts={{}}
+        users={{}}
       />
     );
 
@@ -46,8 +48,10 @@ describe('Post page', () => {
     renderer.render(
       <PostPage
         comments={{}}
+        is_logged_in={false}
         params={{ uuid: uuid4Example }}
         posts={{ [uuid4Example]: false }}
+        users={{}}
       />
     );
 

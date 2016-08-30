@@ -19,6 +19,8 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Gravatar from 'react-gravatar';
 
+import { User as UserPropType } from '../../prop-types/users';
+
 export default class Avatar extends React.Component {
   static displayName = 'Avatar';
 
@@ -28,7 +30,7 @@ export default class Avatar extends React.Component {
     isRound: PropTypes.bool,
     size: PropTypes.number,
     url: PropTypes.string,
-    user: PropTypes.shape({}),
+    user: UserPropType.isRequired,
     userUrl: PropTypes.string
   };
 
@@ -62,8 +64,8 @@ export default class Avatar extends React.Component {
       userUrl
     } = this.props;
 
-    let finalSize = parseInt(size, 10);
-    let finalUrl = this.getImgUrl(url);
+    const finalSize = parseInt(size, 10);
+    const finalUrl = this.getImgUrl(url);
 
     let avatar;
     if (finalUrl) {

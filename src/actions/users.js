@@ -30,6 +30,9 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SUBMIT_RESET_PASSWORD = 'SUBMIT_RESET_PASSWORD';
 export const SUBMIT_NEW_PASSWORD = 'SUBMIT_NEW_PASSWORD';
 
+export const SUBSCRIBE_TO_POST = 'SUBSCRIBE_TO_POST';
+export const UNSUBSCRIBE_FROM_POST = 'UNSUBSCRIBE_FROM_POST';
+
 export function addUser(user) {
   return {
     type: ADD_USER,
@@ -99,5 +102,19 @@ export function submitResetPassword() {
 export function submitNewPassword() {
   return {
     type: SUBMIT_NEW_PASSWORD
+  };
+}
+
+export function subscribeToPost(post_id) {
+  return {
+    type: SUBSCRIBE_TO_POST,
+    post_id
+  };
+}
+
+export function unsubscribeFromPost(post_id) {
+  return {
+    type: UNSUBSCRIBE_FROM_POST,
+    post_id
   };
 }

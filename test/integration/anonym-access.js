@@ -16,7 +16,7 @@ describe('pages that are available for anonym', function () {
       await new User({
         id: uuid.v4(),
         username: 'john',
-        more: '{"lastName": "Smith", "firstName": "John"}',
+        more: '{"lastName": "Smith", "firstName": "John", "first_login": false}',
         email: 'john@example.com'
       }).save(null, {method: 'insert'});
     });

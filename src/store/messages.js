@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
+import { find } from 'lodash';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { messages } from '../actions';
@@ -23,9 +24,27 @@ import messageType from '../consts/messageTypeConstants';
 
 const initialState = i.List([]);
 
+function removeDuplicate(state, action) {
+  const index = state.findIndex(item => item.message === action.message);
+
+  if (index >= 0) {
+    return state.delete(index);
+  }
+  return state;
+}
+
 export default function reducer(state = initialState, action) {
+  if (find([messages.ADD_ERROR, messages.ADD_MESSAGE], a => a === action.type)) {
+    const index = state.findIndex(item => item.message === action.message);
+    if (index !== -1) {
+      state = state.delete(index);
+    }
+  }
+
   switch (action.type) {
     case messages.ADD_ERROR: {
+      state = removeDuplicate(state, action);
+
       state = state.push({
         type: messageType.ERROR,
         message: action.message
@@ -34,10 +53,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case messages.ADD_MESSAGE: {
-      const index = state.findIndex(item => item.message === action.message);
-      if (index !== -1) {
-        state = state.delete(index);
-      }
+      state = removeDuplicate(state, action);
 
       state = state.push({
         type: messageType.MESSAGE,

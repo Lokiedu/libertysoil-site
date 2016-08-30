@@ -27,6 +27,7 @@ import Checkit from 'checkit';
 import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
+import { hidePostsData } from '../utils/posts';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
@@ -85,6 +86,7 @@ export default class ApiController {
       return post;
     });
 
+    response = await hidePostsData(response, ctx, this.bookshelf.knex);
     ctx.body = response;
   };
 
@@ -111,6 +113,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -136,6 +139,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -161,6 +165,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -178,10 +183,10 @@ export default class ApiController {
         .collection()
         .query(qb => {
           qb
-             .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-             .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-             .orderBy('posts.created_at', 'desc')
-             .distinct();
+            .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+            .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+            .orderBy('posts.created_at', 'desc')
+            .distinct();
 
           switch (geotag.attributes.type) {
             case 'Planet':
@@ -211,6 +216,7 @@ export default class ApiController {
         return post;
       });
 
+      posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 404;
@@ -267,12 +273,13 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
 
     try {
-      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
+      let post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
 
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
       post.attributes.comments = post.relations.post_comments.length;
 
-      ctx.body = post.toJSON();
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      ctx.body = post;
     } catch (e) {
       ctx.status = 404;
       return;
@@ -321,20 +328,20 @@ export default class ApiController {
       .map(row => row.post_id);
 
     const q = Post.forge()
-    .query(qb => {
-      qb
-        .select()
-        .from('posts')
-        .whereIn('id', likes)
-        .union(function () {
-          this
-            .select()
-            .from('posts')
-            .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
-            .andWhere('user_id', userId);
-        })
-        .orderBy('updated_at', 'desc');
-    });
+      .query(qb => {
+        qb
+          .select()
+          .from('posts')
+          .whereIn('id', likes)
+          .union(function () {
+            this
+              .select()
+              .from('posts')
+              .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
+              .andWhere('user_id', userId);
+          })
+          .orderBy('updated_at', 'desc');
+      });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
     const post_comments_count = await this.countComments(posts);
@@ -343,6 +350,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
     return posts;
   };
 
@@ -388,11 +396,11 @@ export default class ApiController {
       .map(row => row.post_id);
 
     const q = Post.forge()
-    .query(qb => {
-      qb
-        .whereIn('id', favourites)
-        .orderBy('posts.updated_at', 'desc');
-    });
+      .query(qb => {
+        qb
+          .whereIn('id', favourites)
+          .orderBy('posts.updated_at', 'desc');
+      });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
     const post_comments_count = await this.countComments(posts);
@@ -401,6 +409,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
     return posts;
   };
 
@@ -713,6 +722,7 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -721,7 +731,7 @@ export default class ApiController {
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
-      result.likers = post.relations.likers;
+      result.likers = post.likers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -752,6 +762,7 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -760,7 +771,7 @@ export default class ApiController {
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
-      result.likers = post.relations.likers;
+      result.likers = post.likers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -794,6 +805,7 @@ export default class ApiController {
       await user.favourited_posts().attach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -802,7 +814,7 @@ export default class ApiController {
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
-      result.favourers = post.relations.favourers;
+      result.favourers = post.favourers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -830,6 +842,7 @@ export default class ApiController {
       await user.favourited_posts().detach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
+      post = await hidePostsData(post, ctx, this.bookshelf.knex);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -838,7 +851,7 @@ export default class ApiController {
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
-      result.favourers = post.relations.favourers;
+      result.favourers = post.favourers;
     } catch (ex) {
       ctx.status = 500;
       result.error = ex.message;
@@ -879,6 +892,7 @@ export default class ApiController {
       return post;
     });
 
+    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -1396,6 +1410,9 @@ export default class ApiController {
         await obj.attachGeotags(geotags);
       }
 
+      // Add the author to the list of subscribers by default.
+      obj.subscribers().attach(ctx.session.user);
+
       await obj.fetch({ require: true, withRelated: POST_RELATIONS });
       obj.relations.schools = obj.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
 
@@ -1561,6 +1578,92 @@ export default class ApiController {
     ctx.status = 200;
     ctx.body = { success: true };
   };
+
+  /**
+   * Subscribes the current user to the specified post.
+   * If subscribed, the current user recieves notifications about new comments on the post.
+   */
+  subscribeToPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('id' in ctx.params)) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().attach(ctx.session.user);
+
+      ctx.status = 200;
+      ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+  };
+
+  unsubscribeFromPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('id' in ctx.params)) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().detach(ctx.session.user);
+
+      ctx.status = 200;
+      ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+  };
+
+  getUnsubscribeFromPost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.redirect('/');
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    try {
+      const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
+
+      await post.subscribers().detach(ctx.session.user);
+
+      ctx.redirect(`/post/${post.id}`);
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = 'Something went wrong';
+
+      ctx.app.logger.error(e);
+
+      return;
+    }
+  }
 
   getUser = async (ctx) => {
     const User = this.bookshelf.model('User');
@@ -2574,6 +2677,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'hashtag_like',
         liked_hashtag_id: hashtag.id,
         user_id: user.id
@@ -2637,6 +2741,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'school_like',
         liked_school_id: school.id,
         user_id: user.id
@@ -2700,6 +2805,7 @@ export default class ApiController {
 
       await new Post({
         id: uuid.v4(),
+        fully_published_at: new Date().toJSON(),
         type: 'geotag_like',
         liked_geotag_id: geotag.id,
         user_id: user.id
@@ -2922,13 +3028,13 @@ export default class ApiController {
     }
     const Comment = this.bookshelf.model('Comment');
     const q = Comment.forge()
-        .query(qb => {
-          qb
-              .select('post_id')
-              .count('id as comment_count')
-              .where('post_id', 'IN', ids)
-              .groupBy('post_id');
-        });
+      .query(qb => {
+        qb
+          .select('post_id')
+          .count('id as comment_count')
+          .where('post_id', 'IN', ids)
+          .groupBy('post_id');
+      });
 
     const raw_counts = await q.fetchAll();
 

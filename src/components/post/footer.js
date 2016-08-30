@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { isEmpty } from 'lodash';
 import Time from '../time';
@@ -25,42 +25,88 @@ import TagLine from './tagline';
 import Toolbar from './toolbar';
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
-
-const PostFooter = ({ author, current_user, post, triggers }) => {
-  const post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
-  const hasTags = !isEmpty(post.geotags) || !isEmpty(post.hashtags) || !isEmpty(post.schools);
-
-  return (
-    <div>
-      <div className="card__meta">
-        <div className="card__owner">
-          <User avatar={{ size: 39 }} user={author} />
-        </div>
-        <div className="card__timestamp">
-          <Link to={post_url}>
-            <Time timestamp={post.created_at} />
-          </Link>
-        </div>
-      </div>
+import { Post } from '../../prop-types/posts';
 
 
-      {hasTags &&
-        <footer className="card__footer">
-          <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
-        </footer>
-      }
+class PostFooter extends React.Component {
+  static propTypes = {
+    author: PropTypes.shape({}),
+    current_user: PropTypes.shape({}),
+    post: Post,
+    triggers: PropTypes.shape({
+      subscribeToPost: PropTypes.function,
+      unsubscribeFromPost: PropTypes.function
+    })
+  };
 
-      <footer className="card__footer card__footer-colored">
-        <div className="card__toolbars">
-          <Toolbar current_user={current_user} post={post} triggers={triggers} />
+  handleToggleSubscription = async (e) => {
+    if (e.target.checked) {
+      await this.props.triggers.subscribeToPost(this.props.post.id);
+    } else {
+      await this.props.triggers.unsubscribeFromPost(this.props.post.id);
+    }
+  };
 
-          <div className="card__toolbar card__toolbar-right">
-            <EditPostButton current_user={current_user} post={post} />
+  render() {
+    const {
+      author,
+      current_user,
+      post,
+      triggers
+    } = this.props;
+
+    const post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
+    const hasTags = !isEmpty(post.geotags) || !isEmpty(post.hashtags) || !isEmpty(post.schools);
+    const subscribed = current_user && current_user.post_subscriptions.indexOf(post.id) != -1;
+
+    return (
+      <div>
+        <div className="card__meta">
+          <div className="card__owner">
+            <User avatar={{ size: 39 }} user={author} />
+          </div>
+          <div className="card__timestamp">
+            <Link to={post_url}>
+              <Time timestamp={post.created_at} />
+            </Link>
           </div>
         </div>
-      </footer>
-    </div>
-  );
-};
+
+
+        {hasTags &&
+          <footer className="card__footer">
+            <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
+          </footer>
+        }
+
+        <footer className="card__footer card__footer-colored">
+          <div className="card__toolbars">
+            <Toolbar current_user={current_user} post={post} triggers={triggers} />
+
+            <div className="card__toolbar card__toolbar-right">
+              {current_user &&
+                <label
+                  className="card__toolbar_item"
+                  htmlFor="subscribe_to_post"
+                  title="Recieve email notifications about new comments"
+                >
+                  <span className="checkbox__label-left">Subscribe</span>
+                  <input
+                    checked={subscribed}
+                    id="subscribe_to_post"
+                    name="subscribe_to_post"
+                    type="checkbox"
+                    onClick={this.handleToggleSubscription}
+                  />
+                </label>
+              }
+              <EditPostButton current_user={current_user} post={post} />
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+}
 
 export default PostFooter;

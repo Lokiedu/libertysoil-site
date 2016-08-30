@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+
 import { API_HOST } from '../config';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
@@ -55,10 +57,8 @@ const AuthBlock = ({ current_user, is_logged_in }) => {
 AuthBlock.displayName = 'AuthBlock';
 
 AuthBlock.propTypes = {
-  current_user: PropTypes.shape({
-    user: PropTypes.shape({})
-  }),
-  is_logged_in: PropTypes.bool
+  current_user: CurrentUserPropType,
+  is_logged_in: PropTypes.bool.isRequired
 };
 
 export default AuthBlock;

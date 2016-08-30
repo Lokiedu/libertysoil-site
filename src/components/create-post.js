@@ -17,14 +17,15 @@
  */
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
+import { form as inform, DisabledFormSubmit } from 'react-inform';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
 
-import Button from './button';
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
+
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddTagModal from './add-tag-modal';
@@ -38,6 +39,15 @@ class CreatePost extends React.Component {
     }),
     allSchools: ArrayOfSchoolsPropType,
     defaultText: PropTypes.string,
+    fields: PropTypes.shape({
+      minor_update: PropTypes.shape().isRequired,
+      text: PropTypes.shape().isRequired
+    }),
+    form: PropTypes.shape({
+      forceValidate: PropTypes.func.isRequired,
+      isValid: PropTypes.func.isRequired,
+      onValues: PropTypes.func.isRequired
+    }).isRequired,
     geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     schools: ArrayOfSchoolsPropType,
@@ -57,9 +67,8 @@ class CreatePost extends React.Component {
   constructor(props) {
     super(props);
 
+    this.isSubmitting = false;
     this.state = {
-      isSubmitting: false,
-      hasText: false,
       expanded: false,
       addTagModalType: null
     };
@@ -84,23 +93,24 @@ class CreatePost extends React.Component {
 
   _handleSubmit = async (event) => {
     event.preventDefault();
-    if (this.state.isSubmitting) {
+    if (this.isSubmitting) {
       return;
     }
 
-    if (!this.state.hasText) {
+    const { fields, form } = this.props;
+
+    if (!form.isValid()) {
       return;
     }
 
-    this.setState({ isSubmitting: true });
+    this.isSubmitting = true;
 
-    const form = this.form;
     const data = {
-      text: form.text.value,
+      text: fields.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.name),
       schools: this.props.schools.map(school => school.name),
       geotags: this.props.geotags.map(geotag => geotag.id),
-      minor_update: form.minor_update.checked
+      minor_update: fields.minor_update.checked
     };
 
     this.props.actions.resetCreatePostForm();
@@ -109,18 +119,11 @@ class CreatePost extends React.Component {
     ga('send', 'event', 'Post', 'Done', data.hashtags.join(','));
     await this.props.triggers.loadUserRecentTags();
 
-    form.text.value = '';
+    form.onValues({});
+    await form.forceValidate();
+
     this._addTagModal.reset();
-    this.setState({ isSubmitting: false, hasText: false });
-  };
-
-  _handleTextChange = (event) => {
-    let hasText = false;
-    if (event.target.value.trim()) {
-      hasText = true;
-    }
-
-    this.setState({ hasText });
+    this.isSubmitting = false;
   };
 
   _handleFocus = () => {
@@ -195,6 +198,10 @@ class CreatePost extends React.Component {
 
   render() {
     const {
+      form,
+      fields
+    } = this.props;
+    const {
       addTagModalType,
       expanded
     } = this.state;
@@ -211,12 +218,11 @@ class CreatePost extends React.Component {
                   }
                   <textarea
                     className="input input-block create_post__text_input"
-                    defaultValue={this.props.defaultText}
                     name="text"
                     placeholder="Make a contribution to education change"
-                    rows={(this.state.expanded) ? 10 : 1}
-                    onChange={this._handleTextChange}
+                    rows={expanded ? 10 : 1}
                     onFocus={this._handleFocus}
+                    {...fields.text}
                   />
                 </div>
               </div>
@@ -236,12 +242,10 @@ class CreatePost extends React.Component {
             {expanded &&
               <div className="layout__row layout layout-align_vertical">
                 <div className="layout__grid_item">
-                  <Button
+                  <DisabledFormSubmit
                     className="button button-wide button-red"
-                    disabled={!this.state.hasText}
-                    title="Publish"
                     type="submit"
-                    waiting={this.state.isSubmitting}
+                    value="Publish"
                   />
                 </div>
                 <div className="layout__grid_item layout__grid_item-wide">
@@ -254,7 +258,7 @@ class CreatePost extends React.Component {
                            on their feeds but will be able to see it on your page."
                   >
                     <span className="checkbox__label-left">Minor update (?)</span>
-                    <input name="minor_update" type="checkbox" />
+                    <input name="minor_update" type="checkbox" {...fields.minor_update} />
                   </label>
                 </div>
               </div>
@@ -279,5 +283,22 @@ class CreatePost extends React.Component {
   }
 }
 
+const fields = ['text', 'minor_update'];
+const validate = values => {
+  const { text } = values;
+  const errors = {};
+
+  if (!text || !text.trim().length) {
+    errors.text = 'Post mustn\'t be empty';
+  }
+
+  return errors;
+};
+
 const DecoratedCreatePost = ClickOutsideComponentDecorator(CreatePost);
-export default DecoratedCreatePost;
+const WrappedCreatePost = inform({
+  fields,
+  validate
+})(DecoratedCreatePost);
+
+export default WrappedCreatePost;

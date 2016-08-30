@@ -27,3 +27,5 @@ export const schools = require('./schools');
 
 export const posts = require('./posts');
 export const comments = require('./comments');
+
+export const users = require('./users');

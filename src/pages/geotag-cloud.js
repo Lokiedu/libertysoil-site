@@ -15,11 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import {
   Page,
@@ -43,7 +44,9 @@ class GeotagCloudPage extends Component {
   static displayName = 'GeotagCloudPage';
 
   static propTypes = {
-    geotags: MapOfGeotagsPropType.isRequired
+    current_user: CurrentUserPropType,
+    geotags: MapOfGeotagsPropType.isRequired,
+    is_logged_in: PropTypes.bool.isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -68,7 +71,7 @@ class GeotagCloudPage extends Component {
     return (
       <div>
         <Helmet title="Geotags of " />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Geotags">

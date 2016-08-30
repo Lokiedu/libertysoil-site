@@ -20,6 +20,9 @@ import { values, throttle } from 'lodash';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
+import { Immutable as ImmutablePropType } from '../prop-types/common';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+
 import { toggleSidebar } from '../actions/ui';
 
 import Navigation from './navigation';
@@ -34,7 +37,9 @@ class Sidebar extends React.Component {
   static displayName = 'Sidebar';
 
   static propTypes = {
-    dispatch: PropTypes.func.isRequired
+    current_user: ImmutablePropType(CurrentUserPropType),
+    dispatch: PropTypes.func.isRequired,
+    is_logged_in: PropTypes.bool.isRequired
   };
 
   static contextTypes = {

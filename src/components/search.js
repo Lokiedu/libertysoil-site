@@ -212,7 +212,7 @@ class Search extends Component {
       loading
     } = this.state;
 
-    let classNameBlock = bem.makeClassName({
+    const classNameBlock = bem.makeClassName({
       block: 'search',
       modifiers: {
         opened: isOpened

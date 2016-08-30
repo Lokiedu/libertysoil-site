@@ -185,6 +185,7 @@ export class ActionsTrigger {
     try {
       const result = await this.client.createPost(type, data);
       this.dispatch(a.river.addPostToRiver(result));
+      this.dispatch(a.users.subscribeToPost(result.id));
 
       const userTags = await this.client.userTags();
       this.dispatch(a.tags.setUserTags(userTags));
@@ -233,8 +234,8 @@ export class ActionsTrigger {
         success = true;
       }
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if ('error' in e.response) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else {
         this.dispatch(a.messages.addError(e.message));
       }
@@ -403,6 +404,8 @@ export class ActionsTrigger {
         throw new Error(result.error);
       }
 
+      const userTags = await this.client.userTags();
+      this.dispatch(a.tags.setUserTags(userTags));
       this.dispatch(a.posts.removePost(post_uuid));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -623,8 +626,16 @@ export class ActionsTrigger {
     }
   };
 
+  addError = (message) => {
+    this.dispatch(a.messages.addError(message));
+  };
+
   removeMessage = (id) => {
     this.dispatch(a.messages.removeMessage(id));
+  };
+
+  removeAllMessages = () => {
+    this.dispatch(a.messages.removeAllMessages());
   };
 
   loadUserTags = async () => {
@@ -726,6 +737,24 @@ export class ActionsTrigger {
     try {
       const response = await this.client.search(query);
       this.dispatch(a.search.setSearchResults(response));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  subscribeToPost = async (postId) => {
+    try {
+      await this.client.subscribeToPost(postId);
+      this.dispatch(a.users.subscribeToPost(postId));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  unsubscribeFromPost = async (postId) => {
+    try {
+      await this.client.unsubscribeFromPost(postId);
+      this.dispatch(a.users.unsubscribeFromPost(postId));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

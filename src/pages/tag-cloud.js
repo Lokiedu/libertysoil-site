@@ -15,11 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import {
   Page,
@@ -44,6 +45,8 @@ class TagCloudPage extends Component {
   static displayName = 'TagCloudPage';
 
   static propTypes = {
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     tag_cloud: ArrayOfHashtagsPropType.isRequired
   };
 

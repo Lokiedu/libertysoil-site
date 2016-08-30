@@ -15,25 +15,26 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
-import { isUndefined } from 'lodash';
+export class Command {
+  name;
+  status;
+  run;
+  args;
 
-import { User as UserPropType } from '../prop-types/users';
+  constructor(name = 'Command', run = () => {}, { ...params } = { status: true, args: [] }) {
+    this.name = name;
+    this.run = run;
 
-import User from './user';
+    if (params.status === undefined) {
+      this.status = true;
+    } else {
+      this.status = params.status;
+    }
 
-const CurrentUser = (props) => {
-  if (isUndefined(props.user)) {
-    return null;
+    if (params.args === undefined) {
+      this.args = [];
+    } else {
+      this.args = params.args;
+    }
   }
-
-  return <User {...props} className="user_box-small" />;
-};
-
-CurrentUser.displayName = 'CurrentUser';
-
-CurrentUser.propTypes = {
-  user: UserPropType
-};
-
-export default CurrentUser;
+}

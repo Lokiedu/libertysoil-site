@@ -18,6 +18,12 @@
 import React, { PropTypes } from 'react';
 import { take } from 'lodash';
 
+import {
+  ArrayOfUsers as ArrayOfUsersPropType,
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType
+} from '../prop-types/users';
+
 import FollowButton from './follow-button';
 import IgnoreButton from './ignore-button';
 import User from './user';
@@ -26,26 +32,14 @@ export default class SideSuggestedUsers extends React.Component {
   static displayName = 'SideSuggestedUsers';
 
   static propTypes = {
-    current_user: PropTypes.shape({
-      id: PropTypes.string.isRequired
-    }),
-    i_am_following: PropTypes.arrayOf(PropTypes.string.isRequired),
+    current_user: CurrentUserPropType,
+    i_am_following: ArrayOfUsersIdPropType,
     triggers: PropTypes.shape({
       followUser: PropTypes.func.isRequired,
       unfollowUser: PropTypes.func.isRequired,
       ignoreUser: React.PropTypes.func.isRequired
     }),
-    users: PropTypes.arrayOf(PropTypes.shape({
-      avatar: PropTypes.shape({
-        url: PropTypes.string.isRequired
-      }),
-      id: PropTypes.string.isRequired,
-      username: PropTypes.string,
-      more: PropTypes.shape({
-        firstName: PropTypes.string,
-        lastName: PropTypes.string
-      })
-    }))
+    users: ArrayOfUsersPropType
   };
 
   constructor(props) {

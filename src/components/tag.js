@@ -28,6 +28,7 @@ export default class Tag extends React.Component {
   static displayName = 'Tag';
 
   static propTypes = {
+    addable: PropTypes.bool,
     collapsed: PropTypes.bool,
     deletable: PropTypes.bool,
     inactive: PropTypes.bool,
@@ -155,7 +156,7 @@ export default class Tag extends React.Component {
       return (
         <div className={`tag ${className}`} title={name}>
           <div className="tag__icon_wrapper">
-            <span className="micon tag__icon tag__delete clickable" onClick={this._handleDelete}>close</span>
+            <span className="micon tag__icon tag__action clickable" onClick={this._handleDelete}>close</span>
             {tagIcon}
           </div>
           {tagNameComponent}
@@ -165,6 +166,9 @@ export default class Tag extends React.Component {
       return (
         <div className={`tag tag-clickable ${className}`} title={name} onClick={this._handleClick}>
           <div className="tag__icon_wrapper">
+            {this.props.addable &&
+              <span className="micon tag__icon tag__action clickable">add</span>
+            }
             {tagIcon}
           </div>
           {tagNameComponent}

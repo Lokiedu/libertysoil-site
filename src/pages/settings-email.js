@@ -19,39 +19,21 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import {
-  mapOf as mapOfPropType,
-  uuid4 as uuid4PropType
-} from '../prop-types/common';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
-import {
-  ArrayOfUsersId as ArrayOfUsersIdPropType,
-  CurrentUser as CurrentUserPropType,
-  MapOfUsers as MapOfUsersPropType
-} from '../prop-types/users';
 
 import BaseSettingsPage from './base/settings';
-import SettingsPasswordForm from '../components/settings/password-form';
-
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { Command } from '../utils/command';
-import { addError } from '../actions/messages';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
-class SettingsPasswordPage extends React.Component {
+class SettingsEmailPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
 
   static propTypes = {
-    current_user: CurrentUserPropType,
     dispatch: PropTypes.func.isRequired,
-    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    is_logged_in: PropTypes.bool.isRequired,
-    messages: ArrayOfMessagesPropType,
-    users: MapOfUsersPropType.isRequired
+    messages: ArrayOfMessagesPropType
   };
 
   static async fetchData(params, store, client) {
@@ -68,46 +50,15 @@ class SettingsPasswordPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  handleChange = (values) => {
-    if (this.base) {
-      const command = new Command(
-        'password-form',
-        this.handleSave,
-        { status: !!Object.keys(values).length }
-      );
-
-      this.base.handleChange(command);
-    }
-  };
-
-  handleSave = async () => {
-    let success = false;
-
-    const form = this.form.formProps();
-    form.forceValidate();
-    if (!form.isValid()) {
-      return { success };
-    }
-
+  handleMuteAllPosts = async () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const fields = form.values();
 
-    const result = await triggers.changePassword(
-      fields.oldPassword,
-      fields.newPassword,
-      fields.newPasswordRepeat
-    );
-
-    if (result.success) {
-      form.onValues({});
-      success = true;
-    } else if (result.error) {
-      this.props.dispatch(addError(result.error));
-      success = false;
-    }
-
-    return { success };
+    await triggers.updateUserInfo({
+      more: {
+        mute_all_posts: this.form.mute_all_posts.checked,
+      }
+    });
   };
 
   render() {
@@ -133,24 +84,29 @@ class SettingsPasswordPage extends React.Component {
         following={following}
         is_logged_in={is_logged_in}
         messages={messages}
-        ref={c => this.base = c}
         triggers={triggers}
-        onSave={this.handleSave}
       >
-        <Helmet title="Change Password for " />
-        <SettingsPasswordForm
-          ref={c => this.form = c}
-          onChange={this.handleChange}
-        />
-
-        {false &&
-          <div className="paper__page">
-            <h2 className="content__title">Role</h2>
+        <Helmet title="Email Settings on " />
+        <div className="paper__page">
+          <h2 className="content__sub_title layout__row layout__row-small">Email settings</h2>
+          <div className="layout__row">
+            <form className="paper__page" ref={c => this.form = c}>
+              <label className="layout__row layout__row-small" htmlFor="mute_all_posts">
+                <input
+                  checked={current_user.user.more.mute_all_posts}
+                  id="mute_all_posts"
+                  name="mute_all_posts"
+                  type="checkbox"
+                  onClick={this.handleMuteAllPosts}
+                />
+                <span className="checkbox__label-right">Turn off all email notifications about new comments</span>
+              </label>
+            </form>
           </div>
-        }
+        </div>
       </BaseSettingsPage>
     );
   }
 }
 
-export default connect(defaultSelector)(SettingsPasswordPage);
+export default connect(defaultSelector)(SettingsEmailPage);

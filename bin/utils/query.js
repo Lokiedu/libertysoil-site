@@ -96,9 +96,5 @@ export async function bulkUpsert(table, attributes, conditionExtractor) {
  * @returns {string}
  */
 export function cleanUpExtraEscapes(str) {
-  if (knex.VERSION !== '0.10.0') {
-    throw new Error(`The code uses string-escaping hack to avoid error in Knex's code. It is not tested with your version of Knex`);
-  }
-
   return str.replace(/\\\\"/g, '\\"');
 }

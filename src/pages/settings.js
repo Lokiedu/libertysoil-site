@@ -15,17 +15,29 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
+import {
+  mapOf as mapOfPropType,
+  uuid4 as uuid4PropType
+} from '../prop-types/common';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
+import {
+  ArrayOfUsersId as ArrayOfUsersIdPropType,
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import BaseSettingsPage from './base/settings';
+import BasicInfoForm from '../components/settings/basic-info-form';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
+import { Command } from '../utils/command';
 import { addUser } from '../actions/users';
+import { addError } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
 import { defaultSelector } from '../selectors';
 
@@ -35,7 +47,12 @@ class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
 
   static propTypes = {
-    messages: ArrayOfMessagesPropType
+    current_user: CurrentUserPropType,
+    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
+    is_logged_in: PropTypes.bool.isRequired,
+    messages: ArrayOfMessagesPropType,
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {
@@ -53,42 +70,47 @@ class SettingsPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  constructor(props) {
-    super(props);
+  handleChange = () => {
+    if (this.base) {
+      const command = new Command(
+        'basic-info-form',
+        this.handleSave
+      );
 
-    this.state = {
-      processing: false
-    };
-  }
+      this.base.handleChange(command);
+    }
+  };
 
-  onSave = async () => {
-    this.setState({ processing: true });
-
+  handleSave = async () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     const roles = this.rolesManager._getRoles();
-    const processedPictures = {};
-    const pictures = this.base._getNewPictures();
+    // const processedPictures = {};
+    // const pictures = this.base._getNewPictures();
 
-    for (const name in pictures) {
-      processedPictures[name] = await triggers.uploadPicture({ ...pictures[name] });
+    // for (const name in pictures) {
+    //   processedPictures[name] = await triggers.uploadPicture({ ...pictures[name] });
+    // }
+
+    const formValues = this.form.formProps().values();
+
+    let success;
+    try {
+      success = await triggers.updateUserInfo({
+        more: {
+          bio: formValues.bio,
+          summary: formValues.summary,
+          roles
+          // ...processedPictures
+        }
+      });
+    } catch (e) {
+      success = false;
+      this.props.dispatch(addError(e.message));
     }
 
-    const result = await triggers.updateUserInfo({
-      more: {
-        summary: this.form.summary.value,
-        bio: this.form.bio.value,
-        roles,
-        ...processedPictures
-      }
-    });
-
-    if (result) {
-      this.base._clearPreview();
-    }
-
-    this.setState({ processing: false });
+    return { success };
   };
 
   render() {
@@ -121,21 +143,14 @@ class SettingsPage extends React.Component {
         is_logged_in={is_logged_in}
         messages={messages}
         triggers={triggers}
-        onSave={this.onSave}
-        processing={this.state.processing}
+        onSave={this.handleSave}
       >
         <Helmet title="Your Profile Settings on " />
-        <form ref={c => this.form = c} className="paper__page">
-          <h2 className="content__sub_title layout__row layout__row-small">Basic info</h2>
-          <div className="layout__row">
-            <label htmlFor="summary" className="layout__block layout__row layout__row-small">Summary</label>
-            <input id="summary" name="summary" type="text" onChange={this.onChange} className="input input-block content layout__row layout__row-small" maxLength="100" defaultValue={current_user.user.more.summary} />
-          </div>
-          <div className="layout__row">
-            <label htmlFor="bio" className="layout__block layout__row layout__row-small">Bio</label>
-            <textarea id="bio" name="bio" onChange={this.onChange} className="input input-block input-textarea content layout__row layout__row-small" maxLength="5000" defaultValue={current_user.user.more.bio} />
-          </div>
-        </form>
+        <BasicInfoForm
+          current_user={current_user}
+          ref={c => this.form = c}
+          onChange={this.handleChange}
+        />
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Roles</h2>
           <RolesManager

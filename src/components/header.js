@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
+import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+
 import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
 import Search from './search';
@@ -58,10 +60,8 @@ HeaderComponent.displayName = 'HeaderComponent';
 HeaderComponent.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
-  current_user: PropTypes.shape({
-    user: PropTypes.shape({})
-  }),
-  is_logged_in: PropTypes.bool
+  current_user: CurrentUserPropType,
+  is_logged_in: PropTypes.bool.isRequired
 };
 
 export default HeaderComponent;

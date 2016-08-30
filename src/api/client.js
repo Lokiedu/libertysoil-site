@@ -19,7 +19,7 @@ import fetch from 'isomorphic-fetch';
 import FormData from 'form-data';
 import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
-import { merge as mergeObj } from 'lodash';
+import { extend, merge as mergeObj } from 'lodash';
 
 
 export default class ApiClient
@@ -145,7 +145,6 @@ export default class ApiClient
 
     if (data !== null) {
       body = data;
-      headers = mergeObj(headers, data.getHeaders());
     }
 
     const req = fetch(
@@ -367,7 +366,13 @@ export default class ApiClient
 
   async changePassword(old_password, new_password) {
     const response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
-    return await response.json();
+
+    if (response.status !== 200) {
+      const e = extend(new Error(response.statusText), { response: await response.json() });
+      throw e;
+    }
+
+    return response.json();
   }
 
   async resetPassword(email) {
@@ -588,5 +593,15 @@ export default class ApiClient
     } catch (err) {
       return err.response.body;
     }
+  }
+
+  async subscribeToPost(postId) {
+    const response = await this.post(`/api/v1/post/${postId}/subscribe`);
+    return await response.json();
+  }
+
+  async unsubscribeFromPost(postId) {
+    const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
+    return await response.json();
   }
 }

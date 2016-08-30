@@ -31,6 +31,10 @@ import {
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import {
+  CurrentUser as CurrentUserPropType,
+  MapOfUsers as MapOfUsersPropType
+} from '../prop-types/users';
 
 import {
   Page,
@@ -57,11 +61,14 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 export class PostPage extends React.Component {
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       uuid: uuid4PropType.isRequired
     }).isRequired,
     posts: MapOfPostsPropType.isRequired,
-    related_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType)
+    related_posts: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType),
+    users: MapOfUsersPropType.isRequired
   };
 
   static async fetchData(params, store, client) {

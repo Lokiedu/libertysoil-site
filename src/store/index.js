@@ -95,6 +95,7 @@ const initialState = i.Map({
     liked_hashtags: i.Map({}),
     liked_schools: i.Map({}),
     liked_geotags: i.Map({}),
+    post_subscriptions: i.List([]),
     suggested_users: i.List([]),
     recent_tags: i.Map({
       hashtags: i.List([]),

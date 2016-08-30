@@ -18,14 +18,14 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
+import { User as UserPropType } from '../../prop-types/users';
+
 export default class UserText extends React.Component {
   static displayName = 'UserText';
 
   static propTypes = {
     isLink: PropTypes.bool,
-    user: PropTypes.shape({
-      username: PropTypes.string
-    }).isRequired,
+    user: UserPropType.isRequired,
     userUrl: PropTypes.string
   };
 

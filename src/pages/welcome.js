@@ -27,7 +27,7 @@ import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
 import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
-export default class Welcome extends React.Component {
+class Welcome extends React.Component {
 
   static async fetchData(params, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
