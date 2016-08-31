@@ -83,6 +83,12 @@ describe('Client test', () => {
     expect(result.error, 'to be', 'You are not authorized');
   });
 
+  it('#search works', async () => {
+    const result = await client.search('test');
+
+    expect(result, 'to be an', 'object');
+    expect(result, 'to have key', 'error');
+  });
 });
 
 describe('Authenticated client test', () => {
