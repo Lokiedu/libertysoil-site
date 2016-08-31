@@ -1,6 +1,6 @@
 {
   "name": "libertysoil",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Libertysoil.org website",
   "license": "AGPL-3.0+",
   "repository": {
@@ -54,7 +54,7 @@
     "immutable": "^3.7.5",
     "isomorphic-fetch": "^2.2.1",
     "kcors": "^1.0.1",
-    "knex": "^0.11.9",
+    "knex": "~0.10.0",
     "knex-logger": "^0.1.0",
     "koa": "^2.0.0-alpha.3",
     "koa-bodyparser": "^3.0.0",
