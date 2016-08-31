@@ -90,7 +90,7 @@ class SchoolsToolPage extends React.Component {
       <div>
         <Helmet title="Schools tool on " />
         {schoolsToDisplay.map((school, index) =>
-          <div className="schools_tool__school" key={index}>
+          <div className="tools_page__item" key={index}>
             <TagIcon type={TAG_SCHOOL} />
             <Link className="schools_tool__school_link" to={`/s/${school.get('url_name')}`}>{school.get('name')}</Link>
           </div>
