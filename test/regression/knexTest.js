@@ -2,7 +2,6 @@
 import expect from 'unexpected';
 
 import initBookshelf from '../../src/api/db';
-import config from '../../knexfile';
 
 
 describe('Knex.js library sanity', () => {
@@ -10,7 +9,7 @@ describe('Knex.js library sanity', () => {
   let knex;
 
   before(() => {
-    bookshelf = initBookshelf(config.test);
+    bookshelf = initBookshelf(global.$dbConfig);
     knex = bookshelf.knex;
   });
 
