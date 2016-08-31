@@ -50,15 +50,13 @@ export default class ApiClient
       defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrlForFetch(relativeUrl, query),
       {
         credentials: 'same-origin',
         headers: defaultHeaders
       }
     );
-
-    return Promise.resolve(req);
   }
 
   async head(relativeUrl, query = {}) {
@@ -68,7 +66,7 @@ export default class ApiClient
       defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrlForFetch(relativeUrl, query),
       {
         credentials: 'same-origin',
@@ -76,8 +74,6 @@ export default class ApiClient
         headers: defaultHeaders
       }
     );
-
-    return Promise.resolve(req);
   }
 
   async del(relativeUrl) {
@@ -87,7 +83,7 @@ export default class ApiClient
       defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrlForFetch(relativeUrl),
       {
         credentials: 'same-origin',
@@ -95,8 +91,6 @@ export default class ApiClient
         headers: defaultHeaders
       }
     );
-
-    return Promise.resolve(req);
   }
 
   async post(relativeUrl, data = null) {
@@ -116,7 +110,7 @@ export default class ApiClient
       body = stringify(data);
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -125,8 +119,6 @@ export default class ApiClient
         body
       }
     );
-
-    return Promise.resolve(req);
   }
 
   /*
@@ -147,7 +139,7 @@ export default class ApiClient
       body = data;
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -156,8 +148,6 @@ export default class ApiClient
         body
       }
     );
-
-    return Promise.resolve(req);
   }
 
   async postJSON(relativeUrl, data = null) {
@@ -177,7 +167,7 @@ export default class ApiClient
       body = JSON.stringify(data);
     }
 
-    const req = fetch(
+    return fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -186,8 +176,6 @@ export default class ApiClient
         body
       }
     );
-
-    return Promise.resolve(req);
   }
 
   async subscriptions(offset = 0) {
@@ -469,7 +457,7 @@ export default class ApiClient
 
   async search(query) {
     const response = await this.get(`/api/v1/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async tagCloud() {
@@ -499,7 +487,7 @@ export default class ApiClient
 
   async searchSchools(query) {
     const response = await this.get(`/api/v1/schools/search/${query}`);
-    return response.body;
+    return await response.json();
   }
 
   async followSchool(name) {
@@ -585,14 +573,10 @@ export default class ApiClient
   }
 
   async saveComment(postId, commentId, text) {
-    try {
-      const response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
-        text
-      });
-      return response.body;
-    } catch (err) {
-      return err.response.body;
-    }
+    const response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
+      text
+    });
+    return await response.json();
   }
 
   async subscribeToPost(postId) {
