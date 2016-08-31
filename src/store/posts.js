@@ -43,7 +43,9 @@ export default function reducer(state = initialState, action) {
     case a.hashtags.SET_HASHTAG_POSTS:
     case a.schools.SET_SCHOOL_POSTS:
     case a.geotags.SET_GEOTAG_POSTS:
-    case a.posts.SET_RELATED_POSTS: {
+    case a.posts.SET_RELATED_POSTS:
+    case a.tools.TOOLS__ADD_USER_POSTS_TO_RIVER:
+    case a.tools.TOOLS__SET_USER_POSTS_RIVER: {
       const postsWithoutUsers = _.keyBy(action.posts.map(post => {
         const postCopy = _.cloneDeep(post);
 

@@ -222,8 +222,8 @@ export default class ApiClient
     return await response.json();
   }
 
-  async userPosts(username) {
-    const response = await this.get(`/api/v1/posts/user/${username}`);
+  async userPosts(username, query = {}) {
+    const response = await this.get(`/api/v1/posts/user/${username}`, query);
     return await response.json();
   }
 

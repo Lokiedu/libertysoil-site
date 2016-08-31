@@ -15,11 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const TOOLS__SET_USER_POST = 'TOOLS__SET_USER_POST';
-export const TOOLS__ADD_USER_POST = 'TOOLS__ADD_USER_POST';
-
 export const TOOLS__ADD_SCHOOLS_TO_RIVER = 'TOOLS__ADD_SCHOOLS_TO_RIVER';
 export const TOOLS__SET_SCHOOLS_RIVER = 'TOOLS__SET_SCHOOLS_RIVER';
+
+export const TOOLS__ADD_USER_POSTS_TO_RIVER = 'TOOLS__ADD_USER_POSTS_TO_RIVER';
+export const TOOLS__SET_USER_POSTS_RIVER = 'TOOLS__SET_USER_POSTS_RIVER';
 
 
 export function addSchoolsToRiver(schools) {
@@ -33,5 +33,20 @@ export function setSchoolsRiver(schools) {
   return {
     type: TOOLS__SET_SCHOOLS_RIVER,
     schools
+  };
+}
+
+
+export function addUserPostsToRiver(posts) {
+  return {
+    type: TOOLS__ADD_USER_POSTS_TO_RIVER,
+    posts
+  };
+}
+
+export function setUserPostsRiver(posts) {
+  return {
+    type: TOOLS__SET_USER_POSTS_RIVER,
+    posts
   };
 }
