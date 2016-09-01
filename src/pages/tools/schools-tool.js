@@ -62,7 +62,7 @@ class SchoolsToolPage extends React.Component {
     const result = await trigger.toolsLoadSchoolsRiver({
       limit: 10,
       offset: this.props.schools_river.size,
-      order: 'name'
+      sort: 'name'
     });
 
     // Hide 'Load more' button when there are no more schools to show.
