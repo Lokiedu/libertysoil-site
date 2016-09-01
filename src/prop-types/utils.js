@@ -29,7 +29,7 @@ export function getTypeError(obj, expectedType, fullName, componentName, locatio
 }
 
 export function createRequirableTypeChecker(validate) {
-  function checkType(isRequired, props, propName, componentName, location, propFullName) {
+  function checkType(isRequired, props, propName, componentName, location, propFullName, ...rest) {
     let fullName = propName;
     if (propFullName) {
       fullName = propFullName;
@@ -43,17 +43,18 @@ export function createRequirableTypeChecker(validate) {
       return null;
     }
 
-    return validate(props, propName, componentName, location, fullName);
+    return validate(props, propName, componentName, location, fullName, ...rest);
   }
 
   const chainedCheckType = checkType.bind(null, false);
   chainedCheckType.isRequired = checkType.bind(null, true);
+  chainedCheckType.isSimplified = false;
 
   return chainedCheckType;
 }
 
 export function createSimplifiedRequirableTypeChecker(validate) {
-  function checkType(isRequired, props, propName, componentName, location, propFullName) {
+  function checkType(isRequired, props, propName, componentName, location, propFullName, ...rest) {
     let fullName = propName;
     if (propFullName) {
       fullName = propFullName;
@@ -68,11 +69,12 @@ export function createSimplifiedRequirableTypeChecker(validate) {
       return null;
     }
 
-    return validate(propValue, fullName, componentName, location);
+    return validate(propValue, fullName, componentName, location, ...rest);
   }
 
   const chainedCheckType = checkType.bind(null, false);
   chainedCheckType.isRequired = checkType.bind(null, true);
+  chainedCheckType.isSimplified = true;
 
   return chainedCheckType;
 }
