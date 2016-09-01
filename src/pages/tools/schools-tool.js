@@ -49,7 +49,7 @@ class SchoolsToolPage extends React.Component {
 
   static async fetchData(params, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.toolsLoadSchoolsRiver({ limit: 10, sort: 'name' });
+    await trigger.toolsLoadSchoolsRiver({ limit: 25, sort: 'name' });
   }
 
   state = {
@@ -60,7 +60,7 @@ class SchoolsToolPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const trigger = new ActionsTrigger(client, this.props.dispatch);
     const result = await trigger.toolsLoadSchoolsRiver({
-      limit: 10,
+      limit: 25,
       offset: this.props.schools_river.size,
       sort: 'name'
     });
