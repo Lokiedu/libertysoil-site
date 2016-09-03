@@ -70,7 +70,6 @@
   display: block;
   width: (@count * @col-base);
   flex: 0 0 (@count * @col-base);
-  height: @col-base;
 }
 
 .generate-columns(@size, @n) {
@@ -82,7 +81,6 @@
       .col-@{__size}-100pct {
         display: block;
         width: 100%;
-        height: @col-base;
         flex: 0 0 100%;
       }
     }
@@ -113,7 +111,6 @@
   .col-xs {
     display: block;
     width: 100%;
-    height: @col-base;
     flex: 0 0 100%;
   }
 }
