@@ -21,7 +21,7 @@ import { isEmpty } from 'lodash';
 import Time from '../time';
 
 import EditPostButton from './edit-post-button';
-import TagLine from './tagline';
+import TagCloud from '../tag-cloud';
 import Toolbar from './toolbar';
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
@@ -72,10 +72,16 @@ class PostFooter extends React.Component {
           </div>
         </div>
 
-
         {hasTags &&
           <footer className="card__footer">
-            <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
+            <TagCloud
+              isLink
+              tags={{
+                geotags: post.geotags,
+                hashtags: post.hashtags,
+                schools: post.schools
+              }}
+            />
           </footer>
         }
 

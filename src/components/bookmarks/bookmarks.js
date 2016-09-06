@@ -16,13 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { isNull } from 'lodash';
 
-// v1
+import Bookmark from './bookmark';
 import Navigation from '../navigation';
-import NavigationItem from '../navigation-item';
-import Icon from '../icon';
+import BookmarkSettingsModal from './settings-modal';
 
-class Bookmarks extends React.Component {
+export default class Bookmarks extends React.Component {
   static propTypes = {
     bookmarks: PropTypes.arrayOf(PropTypes.shape({}))
   };
@@ -31,46 +31,54 @@ class Bookmarks extends React.Component {
     super(props);
 
     this.state = {
-      showSettings: false
+      activeSettings: null
     };
   }
 
-  handleSettingsClick = (e) => {
-    const { showSettings } = this.state;
+  handleSettingsClick = (i) => {
+    this.setState({ activeSettings: i });
+  };
 
-    console.log(e);
-    this.setState({ showSettings: !showSettings });
+  handleModalClose = () => {
+    this.setState({ activeSettings: null });
+  };
+
+  renderModal = () => {
+    const i = this.state.activeSettings;
+    if (isNull(i)) {
+      return false;
+    }
+
+    const current = this.props.bookmarks[i];
+    return (
+      <BookmarkSettingsModal
+        {...current}
+        onClose={this.handleModalClose}
+      />
+    );
   };
 
   render() {
     const { bookmarks } = this.props;
 
+    if (!bookmarks) {
+      return <script />;
+    }
+
     return (
-      <Navigation>
-        {bookmarks &&
-          bookmarks.map((item, i) => (
-            <NavigationItem
+      <div>
+        <Navigation>
+          {bookmarks.map((item, i) => (
+            <Bookmark
+              {...item}
+              i={i}
               key={i}
-              to={item.url}
-            >
-              <div className="navigation-item__content">
-                {item.title}
-              </div>
-              <div className="navigation-item__aside">
-                <Icon
-                  icon="settings"
-                  onClick={this.handleSettingsClick}
-                />
-              </div>
-              <div className="navigation-item__icon">
-                <Icon
-                  icon={item.icon}
-                />
-              </div>
-            </NavigationItem>
-          ))
-        }
-      </Navigation>
+              onSettingsClick={this.handleSettingsClick}
+            />
+          ))}
+        </Navigation>
+        {this.renderModal()}
+      </div>
     );
   }
 }

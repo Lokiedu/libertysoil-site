@@ -113,20 +113,6 @@
   }
 }
 
-.page__sidebar {
-  margin: 0 0 @space 0;
-  width: 100%;
-
-  @media @after-base {
-    width: 288px - @space;
-    margin: 0 0 @space @space;
-  }
-
-  @media @after-base {
-    width: @sidebarWidth - @space;
-  }
-}
-
 .page__main {
   flex: 1;
   min-height: 512px;
@@ -152,17 +138,9 @@
     background: #fff;
   }
 
-  &-no_sidebar {
-    padding-left: 0!important;
-  }
-
   &-no_spacing {
     padding: 0!important;
   }
-}
-
-.page-with_sidebar .page__container {
-  padding-left: @navigationWidth;
 }
 
 .page__body {
@@ -250,10 +228,4 @@
       padding-left: @space;
     }
   }
-}
-
-.page__content_sidebar {
-  width: 160px;
-  flex: 0 0 160px;
-  border-left: 1px solid #edebe9;
 }

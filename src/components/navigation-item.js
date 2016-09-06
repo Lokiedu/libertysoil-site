@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
-import { omit } from 'lodash';
+import { assign, omit } from 'lodash';
 
 import Icon from './icon';
 
@@ -52,21 +52,26 @@ const NavigationItemPlain = ({
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
+    const finalIcon = assign({}, icon, {
+      className: classNames('navigation-item__icon', {
+        [icon && icon.className]: icon && icon.className
+      })
+    });
+
     return (
       <div className={cn} {...htmlProps}>
-        <div className="navigation-item__content">
-          {children}
-        </div>
-        {badge &&
-          <div className="navigation-item__badge">
-            {badge}
+        <div className="navigation-item__content-box">
+          <div className="navigation-item__content">
+            {children}
           </div>
-        }
+          {badge &&
+            <div className="navigation-item__badge">
+              {badge}
+            </div>
+          }
+        </div>
         {icon &&
-          <Icon
-            className="navigation-item__icon"
-            icon={icon}
-          />
+          <Icon {...finalIcon} />
         }
       </div>
     );
@@ -100,21 +105,26 @@ const NavigationItemAsLink = ({
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
+    const finalIcon = assign({}, icon, {
+      className: classNames('navigation-item__icon', {
+        [icon && icon.className]: icon && icon.className
+      })
+    });
+
     return (
       <Link activeClassName={activeCn} className={cn} to={to} {...htmlProps}>
-        <div className="navigation-item__content">
-          {children}
-        </div>
-        {badge &&
-          <div className="navigation-item__badge">
-            {badge}
+        <div className="navigation-item__content-box">
+          <div className="navigation-item__content">
+            {children}
           </div>
-        }
+          {badge &&
+            <div className="navigation-item__badge">
+              {badge}
+            </div>
+          }
+        </div>
         {icon &&
-          <Icon
-            className="navigation-item__icon"
-            icon={icon}
-          />
+          <Icon {...finalIcon} />
         }
       </Link>
     );

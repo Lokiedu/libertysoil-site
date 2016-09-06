@@ -60,8 +60,6 @@ import {
 } from '../actions/posts';
 import { clearRiver } from '../actions/river';
 
-import Sidebarv2 from '../components/v2/sidebar';
-
 const client = new ApiClient(API_HOST);
 
 export class List extends React.Component {
@@ -209,8 +207,10 @@ export class List extends React.Component {
         </Header>
 
         <Page>
-          <Sidebarv2 current_user={this.props.current_user} />
-          <Sidebar current_user={this.props.current_user} />
+          <Sidebar
+            current_user={this.props.current_user}
+            theme="normal"
+          />
           <PageMain>
             <PageBody>
               <PageContent>
