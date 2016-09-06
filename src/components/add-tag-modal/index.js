@@ -29,7 +29,7 @@ import { TagCloud } from './deps';
 import ModalSwitcher from './switcher';
 import AddTagForm from './form';
 
-function AddedTags({ addedTags, onDelete }) {
+function AddedTags({ addedTags, onClick }) {
   if (!addedTags.geotags.length &&
       !addedTags.schools.length &&
       !addedTags.hashtags.length) {
@@ -43,9 +43,9 @@ function AddedTags({ addedTags, onDelete }) {
       </div>
       <div className="layout__row add_tag_modal__added_tags">
         <TagCloud
-          deletable
-          onDelete={onDelete}
-          {...addedTags}
+          action="delete"
+          tags={addedTags}
+          onClick={onClick}
         />
       </div>
     </div>
@@ -218,7 +218,7 @@ export default class AddTagModal extends Component {
           />
           <AddedTags
             addedTags={this.state}
-            onDelete={this._deleteTag}
+            onClick={this._deleteTag}
           />
         </ModalComponent.Body>
         <ModalComponent.Actions>

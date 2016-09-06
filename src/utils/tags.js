@@ -1,6 +1,5 @@
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 
-
 /**
  * Converts hashtags(labels), schools, and other tags to the same format.
  * { urlId, name, type }

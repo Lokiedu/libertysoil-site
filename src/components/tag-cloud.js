@@ -17,34 +17,22 @@
 */
 import React, { PropTypes } from 'react';
 
-import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
-import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
-import {
-  ArrayOfSchools as ArrayOfSchoolsPropType,
-  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
-} from '../prop-types/schools';
-
 import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
 
-const TagCloud = (props) => {
-  const tags = convertModelsToTags(props)
+const TagCloud = ({ tags, ...props }) => {
+  const preparedTags = convertModelsToTags(tags)
     .map((tag, index) => (
       <Tag
-        addable={props.addable}
-        deletable={props.deletable}
-        key={index}
-        showPostCount={props.showPostCount}
-        truncated={props.truncated}
-        onClick={props.onClick}
-        onDelete={props.onDelete}
+        key={tag.id || index}
         {...tag}
+        {...props}
       />
     ));
 
   return (
     <div className="tags">
-      {tags}
+      {preparedTags}
     </div>
   );
 };
@@ -52,18 +40,11 @@ const TagCloud = (props) => {
 TagCloud.displayName = 'TagCloud';
 
 TagCloud.propTypes = {
-  addable: PropTypes.bool,
-  deletable: PropTypes.bool,
-  geotags: ArrayOfGeotagsPropType,
-  hashtags: ArrayOfHashtagsPropType,
-  onClick: PropTypes.func,
-  onDelete: PropTypes.func,
-  schools: PropTypes.oneOfType([
-    ArrayOfLightSchoolsPropType,
-    ArrayOfSchoolsPropType
-  ]),
-  showPostCount: PropTypes.bool,
-  truncated: PropTypes.bool
+  tags: PropTypes.shape({})
+};
+
+TagCloud.defaultProps = {
+  tags: {}
 };
 
 export default TagCloud;

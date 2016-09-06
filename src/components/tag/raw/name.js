@@ -14,20 +14,40 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import { reduce, isPlainObject } from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { truncate } from 'grapheme-utils';
+import { omit } from 'lodash';
 
-export function toSpreadArray(obj) {
-  return reduce(obj, (arr, value, key) => {
-    arr.push({ [key]: value });
-    return arr;
-  }, []);
-}
-
-export function castObject(value, fieldName) {
-  if (isPlainObject(value)) {
-    return value;
+const RawTagName = ({ collapsed, truncated, name, ...props }) => {
+  if (!name) {
+    return false;
   }
 
-  return { [fieldName]: value };
-}
+  let n = name;
+  if (collapsed) {
+    n = '';
+  } else if (truncated) {
+    n = truncate(n, { length: 16 });
+  }
+
+  return (
+    <div {...omit(props, ['children'])}>
+      {n}
+    </div>
+  );
+};
+
+RawTagName.propTypes = {
+  collapsed: PropTypes.bool,
+  name: PropTypes.string,
+  truncated: PropTypes.bool
+};
+
+PropTypes.defaultProps = {
+  collapsed: false,
+  name: '',
+  truncated: false
+};
+
+export default RawTagName;

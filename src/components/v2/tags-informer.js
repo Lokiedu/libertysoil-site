@@ -85,19 +85,19 @@ TagsInformer.propTypes = {
   tags: PropTypes.shape({
     geotags: PropTypes.shape({
       icon: PropTypes.string,
-      list: PropTypes.arrayOf(PropTypes.shape({})),
+      list: PropTypes.shape({}),
       unreadPosts: PropTypes.number,
       url: PropTypes.string
     }),
     hashtags: PropTypes.shape({
       icon: PropTypes.string,
-      list: PropTypes.arrayOf(PropTypes.shape({})),
+      list: PropTypes.shape({}),
       unreadPosts: PropTypes.number,
       url: PropTypes.string
     }),
     schools: PropTypes.shape({
       icon: PropTypes.string,
-      list: PropTypes.arrayOf(PropTypes.shape({})),
+      list: PropTypes.shape({}),
       unreadPosts: PropTypes.number,
       url: PropTypes.string
     })

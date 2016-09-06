@@ -14,20 +14,36 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import { reduce, isPlainObject } from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
-export function toSpreadArray(obj) {
-  return reduce(obj, (arr, value, key) => {
-    arr.push({ [key]: value });
-    return arr;
-  }, []);
-}
+import { TAG_TYPES } from '../../../consts/tags';
 
-export function castObject(value, fieldName) {
-  if (isPlainObject(value)) {
-    return value;
+import Tag from '../tag';
+
+const TAG_TYPES_TITLES = Object.keys(TAG_TYPES);
+
+const TagAsLink = ({ ...props }) => {
+  const { name, type, urlId } = props;
+  const { url: typeUrl, isUrlFinal } = TAG_TYPES[type];
+
+  let finalUrl = typeUrl;
+  if (!isUrlFinal) {
+    finalUrl += urlId;
   }
 
-  return { [fieldName]: value };
-}
+  return (
+    <Link title={name} to={finalUrl}>
+      <Tag {...props} />
+    </Link>
+  );
+};
+
+TagAsLink.propTypes = {
+  name: PropTypes.string,
+  type: PropTypes.oneOf(TAG_TYPES_TITLES),
+  urlId: PropTypes.string
+};
+
+export default TagAsLink;

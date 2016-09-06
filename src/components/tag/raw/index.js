@@ -14,20 +14,31 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import { reduce, isPlainObject } from 'lodash';
+*/
+import React, { PropTypes } from 'react';
+import { omit } from 'lodash';
 
-export function toSpreadArray(obj) {
-  return reduce(obj, (arr, value, key) => {
-    arr.push({ [key]: value });
-    return arr;
-  }, []);
-}
+import Icon from '../../icon';
+import RawTagName from './name';
 
-export function castObject(value, fieldName) {
-  if (isPlainObject(value)) {
-    return value;
-  }
+const RawTag = ({ aside, icon, name, ...props }) => (
+  <div {...omit(props, ['children'])}>
+    <Icon {...icon} />
+    <RawTagName {...name} />
+    {aside}
+  </div>
+);
 
-  return { [fieldName]: value };
-}
+RawTag.propTypes = {
+  aside: PropTypes.node,
+  icon: PropTypes.shape({}),
+  name: PropTypes.shape({})
+};
+
+RawTag.defaultProps = {
+  aside: false,
+  icon: {},
+  name: {}
+};
+
+export default RawTag;

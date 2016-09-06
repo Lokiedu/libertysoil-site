@@ -186,7 +186,7 @@ const TagHeader = (props) => {
 
   return (
     <Panel
-      icon={<Tag size="BIG" type={type} urlId={url_name} />}
+      icon={<Tag isLink size="BIG" type={type} urlId={url_name} />}
       title={name}
       toolbarAlt={toolbarAlt}
       toolbarPrimary={toolbarPrimary}

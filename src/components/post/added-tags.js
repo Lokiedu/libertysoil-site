@@ -26,9 +26,7 @@ import {
 
 import TagCloud from '../tag-cloud';
 
-const AddedTags = (props) => {
-  const { geotags, hashtags, schools } = props;
-
+const AddedTags = ({ geotags, hashtags, schools, ...props }) => {
   if (!geotags.length && !schools.length && !hashtags.length) {
     return null;
   }
@@ -36,7 +34,11 @@ const AddedTags = (props) => {
   return (
     <div className="side_block">
       <h4 className="side_block__heading">Post tags:</h4>
-      <TagCloud {...props} />
+      <TagCloud
+        {...props}
+        isLink
+        tags={{ geotags, hashtags, schools }}
+      />
     </div>
   );
 };
@@ -50,6 +52,12 @@ AddedTags.propTypes = {
     ArrayOfLightSchoolsPropType,
     ArrayOfSchoolsPropType
   ])
+};
+
+AddedTags.defaultProps = {
+  geotags: [],
+  hashtags: [],
+  schools: []
 };
 
 export default AddedTags;

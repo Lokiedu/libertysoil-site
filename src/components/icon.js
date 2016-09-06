@@ -15,18 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import * as MdIconPack from 'react-icons/lib/md';
+import { FaHashtag } from 'react-icons/lib/fa';
+
+const FaIconPack = { FaHashtag };
 
 function findIcon(iconName) {
   const camelized = iconName.replace(/(?:^|[-_])(\w)/g, (match, c) =>
     c ? c.toUpperCase() : ''
   );
+  const capitalized = camelized.charAt(0).toUpperCase() + camelized.slice(1);
 
-  const query = `Md${camelized.charAt(0).toUpperCase() + camelized.slice(1)}`;
-  return MdIconPack[query];
+  return MdIconPack[`Md${capitalized}`] || FaIconPack[`Fa${capitalized}`];
 }
 
 const IconComponent = ({
@@ -41,24 +44,26 @@ const IconComponent = ({
   ...props
 }) => {
   const Icon = findIcon(icon);
-  if (!Icon) {
-    return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
-  }
 
   const classNameIcon = classNames('icon', {
     'icon-outline': outline,
     'icon-disabled': disabled,
-    'icon-rotate': spin,
+    'micon-rotate': spin,
     [`micon-${size}`]: size,
-    [`icon-${size}`]: size,
+    [`icon--size_${size}`]: size,
     [className]: className,
   });
 
   const classNameIconPic = classNames('micon', {
     [`color-${color}`]: color,
     [`micon-${size}`]: size,
-    [`icon-${size}`]: size
+    [`icon--size_${size}`]: size
   });
+
+  let renderedIcon = false;
+  if (Icon) {
+    renderedIcon = <Icon className={classNameIconPic} />;
+  }
 
   let localOnClick = onClick;
   if (disabled) {
@@ -72,9 +77,24 @@ const IconComponent = ({
       disabled={disabled}
       onClick={localOnClick}
     >
-      <Icon className={classNameIconPic} />
+      {renderedIcon}
     </div>
   );
+};
+
+IconComponent.propTypes = {
+  className: PropTypes.string,
+  color: PropTypes.string,
+  disabled: PropTypes.bool,
+  icon: PropTypes.string,
+  onClick: PropTypes.func,
+  outline: PropTypes.bool,
+  size: PropTypes.string,
+  spin: PropTypes.bool
+};
+
+IconComponent.defaultProps = {
+  icon: ''
 };
 
 export default IconComponent;

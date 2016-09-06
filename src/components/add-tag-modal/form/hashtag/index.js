@@ -106,8 +106,8 @@ export default class AddHashtagForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  hashtags={this.props.userRecentHashtags}
+                  action="add"
+                  tags={{ hashtags: this.props.userRecentHashtags }}
                   onClick={this._selectRecentlyUsedHashtag}
                 />
               </div>
@@ -117,8 +117,8 @@ export default class AddHashtagForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  hashtags={popularHashtags}
+                  action="add"
+                  tags={{ hashtags: popularHashtags }}
                 />
               </div>
             </Tab.Content>
