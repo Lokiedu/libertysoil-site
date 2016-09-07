@@ -24,7 +24,7 @@ import {
   createSimplifiedRequirableTypeChecker
 } from './utils';
 
-function checkKeys(keyCheckType, propValue, propFullName, componentName, location) {
+function checkKeys(keyCheckType, propValue, propFullName, componentName, location, ...rest) {
   const fields = Object.keys(propValue);
 
   try {
@@ -40,7 +40,8 @@ function checkKeys(keyCheckType, propValue, propFullName, componentName, locatio
         i,
         componentName,
         location,
-        fieldFullName
+        fieldFullName,
+        ...rest
       );
 
       if (error instanceof Error) {
@@ -57,7 +58,7 @@ function checkKeys(keyCheckType, propValue, propFullName, componentName, locatio
   return null;
 }
 
-function checkValues(valueCheckType, propValue, propFullName, componentName, location) {
+function checkValues(valueCheckType, propValue, propFullName, componentName, location, ...rest) {
   const fields = Object.keys(propValue);
 
   try {
@@ -72,7 +73,8 @@ function checkValues(valueCheckType, propValue, propFullName, componentName, loc
         fieldName,
         componentName,
         location,
-        fieldFullName
+        fieldFullName,
+        ...rest
       );
 
       if (error instanceof Error) {
@@ -88,7 +90,7 @@ function checkValues(valueCheckType, propValue, propFullName, componentName, loc
 
 export const mapOfKeys = (keyCheckType) => (
   createSimplifiedRequirableTypeChecker(
-    (propValue, propFullName, componentName, location) => {
+    (propValue, propFullName, componentName, location, ...rest) => {
       const expectedType = 'object';
       if (typeof propValue !== expectedType) {
         return getTypeError(propValue, expectedType, propFullName, componentName, location);
@@ -99,7 +101,8 @@ export const mapOfKeys = (keyCheckType) => (
         propValue,
         propFullName,
         componentName,
-        location
+        location,
+        ...rest
       );
     }
   )
@@ -107,7 +110,7 @@ export const mapOfKeys = (keyCheckType) => (
 
 export const mapOfValues = (valueCheckType) => (
   createSimplifiedRequirableTypeChecker(
-    (propValue, propFullName, componentName, location) => {
+    (propValue, propFullName, componentName, location, ...rest) => {
       const expectedType = 'object';
       if (typeof propValue !== expectedType) {
         return getTypeError(propValue, expectedType, propFullName, componentName, location);
@@ -118,7 +121,8 @@ export const mapOfValues = (valueCheckType) => (
         propValue,
         propFullName,
         componentName,
-        location
+        location,
+        ...rest
       );
     }
   )
@@ -126,7 +130,7 @@ export const mapOfValues = (valueCheckType) => (
 
 export const mapOf = (keyCheckType, valueCheckType) => (
   createSimplifiedRequirableTypeChecker(
-    (propValue, propFullName, componentName, location) => {
+    (propValue, propFullName, componentName, location, ...rest) => {
       const expectedType = 'object';
       if (typeof propValue !== expectedType) {
         return getTypeError(propValue, expectedType, propFullName, componentName, location);
@@ -137,7 +141,8 @@ export const mapOf = (keyCheckType, valueCheckType) => (
         propValue,
         propFullName,
         componentName,
-        location
+        location,
+        ...rest
       );
 
       if (error instanceof Error) {
@@ -149,7 +154,8 @@ export const mapOf = (keyCheckType, valueCheckType) => (
         propValue,
         propFullName,
         componentName,
-        location
+        location,
+        ...rest
       );
     }
   )
@@ -157,7 +163,7 @@ export const mapOf = (keyCheckType, valueCheckType) => (
 
 export const Immutable = (checkType) => (
   createRequirableTypeChecker(
-    (props, propName, componentName, location, propFullName) => {
+    (props, propName, componentName, location, propFullName, ...rest) => {
       const propValue = props[propName];
 
       // all Immutable date types are subclasses of Immutable.Iterable
@@ -167,13 +173,14 @@ export const Immutable = (checkType) => (
 
         // vanilla instance of PropTypes' checkType()
         // or result of createRequirableTypeChecker()
-        if (checkType.length === 5) {
+        if (!checkType.isSimplified) {
           return checkType(
             preraredProps,
             propName,
             componentName,
             location,
-            propFullName
+            propFullName,
+            ...rest
           );
         }
 
@@ -187,7 +194,8 @@ export const Immutable = (checkType) => (
           preparedPropValue,
           fullName,
           componentName,
-          location
+          location,
+          ...rest
         );
       }
 
