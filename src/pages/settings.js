@@ -70,29 +70,24 @@ class SettingsPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  handleChange = () => {
+  handleChange = (commandName, save) => {
     if (this.base) {
       const command = new Command(
-        'basic-info-form',
-        this.handleSave
+        commandName,
+        save
       );
 
       this.base.handleChange(command);
     }
   };
 
+  handleFormChange = () => {
+    this.handleChange('basic-info-form', this.handleSave);
+  };
+
   handleSave = async () => {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    const roles = this.rolesManager._getRoles();
-    // const processedPictures = {};
-    // const pictures = this.base._getNewPictures();
-
-    // for (const name in pictures) {
-    //   processedPictures[name] = await triggers.uploadPicture({ ...pictures[name] });
-    // }
-
     const formValues = this.form.formProps().values();
 
     let success;
@@ -100,17 +95,19 @@ class SettingsPage extends React.Component {
       success = await triggers.updateUserInfo({
         more: {
           bio: formValues.bio,
-          summary: formValues.summary,
-          roles
-          // ...processedPictures
+          summary: formValues.summary
         }
       });
     } catch (e) {
       success = false;
-      this.props.dispatch(addError(e.message));
+      this.handleError(e.message);
     }
 
     return { success };
+  };
+
+  handleError = (e) => {
+    this.props.dispatch(addError(e.message));
   };
 
   render() {
@@ -149,13 +146,15 @@ class SettingsPage extends React.Component {
         <BasicInfoForm
           current_user={current_user}
           ref={c => this.form = c}
-          onChange={this.handleChange}
+          onChange={this.handleFormChange}
         />
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Roles</h2>
           <RolesManager
-            ref={c => this.rolesManager = c}
             roles={roles}
+            onChange={this.handleChange}
+            onError={this.handleError}
+            onSave={triggers.updateUserInfo}
           />
         </div>
       </BaseSettingsPage>

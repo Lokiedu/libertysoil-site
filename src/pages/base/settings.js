@@ -90,6 +90,9 @@ export default class BaseSettingsPage extends React.Component {
     }
   };
 
+  /*
+    Processes all active commands received by handleChange()
+   */
   handleSave = async () => {
     this.setState({ processing: true });
     let success = true;
