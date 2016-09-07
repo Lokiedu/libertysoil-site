@@ -103,7 +103,9 @@ export default class AddHashtagForm extends Component {
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={1}>
-              Used recently:
+              <div className="layout__row">
+                Used recently:
+              </div>
               <div className="layout__row">
                 <TagCloud
                   action="add"
@@ -114,7 +116,9 @@ export default class AddHashtagForm extends Component {
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={2}>
-              Popular:
+              <div className="layout__row">
+                Popular:
+              </div>
               <div className="layout__row">
                 <TagCloud
                   action="add"
