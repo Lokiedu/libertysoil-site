@@ -1,4 +1,22 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 import React from 'react';
+import classNames from 'classnames';
 
 import * as MdIconPack from 'react-icons/lib/md';
 
@@ -27,37 +45,34 @@ const IconComponent = ({
     return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
   }
 
-  const classnameIcon = ['icon'];
-  const classnameIconPic = ['micon'];
+  const classNameIcon = classNames('icon', {
+    'icon-outline': outline,
+    'icon-disabled': disabled,
+    'icon-rotate': spin,
+    [`micon-${size}`]: size,
+    [`icon-${size}`]: size,
+    [className]: className,
+  });
+
+  const classNameIconPic = classNames('micon', {
+    [`color-${color}`]: color,
+    [`micon-${size}`]: size,
+    [`icon-${size}`]: size
+  });
+
   let localOnClick = onClick;
-
-  className && classnameIcon.push(className);
-  outline && classnameIcon.push('icon-outline');
-
-  color && classnameIconPic.push(`color-${color}`);
-
-  if (size) {
-    classnameIcon.push(`icon-${size}`);
-    classnameIconPic.push(`micon-${size}`);
-  }
-
   if (disabled) {
-    classnameIcon.push(`icon-disabled`);
     localOnClick = null;
-  }
-
-  if (spin) {
-    classnameIcon.push(`micon-rotate`);
   }
 
   return (
     <div
       {...props}
-      className={classnameIcon.join(' ')}
+      className={classNameIcon}
       disabled={disabled}
       onClick={localOnClick}
     >
-      <Icon className={classnameIconPic.join(' ')} />
+      <Icon className={classNameIconPic} />
     </div>
   );
 };
