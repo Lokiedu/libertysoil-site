@@ -27,7 +27,7 @@ import Message from '../message';
 const AddCommentPlaceholder = (props) => (
   <article className="comment comment-transparent" {...props}>
     <div className="comment__container">
-      <div className="comment__header"></div>
+      <div className="comment__header" />
       <div className="comment__text action link">
         Add comment
       </div>

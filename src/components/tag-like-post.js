@@ -72,7 +72,7 @@ const TagLikePost = ({ author, post }) => {
         <div className="layout__grid_item">
           <User avatar={{ size: 32 }} user={author} />
         </div>
-        <div className="layout__grid_item layout__grid_item-wide"></div>
+        <div className="layout__grid_item layout__grid_item-wide" />
         <div className="layout__grid_item">
           <Time className="card__timestamp" timestamp={post.created_at} />
         </div>

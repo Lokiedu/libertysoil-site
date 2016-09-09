@@ -53,7 +53,7 @@ class Welcome extends React.Component {
             </Header>
             <header className="landing__header">
               <h1 className="landing__title">Education change network</h1>
-              <p className="landing__details">Connect with people from around the world to make education better for everyone.<br></br>No action is too small.</p>
+              <p className="landing__details">Connect with people from around the world to make education better for everyone.<br />No action is too small.</p>
               <p className="landing__details"><a href="/auth" className="button button-big button-yellow">Join</a></p>
             </header>
           </section>

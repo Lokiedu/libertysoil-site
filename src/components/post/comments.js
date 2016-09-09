@@ -27,7 +27,7 @@ import message from '../../utils/message';
 const CommentsPlaceholder = ({ count, ...props }) => (
   <article className="comment comment-placeholder" {...props}>
     <div className="comment__container">
-      <div className="comment__header"></div>
+      <div className="comment__header" />
       <div className="comment__text action link">
         {message.compile('{count, plural, one{1 comment} other{# comments}}')({ count })}
       </div>

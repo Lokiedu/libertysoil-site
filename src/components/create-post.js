@@ -214,7 +214,7 @@ class CreatePost extends React.Component {
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="create_post__text_input_wrapper">
                   {!expanded &&
-                    <div className="create_post__caret"></div>
+                    <div className="create_post__caret" />
                   }
                   <textarea
                     className="input input-block create_post__text_input"
