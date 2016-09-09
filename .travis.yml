@@ -17,7 +17,7 @@ addons:
     packages:
     - g++-4.8
     - unicode-data
-  postgresql: "9.4"
+  postgresql: "9.5"
 
 before_script:
   - psql -c 'create database libertysoil;' -U postgres
