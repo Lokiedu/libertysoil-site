@@ -54,7 +54,7 @@ describe('Auth page', () => {
     await bookshelf.knex.raw('DELETE FROM users;');
   });
 
-  it('Login component should work', async (done) => {
+  it('Login component should work', (done) => {
     const testComponent = <Login onLoginUser={triggers.login} />;
     const wrapper = mount(testComponent);
     wrapper.find('#loginUsername').node.value = userAttrs.username;
