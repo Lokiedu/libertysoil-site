@@ -19,7 +19,7 @@
 /* eslint-env node, mocha */
 import i from 'immutable';
 
-import expect from '../../../test-helpers/expect';
+import { expect } from '../../../test-helpers/expect-unit';
 import { theReducer } from '../../../src/store';
 import { SET_CURRENT_USER } from '../../../src/actions/users';
 
