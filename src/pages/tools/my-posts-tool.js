@@ -23,7 +23,7 @@ import { truncate } from 'grapheme-utils';
 
 import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
 import { MapOfPosts } from '../../prop-types/posts';
-import { MapOfUsers } from '../../prop-types/users.js';
+import { MapOfUsers } from '../../prop-types/users';
 import createSelector from '../../selectors/createSelector';
 import currentUserSelector from '../../selectors/currentUser';
 import { ActionsTrigger } from '../../triggers';

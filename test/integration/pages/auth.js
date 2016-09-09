@@ -160,8 +160,8 @@ describe('Auth page', () => {
           expect(await User.where({ username }).fetch({ require: true }), 'not to be empty');
 
           done();
-        }, 100);
-      }, 100);
+        }, 500);
+      }, 500);
     });
   });
 });

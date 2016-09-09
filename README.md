@@ -3,8 +3,8 @@
 ## Requirements
 
 * Redis 3.0
-* Postgres 9.4
-* NodeJS (6.2 is actively used by developers now)
+* Postgres 9.5
+* NodeJS (6.5 is actively used by developers now)
 * `npm install`
 
 ## Setting Up Development Environment
