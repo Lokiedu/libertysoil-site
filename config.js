@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   attachments: {
     s3: {
       signatureVersion: 'v4',
@@ -28,3 +28,5 @@ module.exports = {
     }
   }
 };
+
+export default config;

@@ -1166,6 +1166,11 @@
       "from": "constants-browserify@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/constants-browserify/-/constants-browserify-1.0.0.tgz"
     },
+    "contains-path": {
+      "version": "0.1.0",
+      "from": "contains-path@>=0.1.0 <0.2.0",
+      "resolved": "https://registry.npmjs.org/contains-path/-/contains-path-0.1.0.tgz"
+    },
     "content-disposition": {
       "version": "0.5.1",
       "from": "content-disposition@>=0.5.0 <0.6.0",
@@ -1705,6 +1710,11 @@
         }
       }
     },
+    "eslint-import-resolver-node": {
+      "version": "0.2.3",
+      "from": "eslint-import-resolver-node@>=0.2.0 <0.3.0",
+      "resolved": "https://registry.npmjs.org/eslint-import-resolver-node/-/eslint-import-resolver-node-0.2.3.tgz"
+    },
     "espree": {
       "version": "3.1.7",
       "from": "espree@>=3.1.6 <4.0.0",
@@ -1859,7 +1869,7 @@
     },
     "fbjs": {
       "version": "0.8.4",
-      "from": "fbjs@>=0.8.4 <0.9.0",
+      "from": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.4.tgz",
       "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.4.tgz",
       "dependencies": {
         "asap": {
@@ -1997,7 +2007,7 @@
     },
     "form-data": {
       "version": "1.0.1",
-      "from": "form-data@>=1.0.0-rc4 <1.1.0",
+      "from": "https://registry.npmjs.org/form-data/-/form-data-1.0.1.tgz",
       "resolved": "https://registry.npmjs.org/form-data/-/form-data-1.0.1.tgz"
     },
     "formatio": {
@@ -3679,6 +3689,11 @@
       "from": "lodash.camelcase@>=3.0.1 <4.0.0",
       "resolved": "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-3.0.1.tgz"
     },
+    "lodash.cond": {
+      "version": "4.5.2",
+      "from": "lodash.cond@>=4.3.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.cond/-/lodash.cond-4.5.2.tgz"
+    },
     "lodash.create": {
       "version": "3.1.1",
       "from": "lodash.create@3.1.1",
@@ -3688,6 +3703,21 @@
       "version": "3.2.0",
       "from": "lodash.deburr@>=3.0.0 <4.0.0",
       "resolved": "https://registry.npmjs.org/lodash.deburr/-/lodash.deburr-3.2.0.tgz"
+    },
+    "lodash.endswith": {
+      "version": "4.2.1",
+      "from": "lodash.endswith@>=4.0.1 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.endswith/-/lodash.endswith-4.2.1.tgz"
+    },
+    "lodash.find": {
+      "version": "4.6.0",
+      "from": "lodash.find@>=4.3.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.find/-/lodash.find-4.6.0.tgz"
+    },
+    "lodash.findindex": {
+      "version": "4.6.0",
+      "from": "lodash.findindex@>=4.3.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.findindex/-/lodash.findindex-4.6.0.tgz"
     },
     "lodash.get": {
       "version": "4.4.2",
@@ -4374,6 +4404,16 @@
       "version": "2.0.1",
       "from": "pinkie-promise@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/pinkie-promise/-/pinkie-promise-2.0.1.tgz"
+    },
+    "pkg-dir": {
+      "version": "1.0.0",
+      "from": "pkg-dir@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pkg-dir/-/pkg-dir-1.0.0.tgz"
+    },
+    "pkg-up": {
+      "version": "1.0.0",
+      "from": "pkg-up@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pkg-up/-/pkg-up-1.0.0.tgz"
     },
     "pluralize": {
       "version": "1.2.1",

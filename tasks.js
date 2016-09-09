@@ -21,7 +21,7 @@ import config from './config';
 import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate, renderNewCommentTemplate } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 import { API_HOST, API_URL_PREFIX } from './src/config';
-import dbConfig from './knexfile';
+import dbConfig from './knexfile';  // eslint-disable-line import/default
 import initBookshelf from './src/api/db';
 
 

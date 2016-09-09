@@ -10,7 +10,7 @@ import _ from 'lodash';
 import ora from 'ora';
 import slug from 'slug';
 
-import knexConfig from '../knexfile';
+import knexConfig from '../knexfile';  // eslint-disable-line import/default
 
 
 const exec_env = process.env.DB_ENV || 'development';
