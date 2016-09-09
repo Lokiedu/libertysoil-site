@@ -19,82 +19,86 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
+import { truncate } from 'grapheme-utils';
 
 import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
-import { MapOfSchools } from '../../prop-types/schools';
+import { MapOfPosts } from '../../prop-types/posts';
+import { MapOfUsers } from '../../prop-types/users.js';
 import createSelector from '../../selectors/createSelector';
+import currentUserSelector from '../../selectors/currentUser';
 import { ActionsTrigger } from '../../triggers';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import Button from '../../components/button';
 import VisibilitySensor from '../../components/visibility-sensor';
-import TagIcon from '../../components/tag-icon';
-import { TAG_SCHOOL } from '../../consts/tags';
 
-class SchoolsToolPage extends React.Component {
+
+class MyPostsToolPage extends React.Component {
   static displayName = 'SchoolsToolPage';
 
   static propTypes = {
+    current_user: ImmutablePropType(PropTypes.shape({
+      id: uuid4
+    })),
     dispatch: PropTypes.func.isRequired,
-    schools: ImmutablePropType(MapOfSchools).isRequired,
-    schools_river: ImmutablePropType(PropTypes.arrayOf(uuid4)).isRequired,
-    ui: ImmutablePropType(
-      PropTypes.shape({
-        progress: ImmutablePropType(
-          PropTypes.shape({
-            loadingSchoolsRiver: PropTypes.bool.isRequired
-          })
-        ).isRequired
-      })
-    )
+    posts: ImmutablePropType(MapOfPosts).isRequired,
+    ui: ImmutablePropType(PropTypes.shape({
+      progress: ImmutablePropType(PropTypes.shape({
+        loadingUserPostsRiver: PropTypes.bool
+      })).isRequired
+    })),
+    user_posts_river: ImmutablePropType(PropTypes.arrayOf(uuid4)).isRequired,
+    users: ImmutablePropType(MapOfUsers)
   };
 
   static async fetchData(params, store, client) {
+    const userId = store.getState().getIn(['current_user', 'id']);
+    const userName = store.getState().getIn(['users', userId, 'username']);
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.toolsLoadSchoolsRiver({ limit: 25, sort: 'name' });
+    await trigger.toolsLoadUserPostsRiver(userName, { limit: 25, sort: '-created_at' });
   }
 
   state = {
     displayLoadMore: true
-  }
+  };
 
-  handleLoadSchools = async () => {
+  handleLoadPosts = async () => {
+    const userId = this.props.current_user.get('id');
+    const userName = this.props.users.getIn([userId, 'username']);
     const client = new ApiClient(API_HOST);
     const trigger = new ActionsTrigger(client, this.props.dispatch);
-    const result = await trigger.toolsLoadSchoolsRiver({
+    const result = await trigger.toolsLoadUserPostsRiver(userName, {
       limit: 25,
-      offset: this.props.schools_river.size,
-      sort: 'name'
+      offset: this.props.user_posts_river.size,
+      sort: '-created_at'
     });
 
-    // Hide 'Load more' button when there are no more schools to show.
     if (Array.isArray(result) && result.length === 0) {
       this.setState({ displayLoadMore: false });
     }
   };
 
   handleLoadOnSensor = async (isVisible) => {
-    if (isVisible && !this.props.ui.getIn(['progress', 'loadingSchoolsRiver'])) {
-      this.handleLoadSchools();
+    if (isVisible && !this.props.ui.getIn(['progress', 'loadingUserPostsRiver'])) {
+      this.handleLoadPosts();
     }
   };
 
   render() {
     const {
-      schools,
-      schools_river,
-      ui
+      posts,
+      ui,
+      user_posts_river
     } = this.props;
 
-    const schoolsToDisplay = schools_river.map(schoolId => schools.get(schoolId));
+    const postsToDisplay = user_posts_river.map(postId => posts.get(postId));
 
     return (
       <div>
-        <Helmet title="Schools tool on " />
-        {schoolsToDisplay.map((school, index) =>
+        <Helmet title="My posts tool on " />
+        {postsToDisplay.map((post, index) =>
           <div className="tools_page__item" key={index}>
-            <TagIcon type={TAG_SCHOOL} />
-            <Link className="schools_tool__school_link" to={`/s/${school.get('url_name')}`}>{school.get('name')}</Link>
+            <Link to={`/post/${post.get('id')}`}>{truncate(post.get('text'), { length: 70 })}</Link>
           </div>
         )}
         <div className="layout layout-align_center layout__space layout__space-double">
@@ -102,8 +106,8 @@ class SchoolsToolPage extends React.Component {
             <VisibilitySensor onChange={this.handleLoadOnSensor}>
               <Button
                 title="Load more..."
-                waiting={ui.getIn(['progress', 'loadingSchoolsRiver'])}
-                onClick={this.handleLoadSchools}
+                waiting={ui.getIn(['progress', 'loadingUserPostsRiver'])}
+                onClick={this.handleLoadPosts}
               />
             </VisibilitySensor>
           }
@@ -115,13 +119,17 @@ class SchoolsToolPage extends React.Component {
 
 const selector = createSelector(
   state => state.get('ui'),
-  state => state.get('schools'),
-  state => state.getIn(['tools', 'schools_river']),
-  (ui, schools, schools_river) => ({
+  state => state.get('posts'),
+  state => state.getIn(['tools', 'user_posts_river']),
+  state => state.get('users'),
+  currentUserSelector,
+  (ui, posts, user_posts_river, users, current_user) => ({
     ui,
-    schools,
-    schools_river
+    posts,
+    user_posts_river,
+    users,
+    ...current_user
   })
 );
 
-export default connect(selector)(SchoolsToolPage);
+export default connect(selector)(MyPostsToolPage);

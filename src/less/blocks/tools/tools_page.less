@@ -42,7 +42,7 @@
   }
 
   &__menu-col {
-    width: 250px;
+    flex: 0 0 250px;
     border-right: 1px solid #EDEDED;
   }
 
@@ -66,5 +66,13 @@
       background-color: #FD9315;
       color: white;
     }
+  }
+
+  // A universal element for items in collection (schools, posts, etc.)
+  &__item {
+    margin-bottom: 15px;
+    padding: 20px;
+    background-color: white;
+    border-bottom: 2px solid #EDEDED;
   }
 }

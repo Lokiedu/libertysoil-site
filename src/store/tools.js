@@ -21,7 +21,8 @@ import { tools } from '../actions';
 
 
 const initialState = i.fromJS({
-  schools_river: []
+  schools_river: [],
+  user_posts_river: []
 });
 
 export default function reducer(state = initialState, action) {
@@ -34,6 +35,17 @@ export default function reducer(state = initialState, action) {
 
     case tools.TOOLS__SET_SCHOOLS_RIVER: {
       state = state.set('schools_river', i.List(action.schools.map(school => school.id)));
+      break;
+    }
+
+    case tools.TOOLS__ADD_USER_POSTS_TO_RIVER: {
+      const ids = i.List(action.posts.map(post => post.id));
+      state = state.update('user_posts_river', user_posts_river => user_posts_river.concat(ids));
+      break;
+    }
+
+    case tools.TOOLS__SET_USER_POSTS_RIVER: {
+      state = state.set('user_posts_river', i.List(action.posts.map(posts => posts.id)));
       break;
     }
   }

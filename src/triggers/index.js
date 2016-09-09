@@ -501,6 +501,27 @@ export class ActionsTrigger {
     return result;
   }
 
+  toolsLoadUserPostsRiver = async (userName, query = {}) => {
+    this.dispatch(a.ui.setProgress('loadingUserPostsRiver', true));
+
+    let result;
+    try {
+      result = await this.client.userPosts(userName, Object.assign(query));
+
+      if (!query.offset) {
+        this.dispatch(a.tools.setUserPostsRiver(result));
+      } else {
+        this.dispatch(a.tools.addUserPostsToRiver(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadingUserPostsRiver', false));
+
+    return result;
+  };
+
   loadInitialSuggestions = async () => {
     try {
       const result = await this.client.initialSuggestions();
