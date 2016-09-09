@@ -124,6 +124,7 @@
     "enzyme": "^2.3.0",
     "eslint": "^3.0.1",
     "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-lodash": "^1.10.3",
     "eslint-plugin-react": "~6.2.0",
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "faker": "^3.0.1",
