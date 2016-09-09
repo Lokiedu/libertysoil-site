@@ -17,12 +17,11 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
-import { School } from '../../prop-types/schools';
-import { uuid4 } from '../../prop-types/common';
+import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
+import { MapOfSchools } from '../../prop-types/schools';
 import createSelector from '../../selectors/createSelector';
 import { ActionsTrigger } from '../../triggers';
 import ApiClient from '../../api/client';
@@ -32,19 +31,22 @@ import VisibilitySensor from '../../components/visibility-sensor';
 import TagIcon from '../../components/tag-icon';
 import { TAG_SCHOOL } from '../../consts/tags';
 
-
 class SchoolsToolPage extends React.Component {
   static displayName = 'SchoolsToolPage';
 
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    schools: ImmutablePropTypes.mapOf(School, uuid4).isRequired,
-    schools_river: ImmutablePropTypes.listOf(uuid4).isRequired,
-    ui: ImmutablePropTypes.contains({
-      progress: ImmutablePropTypes.contains({
-        loadingSchoolsRiver: PropTypes.bool
-      }).isRequired
-    })
+    schools: ImmutablePropType(MapOfSchools).isRequired,
+    schools_river: ImmutablePropType(PropTypes.arrayOf(uuid4)).isRequired,
+    ui: ImmutablePropType(
+      PropTypes.shape({
+        progress: ImmutablePropType(
+          PropTypes.shape({
+            loadingSchoolsRiver: PropTypes.bool.isRequired
+          })
+        ).isRequired
+      })
+    )
   };
 
   static async fetchData(params, store, client) {
