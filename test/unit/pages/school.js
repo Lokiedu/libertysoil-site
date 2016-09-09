@@ -17,6 +17,8 @@
 */
 /*eslint-env node, mocha */
 import { mount, shallow } from 'enzyme';
+import sinon from 'sinon';
+import uuid from 'uuid';
 
 import { expect, React } from '../../../test-helpers/expect-unit';
 import { SchoolPage } from '../../../src/pages/school';
@@ -25,6 +27,14 @@ import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
 describe('School page', () => {
+  beforeEach(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  afterEach(() => {
+    console.error.restore();
+  });
+
   it('renders nothing if school hasn\'t been loaded yet', () => {
     const wrapper = shallow(
       <SchoolPage
@@ -42,9 +52,7 @@ describe('School page', () => {
   });
 
   it('MUST report an error for invalid school object', () => {
-    let errorCalls = 0;
-
-    try {
+    expect(() => {
       shallow(
         <SchoolPage
           comments={{}}
@@ -55,35 +63,7 @@ describe('School page', () => {
           users={{}}
         />
       );
-    } catch (e) {
-      ++errorCalls;
-    }
-
-    expect(errorCalls, 'to be', 1);
-  });
-
-  it('renders <NotFound /> if no school found', () => {
-    let errorCalls = 0;
-
-    const error = console.error;
-    // consider using Sinon (spy) or Jasmine (spyOn) instead
-    console.error = () => { ++errorCalls; };
-
-    // schools[0] doesn't satisfy SchoolPage.propTypes
-    // shallow() throws an exception after normal console.error
-    const wrapper = shallow(
-      <SchoolPage
-        comments={{}}
-        is_logged_in={false}
-        params={{ school_name: 'test' }}
-        school_posts={{}}
-        schools={[{ url_name: 'test', name: 'test' }]}
-        users={{}}
-      />
-    );
-
-    console.error = error;
-    expect(wrapper.contains(<NotFound />), 'to be true');
+    }, 'to error');
   });
 
   it('renders default school description if no description provided', () => {
@@ -111,4 +91,23 @@ describe('School page', () => {
 
     expect(wrapper.text(), 'to contain', 'test description');
   });
+});
+
+
+describe('test', () => {
+
+  it('renders <NotFound /> if no school found', () => {
+    const wrapper = shallow(
+      <SchoolPage
+        comments={{}}
+        is_logged_in={false}
+        params={{ school_name: 'test' }}
+        school_posts={{}}
+        schools={[{ url_name: 'test' }]}
+        users={{}}
+      />);
+
+    expect(wrapper.contains(<NotFound />), 'to be true');
+  });
+
 });
