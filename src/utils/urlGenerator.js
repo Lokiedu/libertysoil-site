@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import urlAssembler from 'url-assembler';
-import { API_URL, URL, API_URL_NAMES, URL_NAMES } from '../config.js';
+import { API_URL, URL, API_URL_NAMES, URL_NAMES } from '../config';
 
 function getUrl(id, params) {
   return urlAssembler()

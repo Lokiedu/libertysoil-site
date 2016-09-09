@@ -38,6 +38,10 @@ class Menu1 extends React.Component {
     this.setState({ opened: !this.state.opened });
   };
 
+  handleClickOnItem = () => {
+    this.setState({ opened: false });
+  };
+
   onClickOutside = () => {
     this.setState({ opened: false });
   };
@@ -60,7 +64,14 @@ class Menu1 extends React.Component {
         {this.state.opened &&
           <div className="tools_menu_1__dropdown">
             {items.map((item, index) => (
-              <Link className="tools_menu_1__item" key={index} to={item.path}>{item.name}</Link>
+              <Link
+                className="tools_menu_1__item"
+                key={index}
+                to={item.path}
+                onClick={this.handleClickOnItem}
+              >
+                {item.name}
+              </Link>
             ))}
           </div>
         }

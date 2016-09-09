@@ -310,7 +310,7 @@ export default class BaseTagPage extends React.Component {
             </PageBody>
             <PageBody className="page__body-up">
               <PageContent>
-                <div className="layout__space-double"></div>
+                <div className="layout__space-double" />
                 <div className="layout__row">
                   {createPostForm}
                   {this.props.children}

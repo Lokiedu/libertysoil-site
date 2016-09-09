@@ -244,7 +244,7 @@ export default class Reviews extends Component {
       <div>
         <div className="page__container-bg">
           <div className="page__body page__body-rows width">
-            <h2 className="page__title content-center layout__space"></h2>
+            <h2 className="page__title content-center layout__space" />
           </div>
         </div>
         <div className="review_group">

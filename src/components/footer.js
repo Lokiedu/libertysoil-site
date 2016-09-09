@@ -33,7 +33,7 @@ const FooterComponent = () => (
     <p>
       <a href="https://github.com/Lokiedu/libertysoil-site/milestones">Version 1.7.2</a>
     </p>
-    <script async data-trackduck-id="56182f159e7749be13765442" src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js"></script>
+    <script async data-trackduck-id="56182f159e7749be13765442" src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js" />
   </footer>
 );
 

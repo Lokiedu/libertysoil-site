@@ -57,7 +57,7 @@ import {
   setCurrentUser, setLikes, setFavourites
 } from './src/actions/users';
 
-import db_config from './knexfile';
+import db_config from './knexfile';  // eslint-disable-line import/default
 
 
 const exec_env = process.env.DB_ENV || 'development';

@@ -100,7 +100,7 @@ export default class Role extends React.Component {
             name="description"
             value={this.state.description.value}
             onChange={this.changeHandler}
-          ></textarea>
+          />
         </div>
       </div>
     );

@@ -17,7 +17,7 @@ export default class Textarea extends Component {
         <textarea
           onKeyDown={this.onKeyDown}
           {...this.props}
-        ></textarea>
+        />
         <input
           type="submit"
           ref={c => this.submit = c}

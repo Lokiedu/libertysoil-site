@@ -99,7 +99,11 @@ export default class ApiController {
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', ctx.params.user)
           .orderBy('posts.updated_at', 'desc')
-          .whereIn('posts.type', ['short_text', 'long_text']);
+          .whereIn('posts.type', ['short_text', 'long_text'])
+          .limit(ctx.query.limit)
+          .offset(ctx.query.offset);
+
+        this.applySortQuery(qb, ctx.query);
       });
 
 

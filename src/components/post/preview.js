@@ -10,7 +10,7 @@ const Preview = (props) => {
     return null;
   }
 
-  return <a className="embedly-card" data-card-width="100%" href={urls[0].url}></a>;
+  return <a className="embedly-card" data-card-width="100%" href={urls[0].url} />;
 };
 
 export default Preview;

@@ -3,6 +3,8 @@
   "parser": "babel-eslint",
   "plugins": [
     "babel",
+    "import",
+    "lodash",
     "react"
   ],
   "parserOptions": {
@@ -53,6 +55,27 @@
     "space-infix-ops": 2,
     "space-unary-ops": [2, { "words": true, "nonwords": false }],
 
+    "import/default": 2,
+    "import/extensions": 2,
+    "import/named": 2,
+    "import/namespace": 2,
+    "import/no-duplicates": 1,
+    "import/no-extraneous-dependencies": 2,
+    "import/no-named-as-default": 1,
+    "import/no-named-as-default-member": 2,
+    "import/no-unresolved": 2,
+    "import/order": 1,
+
+    "lodash/callback-binding": 2,
+    "lodash/collection-method-value": 2,
+    "lodash/collection-return": 2,
+    "lodash/no-double-unwrap": 2,
+    "lodash/no-extra-args": 2,
+    "lodash/prefer-compact": 2,
+    "lodash/prefer-filter": 2,
+    "lodash/prefer-map": 2,
+    "lodash/unwrap": 2,
+
     "jsx-quotes": 2,
     "react/display-name": 2,
     "react/forbid-prop-types": 2,
@@ -74,6 +97,7 @@
     "react/jsx-space-before-closing": [2, "always"],
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,
+    "react/jsx-wrap-multilines": 2,
     "react/no-danger": 2,
     "react/no-deprecated": 1,
     "react/no-did-mount-set-state": 2,
@@ -88,12 +112,11 @@
     "react/prefer-stateless-function": 2,
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
-    "react/require-extension": 1,
     "react/require-optimization": 1,
     "react/require-render-return": 2,
     "react/self-closing-comp": 2,
     "react/sort-comp": 2,
     "react/sort-prop-types": 2,
-    "react/wrap-multilines": 2
+    "react/style-prop-object": 2
   }
 }

@@ -25,6 +25,9 @@ export default class RolesManager extends React.Component {
   static displayName = 'RolesManager';
 
   static propTypes = {
+    onChange: PropTypes.func,
+    onError: PropTypes.func,
+    onSave: PropTypes.func,
     roles: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.string,
@@ -34,6 +37,9 @@ export default class RolesManager extends React.Component {
   };
 
   static defaultProps = {
+    onChange: () => {},
+    onError: () => {},
+    onSave: () => {},
     roles: []
   };
 
@@ -55,7 +61,17 @@ export default class RolesManager extends React.Component {
     this.setState({ rolesAmount: this.roles.length });
   }
 
-  _getRoles = () => {
+  handleSave = async () => {
+    const roles = this.getRoles();
+
+    try {
+      await this.props.onSave({ more: { roles } });
+    } catch (e) {
+      this.props.onError(e);
+    }
+  };
+
+  getRoles = () => {
     const roles = this.roles.map(role =>
       pick(role, ['title', 'description'])
     );
@@ -66,10 +82,14 @@ export default class RolesManager extends React.Component {
   onRemove = (index) => {
     this.roles.splice(index, 1);
     this.setState({ rolesAmount: this.state.rolesAmount - 1 });
+
+    this.props.onChange('roles', this.handleSave);
   };
 
   onChange = ({ index, name, value }) => {
     this.roles[index][name] = value;
+
+    this.props.onChange('roles', this.handleSave);
   };
 
   onAdd = () => {
@@ -79,6 +99,8 @@ export default class RolesManager extends React.Component {
       id: uniqueId()
     });
     this.setState({ rolesAmount: this.state.rolesAmount + 1 });
+
+    this.props.onChange('roles', this.handleSave);
   }
 
   render() {
