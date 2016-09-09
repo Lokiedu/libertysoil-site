@@ -78,16 +78,18 @@ queue.process('on-comment', async function(job, done) {
       .fetch({ require: true, withRelated: ['user', 'post', 'post.user'] });
     const commentAuthor = comment.related('user');
     const post = comment.related('post');
-    const subscribers = await post.related('subscribers').fetch();
+    const subscribers = (await post.related('subscribers').fetch())
+      .map(subscriber => subscriber.attributes);
 
-
-    if (subscribers.length > 0) {
-      queue.create('new-comment-email', {
-        comment: comment.attributes,
-        commentAuthor: commentAuthor.attributes,
-        post: post.attributes,
-        subscribers: subscribers.toJSON()
-      }).save();
+    for (const subscriber of subscribers) {
+      if (!subscriber.more.mute_all_posts && commentAuthor.id !== subscriber.id) {
+        queue.create('new-comment-email', {
+          comment: comment.attributes,
+          commentAuthor: commentAuthor.attributes,
+          post: post.attributes,
+          subscriber
+        }).priority('medium').save();
+      }
     }
 
     done();
@@ -102,15 +104,11 @@ queue.process('new-comment-email', async function(job, done) {
       comment,
       commentAuthor,
       post,
-      subscribers
+      subscriber
     } = job.data;
 
-    for (const subscriber of subscribers) {
-      if (!commentAuthor.more.mute_all_posts && commentAuthor.id !== subscriber.id) {
-        const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
-        await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
-      }
-    }
+    const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
+    await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
 
     done();
   } catch (e) {
