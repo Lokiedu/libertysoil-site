@@ -100,8 +100,11 @@ export default class ApiController {
           .where('users.username', '=', ctx.params.user)
           .orderBy('posts.updated_at', 'desc')
           .whereIn('posts.type', ['short_text', 'long_text'])
-          .limit(ctx.query.limit)
           .offset(ctx.query.offset);
+
+        if ('limit' in ctx.query) {
+          qb.limit(ctx.query.limit);
+        }
 
         this.applySortQuery(qb, ctx.query);
       });
@@ -449,7 +452,10 @@ export default class ApiController {
 
     try {
       const schools = await School.collection().query(qb => {
-        qb.limit(ctx.query.limit);
+        if ('limit' in ctx.query) {
+          qb.limit(ctx.query.limit);
+        }
+
         qb.offset(ctx.query.offset);
         this.applySortQuery(qb, ctx.query);
 
