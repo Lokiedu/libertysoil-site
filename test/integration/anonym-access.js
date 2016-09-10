@@ -1,6 +1,7 @@
 /*eslint-env node, mocha */
 /*global $dbConfig */
 import uuid from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
@@ -10,6 +11,14 @@ let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
 
 describe('pages that are available for anonym', function () {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
 
   describe('when user is not logged in', function () {
     beforeEach(async function () {
