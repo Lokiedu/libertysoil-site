@@ -19,6 +19,7 @@
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
@@ -34,6 +35,7 @@ describe('NewPassword page', () => {
     let user;
 
     before(async () => {
+      sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
       await user.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
@@ -41,6 +43,7 @@ describe('NewPassword page', () => {
 
     after(async () => {
       await user.destroy();
+      console.error.restore();
     });
 
     it('user can open new password page and see form', async () => {

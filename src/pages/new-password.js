@@ -147,7 +147,8 @@ class Form extends React.Component {
 
   render() {
     const {
-      messages
+      messages,
+      is_logged_in
     } = this.props;
 
     let content = <PasswordForm onSubmit={this.submitHandler} />;
@@ -162,7 +163,7 @@ class Form extends React.Component {
     return (
       <div>
         <Helmet title="Set New Password for " />
-        <Header />
+        <Header is_logged_in={is_logged_in} />
 
         <Page className="page__container-no_sidebar">
           <PageMain>
