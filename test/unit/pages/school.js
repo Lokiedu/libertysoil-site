@@ -27,11 +27,11 @@ import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
 
 describe('School page', () => {
-  beforeEach(() => {
+  before(() => {
     sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   });
 
-  afterEach(() => {
+  after(() => {
     console.error.restore();
   });
 
@@ -95,6 +95,13 @@ describe('School page', () => {
 
 
 describe('test', () => {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => null );
+  });
+
+  after(() => {
+    console.error.restore();
+  });
 
   it('renders <NotFound /> if no school found', () => {
     const wrapper = shallow(
