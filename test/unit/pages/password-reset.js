@@ -17,22 +17,31 @@
  */
 /*eslint-env node, mocha */
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import sinon from 'sinon';
 
 import { Form as PasswordResetPage, ResetForm, SuccessMessage } from '../../../src/pages/password-reset';
 
 
 describe('PasswordResetPage', function() {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
 
   it('MUST renders <ResetForm /> by default', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<PasswordResetPage ui={{submitResetPassword: undefined}} />);
+    renderer.render(<PasswordResetPage is_logged_in={false} ui={{submitResetPassword: undefined}} />);
 
     return expect(renderer, 'to contain', <ResetForm />);
   });
 
   it('MUST contain <SuccessMessage /> when ui.submitResetPassword is true', function() {
     let renderer = TestUtils.createRenderer();
-    renderer.render(<PasswordResetPage ui={{submitResetPassword: true}} />);
+    renderer.render(<PasswordResetPage ui={{submitResetPassword: true}} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', <SuccessMessage />);
   });
