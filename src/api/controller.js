@@ -2517,7 +2517,7 @@ export default class ApiController {
     const query = ctx.params.query;
 
     try {
-      const geotags = await this.getSimilarGeotags(query);
+      const geotags = await this.getSimilarGeotags(query, ctx.query);
 
       ctx.body = { geotags };
     } catch (e) {
@@ -2552,13 +2552,25 @@ export default class ApiController {
     }
   };
 
-  getSimilarGeotags = async (query) => {
+  getSimilarGeotags = async (query, queryParams) => {
     const Geotag = this.bookshelf.model('Geotag');
+    const knex = this.bookshelf.knex;
+    // Transform initial query into a string of tokens separated by the & operator.
+    const finalQuery = query
+      .replace(/(\||&|!|\(|\))/g, '') // remove operators
+      .split(' ')
+      .filter(t => !!t.length) // filter out empty tokens
+      .map(t => `${t}:*`)
+      .join(' & ');
 
-    const geotags = await Geotag.collection().query(function (qb) {
+    const geotags = await Geotag.collection().query((qb) => {
       qb
-        .where('name', 'ILIKE',  `${query}%`)
-        .limit(10);
+        .select(knex.raw(`*, ts_rank_cd('{1.0, 1.0, 0.8, 0.4}', tsv, query) as rank`))
+        .from(knex.raw(`geotags, to_tsquery(?) query`, finalQuery))
+        .whereRaw('tsv @@ query')
+        .orderBy('rank', 'DESC')
+        .limit(queryParams.limit || 10)
+        .offset(queryParams.offset);
     }).fetch({ withRelated: ['country', 'admin1'] });
 
     return geotags;
