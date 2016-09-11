@@ -72,22 +72,26 @@ export default class GeotagSelect extends Component {
   _getSuggestionValue = (geotag) => geotag.name;
 
   _renderSuggestion(geotag) {
-    let name = geotag.name;
-    const additionalInfo = [];
+    let geotagType = geotag.type;
+    if (geotagType == 'AdminDivision1') {
+      geotagType = 'Admin. Division';
+    }
+
+    const names = [geotag.name];
 
     if (!isEmpty(geotag.admin1)) {
-      additionalInfo.push(geotag.admin1.name);
+      if (geotag.country_code == 'US') {
+        names.push(geotag.admin1_code);
+      } else {
+        names.push(geotag.admin1.name);
+      }
     }
 
     if (!isEmpty(geotag.country)) {
-      additionalInfo.push(geotag.country.name);
+      names.push(geotag.country.name);
     }
 
-    if (additionalInfo.length > 0) {
-      name += ` (${additionalInfo.join(', ')})`;
-    }
-
-    return name;
+    return `${names.join(', ')} (${geotagType})`;
   }
 
   _handleSelect = (event, { suggestion }) => {
