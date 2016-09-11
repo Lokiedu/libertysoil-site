@@ -258,7 +258,7 @@ export const url = createSimplifiedRequirableTypeChecker(
       return getTypeError(propValue, expectedType, propFullName, componentName, location);
     }
 
-    const test = RegExp(/^[a-z0-9_-]+$/i);
+    const test = RegExp(/^[a-z0-9_\.'-]+$/i);
     if (!propValue.match(test)) {
       return new Error(
         `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +
