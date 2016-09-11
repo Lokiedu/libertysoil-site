@@ -18,7 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
-import { assign, keys } from 'lodash';
+import { keys, omit, reduce } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -163,7 +163,8 @@ export class Register extends React.Component {
     const filtered = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
 
     const { form } = this.props;
-    const nextValues = assign({}, form.values(), {
+    const prevValues = form.values();
+    const nextValues = Object.assign({}, prevValues, {
       username: filtered
     });
     form.onValues(nextValues);
@@ -184,6 +185,11 @@ export class Register extends React.Component {
       ga('send', 'event', 'Reg', 'Done');
       return <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} />;
     }
+
+    const htmlFields = reduce(fields, (acc, value, key) =>
+      Object.assign({}, acc, {
+        [key]: omit(value, ['error'])
+      }), {});
 
     return (
       <div className="div" id="register">
@@ -230,7 +236,7 @@ export class Register extends React.Component {
                 ref={c => this.username = c}
                 required="required"
                 type="text"
-                {...fields.username}
+                {...htmlFields.username}
               />
               {fields.username.error &&
                 <Message message={fields.username.error} />
@@ -244,7 +250,7 @@ export class Register extends React.Component {
                 name="password"
                 required="required"
                 type="password"
-                {...fields.password}
+                {...htmlFields.password}
               />
               {fields.password.error &&
                 <Message message={fields.password.error} />
@@ -258,7 +264,7 @@ export class Register extends React.Component {
                 name="password_repeat"
                 required="required"
                 type="password"
-                {...fields.passwordRepeat}
+                {...htmlFields.passwordRepeat}
               />
               {fields.passwordRepeat.error &&
                 <Message message={fields.passwordRepeat.error} />
@@ -273,7 +279,7 @@ export class Register extends React.Component {
                 placeholder="email.address@example.com"
                 required="required"
                 type="email"
-                {...fields.email}
+                {...htmlFields.email}
               />
               {fields.email.error &&
                 <Message message={fields.email.error} />
@@ -292,7 +298,7 @@ export class Register extends React.Component {
                   name="agree"
                   required="required"
                   type="checkbox"
-                  {...fields.agree}
+                  {...htmlFields.agree}
                 />
                 <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
               </label>
