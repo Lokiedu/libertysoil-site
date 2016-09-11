@@ -18,6 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
+import { assign, keys } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -78,10 +79,13 @@ export class Register extends React.Component {
   constructor() {
     super();
 
-    this.first = '';
-    this.last = '';
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
+
+    this.state = {
+      firstName: '',
+      lastName: ''
+    };
   }
 
   componentDidMount() {
@@ -114,52 +118,56 @@ export class Register extends React.Component {
     );
   };
 
-  async getAvailableUsername(username) {
+  getAvailableUsername = async (username) => {
     const client = new ApiClient(API_HOST);
     return await client.getAvailableUsername(username);
-  }
+  };
 
   changeName = async (event) => {
+    const field = event.target;
+    const attr = field.getAttribute('name');
+    if (!keys(this.state).find(v => v === attr)) {
+      return;
+    }
+
+    const input = field.value.replace(/\W|\d/g, '');
+    this.setState({ [attr]: input });
+
     if (this.usernameManuallyChanged) {
       return;
     }
 
-    const field = event.target;
-    const input = field.value.replace(/\W|\d/g, '');
-    field.value = input;
-
-    if (field.getAttribute('name') === 'firstName') {
-      this.first = input;
-    } else if (field.getAttribute('name') === 'lastName') {
-      this.last = input;
+    let result = input + this.state.lastName;
+    if (attr === 'lastName') {
+      result = this.state.firstName + input;
     }
 
-    const result = this.first + this.last;
-    const simulatedInput = new Event('input', { bubbles: true }); // to notify react-inform about changes
-
-    if (!result) {
-      this.username.value = result;
-      this.username.dispatchEvent(simulatedInput);
-      return;
+    result = result.trim();
+    if (result) {
+      result = await this.getAvailableUsername(result);
     }
-
-    try {
-      this.username.value = await this.getAvailableUsername(result);
-      this.username.dispatchEvent(simulatedInput);
-    } catch (e) {
-      // do nothing
-    }
+    this.changeUsername(result);
   };
 
   inputUsername = (event) => {
-    const field = event.target;
-    const result = field.value.replace(/\s|\W/g, '');
-
-    field.value = result;
     if (this.usernameFocused) {
       this.usernameManuallyChanged = true;
     }
+
+    const field = event.target;
+    const raw = field.value;
+    this.changeUsername(raw);
   };
+
+  changeUsername = (input) => {
+    const filtered = input.replace(/\s|\W/g, '');
+
+    const { form } = this.props;
+    const nextValues = assign({}, form.values(), {
+      username: filtered
+    });
+    form.onValues(nextValues);
+  }
 
   usernameFocusHandler = () => {
     this.usernameFocused = true;
@@ -191,11 +199,11 @@ export class Register extends React.Component {
           <div className="layout__row">
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.firstName = c} />
+              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.firstName = c} value={this.state.firstName} />
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.lastName = c} />
+              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.lastName = c} value={this.state.lastName} />
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="username">Username</label>
