@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { cloneElement, Component, PropTypes } from 'react';
-import { throttle, isArray, compact } from 'lodash';
+import { throttle, isArray, compact, keys } from 'lodash';
 
 export default class Breadcrumbs extends Component {
   static displayName = 'Breadcrumbs';
@@ -85,9 +85,18 @@ export default class Breadcrumbs extends Component {
 
     isCollapsed = crumbs.map(() => ((visibleCrumbs-- <= 0))).reverse();
 
+    const checkType = (typeDef) => {
+      return (
+        (typeof typeDef.propTypes === 'object') &&
+        keys(typeDef.propTypes).find(v => v === 'collapsed')
+      );
+    };
+
     return compact(crumbs).map((crumb, i) => {
       const props = {};
-      if (crumb.type instanceof Function) {
+      const { type: typeDef } = crumb;
+
+      if ((typeDef instanceof Function) && checkType(typeDef)) {
         props.collapsed = isCollapsed[i];
       }
 
