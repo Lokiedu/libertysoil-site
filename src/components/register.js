@@ -163,7 +163,8 @@ export class Register extends React.Component {
     const filtered = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
 
     const { form } = this.props;
-    const nextValues = assign({}, form.values(), {
+    const prevValues = form.values();
+    const nextValues = assign({}, prevValues, {
       username: filtered
     });
     form.onValues(nextValues);

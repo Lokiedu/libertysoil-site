@@ -69,29 +69,27 @@ describe('Auth page', () => {
 
   describe('Register component', () => {
     it('availableUsername should work', (done) => {
-      const testComponent =
-              <Register
-      fields={
-        {
-          username: {},
-          password: {},
-          passwordRepeat: {},
-          email: {},
-          agree: {}
-        }
-      }
-      form={{
-        forceValidate: () => {},
-        isValid: () => {},
-        onValues: () => {},
-        onRegisterUser: () => {},
-        onShowRegisterForm: () => {}
-      }}
-      onRegisterUser={() => {}}
-      onShowRegisterForm={() => {}}
-        />;
+      const testComponent = (
+        <Register
+          fields={{
+            username: {},
+            password: {},
+            passwordRepeat: {},
+            email: {},
+            agree: {}
+          }}
+          form={{
+            forceValidate: () => {},
+            isValid: () => {},
+            onValues: () => {},
+            values: () => {}
+          }}
+          onRegisterUser={() => {}}
+          onShowRegisterForm={() => {}}
+        />
+      );
       const wrapper = mount(testComponent);
-      expect(wrapper.find('#username').node.value, 'to be empty');
+      expect(wrapper.find('#registerUsername').node.value, 'to be empty');
 
       wrapper.find('#registerFirstName').node.value = 'test_firstname';
       wrapper.find('#registerLastName').node.value = 'test_lastname';
@@ -99,9 +97,9 @@ describe('Auth page', () => {
       wrapper.find('#registerLastName').simulate('change');
 
       setTimeout(() => {
-        expect(wrapper.find('#username').node.value, 'to be non-empty');
+        expect(wrapper.find('#registerUsername').node.value, 'to be non-empty');
         done();
-      }, 50);
+      }, 100);
     });
   });
 
@@ -123,7 +121,7 @@ describe('Auth page', () => {
         <WrappedRegister
           onRegisterUser={() => {}}
           onShowRegisterForm={() => {}}
-          />
+        />
       );
       const wrapper = mount(testComponent);
 
@@ -143,11 +141,11 @@ describe('Auth page', () => {
         <WrappedRegister
           onRegisterUser={triggers.registerUser}
           onShowRegisterForm={() => {}}
-          />
+        />
       );
       const wrapper = mount(testComponent);
 
-      wrapper.find('#username').simulate('change', { target: { value: username } });
+      wrapper.find('#registerUsername').simulate('change', { target: { value: username } });
       wrapper.find('#registerPassword').simulate('change', { target: { value: 'test2password' } });
       wrapper.find('#registerPasswordRepeat').simulate('change', { target: { value: 'test2password' } });
       wrapper.find('#registerEmail').simulate('change', { target: { value: 'test2@example.com' } });
