@@ -280,9 +280,24 @@ async function geotags() {
   await searchIndex();
 }
 
-geotags()
+function main() {
+  const commands = {
+    planets,
+    continents,
+    countries,
+    adminDivisions,
+    cities,
+    searchIndex
+  };
+
+  const command = commands[process.argv[2]] || geotags;
+
+  return command();
+}
+
+main()
   .then(() => {
-    process.stdout.write("=== GEOTAGS DONE ===\n");
+    process.stdout.write("=== DONE ===\n");
     process.exit(0);
   })
   .catch(e => {
