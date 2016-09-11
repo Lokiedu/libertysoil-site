@@ -130,7 +130,7 @@ export class Register extends React.Component {
       return;
     }
 
-    const input = field.value.replace(/\W|\d/g, '');
+    const input = field.value.replace(/[\f\n\r\t\v0-9]/g, '');
     this.setState({ [attr]: input });
 
     if (this.usernameManuallyChanged) {
@@ -160,7 +160,7 @@ export class Register extends React.Component {
   };
 
   changeUsername = (input) => {
-    const filtered = input.replace(/\s|\W/g, '');
+    const filtered = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
 
     const { form } = this.props;
     const nextValues = assign({}, form.values(), {
