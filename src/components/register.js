@@ -18,6 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
+import { assign, keys, omit, reduce } from 'lodash';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -78,25 +79,27 @@ export class Register extends React.Component {
   constructor() {
     super();
 
-    this.first = '';
-    this.last = '';
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
+    this.state = {
+      firstName: '',
+      lastName: ''
+    };
   }
 
   componentDidMount() {
-    this.username.addEventListener('focus', this.usernameFocusHandler);
-    this.username.addEventListener('blur', this.usernameBlurHandler);
-    this.username.addEventListener('input', this.inputUsername);
+    this.username.addEventListener('focus', this.handleUsernameFocus);
+    this.username.addEventListener('blur', this.handleUsernameBlur);
+    this.username.addEventListener('input', this.handleUsernameInput);
   }
 
   componentWillUnmount() {
-    this.username.removeEventListener('focus', this.usernameFocusHandler);
-    this.username.removeEventListener('blur', this.usernameBlurHandler);
-    this.username.removeEventListener('input', this.inputUsername);
+    this.username.removeEventListener('focus', this.handleUsernameFocus);
+    this.username.removeEventListener('blur', this.handleUsernameBlur);
+    this.username.removeEventListener('input', this.handleUsernameInput);
   }
 
-  submitHandler = (event) => {
+  handleSubmit = (event) => {
     event.preventDefault();
     const { form, fields } = this.props;
 
@@ -105,67 +108,73 @@ export class Register extends React.Component {
       return;
     }
 
+    const htmlForm = event.target;
     this.props.onRegisterUser(
       fields.username.value,
       fields.password.value,
       fields.email.value,
-      this.firstName.value,
-      this.lastName.value
+      htmlForm.firstName.value,
+      htmlForm.lastName.value
     );
   };
 
-  async getAvailableUsername(username) {
+  getAvailableUsername = async (username) => {
     const client = new ApiClient(API_HOST);
     return await client.getAvailableUsername(username);
-  }
+  };
 
-  changeName = async (event) => {
+  handleNameChange = async (event) => {
+    const field = event.target;
+    const attr = field.getAttribute('name');
+    if (!keys(this.state).find(v => v === attr)) {
+      return;
+    }
+
+    const input = field.value.replace(/[\f\n\r\t\v0-9]/g, '');
+    this.setState({ [attr]: input });
+
     if (this.usernameManuallyChanged) {
       return;
     }
 
-    const field = event.target;
-    const input = field.value.replace(/\W|\d/g, '');
-    field.value = input;
-
-    if (field.getAttribute('name') === 'firstName') {
-      this.first = input;
-    } else if (field.getAttribute('name') === 'lastName') {
-      this.last = input;
+    let result = input + this.state.lastName;
+    if (attr === 'lastName') {
+      result = this.state.firstName + input;
     }
 
-    const result = this.first + this.last;
-    const simulatedInput = new Event('input', { bubbles: true }); // to notify react-inform about changes
-
-    if (!result) {
-      this.username.value = result;
-      this.username.dispatchEvent(simulatedInput);
-      return;
+    result = result.trim();
+    if (result) {
+      result = await this.getAvailableUsername(result);
     }
-
-    try {
-      this.username.value = await this.getAvailableUsername(result);
-      this.username.dispatchEvent(simulatedInput);
-    } catch (e) {
-      // do nothing
-    }
+    this.changeUsername(result);
   };
 
-  inputUsername = (event) => {
-    const field = event.target;
-    const result = field.value.replace(/\s|\W/g, '');
-
-    field.value = result;
+  handleUsernameInput = (event) => {
     if (this.usernameFocused) {
       this.usernameManuallyChanged = true;
     }
+
+    const field = event.target;
+    const raw = field.value;
+    this.changeUsername(raw);
   };
 
-  usernameFocusHandler = () => {
+  changeUsername = (input) => {
+    const filtered = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
+
+    const { form } = this.props;
+    const prevValues = form.values();
+    const nextValues = assign({}, prevValues, {
+      username: filtered
+    });
+    form.onValues(nextValues);
+  };
+
+  handleUsernameFocus = () => {
     this.usernameFocused = true;
   };
 
-  usernameBlurHandler = () => {
+  handleUsernameBlur = () => {
     this.usernameFocused = false;
   };
 
@@ -177,7 +186,11 @@ export class Register extends React.Component {
       return <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} />;
     }
 
-    const reset = ((e) => e.target.setCustomValidity(''));
+    const htmlFields = reduce(fields, (acc, value, key) =>
+      assign({}, acc, {
+        [key]: omit(value, ['error'])
+      }), {});
+
     return (
       <div className="div" id="register">
         <header className="layout__row layout__row-double">
@@ -187,40 +200,87 @@ export class Register extends React.Component {
             <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
           </div>
         </header>
-        <form action="" className="layout__row" id="registerForm" onSubmit={this.submitHandler}>
+        <form action="" className="layout__row" id="registerForm" onSubmit={this.handleSubmit}>
           <div className="layout__row">
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-              <input className="input input-gray input-big input-block" id="registerFirstName" name="firstName" placeholder="Firstname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.firstName = c} />
+              <input
+                className="input input-gray input-big input-block"
+                id="registerFirstName"
+                name="firstName"
+                placeholder="Firstname"
+                type="text"
+                value={this.state.firstName}
+                onChange={this.handleNameChange}
+              />
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-              <input className="input input-gray input-big input-block" id="registerLastName" name="lastName" placeholder="Lastname" type="text" onBlur={reset} onChange={this.changeName} ref={(c) => this.lastName = c} />
+              <input
+                className="input input-gray input-big input-block"
+                id="registerLastName"
+                name="lastName"
+                placeholder="Lastname"
+                type="text"
+                value={this.state.lastName}
+                onChange={this.handleNameChange}
+              />
             </div>
             <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="username">Username</label>
-              <input className="input input-gray input-big input-block" id="username" name="username" placeholder="Username" ref={(c) => this.username = c} required="required" type="text" {...fields.username} />
+              <label className="label label-before_input" htmlFor="registerUsername">Username</label>
+              <input
+                className="input input-gray input-big input-block"
+                id="registerUsername"
+                name="username"
+                placeholder="Username"
+                ref={c => this.username = c}
+                required="required"
+                type="text"
+                {...htmlFields.username}
+              />
               {fields.username.error &&
                 <Message message={fields.username.error} />
               }
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-              <input className="input input-gray input-big input-block" id="registerPassword" name="password" ref={(c) => this.password = c} required="required" type="password" {...fields.password} />
+              <input
+                className="input input-gray input-big input-block"
+                id="registerPassword"
+                name="password"
+                required="required"
+                type="password"
+                {...htmlFields.password}
+              />
               {fields.password.error &&
                 <Message message={fields.password.error} />
               }
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-              <input className="input input-gray input-big input-block" id="registerPasswordRepeat" name="password_repeat" ref={(c) => this.passwordRepeat = c} required="required" type="password" {...fields.passwordRepeat} />
+              <input
+                className="input input-gray input-big input-block"
+                id="registerPasswordRepeat"
+                name="password_repeat"
+                required="required"
+                type="password"
+                {...htmlFields.passwordRepeat}
+              />
               {fields.passwordRepeat.error &&
                 <Message message={fields.passwordRepeat.error} />
               }
             </div>
             <div className="layout__row layout__row-double">
               <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-              <input className="input input-gray input-big input-block" id="registerEmail" name="email" placeholder="email.address@example.com" ref={(c) => this.email = c} required="required" type="email" {...fields.email} />
+              <input
+                className="input input-gray input-big input-block"
+                id="registerEmail"
+                name="email"
+                placeholder="email.address@example.com"
+                required="required"
+                type="email"
+                {...htmlFields.email}
+              />
               {fields.email.error &&
                 <Message message={fields.email.error} />
               }
@@ -233,7 +293,13 @@ export class Register extends React.Component {
             <div className="layout__grid layout__grid-big layout-align_vertical">
               <button className="button button-big button-green">Sign up</button>
               <label className="action checkbox">
-                <input id="registerAgree" name="agree" required="required" type="checkbox" {...fields.agree} />
+                <input
+                  id="registerAgree"
+                  name="agree"
+                  required="required"
+                  type="checkbox"
+                  {...htmlFields.agree}
+                />
                 <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
               </label>
             </div>
