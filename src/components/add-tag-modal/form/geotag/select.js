@@ -66,28 +66,32 @@ export default class GeotagSelect extends Component {
     const client = new ApiClient(API_HOST);
     const response = await client.searchGeotags(value.trim());
 
-    this.setState({ suggestions: response.geotags.slice(0, 5) });
+    this.setState({ suggestions: response.geotags });
   }, 300);
 
   _getSuggestionValue = (geotag) => geotag.name;
 
   _renderSuggestion(geotag) {
-    let name = geotag.name;
-    const additionalInfo = [];
+    let geotagType = geotag.type;
+    if (geotagType == 'AdminDivision1') {
+      geotagType = 'Admin. Division';
+    }
+
+    const names = [geotag.name];
 
     if (!isEmpty(geotag.admin1)) {
-      additionalInfo.push(geotag.admin1.name);
+      if (geotag.country_code == 'US') {
+        names.push(geotag.admin1_code);
+      } else {
+        names.push(geotag.admin1.name);
+      }
     }
 
     if (!isEmpty(geotag.country)) {
-      additionalInfo.push(geotag.country.name);
+      names.push(geotag.country.name);
     }
 
-    if (additionalInfo.length > 0) {
-      name += ` (${additionalInfo.join(', ')})`;
-    }
-
-    return name;
+    return `${names.join(', ')} (${geotagType})`;
   }
 
   _handleSelect = (event, { suggestion }) => {
@@ -114,6 +118,10 @@ export default class GeotagSelect extends Component {
       value: this.state.value
     };
 
+    const theme = {
+      suggestionsContainer: 'autosuggest__suggestions_container autosuggest__suggestions_container-with-scroll'
+    };
+
     return (
       <div>
         <input name="geotag" type="hidden" value={this.state.geotagId} />
@@ -122,6 +130,7 @@ export default class GeotagSelect extends Component {
           inputProps={inputProps}
           renderSuggestion={this._renderSuggestion}
           suggestions={this.state.suggestions}
+          theme={theme}
           onSuggestionSelected={this._handleSelect}
           onSuggestionsUpdateRequested={this._getSuggestions}
           {...this.props}

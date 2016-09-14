@@ -236,6 +236,30 @@ async function cities() {
   });
 }
 
+async function searchIndex() {
+  /*
+    Weights:
+      A (primary name) = 0.4 gives some room for specifiers (country name, codes etc.)
+      B (name specifiers) = 0.8
+      C (code specifiers) = 1.0 max priority to override the name
+  */
+  await knex.raw(`
+    UPDATE geotags
+    SET tsv =
+      setweight(to_tsvector(coalesce(geotags.name, '')), 'A') ||
+      setweight(to_tsvector(coalesce(countries.iso_alpha2, '')), 'C') ||
+      setweight(to_tsvector(coalesce(countries.iso_alpha3, '')), 'C') ||
+      setweight(to_tsvector(coalesce(countries.name, '')), 'B') ||
+      setweight(to_tsvector(coalesce(admin1.name, '')), 'B') ||
+      setweight(to_tsvector(coalesce(admin1.code, '')), 'C') ||
+      setweight(to_tsvector(coalesce(geotags.type, '')), 'C')
+    FROM geotags as g2
+      LEFT JOIN geonames_countries AS countries ON countries.id = g2.geonames_country_id
+      LEFT JOIN geonames_admin1 AS admin1 ON admin1.id = g2.geonames_admin1_id
+      WHERE g2.id = geotags.id
+  `);
+}
+
 async function geotags() {
   process.stdout.write("=== IMPORTING/UPDATING PLANET GEOTAGS ===\n");
   await planets();
@@ -251,11 +275,29 @@ async function geotags() {
 
   process.stdout.write("=== IMPORTING/UPDATING CITY GEOTAGS ===\n");
   await cities();
+
+  process.stdout.write("=== UPDATING SEARCH INDEX FOR GEOTAGS ===\n");
+  await searchIndex();
 }
 
-geotags()
+function main() {
+  const commands = {
+    planets,
+    continents,
+    countries,
+    adminDivisions,
+    cities,
+    searchIndex
+  };
+
+  const command = commands[process.argv[2]] || geotags;
+
+  return command();
+}
+
+main()
   .then(() => {
-    process.stdout.write("=== GEOTAGS DONE ===\n");
+    process.stdout.write("=== DONE ===\n");
     process.exit(0);
   })
   .catch(e => {

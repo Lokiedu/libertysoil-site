@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactAutosuggest from 'react-autosuggest';
+import { omit } from 'lodash';
 
 
 const theme = {
@@ -14,8 +15,15 @@ const theme = {
   sectionSuggestionsContainer: 'autosuggest__section_suggestions_container'
 };
 
-export default function Autosuggest(props) {
+function Autosuggest(props) {
+  const combinedTheme = Object.assign(theme, props.theme);
+  props = omit(props, 'theme');
+
   return (
-    <ReactAutosuggest theme={theme} {...props} />
+    <ReactAutosuggest theme={combinedTheme} {...props} />
   );
 }
+
+Autosuggest.propTypes = ReactAutosuggest.propTypes;
+
+export default Autosuggest;
