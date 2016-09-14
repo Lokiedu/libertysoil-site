@@ -206,11 +206,11 @@ export class List extends React.Component {
           <Breadcrumbs title="News Feed" />
         </Header>
 
-        <Page>
+        <Page v2>
           <Sidebar current_user={current_user} />
-          <PageMain>
-            <PageBody>
-              <PageContent>
+          <PageMain v2>
+            <PageBody v2>
+              <PageContent v2>
                 <CreatePost
                   actions={actions}
                   allSchools={values(schools)}

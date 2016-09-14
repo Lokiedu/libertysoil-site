@@ -17,26 +17,32 @@
  */
 import React from 'react';
 
-const Page = ({ children, className = '' }) => (
-  <div className={`page__container ${className}`}>
+const applyV2 = (needV2, className) => {
+  if (needV2) {
+    return 'v2-'.concat(className.trim());
+  }
+
+  return className;
+};
+
+const Page = ({ children, className = '', v2 }) => (
+  <div className={applyV2(v2,`page__container ${className}`)}>
     {children}
   </div>
 );
 
-const PageCaption = ({ children }) => (
-  <header className="page__caption">
+const PageCaption = ({ children, v2 }) => (
+  <header className={applyV2(v2, 'page__caption')}>
     <h1>{children}</h1>
   </header>
 );
 
-const PageHero = ({ children, url }) => (
-  <div className="page__hero">
-    <div className="page__hero_body">
+const PageHero = ({ children, url, v2 }) => (
+  <div className={applyV2(v2, 'page__hero')}>
+    <div className={applyV2(v2, 'page__hero_body')}>
       <div
-        className="page__hero_content"
-        style={{
-          backgroundImage: `url(${url})`
-        }}
+        className={applyV2(v2, 'page__hero_content')}
+        style={{ backgroundImage: `url(${url})` }}
       >
         {children}
       </div>
@@ -44,21 +50,20 @@ const PageHero = ({ children, url }) => (
   </div>
 );
 
-
-const PageMain = ({ children, className = '', ...props }) => (
-  <div className={`page__main ${className}`} {...props}>
+const PageMain = ({ children, className = '', v2, ...props }) => (
+  <div className={applyV2(v2, `page__main col col-xs col-s-12 col-m-13 col-l-17 col-xl-19 ${className}`)} {...props}>
     {children}
   </div>
 );
 
-const PageBody = ({ children, className = '', ...props }) => (
-  <div className={`page__body ${className}`} {...props}>
+const PageBody = ({ children, className = '', v2, ...props }) => (
+  <div className={applyV2(v2, `page__body ${className}`)} {...props}>
     {children}
   </div>
 );
 
-const PageContent = ({ children, className = '' }) => (
-  <div className={`page__content ${className}`}>
+const PageContent = ({ children, className = '', v2 }) => (
+  <div className={applyV2(v2, `page__content col col-xs col-s-19-h col-m-19-h col-l-19-h col-xl-10 ${className}`)}>
     {children}
   </div>
 );
