@@ -159,14 +159,13 @@
   }
 }
 
-.generate-xs-columns();
 .hide-xs-columns();
-
 .hide-columns-if-not(@size: ~"s", @media-query: @tablet, @n: 23);
 .hide-columns-if-not(@size: ~"m", @media-query: @narrow-desktop, @n: 23);
 .hide-columns-if-not(@size: ~"l", @media-query: @standard-desktop, @n: 23);
 .hide-columns-if-not(@size: ~"xl", @media-query: @widescreen-desktop, @n: 23);
 
+.generate-xs-columns();
 .media(@tablet, { .generate-columns(@size: ~"s", @n: 23); });
 .media(@narrow-desktop, { .generate-columns(@size: ~"m", @n: 23); });
 .media(@standard-desktop, { .generate-columns(@size: ~"l", @n: 23); });
