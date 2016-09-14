@@ -40,6 +40,10 @@ import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';
 
+  static defaultProps = {
+    onChange: () => {}
+  };
+
   static propTypes = {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),

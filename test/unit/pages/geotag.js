@@ -18,11 +18,20 @@
 /* eslint-env node, mocha */
 import { shallow } from 'enzyme';
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import sinon from 'sinon';
 
 import { GeotagPage } from '../../../src/pages/geotag';
 import NotFound from '../../../src/pages/not-found';
 
 describe('GeotagPage', () => {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
   it('MUST render nothing when geotag is not yet loaded', () => {
     const wrapper = shallow(
       <GeotagPage
@@ -40,22 +49,4 @@ describe('GeotagPage', () => {
     return expect(wrapper.equals(null), 'to be true');
   });
 
-  it('MUST render <NotFound /> for non existing geotag', () => {
-    const renderer = TestUtils.createRenderer();
-
-    renderer.render(
-      <GeotagPage
-        comments={{}}
-        geotag_posts={{}}
-        geotags={{ test: {} }}
-        is_logged_in={false}
-        params={{ url_name: 'test' }}
-        posts={{}}
-        schools={{}}
-        users={{}}
-      />
-    );
-
-    return expect(renderer, 'to have rendered', <NotFound />);
-  });
 });

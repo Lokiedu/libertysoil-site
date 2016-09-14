@@ -77,7 +77,7 @@ export const CurrentUser = PropTypes.shape({
   followed_schools: mapOf(url, School).isRequired,
   geotags: ArrayOfGeotags.isRequired,
   hashtags: ArrayOfHashtags.isRequired,
-  id: uuid4.isRequired,
+  id: uuid4,
   liked_geotags: mapOf(url, Geotag).isRequired,
   liked_hashtags: mapOf(url, Hashtag).isRequired,
   liked_schools: mapOf(url, School).isRequired,
@@ -85,5 +85,5 @@ export const CurrentUser = PropTypes.shape({
   recent_tags: UserRecentTags.isRequired,
   schools: ArrayOfSchools.isRequired,
   suggested_users: ArrayOfUsers.isRequired,
-  user: User.isRequired
+  user: User
 });

@@ -21,7 +21,7 @@ import path from 'path';
 import fs, { accessSync, readFileSync } from 'fs';
 
 import Koa from 'koa';
-import { isString, indexOf } from 'lodash';
+import { isString } from 'lodash';
 import session from 'koa-generic-session';
 import redisStore from 'koa-redis';
 import convert from 'koa-convert';
@@ -185,16 +185,6 @@ app.use(convert(session({
 })));
 
 app.use(createRequestLogger({ level: 'info', logger }));
-
-if (indexOf(['test', 'travis'], exec_env) !== -1) {
-  const warn = console.error; // eslint-disable-line no-console
-  console.error = function (warning) { // eslint-disable-line no-console
-    if (/(Invalid prop|Failed propType)/.test(warning)) {
-      throw new Error(warning);
-    }
-    warn.apply(console, arguments);
-  };
-}
 
 app.use(mount('/api/v1', api));
 

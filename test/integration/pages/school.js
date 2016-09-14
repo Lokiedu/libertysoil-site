@@ -19,6 +19,7 @@
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import { login } from '../../../test-helpers/api';
@@ -33,13 +34,22 @@ const User = bookshelf.model('User');
 const School = bookshelf.model('School');
 
 describe('School page', () => {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
+
   describe('when user is logged in', () => {
     let user;
     let sessionId;
 
     before(async () => {
       await bookshelf.knex('users').del();
-      user = await User.create('test', 'test', 'test@example.com');
+      user = await User.create('test', 'test', 'test@example.com', { first_login: false });
       await user.save({ 'email_check_hash': '' },{ require: true });
 
       sessionId = await login('test', 'test');
@@ -59,7 +69,7 @@ describe('School page', () => {
 
         const userAttrs = UserFactory.build();
 
-        author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email, { first_login: false });
         school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
 
         for (let i = 0; i < posts.length; ++i) {
