@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { filter, find, assign } from 'lodash';
+import { filter, find } from 'lodash';
 
 function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
   let filtered = arrayToFilter;
@@ -57,10 +57,11 @@ export async function hidePostsData(target, ctx, qb, convertToJSON = true) {
         plainPost = post.toJSON();
       }
 
-      return assign({}, plainPost, {
+      return {
+        ...plainPost,
         favourers: hide(plainPost.id, userId, userPosts, plainPost.favourers),
         likers: hide(plainPost.id, userId, userPosts, plainPost.likers)
-      });
+      };
     });
   } else {
     let plainPost = target;
@@ -68,10 +69,11 @@ export async function hidePostsData(target, ctx, qb, convertToJSON = true) {
       plainPost = target.toJSON();
     }
 
-    filtered = assign({}, plainPost, {
+    filtered = {
+      ...plainPost,
       favourers: hide(plainPost.id, userId, userPosts, plainPost.favourers),
       likers: hide(plainPost.id, userId, userPosts, plainPost.likers)
-    });
+    };
   }
 
   return filtered;

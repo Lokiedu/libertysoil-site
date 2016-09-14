@@ -2006,7 +2006,7 @@ export default class ApiController {
 
     try {
       const urlObj = parse_url(`https://pickpoint.io/api/v1/forward`);
-      urlObj.query = Object.assign(ctx.query, { key: config.pickpoint.key });
+      urlObj.query = { ...ctx.query, key: config.pickpoint.key };
 
       const response = await fetch(format_url(urlObj));
       const data = await response.json();
