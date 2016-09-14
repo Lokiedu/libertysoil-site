@@ -67,9 +67,15 @@ const IconComponent = ({
     classnameIcon.push(`micon-rotate`);
   }
 
+  const divProps = { ...props };
+  delete divProps.is_logged_in;
+  delete divProps.liked_tags;
+  delete divProps.tag;
+  delete divProps.triggers;
+
   return (
     <div
-      {...props}
+      {...divProps}
       disabled={disabled}
       onClick={localOnClick}
       className={classnameIcon.join(' ')}

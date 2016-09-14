@@ -18,6 +18,8 @@
 /*eslint-env node, mocha */
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import Helmet from 'react-helmet';
+import uuid from 'uuid';
+import sinon from 'sinon';
 
 import { List } from '../../../src/pages/list';
 import Header from '../../../src/components/header';
@@ -32,13 +34,51 @@ import SideSuggestedUsers from '../../../src/components/side-suggested-users';
 import CreatePost from '../../../src/components/create-post';
 
 describe('List page with redux', () => {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <List
         comments={{}}
         create_post_form={{ text: 'foo' }}
-        current_user={{ id: '1' }}
+        current_user={{
+          id: uuid.v4(),
+          favourites: [],
+          followed_geotags: [],
+          followed_hashtags: [],
+          followed_schools: [],
+          geotags: [],
+          hashtags: [],
+          liked_geotags: [],
+          liked_hashtags: [],
+          liked_schools: [],
+          likes: [],
+          recent_tags: {
+            geotags: [],
+            hashtags: [],
+            schools: []
+          },
+          schools: [],
+          suggested_users: [],
+          user: {
+            created_at: '',
+            id: uuid.v4(),
+            more: {
+              first_login: false
+            },
+            updated_at: '',
+            username: 'test'
+          }
+        }}
+        is_logged_in
+        users={[]}
         posts={{}}
         river={[]}
         schools={{}}

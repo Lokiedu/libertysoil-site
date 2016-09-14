@@ -90,6 +90,7 @@ export const theReducer = combineReducers(i.Map({
 const initialState = i.Map({
   current_user: i.Map({
     id: null,
+    geotags: i.List([]),
     hashtags: i.List([]),
     followed_hashtags: i.Map({}),
     followed_schools: i.Map({}),
@@ -98,12 +99,13 @@ const initialState = i.Map({
     liked_schools: i.Map({}),
     liked_geotags: i.Map({}),
     post_subscriptions: i.List([]),
-    suggested_users: i.List([]),
     recent_tags: i.Map({
       hashtags: i.List([]),
       schools: i.List([]),
       geotags: i.List([])
-    })
+    }),
+    schools: i.List([]),
+    suggested_users: i.List([])
   }),
   create_post_form: i.fromJS({
     text: '',

@@ -206,6 +206,9 @@ class CreatePost extends React.Component {
       expanded
     } = this.state;
 
+    const textProps = { ...fields.text };
+    delete textProps.error;
+
     return (
       <div className="box box-post box-space_bottom create_post">
         <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
@@ -222,7 +225,7 @@ class CreatePost extends React.Component {
                     placeholder="Make a contribution to education change"
                     rows={expanded ? 10 : 1}
                     onFocus={this._handleFocus}
-                    {...fields.text}
+                    {...textProps}
                   />
                 </div>
               </div>

@@ -38,36 +38,39 @@ const TagIcon = ({ big, className, inactive, small, type, ...props }) => {
     cn += ' tag_icon-inactive';
   }
 
+  const spanProps = { ...props };
+  delete spanProps.collapsed;
+
   switch (type) {
     case TAG_HASHTAG:
       return (
-        <span className={`${cn} tag_icon-hashtag`} {...props}>#</span>
+        <span className={`${cn} tag_icon-hashtag`} {...spanProps}>#</span>
       );
     case TAG_SCHOOL:
       return (
-        <span className={`${cn} tag_icon-school`} {...props}>
+        <span className={`${cn} tag_icon-school`} {...spanProps}>
           <span className="micon">school</span>
         </span>
       );
     case TAG_MENTION:
       return (
-        <span className={`${cn} tag_icon-mention`} {...props}>@</span>
+        <span className={`${cn} tag_icon-mention`} {...spanProps}>@</span>
       );
     case TAG_LOCATION:
       return (
-        <span className={`${cn} tag_icon-location`} {...props}>
+        <span className={`${cn} tag_icon-location`} {...spanProps}>
           <span className="micon">location_on</span>
         </span>
       );
     case TAG_EVENT:
       return (
-        <span className={`${cn} tag_icon-event`} {...props}>
+        <span className={`${cn} tag_icon-event`} {...spanProps}>
           <span className="micon">event</span>
         </span>
       );
     case TAG_PLANET:
       return (
-        <span className={`${cn} tag_icon-planet`} {...props}>
+        <span className={`${cn} tag_icon-planet`} {...spanProps}>
           <span className="micon">public</span>
         </span>
       );

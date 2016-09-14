@@ -87,6 +87,9 @@ class GeotagEditForm extends React.Component {
       messages
     } = this.props;
 
+    const textAreaProps = fields.description;
+    delete textAreaProps.error;
+
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={geotag.id} />
@@ -96,7 +99,7 @@ class GeotagEditForm extends React.Component {
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
             name="description"
-            {...fields.description}
+            {...textAreaProps}
           />
 
           {fields.description.error &&

@@ -19,6 +19,7 @@
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
@@ -30,6 +31,14 @@ let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 
 describe('ListPage', () => {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
+
+  after(() => {
+    console.error.restore();
+  });
+
   it('anonymous can not open /', async () => {
     await expect('/', 'to redirect');
   });
@@ -40,7 +49,7 @@ describe('ListPage', () => {
 
     before(async () => {
       await bookshelf.knex('users').del();
-      user = await User.create('test', 'test', 'test@example.com');
+      user = await User.create('test', 'test', 'test@example.com', { first_login: false });
       await user.save({'email_check_hash': ''},{require:true});
 
       sessionId = await login('test', 'test');

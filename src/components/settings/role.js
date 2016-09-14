@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { uniqueId, assign } from 'lodash';
+import { uniqueId } from 'lodash';
 
 import { ROLES } from '../../consts/profileConstants';
 
@@ -53,7 +53,7 @@ export default class Role extends React.Component {
     const value = event.target.value;
 
     const fieldOldData = this.state[name];
-    const fieldNewData = assign({}, fieldOldData, { value });
+    const fieldNewData = { ...fieldOldData, value };
 
     this.setState({ [name]: fieldNewData });
     onChange({ index, name, value });

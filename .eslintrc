@@ -5,6 +5,7 @@
     "babel",
     "import",
     "lodash",
+    "prefer-object-spread",
     "react"
   ],
   "parserOptions": {
@@ -76,6 +77,8 @@
     "lodash/prefer-map": 2,
     "lodash/unwrap": 2,
 
+    "prefer-object-spread/prefer-object-spread": 2,
+
     "jsx-quotes": 2,
     "react/display-name": 2,
     "react/forbid-prop-types": 2,
@@ -108,6 +111,7 @@
     "react/no-set-state": 1,
     "react/no-string-refs": 2,
     "react/no-unknown-property": 2,
+    "react/no-unused-prop-types": [ 1, { "skipShapeProps": true } ],
     "react/prefer-es6-class": 1,
     "react/prefer-stateless-function": 2,
     "react/prop-types": 1,

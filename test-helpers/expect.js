@@ -9,6 +9,7 @@ import app from '../index';
 expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));
 expect.installPlugin(require('unexpected-immutable'));
+expect.installPlugin(require('unexpected-sinon'));
 
 let subjectToRequest = (subject) => {
   if (isString(subject)) {

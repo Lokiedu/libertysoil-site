@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import { assign } from 'lodash';
 
 import {
   getTypeError,
@@ -169,7 +168,7 @@ export const Immutable = (checkType) => (
       // all Immutable date types are subclasses of Immutable.Iterable
       if (i.Iterable.isIterable(propValue)) {
         const preparedPropValue = propValue.toJS();
-        const preraredProps = assign({}, props, { [propName]: preparedPropValue });
+        const preraredProps = { ...props, [propName]: preparedPropValue };
 
         // vanilla instance of PropTypes' checkType()
         // or result of createRequirableTypeChecker()
@@ -258,7 +257,7 @@ export const url = createSimplifiedRequirableTypeChecker(
       return getTypeError(propValue, expectedType, propFullName, componentName, location);
     }
 
-    const test = RegExp(/^[a-z0-9_-]+$/i);
+    const test = RegExp(/^[a-z0-9_\.'-]+$/i);
     if (!propValue.match(test)) {
       return new Error(
         `Invalid prop \`${propFullName}\` of type \`${expectedType}\` ` +

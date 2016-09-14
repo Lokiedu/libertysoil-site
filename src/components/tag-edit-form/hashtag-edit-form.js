@@ -87,6 +87,9 @@ class HashtagEditForm extends React.Component {
       triggers
     } = this.props;
 
+    const textAreaProps = fields.description;
+    delete textAreaProps.error;
+
     return (
       <form onSubmit={this.submitHandler}>
         <input name="id" type="hidden" value={hashtag.id} />

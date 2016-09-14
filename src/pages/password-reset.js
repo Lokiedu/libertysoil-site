@@ -77,6 +77,8 @@ export class Form extends React.Component {
   };
 
   render() {
+    const { is_logged_in } = this.props;
+
     let content = <ResetForm submitHandler={this.submitHandler} />;
 
     if (this.props.ui.submitResetPassword) {
@@ -89,6 +91,7 @@ export class Form extends React.Component {
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             className="header-transparent"
+            is_logged_in={is_logged_in}
           />
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>

@@ -18,6 +18,7 @@
 /*eslint-env node, mocha */
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import Helmet from 'react-helmet';
+import sinon from 'sinon';
 
 import { Auth } from '../../../src/pages/auth';
 import Messages from '../../../src/components/messages';
@@ -29,10 +30,18 @@ import Register from '../../../src/components/register';
 
 
 describe('Auth page with redux', function() {
+  before(() => {
+    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  });
 
-  it('MUST render important components', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<Auth messages={[]} ui={{}} />);
+  after(() => {
+    console.error.restore();
+  });
+
+
+  it('MUST render important components', () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Auth is_logged_in messages={[]} ui={{}} />);
 
     return expect(
       renderer,
@@ -42,9 +51,9 @@ describe('Auth page with redux', function() {
     );
   });
 
-  it('MUST render passed messages', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<Auth messages={[{message: 'Im foo message'}]} ui={{}} />);
+  it('MUST render passed messages', () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Auth is_logged_in messages={[{ message: 'Im foo message' }]} ui={{}} />);
 
     return expect(
       renderer,
@@ -55,9 +64,9 @@ describe('Auth page with redux', function() {
     );
   });
 
-  it('MUST pass ui.registrationSuccess to Register component', function() {
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<Auth messages={[]} ui={{registrationSuccess: false}} />);
+  it('MUST pass ui.registrationSuccess to Register component', () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Auth is_logged_in messages={[]} ui={{ registrationSuccess: false }} />);
 
     return expect(
       renderer,
