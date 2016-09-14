@@ -5,6 +5,7 @@
     "babel",
     "import",
     "lodash",
+    "prefer-object-spread",
     "react"
   ],
   "parserOptions": {
@@ -75,6 +76,8 @@
     "lodash/prefer-filter": 2,
     "lodash/prefer-map": 2,
     "lodash/unwrap": 2,
+
+    "prefer-object-spread/prefer-object-spread": 2,
 
     "jsx-quotes": 2,
     "react/display-name": 2,

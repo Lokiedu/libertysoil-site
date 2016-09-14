@@ -484,7 +484,7 @@ export class ActionsTrigger {
 
     let result;
     try {
-      result = await this.client.schools(Object.assign({ havePosts: true }, query));
+      result = await this.client.schools({ havePosts: true, ...query });
       this.dispatch(a.schools.setSchools(result));
 
       if (!query.offset) {

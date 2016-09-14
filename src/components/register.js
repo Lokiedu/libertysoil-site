@@ -160,13 +160,11 @@ export class Register extends React.Component {
   };
 
   changeUsername = (input) => {
-    const filtered = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
+    const username = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
 
     const { form } = this.props;
     const prevValues = form.values();
-    const nextValues = Object.assign({}, prevValues, {
-      username: filtered
-    });
+    const nextValues = { ...prevValues, username };
     form.onValues(nextValues);
   };
 
@@ -186,10 +184,11 @@ export class Register extends React.Component {
       return <SuccessContent onShowRegisterForm={this.props.onShowRegisterForm} />;
     }
 
-    const htmlFields = reduce(fields, (acc, value, key) =>
-      Object.assign({}, acc, {
-        [key]: omit(value, ['error'])
-      }), {});
+    const htmlFields = reduce(
+      fields,
+      (acc, value, key) => ({ ...acc, [key]: omit(value, ['error']) }),
+      {}
+    );
 
     return (
       <div className="div" id="register">

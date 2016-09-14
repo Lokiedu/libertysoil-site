@@ -67,7 +67,7 @@ const IconComponent = ({
     classnameIcon.push(`micon-rotate`);
   }
 
-  const divProps = Object.assign({}, props);
+  const divProps = { ...props };
   delete divProps.is_logged_in;
   delete divProps.liked_tags;
   delete divProps.tag;

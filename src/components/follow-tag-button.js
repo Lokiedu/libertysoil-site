@@ -101,7 +101,7 @@ export default class FollowTagButton extends React.Component {
       return null;
     }
 
-    const buttonProps = Object.assign({}, props);
+    const buttonProps = { ...props };
     delete buttonProps.tag;
     delete buttonProps.triggers;
 

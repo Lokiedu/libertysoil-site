@@ -38,7 +38,7 @@ const TagIcon = ({ big, className, inactive, small, type, ...props }) => {
     cn += ' tag_icon-inactive';
   }
 
-  const spanProps = Object.assign({}, props);
+  const spanProps = { ...props };
   delete spanProps.collapsed;
 
   switch (type) {

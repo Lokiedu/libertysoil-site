@@ -206,7 +206,7 @@ class CreatePost extends React.Component {
       expanded
     } = this.state;
 
-    const textProps = Object.assign({}, fields.text);
+    const textProps = { ...fields.text };
     delete textProps.error;
 
     return (
