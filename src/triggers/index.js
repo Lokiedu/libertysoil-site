@@ -194,6 +194,21 @@ export class ActionsTrigger {
     }
   };
 
+  loadUserInfo = async (username) => {
+    let status = false;
+    try {
+      const user = await this.client.userInfo(username);
+
+      if ('id' in user) {
+        this.dispatch(a.users.addUser(user));
+        status = true;
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.messages));
+    }
+    return status;
+  };
+
   updateUserInfo = async (user) => {
     let status = false;
     try {
