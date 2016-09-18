@@ -51,13 +51,13 @@ class GeotagEditPage extends React.Component {
     schools: MapOfSchoolsPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const geotag = client.getGeotag(params.url_name);
+  static async fetchData(router, store, client) {
+    const geotag = client.getGeotag(router.params.url_name);
 
     try {
       store.dispatch(addGeotag(await geotag));
     } catch (e) {
-      store.dispatch(addGeotag({ url_name: params.url_name }));
+      store.dispatch(addGeotag({ url_name: router.params.url_name }));
 
       return 404;
     }

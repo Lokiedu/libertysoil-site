@@ -49,13 +49,13 @@ class SchoolEditPage extends React.Component {
     schools: MapOfSchoolsPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const school = client.getSchool(params.school_name);
+  static async fetchData(router, store, client) {
+    const school = client.getSchool(router.params.school_name);
 
     try {
       store.dispatch(addSchool(await school));
     } catch (e) {
-      store.dispatch(addSchool({ url_name: params.school_name }));
+      store.dispatch(addSchool({ url_name: router.params.school_name }));
 
       return 404;
     }

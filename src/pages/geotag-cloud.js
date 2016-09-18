@@ -49,7 +49,7 @@ class GeotagCloudPage extends Component {
     is_logged_in: PropTypes.bool.isRequired
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
     await triggers.loadGeotagCloud();
   }

@@ -49,8 +49,8 @@ class AboutUserPage extends React.Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const userInfo = client.userInfo(params.username);
+  static async fetchData(router, store, client) {
+    const userInfo = client.userInfo(router.params.username);
     store.dispatch(addUser(await userInfo));
   }
 

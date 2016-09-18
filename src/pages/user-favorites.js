@@ -65,11 +65,11 @@ class UserFavoritesPage extends React.Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const userInfo = await client.userInfo(params.username);
+  static async fetchData(router, store, client) {
+    const userInfo = await client.userInfo(router.params.username);
     store.dispatch(addUser(userInfo));
 
-    const favouredPosts = client.getFavouredPosts(params.username);
+    const favouredPosts = client.getFavouredPosts(router.params.username);
     store.dispatch(setPostsToFavouritesRiver(userInfo.id, await favouredPosts));
   }
 

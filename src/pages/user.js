@@ -70,9 +70,9 @@ class UserPage extends React.Component {
     routeLocation: PropTypes.shape({}).isRequired // not jush 'location' to prevent misleading warnings
   };
 
-  static async fetchData(params, store, client) {
-    const userInfo = await client.userInfo(params.username);
-    const userPosts = client.userPosts(params.username);
+  static async fetchData(router, store, client) {
+    const userInfo = await client.userInfo(router.params.username);
+    const userPosts = client.userPosts(router.params.username);
 
     store.dispatch(addUser(userInfo));
     store.dispatch(setUserPosts(userInfo.id, await userPosts));

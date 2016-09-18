@@ -33,7 +33,7 @@ export class App extends React.Component {
     ui: PropTypes.shape({})
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const props = store.getState();
 
     if (!props.get('current_user').get('id')) {
