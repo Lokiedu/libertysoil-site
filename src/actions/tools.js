@@ -17,6 +17,8 @@
 */
 export const TOOLS__ADD_SCHOOLS_TO_RIVER = 'TOOLS__ADD_SCHOOLS_TO_RIVER';
 export const TOOLS__SET_SCHOOLS_RIVER = 'TOOLS__SET_SCHOOLS_RIVER';
+export const TOOLS__SET_ALL_SCHOOLS_LOADED = 'TOOLS__SET_ALL_SCHOOLS_LOADED';
+export const TOOLS__SET_SCHOOLS_ALPHABET = 'TOOLS__SET_SCHOOLS_ALPHABET';
 
 export const TOOLS__ADD_USER_POSTS_TO_RIVER = 'TOOLS__ADD_USER_POSTS_TO_RIVER';
 export const TOOLS__SET_USER_POSTS_RIVER = 'TOOLS__SET_USER_POSTS_RIVER';
@@ -33,6 +35,20 @@ export function setSchoolsRiver(schools) {
   return {
     type: TOOLS__SET_SCHOOLS_RIVER,
     schools
+  };
+}
+
+export function setAllSchoolsLoaded(value) {
+  return {
+    type: TOOLS__SET_ALL_SCHOOLS_LOADED,
+    value
+  };
+}
+
+export function setSchoolsAlphabet(alphabet) {
+  return {
+    type: TOOLS__SET_SCHOOLS_ALPHABET,
+    alphabet
   };
 }
 

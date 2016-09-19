@@ -29,10 +29,6 @@ const BaseToolsPage = ({ children, location }) => {
   const currentPath = location.pathname;
   const currentMenuItem = toolsMenu.getCurrent(currentPath);
 
-  if (!currentMenuItem) {
-    return <div>{currentPath}</div>;
-  }
-
   return (
     <div className="tools_page">
       <header className="header page__header">

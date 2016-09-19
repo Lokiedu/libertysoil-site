@@ -21,7 +21,9 @@ import { tools } from '../actions';
 
 
 const initialState = i.fromJS({
-  schools_river: [],
+  schools_river: [], // group things when the state gets clutered
+  all_schools_loaded: false,
+  schools_alphabet: [],
   user_posts_river: []
 });
 
@@ -35,6 +37,16 @@ export default function reducer(state = initialState, action) {
 
     case tools.TOOLS__SET_SCHOOLS_RIVER: {
       state = state.set('schools_river', i.List(action.schools.map(school => school.id)));
+      break;
+    }
+
+    case tools.TOOLS__SET_ALL_SCHOOLS_LOADED: {
+      state = state.set('all_schools_loaded', action.value);
+      break;
+    }
+
+    case tools.TOOLS__SET_SCHOOLS_ALPHABET: {
+      state = state.set('schools_alphabet', i.List(action.alphabet));
       break;
     }
 
