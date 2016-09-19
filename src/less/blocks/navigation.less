@@ -1,66 +1,79 @@
-.navigation {
-  font-size: 13px;
-  color: #333;
-  margin: 0 -10px;
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
-  &-first {
-    margin-top: -10px;
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+.navigation-item {
+  position: relative;
+  display: flex;
+  min-height: 42px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  &:extend(.font-open_sans);
+  font-size: 14px;
+  color: #a3a3a3;
+  
+  &:hover {
+    color: #000;
+    background-color: #f5f5f5;
+  }
+
+  &--active {
+    font-weight: bold;
+    color: #000;
+    background-color: #fafafa;
+
+    .navigation-item__icon {
+      background-color: #66b6ec;
+      color: #fff;
+    }
+
+    &::after {
+      position: absolute;
+      top: calc(50% - 3px);
+      right: -7px;
+      
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+
+      content: '';
+      background-color: #66b6ec;
+    }
+  }
+
+  &__content {
+    flex: auto;
+    width: auto;
+  }
+  
+  &__badge {
+    width: 20px;
+    height: 100%;
   }
 
   &__icon {
-    margin: 0 7px 0 -1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #999;
+    padding: 13px;
+    border-radius: 1px;
+    width: 42px;
+    height: 42px;
 
-    .micon {
-      font-size: 20px;
-    }
-  }
-
-  &__title {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    white-space: nowrap;
-    position: relative;
-  }
-
-  &__badge {
-    width: 30px;
-    font-size: 12px;
-    position: relative;
-    top: -1px;
-  }
-}
-
-.navigation__item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-
-  &-active {
-    background: @color__red;
-    color: #fff;
-
-    .navigation__icon {
-      color: #fff;
-    }
-  }
-
-  &-disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  &:hover {
-    background: @color__dark_gray;
-    color: #fff;
-
-    .navigation__icon {
-      color: #fff;
-    }
+    font-size: 16px;
   }
 }
