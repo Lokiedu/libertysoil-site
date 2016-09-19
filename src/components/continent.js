@@ -25,6 +25,7 @@ import TagCloud from './tag-cloud';
 
 const Continent = ({ code, count, geotags }) => {
   const imageUrl = `/images/geo/continents/${code}.svg`;
+
   const name = CONTINENTS[code].name;
   const url_name = CONTINENTS[code].url_name;
 
@@ -40,7 +41,11 @@ const Continent = ({ code, count, geotags }) => {
         {name} <span className="continent__amount">({count})</span>
       </Link>
       <div className="layout__row">
-        <TagCloud geotags={geotags} showPostCount />
+        <TagCloud
+          isLink
+          showPostCount
+          tags={{ geotags }}
+        />
       </div>
     </div>
   );

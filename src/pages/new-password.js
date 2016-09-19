@@ -165,7 +165,7 @@ class Form extends React.Component {
         <Helmet title="Set New Password for " />
         <Header is_logged_in={is_logged_in} />
 
-        <Page className="page__container-no_sidebar">
+        <Page>
           <PageMain>
             <PageBody>
               <PageContent>

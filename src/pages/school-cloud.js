@@ -87,7 +87,11 @@ class SchoolCloudPage extends Component {
               <PageContent>
                 <PageCaption>School cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud schools={schoolsForCloud} showPostCount />
+                  <TagCloud
+                    isLink
+                    showPostCount
+                    tags={{ schools: schoolsForCloud }}
+                  />
                 </div>
               </PageContent>
             </PageBody>

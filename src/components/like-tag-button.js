@@ -53,7 +53,7 @@ export default class LikeTagButton extends React.Component {
 
     if (!this._isLiked()) {
       icon = 'favorite_border';
-      color = false;
+      color = '';
     }
 
     return (

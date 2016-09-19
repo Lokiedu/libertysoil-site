@@ -16,29 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 
-const SidebarLink = ({ activeClassName, children, className, enabled, to }) => {
-  if (enabled) {
-    return <Link activeClassName={activeClassName} className={className} to={to}>{children}</Link>;
+import SidebarMenuTruncated from './truncated';
+import SidebarMenuMin from './min';
+import SidebarMenuNormal from './normal';
+import SidebarMenuExtended from './extended';
+
+const SidebarMenu = ({ theme, ...props }) => {
+  switch (theme) {
+    case 'trunc': return <SidebarMenuTruncated {...props} />;
+    case 'min': return <SidebarMenuMin {...props} />;
+    case 'ext': return <SidebarMenuExtended {...props} />;
+    default: return <SidebarMenuNormal {...props} />;
   }
-
-  let cn = 'disabled';
-  if (className) {
-    cn += ` ${className}`;
-  }
-
-  return <span className={cn}>{children}</span>;
 };
 
-SidebarLink.displayName = 'SidebarLink';
-
-SidebarLink.propTypes = {
-  activeClassName: PropTypes.string,
-  children: PropTypes.node,
-  className: PropTypes.string,
-  enabled: PropTypes.bool,
-  to: PropTypes.string
+SidebarMenu.propTypes = {
+  theme: PropTypes.string
 };
 
-export default SidebarLink;
+SidebarMenu.defaultProps = {
+  theme: 'normal'
+};
+
+export default SidebarMenu;

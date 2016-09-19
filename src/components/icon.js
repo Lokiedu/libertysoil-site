@@ -1,32 +1,36 @@
-import React from 'react';
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
-import favorite from 'react-icons/lib/md/favorite';
-import favorite_border from 'react-icons/lib/md/favorite-border';
-import _public from 'react-icons/lib/md/public';
-import star from 'react-icons/lib/md/star';
-import star_border from 'react-icons/lib/md/star-border';
-import chat_bubble_outline from 'react-icons/lib/md/chat-bubble-outline';
-import link from 'react-icons/lib/md/link';
-import edit from 'react-icons/lib/md/edit';
-import close from 'react-icons/lib/md/close';
-import _delete from 'react-icons/lib/md/delete';
-import search from 'react-icons/lib/md/search';
-import refresh from 'react-icons/lib/md/refresh';
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-const icons = {
-  favorite,
-  favorite_border,
-  public: _public,
-  star,
-  star_border,
-  chat_bubble_outline,
-  link,
-  edit,
-  close,
-  delete: _delete,
-  search,
-  refresh
-};
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+
+import * as MdIconPack from 'react-icons/lib/md';
+import { FaHashtag } from 'react-icons/lib/fa';
+
+const FaIconPack = { FaHashtag };
+
+function findIcon(iconName) {
+  const camelized = iconName.replace(/(?:^|[-_])(\w)/g, (match, c) =>
+    c ? c.toUpperCase() : ''
+  );
+  const capitalized = camelized.charAt(0).toUpperCase() + camelized.slice(1);
+
+  return MdIconPack[`Md${capitalized}`] || FaIconPack[`Fa${capitalized}`];
+}
 
 const IconComponent = ({
   className,
@@ -39,50 +43,58 @@ const IconComponent = ({
   size,
   ...props
 }) => {
-  const Icon = icons[icon];
-  const classnameIcon = ['icon'];
-  const classnameIconPic = ['micon'];
+  const Icon = findIcon(icon);
+
+  const classNameIcon = classNames('icon', {
+    'icon-outline': outline,
+    'icon-disabled': disabled,
+    'micon-rotate': spin,
+    [`micon-${size}`]: size,
+    [`icon--size_${size}`]: size,
+    [className]: className,
+  });
+
+  const classNameIconPic = classNames('micon', {
+    [`color-${color}`]: color,
+    [`micon-${size}`]: size,
+    [`icon--size_${size}`]: size
+  });
+
+  let renderedIcon = false;
+  if (Icon) {
+    renderedIcon = <Icon className={classNameIconPic} />;
+  }
+
   let localOnClick = onClick;
-
-  className && classnameIcon.push(className);
-  outline && classnameIcon.push('icon-outline');
-
-  color && classnameIconPic.push(`color-${color}`);
-
-  if (!Icon) {
-    return <div>{`Please import '${icon}' from react-icons/lib/md`}</div>;
-  }
-
-  if (size) {
-    classnameIcon.push(`icon-${size}`);
-    classnameIconPic.push(`micon-${size}`);
-  }
-
   if (disabled) {
-    classnameIcon.push(`icon-disabled`);
     localOnClick = null;
   }
 
-  if (spin) {
-    classnameIcon.push(`micon-rotate`);
-  }
-
-  const divProps = { ...props };
-  delete divProps.is_logged_in;
-  delete divProps.liked_tags;
-  delete divProps.tag;
-  delete divProps.triggers;
-
   return (
     <div
-      {...divProps}
+      {...props}
+      className={classNameIcon}
       disabled={disabled}
       onClick={localOnClick}
-      className={classnameIcon.join(' ')}
     >
-      <Icon className={classnameIconPic.join(' ')} />
+      {renderedIcon}
     </div>
   );
+};
+
+IconComponent.propTypes = {
+  className: PropTypes.string,
+  color: PropTypes.string,
+  disabled: PropTypes.bool,
+  icon: PropTypes.string,
+  onClick: PropTypes.func,
+  outline: PropTypes.bool,
+  size: PropTypes.string,
+  spin: PropTypes.bool
+};
+
+IconComponent.defaultProps = {
+  icon: ''
 };
 
 export default IconComponent;

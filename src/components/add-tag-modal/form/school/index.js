@@ -112,22 +112,26 @@ export default class AddSchoolForm extends Component {
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={1}>
-              Used recently:
+              <div className="layout__row">
+                Used recently:
+              </div>
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={this.props.userRecentSchools}
+                  action="add"
+                  tags={{ schools: this.props.userRecentSchools }}
                   onClick={this._selectRecentlyUsedSchool}
                 />
               </div>
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={2}>
-              Popular:
+              <div className="layout__row">
+                Popular:
+              </div>
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={popularSchools}
+                  action="add"
+                  tags={{ schools: popularSchools }}
                 />
               </div>
             </Tab.Content>

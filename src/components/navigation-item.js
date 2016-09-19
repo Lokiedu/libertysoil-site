@@ -16,54 +16,125 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import { Link } from 'react-router';
+import { assign, omit } from 'lodash';
 
 import Icon from './icon';
 
-const SidebarLink = ({
-  icon,
-  badge,
+const NavigationItem = ({ ...props }) => {
+  if (props.to) {
+    return <NavigationItemAsLink {...props} />;
+  }
+
+  return <NavigationItemPlain {...omit(props, ['activeClassName', 'to'])} />;
+};
+
+NavigationItem.displayName = 'NavigationItem';
+
+NavigationItem.propTypes = {
+  activeClassName: PropTypes.string,
+  to: PropTypes.string
+};
+
+const NavigationItemPlain = ({
+  children,
   className,
-  enabled,
-  to,
-  children
+  disabled,
+  theme,
+  ...props
 }) => {
-  let cn = 'navigation__item';
-  if (className) {
-    cn += ` ${className}`;
-  }
+  const cn = classNames('navigation-item', {
+    'navigation-item--disabled': disabled,
+    [`${className}`]: className
+  });
 
-  if (!enabled) {
-    cn += ' navigation__item-disabled';
-  }
+  if (theme === '2.0') {
+    const { icon, badge, ...htmlProps } = props;
 
-  let iconRender;
-  if (icon) {
-    iconRender = (
-      <div className="navigation__icon">
-        <Icon icon={icon} />
+    const finalIcon = assign({}, icon, {
+      className: classNames('navigation-item__icon', {
+        [icon && icon.className]: icon && icon.className
+      })
+    });
+
+    return (
+      <div className={cn} {...htmlProps}>
+        <div className="navigation-item__content-box">
+          <div className="navigation-item__content">
+            {children}
+          </div>
+          {badge &&
+            <div className="navigation-item__badge">
+              {badge}
+            </div>
+          }
+        </div>
+        {icon &&
+          <Icon {...finalIcon} />
+        }
       </div>
     );
   }
 
   return (
-    <Link activeClassName="navigation__item-active" className={cn} to={to}>
-      {iconRender}
-      <div className="navigation__title">{children}</div>
-      <div className="navigation__badge">{badge}</div>
+    <div className={cn} {...props}>
+      {children}
+    </div>
+  );
+};
+
+const NavigationItemAsLink = ({
+  activeClassName,
+  children,
+  className,
+  disabled,
+  theme,
+  to,
+  ...props
+}) => {
+  const cn = classNames('navigation-item', {
+    'navigation-item--disabled': disabled,
+    [`${className}`]: className
+  });
+
+  const activeCn = classNames('navigation-item--active', {
+    [`${activeClassName}`]: activeClassName
+  });
+
+  if (theme === '2.0') {
+    const { icon, badge, ...htmlProps } = props;
+
+    const finalIcon = assign({}, icon, {
+      className: classNames('navigation-item__icon', {
+        [icon && icon.className]: icon && icon.className
+      })
+    });
+
+    return (
+      <Link activeClassName={activeCn} className={cn} to={to} {...htmlProps}>
+        <div className="navigation-item__content-box">
+          <div className="navigation-item__content">
+            {children}
+          </div>
+          {badge &&
+            <div className="navigation-item__badge">
+              {badge}
+            </div>
+          }
+        </div>
+        {icon &&
+          <Icon {...finalIcon} />
+        }
+      </Link>
+    );
+  }
+
+  return (
+    <Link activeClassName={activeCn} className={cn} to={to} {...props}>
+      {children}
     </Link>
   );
 };
 
-SidebarLink.displayName = 'SidebarLink';
-
-SidebarLink.propTypes = {
-  badge: PropTypes.node,
-  children: PropTypes.node,
-  className: PropTypes.string,
-  enabled: PropTypes.bool,
-  icon: PropTypes.string,
-  to: PropTypes.string
-};
-
-export default SidebarLink;
+export default NavigationItem;

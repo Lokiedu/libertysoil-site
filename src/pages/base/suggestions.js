@@ -34,7 +34,7 @@ const BaseSuggestionsPage = ({ children, current_user, is_logged_in, messages, t
   <div>
     <Header current_user={current_user} is_logged_in={is_logged_in} />
 
-    <Page className="page__container-no_sidebar">
+    <Page>
       <PageMain>
         <PageBody>
           <PageContent>

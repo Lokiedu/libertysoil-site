@@ -20,7 +20,7 @@ import i from 'immutable';
 import * as a from '../actions';
 
 const initialState = i.Map({
-  sidebarIsVisible: true,
+  sidebarIsVisible: false,
   progress: i.Map({}),
   comments: i.Map({})
 });

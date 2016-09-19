@@ -79,7 +79,11 @@ class TagCloudPage extends Component {
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud hashtags={tag_cloud} showPostCount />
+                  <TagCloud
+                    isLink
+                    showPostCount
+                    tags={{ hashtags: tag_cloud }}
+                  />
                 </div>
               </PageContent>
             </PageBody>

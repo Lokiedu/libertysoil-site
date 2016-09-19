@@ -16,38 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .sidebar {
-  &:extend(.font-open_sans);
-  padding: @space;
-  width: @navigationWidth;
-  background: #fff;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  top: @headerHeight;
-  overflow: auto;
-  transform: translateX(-110%);
-  z-index: 100;
-  //transition: transform @transition__time @transition__function;
+  padding-right: 20px;
+  overflow: hidden;
 
-  &__heading {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #FF2658;
-  }
-
-  &-visible {
-    transform: translateX(0);
-  }
-
-  @media (max-width: 1330px) {
-    box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.09);
-  }
-}
-
-.sidebar__user {
-  padding: 7px;
-
-  .link {
-    border: none;
+  &.col-2 {
+    padding-right: 0;
   }
 }
