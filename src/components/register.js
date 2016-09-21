@@ -289,8 +289,8 @@ export class Register extends React.Component {
             {fields.agree.error &&
               <Message message={fields.agree.error} />
             }
-            <div className="layout__grid layout__grid-big layout-align_vertical">
-              <button className="button button-big button-green">Sign up</button>
+            {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
+            <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
               <label className="action checkbox">
                 <input
                   id="registerAgree"
@@ -301,6 +301,7 @@ export class Register extends React.Component {
                 />
                 <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
               </label>
+              <button className="button button-big button-green">Sign up</button>
             </div>
           </div>
         </form>
