@@ -41,7 +41,7 @@ export const URL = {
   [URL_NAMES.SETTINGS]: '/settings',
   [URL_NAMES.EMAIL_SETTINGS]: '/settings/email',
   [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
-  [URL_NAMES.CHANGE_PASSWORD]: '/settings/password',
+  [URL_NAMES.CHANGE_PASSWORD]: '/tools/account/password',
   [URL_NAMES.SCHOOL]: '/s/:url_name',
   [URL_NAMES.HASHTAG]: '/tag/:name',
   [URL_NAMES.GEOTAG]: '/geo/:url_name'
