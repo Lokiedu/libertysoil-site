@@ -11,7 +11,7 @@ module.exports = {
   ],
 
   resolve: {
-    extensions: ['', '.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less']
   },
 
   output: {
@@ -21,15 +21,14 @@ module.exports = {
   },
 
   module: {
-    postLoaders: [
+    rules: [
       // Fix grapheme-breaker
       {
+        enforce: 'post',
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
         loader: 'transform/cacheable?brfs'
-      }
-    ],
-    loaders: [
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
@@ -62,10 +61,14 @@ module.exports = {
     new ExtractTextPlugin({
       filename: 'styles.css',
       allChunks: true
+    }),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        postcss: [
+          autoprefixer
+        ]
+      }
     })
-  ],
-
-  postcss: () => {
-    return [autoprefixer];
-  }
+  ]
 };

@@ -13,7 +13,7 @@ module.exports = {
   ],
 
   resolve: {
-    extensions: ['', '.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less']
   },
 
   output: {
@@ -24,15 +24,14 @@ module.exports = {
   },
 
   module: {
-    postLoaders: [
+    rules: [
       // Fix grapheme-breaker
       {
+        enforce: 'post',
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
         loader: 'transform/cacheable?brfs'
-      }
-    ],
-    loaders: [
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
@@ -69,13 +68,17 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEV__: true
+    }),
+    new webpack.LoaderOptionsPlugin({
+      debug: true,
+      options: {
+        context: __dirname,
+        postcss: [
+          autoprefixer
+        ]
+      }
     })
   ],
 
-  postcss: () => {
-    return [autoprefixer];
-  },
-
-  debug: true,
   devtool: 'cheap-module-inline-source-map'
 };
