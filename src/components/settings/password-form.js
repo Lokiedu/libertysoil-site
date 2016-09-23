@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import { form as inform, from, DisabledFormSubmit } from 'react-inform';
 import { omit, reduce } from 'lodash';
 import classNames from 'classnames';
+import zxcvbn from 'zxcvbn';
 
 import Message from '../message';
 
@@ -126,6 +127,13 @@ const validateNewPasswordChars = (password) => {
   return true;
 };
 
+const validateComplexity = (password) => {
+  if (zxcvbn(password).score < 3) {
+    return false;
+  }
+  return true;
+};
+
 const validateNewPasswordRepeat = (newPasswordRepeat, form) => {
   if (form.newPassword !== newPasswordRepeat) {
     return false;
@@ -141,6 +149,7 @@ const WrappedPasswordForm = inform(from({
     'Enter new password': n => n,
     'Password must contain at least 8 symbols': validateNewPassword,
     'Password must contain only ASCII characters': validateNewPasswordChars,
+    'Password is too weak. Consider adding more words or symbols': validateComplexity
   },
   newPasswordRepeat: {
     'Passwords don\'t match': validateNewPasswordRepeat
