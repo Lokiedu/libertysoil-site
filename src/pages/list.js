@@ -84,7 +84,7 @@ export class List extends React.Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
 
     store.dispatch(clearRiver());

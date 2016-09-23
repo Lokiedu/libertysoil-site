@@ -51,7 +51,7 @@ class MyPostsToolPage extends React.Component {
     users: ImmutablePropType(MapOfUsers)
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const userId = store.getState().getIn(['current_user', 'id']);
     const userName = store.getState().getIn(['users', userId, 'username']);
     const trigger = new ActionsTrigger(client, store.dispatch);

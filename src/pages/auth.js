@@ -51,7 +51,7 @@ export class Auth extends React.Component {
     }).isRequired
   };
 
-  static async fetchData(params, store) {
+  static async fetchData(router, store) {
     const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
     const isLoggedIn = (currentUserId !== null);

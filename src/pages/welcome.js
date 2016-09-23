@@ -29,7 +29,7 @@ import Footer from '../components/footer';
 
 class Welcome extends React.Component {
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
 
     await trigger.setQuotes();

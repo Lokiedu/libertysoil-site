@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import { compose, createStore } from 'redux';
+import { compose, createStore, applyMiddleware } from 'redux';
 import { combineReducers } from 'redux-immutablejs';
-import { routerReducer } from 'react-router-redux';
+import { browserHistory } from 'react-router';
+import { routerReducer, routerMiddleware } from 'react-router-redux';
 
 import current_user from './current-user';
 import create_post_form from './create_post_form';
@@ -160,11 +161,15 @@ const initialState = i.Map({
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
-const finalCreateStore = compose(
-  browserHasDevTools ? window.devToolsExtension() : f => f
-)(createStore);
 
 export function initState(state = initialState) {
-  const store = finalCreateStore(theReducer, i.fromJS(state));
+  const store = createStore(
+    theReducer,
+    i.fromJS(state),
+    compose(
+      applyMiddleware(routerMiddleware(browserHistory)),
+      browserHasDevTools ? window.devToolsExtension() : f => f
+    )
+  );
   return store;
 }

@@ -71,12 +71,12 @@ export class PostPage extends React.Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const post = await client.postInfo(params.uuid);
-    const relatedPosts = client.relatedPosts(params.uuid);
+  static async fetchData(router, store, client) {
+    const post = await client.postInfo(router.params.uuid);
+    const relatedPosts = client.relatedPosts(router.params.uuid);
 
     store.dispatch(addPost(post));
-    store.dispatch(setRelatedPosts(params.uuid, await relatedPosts));
+    store.dispatch(setRelatedPosts(router.params.uuid, await relatedPosts));
   }
 
   render() {

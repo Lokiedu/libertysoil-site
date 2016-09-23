@@ -115,7 +115,7 @@ export class FetchHandler {
 
       if ('component' in route && 'fetchData' in route.component) {
         try {
-          const response = await route.component.fetchData(nextState.params, this.store, this.apiClient);
+          const response = await route.component.fetchData(nextState, this.store, this.apiClient);
 
           if (isPlainObject(response)) {
             const { status, redirectTo } = response;

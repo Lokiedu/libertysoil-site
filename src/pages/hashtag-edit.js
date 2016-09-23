@@ -50,13 +50,13 @@ class HashtagEditPage extends React.Component {
     schools: MapOfSchoolsPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const hashtag = client.getHashtag(params.tag);
+  static async fetchData(router, store, client) {
+    const hashtag = client.getHashtag(router.params.tag);
 
     try {
       store.dispatch(addHashtag(await hashtag));
     } catch (e) {
-      store.dispatch(addHashtag({ name: params.tag }));
+      store.dispatch(addHashtag({ name: router.params.tag }));
 
       return 404;
     }

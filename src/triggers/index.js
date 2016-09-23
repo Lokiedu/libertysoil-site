@@ -479,8 +479,10 @@ export class ActionsTrigger {
     }
   };
 
-  toolsLoadSchoolsRiver = async (query = {}) => {
-    this.dispatch(a.ui.setProgress('loadingSchoolsRiver', true));
+  toolsLoadSchoolsRiver = async (query = {}, triggerUiChanges = true) => {
+    if (triggerUiChanges) {
+      this.dispatch(a.ui.setProgress('loadingSchoolsRiver', true));
+    }
 
     let result;
     try {
@@ -491,6 +493,12 @@ export class ActionsTrigger {
         this.dispatch(a.tools.setSchoolsRiver(result));
       } else {
         this.dispatch(a.tools.addSchoolsToRiver(result));
+      }
+
+      if (result.length < query.limit) {
+        this.dispatch(a.tools.setAllSchoolsLoaded(true));
+      } else {
+        this.dispatch(a.tools.setAllSchoolsLoaded(false));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));

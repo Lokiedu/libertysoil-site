@@ -50,7 +50,7 @@ class TagCloudPage extends Component {
     tag_cloud: ArrayOfHashtagsPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
     await triggers.loadTagCloud();
   }

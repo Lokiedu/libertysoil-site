@@ -36,7 +36,7 @@ class SettingsEmailPage extends React.Component {
     messages: ArrayOfMessagesPropType
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const props = store.getState();
     const currentUserId = props.get('current_user').get('id');
 
