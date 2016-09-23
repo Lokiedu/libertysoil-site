@@ -65,11 +65,11 @@ class UserLikesPage extends Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    const userInfo = await client.userInfo(params.username);
+  static async fetchData(router, store, client) {
+    const userInfo = await client.userInfo(router.params.username);
     store.dispatch(addUser(userInfo));
 
-    const likedPosts = client.getLikedPosts(params.username);
+    const likedPosts = client.getLikedPosts(router.params.username);
     store.dispatch(setPostsToLikesRiver(userInfo.id, await likedPosts));
   }
 

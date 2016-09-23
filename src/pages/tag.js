@@ -66,20 +66,20 @@ export class TagPage extends Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    let hashtag = client.getHashtag(params.tag);
-    const tagPosts = client.tagPosts(params.tag);
+  static async fetchData(router, store, client) {
+    let hashtag = client.getHashtag(router.params.tag);
+    const tagPosts = client.tagPosts(router.params.tag);
 
     try {
       hashtag = await hashtag;
     } catch (e) {
-      store.dispatch(addHashtag({ name: params.tag }));
+      store.dispatch(addHashtag({ name: router.params.tag }));
 
       return 404;
     }
 
     store.dispatch(addHashtag(hashtag));
-    store.dispatch(setHashtagPosts(params.tag, await tagPosts));
+    store.dispatch(setHashtagPosts(router.params.tag, await tagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
     Promise.all([

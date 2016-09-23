@@ -457,10 +457,14 @@ export default class ApiController {
         }
 
         qb.offset(ctx.query.offset);
-        this.applySortQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, 'name');
 
         if (ctx.query.havePosts) {
           qb.where('post_count', '>', 0);
+        }
+
+        if (ctx.query.startWith) {
+          qb.where('name', 'ILIKE', `${ctx.query.startWith}%`);
         }
       }).fetch({ withRelated: 'images' });
 
@@ -470,6 +474,19 @@ export default class ApiController {
       return;
     }
   };
+
+  getSchoolsAlphabet = async (ctx) => {
+    const knex = this.bookshelf.knex;
+
+    const alphabet = await knex('schools')
+      .select(knex.raw('DISTINCT(upper(substring(name FROM 1 FOR 1))) as letter'))
+      .where('post_count', '>', 0)
+      .orderBy('letter');
+
+    ctx.body = alphabet
+      .map(row => row.letter)
+      .filter(l => l && l.length);
+  }
 
   getCountries = async (ctx) => {
     const Geotag = this.bookshelf.model('Geotag');
@@ -3088,9 +3105,9 @@ export default class ApiController {
    * @param qb Knex query builder.
    * @param {Object} query An object containing query parameters.
    */
-  applySortQuery(qb, query) {
-    if ('sort' in query) {
-      let column = query.sort;
+  applySortQuery(qb, query, defaultValue = null) {
+    if ('sort' in query || defaultValue) {
+      let column = query.sort || defaultValue;
       let order = 'ASC';
 
       if (column[0] == '-') {
@@ -3099,6 +3116,12 @@ export default class ApiController {
       }
 
       qb.orderBy(column, order);
+    }
+  }
+
+  applyStartsWithQuery(qb, query) {
+    if ('startsWith' in query) {
+      qb.where('name', 'ILIKE', `${query.startsWith}%`);
     }
   }
 }

@@ -97,7 +97,7 @@ class ModalComponent extends Component {
     return (
       <div className={cn} {...props} onClick={this.hide}>
         <div className="modal__section" ref={c => this.body = c} onClick={this.clickHandler}>
-            {children}
+          {children}
         </div>
       </div>
     );

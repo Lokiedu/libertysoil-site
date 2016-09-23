@@ -67,7 +67,7 @@ class PostEditPage extends React.Component {
     schools: MapOfSchoolsPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const noSchoolsLoaded = store.getState().get('schools').isEmpty();
     const trigger = new ActionsTrigger(client, store.dispatch);
     let schoolsPromise;
@@ -77,10 +77,10 @@ class PostEditPage extends React.Component {
     }
 
     try {
-      const post = await client.postInfo(params.uuid);
+      const post = await client.postInfo(router.params.uuid);
       store.dispatch(addPost(post));
     } catch (e) {
-      store.dispatch(addPost({ error: true, id: params.uuid, user: {} }));
+      store.dispatch(addPost({ error: true, id: router.params.uuid, user: {} }));
 
       return 404;
     }

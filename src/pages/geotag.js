@@ -67,20 +67,20 @@ export class GeotagPage extends Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    let geotag = client.getGeotag(params.url_name);
-    const geotagPosts = client.geotagPosts(params.url_name);
+  static async fetchData(router, store, client) {
+    let geotag = client.getGeotag(router.params.url_name);
+    const geotagPosts = client.geotagPosts(router.params.url_name);
 
     try {
       geotag = await geotag;
     } catch (e) {
-      store.dispatch(addGeotag({ url_name: params.url_name }));
+      store.dispatch(addGeotag({ url_name: router.params.url_name }));
 
       return 404;
     }
 
     store.dispatch(addGeotag(geotag));
-    store.dispatch(setGeotagPosts(params.url_name, await geotagPosts));
+    store.dispatch(setGeotagPosts(router.params.url_name, await geotagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
     Promise.all([

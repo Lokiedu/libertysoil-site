@@ -14,57 +14,32 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.input {
-  border-radius: @radius-input;
-  border: 1px solid @color__border;
-  padding: 7px 10px;
-  resize: vertical;
-  background: #fff;
-  color: @color__text;
-  appearance: none;
+*/
+import React, { PropTypes } from 'react';
 
-  &:focus {
-    border-color: @color__blue;
-    outline: none;
-  }
 
-  &-transparent {
-    border: none;
-    background: #fff;
-    color: #000;
-  }
+export default function AlphabetFilter({ alphabet, selectedLetter, onSelect }) {
+  const letters = alphabet.map((letter, index) => {
+    const handleClick = () => onSelect(letter);
+    let className = 'alphabet_filter__letter';
+    if (selectedLetter === letter) {
+      className += ' alphabet_filter__letter-selected';
+    }
 
-  &-button_height {
-    height: 40px;
-  }
+    return (
+      <a className={className} href="javascript:;" key={index} onClick={handleClick}>{letter}</a>
+    );
+  });
 
-  &-big {
-    height: 55px;
-    padding: 0 25px;
-    min-width: 100px;
-  }
-
-  &-gray {
-    border-color: #f2f2f2;
-    background: #f2f2f2;
-  }
+  return (
+    <div className="alphabet_filter">
+      {letters}
+    </div>
+  );
 }
 
-.input-textarea {
-  min-height: 130px;
-}
-
-.input-textarea_small {
-  min-height: 70px;
-}
-
-.input-select {
-  appearance: none;
-  cursor: pointer;
-}
-
-.input-block {
-  display: block;
-  width: 100%;
-}
+AlphabetFilter.propTypes = {
+  alphabet: PropTypes.arrayOf(PropTypes.string),
+  onSelect: PropTypes.func,
+  selectedLetter: PropTypes.string,
+};

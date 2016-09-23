@@ -29,7 +29,7 @@ import Footer from '../components/footer';
 
 class Welcome extends React.Component {
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
 
     await trigger.setQuotes();
@@ -66,7 +66,7 @@ class Welcome extends React.Component {
               <p>We encourage people to collect, share and discuss resources on teaching and learning, helping to build a better understanding of the diversity within education. We aim to help families and schools solve problems like bullying, academic pressure, depression, anxiety, professional and social isolation, to name just a few. Needless to say, poor early life experiences negatively affect each person and a society as a whole.</p>
             </div>
 
-          {/*  <div className="page__body">
+            {/*<div className="page__body">
               <div className="page__content">
                 <div className="layout__space">
                   <h1 className="page__title">Popular Posts</h1>

@@ -34,7 +34,6 @@
   }
 
   &__footer {
-    box-sizing: border-box;
     height: @headerHeight;
     padding: @space;
     background: @color__block_background;
@@ -70,9 +69,19 @@
 
   // A universal element for items in collection (schools, posts, etc.)
   &__item {
+    display: block;
     margin-bottom: 15px;
     padding: 20px;
     background-color: white;
     border-bottom: 2px solid #EDEDED;
+
+    &-selected {
+      background: #FD9315;
+      color: white;
+    }
+  }
+
+  &__paper:extend(&__item) {
+    width: 100%;
   }
 }

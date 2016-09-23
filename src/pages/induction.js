@@ -61,7 +61,7 @@ class InductionPage extends React.Component {
     suggested_users: ArrayOfUsersPropType
   };
 
-  static async fetchData(params, store, client) {
+  static async fetchData(router, store, client) {
     const state = store.getState();
 
     const currentUserId = state.getIn(['current_user', 'id']);

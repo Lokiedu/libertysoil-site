@@ -62,14 +62,14 @@ export class SchoolPage extends React.Component {
     users: MapOfUsersPropType.isRequired
   };
 
-  static async fetchData(params, store, client) {
-    let school = client.getSchool(params.school_name);
-    const posts = client.schoolPosts(params.school_name);
+  static async fetchData(router, store, client) {
+    let school = client.getSchool(router.params.school_name);
+    const posts = client.schoolPosts(router.params.school_name);
 
     try {
       school = await school;
     } catch (e) {
-      store.dispatch(addSchool({ url_name: params.school_name }));
+      store.dispatch(addSchool({ url_name: router.params.school_name }));
 
       return 404;
     }

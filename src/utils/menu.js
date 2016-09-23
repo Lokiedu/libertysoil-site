@@ -20,7 +20,7 @@ export class MenuTree {
    * Menu item format:
    *  {
    *    name: 'Name',
-   *    path: '/path',
+   *    path: '/path', // string or regexp
    *    children: [] // optional array of menu items
    *  }
    * @param {Object[]} items An array of menu items.
@@ -47,7 +47,9 @@ export class MenuTree {
 
   find(currentPath, items) {
     for (const item of items) {
-      if (item.path === currentPath) {
+      const same = (item.regexp && currentPath.match(item.regexp) !== null) ||
+                    item.path === currentPath;
+      if (same) {
         return item;
       }
 
@@ -86,7 +88,7 @@ export const toolsMenu = new MenuTree([
     name: 'Tags',
     path: '/tools/tags',
     children: [
-      { name: 'Schools', path: '/tools/schools' }
+      { name: 'Schools', path: '/tools/schools', regexp: /\/tools\/schools/ }
     ]
   },
   {
