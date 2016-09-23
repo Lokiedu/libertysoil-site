@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { find } from 'lodash';
 
 import {
   ArrayOfUsersId as ArrayOfUsersIdPropType,
@@ -62,8 +61,7 @@ export default class FollowButton extends React.Component {
       return null;  // do not allow to follow one's self
     }
 
-    const is_followed = find(following, user.id);
-    if (is_followed) {
+    if (following.includes(user.id)) {
       return <button className="button button-wide button-yellow" onClick={this.unfollowUser}>Following</button>;
     }
 
