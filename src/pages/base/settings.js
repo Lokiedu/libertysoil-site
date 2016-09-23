@@ -193,7 +193,7 @@ export default class BaseSettingsPage extends React.Component {
                   </div>
                   <div className="paper layout">
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                        {children}
+                      {children}
                     </div>
                     <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
                       <div className="tabs tabs-theme_settings">
