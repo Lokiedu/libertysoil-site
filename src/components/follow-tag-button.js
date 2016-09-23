@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
+import { omit } from 'lodash';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
@@ -34,7 +35,6 @@ export default class FollowTagButton extends React.Component {
   static displayName = 'FollowButton';
   static propTypes = {
     current_user: CurrentUserPropType,
-    // {tagName: tag}
     followed_tags: PropTypes.shape({}),
     tag: PropTypes.string,
     triggers: PropTypes.shape({
@@ -101,9 +101,7 @@ export default class FollowTagButton extends React.Component {
       return null;
     }
 
-    const buttonProps = { ...props };
-    delete buttonProps.tag;
-    delete buttonProps.triggers;
+    const buttonProps = omit(props, Object.keys(FollowTagButton.propTypes));
 
     // If followTag or unfollowTag was performed
     if (status !== STATUS_NOT_TOUCHED) {
