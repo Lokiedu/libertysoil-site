@@ -20,7 +20,7 @@ import _ from 'lodash';
 
 import * as a from '../actions';
 
-const initialState = i.Map({
+export const initialState = i.Map({
   id: null,
   hashtags: i.List([]),
   geotags: i.List([]),
@@ -46,25 +46,9 @@ export default function reducer(state = initialState, action) {
       const oldUid = state.get('id');
       const newUid = action.user ? action.user.id : null;
 
-
       // UID is changed. means logout or re-login. Do the cleanup
       if (oldUid !== newUid) {
-        state = state.withMutations((state) => {
-          state
-            .set('id', newUid)
-            .set('hashtags', i.List([]))
-            .set('geotags', i.List([]))
-            .set('schools', i.List([]))
-            .set('followed_hashtags', i.Map({}))
-            .set('followed_schools', i.Map({}))
-            .set('followed_geotags', i.Map({}))
-            .set('liked_hashtags', i.Map({}))
-            .set('liked_schools', i.Map({}))
-            .set('liked_geotags', i.Map({}))
-            .set('post_subscriptions', i.List([]))
-            .set('suggested_users', i.List([]))
-            .set('recent_tags', i.fromJS({ hashtags: [], schools: [], geotags: [] }));
-        });
+        state = initialState.set('id', newUid);
       }
 
       if (newUid) {
