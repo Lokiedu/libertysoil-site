@@ -79,7 +79,7 @@ export default class BaseSettingsPage extends React.Component {
    */
   handleChange = (command) => {
     if (command instanceof Command) {
-      const index = findIndex(this.commands, { name: command.name });
+      const index = findIndex(this.commands, c => c.title === command.title);
 
       if (index >= 0) {
         this.commands[index] = command;
