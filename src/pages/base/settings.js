@@ -73,6 +73,10 @@ export default class BaseSettingsPage extends React.Component {
     this.head._clearPreview();
   }
 
+  /**
+   * Receives all commands to execute right after click on "Save" button
+   * @param {Command} command  The command to execute
+   */
   handleChange = (command) => {
     if (command instanceof Command) {
       const index = findIndex(this.commands, { name: command.name });
@@ -90,8 +94,8 @@ export default class BaseSettingsPage extends React.Component {
     }
   };
 
-  /*
-    Processes all active commands received by handleChange()
+  /**
+   * Processes all active commands (command.params.status == true) received by handleChange()
    */
   handleSave = async () => {
     this.setState({ processing: true });
