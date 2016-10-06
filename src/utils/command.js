@@ -15,26 +15,20 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export class Command {
-  name;
-  status;
-  run;
-  args;
+export function Command(title = 'Command', run = () => {}, { ...params } = {}) {
+  // use 'title' instead of 'name' in order to avoid conflict with vanilla js Function.name
+  this.title = title;
+  this.run = run;
 
-  constructor(name = 'Command', run = () => {}, { ...params } = { status: true, args: [] }) {
-    this.name = name;
-    this.run = run;
+  if (params.status === undefined) {
+    this.status = true;
+  } else {
+    this.status = params.status;
+  }
 
-    if (params.status === undefined) {
-      this.status = true;
-    } else {
-      this.status = params.status;
-    }
-
-    if (params.args === undefined) {
-      this.args = [];
-    } else {
-      this.args = params.args;
-    }
+  if (params.args === undefined) {
+    this.args = [];
+  } else {
+    this.args = params.args;
   }
 }

@@ -70,19 +70,16 @@ class SettingsPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  handleChange = (commandName, save) => {
+  handleChange = (command) => {
     if (this.base) {
-      const command = new Command(
-        commandName,
-        save
-      );
-
       this.base.handleChange(command);
     }
   };
 
+  // BasicInfoForm uses react-inform's onChange that can't generate Command independently
   handleFormChange = () => {
-    this.handleChange('basic-info-form', this.handleSave);
+    const command = new Command('basic-info-form', this.handleSave);
+    this.handleChange(command);
   };
 
   handleSave = async () => {
