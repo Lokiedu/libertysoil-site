@@ -1,0 +1,195 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+@tablet-flexible: ~"(max-width: 740px)";
+@tablet: ~"(min-width: 740px) and (max-width: 960px)";
+@narrow-desktop: ~"(min-width: 960px) and (max-width: 1140px)";
+@standard-desktop: ~"(min-width: 1140px) and (max-width: 1340px)";
+@widescreen-desktop: ~"(min-width: 1340px)";
+
+@col-base: 60px;
+@margin-base: 20px;
+
+.media(@query, @rules) {
+  @media @query {
+    @rules();
+  }
+}
+
+.margin(@size) {
+  .margin--@{size} {
+    margin: @margin-base;
+
+    &--h {
+      margin: (@margin-base / 2);
+    }
+
+    &--q {
+      margin: (@margin-base / 4);
+    }
+  }
+}
+
+.margin(@size, @position) {
+  .margin--@{size}_@{position} {
+    margin-@{position}: @margin-base;
+
+    &--h {
+      margin-@{position}: (@margin-base / 2);
+    }
+
+    &--q {
+      margin-@{position}: (@margin-base / 4);
+    }
+  }
+}
+
+.generate-margins(@size) {
+  .margin(@size, ~"left");
+  .margin(@size, ~"right");
+  .margin(@size, ~"top");
+  .margin(@size, ~"bottom");
+  .margin(@size);
+}
+
+.column(@count: 1) {
+  display: block;
+  width: (@count * @col-base);
+  flex: 0 0 (@count * @col-base);
+}
+
+.generate-columns(@size, @n) {
+  // inner functions use '_name' and '__name' syntax to avoid misleading effects
+
+  // to create 100% width columns
+  .show-if-true(@_size, @_n, @_i: (@_n + 1)) when (@_i = (@_n + 1)) {
+    .show-col-100pct(@__size) {
+      .col-@{__size}-100pct {
+        display: block;
+        width: 100%;
+        flex: 0 0 100%;
+      }
+    }
+
+    .show-col-100pct(@_size);
+  }
+
+  .show-if-true(@_size, @_n, @_i: 1) when (@_i =< @_n) {
+    .col-@{size}-@{_i} {
+      .column(@_i);
+      
+      &-h {
+        .column((@_i / 2));
+      }
+      
+      &-q {
+        .column((@_i / 4));
+      }
+    }
+
+    .show-if-true(@_size, @_n, (@_i + 1));
+  }
+
+  .show-if-true(@_size: @size, @n);
+}
+
+.generate-xs-columns() {
+  .col-xs {
+    display: block;
+    width: 100%;
+    flex: 0 0 100%;
+  }
+}
+
+.hide-xs-columns() {
+  @media not all and @tablet-flexible {
+    .col-xs {
+      display: none;
+    }
+  }
+}
+
+.hide-columns-if-not(@size, @media-query, @n) {
+  // inner functions use '_name' and '__name' syntax to avoid misleading effects
+
+  // generates the final classes selector
+  .generate-col-classes(@_size, @_n, @_temp-selector, 1) {
+    @__step: ~".col-@{_size}-1";
+    @__this-step-col: ~"@{__step}, @{__step}-h, @{__step}-q";
+    @__col-100pct: ~".col-@{_size}-100pct";
+    @__common-col: ~".col-@{_size}";
+    @col-classes: ~"@{_temp-selector}, @{__this-step-col}, @{__col-100pct}, @{__common-col}";
+  }
+
+  .generate-col-classes(@_size, @_n, @_selector, @_i) when (@_i > 1) {
+    @__step: ~".col-@{_size}-@{_i}";
+    @__temp-selector: ~"@{_selector}, @{__step}, @{__step}-h, @{__step}-q";
+
+    .generate-col-classes(@_size, @_n, @__temp-selector, (@_i - 1));
+  }
+
+  // generates first (temp) classes selector
+  .generate-col-classes(@_size, @_n, @_i: @_n) {
+    @__step: ~".col-@{_size}-@{_n}";
+    @__temp-selector: ~"@{__step}, @{__step}-h, @{__step}-q";
+
+    .generate-col-classes(@_size, @_n, @__temp-selector, (@_i - 1));
+  }
+
+  @media not all and @media-query {
+    .generate-col-classes(@size, @n);
+
+    @{col-classes} {
+      display: none;
+    }
+  }
+}
+
+.hide-xs-columns();
+.hide-columns-if-not(@size: ~"s", @media-query: @tablet, @n: 23);
+.hide-columns-if-not(@size: ~"m", @media-query: @narrow-desktop, @n: 23);
+.hide-columns-if-not(@size: ~"l", @media-query: @standard-desktop, @n: 23);
+.hide-columns-if-not(@size: ~"xl", @media-query: @widescreen-desktop, @n: 23);
+
+.generate-xs-columns();
+.media(@tablet, { .generate-columns(@size: ~"s", @n: 23); });
+.media(@narrow-desktop, { .generate-columns(@size: ~"m", @n: 23); });
+.media(@standard-desktop, { .generate-columns(@size: ~"l", @n: 23); });
+.media(@widescreen-desktop, { .generate-columns(@size: ~"xl", @n: 23); });
+
+.media(@tablet-flexible, { .generate-margins(@size: ~"xs"); });
+.media(@tablet, { .generate-margins(@size: ~"s"); });
+.media(@narrow-desktop, { .generate-margins(@size: ~"m"); });
+.media(@standard-desktop, { .generate-margins(@size: ~"l"); });
+.media(@widescreen-desktop, { .generate-margins(@size: ~"xl"); });
+
+.layout-v2 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
+  border: 1px solid black;
+  
+  @media not all and @tablet-flexible {
+    flex: 0 0 120px;
+  }
+
+  > * {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: (@col-base * 2);
+  }
+}
