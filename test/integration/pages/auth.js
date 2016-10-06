@@ -118,9 +118,7 @@ describe('Auth page', () => {
       await user.destroy();
     });
 
-    it('should check on email currently taken', (done) => {
-      done();
-      return;
+    xit('should check on email currently taken', (done) => {
       const testComponent = (
         <WrappedRegister
           onRegisterUser={() => {}}
@@ -139,9 +137,7 @@ describe('Auth page', () => {
       }, 100);
     });
 
-    it('Should call "registerUser" trigger with no validation error', (done) => {
-      done();
-      return;
+    xit('Should call "registerUser" trigger with no validation error', (done) => {
       const username = 'test2';
       const testComponent = (
         <WrappedRegister
