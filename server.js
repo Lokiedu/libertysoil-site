@@ -42,7 +42,6 @@ import { Provider } from 'react-redux';
 import { Router, RouterContext, match, useRouterHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import Helmet from 'react-helmet';
-import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
@@ -279,7 +278,14 @@ app.use(async function reactMiddleware(ctx) {
         ctx.status = fetchHandler.status;
       }
 
-      const metadata = ExecutionEnvironment.canUseDOM ? Helmet.peek() : Helmet.rewind();
+      // taken from https://github.com/facebook/fbjs/blob/df9047fec0bbd1e64635ae369c045975777cba7c/packages/fbjs/src/core/ExecutionEnvironment.js
+      const canUseDOM = !!(
+        typeof window !== 'undefined' &&
+        window.document &&
+        window.document.createElement
+      );
+
+      const metadata = canUseDOM ? Helmet.peek() : Helmet.rewind();
 
       ctx.staus = 200;
       ctx.body = template({ state, html, metadata });
