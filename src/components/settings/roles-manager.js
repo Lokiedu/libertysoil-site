@@ -18,8 +18,10 @@
 import React, { PropTypes } from 'react';
 import { uniqueId, pick } from 'lodash';
 
+import { Command } from '../../utils/command';
 import Role from './role';
 import { ROLES } from '../../consts/profileConstants';
+
 
 export default class RolesManager extends React.Component {
   static displayName = 'RolesManager';
@@ -61,14 +63,23 @@ export default class RolesManager extends React.Component {
     this.setState({ rolesAmount: this.roles.length });
   }
 
+  dispatchChange = () => {
+    const command = new Command('roles', this.handleSave);
+    this.props.onChange(command);
+  };
+
   handleSave = async () => {
     const roles = this.getRoles();
+    let success = false;
 
     try {
       await this.props.onSave({ more: { roles } });
+      success = true;
     } catch (e) {
       this.props.onError(e);
     }
+
+    return { success };
   };
 
   getRoles = () => {
@@ -83,13 +94,13 @@ export default class RolesManager extends React.Component {
     this.roles.splice(index, 1);
     this.setState({ rolesAmount: this.state.rolesAmount - 1 });
 
-    this.props.onChange('roles', this.handleSave);
+    this.dispatchChange();
   };
 
   onChange = ({ index, name, value }) => {
     this.roles[index][name] = value;
 
-    this.props.onChange('roles', this.handleSave);
+    this.dispatchChange();
   };
 
   onAdd = () => {
@@ -100,7 +111,7 @@ export default class RolesManager extends React.Component {
     });
     this.setState({ rolesAmount: this.state.rolesAmount + 1 });
 
-    this.props.onChange('roles', this.handleSave);
+    this.dispatchChange();
   }
 
   render() {
