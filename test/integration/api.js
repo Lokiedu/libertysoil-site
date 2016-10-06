@@ -551,9 +551,9 @@ describe('api v.1', () => {
           let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
 
           let post1 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
-          post1.hashtags().attach(hashtag);
+          await post1.hashtags().attach(hashtag);
           let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
-          post2.hashtags().attach(hashtag);
+          await post2.hashtags().attach(hashtag);
 
           await expect(
             {url: `/api/v1/user/tags`, session: sessionId},
