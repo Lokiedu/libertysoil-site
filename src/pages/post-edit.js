@@ -80,8 +80,7 @@ class PostEditPage extends React.Component {
       const post = await client.postInfo(router.params.uuid);
       store.dispatch(addPost(post));
     } catch (e) {
-      store.dispatch(addPost({ error: true, id: router.params.uuid, user: {} }));
-
+      store.dispatch(addPost({ error: true, id: router.params.uuid }));
       return 404;
     }
 
@@ -90,7 +89,6 @@ class PostEditPage extends React.Component {
     }
 
     await trigger.loadUserRecentTags();
-
     return 200;
   }
 
@@ -119,14 +117,12 @@ class PostEditPage extends React.Component {
     } = this.props;
 
     const postId = this.props.params.uuid;
-
     if (!posts.get(postId)) {
       // not loaded yet
       return null;
     }
 
     const post = posts.get(postId);
-
     if (post.get('error')) { // TODO: Proper 404 handling
       return <NotFound />;
     }
