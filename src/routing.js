@@ -52,6 +52,7 @@ import BaseToolsPage from './pages/base/tools';
 import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
+import PasswordToolPage from './pages/tools/password-tool';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -121,7 +122,12 @@ export function getRoutes(authHandler, fetchHandler) {
           <IndexRedirect to="following" />
           <Route component={PeopleToolPage} path="following" onEnter={withAuth} />
         </Route>
+        <Route path="account">
+          <IndexRedirect to="password" />
+          <Route component={PasswordToolPage} path="password" onEnter={withAuth} />
+        </Route>
       </Route>
+      <Redirect from="/settings/password" to="/tools/account/password" />
     </Route>
   );
 }

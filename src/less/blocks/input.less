@@ -49,6 +49,33 @@
     border-color: #f2f2f2;
     background: #f2f2f2;
   }
+
+  &-narrow {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+}
+
+.input_wrap {
+  padding-right: 40px;
+  width: 100%;
+
+  &-error {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #fb4d49;
+    }
+  }
 }
 
 .input-textarea {
@@ -67,4 +94,8 @@
 .input-block {
   display: block;
   width: 100%;
+}
+
+.input__label {
+  padding: 7px 10px;
 }

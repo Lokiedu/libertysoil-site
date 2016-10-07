@@ -139,5 +139,12 @@ export const toolsMenu = new MenuTree([
     children: [
       { name: 'Following', path: '/tools/people/following' }
     ]
+  },
+  {
+    name: 'Account',
+    path: '/tools/account',
+    children: [
+      { name: 'Password', path: '/tools/account/password' }
+    ]
   }
 ]);
