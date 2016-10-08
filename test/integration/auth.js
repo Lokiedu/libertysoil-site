@@ -29,6 +29,7 @@ describe('routes that are unavailable for guests', function () {
       '/',
       '/settings',
       '/settings/password',
+      '/tools/account/password',
       '/settings/followers'
     ];
 
