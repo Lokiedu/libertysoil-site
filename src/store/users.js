@@ -100,8 +100,16 @@ export default function reducer(state = initialState, action) {
 
     case a.posts.SET_RELATED_POSTS: {
       const users = _.keyBy(action.posts.map(post => post.user), 'id');
-
       state = state.mergeDeep(i.fromJS(users));
+
+      break;
+    }
+
+    case a.tools.TOOLS__SET_FOLLOWED_USERS: {
+      const users = _.keyBy(action.users, 'id');
+      state = state.mergeDeep(i.fromJS(users));
+
+      break;
     }
   }
 

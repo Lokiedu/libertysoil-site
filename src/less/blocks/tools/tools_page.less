@@ -67,21 +67,15 @@
     }
   }
 
-  // A universal element for items in collection (schools, posts, etc.)
-  &__item {
-    display: block;
-    margin-bottom: 15px;
-    padding: 20px;
-    background-color: white;
-    border-bottom: 2px solid #EDEDED;
-
-    &-selected {
-      background: #FD9315;
-      color: white;
-    }
+  // Column for lists of things (schools, users, posts, etc.)
+  &__list_col {
+    margin-right: @space;
+    max-width: 400px;
+    flex: 1 1;
   }
 
-  &__paper:extend(&__item) {
-    width: 100%;
+  // Column for the selected item's details.
+  &__details_col {
+    flex: 1 1;
   }
 }

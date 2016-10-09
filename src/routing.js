@@ -52,6 +52,7 @@ import GeotagEditPage from './pages/geotag-edit';
 import BaseToolsPage from './pages/base/tools';
 import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
+import PeopleToolPage from './pages/tools/people-tool';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -117,6 +118,10 @@ export function getRoutes(authHandler, fetchHandler) {
         <Route path="my">
           <IndexRedirect to="posts" />
           <Route component={MyPostsToolPage} path="posts" onEnter={withAuth} />
+        </Route>
+        <Route path="people">
+          <IndexRedirect to="following" />
+          <Route component={PeopleToolPage} path="following" onEnter={withAuth} />
         </Route>
       </Route>
     </Route>
