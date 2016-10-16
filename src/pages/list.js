@@ -53,7 +53,7 @@ import Button from '../components/button';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import {
   resetCreatePostForm,
   updateCreatePostForm
@@ -107,7 +107,7 @@ export class List extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.river.length > 4) {
+    if (this.props.river.size > 4) {
       this.setState({ displayLoadMore: true });
     }
   }
@@ -125,7 +125,7 @@ export class List extends React.Component {
     const { river } = this.props;
 
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    await triggers.loadPostRiver(river.length);
+    await triggers.loadPostRiver(river.size);
   }
 
   loadMore = async (isVisible) => {
@@ -133,11 +133,11 @@ export class List extends React.Component {
 
     const triggers = new ActionsTrigger(client, dispatch);
 
-    if (isVisible && !ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+    if (isVisible && !ui.getIn(['progress', 'loadRiverInProgress']) && this.state.downloadAttemptsCount < 1) {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      const res = await triggers.loadPostRiver(river.length);
+      const res = await triggers.loadPostRiver(river.size);
 
       let displayLoadMore = false;
       if (res === false) { // bad response
@@ -159,7 +159,8 @@ export class List extends React.Component {
     const {
       comments,
       current_user,
-      i_am_following,
+      create_post_form,
+      following,
       is_logged_in,
       posts,
       resetCreatePostForm,
@@ -170,6 +171,16 @@ export class List extends React.Component {
       users
     } = this.props;
 
+    const comments_js = comments.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const river_js = river.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+
     const actions = { resetCreatePostForm, updateCreatePostForm };
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -179,7 +190,7 @@ export class List extends React.Component {
         <div className="layout layout-align_center layout__space layout__space-double">
           <VisibilitySensor onChange={this.loadMore}>
             <Button
-              title="Load more..." waiting={ui.progress.loadRiverInProgress}
+              title="Load more..." waiting={ui.getIn('progress', 'loadRiverInProgress')}
               onClick={this.loadPostRiverManually}
             />
           </VisibilitySensor>
@@ -192,42 +203,42 @@ export class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header current_user={current_user} is_logged_in={is_logged_in}>
+        <Header current_user={current_user_js} is_logged_in={is_logged_in}>
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={values(schools)}
-                  defaultText={this.props.create_post_form.text}
+                  allSchools={values(schools_js)}
+                  defaultText={create_post_form_js.text}
                   triggers={triggers}
-                  userRecentTags={current_user.recent_tags}
-                  {...this.props.create_post_form}
+                  userRecentTags={current_user_js.recent_tags}
+                  {...create_post_form_js}
                 />
                 <River
-                  river={river}
-                  posts={posts}
-                  users={users}
-                  current_user={current_user}
+                  river={river_js}
+                  posts={posts_js}
+                  users={users_js}
+                  current_user={current_user_js}
                   triggers={triggers}
-                  ui={ui}
-                  comments={comments}
+                  ui={ui_js}
+                  comments={comments_js}
                 />
                 {loadMore}
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...this.props.create_post_form} truncated />
+                <AddedTags {...create_post_form_js} truncated />
                 <SideSuggestedUsers
-                  current_user={current_user}
+                  current_user={current_user_js}
                   i_am_following={i_am_following}
                   triggers={triggers}
-                  users={current_user.suggested_users}
+                  users={current_user_js.suggested_users}
                 />
               </SidebarAlt>
             </PageBody>
@@ -240,7 +251,30 @@ export class List extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('following'),
+  state => state.get('posts'),
+  state => state.get('river'),
+  state => state.get('schools'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, following, posts, river, schools, users, ui) => ({
+    comments,
+    create_post_form,
+    following,
+    posts,
+    river,
+    schools,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(List);
