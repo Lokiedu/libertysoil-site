@@ -47,7 +47,7 @@ import River from '../components/river_of_posts';
 import BaseTagPage from './base/tag';
 
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_LOCATION } from '../consts/tags';
 
 export class GeotagPage extends Component {
@@ -95,6 +95,7 @@ export class GeotagPage extends Component {
     const {
       ui,
       comments,
+      create_post_form,
       is_logged_in,
       current_user,
       posts,
@@ -106,11 +107,21 @@ export class GeotagPage extends Component {
       schools
     } = this.props;
 
+    const comments_js = comments.toJS(); // FIXME #662
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const geotags_js = geotags.toJS(); // FIXME #662
+    const geotag_posts_js = geotag_posts.toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const geotag = geotags[this.props.params.url_name];
+    const geotag = geotags_js[this.props.params.url_name];
     const title = geotag ? geotag.name : this.props.params.url_name;
 
     if (!geotag) {
@@ -121,37 +132,60 @@ export class GeotagPage extends Component {
       return <NotFound />;
     }
 
-    const geotagPosts = geotag_posts[this.props.params.url_name] || [];
+    const geotagPosts = geotag_posts_js[this.props.params.url_name] || [];
 
     return (
       <BaseTagPage
-        current_user={current_user}
+        current_user={current_user_js}
         is_logged_in={is_logged_in}
         params={this.props.params}
         tag={geotag}
         type={TAG_LOCATION}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
+        schools={values(schools_js)}
         postsAmount={geotagPosts.length}
-        create_post_form={this.props.create_post_form}
+        create_post_form={create_post_form_js}
       >
         <Helmet title={`${title} posts on `} />
         <River
-          current_user={current_user}
-          posts={posts}
+          current_user={current_user_js}
+          posts={posts_js}
           river={geotagPosts}
           triggers={triggers}
-          comments={comments}
-          ui={ui}
-          users={users}
+          comments={comments_js}
+          ui={ui_js}
+          users={users_js}
         />
       </BaseTagPage>
     );
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('geotags'),
+  state => state.get('geotag_posts'),
+  state => state.get('posts'),
+  state => state.get('schools'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, geotags, geotag_posts, posts, schools, users, ui) => ({
+    comments,
+    create_post_form,
+    geotags,
+    geotag_posts,
+    posts,
+    schools,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagPage);
