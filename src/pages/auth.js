@@ -25,7 +25,7 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import {
   Page,
@@ -79,22 +79,25 @@ export class Auth extends React.Component {
       ui
     } = this.props;
 
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let renderedMessages;
 
-    if (messages.length) {
+    if (messages_js.length) {
       renderedMessages = (
         <div className="page__messages">
           <div className="page__body page__body-small">
-            <Messages messages={messages} removeMessage={triggers.removeMessage} />
+            <Messages messages={messages_js} removeMessage={triggers.removeMessage} />
           </div>
         </div>
       );
     }
 
-    const registration_success = ui.registrationSuccess;
+    const registration_success = ui.get('registrationSuccess');
 
     return (
       <div className="font-open_sans font-light">
@@ -102,7 +105,7 @@ export class Auth extends React.Component {
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             is_logged_in={is_logged_in}
-            current_user={current_user}
+            current_user={current_user_js}
             className="header-transparent"
           >
             <HeaderLogo />
@@ -138,4 +141,15 @@ export class Auth extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Auth);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('ui'),
+  (current_user, messages, ui) => ({
+    messages,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(Auth);
