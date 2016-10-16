@@ -36,7 +36,7 @@ import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_PLANET } from '../consts/tags';
 import Continent from '../components/continent';
 
@@ -62,16 +62,20 @@ class GeotagCloudPage extends Component {
       geotag_cloud
     } = this.props;
 
-    const geotagsByContinents = geotag_cloud.map(continent => {
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const geotags_js = geotags.toJS(); // FIXME #662
+    const geotag_cloud_js = geotag_cloud.toJS(); // FIXME #662
+
+    const geotagsByContinents = geotag_cloud_js.map(continent => {
       return Object.assign(continent, {
-        geotags: continent.geotags.map(urlName => geotags[urlName])
+        geotags: continent.geotags.map(urlName => geotags_js[urlName])
       });
     });
 
     return (
       <div>
         <Helmet title="Geotags of " />
-        <Header current_user={current_user} is_logged_in={is_logged_in}>
+        <Header current_user={current_user_js} is_logged_in={is_logged_in}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Geotags">
@@ -81,7 +85,7 @@ class GeotagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
@@ -107,4 +111,15 @@ class GeotagCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(GeotagCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('geotags'),
+  state => state.get('geotag_cloud'),
+  (current_user, geotags, geotag_cloud) => ({
+    geotags,
+    geotag_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(GeotagCloudPage);
