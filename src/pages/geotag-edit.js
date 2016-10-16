@@ -27,7 +27,7 @@ import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -100,6 +100,7 @@ class GeotagEditPage extends React.Component {
   render() {
     const {
       is_logged_in,
+      create_post_form,
       current_user,
       resetCreatePostForm,
       updateCreatePostForm,
@@ -109,11 +110,17 @@ class GeotagEditPage extends React.Component {
       messages
     } = this.props;
 
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const geotags_js = geotags.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const geotag = geotags[this.props.params.url_name];
+    const geotag = geotags_js[this.props.params.url_name];
     const title = geotag ? geotag.name : this.props.params.url_name;
 
     if (!geotag) {
@@ -128,14 +135,14 @@ class GeotagEditPage extends React.Component {
       <BaseTagPage
         editable
         params={params}
-        current_user={current_user}
+        current_user={current_user_js}
         tag={geotag}
         type={TAG_LOCATION}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
-        create_post_form={this.props.create_post_form}
+        schools={values(schools_js)}
+        create_post_form={create_post_form_js}
       >
         <Helmet title={`${title} posts on `} />
         <div className="paper">
@@ -143,7 +150,7 @@ class GeotagEditPage extends React.Component {
             <TagEditForm
               tag={geotag}
               type={TAG_LOCATION}
-              messages={messages}
+              messages={messages_js}
               triggers={triggers}
               saveHandler={this.saveGeotag}
               processing={this.state.processing}
@@ -155,7 +162,22 @@ class GeotagEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('geotags'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, geotags, messages, schools) => ({
+    create_post_form,
+    geotags,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagEditPage);
