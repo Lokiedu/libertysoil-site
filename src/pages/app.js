@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 
-import { defaultSelector } from '../selectors';
+import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 
 const GAInitializer = ga.Initializer;
@@ -64,7 +64,7 @@ export class App extends React.Component {
     }
 
     let className = 'page';
-    if (ui.sidebarIsVisible) {
+    if (ui.get('sidebarIsVisible')) {
       className += ' page-with_sidebar';
     }
 
@@ -78,4 +78,9 @@ export class App extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(App);
+const selector = createSelector(
+  state => state.get('ui'),
+  ui => ({ ui })
+);
+
+export default connect(selector)(App);
