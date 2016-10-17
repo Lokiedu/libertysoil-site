@@ -126,6 +126,7 @@
     "enzyme": "^2.3.0",
     "eslint": "^3.0.1",
     "eslint-plugin-babel": "~3.3.0",
+    "eslint-plugin-flowtype": "^2.20.0",
     "eslint-plugin-import": "~1.16.0",
     "eslint-plugin-lodash": "^1.10.3",
     "eslint-plugin-prefer-object-spread": "^1.1.0",
