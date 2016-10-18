@@ -28,6 +28,12 @@ import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { initState } from '../store';
 
+/* to get rid of throwed errors by default */
+if (process.env.NODE_ENV === 'development') {
+  const t = require('tcomb');
+  t.fail = msg => console.error('[tcomb] '.concat(msg)); // eslint-disable-line no-console
+}
+
 bluebird.longStackTraces();
 window.Promise = bluebird;
 
