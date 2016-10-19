@@ -22,7 +22,7 @@ import Helmet from 'react-helmet';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector } from '../selectors';
 
 import {
   Page,
@@ -57,7 +57,7 @@ export const SuccessMessage = () => {
   );
 };
 
-export class Form extends React.Component {
+export class PasswordResetPage extends React.Component {
 
   static propTypes = {
     ui: PropTypes.shape({
@@ -77,11 +77,14 @@ export class Form extends React.Component {
   };
 
   render() {
-    const { is_logged_in } = this.props;
+    const {
+      is_logged_in,
+      ui
+    } = this.props;
 
     let content = <ResetForm submitHandler={this.submitHandler} />;
 
-    if (this.props.ui.submitResetPassword) {
+    if (ui.get('submitResetPassword')) {
       content = <SuccessMessage />;
     }
 
@@ -118,4 +121,13 @@ export class Form extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Form);
+const selector = createSelector(
+  state => !!state.getIn(['current_user', 'id']),
+  state => state.get('ui'),
+  (is_logged_in, ui) => ({
+    is_logged_in,
+    ui
+  })
+);
+
+export default connect(selector)(PasswordResetPage);
