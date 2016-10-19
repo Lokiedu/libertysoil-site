@@ -26,7 +26,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class SettingsEmailPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -70,6 +70,11 @@ class SettingsEmailPage extends React.Component {
       followers
     } = this.props;
 
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+
     if (!is_logged_in) {
       return false;
     }
@@ -79,11 +84,11 @@ class SettingsEmailPage extends React.Component {
 
     return (
       <BaseSettingsPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         is_logged_in={is_logged_in}
-        messages={messages}
+        messages={messages_js}
         triggers={triggers}
       >
         <Helmet title="Email Settings on " />
@@ -93,7 +98,7 @@ class SettingsEmailPage extends React.Component {
             <form className="paper__page" ref={c => this.form = c}>
               <label className="layout__row layout__row-small" htmlFor="mute_all_posts">
                 <input
-                  checked={current_user.user.more.mute_all_posts}
+                  checked={current_user_js.user.more.mute_all_posts}
                   id="mute_all_posts"
                   name="mute_all_posts"
                   type="checkbox"
@@ -109,4 +114,17 @@ class SettingsEmailPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsEmailPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsEmailPage);
