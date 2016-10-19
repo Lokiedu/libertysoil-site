@@ -27,7 +27,7 @@ import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -112,19 +112,26 @@ class HashtagEditPage extends React.Component {
     const {
       is_logged_in,
       current_user,
+      create_post_form,
       resetCreatePostForm,
       updateCreatePostForm,
       params,
       hashtags,
       schools,
-      messages
+      messages,
     } = this.props;
+
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const hashtags_js = hashtags.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags[params.tag];
+    const tag = hashtags_js[params.tag];
 
     if (!tag) {
       return null;
@@ -135,14 +142,14 @@ class HashtagEditPage extends React.Component {
         ref={c => this.base = c}
         editable
         params={params}
-        current_user={current_user}
+        current_user={current_user_js}
         tag={tag}
         type={TAG_HASHTAG}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
-        create_post_form={this.props.create_post_form}
+        schools={values(schools_js)}
+        create_post_form={create_post_form_js}
       >
         <Helmet title={`"${tag.name}" posts on `} />
         <div className="paper">
@@ -150,7 +157,7 @@ class HashtagEditPage extends React.Component {
             <TagEditForm
               tag={tag}
               type={TAG_HASHTAG}
-              messages={messages}
+              messages={messages_js}
               triggers={triggers}
               saveHandler={this.saveHashtag}
               processing={this.state.processing}
@@ -162,7 +169,22 @@ class HashtagEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('hashtags'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, hashtags, messages, schools) => ({
+    create_post_form,
+    hashtags,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(HashtagEditPage);
