@@ -44,7 +44,7 @@ import NotFound from './not-found';
 import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
 
 
@@ -89,6 +89,7 @@ export class SchoolPage extends React.Component {
   render() {
     const {
       comments,
+      create_post_form,
       ui,
       is_logged_in,
       current_user,
@@ -99,11 +100,22 @@ export class SchoolPage extends React.Component {
       school_posts,
       users
     } = this.props;
+
+    const comments_js = comments.toJS(); // FIXME #662
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const school_posts_js = school_posts.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools, { url_name: this.props.params.school_name });
+    const school = find(schools_js, { url_name: this.props.params.school_name });
 
     if (!school) {
       return null; // not loaded yet
@@ -113,37 +125,58 @@ export class SchoolPage extends React.Component {
       return <NotFound />;
     }
 
-    const schoolPosts = school_posts[school.id] || [];
+    const schoolPosts = school_posts_js[school.id] || [];
 
     return (
       <BaseTagPage
         params={this.props.params}
-        current_user={current_user}
+        current_user={current_user_js}
         tag={school}
         type={TAG_SCHOOL}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
+        schools={values(schools_js)}
         postsAmount={schoolPosts.length}
-        create_post_form={this.props.create_post_form}
+        create_post_form={create_post_form_js}
       >
         <Helmet title={`Posts about ${school.name} on `} />
         <River
-          current_user={current_user}
-          posts={posts}
+          current_user={current_user_js}
+          posts={posts_js}
           river={schoolPosts}
           triggers={triggers}
-          users={users}
-          comments={comments}
-          ui={ui}
+          users={users_js}
+          comments={comments_js}
+          ui={ui_js}
         />
       </BaseTagPage>
     );
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('posts'),
+  state => state.get('school_posts'),
+  state => state.get('schools'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, create_post_form, posts, school_posts, schools, ui, users) => ({
+    comments,
+    create_post_form,
+    posts,
+    school_posts,
+    schools,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolPage);
