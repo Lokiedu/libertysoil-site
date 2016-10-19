@@ -46,7 +46,7 @@ import SidebarAlt from '../components/sidebarAlt';
 import EditPost from '../components/edit-post';
 import AddedTags from '../components/post/added-tags';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import {
   addPost,
@@ -113,49 +113,57 @@ class PostEditPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      posts
+      posts,
+      schools,
+      edit_post_form
     } = this.props;
+
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const edit_post_form_js = edit_post_form.toJS(); // FIXME #662
+
     const postId = this.props.params.uuid;
 
-    if (!(postId in posts)) {
+    if (!(postId in posts_js)) {
       // not loaded yet
       return null;
     }
 
-    const post = posts[postId];
+    const post = posts_js[postId];
 
     if (post.error) {
       return <NotFound />;
     }
 
-    if (post.user_id != current_user.id) {
+    if (post.user_id != current_user_js.id) {
       return null;
     }
 
     const actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const formState = this.props.edit_post_form;
+    const formState = edit_post_form_js;
 
     return (
       <div>
         <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
         <Header
           is_logged_in={is_logged_in}
-          current_user={current_user}
+          current_user={current_user_js}
         >
           <HeaderLogo small />
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <EditPost
                   actions={actions}
-                  allSchools={_.values(this.props.schools)}
-                  userRecentTags={current_user.recent_tags}
+                  allSchools={_.values(schools_js)}
+                  userRecentTags={current_user_js.recent_tags}
                   post={post}
                   triggers={triggers}
                   onDelete={this._handleDelete}
@@ -175,7 +183,20 @@ class PostEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('posts'),
+  state => state.get('schools'),
+  state => state.get('edit_post_form'),
+  (current_user, posts, schools, edit_post_form) => ({
+    posts,
+    schools,
+    edit_post_form,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetEditPostForm, updateEditPostForm }, dispatch)
 }))(PostEditPage);
