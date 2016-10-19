@@ -39,7 +39,7 @@ import { Command } from '../utils/command';
 import { addUser } from '../actions/users';
 import { addError } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { RolesManager } from '../components/settings';
 
@@ -116,13 +116,18 @@ class SettingsPage extends React.Component {
       followers
     } = this.props;
 
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+
     if (!is_logged_in) {
       return false;
     }
 
     let roles = [];
-    if (current_user.id && current_user.user.more && current_user.user.more.roles) {
-      roles = current_user.user.more.roles;
+    if (current_user_js.id && current_user_js.user.more && current_user_js.user.more.roles) {
+      roles = current_user_js.user.more.roles;
     }
 
     const client = new ApiClient(API_HOST);
@@ -131,17 +136,17 @@ class SettingsPage extends React.Component {
     return (
       <BaseSettingsPage
         ref={c => this.base = c}
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         is_logged_in={is_logged_in}
-        messages={messages}
+        messages={messages_js}
         triggers={triggers}
         onSave={this.handleSave}
       >
         <Helmet title="Your Profile Settings on " />
         <BasicInfoForm
-          current_user={current_user}
+          current_user={current_user_js}
           ref={c => this.form = c}
           onChange={this.handleFormChange}
         />
@@ -159,4 +164,17 @@ class SettingsPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsPage);
