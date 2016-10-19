@@ -37,7 +37,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -70,12 +70,18 @@ class SettingsFollowersPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      i_am_following,
       messages,
       following,
       followers,
       users
     } = this.props;
+
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
 
     if (!is_logged_in) {
       return false;
@@ -84,19 +90,19 @@ class SettingsFollowersPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let followingUsers = following[current_user.id] || [];
-    let followersUsers = followers[current_user.id] || [];
+    let followingUsers = following_js[current_user_js.id] || [];
+    let followersUsers = followers_js[current_user_js.id] || [];
 
-    followingUsers = followingUsers.map(user_id => users[user_id]);
-    followersUsers = followersUsers.map(user_id => users[user_id]);
+    followingUsers = followingUsers.map(user_id => users_js[user_id]);
+    followersUsers = followersUsers.map(user_id => users_js[user_id]);
 
     return (
       <BaseSettingsPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         is_logged_in={is_logged_in}
-        messages={messages}
+        messages={messages_js}
         triggers={triggers}
       >
         <Helmet title="Manage Followers on " />
@@ -108,7 +114,7 @@ class SettingsFollowersPage extends React.Component {
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user}
+              current_user={current_user_js}
               i_am_following={i_am_following}
               notFoundMessage="You are not following any users"
               triggers={triggers}
@@ -121,7 +127,7 @@ class SettingsFollowersPage extends React.Component {
           <h2 className="content__sub_title layout__row">Following you</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user}
+              current_user={current_user_js}
               i_am_following={i_am_following}
               notFoundMessage="No one follows you yet"
               triggers={triggers}
@@ -134,4 +140,19 @@ class SettingsFollowersPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsFollowersPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  state => state.get('users'),
+  (current_user, messages, following, followers, users) => ({
+    messages,
+    following,
+    followers,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsFollowersPage);
