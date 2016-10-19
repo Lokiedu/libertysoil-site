@@ -33,7 +33,7 @@ import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
 import {
   Page,
@@ -66,12 +66,16 @@ class SchoolCloudPage extends Component {
       school_cloud
     } = this.props;
 
-    const schoolsForCloud = school_cloud.map(id => schools[id]);
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const school_cloud_js = school_cloud.toJS(); // FIXME #662
+
+    const schoolsForCloud = school_cloud_js.map(id => schools_js[id]);
 
     return (
       <div>
         <Helmet title="Tags of " />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Header is_logged_in={is_logged_in} current_user={current_user_js}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Schools">
@@ -81,7 +85,7 @@ class SchoolCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
@@ -100,4 +104,15 @@ class SchoolCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(SchoolCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('schools'),
+  state => state.get('school_cloud'),
+  (current_user, schools, school_cloud) => ({
+    schools,
+    school_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SchoolCloudPage);
