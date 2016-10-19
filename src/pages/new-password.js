@@ -23,7 +23,7 @@ import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messag
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { defaultSelector } from '../selectors';
+import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import { Link } from 'react-router';
 
@@ -129,7 +129,7 @@ class PasswordForm extends React.Component {
 }
 
 
-class Form extends React.Component {
+class PasswordPage extends React.Component {
   static propTypes = {
     messages: ArrayOfMessagesPropType.isRequired
   };
@@ -148,12 +148,15 @@ class Form extends React.Component {
   render() {
     const {
       messages,
-      is_logged_in
+      is_logged_in,
+      ui
     } = this.props;
+
+    const messages_js = messages.toJS(); // FIXME #662
 
     let content = <PasswordForm onSubmit={this.submitHandler} />;
 
-    if (this.props.ui.submitNewPassword) {
+    if (ui.get('submitNewPassword')) {
       content = <SuccessMessage />;
     }
 
@@ -170,7 +173,7 @@ class Form extends React.Component {
             <PageBody>
               <PageContent>
                 <div className="area">
-                  <Messages messages={messages} removeMessage={triggers.removeMessage} />
+                  <Messages messages={messages_js} removeMessage={triggers.removeMessage} />
                   <div className="area__body layout-align_start">
                     <div className="box box-middle">
                       <header className="box__title">Set new password</header>
@@ -191,4 +194,15 @@ class Form extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Form);
+const selector = createSelector(
+  state => !!state.getIn(['current_user', 'id']),
+  state => state.get('messages'),
+  state => state.get('ui'),
+  (is_logged_in, messages, ui) => ({
+    is_logged_in,
+    messages,
+    ui
+  })
+);
+
+export default connect(selector)(PasswordPage);
