@@ -55,7 +55,7 @@ import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { addPost, setRelatedPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export class PostPage extends React.Component {
@@ -91,27 +91,34 @@ export class PostPage extends React.Component {
       users
     } = this.props;
 
+    const comments_js = comments.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS();  // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const related_posts_js = related_posts.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+    const users_js = users.toJS();  // FIXME #662
+
     const post_uuid = params.uuid;
 
-    if (!(post_uuid in posts)) {
+    if (!(post_uuid in posts_js)) {
       // not loaded yet
       return null;
     }
 
-    const current_post = posts[post_uuid];
+    const current_post = posts_js[post_uuid];
 
     if (current_post === false) {
       return <NotFound />;
     }
 
-    const author = users[current_post.user_id];
+    const author = users_js[current_post.user_id];
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const relatedPostIds = related_posts[current_post.id];
+    const relatedPostIds = related_posts_js[current_post.id];
     const relatedPosts = (relatedPostIds)
-                         ? relatedPostIds.map(id => posts[id])
+                         ? relatedPostIds.map(id => posts_js[id])
                          : null;
 
     const authorUrl = getUrl(URL_NAMES.USER, { username: author.username });
@@ -124,7 +131,7 @@ export class PostPage extends React.Component {
     return (
       <div>
         <Helmet title={`${current_post.more.pageTitle} on `} />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Header is_logged_in={is_logged_in} current_user={current_user_js}>
           <HeaderLogo small />
           <Breadcrumbs title={truncate(current_post.text, { length: 16 })}>
             <Link
@@ -138,17 +145,17 @@ export class PostPage extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <PostWrapper
                   author={author}
-                  current_user={current_user}
-                  users={users}
+                  current_user={current_user_js}
+                  users={users_js}
                   post={current_post}
-                  comments={comments}
-                  ui={ui}
+                  comments={comments_js}
+                  ui={ui_js}
                   showAllComments
                   triggers={triggers}
                 >
@@ -157,10 +164,10 @@ export class PostPage extends React.Component {
               </PageContent>
               <SidebarAlt>
                 <RelatedPosts
-                  current_user={current_user}
+                  current_user={current_user_js}
                   posts={relatedPosts}
                   triggers={triggers}
-                  users={users}
+                  users={users_js}
                 />
               </SidebarAlt>
             </PageBody>
@@ -173,4 +180,21 @@ export class PostPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(PostPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('posts'),
+  state => state.get('related_posts'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, posts, related_posts, ui, users) => ({
+    comments,
+    posts,
+    related_posts,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(PostPage);
