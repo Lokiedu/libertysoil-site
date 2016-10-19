@@ -32,7 +32,7 @@ import BaseTagPage from './base/tag';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addSchool } from '../actions/schools';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import NotFound from './not-found';
@@ -119,6 +119,7 @@ class SchoolEditPage extends React.Component {
 
   render() {
     const {
+      create_post_form,
       geo,
       schools,
       current_user,
@@ -129,12 +130,18 @@ class SchoolEditPage extends React.Component {
       messages
     } = this.props;
 
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const geo_js = geo.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools, { url_name: this.props.params.school_name });
-    const countries = geo.countries;
+    const school = find(schools_js, { url_name: this.props.params.school_name });
+    const countries = geo_js.countries;
 
     if (!school) {
       return false;  // not loaded yet
@@ -153,21 +160,21 @@ class SchoolEditPage extends React.Component {
         ref={c => this.base = c}
         editable
         params={params}
-        current_user={current_user}
+        current_user={current_user_js}
         is_logged_in={is_logged_in}
         tag={school}
         type={TAG_SCHOOL}
         actions={actions}
         triggers={triggers}
-        schools={schools}
-        create_post_form={this.props.create_post_form}
+        schools={schools_js}
+        create_post_form={create_post_form_js}
       >
         <Helmet title={`Edit ${school.name} on `} />
         <div className="paper">
           <div className="paper__page">
             <TagEditForm
               countries={countries}
-              messages={messages}
+              messages={messages_js}
               processing={this.state.processing}
               saveHandler={this.saveSchool}
               tag={school}
@@ -181,7 +188,22 @@ class SchoolEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('geo'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, geo, messages, schools) => ({
+    create_post_form,
+    geo,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolEditPage);
