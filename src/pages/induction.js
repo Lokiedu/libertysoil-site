@@ -35,7 +35,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 const InductionDone = () => (
   <div className="area">
@@ -93,18 +93,23 @@ class InductionPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      i_am_following,
       suggested_users,
-      messages
+      messages,
+      following
     } = this.props;
+
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const suggested_users_js = suggested_users.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    if (!current_user.user.more.first_login) {
+    if (!current_user_js.user.more.first_login) {
       return (
         <div>
-          <Header current_user={current_user} is_logged_in={is_logged_in} />
+          <Header current_user={current_user_js} is_logged_in={is_logged_in} />
           <div className="page__body">
             <InductionDone />
           </div>
@@ -115,9 +120,9 @@ class InductionPage extends React.Component {
 
     return (
       <BaseInductionPage
-        current_user={current_user}
+        current_user={current_user_js}
         is_logged_in={is_logged_in}
-        messages={messages}
+        messages={messages_js}
         next_caption="Done"
         triggers={triggers}
         onNext={this.doneInduction}
@@ -134,10 +139,10 @@ class InductionPage extends React.Component {
           <h2 className="content__sub_title layout__row">People to follow</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user}
+              current_user={current_user_js}
               i_am_following={i_am_following}
               triggers={triggers}
-              users={suggested_users}
+              users={suggested_users_js}
             />
           </div>
         </div>
@@ -146,4 +151,17 @@ class InductionPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(InductionPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('following'),
+  state => state.get('messages'),
+  state => state.get('suggested_users'),
+  (current_user, following, messages, suggested_users) => ({
+    following,
+    messages,
+    suggested_users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(InductionPage);
