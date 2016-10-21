@@ -37,7 +37,7 @@ import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_HASHTAG } from '../consts/tags';
 
 
@@ -62,10 +62,13 @@ class TagCloudPage extends Component {
       tag_cloud
     } = this.props;
 
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const tag_cloud_js = tag_cloud.toJS(); // FIXME #662
+
     return (
       <div>
         <Helmet title="Tags of " />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Header is_logged_in={is_logged_in} current_user={current_user_js}>
           <HeaderLogo small />
           <Breadcrumbs title="All Hashtags">
             <TagIcon big type={TAG_HASHTAG} />
@@ -73,13 +76,13 @@ class TagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar current_user={current_user_js} />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud hashtags={tag_cloud} showPostCount />
+                  <TagCloud hashtags={tag_cloud_js} showPostCount />
                 </div>
               </PageContent>
             </PageBody>
@@ -92,4 +95,13 @@ class TagCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(TagCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('tag_cloud'),
+  (current_user, tag_cloud) => ({
+    tag_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(TagCloudPage);
