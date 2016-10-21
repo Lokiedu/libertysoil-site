@@ -45,7 +45,8 @@ import ApiClient from '../api/client';
 import { addUser } from '../actions/users';
 import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
+
 
 class UserPage extends React.Component {
   static displayName = 'UserPage';
@@ -90,7 +91,6 @@ class UserPage extends React.Component {
       current_user,
       followers,
       following,
-      i_am_following,
       is_logged_in,
       params,
       posts,
@@ -99,7 +99,17 @@ class UserPage extends React.Component {
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
+    const comments_js = comments.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+    const user_posts_js = user_posts.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+
+    const page_user = _.find(users_js, { username: params.username });
     if (_.isUndefined(page_user)) {
       return null;  // not loaded yet
     }
@@ -108,7 +118,7 @@ class UserPage extends React.Component {
       return <NotFound />;
     }
 
-    let userPostsRiver = user_posts[page_user.id];
+    let userPostsRiver = user_posts_js[page_user.id];
     if (!userPostsRiver) {
       userPostsRiver = [];
     }
@@ -118,9 +128,9 @@ class UserPage extends React.Component {
 
     return (
       <BaseUserPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
         page_user={page_user}
@@ -128,17 +138,38 @@ class UserPage extends React.Component {
       >
         <Helmet title={`Posts of ${page_user.fullName} on `} />
         <River
-          comments={comments}
-          current_user={current_user}
-          posts={posts}
+          comments={comments_js}
+          current_user={current_user_js}
+          posts={posts_js}
           river={userPostsRiver}
           triggers={triggers}
-          ui={ui}
-          users={users}
+          ui={ui_js}
+          users={users_js}
         />
       </BaseUserPage>
     );
   }
 }
 
-export default connect(defaultSelector)(UserPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('followers'),
+  state => state.get('following'),
+  state => state.get('posts'),
+  state => state.get('user_posts'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, followers, following, posts, user_posts, users, ui) => ({
+    comments,
+    followers,
+    following,
+    posts,
+    user_posts,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(UserPage);
