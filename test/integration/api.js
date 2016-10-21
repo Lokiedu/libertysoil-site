@@ -786,6 +786,14 @@ describe('api v.1', () => {
             );
           });
 
+          it('/api/v1/posts/liked for non existing user should expose json with empty array', async () => {
+            await expect(
+              { url: `/api/v1/posts/liked/nonexistinguser` },
+              'body to satisfy',
+              []
+            );
+          });
+
           it('Anonymous user MUST NOT see post\'s likers list', async () => {
             await user.save({ email_check_hash: '' },{ require: true });
             const session = await login('mary', 'secret');
