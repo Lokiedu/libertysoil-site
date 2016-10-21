@@ -34,7 +34,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class AboutUserPage extends React.Component {
   static displayName = 'AboutUserPage';
@@ -57,13 +57,17 @@ class AboutUserPage extends React.Component {
   render() {
     const {
       current_user,
-      i_am_following,
+      following,
       is_logged_in,
       params,
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+
+    const page_user = _.find(users_js, { username: params.username });
     if (_.isUndefined(page_user)) {
       return null;  // not loaded yet
     }
@@ -84,7 +88,7 @@ class AboutUserPage extends React.Component {
 
     return (
       <BaseUserPage
-        current_user={current_user}
+        current_user={current_user_js}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
         page_user={page_user}
@@ -101,4 +105,15 @@ class AboutUserPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(AboutUserPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('following'),
+  state => state.get('users'),
+  (current_user, following, users) => ({
+    following,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(AboutUserPage);
