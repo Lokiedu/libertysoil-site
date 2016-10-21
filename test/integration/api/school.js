@@ -36,9 +36,9 @@ describe('Post', () => {
       }
     });
 
-    after(() => {
+    after(async () => {
       for (const school of schools) {
-        school.destroy();
+        await school.destroy();
       }
     });
 
