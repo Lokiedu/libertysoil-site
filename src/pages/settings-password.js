@@ -39,7 +39,7 @@ import { Command } from '../utils/command';
 import { addError } from '../actions/messages';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -119,6 +119,11 @@ class SettingsPasswordPage extends React.Component {
       followers
     } = this.props;
 
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const messages_js = messages.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+
     if (!is_logged_in) {
       return false;
     }
@@ -128,11 +133,11 @@ class SettingsPasswordPage extends React.Component {
 
     return (
       <BaseSettingsPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         is_logged_in={is_logged_in}
-        messages={messages}
+        messages={messages_js}
         ref={c => this.base = c}
         triggers={triggers}
         onSave={this.handleSave}
@@ -153,4 +158,17 @@ class SettingsPasswordPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsPasswordPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsPasswordPage);
