@@ -45,7 +45,7 @@ import { addHashtag, setHashtagPosts } from '../actions/hashtags';
 import NotFound from './not-found';
 import River                from '../components/river_of_posts';
 import { ActionsTrigger }   from '../triggers';
-import { defaultSelector }  from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_HASHTAG }      from '../consts/tags';
 import BaseTagPage from './base/tag';
 
@@ -93,6 +93,7 @@ export class TagPage extends Component {
   render() {
     const {
       comments,
+      create_post_form,
       is_logged_in,
       current_user,
       posts,
@@ -106,11 +107,21 @@ export class TagPage extends Component {
       ui
     } = this.props;
 
+    const comments_js = comments.toJS(); // FIXME #662
+    const create_post_form_js = create_post_form.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const tag_posts_js = tag_posts.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+    const hashtags_js = hashtags.toJS(); // FIXME #662
+    const schools_js = schools.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags[params.tag];
+    const tag = hashtags_js[params.tag];
 
     if (!tag) {
       return null;
@@ -120,37 +131,61 @@ export class TagPage extends Component {
       return <NotFound />;
     }
 
-    const thisTagPosts = tag_posts[tag.name] || [];
+    const thisTagPosts = tag_posts_js[tag.name] || [];
 
     return (
       <BaseTagPage
         actions={actions}
-        create_post_form={this.props.create_post_form}
-        current_user={current_user}
+        create_post_form={create_post_form_js}
+        current_user={current_user_js}
         is_logged_in={is_logged_in}
         params={this.props.params}
         postsAmount={thisTagPosts.length}
-        schools={values(schools)}
+        schools={values(schools_js)}
         tag={tag}
         triggers={triggers}
         type={TAG_HASHTAG}
       >
         <Helmet title={`"${tag.name}" posts on `} />
         <River
-          comments={comments}
-          current_user={current_user}
-          posts={posts}
+          comments={comments_js}
+          current_user={current_user_js}
+          posts={posts_js}
           river={thisTagPosts}
           triggers={triggers}
-          ui={ui}
-          users={users}
+          ui={ui_js}
+          users={users_js}
         />
       </BaseTagPage>
     );
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('posts'),
+  state => state.get('tag_posts'),
+  state => state.get('users'),
+  state => state.get('hashtags'),
+  state => state.get('schools'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, posts, tag_posts, users, hashtags, schools, ui) => ({
+    comments,
+    create_post_form,
+    posts,
+    tag_posts,
+    users,
+    hashtags,
+    schools,
+    ui,
+    ...current_user
+  })
+);
+
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(TagPage);
