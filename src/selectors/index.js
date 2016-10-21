@@ -15,26 +15,5 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-export function defaultSelector(state) {
-  const data = state.toJS();
-
-  data.is_logged_in = !!data.current_user.id;
-
-  if (data.is_logged_in) {
-    const current_user_id = data.current_user.id;
-
-    data.current_user_tags = data.current_user.hashtags;
-    data.current_user.user = data.users[current_user_id];
-    data.current_user.likes = data.likes[current_user_id] || [];
-    data.current_user.favourites = data.favourites[current_user_id] || [];
-
-    data.i_am_following = data.following[current_user_id];
-  } else {
-    data.current_user = null;
-  }
-
-  return data;
-}
-
 export { default as createSelector } from './createSelector';
 export { default as currentUserSelector } from './currentUser';
