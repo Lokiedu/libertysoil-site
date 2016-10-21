@@ -45,7 +45,8 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
+
 
 class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
@@ -79,7 +80,6 @@ class UserLikesPage extends Component {
       current_user,
       followers,
       following,
-      i_am_following,
       is_logged_in,
       likes_river,
       params,
@@ -88,7 +88,17 @@ class UserLikesPage extends Component {
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
+    const comments_js = comments.toJS(); // FIXME #662
+    const current_user_js = current_user.toJS(); // FIXME #662
+    const followers_js = followers.toJS(); // FIXME #662
+    const following_js = following.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const likes_river_js = likes_river.toJS(); // FIXME #662
+    const posts_js = posts.toJS(); // FIXME #662
+    const ui_js = ui.toJS(); // FIXME #662
+    const users_js = users.toJS(); // FIXME #662
+
+    const page_user = _.find(users_js, { username: params.username });
     if (_.isUndefined(page_user)) {
       return null;  // not loaded yet
     }
@@ -100,16 +110,16 @@ class UserLikesPage extends Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let userLikesRiver = likes_river[page_user.id];
+    let userLikesRiver = likes_river_js[page_user.id];
     if (!userLikesRiver) {
       userLikesRiver = [];
     }
 
     return (
       <BaseUserLikesPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
+        current_user={current_user_js}
+        followers={followers_js}
+        following={following_js}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
         page_user={page_user}
@@ -117,17 +127,38 @@ class UserLikesPage extends Component {
       >
         <Helmet title={`Likes of ${page_user.fullName} on `} />
         <River
-          comments={comments}
-          current_user={current_user}
-          posts={posts}
+          comments={comments_js}
+          current_user={current_user_js}
+          posts={posts_js}
           river={userLikesRiver}
           triggers={triggers}
-          ui={ui}
-          users={users}
+          ui={ui_js}
+          users={users_js}
         />
       </BaseUserLikesPage>
     );
   }
 }
 
-export default connect(defaultSelector)(UserLikesPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('followers'),
+  state => state.get('following'),
+  state => state.get('likes_river'),
+  state => state.get('posts'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, followers, following, likes_river, posts, ui, users) => ({
+    comments,
+    followers,
+    following,
+    likes_river,
+    posts,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(UserLikesPage);
