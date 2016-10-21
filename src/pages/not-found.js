@@ -33,8 +33,6 @@ import Sidebar from '../components/sidebar';
 
 
 const NotFound = ({ is_logged_in, current_user }) => {
-  const current_user_js = current_user.toJS(); // FIXME #662
-
   let pageClassName = null;
 
   if (!is_logged_in) {
@@ -44,9 +42,9 @@ const NotFound = ({ is_logged_in, current_user }) => {
   return (
     <div>
       <Helmet title="Page not found at " />
-      <Header current_user={current_user_js} is_logged_in={is_logged_in} />
+      <Header current_user={current_user} is_logged_in={is_logged_in} />
       <Page className={pageClassName}>
-        <Sidebar current_user={current_user_js} />
+        <Sidebar />
         <PageMain>
           <PageBody>
             <PageContent>

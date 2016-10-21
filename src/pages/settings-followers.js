@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { List } from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -76,33 +77,27 @@ class SettingsFollowersPage extends React.Component {
       users
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-    const following_js = following.toJS(); // FIXME #662
-    const followers_js = followers.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
-
     if (!is_logged_in) {
       return false;
     }
 
+    const i_am_following = following.get(current_user.get('id'));
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let followingUsers = following_js[current_user_js.id] || [];
-    let followersUsers = followers_js[current_user_js.id] || [];
-
-    followingUsers = followingUsers.map(user_id => users_js[user_id]);
-    followersUsers = followersUsers.map(user_id => users_js[user_id]);
+    const followingUsers = (following.get(current_user.get('id')) || List())
+      .map(userId => users.get(userId));
+    const followersUsers = (followers.get(current_user.get('id')) || List())
+      .map(userId => users.get(userId));
 
     return (
       <BaseSettingsPage
-        current_user={current_user_js}
-        followers={followers_js}
-        following={following_js}
+        current_user={current_user}
+        followers={followers}
+        following={following}
         is_logged_in={is_logged_in}
-        messages={messages_js}
+        messages={messages}
         triggers={triggers}
       >
         <Helmet title="Manage Followers on " />
@@ -114,7 +109,7 @@ class SettingsFollowersPage extends React.Component {
           <h2 className="content__sub_title layout__row">People you follow</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user_js}
+              current_user={current_user}
               i_am_following={i_am_following}
               notFoundMessage="You are not following any users"
               triggers={triggers}
@@ -127,7 +122,7 @@ class SettingsFollowersPage extends React.Component {
           <h2 className="content__sub_title layout__row">Following you</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user_js}
+              current_user={current_user}
               i_am_following={i_am_following}
               notFoundMessage="No one follows you yet"
               triggers={triggers}

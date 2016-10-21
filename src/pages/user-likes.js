@@ -17,8 +17,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -88,52 +88,44 @@ class UserLikesPage extends Component {
       users
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const followers_js = followers.toJS(); // FIXME #662
-    const following_js = following.toJS(); // FIXME #662
-    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
-    const likes_river_js = likes_river.toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
 
-    const page_user = _.find(users_js, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let userLikesRiver = likes_river_js[page_user.id];
+    let userLikesRiver = likes_river.get(user.get('id'));
     if (!userLikesRiver) {
-      userLikesRiver = [];
+      userLikesRiver = i.List();
     }
 
     return (
       <BaseUserLikesPage
-        current_user={current_user_js}
-        followers={followers_js}
-        following={following_js}
+        current_user={current_user}
+        followers={followers}
+        following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`Likes of ${page_user.fullName} on `} />
+        <Helmet title={`Likes of ${user.get('fullName')} on `} />
         <River
-          comments={comments_js}
-          current_user={current_user_js}
-          posts={posts_js}
+          comments={comments}
+          current_user={current_user}
+          posts={posts}
           river={userLikesRiver}
           triggers={triggers}
-          ui={ui_js}
-          users={users_js}
+          ui={ui}
+          users={users}
         />
       </BaseUserLikesPage>
     );

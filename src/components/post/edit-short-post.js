@@ -22,7 +22,7 @@ const EditPostShort = ({ post }) => {
   let value = '';
 
   if (!isUndefined(post)) {
-    value = post.text;
+    value = post.get('text');
   }
 
   return (

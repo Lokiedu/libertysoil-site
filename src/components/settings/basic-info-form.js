@@ -38,8 +38,8 @@ class BasicInfoForm extends React.Component {
     const { current_user, form } = this.props;
 
     form.onValues({
-      bio: current_user.user.more.bio,
-      summary: current_user.user.more.summary
+      bio: current_user.getIn(['user', 'more', 'bio']),
+      summary: current_user.getIn(['user', 'more', 'summary'])
     });
   }
 

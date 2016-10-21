@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -171,15 +170,7 @@ export class List extends React.Component {
       users
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const river_js = river.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id'));
 
     const actions = { resetCreatePostForm, updateCreatePostForm };
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -203,42 +194,49 @@ export class List extends React.Component {
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header current_user={current_user_js} is_logged_in={is_logged_in}>
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user_js} />
+          <Sidebar />
           <PageMain>
             <PageBody>
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={values(schools_js)}
-                  defaultText={create_post_form_js.text}
+                  addedGeotags={create_post_form.get('geotags')}
+                  addedHashtags={create_post_form.get('hashtags')}
+                  addedSchools={create_post_form.get('schools')}
+                  allSchools={schools.toList()}
+                  defaultText={create_post_form.get('text')}
                   triggers={triggers}
-                  userRecentTags={current_user_js.recent_tags}
-                  {...create_post_form_js}
+                  userRecentTags={current_user.get('recent_tags')}
                 />
                 <River
-                  river={river_js}
-                  posts={posts_js}
-                  users={users_js}
-                  current_user={current_user_js}
+                  comments={comments}
+                  current_user={current_user}
+                  posts={posts}
+                  river={river}
                   triggers={triggers}
-                  ui={ui_js}
-                  comments={comments_js}
+                  ui={ui}
+                  users={users}
                 />
                 {loadMore}
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...create_post_form_js} truncated />
+                <AddedTags
+                  geotags={create_post_form.get('geotags')}
+                  hashtags={create_post_form.get('hashtags')}
+                  schools={create_post_form.get('schools')}
+                  truncated
+                />
                 <SideSuggestedUsers
-                  current_user={current_user_js}
+                  current_user={current_user}
                   i_am_following={i_am_following}
                   triggers={triggers}
-                  users={current_user_js.suggested_users}
+                  users={current_user.get('suggested_users')}
                 />
               </SidebarAlt>
             </PageBody>

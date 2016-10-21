@@ -56,9 +56,9 @@ class Comments extends Component {
     });
   };
 
-  renderComment = (i, comment) => {
+  renderComment = (comment, i) => {
     const {
-      author,
+      current_user,
       triggers,
       users,
       post,
@@ -67,11 +67,11 @@ class Comments extends Component {
 
     return (
       <Comment
-        author={users[comment.user_id]}
+        author={users.get(comment.get('user_id'))}
         comment={comment}
-        current_user={author}
+        current_user={current_user}
         key={i}
-        postId={post.id}
+        postId={post.get('id')}
         triggers={triggers}
         ui={ui}
       />
@@ -83,31 +83,29 @@ class Comments extends Component {
       comments,
       post
     } = this.props;
+
     const {
       showAllComments
     } = this.state;
-    const hasComments = !!(post.comments && comments && comments[post.id] && comments[post.id].length);
-    let commentsData = [];
+
+    const commentsData = comments.get(post.get('id'));
+    const hasComments = post.get('comments') && commentsData && commentsData.size;
     let postComments = [];
 
     if (hasComments) {
-      commentsData = comments[post.id];
-
       if (showAllComments) {
-        postComments = commentsData.map((comment, i) => (this.renderComment(i, comment)));
+        postComments = commentsData.map(this.renderComment);
       } else {
-        postComments.push(this.renderComment(0, commentsData[0]));
+        commentsData.take(2).map(this.renderComment).forEach(c => postComments.push(c));
 
-        commentsData[1] && postComments.push(this.renderComment(1, commentsData[1]));
-
-        if (commentsData.length > 3) {
+        if (commentsData.size > 3) {
           postComments.push(
-            <CommentsPlaceholder onClick={this.showAllComments} key="placeholder" count={commentsData.length - 3} />
+            <CommentsPlaceholder count={commentsData.size - 3} key="placeholder" onClick={this.showAllComments} />
           );
         }
 
-        if (commentsData.length > 2) {
-          postComments.push(this.renderComment('last', commentsData[commentsData.length - 1]));
+        if (commentsData.size > 2) {
+          postComments.push(this.renderComment(commentsData.last(), 'last'));
         }
       }
 
@@ -125,7 +123,7 @@ class Comments extends Component {
 
   render() {
     const {
-      author,
+      current_user,
       triggers,
       post,
       ui
@@ -135,9 +133,9 @@ class Comments extends Component {
       <div>
         {this.renderComments()}
         <CreateComment
-          author={author}
           className="card__footer"
-          postId={post.id}
+          current_user={current_user}
+          postId={post.get('id')}
           triggers={triggers}
           ui={ui}
         />

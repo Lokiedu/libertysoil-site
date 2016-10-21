@@ -20,7 +20,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
-import { values } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
@@ -121,17 +120,11 @@ class HashtagEditPage extends React.Component {
       messages,
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const hashtags_js = hashtags.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags_js[params.tag];
+    const tag = hashtags.get(params.tag);
 
     if (!tag) {
       return null;
@@ -142,22 +135,22 @@ class HashtagEditPage extends React.Component {
         ref={c => this.base = c}
         editable
         params={params}
-        current_user={current_user_js}
+        current_user={current_user}
         tag={tag}
         type={TAG_HASHTAG}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools_js)}
-        create_post_form={create_post_form_js}
+        schools={schools.toList()}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`"${tag.name}" posts on `} />
+        <Helmet title={`"${tag.get('name')}" posts on `} />
         <div className="paper">
           <div className="paper__page">
             <TagEditForm
               tag={tag}
               type={TAG_HASHTAG}
-              messages={messages_js}
+              messages={messages}
               triggers={triggers}
               saveHandler={this.saveHashtag}
               processing={this.state.processing}

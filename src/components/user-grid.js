@@ -27,7 +27,7 @@ import FollowButton from './follow-button';
 import User from './user';
 
 const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, users }) => {
-  if (!users || !users.length) {
+  if (!users || !users.size) {
     if (notFoundMessage) {
       return <div>{notFoundMessage}</div>;
     }
@@ -36,7 +36,7 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
   }
 
   const usersToShow = users.map((user) => (
-    <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.id}`}>
+    <div className="layout__grids_item layout__grids_item-space layout__grid_item-50" key={`user-${user.get('id')}`}>
       <div className="layout__row layout__row-small">
         <User
           avatar={{ size: 32 }}

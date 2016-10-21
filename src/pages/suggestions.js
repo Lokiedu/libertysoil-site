@@ -69,19 +69,16 @@ const SuggestionsPage = ({ current_user, dispatch, is_logged_in, following, mess
   if (!is_logged_in) {
     return false;
   }
-
-  const current_user_js = current_user.toJS(); // FIXME #662
-  const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
-  const messages_js = messages.toJS(); // FIXME #662
+  const i_am_following = following.get(current_user.get('id'));
 
   const client = new ApiClient(API_HOST);
   const triggers = new ActionsTrigger(client, dispatch);
 
   return (
     <BaseSuggestionsPage
-      current_user={current_user_js}
+      current_user={current_user}
       is_logged_in={is_logged_in}
-      messages={messages_js}
+      messages={messages}
       next_caption="Proceed to your feed"
       triggers={triggers}
     >
@@ -91,10 +88,10 @@ const SuggestionsPage = ({ current_user, dispatch, is_logged_in, following, mess
       </div>
 
       <DiscoverGrid
-        current_user={current_user_js}
+        current_user={current_user}
         i_am_following={i_am_following}
         triggers={triggers}
-        users={current_user_js.suggested_users}
+        users={current_user.get('suggested_users')}
       />
     </BaseSuggestionsPage>
   );

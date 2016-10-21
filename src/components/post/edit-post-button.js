@@ -22,17 +22,17 @@ import Icon from '../icon';
 
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-const EditPostButton = (props) => {
-  if (!props.current_user || props.current_user.id !== props.post.user_id) {
+const EditPostButton = ({ current_user, post }) => {
+  if (current_user.get('id') !== post.get('user_id')) {
     return null;
   }
 
-  const post_edit_url = getUrl(URL_NAMES.EDIT_POST, { uuid: props.post.id });
+  const postEditUrl = getUrl(URL_NAMES.EDIT_POST, { uuid: post.get('id') });
 
   return (
     <div className="card__toolbar_item">
-      <Link to={post_edit_url}>
-        <Icon icon="edit"outline size="small" />
+      <Link to={postEditUrl}>
+        <Icon icon="edit" outline size="small" />
       </Link>
     </div>
   );

@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { values } from 'lodash';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -107,55 +107,45 @@ export class GeotagPage extends Component {
       schools
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const geotags_js = geotags.toJS(); // FIXME #662
-    const geotag_posts_js = geotag_posts.toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const geotag = geotags_js[this.props.params.url_name];
-    const title = geotag ? geotag.name : this.props.params.url_name;
+    const geotag = geotags.get(this.props.params.url_name);
+    const title = geotag ? geotag.get('name') : this.props.params.url_name;
 
     if (!geotag) {
       return null;
     }
 
-    if (!geotag.id) {
+    if (!geotag.get('id')) {
       return <NotFound />;
     }
 
-    const geotagPosts = geotag_posts_js[this.props.params.url_name] || [];
+    const geotagPosts = geotag_posts.get(this.props.params.url_name) || i.List();
 
     return (
       <BaseTagPage
-        current_user={current_user_js}
+        current_user={current_user}
         is_logged_in={is_logged_in}
         params={this.props.params}
         tag={geotag}
         type={TAG_LOCATION}
         actions={actions}
         triggers={triggers}
-        schools={values(schools_js)}
+        schools={schools.toList()}
         postsAmount={geotagPosts.length}
-        create_post_form={create_post_form_js}
+        create_post_form={create_post_form}
       >
         <Helmet title={`${title} posts on `} />
         <River
-          current_user={current_user_js}
-          posts={posts_js}
+          current_user={current_user}
+          posts={posts}
           river={geotagPosts}
           triggers={triggers}
-          comments={comments_js}
-          ui={ui_js}
-          users={users_js}
+          comments={comments}
+          ui={ui}
+          users={users}
         />
       </BaseTagPage>
     );

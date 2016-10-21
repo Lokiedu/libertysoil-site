@@ -152,8 +152,6 @@ class PasswordPage extends React.Component {
       ui
     } = this.props;
 
-    const messages_js = messages.toJS(); // FIXME #662
-
     let content = <PasswordForm onSubmit={this.submitHandler} />;
 
     if (ui.get('submitNewPassword')) {
@@ -173,7 +171,7 @@ class PasswordPage extends React.Component {
             <PageBody>
               <PageContent>
                 <div className="area">
-                  <Messages messages={messages_js} removeMessage={triggers.removeMessage} />
+                  <Messages messages={messages} removeMessage={triggers.removeMessage} />
                   <div className="area__body layout-align_start">
                     <div className="box box-middle">
                       <header className="box__title">Set new password</header>

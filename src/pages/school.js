@@ -18,8 +18,8 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   uuid4 as uuid4PropType,
@@ -101,54 +101,44 @@ export class SchoolPage extends React.Component {
       users
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const school_posts_js = school_posts.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
-
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools_js, { url_name: this.props.params.school_name });
+    const school = schools.find(school => school.get('url_name') === this.props.params.school_name);
 
     if (!school) {
       return null; // not loaded yet
     }
 
-    if (!school.id) {
+    if (!school.get('id')) {
       return <NotFound />;
     }
 
-    const schoolPosts = school_posts_js[school.id] || [];
+    const schoolPosts = school_posts.get(school.get('id')) || i.List();
 
     return (
       <BaseTagPage
         params={this.props.params}
-        current_user={current_user_js}
+        current_user={current_user}
         tag={school}
         type={TAG_SCHOOL}
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools_js)}
-        postsAmount={schoolPosts.length}
-        create_post_form={create_post_form_js}
+        schools={schools}
+        postsAmount={schoolPosts.size}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`Posts about ${school.name} on `} />
+        <Helmet title={`Posts about ${school.get('name')} on `} />
         <River
-          current_user={current_user_js}
-          posts={posts_js}
+          current_user={current_user}
+          posts={posts}
           river={schoolPosts}
           triggers={triggers}
-          users={users_js}
-          comments={comments_js}
-          ui={ui_js}
+          users={users}
+          comments={comments}
+          ui={ui}
         />
       </BaseTagPage>
     );

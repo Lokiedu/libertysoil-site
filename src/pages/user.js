@@ -17,8 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -72,6 +72,7 @@ class UserPage extends React.Component {
   };
 
   static async fetchData(router, store, client) {
+    // TODO: Implement 404 handling
     const userInfo = await client.userInfo(router.params.username);
     const userPosts = client.userPosts(router.params.username);
 
@@ -99,28 +100,20 @@ class UserPage extends React.Component {
       users
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const followers_js = followers.toJS(); // FIXME #662
-    const following_js = following.toJS(); // FIXME #662
-    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-    const user_posts_js = user_posts.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
 
-    const page_user = _.find(users_js, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
-    let userPostsRiver = user_posts_js[page_user.id];
+    let userPostsRiver = user_posts.get(user.get('id'));
     if (!userPostsRiver) {
-      userPostsRiver = [];
+      userPostsRiver = i.List();
     }
 
     const client = new ApiClient(API_HOST);
@@ -128,23 +121,23 @@ class UserPage extends React.Component {
 
     return (
       <BaseUserPage
-        current_user={current_user_js}
-        followers={followers_js}
-        following={following_js}
+        current_user={current_user}
+        followers={followers}
+        following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`Posts of ${page_user.fullName} on `} />
+        <Helmet title={`Posts of ${user.get('fullName')} on `} />
         <River
-          comments={comments_js}
-          current_user={current_user_js}
-          posts={posts_js}
+          comments={comments}
+          current_user={current_user}
+          posts={posts}
           river={userPostsRiver}
           triggers={triggers}
-          ui={ui_js}
-          users={users_js}
+          ui={ui}
+          users={users}
         />
       </BaseUserPage>
     );

@@ -17,7 +17,6 @@
  */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { isEmpty } from 'lodash';
 import Time from '../time';
 
 import EditPostButton from './edit-post-button';
@@ -41,9 +40,9 @@ class PostFooter extends React.Component {
 
   handleToggleSubscription = async (e) => {
     if (e.target.checked) {
-      await this.props.triggers.subscribeToPost(this.props.post.id);
+      await this.props.triggers.subscribeToPost(this.props.post.get('id'));
     } else {
-      await this.props.triggers.unsubscribeFromPost(this.props.post.id);
+      await this.props.triggers.unsubscribeFromPost(this.props.post.get('id'));
     }
   };
 
@@ -55,9 +54,9 @@ class PostFooter extends React.Component {
       triggers
     } = this.props;
 
-    const post_url = getUrl(URL_NAMES.POST, { uuid: post.id });
-    const hasTags = !isEmpty(post.geotags) || !isEmpty(post.hashtags) || !isEmpty(post.schools);
-    const subscribed = current_user && current_user.post_subscriptions.indexOf(post.id) != -1;
+    const postUrl = getUrl(URL_NAMES.POST, { uuid: post.get('id') });
+    const hasTags = !post.get('geotags').isEmpty() || !post.get('hashtags').isEmpty() || !post.get('schools').isEmpty();
+    const isSubscribed = current_user.get('post_subscriptions').includes(post.get('id'));
 
     return (
       <div>
@@ -66,8 +65,8 @@ class PostFooter extends React.Component {
             <User avatar={{ size: 39 }} user={author} />
           </div>
           <div className="card__timestamp">
-            <Link to={post_url}>
-              <Time timestamp={post.created_at} />
+            <Link to={postUrl}>
+              <Time timestamp={post.get('created_at')} />
             </Link>
           </div>
         </div>
@@ -75,7 +74,7 @@ class PostFooter extends React.Component {
 
         {hasTags &&
           <footer className="card__footer">
-            <TagLine geotags={post.geotags} hashtags={post.hashtags} schools={post.schools} />
+            <TagLine geotags={post.get('geotags')} hashtags={post.get('hashtags')} schools={post.get('schools')} />
           </footer>
         }
 
@@ -84,7 +83,7 @@ class PostFooter extends React.Component {
             <Toolbar current_user={current_user} post={post} triggers={triggers} />
 
             <div className="card__toolbar card__toolbar-right">
-              {current_user &&
+              {current_user.get('id') &&
                 <label
                   className="card__toolbar_item"
                   htmlFor="subscribe_to_post"
@@ -92,7 +91,7 @@ class PostFooter extends React.Component {
                 >
                   <span className="checkbox__label-left">Subscribe</span>
                   <input
-                    checked={subscribed}
+                    checked={isSubscribed}
                     id="subscribe_to_post"
                     name="subscribe_to_post"
                     type="checkbox"

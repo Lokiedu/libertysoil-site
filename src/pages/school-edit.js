@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
@@ -130,28 +129,18 @@ class SchoolEditPage extends React.Component {
       messages
     } = this.props;
 
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const geo_js = geo.toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools_js, { url_name: this.props.params.school_name });
-    const countries = geo_js.countries;
+    const school = schools.find(school => school.get('url_name') === this.props.params.school_name);
+    const countries = geo.get('countries');
 
     if (!school) {
       return false;  // not loaded yet
     }
 
-    if (countries.length === 0) {
-      return false;  // not loaded yet
-    }
-
-    if (!school.id) {
+    if (!school.get('id')) {
       return <NotFound />;
     }
 
@@ -160,21 +149,21 @@ class SchoolEditPage extends React.Component {
         ref={c => this.base = c}
         editable
         params={params}
-        current_user={current_user_js}
+        current_user={current_user}
         is_logged_in={is_logged_in}
         tag={school}
         type={TAG_SCHOOL}
         actions={actions}
         triggers={triggers}
-        schools={schools_js}
-        create_post_form={create_post_form_js}
+        schools={schools}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`Edit ${school.name} on `} />
+        <Helmet title={`Edit ${school.get('name')} on `} />
         <div className="paper">
           <div className="paper__page">
             <TagEditForm
               countries={countries}
-              messages={messages_js}
+              messages={messages}
               processing={this.state.processing}
               saveHandler={this.saveSchool}
               tag={school}

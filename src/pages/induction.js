@@ -98,18 +98,15 @@ class InductionPage extends React.Component {
       following
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const suggested_users_js = suggested_users.toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-    const i_am_following = following.get(current_user.get('id')).toJS(); // FIXME #662
+    const i_am_following = following.get(current_user.get('id'));
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    if (!current_user_js.user.more.first_login) {
+    if (!current_user.getIn(['user', 'more', 'first_login'])) {
       return (
         <div>
-          <Header current_user={current_user_js} is_logged_in={is_logged_in} />
+          <Header current_user={current_user} is_logged_in={is_logged_in} />
           <div className="page__body">
             <InductionDone />
           </div>
@@ -120,9 +117,9 @@ class InductionPage extends React.Component {
 
     return (
       <BaseInductionPage
-        current_user={current_user_js}
+        current_user={current_user}
         is_logged_in={is_logged_in}
-        messages={messages_js}
+        messages={messages}
         next_caption="Done"
         triggers={triggers}
         onNext={this.doneInduction}
@@ -139,10 +136,10 @@ class InductionPage extends React.Component {
           <h2 className="content__sub_title layout__row">People to follow</h2>
           <div className="layout__row layout__row-double">
             <UserGrid
-              current_user={current_user_js}
+              current_user={current_user}
               i_am_following={i_am_following}
               triggers={triggers}
-              users={suggested_users_js}
+              users={suggested_users}
             />
           </div>
         </div>

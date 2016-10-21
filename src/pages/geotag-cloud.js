@@ -62,20 +62,14 @@ class GeotagCloudPage extends Component {
       geotag_cloud
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const geotags_js = geotags.toJS(); // FIXME #662
-    const geotag_cloud_js = geotag_cloud.toJS(); // FIXME #662
-
-    const geotagsByContinents = geotag_cloud_js.map(continent => {
-      return Object.assign(continent, {
-        geotags: continent.geotags.map(urlName => geotags_js[urlName])
-      });
-    });
+    const geotagsByContinents = geotag_cloud.map(continent => (
+      continent.set('geotags', geotags.map(urlName => geotags.get(urlName)))
+    ));
 
     return (
       <div>
         <Helmet title="Geotags of " />
-        <Header current_user={current_user_js} is_logged_in={is_logged_in}>
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Geotags">
@@ -85,7 +79,7 @@ class GeotagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user_js} />
+          <Sidebar />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
@@ -93,10 +87,10 @@ class GeotagCloudPage extends Component {
                 {
                   geotagsByContinents.map(continent => (
                     <Continent
-                      code={continent.continent_code}
-                      count={continent.geotag_count}
-                      geotags={continent.geotags}
-                      key={continent.continent_code}
+                      code={continent.get('continent_code')}
+                      count={continent.get('geotag_count')}
+                      geotags={continent.get('geotags')}
+                      key={continent.get('continent_code')}
                     />
                   ))
                 }

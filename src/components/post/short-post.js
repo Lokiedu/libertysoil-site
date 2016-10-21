@@ -22,9 +22,9 @@ import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 import User from '../user';
 
 const ShortPost = ({ post, author }) => (
-  <div className="short_post short_post-spacing" key={post.id}>
-    <Link className="short_post__text" to={getUrl(URL_NAMES.POST, { uuid: post.id })}>
-      {post.text}
+  <div className="short_post short_post-spacing" key={post.get('id')}>
+    <Link className="short_post__text" to={getUrl(URL_NAMES.POST, { uuid: post.get('id') })}>
+      {post.get('text')}
     </Link>
     <div className="short_post__author">
       <User avatar={{ size: 20 }} user={author} />

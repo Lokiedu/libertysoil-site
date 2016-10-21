@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import { IndexLink } from 'react-router';
-import { isEmpty } from 'lodash';
 
 import {
   mapOf as mapOfPropType,
@@ -52,28 +51,27 @@ const BaseUserPage = (props) => {
   const {
     children,
     current_user,
-    i_am_following,
     is_logged_in,
-    page_user,
+    user,
     following,
     followers,
     triggers
   } = props;
 
-  const showLikesLink = (
-    !isEmpty(page_user.liked_posts) ||
-    !isEmpty(page_user.liked_hashtags) ||
-    !isEmpty(page_user.liked_schools) ||
-    !isEmpty(page_user.liked_geotags)
+  const showLikesLink = !!(
+    user.get('liked_posts') && user.get('liked_posts').size ||
+    user.get('liked_hashtags') && user.get('liked_hashtags').size ||
+    user.get('liked_schools') && user.get('liked_schools').size ||
+    user.get('liked_geotags') && user.get('liked_geotags').size
   );
-  const showFavouritesLink = page_user.favourited_posts && !!page_user.favourited_posts.length;
-  const showBioLink = page_user.more && !!page_user.more.bio;
+  const showFavouritesLink = user.get('favourited_posts') && !!user.get('favourited_posts').size;
+  const showBioLink = !!user.getIn(['more', 'bio']);
 
-  let name = page_user.username;
+  let name = user.get('username');
 
-  if (page_user.more) {
-    if (page_user.more.firstName || page_user.more.lastName) {
-      name = `${page_user.more.firstName} ${page_user.more.lastName}`;
+  if (user.get('more')) {
+    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
+      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
     }
   }
 
@@ -87,37 +85,36 @@ const BaseUserPage = (props) => {
               avatar={{ size: 36, isRound: true }}
               isLink={false}
               text={{ hide: true }}
-              user={page_user}
+              user={user}
             />
           </Breadcrumbs>
         </div>
       </Header>
 
       <Page>
-        <Sidebar current_user={current_user} />
+        <Sidebar />
         <PageMain className="page__main-no_space">
           <ProfileHeader
             current_user={current_user}
             editable={false}
             followers={followers}
             following={following}
-            i_am_following={i_am_following}
             triggers={triggers}
-            user={page_user}
+            user={user}
           />
           <PageBody>
             <PageContent>
               <div className="layout__space-double">
                 <div className="layout__grid tabs">
                   <div className="layout__grid_item">
-                    <IndexLink activeClassName="tabs__link-active" className="tabs__link" to={`/user/${page_user.username}`}>Posts</IndexLink>
+                    <IndexLink activeClassName="tabs__link-active" className="tabs__link" to={`/user/${user.get('username')}`}>Posts</IndexLink>
                   </div>
                   {showLikesLink &&
                     <div className="layout__grid_item">
                       <PageContentLink
                         activeClassName="tabs__link-active"
                         className="tabs__link"
-                        to={`/user/${page_user.username}/likes`}
+                        to={`/user/${user.get('username')}/likes`}
                         visible
                       >
                         Likes
@@ -129,7 +126,7 @@ const BaseUserPage = (props) => {
                       <PageContentLink
                         activeClassName="tabs__link-active"
                         className="tabs__link"
-                        to={`/user/${page_user.username}/favorites`}
+                        to={`/user/${user.get('username')}/favorites`}
                         visible
                       >
                         Favorites
@@ -141,7 +138,7 @@ const BaseUserPage = (props) => {
                       <PageContentLink
                         activeClassName="tabs__link-active"
                         className="tabs__link"
-                        to={`/user/${page_user.username}/bio`}
+                        to={`/user/${user.get('username')}/bio`}
                         visible
                       >
                         Bio

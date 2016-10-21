@@ -77,7 +77,7 @@ export default class SideSuggestedUsers extends React.Component {
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
         {take(users, 3).map((user) => (
-          <div className={className} key={`user-${user.id}`}>
+          <div className={className} key={`user-${user.get('id')}`}>
             <div className="layout__row layout__row-small">
               <User
                 avatar={{ size: 32 }}

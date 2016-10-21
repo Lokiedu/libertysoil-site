@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { values } from 'lodash';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -107,54 +107,44 @@ export class TagPage extends Component {
       ui
     } = this.props;
 
-    const comments_js = comments.toJS(); // FIXME #662
-    const create_post_form_js = create_post_form.toJS(); // FIXME #662
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const tag_posts_js = tag_posts.toJS(); // FIXME #662
-    const users_js = users.toJS(); // FIXME #662
-    const hashtags_js = hashtags.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const ui_js = ui.toJS(); // FIXME #662
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags_js[params.tag];
+    const tag = hashtags.get(params.tag);
 
     if (!tag) {
       return null;
     }
 
-    if (!tag.id) {
+    if (!tag.get('id')) {
       return <NotFound />;
     }
 
-    const thisTagPosts = tag_posts_js[tag.name] || [];
+    const thisTagPosts = tag_posts.get(tag.get('name')) || i.List();
 
     return (
       <BaseTagPage
         actions={actions}
-        create_post_form={create_post_form_js}
-        current_user={current_user_js}
+        create_post_form={create_post_form}
+        current_user={current_user}
         is_logged_in={is_logged_in}
         params={this.props.params}
         postsAmount={thisTagPosts.length}
-        schools={values(schools_js)}
+        schools={schools.toList()}
         tag={tag}
         triggers={triggers}
         type={TAG_HASHTAG}
       >
-        <Helmet title={`"${tag.name}" posts on `} />
+        <Helmet title={`"${tag.get('name')}" posts on `} />
         <River
-          comments={comments_js}
-          current_user={current_user_js}
-          posts={posts_js}
+          comments={comments}
+          current_user={current_user}
+          posts={posts}
           river={thisTagPosts}
           triggers={triggers}
-          ui={ui_js}
-          users={users_js}
+          ui={ui}
+          users={users}
         />
       </BaseTagPage>
     );

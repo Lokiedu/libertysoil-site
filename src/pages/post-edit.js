@@ -118,61 +118,62 @@ class PostEditPage extends React.Component {
       edit_post_form
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const posts_js = posts.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const edit_post_form_js = edit_post_form.toJS(); // FIXME #662
-
     const postId = this.props.params.uuid;
 
-    if (!(postId in posts_js)) {
+    if (!posts.get(postId)) {
       // not loaded yet
       return null;
     }
 
-    const post = posts_js[postId];
+    const post = posts.get(postId);
 
-    if (post.error) {
+    if (post.get('error')) { // TODO: Proper 404 handling
       return <NotFound />;
     }
 
-    if (post.user_id != current_user_js.id) {
+    if (post.get('user_id') != current_user.get('id')) {
       return null;
     }
 
     const actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const formState = edit_post_form_js;
 
     return (
       <div>
-        <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
+        <Helmet title={`Edit "${post.getIn(['more', 'pageTitle'])}" post on `} />
         <Header
+          current_user={current_user}
           is_logged_in={is_logged_in}
-          current_user={current_user_js}
         >
           <HeaderLogo small />
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
-          <Sidebar current_user={current_user_js} />
+          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
               <PageContent>
                 <EditPost
                   actions={actions}
-                  allSchools={_.values(schools_js)}
-                  userRecentTags={current_user_js.recent_tags}
+                  allSchools={schools.toList()}
+                  userRecentTags={current_user.get('recent_tags')}
                   post={post}
                   triggers={triggers}
                   onDelete={this._handleDelete}
                   onSubmit={this._handleSubmit}
-                  {...formState}
+                  geotags={edit_post_form.get('geotags')}
+                  hashtags={edit_post_form.get('hashtags')}
+                  schools={edit_post_form.get('schools')}
                 />
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...formState} truncated />
+                <AddedTags
+                  geotags={edit_post_form.get('geotags')}
+                  hashtags={edit_post_form.get('hashtags')}
+                  schools={edit_post_form.get('schools')}
+                  truncated
+                />
               </SidebarAlt>
             </PageBody>
           </PageMain>

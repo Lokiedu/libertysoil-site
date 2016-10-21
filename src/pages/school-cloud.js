@@ -66,16 +66,12 @@ class SchoolCloudPage extends Component {
       school_cloud
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const schools_js = schools.toJS(); // FIXME #662
-    const school_cloud_js = school_cloud.toJS(); // FIXME #662
-
-    const schoolsForCloud = school_cloud_js.map(id => schools_js[id]);
+    const schoolsForCloud = school_cloud.map(id => schools.get(id));
 
     return (
       <div>
         <Helmet title="Tags of " />
-        <Header is_logged_in={is_logged_in} current_user={current_user_js}>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Schools">
@@ -85,7 +81,7 @@ class SchoolCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user_js} />
+          <Sidebar current_user={current_user} />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>

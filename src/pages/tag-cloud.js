@@ -62,13 +62,10 @@ class TagCloudPage extends Component {
       tag_cloud
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const tag_cloud_js = tag_cloud.toJS(); // FIXME #662
-
     return (
       <div>
         <Helmet title="Tags of " />
-        <Header is_logged_in={is_logged_in} current_user={current_user_js}>
+        <Header is_logged_in={is_logged_in} current_user={current_user}>
           <HeaderLogo small />
           <Breadcrumbs title="All Hashtags">
             <TagIcon big type={TAG_HASHTAG} />
@@ -76,13 +73,13 @@ class TagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user_js} />
+          <Sidebar />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud hashtags={tag_cloud_js} showPostCount />
+                  <TagCloud hashtags={tag_cloud} showPostCount />
                 </div>
               </PageContent>
             </PageBody>

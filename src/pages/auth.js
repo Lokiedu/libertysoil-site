@@ -79,19 +79,16 @@ export class Auth extends React.Component {
       ui
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let renderedMessages;
 
-    if (messages_js.length) {
+    if (!messages.isEmpty()) {
       renderedMessages = (
         <div className="page__messages">
           <div className="page__body page__body-small">
-            <Messages messages={messages_js} removeMessage={triggers.removeMessage} />
+            <Messages messages={messages} removeMessage={triggers.removeMessage} />
           </div>
         </div>
       );
@@ -105,7 +102,7 @@ export class Auth extends React.Component {
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
             is_logged_in={is_logged_in}
-            current_user={current_user_js}
+            current_user={current_user}
             className="header-transparent"
           >
             <HeaderLogo />

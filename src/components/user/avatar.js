@@ -41,16 +41,7 @@ export default class Avatar extends React.Component {
   };
 
   getImgUrl(url) {
-    const { user } = this.props;
-
-    let imgUrl;
-    if (url) {
-      imgUrl = url;
-    } else if (user.more && user.more.avatar) {
-      imgUrl = user.more.avatar.url;
-    }
-
-    return imgUrl;
+    return url || this.props.user.getIn(['more', 'avatar', 'url']);
   }
 
   render() {
@@ -71,7 +62,7 @@ export default class Avatar extends React.Component {
     if (finalUrl) {
       avatar = <img height={finalSize} src={finalUrl} width={finalSize} />;
     } else {
-      avatar = <Gravatar default="retro" md5={user.gravatarHash} size={finalSize} />;
+      avatar = <Gravatar default="retro" md5={user.get('gravatarHash')} size={finalSize} />;
     }
 
     let cn = 'user_box__avatar';

@@ -21,8 +21,8 @@ import Linkify from 'react-linkify';
 const ShortTextPost = ({ post }) => {
   let text = '';
 
-  if (post.text) {
-    text = post.text.split("\n").map((line, i) => <p key={`text-${i}`}>{line}</p>);
+  if (post.get('text')) {
+    text = post.get('text').split('\n').map((line, i) => <p key={`text-${i}`}>{line}</p>);
   }
 
   return (

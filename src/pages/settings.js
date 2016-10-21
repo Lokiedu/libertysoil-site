@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -116,19 +117,11 @@ class SettingsPage extends React.Component {
       followers
     } = this.props;
 
-    const current_user_js = current_user.toJS(); // FIXME #662
-    const messages_js = messages.toJS(); // FIXME #662
-    const following_js = following.toJS(); // FIXME #662
-    const followers_js = followers.toJS(); // FIXME #662
-
     if (!is_logged_in) {
       return false;
     }
 
-    let roles = [];
-    if (current_user_js.id && current_user_js.user.more && current_user_js.user.more.roles) {
-      roles = current_user_js.user.more.roles;
-    }
+    const roles = (current_user.getIn(['user', 'more', 'roles']) || i.List()).toJS();
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -136,17 +129,17 @@ class SettingsPage extends React.Component {
     return (
       <BaseSettingsPage
         ref={c => this.base = c}
-        current_user={current_user_js}
-        followers={followers_js}
-        following={following_js}
+        current_user={current_user}
+        followers={followers}
+        following={following}
         is_logged_in={is_logged_in}
-        messages={messages_js}
+        messages={messages}
         triggers={triggers}
         onSave={this.handleSave}
       >
         <Helmet title="Your Profile Settings on " />
         <BasicInfoForm
-          current_user={current_user_js}
+          current_user={current_user}
           ref={c => this.form = c}
           onChange={this.handleFormChange}
         />

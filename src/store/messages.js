@@ -35,7 +35,7 @@ function removeDuplicate(state, action) {
 
 export default function reducer(state = initialState, action) {
   if (find([messages.ADD_ERROR, messages.ADD_MESSAGE], a => a === action.type)) {
-    const index = state.findIndex(item => item.message === action.message);
+    const index = state.findIndex(item => item.get('message') === action.message);
     if (index !== -1) {
       state = state.delete(index);
     }
@@ -45,20 +45,20 @@ export default function reducer(state = initialState, action) {
     case messages.ADD_ERROR: {
       state = removeDuplicate(state, action);
 
-      state = state.push({
+      state = state.push(i.fromJS({
         type: messageType.ERROR,
         message: action.message
-      });
+      }));
       break;
     }
 
     case messages.ADD_MESSAGE: {
       state = removeDuplicate(state, action);
 
-      state = state.push({
+      state = state.push(i.fromJS({
         type: messageType.MESSAGE,
         message: action.message
-      });
+      }));
       break;
     }
 

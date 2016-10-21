@@ -17,7 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform } from 'react-inform';
-import { each, pick, sortBy } from 'lodash';
+import { pick } from 'lodash';
+import i from 'immutable';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 import { School as SchoolPropType } from '../../prop-types/schools';
@@ -79,7 +80,7 @@ class SchoolEditForm extends React.Component {
       school
      } = this.props;
 
-    form.onValues(school);
+    form.onValues(school.toJS());
   }
 
   submitHandler = (event) => {
@@ -147,25 +148,23 @@ class SchoolEditForm extends React.Component {
       triggers,
       messages
     } = this.props;
-    const initialLocation = { lat: school.lat, lon: school.lon };
+    const initialLocation = { lat: school.get('lat'), lon: school.get('lon') };
 
     let is_open = 'unknown';
 
-    if (school.is_open === true) {
+    if (school.get('is_open') === true) {
       is_open = 'yes';
-    } else if (school.is_open === false) {
+    } else if (school.get('is_open') === false) {
       is_open = 'no';
     }
 
-    const memberships = {};
-    each(school.org_membership, (row, key) => {
-      memberships[key] = row.is_member;
-    });
+    const memberships = (school.get('org_membership') || i.Map())
+      .map(val => val.get('is_member')).toJS();
 
     // needed for react-inform
     const values = {
       ...pick(
-        school,
+        school.toJS(),
         [
           'name', 'description',
           'principal_name', 'principal_surname',
@@ -179,7 +178,7 @@ class SchoolEditForm extends React.Component {
 
     return (
       <form onSubmit={this.submitHandler}>
-        <input name="id" type="hidden" value={school.id} />
+        <input name="id" type="hidden" value={school.get('id')} />
 
         <TextInputField defaultValue={values.name} field={fields.name} name="name" title="Name" />
 
@@ -216,7 +215,9 @@ class SchoolEditForm extends React.Component {
             {...fields.country_id}
           >
             <option value="">unknown</option>
-            {sortBy(countries, 'name').map(country => <option key={country.id} value={country.id}>{country.name}</option>)}
+            {countries.toList().sortBy(c => c.get('name')).map(country => (
+              <option key={country.get('id')} value={country.get('id')}>{country.get('name')}</option>
+            ))}
           </select>
         </div>
 

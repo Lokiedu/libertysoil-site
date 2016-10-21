@@ -78,20 +78,22 @@ export default class EditPost extends React.Component {
   }
 
   componentWillMount() {
+    const { post } = this.props;
+
     const newFormState = {
-      id: this.props.post.id,
-      geotags: this.props.post.geotags,
-      schools: this.props.post.schools,
-      hashtags: this.props.post.hashtags
+      id: post.get('id'),
+      geotags: post.get('geotags').toJS(),
+      schools: post.get('schools').toJS(),
+      hashtags: post.get('hashtags').toJS()
     };
 
     this.props.actions.updateEditPostForm(newFormState);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.id === nextProps.post.id) {
+    if (nextProps.id === nextProps.post.get('id')) {
       let hasText = false;
-      if (nextProps.post.text.trim()) {
+      if (nextProps.post.get('text').trim()) {
         hasText = true;
       }
 
@@ -131,13 +133,13 @@ export default class EditPost extends React.Component {
     const form = this.form;
     const data = {
       text: form.text.value,
-      hashtags: this.props.hashtags.map(hashtag => hashtag.name),
-      schools: this.props.schools.map(school => school.name),
-      geotags: this.props.geotags.map(geotag => geotag.id),
+      hashtags: this.props.hashtags.map(hashtag => hashtag.get('name')).toJS(),
+      schools: this.props.schools.map(school => school.get('name')).toJS(),
+      geotags: this.props.geotags.map(geotag => geotag.get('id')).toJS(),
       minor_update: (form.minor_update) ? form.minor_update.checked : null
     };
 
-    await this.props.triggers.updatePost(this.props.post.id, data);
+    await this.props.triggers.updatePost(this.props.post.get('id'), data);
     await this.props.triggers.loadUserRecentTags();
 
     this.props.actions.resetEditPostForm();
@@ -159,7 +161,7 @@ export default class EditPost extends React.Component {
   _handleDelete = async (event) => {
     if (confirm(`Are you sure you want to delete this post and all it's comments? There is no undo.`)) {
       try {
-        await this.props.triggers.deletePost(this.props.post.id);
+        await this.props.triggers.deletePost(this.props.post.get('id'));
         this.props.onDelete(event);
       } catch (e) {
         // do nothing. redux already had got an error
@@ -227,25 +229,31 @@ export default class EditPost extends React.Component {
     let allModalTags = pick(this.props, 'geotags', 'schools', 'hashtags');
 
     // If edit_post_form is not initialized yet.
-    if (!this.props.id) {
+    if (this.props.id) {
       allModalTags = {
-        geotags: post.geotags,
-        schools: post.schools,
-        hashtags: post.hashtags
+        addedGeotags: this.props.geotags,
+        addedHashtags: this.props.hashtags,
+        addedSchools: this.props.schools
+      };
+    } else {
+      allModalTags = {
+        addedGeotags: post.get('geotags'),
+        addedHashtags: post.get('hashtags'),
+        addedSchools: post.get('schools')
       };
     }
 
     return (
       <div className="box box-post box-space_bottom create_post">
         <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
-          <input name="id" type="hidden" value={post.id} />
+          <input name="id" type="hidden" value={post.get('id')} />
           <div className="box__body">
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="create_post__text_input_wrapper">
                   <textarea
                     className="input input-block create_post__text_input"
-                    defaultValue={post.text}
+                    defaultValue={post.get('text')}
                     name="text"
                     placeholder="Make a contribution to education change"
                     rows={10}
@@ -278,7 +286,7 @@ export default class EditPost extends React.Component {
                 {/*<button className="button button-wide button-transparent" type="button">Go full screen</button>*/}
               </div>
               <div className="layout__grid_item layout__grid_item-small">
-                {!post.fully_published_at &&
+                {!post.get('fully_published_at') &&
                   <label
                     className="action checkbox"
                     title="If you uncheck this option, the post will show up on

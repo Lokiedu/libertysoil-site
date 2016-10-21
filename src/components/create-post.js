@@ -107,9 +107,9 @@ class CreatePost extends React.Component {
 
     const data = {
       text: fields.text.value,
-      hashtags: this.props.hashtags.map(hashtag => hashtag.name),
-      schools: this.props.schools.map(school => school.name),
-      geotags: this.props.geotags.map(geotag => geotag.id),
+      hashtags: this.props.addedHashtags.map(hashtag => hashtag.get('name')).toJS(),
+      schools: this.props.addedSchools.map(school => school.get('name')).toJS(),
+      geotags: this.props.addedGeotags.map(geotag => geotag.get('id')).toJS(),
       minor_update: fields.minor_update.checked
     };
 
@@ -269,11 +269,11 @@ class CreatePost extends React.Component {
           </div>
         </form>
         <AddTagModal
+          addedGeotags={this.props.addedGeotags}
+          addedHashtags={this.props.addedHashtags}
+          addedSchools={this.props.addedSchools}
           allSchools={this.props.allSchools}
-          geotags={this.props.geotags}
-          hashtags={this.props.hashtags}
           ref={(c) => this._addTagModal = c}
-          schools={this.props.schools}
           triggers={this.props.triggers}
           type={addTagModalType}
           userRecentTags={this.props.userRecentTags}
