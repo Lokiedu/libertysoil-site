@@ -14,7 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+ @flow
+*/
 import fetch from 'isomorphic-fetch';
 import FormData from 'form-data';
 import { format as format_url, parse as parse_url } from 'url';
@@ -224,13 +226,13 @@ export default class ApiClient
     return await response.json();
   }
 
-  async checkUserExists(username) {
+  async checkUserExists(username): Promise<boolean> {
     const result = await this.head(`/api/v1/user/${username}`);
 
     return result.ok;
   }
 
-  async checkEmailTaken(email) {
+  async checkEmailTaken(email): Promise<boolean> {
     const result = await this.head(`/api/v1/user/email/${email}`);
 
     return result.ok;
@@ -261,7 +263,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async checkSchoolExists(name) {
+  async checkSchoolExists(name): Promise<boolean> {
     const result = await this.head(`/api/v1/school/${name}`);
 
     return result.ok;
@@ -587,7 +589,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async checkGeotagExists(name) {
+  async checkGeotagExists(name): Promise<boolean> {
     const result = await this.head(`/api/v1/geotag/${name}`);
 
     return result.ok;
