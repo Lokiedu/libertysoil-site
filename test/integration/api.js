@@ -764,6 +764,14 @@ describe('api v.1', () => {
               'body to satisfy', [{text: post.get('text')}]
             );
           });
+
+          it('/api/v1/posts/favoured for non existing user should expose json with empty array', async () => {
+            await expect(
+              { url: `/api/v1/posts/favoured/nonexistinguser` },
+              'body to satisfy',
+              []
+            );
+          });
         });
 
         describe('Likes', () => {
