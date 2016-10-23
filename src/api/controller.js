@@ -384,14 +384,18 @@ export default class ApiController {
 
   userFavouredPosts = async (ctx) => {
     try {
-      const user_id = await this.bookshelf.knex
-        .select('id')
+      const user = await this.bookshelf.knex
+        .first('id')
         .from('users')
-        .where('users.username', '=', ctx.params.user)
-        .map(row => row.id);
+        .where('users.username', '=', ctx.params.user);
 
-      const posts = await this.getFavouredPosts(user_id[0]);
-      ctx.body = posts;
+      if (user) {
+        const posts = await this.getFavouredPosts(user.id);
+        ctx.body = posts;
+      } else {
+        ctx.app.logger.warn(`Someone tried read favoured posts for '${ctx.params.user}', but there's no such user`);
+        ctx.body = [];
+      }
     } catch (e) {
       ctx.status = 500;
       ctx.body = e.message;
