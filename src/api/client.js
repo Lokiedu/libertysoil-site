@@ -23,6 +23,17 @@ import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
 import { extend, merge as mergeObj } from 'lodash';
 
+import type { Integer, Success, UrlNode } from '../definitions/common';
+import type { GeotagId, Geotag } from '../definitions/geotags';
+import type { HashtagId, Hashtag } from '../definitions/hashtags';
+import type { SchoolId, School } from '../definitions/schools';
+
+export type Tags = {
+  geotags: Array<Geotag>,
+  hashtags: Array<Hashtag>,
+  schools: Array<School>
+};
+
 export default class ApiClient
 {
   host;
@@ -221,7 +232,7 @@ export default class ApiClient
     return response;
   }
 
-  async subscriptions(offset = 0) {
+  async subscriptions(offset: Integer = 0) {
     const response = await this.get(`/api/v1/posts?offset=${offset}`);
     return await response.json();
   }
@@ -263,18 +274,18 @@ export default class ApiClient
     return await response.json();
   }
 
-  async checkSchoolExists(name): Promise<boolean> {
+  async checkSchoolExists(name: string): Promise<boolean> {
     const result = await this.head(`/api/v1/school/${name}`);
 
     return result.ok;
   }
 
-  async getSchool(school_name) {
+  async getSchool(school_name: string): Promise<School> {
     const response = await this.get(`/api/v1/school/${school_name}`);
     return await response.json();
   }
 
-  async schools(query = {}) {
+  async schools(query = {}): Promise<{ schools: Array<School> }> {
     const response = await this.get('/api/v1/schools', query);
     return await response.json();
   }
@@ -301,7 +312,7 @@ export default class ApiClient
     return json;
   }
 
-  async userTags() {
+  async userTags(): Promise<Tags> {
     const response = await this.get(`/api/v1/user/tags`);
     return await response.json();
   }
@@ -311,7 +322,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async schoolPosts(schoolUrlName) {
+  async schoolPosts(schoolUrlName: UrlNode) {
     const response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
     return await response.json();
   }
@@ -331,12 +342,12 @@ export default class ApiClient
     return await response.json();
   }
 
-  async tagPosts(tag) {
+  async tagPosts(tag: UrlNode) {
     const response = await this.get(`/api/v1/posts/tag/${tag}`);
     return await response.json();
   }
 
-  async geotagPosts(geotagUrlName) {
+  async geotagPosts(geotagUrlName: UrlNode) {
     const response = await this.get(`/api/v1/posts/geotag/${geotagUrlName}`);
     return await response.json();
   }
@@ -351,7 +362,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async country(country_code) {
+  async country(country_code: string) {
     const response = await this.get(`/api/v1/country/${country_code}`);
     return await response.json();
   }
@@ -366,32 +377,32 @@ export default class ApiClient
     return await response.json();
   }
 
-  async likeHashtag(name) {
+  async likeHashtag(name: UrlNode): Promise<Success & { hashtag: Hashtag }> {
     const response = await this.post(`/api/v1/tag/${name}/like`);
     return await response.json();
   }
 
-  async unlikeHashtag(name) {
+  async unlikeHashtag(name: UrlNode): Promise<Success & { hashtag: Hashtag }> {
     const response = await this.post(`/api/v1/tag/${name}/unlike`);
     return await response.json();
   }
 
-  async likeSchool(urlName) {
+  async likeSchool(urlName: UrlNode): Promise<Success & { school: School }> {
     const response = await this.post(`/api/v1/school/${urlName}/like`);
     return await response.json();
   }
 
-  async unlikeSchool(urlName) {
+  async unlikeSchool(urlName: UrlNode): Promise<Success & { school: School }> {
     const response = await this.post(`/api/v1/school/${urlName}/unlike`);
     return await response.json();
   }
 
-  async likeGeotag(urlName) {
+  async likeGeotag(urlName: UrlNode): Promise<Success & { geotag: Geotag }> {
     const response = await this.post(`/api/v1/geotag/${urlName}/like`);
     return await response.json();
   }
 
-  async unlikeGeotag(urlName) {
+  async unlikeGeotag(urlName: UrlNode): Promise<Success & { geotag: Geotag }> {
     const response = await this.post(`/api/v1/geotag/${urlName}/unlike`);
     return await response.json();
   }
@@ -463,17 +474,17 @@ export default class ApiClient
     return await response.json();
   }
 
-  async userRecentHashtags() {
+  async userRecentHashtags(): Promise<Array<Geotag>> {
     const response = await this.get('/api/v1/user/recent-hashtags');
     return await response.json();
   }
 
-  async userRecentSchools() {
+  async userRecentSchools(): Promise<Array<School>> {
     const response = await this.get('/api/v1/user/recent-schools');
     return await response.json();
   }
 
-  async userRecentGeotags() {
+  async userRecentGeotags(): Promise<Array<Geotag>> {
     const response = await this.get('/api/v1/user/recent-geotags');
     return await response.json();
   }
@@ -504,22 +515,22 @@ export default class ApiClient
     return await response.json();
   }
 
-  async updateGeotag(uuid, data) {
+  async updateGeotag(uuid: GeotagId, data): Promise<Geotag> {
     const response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
     return await response.json();
   }
 
-  async updateHashtag(uuid, data) {
+  async updateHashtag(uuid: HashtagId, data): Promise<Hashtag> {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
     return await response.json();
   }
 
-  async createSchool(data) {
+  async createSchool(data): Promise<School> {
     const response = await this.postJSON('/api/v1/schools/new', data);
     return await response.json();
   }
 
-  async updateSchool(uuid, data) {
+  async updateSchool(uuid: SchoolId, data): Promise<School> {
     const response = await this.postJSON(`/api/v1/school/${uuid}`, data);
     return await response.json();
   }
@@ -534,42 +545,42 @@ export default class ApiClient
     return await response.json();
   }
 
-  async tagCloud() {
+  async tagCloud(): Promise<Array<Hashtag>> {
     const response = await this.get('/api/v1/tag-cloud');
     return await response.json();
   }
 
-  async searchHashtags(query) {
+  async searchHashtags(query): Promise<Array<Hashtag>> {
     const response = await this.get(`/api/v1/tags/search/${query}`);
     return await response.json();
   }
 
-  async followTag(name) {
+  async followTag(name: UrlNode): Promise<Success & { hashtag: Hashtag }> {
     const response = await this.post(`/api/v1/tag/${name}/follow`);
     return await response.json();
   }
 
-  async unfollowTag(name) {
+  async unfollowTag(name: UrlNode): Promise<Success & { hashtag: Hashtag }> {
     const response = await this.post(`/api/v1/tag/${name}/unfollow`);
     return await response.json();
   }
 
-  async schoolCloud() {
+  async schoolCloud(): Promise<Array<School>> {
     const response = await this.get('/api/v1/school-cloud');
     return await response.json();
   }
 
-  async searchSchools(query) {
+  async searchSchools(query): Promise<Array<School>> {
     const response = await this.get(`/api/v1/schools/search/${query}`);
     return await response.json();
   }
 
-  async followSchool(name) {
+  async followSchool(name: UrlNode): Promise<Success & { school: School }> { // TODO: use url_name instead
     const response = await this.post(`/api/v1/school/${name}/follow`);
     return await response.json();
   }
 
-  async unfollowSchool(name) {
+  async unfollowSchool(name: UrlNode): Promise<Success & { school: School }> { // TODO: use url_name instead
     const response = await this.post(`/api/v1/school/${name}/unfollow`);
     return await response.json();
   }
@@ -579,33 +590,33 @@ export default class ApiClient
     return await response.json();
   }
 
-  async followGeotag(urlName) {
+  async followGeotag(urlName: UrlNode): Promise<Success & { geotag: Geotag }> {
     const response = await this.post(`/api/v1/geotag/${urlName}/follow`);
     return await response.json();
   }
 
-  async unfollowGeotag(urlName) {
+  async unfollowGeotag(urlName: UrlNode): Promise<Success & { geotag: Geotag }> {
     const response = await this.post(`/api/v1/geotag/${urlName}/unfollow`);
     return await response.json();
   }
 
-  async checkGeotagExists(name): Promise<boolean> {
+  async checkGeotagExists(name: string): Promise<boolean> {
     const result = await this.head(`/api/v1/geotag/${name}`);
 
     return result.ok;
   }
 
-  async getGeotag(urlName) {
+  async getGeotag(urlName: UrlNode): Promise<Geotag> {
     const response = await this.get(`/api/v1/geotag/${urlName}`);
     return await response.json();
   }
 
-  async getHashtag(name) {
+  async getHashtag(name: UrlNode): Promise<Hashag> {
     const response = await this.get(`/api/v1/tag/${name}`);
     return await response.json();
   }
 
-  async searchGeotags(query) {
+  async searchGeotags(query): Promise<Array<Geotag>> {
     const response = await this.get(`/api/v1/geotags/search/${query}`);
     return await response.json();
   }
