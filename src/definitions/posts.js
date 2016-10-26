@@ -21,6 +21,7 @@ import type { DateType, Integer, UrlNode, Uuid4 } from './common';
 import type { Geotag, GeotagId } from './geotags';
 import type { Hashtag, HashtagId } from './hashtags';
 import type { LightSchool, SchoolId } from './schools';
+import type { User } from './users';
 
 export type PostId = Uuid4;
 
@@ -46,13 +47,13 @@ export type UserUpdateablePostData = {
 export type Post = UserUpdateablePostData & {
   comments: Integer,
   created_at: DateType,
-  favourers: Array<Object>,
+  favourers: Array<User>,
   fully_published_at?: DateType,
   id: PostId,
   liked_geotag_id?: GeotagId,
   liked_hashtag_id?: HashtagId,
   liked_school_id?: SchoolId,
-  likers: Array<Object>,
+  likers: Array<User>,
   more?: PostMore,
   type: PostType,
   updated_at: DateType,

@@ -23,16 +23,11 @@ import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
 import { extend, merge as mergeObj } from 'lodash';
 
-import type { Integer, Success, UrlNode } from '../definitions/common';
+import type { Email, Integer, Success, UrlNode } from '../definitions/common';
 import type { GeotagId, Geotag } from '../definitions/geotags';
 import type { HashtagId, Hashtag } from '../definitions/hashtags';
 import type { SchoolId, School } from '../definitions/schools';
-
-export type Tags = {
-  geotags: Array<Geotag>,
-  hashtags: Array<Hashtag>,
-  schools: Array<School>
-};
+import type { Password, UserId, UserRecentTags, UserMore, User, Username } from '../definitions/users';
 
 export default class ApiClient
 {
@@ -237,19 +232,19 @@ export default class ApiClient
     return await response.json();
   }
 
-  async checkUserExists(username): Promise<boolean> {
+  async checkUserExists(username: Username): Promise<boolean> {
     const result = await this.head(`/api/v1/user/${username}`);
 
     return result.ok;
   }
 
-  async checkEmailTaken(email): Promise<boolean> {
+  async checkEmailTaken(email: Email): Promise<boolean> {
     const result = await this.head(`/api/v1/user/email/${email}`);
 
     return result.ok;
   }
 
-  async getAvailableUsername(username) {
+  async getAvailableUsername(username: Username) {
     let json;
     const response = await this.get(`/api/v1/user/available-username/${username}`);
 
@@ -264,7 +259,7 @@ export default class ApiClient
     return json.username;
   }
 
-  async userInfo(username) {
+  async userInfo(username: Username) {
     const response = await this.get(`/api/v1/user/${username}`);
     return await response.json();
   }
@@ -295,7 +290,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async userPosts(username, query = {}) {
+  async userPosts(username: Username, query = {}) {
     const response = await this.get(`/api/v1/posts/user/${username}`, query);
     return await response.json();
   }
@@ -312,7 +307,7 @@ export default class ApiClient
     return json;
   }
 
-  async userTags(): Promise<Tags> {
+  async userTags(): Promise<UserRecentTags> {
     const response = await this.get(`/api/v1/user/tags`);
     return await response.json();
   }
@@ -337,7 +332,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async getFavouredPosts(username) {
+  async getFavouredPosts(username: Username) {
     const response = await this.get(`/api/v1/posts/favoured/${username}`);
     return await response.json();
   }
@@ -417,22 +412,22 @@ export default class ApiClient
     return await response.json();
   }
 
-  async follow(userName) {
+  async follow(userName: Username): Promise<Success & { user1: User, user2: User }> {
     const response = await this.post(`/api/v1/user/${userName}/follow`);
     return await response.json();
   }
 
-  async ignoreUser(userName) {
+  async ignoreUser(userName: Username) {
     const response = await this.post(`/api/v1/user/${userName}/ignore`);
     return await response.json();
   }
 
-  async updateUser(user) {
+  async updateUser(user: { more: UserMore }) {
     const response = await this.postJSON(`/api/v1/user`, user);
     return await response.json();
   }
 
-  async changePassword(old_password, new_password) {
+  async changePassword(old_password: Password, new_password: Password) {
     const response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
 
     if (response.status !== 200) {
@@ -443,18 +438,18 @@ export default class ApiClient
     return response.json();
   }
 
-  async resetPassword(email) {
+  async resetPassword(email: Email) {
     const response = await this.postJSON(`/api/v1/resetpassword`, { email });
 
     return await response.json();
   }
 
-  async newPassword(hash, password, password_repeat) {
+  async newPassword(hash, password: Password, password_repeat: Password) {
     const response = await this.postJSON(`/api/v1/newpassword/${hash}`, { password, password_repeat });
     return await response.json();
   }
 
-  async unfollow(userName) {
+  async unfollow(userName: Username): Promise<Success & { user1: User, user2: User }> {
     const response = await this.post(`/api/v1/user/${userName}/unfollow`);
     return await response.json();
   }
