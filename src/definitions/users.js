@@ -65,6 +65,7 @@ export type UserMore = {
   firstName?: string,
   head_pic?: Attachment,
   lastName?: string,
+  mute_all_posts?: boolean,
   roles?: Array<UserRole>,
   summary?: string
 };
@@ -109,4 +110,17 @@ export type CurrentUser = {
   schools: Array<School>,
   suggested_users: Array<User>,
   user?: User
+};
+
+// recursive
+export type RawUser = {
+  created_at: DateType,
+  followers: Array<RawUser>,
+  following: Array<RawUser>,
+  fullName?: string,
+  gravatarHash: string,
+  id: UserId,
+  more: UserMore,
+  updated_at: DateType,
+  username: Username
 };
