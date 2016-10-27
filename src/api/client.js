@@ -28,6 +28,7 @@ import type { GeotagId, Geotag } from '../definitions/geotags';
 import type { HashtagId, Hashtag } from '../definitions/hashtags';
 import type { SchoolId, School } from '../definitions/schools';
 import type { Password, UserId, UserRecentTags, UserMore, User, Username } from '../definitions/users';
+import type { UserUpdateablePostData, Post, PostType, PostId } from '../definitions/posts';
 
 export default class ApiClient
 {
@@ -227,7 +228,7 @@ export default class ApiClient
     return response;
   }
 
-  async subscriptions(offset: Integer = 0) {
+  async subscriptions(offset: Integer = 0): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts?offset=${offset}`);
     return await response.json();
   }
@@ -290,12 +291,12 @@ export default class ApiClient
     return await response.json();
   }
 
-  async userPosts(username: Username, query = {}) {
+  async userPosts(username: Username, query = {}): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/user/${username}`, query);
     return await response.json();
   }
 
-  async relatedPosts(postId) {
+  async relatedPosts(postId: PostId): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/post/${postId}/related-posts`);
 
     const json = await response.json();
@@ -312,37 +313,37 @@ export default class ApiClient
     return await response.json();
   }
 
-  async userLikedPosts() {
+  async userLikedPosts(): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/liked`);
     return await response.json();
   }
 
-  async schoolPosts(schoolUrlName: UrlNode) {
+  async schoolPosts(schoolUrlName: UrlNode): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/school/${schoolUrlName}`);
     return await response.json();
   }
 
-  async getLikedPosts(username) {
+  async getLikedPosts(username): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/liked/${username}`);
     return await response.json();
   }
 
-  async userFavouredPosts() {
+  async userFavouredPosts(): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/favoured`);
     return await response.json();
   }
 
-  async getFavouredPosts(username: Username) {
+  async getFavouredPosts(username: Username): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/favoured/${username}`);
     return await response.json();
   }
 
-  async tagPosts(tag: UrlNode) {
+  async tagPosts(tag: UrlNode): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/tag/${tag}`);
     return await response.json();
   }
 
-  async geotagPosts(geotagUrlName: UrlNode) {
+  async geotagPosts(geotagUrlName: UrlNode): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/geotag/${geotagUrlName}`);
     return await response.json();
   }
@@ -362,12 +363,12 @@ export default class ApiClient
     return await response.json();
   }
 
-  async like(postId) {
+  async like(postId: PostId): Promise<Success & { likes: Array<PostId>, likers: Array<UserId> }> {
     const response = await this.post(`/api/v1/post/${postId}/like`);
     return await response.json();
   }
 
-  async unlike(postId) {
+  async unlike(postId: PostId): Promise<Success & { likes: Array<PostId>, likers: Array<UserId> }> {
     const response = await this.post(`/api/v1/post/${postId}/unlike`);
     return await response.json();
   }
@@ -402,12 +403,12 @@ export default class ApiClient
     return await response.json();
   }
 
-  async fav(postId) {
+  async fav(postId: PostId): Promise<Success & { favourites: Array<PostId>, favourers: Array<UserId> }> {
     const response = await this.post(`/api/v1/post/${postId}/fav`);
     return await response.json();
   }
 
-  async unfav(postId) {
+  async unfav(postId: PostId): Promise<Success & { favourites: Array<PostId>, favourers: Array<UserId> }> {
     const response = await this.post(`/api/v1/post/${postId}/unfav`);
     return await response.json();
   }
@@ -489,23 +490,27 @@ export default class ApiClient
     return await response.json();
   }
 
-  async postInfo(uuid) {
+  async postInfo(uuid: PostId): Promise<Post> {
     const response = await this.get(`/api/v1/post/${uuid}`);
     return await response.json();
   }
 
-  async createPost(type, data) {
-    data.type = type;
+  async createPost(type: PostType, data: UserUpdateablePostData): Promise<Post> {
+    if (process.env.NODE_ENV === 'development') {
+      data = UserUpdateablePostData.update(data, { type: { '$set': type } });
+    } else {
+      data.type = type;
+    }
     const response = await this.postJSON(`/api/v1/posts`, data);
     return await response.json();
   }
 
-  async updatePost(uuid, data) {
+  async updatePost(uuid: PostId, data: UserUpdateablePostData): Promise<Post> {
     const response = await this.postJSON(`/api/v1/post/${uuid}`, data);
     return await response.json();
   }
 
-  async deletePost(uuid) {
+  async deletePost(uuid: PostId): Promise<Success> {
     const response = await this.del(`/api/v1/post/${uuid}`);
     return await response.json();
   }
@@ -640,31 +645,31 @@ export default class ApiClient
     return await response.json();
   }
 
-  async createComment(postId, text) {
+  async createComment(postId: PostId, text) {
     const response = await this.post(`/api/v1/post/${postId}/comments`, {
       text
     });
     return await response.json();
   }
 
-  async deleteComment(postId, commentId) {
+  async deleteComment(postId: PostId, commentId) {
     const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
     return await response.json();
   }
 
-  async saveComment(postId, commentId, text) {
+  async saveComment(postId: PostId, commentId, text) {
     const response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
       text
     });
     return await response.json();
   }
 
-  async subscribeToPost(postId) {
+  async subscribeToPost(postId: PostId) {
     const response = await this.post(`/api/v1/post/${postId}/subscribe`);
     return await response.json();
   }
 
-  async unsubscribeFromPost(postId) {
+  async unsubscribeFromPost(postId: PostId) {
     const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
     return await response.json();
   }
