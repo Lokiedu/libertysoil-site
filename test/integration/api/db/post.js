@@ -39,9 +39,9 @@ describe('Post', () => {
     school = await new School(SchoolFactory.build({updated_at: null})).save(null, {method: 'insert'});
   });
 
-  after(() => {
-    post.destroy();
-    school.destroy();
+  after(async () => {
+    await post.destroy();
+    await school.destroy();
   });
 
   it('attachSchool updates school updated_at field', async () => {
@@ -66,9 +66,9 @@ describe('Post', () => {
       }
     });
 
-    after(() => {
+    after(async () => {
       for (let geotag of geotags) {
-        geotag.destroy();
+        await geotag.destroy();
       }
     });
 
@@ -122,7 +122,7 @@ describe('Post', () => {
         await newGeotag.refresh();
         expect(newGeotag.get('post_count'), 'to equal', 1);
 
-        newGeotag.destroy();
+        await newGeotag.destroy();
       });
     });
   });
@@ -140,9 +140,9 @@ describe('Post', () => {
       }
     });
 
-    after(() => {
+    after(async () => {
       for (let school of schools) {
-        school.destroy();
+        await school.destroy();
       }
     });
 
@@ -196,7 +196,7 @@ describe('Post', () => {
         await newSchool.refresh();
         expect(newSchool.get('post_count'), 'to equal', 1);
 
-        newSchool.destroy();
+        await newSchool.destroy();
       });
     });
   });
@@ -214,9 +214,9 @@ describe('Post', () => {
       }
     });
 
-    after(() => {
+    after(async () => {
       for (let hashtag of hashtags) {
-        hashtag.destroy();
+        await hashtag.destroy();
       }
     });
 
@@ -270,7 +270,7 @@ describe('Post', () => {
         await newHashtag.refresh();
         expect(newHashtag.get('post_count'), 'to equal', 1);
 
-        newHashtag.destroy();
+        await newHashtag.destroy();
       });
     });
   });

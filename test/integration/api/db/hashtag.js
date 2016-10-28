@@ -45,13 +45,13 @@ describe('Hashtag', () => {
     }
   });
 
-  after(() => {
+  after(async () => {
     for (let post of posts) {
-      post.destroy();
+      await post.destroy();
     }
 
     for (let hashtag of hashtags) {
-      hashtag.destroy();
+      await hashtag.destroy();
     }
   });
 

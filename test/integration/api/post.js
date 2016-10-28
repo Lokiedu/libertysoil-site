@@ -180,8 +180,8 @@ describe('Post', () => {
       });
 
       after(async () => {
-        user.destroy();
-        post.destroy();
+        await user.destroy();
+        await post.destroy();
       });
 
       afterEach(async () => {

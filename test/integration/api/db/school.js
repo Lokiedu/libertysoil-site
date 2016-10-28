@@ -45,13 +45,13 @@ describe('School', () => {
     }
   });
 
-  after(() => {
+  after(async () => {
     for (let post of posts) {
-      post.destroy();
+      await post.destroy();
     }
 
     for (let school of schools) {
-      school.destroy();
+      await school.destroy();
     }
   });
 
