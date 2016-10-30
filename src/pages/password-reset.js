@@ -46,7 +46,7 @@ export const ResetForm = (props) => {
         <button type="submit" className="button button-big button-green">Submit</button>
       </div>
     </form>
-   );
+  );
 };
 
 export const SuccessMessage = () => {
