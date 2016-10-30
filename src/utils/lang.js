@@ -32,3 +32,11 @@ export function castObject(value, fieldName) {
 
   return { [fieldName]: value };
 }
+
+export function removeWhitespace(str = '') {
+  return str
+    .trim()               // whitespace from ends
+    .split(' ')
+    .filter(word => word) // extra whitespace between words
+    .join(' ');
+}
