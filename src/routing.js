@@ -53,6 +53,7 @@ import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
 import PasswordToolPage from './pages/tools/password-tool';
+import NewSchoolToolPage from './pages/tools/new-school-tool';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -114,6 +115,7 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={BaseToolsPage} path="/tools">
         <Redirect from="tags" to="schools" />
         <Route component={SchoolsToolPage} path="schools" onEnter={withAuth} />
+        <Route component={NewSchoolToolPage} path="schools/new" onEnter={withAuth} />
         <Route path="my">
           <IndexRedirect to="posts" />
           <Route component={MyPostsToolPage} path="posts" onEnter={withAuth} />
