@@ -17,10 +17,12 @@
 */
 /*eslint-env node, mocha */
 import { shallow } from 'enzyme';
+import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import { PostPage } from '../../../src/pages/post';
 import NotFound from '../../../src/pages/not-found';
+
 
 describe('Post page', () => {
   const uuid4Example = '550e8400-e29b-41d4-a716-446655440000';
@@ -28,11 +30,11 @@ describe('Post page', () => {
   it('MUST render nothing when post hasn\'t been fetched yet', () => {
     const wrapper = shallow(
       <PostPage
-        comments={{}}
+        comments={i.Map()}
         is_logged_in={false}
         params={{ uuid: uuid4Example }}
-        posts={{}}
-        users={{}}
+        posts={i.Map()}
+        users={i.Map()}
       />
     );
 
@@ -40,22 +42,17 @@ describe('Post page', () => {
   });
 
   it('MUST render as <NotFound /> page when post doesn\'t exist', () => {
-    let errorCalls = 0;
-    const error = console.error;
-    console.error = () => { ++errorCalls; };
-
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <PostPage
-        comments={{}}
+        comments={i.Map()}
         is_logged_in={false}
         params={{ uuid: uuid4Example }}
-        posts={{ [uuid4Example]: false }}
-        users={{}}
+        posts={i.fromJS({ [uuid4Example]: { error: true } })}
+        users={i.Map()}
       />
     );
 
-    console.error = error;
     return expect(renderer, 'to have rendered', <NotFound />);
   });
 });

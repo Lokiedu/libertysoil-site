@@ -20,6 +20,7 @@ import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import Helmet from 'react-helmet';
 import uuid from 'uuid';
 import sinon from 'sinon';
+import i from 'immutable';
 
 import { List } from '../../../src/pages/list';
 import Header from '../../../src/components/header';
@@ -34,21 +35,21 @@ import SideSuggestedUsers from '../../../src/components/side-suggested-users';
 import CreatePost from '../../../src/components/create-post';
 
 describe('List page with redux', () => {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <List
-        comments={{}}
-        create_post_form={{ text: 'foo' }}
-        current_user={{
+        comments={i.Map()}
+        create_post_form={i.fromJS({ text: 'foo' })}
+        current_user={i.fromJS({
           id: uuid.v4(),
           favourites: [],
           followed_geotags: [],
@@ -76,13 +77,14 @@ describe('List page with redux', () => {
             updated_at: '',
             username: 'test'
           }
-        }}
+        })}
+        following={i.Map()}
         is_logged_in
-        users={[]}
-        posts={{}}
-        river={[]}
-        schools={{}}
-        ui={{ progress: {} }}
+        posts={i.Map()}
+        river={i.List()}
+        schools={i.Map()}
+        ui={i.fromJS({ progress: {} })}
+        users={i.Map()}
       />
     );
 
