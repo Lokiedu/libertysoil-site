@@ -1064,7 +1064,6 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 

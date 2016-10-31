@@ -20,9 +20,12 @@ import { uniq } from 'lodash';
 
 import expect from '../../../test-helpers/expect';
 import { bookshelf } from '../../../test-helpers/db';
+import { login } from '../../../test-helpers/api';
+
+import UserFactory from '../../../test-helpers/factories/user';
 import SchoolFactory from '../../../test-helpers/factories/school';
 
-
+const User = bookshelf.model('User');
 const School = bookshelf.model('School');
 
 describe('Post', () => {
@@ -50,6 +53,180 @@ describe('Post', () => {
         'body to satisfy',
         letters
       );
+    });
+  });
+
+  describe('/api/v1/schools/new', () => {
+    describe('Not authenticated user', () => {
+      it('responds with error', async () => {
+        await expect(
+          { url: '/api/v1/schools/new', method: 'POST', body: { name: 'test' } },
+          'not to open authorized'
+        );
+      });
+    });
+
+    describe('Authenticated user', () => {
+      let user, sessionId;
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+
+        user.set('email_check_hash', null);
+        await user.save(null, { method: 'update' });
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(async () => {
+        await user.destroy();
+        sessionId = null;
+      });
+
+      describe('If school doesn\'t exist', () => {
+        describe('Validation errors', () => {
+          it('"name" property isn\'t given', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: {},
+                method: 'POST'
+              },
+              'to fail validation with',
+              '"name" property is not given'
+            );
+          });
+
+          it('"name" property is an empty string or contains only whitespace', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: '' },
+                method: 'POST'
+              },
+              'to fail validation with',
+              '"name" mustn\'t be an empty string'
+            );
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: '     ' },
+                method: 'POST'
+              },
+              'to fail validation with',
+              '"name" mustn\'t be an empty string'
+            );
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: ' \n\n  \r \t ' },
+                method: 'POST'
+              },
+              'to fail validation with',
+              '"name" mustn\'t be an empty string'
+            );
+          });
+
+          it("'is_open' has to be boolean or null", async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: 'test', is_open: '' },
+                method: 'POST'
+              },
+              'body to satisfy',
+              { error: "'is_open' has to be boolean or null" }
+            );
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: 'test', is_open: '' },
+                method: 'POST'
+              },
+              'body to satisfy',
+              { error: "'is_open' has to be boolean or null" }
+            );
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: 'test', is_open: 1 },
+                method: 'POST'
+              },
+              'body to satisfy',
+              { error: "'is_open' has to be boolean or null" }
+            );
+          });
+
+          // TODO: add more validation tests
+        });
+
+        describe('Succeed', () => {
+          it('creates school successfully', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: '/api/v1/schools/new',
+                body: { name: 'test' },
+                method: 'POST'
+              },
+              'body to satisfy',
+              {
+                more: { last_editor: user.get('id') },
+                name: 'test',
+                post_count: 0,
+                url_name: 'test'
+              }
+            );
+
+            const school = await School.where({ name: 'test' }).fetch({ require: true });
+            await school.destroy();
+          });
+        });
+      });
+
+      describe('If school exists', () => {
+        let school, name;
+
+        before(async () => {
+          school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
+          name = school.get('name');
+        });
+
+        after(async () => {
+          await school.destroy();
+          name = null;
+        });
+
+        it('responds with error', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: '/api/v1/schools/new',
+              body: { name },
+              method: 'POST'
+            },
+            'body to satisfy',
+            { error: 'School with such name is already registered' }
+          );
+          await expect(
+            {
+              session: sessionId,
+              url: '/api/v1/schools/new',
+              body: { name: `${name} ` },
+              method: 'POST'
+            },
+            'body to satisfy',
+            { error: 'School with such name is already registered' }
+          );
+        });
+      });
     });
   });
 });
