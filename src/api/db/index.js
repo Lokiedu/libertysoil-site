@@ -133,7 +133,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  User.create = async function(username, password, email, moreData) {
+  User.create = async function (username, password, email, moreData) {
     username = username.toLowerCase();
     const hashed_password = await bcryptHashAsync(password, 10);
 
@@ -365,7 +365,7 @@ export function initBookshelfFromKnex(knex) {
     }
   };
 
-  Hashtag.updatePostCounters = async function() {
+  Hashtag.updatePostCounters = async function () {
     await knex('hashtags')
       .update({
         post_count: knex('hashtags_posts')
@@ -374,7 +374,7 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  Hashtag.updateUpdatedAt = async function(ids) {
+  Hashtag.updateUpdatedAt = async function (ids) {
     await knex('hashtags')
       .whereIn('id', ids)
       .update({
@@ -418,7 +418,7 @@ export function initBookshelfFromKnex(knex) {
     }
   };
 
-  School.updatePostCounters = async function() {
+  School.updatePostCounters = async function () {
     await knex('schools')
       .update({
         post_count: knex('posts_schools')
@@ -427,7 +427,7 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  School.updateUpdatedAt = async function(ids) {
+  School.updateUpdatedAt = async function (ids) {
     await knex('schools')
       .whereIn('id', ids)
       .update({
@@ -494,7 +494,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  Geotag.updatePostCounters = async function() {
+  Geotag.updatePostCounters = async function () {
     await knex('geotags')
       .update({
         post_count: knex('geotags_posts')
@@ -503,7 +503,7 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  Geotag.updateUpdatedAt = async function(ids) {
+  Geotag.updateUpdatedAt = async function (ids) {
     await knex('geotags')
       .whereIn('id', ids)
       .update({

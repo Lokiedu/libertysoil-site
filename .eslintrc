@@ -13,16 +13,19 @@
     "flowtype"
   ],
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2107,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    },
+    }
   },
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
     },
+    "import/ignore": [
+      "node_modules"
+    ],
     "react": {
       "pragma": "React",
       "version": "15.0"
