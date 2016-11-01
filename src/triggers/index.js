@@ -249,11 +249,7 @@ export class ActionsTrigger {
         success = true;
       }
     } catch (e) {
-      if ('error' in e.response) {
-        this.dispatch(a.messages.addError(e.response.error));
-      } else {
-        this.dispatch(a.messages.addError(e.message));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
 
     return success;
