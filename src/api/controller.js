@@ -1712,19 +1712,24 @@ export default class ApiController {
 
   getUser = async (ctx) => {
     const User = this.bookshelf.model('User');
-    const u = await User
-      .where({ username: ctx.params.username })
-      .fetch({
-        require: true,
-        withRelated: [
-          'following', 'followers', 'liked_posts',
-          'liked_hashtags', 'liked_schools', 'liked_geotags',
-          'favourited_posts', 'followed_hashtags',
-          'followed_schools', 'followed_geotags'
-        ]
-      });
 
-    ctx.body = u.toJSON();
+    try {
+      const u = await User
+              .where({ username: ctx.params.username })
+              .fetch({
+                require: true,
+                withRelated: [
+                  'following', 'followers', 'liked_posts',
+                  'liked_hashtags', 'liked_schools', 'liked_geotags',
+                  'favourited_posts', 'followed_hashtags',
+                  'followed_schools', 'followed_geotags'
+                ]
+              });
+      ctx.body = u.toJSON();
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
   };
 
   followUser = async (ctx) => {
@@ -2710,7 +2715,8 @@ export default class ApiController {
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
-      ctx.body = { error: e.message };
+      ctx.body = { error: 'Internal Server Error' };
+      ctx.app.logger.error(e);
     }
   };
 
