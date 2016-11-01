@@ -205,11 +205,7 @@ export class ActionsTrigger {
         status = true;
       }
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
-      } else {
-        this.dispatch(a.messages.addError(e.message));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
     return status;
   };
@@ -234,11 +230,7 @@ export class ActionsTrigger {
         success = true;
       }
     } catch (e) {
-      if ('error' in e.response) {
-        this.dispatch(a.messages.addError(e.response.error));
-      } else {
-        this.dispatch(a.messages.addError(e.message));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
 
     return success;
@@ -304,18 +296,10 @@ export class ActionsTrigger {
 
       user = result.user;
     } catch (e) {
+      // FIXME: in some cases, this should be reported to developers instead (use Sentry?)
+      console.warn(e);  // eslint-disable-line no-console
+      this.dispatch(a.messages.addError(e.message));
       this.dispatch(a.users.setCurrentUser(null));
-
-      if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
-      } else if (e.status === 401) {
-        this.dispatch(a.messages.addError('Invalid username or password'));
-      } else {
-        // FIXME: this should be reported to developers instead (use Sentry?)
-        console.warn(e);  // eslint-disable-line no-console
-        this.dispatch(a.messages.addError('Server error: please retry later'));
-      }
-
       return;
     }
 
@@ -348,11 +332,7 @@ export class ActionsTrigger {
       await this.client.newPassword(hash, password, password_repeat);
       this.dispatch(a.users.submitNewPassword());
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
-      } else {
-        this.dispatch(a.messages.addError(e.message));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -368,21 +348,7 @@ export class ActionsTrigger {
       }
     } catch (e) {
       // FIXME: enable form again
-
-      if (e.response && ('error' in e.response.body)) {
-        // FIXME: enable form again
-        const errors = e.response.body.error;
-        let message = '';
-        for (const i in errors) {
-          errors[i].map((el) => {
-            message += `${el}\n`;
-          });
-        }
-
-        this.dispatch(a.messages.addError(message));
-      } else {
-        this.dispatch(a.messages.addError('Server seems to have problems. Retry later, please'));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
   };
 
@@ -398,12 +364,7 @@ export class ActionsTrigger {
 
   deletePost = async (post_uuid) => {
     try {
-      const result = await this.client.deletePost(post_uuid);
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
+      await this.client.deletePost(post_uuid);
       const userTags = await this.client.userTags();
       this.dispatch(a.tags.setUserTags(userTags));
       this.dispatch(a.posts.removePost(post_uuid));
@@ -690,8 +651,12 @@ export class ActionsTrigger {
   };
 
   loadUserTags = async () => {
-    const userTags = await this.client.userTags();
-    this.dispatch(a.tags.setUserTags(userTags));
+    try {
+      const userTags = await this.client.userTags();
+      this.dispatch(a.tags.setUserTags(userTags));
+    } catch (e) {
+      this.dispatch(e.messages.addError(e.message));
+    }
   };
 
   showRegisterForm = async () => {
@@ -724,16 +689,11 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.createComment(postId, comment);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.createCommentFailure(postId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.createCommentSuccess(postId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.createCommentSuccess(postId));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
+      this.dispatch(a.comments.createCommentFailure(postId, e.message));
     }
   };
 
@@ -743,15 +703,10 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.deleteComment(postId, commentId);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.deleteCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
     } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
       this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
     }
   };
@@ -761,16 +716,11 @@ export class ActionsTrigger {
 
     try {
       const responseBody = await this.client.saveComment(postId, commentId, text);
-
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.saveCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
-        }
-      }
+      
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
     } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
       this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
     }
   };
