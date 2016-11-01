@@ -16,98 +16,119 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { form as inform, from } from 'react-inform';
+import { form as inform, from, DisabledFormSubmit } from 'react-inform';
+import { omit, reduce } from 'lodash';
+import classNames from 'classnames';
+import zxcvbn from 'zxcvbn';
 
 import Message from '../message';
 
-class PasswordForm extends React.Component {
-  static displayName = 'PasswordForm';
+const staticFields = {
+  oldPassword: {
+    label: 'Current password:'
+  },
+  newPassword: {
+    label: 'New password:'
+  },
+  newPasswordRepeat: {
+    label: 'Repeat new password:'
+  },
+};
 
-  static propTypes = {
-    fields: PropTypes.shape({
-      oldPassword: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      newPassword: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      newPasswordRepeat: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired
+const PasswordForm = ({ fields, form, onSubmit }) => (
+  <form action="" autoComplete="off" onSubmit={onSubmit}>
+    <input name="autofillWorkaround" style={{ display: 'none' }} type="password" />
+
+    {reduce(
+      fields,
+      (acc, fieldValue, fieldName) => {
+        const wrapClassName = classNames('input_wrap', {
+          'input_wrap-error': !!fieldValue.error
+        });
+
+        acc.push(
+          <div key={fieldName}>
+            <div className="form__row tools_page__item tools_page__item--close">
+              <label className="form__label" htmlFor={fieldName}>
+                {staticFields[fieldName].label}
+              </label>
+              <div className={wrapClassName}>
+                <input
+                  autoFocus={fieldName === 'oldPassword'}
+                  className="input input-block input-narrow input-transparent"
+                  id={fieldName}
+                  name={fieldName}
+                  required
+                  type="password"
+                  {...omit(fieldValue, ['error'])}
+                />
+              </div>
+            </div>
+            {fieldValue.error &&
+              <div>
+                <Message message={fieldValue.error} />
+              </div>
+            }
+          </div>
+        );
+
+        return acc;
+      },
+      []
+    )}
+
+    {form.isValid() &&
+      <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
+        <DisabledFormSubmit
+          className="button button-wide button-green button--new"
+          type="submit"
+          value="Save"
+        />
+      </div>
+    }
+  </form>
+);
+
+PasswordForm.displayName = 'PasswordForm';
+
+PasswordForm.propTypes = {
+  fields: PropTypes.shape({
+    oldPassword: PropTypes.shape({
+      error: PropTypes.string
     }).isRequired,
-    form: PropTypes.shape({
-      forceValidate: PropTypes.func.isRequired,
-      isValid: PropTypes.func.isRequired,
-      onValues: PropTypes.func.isRequired
+    newPassword: PropTypes.shape({
+      error: PropTypes.string
+    }).isRequired,
+    newPasswordRepeat: PropTypes.shape({
+      error: PropTypes.string
     }).isRequired
-  };
+  }).isRequired,
+  form: PropTypes.shape({
+    isValid: PropTypes.func
+  }),
+  onSubmit: PropTypes.func
+};
 
-  render() {
-    const { fields, form } = this.props;
-
-    return (
-      <form action="" className="paper__page" autoComplete={false}>
-        <h2 className="content__sub_title layout__row">Password</h2>
-
-        <input name="autofillWorkaround" style={{ display: 'none' }} type="password" />
-
-        <div className="layout__row">
-          <label className="layout__row layout__row-small" htmlFor="oldPassword">Current password</label>
-          <input
-            className="input input-block layout__row layout__row-small"
-            id="oldPassword"
-            name="oldPassword"
-            placeholder="secret"
-            required
-            type="password"
-            onChange={this._validateOldPassword}
-            {...fields.oldPassword}
-          />
-          {fields.oldPassword.error &&
-            <Message message={fields.oldPassword.error} />
-          }
-        </div>
-
-        <div className="layout__row">
-          <label className="layout__row layout__row-small" htmlFor="newPassword">New password</label>
-          <input
-            className="input input-block layout__row layout__row-small"
-            id="newPassword"
-            name="newPassword"
-            placeholder="mystery"
-            required
-            type="password"
-            onChange={this._validateNewPassword}
-            {...fields.newPassword}
-          />
-          {fields.newPassword.error &&
-            <Message message={fields.newPassword.error} />
-          }
-        </div>
-
-        <div className="layout__row">
-          <label className="layout__row layout__row-small" htmlFor="newPasswordRepeat">Repeat new password</label>
-          <input
-            className="input input-block layout__row layout__row-small"
-            id="newPasswordRepeat"
-            name="newPasswordRepeat"
-            placeholder="mystery"
-            required
-            type="password"
-            onChange={this._validateNewPasswordRepeat}
-            {...fields.newPasswordRepeat}
-          />
-          {fields.newPasswordRepeat.error &&
-            <Message message={fields.newPasswordRepeat.error} />
-          }
-        </div>
-      </form>
-    );
-  }
-}
+PasswordForm.defaultProps = {
+  onSubmit: () => {}
+};
 
 const validateNewPassword = (password) => {
   if (password && password.length < 8) {
+    return false;
+  }
+  return true;
+};
+
+const validateNewPasswordChars = (password) => {
+  if (!password.match(/[\x20-\x7E]$/)) {
+    return false;
+  }
+  return true;
+};
+
+const validateComplexity = (password) => {
+  if (zxcvbn(password).score < 3) {
     return false;
   }
   return true;
@@ -126,7 +147,9 @@ const WrappedPasswordForm = inform(from({
   },
   newPassword: {
     'Enter new password': n => n,
-    'Password must contain at least 8 symbols': validateNewPassword
+    'Password must contain at least 8 symbols': validateNewPassword,
+    'Password must contain only ASCII characters': validateNewPasswordChars,
+    'Password is too weak. Consider adding more words or symbols': validateComplexity
   },
   newPasswordRepeat: {
     'Passwords don\'t match': validateNewPasswordRepeat

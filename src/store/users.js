@@ -70,6 +70,11 @@ export default function reducer(state = initialState, action) {
     case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
       const user = action.post.user;
+      if (!user) {
+        // the post hasn't been found; adding a fake
+        break;
+      }
+
       const comment_authors = action.post.post_comments.map(comment => comment.user);
       const users = _.keyBy(_.uniqBy([user, ...comment_authors], 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));

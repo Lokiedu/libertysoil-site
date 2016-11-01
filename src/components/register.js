@@ -129,7 +129,6 @@ export class Register extends React.Component {
     if (!keys(this.state).find(v => v === attr)) {
       return;
     }
-
     const input = field.value.replace(/[\f\n\r\t\v0-9]/g, '');
     this.setState({ [attr]: input });
 

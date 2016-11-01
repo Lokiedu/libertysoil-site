@@ -194,6 +194,21 @@ export class ActionsTrigger {
     }
   };
 
+  loadUserInfo = async (username) => {
+    let status = false;
+    try {
+      const user = await this.client.userInfo(username);
+
+      if ('id' in user) {
+        this.dispatch(a.users.addUser(user));
+        status = true;
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.messages));
+    }
+    return status;
+  };
+
   updateUserInfo = async (user) => {
     let status = false;
     try {
@@ -234,11 +249,7 @@ export class ActionsTrigger {
         success = true;
       }
     } catch (e) {
-      if ('error' in e.response) {
-        this.dispatch(a.messages.addError(e.response.error));
-      } else {
-        this.dispatch(a.messages.addError(e.message));
-      }
+      this.dispatch(a.messages.addError(e.message));
     }
 
     return success;
