@@ -15,26 +15,28 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.schools_tool {
+// Visual block used in item lists on tool pages.
+.tools_item {
   @space: 20px;
-  @subtextColor: #888;
 
-  &__post_count {
-    margin-left: auto;
+  display: flex;
+  margin-bottom: 15px;
+  padding: @space;
+  background-color: white;
+  border-bottom: 2px solid #EDEDED;
+
+  &-selected {
+    background: #FD9315;
+    color: white;
   }
 
-  &__details_icon {
-    font-size: 100px;
+  &-clickable {
+    &:hover {
+      cursor: pointer;
+    }
   }
 
-  &__filter {
-    margin-bottom: @space;
-  }
-
-  &__sort {
-    display: flex;
-    align-items: center;
-    float: right;
+  &__child-padded {
     margin-left: @space;
   }
 }

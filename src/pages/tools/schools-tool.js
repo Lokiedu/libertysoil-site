@@ -18,7 +18,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
 import { replace } from 'react-router-redux';
 
 import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
@@ -30,76 +29,12 @@ import { setSchoolsAlphabet } from '../../actions/tools';
 import { ActionsTrigger } from '../../triggers';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
-import { TAG_SCHOOL } from '../../consts/tags';
 import Button from '../../components/button';
 import VisibilitySensor from '../../components/visibility-sensor';
-import TagIcon from '../../components/tag-icon';
-import FollowTagButton from '../../components/follow-tag-button';
 import AlphabetFilter from '../../components/tools/alphabet-filter';
+import SchoolList from '../../components/tools/school-list';
+import SchoolDetails from '../../components/tools/school-details';
 
-
-function SchoolList({ onClick, schools, selectedSchoolId }) {
-  const items = schools.map((school, index) => {
-    const handleClick = () => onClick(school.get('id'));
-    let className = 'tools_page__item schools_tool__school_item';
-    if (school.get('id') === selectedSchoolId) {
-      className += ' tools_page__item-selected';
-    }
-
-    return (
-      <div
-        className={className}
-        key={index}
-        onClick={handleClick}
-      >
-        <TagIcon type={TAG_SCHOOL} />
-        <span className="schools_tool__school_link">{school.get('name')}</span>
-        <span
-          className="schools_tool__post_count"
-          title="Number of times this school was used"
-        >
-          ({school.get('post_count')})
-        </span>
-      </div>
-    );
-  });
-
-  return (
-    <div>
-      {items}
-    </div>
-  );
-}
-
-function SchoolDescription({ current_user, school, triggers }) {
-  if (school) {
-    return (
-      <div className="layout__grid_item-identical schools_tool__info_col">
-        <div className="tools_page__item schools_tool__info ">
-          <span className="micon schools_tool__info_icon">school</span>
-          <div>
-            <Link className="schools_tool__info_title" to={`/s/${school.get('url_name')}`}>
-              {school.get('name')}
-            </Link>
-            <div className="schools_tool__info_description">
-              {school.get('description')}
-            </div>
-            <FollowTagButton
-              className="button-midi"
-              current_user={current_user.toJS()}
-              followed_tags={current_user.get('followed_schools').toJS()}
-              key="follow"
-              tag={school.get('url_name')}
-              triggers={triggers}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
 
 const LIMIT = 25;
 
@@ -220,17 +155,13 @@ class SchoolsToolPage extends React.Component {
     const schoolsToDisplay = schools_river.map(schoolId => schools.get(schoolId));
     const sortQuery = this.props.location.query.sort || 'name';
 
-    let selectedSchool;
-    if (this.state.selectedSchoolId) {
-      selectedSchool = schools.get(this.state.selectedSchoolId);
-    } else {
-      selectedSchool = schools.get(schools_river.get(0));
-    }
+    const selectedSchoolId = this.state.selectedSchoolId || schools_river.get(0);
+    const selectedSchool = schools.get(selectedSchoolId);
 
     return (
       <div className="layout">
         <Helmet title="Schools tool on " />
-        <div className="schools_tool__list_col">
+        <div className="tools_page__list_col">
           <div className="schools_tool__filter">
             <div className="schools_tool__sort">
               <span className="micon">sort</span>
@@ -247,7 +178,7 @@ class SchoolsToolPage extends React.Component {
           </div>
           <SchoolList
             schools={schoolsToDisplay}
-            selectedSchoolId={selectedSchool.get('id')}
+            selectedSchoolId={selectedSchoolId}
             onClick={this.handleSelectSchool}
           />
           <div className="layout layout-align_center layout__space layout__space-double">
@@ -262,7 +193,7 @@ class SchoolsToolPage extends React.Component {
             }
           </div>
         </div>
-        <SchoolDescription
+        <SchoolDetails
           current_user={current_user}
           school={selectedSchool}
           triggers={followSchoolTriggers}

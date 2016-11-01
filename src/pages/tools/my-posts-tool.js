@@ -97,7 +97,7 @@ class MyPostsToolPage extends React.Component {
       <div>
         <Helmet title="My posts tool on " />
         {postsToDisplay.map((post, index) =>
-          <div className="tools_page__item" key={index}>
+          <div className="tools_item tools_item-clickable" key={index}>
             <Link to={`/post/${post.get('id')}`}>{truncate(post.get('text'), { length: 70 })}</Link>
           </div>
         )}
