@@ -19,6 +19,7 @@
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import Helmet from 'react-helmet';
 import sinon from 'sinon';
+import i from 'immutable';
 
 import { Auth } from '../../../src/pages/auth';
 import Messages from '../../../src/components/messages';
@@ -30,18 +31,18 @@ import Register from '../../../src/components/register';
 
 
 describe('Auth page with redux', function() {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
 
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={[]} ui={{}} />);
+    renderer.render(<Auth is_logged_in messages={i.List()} ui={i.Map()} />);
 
     return expect(
       renderer,
@@ -53,20 +54,20 @@ describe('Auth page with redux', function() {
 
   it('MUST render passed messages', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={[{ message: 'Im foo message' }]} ui={{}} />);
+    renderer.render(<Auth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
 
     return expect(
       renderer,
       'to contain',
       <div>
-        <Messages messages={[{message: 'Im foo message'}]} />
+        <Messages messages={i.fromJS([{ message: 'Im foo message' }])} />
       </div>
     );
   });
 
   it('MUST pass ui.registrationSuccess to Register component', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={[]} ui={{ registrationSuccess: false }} />);
+    renderer.render(<Auth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
 
     return expect(
       renderer,
@@ -76,5 +77,4 @@ describe('Auth page with redux', function() {
       </div>
     );
   });
-
 });

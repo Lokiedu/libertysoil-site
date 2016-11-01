@@ -58,13 +58,13 @@ export default class CreateComment extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      ui
-    } = this.props;
-    const commentUi = ui.comments.new;
-    const nextCommentUi = nextProps.ui.comments.new;
+    const commentUi = this.props.ui.getIn(['comments', 'new']);
+    const nextCommentUi = nextProps.ui.getIn(['comments', 'new']);
 
-    if (commentUi && nextCommentUi && commentUi.isCreateInProgress && !nextCommentUi.isCreateInProgress && !nextCommentUi.error) {
+    if (commentUi && nextCommentUi &&
+        commentUi.get('isCreateInProgress') &&
+        !nextCommentUi.get('isCreateInProgress') &&
+        !nextCommentUi.get('error')) {
       this.setState({
         isExpanded: false,
         comment: ''
@@ -108,42 +108,41 @@ export default class CreateComment extends Component {
   };
 
   renderMessage = () => {
-    const {
-      ui
-    } = this.props;
-    let messageComponent = null;
-    const commentUi = ui.comments.new || {};
+    const commentUi = this.props.ui.getIn(['comments', 'new']);
 
-    if (commentUi.error) {
-      messageComponent = (
+    if (commentUi.get('error')) {
+      return (
         <div className="layout__row">
-          <Message message={commentUi.error} type="ERROR" />
+          <Message message={commentUi.get('error')} type="ERROR" />
         </div>
       );
     }
 
-    return messageComponent;
+    return null;
   };
 
   render() {
     const {
-      author,
+      current_user,
       className,
       ui
     } = this.props;
+
     const {
       isExpanded,
       comment
     } = this.state;
+
     const blockClassName = bem.makeClassName({
       block: 'create_comment',
       modifiers: {
         expanded: isExpanded
       }
     });
-    const commentUi = ui.comments.new || {};
 
-    if (!author) {
+    const commentUi = ui.getIn(['comments', 'new']);
+
+    if (!current_user) {
       return (
         <div className={`${blockClassName} ${className} content`}>
           You can not comment. Please <Link to="/auth">register or log in</Link>.
@@ -162,7 +161,7 @@ export default class CreateComment extends Component {
             <User
               avatar={{ size: 32 }}
               text={{ hide: true }}
-              user={author}
+              user={current_user.get('user')}
             />
           </div>
           <div className="layout__grid_item layout__grid_item-wide">
@@ -179,7 +178,7 @@ export default class CreateComment extends Component {
               <Button
                 className="layout__grid_item"
                 color="light_blue"
-                disabled={!comment.trim() || commentUi.isCreateInProgress}
+                disabled={!comment.trim() || commentUi.get('isCreateInProgress')}
                 size="midi"
                 title="Post"
                 type="submit"

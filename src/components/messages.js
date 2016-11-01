@@ -22,12 +22,12 @@ import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messag
 import Message from './message';
 
 const Messages = ({ messages, removeMessage }) => {
-  if (messages.length === 0) {
+  if (messages.isEmpty()) {
     return null;
   }
 
   const messagesToRender = messages.map((msg, i) => {
-    return <Message i={i} key={i} message={msg.message} removeMessage={removeMessage} type={msg.type} />;
+    return <Message i={i} key={i} message={msg.get('message')} removeMessage={removeMessage} type={msg.get('type')} />;
   });
 
   return (

@@ -23,7 +23,7 @@ import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messag
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
-import { defaultSelector } from '../selectors';
+import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import { Link } from 'react-router';
 
@@ -129,7 +129,7 @@ class PasswordForm extends React.Component {
 }
 
 
-class Form extends React.Component {
+class PasswordPage extends React.Component {
   static propTypes = {
     messages: ArrayOfMessagesPropType.isRequired
   };
@@ -148,12 +148,13 @@ class Form extends React.Component {
   render() {
     const {
       messages,
-      is_logged_in
+      is_logged_in,
+      ui
     } = this.props;
 
     let content = <PasswordForm onSubmit={this.submitHandler} />;
 
-    if (this.props.ui.submitNewPassword) {
+    if (ui.get('submitNewPassword')) {
       content = <SuccessMessage />;
     }
 
@@ -191,4 +192,15 @@ class Form extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Form);
+const selector = createSelector(
+  state => !!state.getIn(['current_user', 'id']),
+  state => state.get('messages'),
+  state => state.get('ui'),
+  (is_logged_in, messages, ui) => ({
+    is_logged_in,
+    messages,
+    ui
+  })
+);
+
+export default connect(selector)(PasswordPage);

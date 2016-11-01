@@ -158,32 +158,28 @@ export default class ProfileHeader extends React.Component {
       user,
       current_user,
       editable,
-      i_am_following,
       following,
       followers
     } = this.props;
 
-    let picture = '/assets/d18659acda9afc3dea60b49d71d689ae.jpg';
-    let name = user.username;
-    let summary = '';
+    const currentUserFollowing = following.get(current_user.get('id'));
+    const userFollowing = following.get(user.get('id'));
+    const userFollowers = followers.get(user.get('id'));
+    const loggedIn = !!current_user.get('id');
+    const notCurrentUser = current_user.get('id') != user.get('id');
+
+    let picture = user.getIn(['more', 'head_pic', 'url']) || '/assets/d18659acda9afc3dea60b49d71d689ae.jpg';
+    let name = user.get('username');
+    const summary = user.getIn(['more', 'summary']) || '';
 
     let modalName = <span className="font-bold">{name}</span>;
-    if (user.more) {
-      if (user.more.firstName || user.more.lastName) {
-        name = `${user.more.firstName} ${user.more.lastName}`;
-        modalName = [
-          <span className="font-bold" key="modalName">{name}</span>,
-          ` (${user.username})`
-        ];
-      }
 
-      if (user.more.summary) {
-        summary = user.more.summary;
-      }
-
-      if (user.more.head_pic) {
-        picture = user.more.head_pic.url;
-      }
+    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
+      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
+      modalName = [
+        <span className="font-bold" key="modalName">{name}</span>,
+        ` (${user.get('username')})`
+      ];
     }
 
     if (this.state.head_pic) {
@@ -198,39 +194,38 @@ export default class ProfileHeader extends React.Component {
     let followingCount;
     let followersCount;
 
-    if (following && following[user.id] && following[user.id].length) {
+    if (userFollowing && userFollowing.isEmpty()) {
       // if anonym user, then do not show "Manage followers" links next to follow counters
-      if (!current_user || (current_user && current_user.id != user.id)) {
+      if (!loggedIn || notCurrentUser) {
         followingCount = (
           <div>
-            {following[user.id].length}<br />
+            {userFollowing.size}<br />
             Following
           </div>
         );
       } else {
         followingCount = (
           <div>
-            {following[user.id].length}<br />
+            {userFollowing.size}<br />
             <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Following</Link>
           </div>
         );
       }
     }
 
-    if (followers && followers[user.id] && followers[user.id].length) {
+    if (userFollowers && !userFollowers.isEmpty()) {
       // if anonym user, then do not show "Manage followers" too
-      if (!current_user || (current_user && current_user.id != user.id)) {
+      if (!loggedIn || notCurrentUser) {
         followersCount = (
           <div>
-            {followers[user.id].length}<br />
+            {userFollowers.size}<br />
             Followers
           </div>
         );
       } else {
         followersCount = (
           <div>
-            {followers[user.id].length}<br />
-
+            {userFollowers.size}<br />
             <Link to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Followers</Link>
           </div>
         );
@@ -282,7 +277,7 @@ export default class ProfileHeader extends React.Component {
               <div className="layout__grid_item">
                 <FollowButton
                   active_user={current_user}
-                  following={i_am_following}
+                  following={currentUserFollowing}
                   triggers={this.props.triggers}
                   user={user}
                 />

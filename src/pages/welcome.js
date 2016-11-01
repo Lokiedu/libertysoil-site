@@ -40,7 +40,7 @@ class Welcome extends React.Component {
 
     let reviews;
     if (quotes && quotes.size) {
-      reviews = <Reviews quotes={quotes.toJS()} />;
+      reviews = <Reviews quotes={quotes} />;
     }
 
     return (

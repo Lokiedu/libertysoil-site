@@ -19,34 +19,34 @@
 import { shallow } from 'enzyme';
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import sinon from 'sinon';
+import i from 'immutable';
 
 import { GeotagPage } from '../../../src/pages/geotag';
 import NotFound from '../../../src/pages/not-found';
 
 describe('GeotagPage', () => {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
   it('MUST render nothing when geotag is not yet loaded', () => {
     const wrapper = shallow(
       <GeotagPage
-        comments={{}}
-        geotag_posts={{}}
-        geotags={{}}
+        comments={i.Map()}
+        geotag_posts={i.Map()}
+        geotags={i.Map()}
         is_logged_in={false}
         params={{ url_name: 'test' }}
-        posts={{}}
-        schools={{}}
-        users={{}}
+        posts={i.Map()}
+        schools={i.Map()}
+        users={i.Map()}
       />
     );
 
     return expect(wrapper.equals(null), 'to be true');
   });
-
 });

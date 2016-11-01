@@ -17,8 +17,9 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
+
 
 import {
   url as urlPropType,
@@ -45,7 +46,8 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { setPostsToFavouritesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
+
 
 class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
@@ -80,7 +82,6 @@ class UserFavoritesPage extends React.Component {
       favourites_river,
       followers,
       following,
-      i_am_following,
       is_logged_in,
       params,
       posts,
@@ -88,21 +89,23 @@ class UserFavoritesPage extends React.Component {
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
+
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let userFavouritesRiver = favourites_river[page_user.id];
+    let userFavouritesRiver = favourites_river.get(user.get('id'));
     if (!userFavouritesRiver) {
-      userFavouritesRiver = [];
+      userFavouritesRiver = i.List();
     }
 
     return (
@@ -112,10 +115,10 @@ class UserFavoritesPage extends React.Component {
         following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`Favorites of ${page_user.fullName} on `} />
+        <Helmet title={`Favorites of ${user.get('fullName')} on `} />
         <River
           comments={comments}
           current_user={current_user}
@@ -130,4 +133,25 @@ class UserFavoritesPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(UserFavoritesPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('favourites_river'),
+  state => state.get('followers'),
+  state => state.get('following'),
+  state => state.get('posts'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, favourites_river, followers, following, posts, ui, users) => ({
+    comments,
+    favourites_river,
+    followers,
+    following,
+    posts,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(UserFavoritesPage);

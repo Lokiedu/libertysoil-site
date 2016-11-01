@@ -25,7 +25,7 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import {
   Page,
@@ -84,7 +84,7 @@ export class Auth extends React.Component {
 
     let renderedMessages;
 
-    if (messages.length) {
+    if (!messages.isEmpty()) {
       renderedMessages = (
         <div className="page__messages">
           <div className="page__body page__body-small">
@@ -94,7 +94,7 @@ export class Auth extends React.Component {
       );
     }
 
-    const registration_success = ui.registrationSuccess;
+    const registration_success = ui.get('registrationSuccess');
 
     return (
       <div className="font-open_sans font-light">
@@ -138,4 +138,15 @@ export class Auth extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(Auth);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('ui'),
+  (current_user, messages, ui) => ({
+    messages,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(Auth);

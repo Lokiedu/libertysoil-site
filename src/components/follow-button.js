@@ -53,15 +53,15 @@ export default class FollowButton extends React.Component {
       user
     } = this.props;
 
-    if (!active_user) {
+    if (!active_user || !active_user.get('id')) {
       return null;  // anonymous
     }
 
-    if (user.id === active_user.id) {
+    if (user.get('id') === active_user.get('id')) {
       return null;  // do not allow to follow one's self
     }
 
-    if (following.includes(user.id)) {
+    if (following.includes(user.get('id'))) {
       return <button className="button button-wide button-yellow" onClick={this.unfollowUser}>Following</button>;
     }
 

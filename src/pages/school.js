@@ -18,8 +18,8 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find, values } from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   uuid4 as uuid4PropType,
@@ -44,7 +44,7 @@ import NotFound from './not-found';
 import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
 
 
@@ -89,6 +89,7 @@ export class SchoolPage extends React.Component {
   render() {
     const {
       comments,
+      create_post_form,
       ui,
       is_logged_in,
       current_user,
@@ -99,21 +100,22 @@ export class SchoolPage extends React.Component {
       school_posts,
       users
     } = this.props;
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools, { url_name: this.props.params.school_name });
+    const school = schools.find(school => school.get('url_name') === this.props.params.school_name);
 
     if (!school) {
       return null; // not loaded yet
     }
 
-    if (!school.id) {
+    if (!school.get('id')) {
       return <NotFound />;
     }
 
-    const schoolPosts = school_posts[school.id] || [];
+    const schoolPosts = school_posts.get(school.get('id')) || i.List();
 
     return (
       <BaseTagPage
@@ -124,11 +126,11 @@ export class SchoolPage extends React.Component {
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
-        postsAmount={schoolPosts.length}
-        create_post_form={this.props.create_post_form}
+        schools={schools}
+        postsAmount={schoolPosts.size}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`Posts about ${school.name} on `} />
+        <Helmet title={`Posts about ${school.get('name')} on `} />
         <River
           current_user={current_user}
           posts={posts}
@@ -143,7 +145,28 @@ export class SchoolPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('posts'),
+  state => state.get('school_posts'),
+  state => state.get('schools'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, create_post_form, posts, school_posts, schools, ui, users) => ({
+    comments,
+    create_post_form,
+    posts,
+    school_posts,
+    schools,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolPage);

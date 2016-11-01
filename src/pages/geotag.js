@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { values } from 'lodash';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -47,7 +47,7 @@ import River from '../components/river_of_posts';
 import BaseTagPage from './base/tag';
 
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_LOCATION } from '../consts/tags';
 
 export class GeotagPage extends Component {
@@ -95,6 +95,7 @@ export class GeotagPage extends Component {
     const {
       ui,
       comments,
+      create_post_form,
       is_logged_in,
       current_user,
       posts,
@@ -110,18 +111,18 @@ export class GeotagPage extends Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const geotag = geotags[this.props.params.url_name];
-    const title = geotag ? geotag.name : this.props.params.url_name;
+    const geotag = geotags.get(this.props.params.url_name);
+    const title = geotag ? geotag.get('name') : this.props.params.url_name;
 
     if (!geotag) {
       return null;
     }
 
-    if (!geotag.id) {
+    if (!geotag.get('id')) {
       return <NotFound />;
     }
 
-    const geotagPosts = geotag_posts[this.props.params.url_name] || [];
+    const geotagPosts = geotag_posts.get(this.props.params.url_name) || i.List();
 
     return (
       <BaseTagPage
@@ -132,9 +133,9 @@ export class GeotagPage extends Component {
         type={TAG_LOCATION}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
+        schools={schools.toList()}
         postsAmount={geotagPosts.length}
-        create_post_form={this.props.create_post_form}
+        create_post_form={create_post_form}
       >
         <Helmet title={`${title} posts on `} />
         <River
@@ -151,7 +152,30 @@ export class GeotagPage extends Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('geotags'),
+  state => state.get('geotag_posts'),
+  state => state.get('posts'),
+  state => state.get('schools'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, geotags, geotag_posts, posts, schools, users, ui) => ({
+    comments,
+    create_post_form,
+    geotags,
+    geotag_posts,
+    posts,
+    schools,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagPage);

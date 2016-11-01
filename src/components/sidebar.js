@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, throttle } from 'lodash';
+import { throttle } from 'lodash';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
@@ -101,7 +101,8 @@ class Sidebar extends React.Component {
     const { routeLocation } = this.context;
     const {
       ui,
-      is_logged_in
+      is_logged_in,
+      current_user
     } = this.props;
     const sidebarClassName = ['sidebar'];
 
@@ -113,20 +114,22 @@ class Sidebar extends React.Component {
       sidebarClassName.push('sidebar-visible');
     }
 
-    const current_user = this.props.current_user.toJS();
-
-    const followedTags = values(current_user.followed_hashtags);
-    const followedSchools = values(current_user.followed_schools);
-    const followedGeotags = values(current_user.followed_geotags);
+    const followedTags = current_user.get('followed_hashtags').toList();
+    const followedSchools = current_user.get('followed_schools').toList();
+    const followedGeotags = current_user.get('followed_geotags').toList();
+    const hashtags = current_user.get('hashtags');
+    const schools = current_user.get('schools');
+    const geotags = current_user.get('geotags');
+    const username = current_user.getIn(['user', 'username']);
 
     const showLikes =
-      (current_user.likes && current_user.likes.length)
-      || this.props.current_user.get('liked_hashtags').size
-      || this.props.current_user.get('liked_geotags').size
-      || this.props.current_user.get('liked_schools').size;
-    const showFavorites = (current_user.favourites && current_user.favourites.length > 0);
-    const showFollowedTags = followedTags.length || followedSchools.length || followedGeotags.length;
-    const showUsedTags = current_user.hashtags.length || current_user.geotags.length || current_user.schools.length;
+      (current_user.get('likes') && current_user.get('likes').size)
+      || current_user.get('liked_hashtags').size
+      || current_user.get('liked_geotags').size
+      || current_user.get('liked_schools').size;
+    const showFavorites = (current_user.get('favorites') && current_user.get('favotites').size > 0);
+    const showFollowedTags = followedTags.size || followedSchools.size || followedGeotags.size;
+    const showUsedTags = hashtags.size || schools.size || geotags.size;
 
     let followedTagsSection;
     if (showFollowedTags) {
@@ -146,7 +149,7 @@ class Sidebar extends React.Component {
         <NavigationItem
           enabled
           icon="favorite"
-          to={`/user/${current_user.user.username}/likes`}
+          to={`/user/${username}/likes`}
         >
           My Likes
         </NavigationItem>
@@ -159,7 +162,7 @@ class Sidebar extends React.Component {
         <NavigationItem
           enabled
           icon="star"
-          to={`/user/${current_user.user.username}/favorites`}
+          to={`/user/${username}/favorites`}
         >
           My Favorites
         </NavigationItem>
@@ -173,9 +176,9 @@ class Sidebar extends React.Component {
           <h4 className="sidebar__heading">I post to</h4>
           <div className="sidebar__user_tags">
             <TagCloud
-              geotags={current_user.geotags}
-              hashtags={current_user.hashtags}
-              schools={current_user.schools}
+              geotags={geotags}
+              hashtags={hashtags}
+              schools={schools}
               truncated
             />
           </div>
@@ -183,20 +186,19 @@ class Sidebar extends React.Component {
       );
     }
 
-    const username = current_user.user.username;
     const test = RegExp(`user\/${username}\/?$`);
     let currentUser;
 
     if (routeLocation && routeLocation.pathname.match(test)) {
       currentUser = (
         <NavigationItem className="sidebar__user" enabled to={`/user/${username}`}>
-          <CurrentUser isLink={false} user={current_user.user} />
+          <CurrentUser isLink={false} user={current_user.get('user')} />
         </NavigationItem>
       );
     } else {
       currentUser = (
         <Link className="navigation__item sidebar__user" to={`/user/${username}`}>
-          <CurrentUser isLink={false} user={current_user.user} />
+          <CurrentUser isLink={false} user={current_user.get('user')} />
         </Link>
       );
     }

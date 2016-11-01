@@ -35,7 +35,7 @@ describe('NewPassword page', () => {
     let user;
 
     before(async () => {
-      sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+      // sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
       await user.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
@@ -43,7 +43,7 @@ describe('NewPassword page', () => {
 
     after(async () => {
       await user.destroy();
-      console.error.restore();
+      // console.error.restore();
     });
 
     it('user can open new password page and see form', async () => {

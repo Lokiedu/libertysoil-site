@@ -29,11 +29,11 @@ const initialState = i.fromJS({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case posts.RESET_EDIT_POST_FORM: {
-      state.set(action.post_id, {
+      state.set(action.post_id, i.fromJS({
         geotags: [],
         schools: [],
         hashtags: []
-      });
+      }));
 
       break;
     }

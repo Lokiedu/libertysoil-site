@@ -23,8 +23,8 @@ import paragraphify from '../../utils/paragraphify';
 const ShortTextPost = ({ post }) => {
   let text = '';
 
-  if (post.text) {
-    text = paragraphify(post.text);
+  if (post.get('text')) {
+    text = paragraphify(post.get('text'));
   }
 
   return (

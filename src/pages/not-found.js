@@ -27,7 +27,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import Header from '../components/header';
 import Sidebar from '../components/sidebar';
 
@@ -44,7 +44,7 @@ const NotFound = ({ is_logged_in, current_user }) => {
       <Helmet title="Page not found at " />
       <Header current_user={current_user} is_logged_in={is_logged_in} />
       <Page className={pageClassName}>
-        <Sidebar current_user={current_user} />
+        <Sidebar />
         <PageMain>
           <PageBody>
             <PageContent>
@@ -68,4 +68,9 @@ NotFound.propTypes = {
   is_logged_in: PropTypes.bool.isRequired
 };
 
-export default connect(defaultSelector)(NotFound);
+const selector = createSelector(
+  currentUserSelector,
+  (current_user) => ({ ...current_user })
+);
+
+export default connect(selector)(NotFound);

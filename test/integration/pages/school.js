@@ -34,13 +34,13 @@ const User = bookshelf.model('User');
 const School = bookshelf.model('School');
 
 describe('School page', () => {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
 
   describe('when user is logged in', () => {

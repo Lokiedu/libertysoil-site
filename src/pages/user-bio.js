@@ -17,8 +17,8 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import { url as urlPropType } from '../prop-types/common';
 import {
@@ -34,7 +34,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class AboutUserPage extends React.Component {
   static displayName = 'AboutUserPage';
@@ -57,18 +57,20 @@ class AboutUserPage extends React.Component {
   render() {
     const {
       current_user,
-      i_am_following,
+      following,
       is_logged_in,
       params,
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
+
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
@@ -76,21 +78,21 @@ class AboutUserPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let linesOfBio = <p>No information provided...</p>;
-    if (page_user.more) {
-      if (page_user.more.bio) {
-        linesOfBio = page_user.more.bio.split("\n").map((line, i) => <p key={`bio-${i}`}>{line}</p>);
-      }
+    if (user.getIn(['more', 'bio'])) {
+      linesOfBio = user.getIn(['more', 'bio']).split('\n').map((line, i) => <p key={`bio-${i}`}>{line}</p>);
     }
 
     return (
       <BaseUserPage
         current_user={current_user}
+        followers={i.Map()}
+        following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`${page_user.fullName} on `} />
+        <Helmet title={`${user.get('fullName')} on `} />
         <div className="paper">
           <div className="paper__page content">
             {linesOfBio}
@@ -101,4 +103,15 @@ class AboutUserPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(AboutUserPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('following'),
+  state => state.get('users'),
+  (current_user, following, users) => ({
+    following,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(AboutUserPage);

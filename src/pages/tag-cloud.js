@@ -37,7 +37,7 @@ import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_HASHTAG } from '../consts/tags';
 
 
@@ -73,7 +73,7 @@ class TagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
@@ -92,4 +92,13 @@ class TagCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(TagCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('tag_cloud'),
+  (current_user, tag_cloud) => ({
+    tag_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(TagCloudPage);

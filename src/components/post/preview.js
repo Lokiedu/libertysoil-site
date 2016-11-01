@@ -2,8 +2,8 @@ import React from 'react';
 import twtxt from 'twitter-text';
 
 
-const Preview = (props) => {
-  const text = props.post.text;
+const Preview = ({ post }) => {
+  const text = post.get('text');
   const urls = twtxt.extractUrlsWithIndices(text);
 
   if (urls.length === 0) {

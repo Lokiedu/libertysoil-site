@@ -49,12 +49,9 @@ class HashtagEditForm extends React.Component {
       hashtag
     } = this.props;
 
-    const initialValues = {};
-    if (hashtag) {
-      if (hashtag.more) {
-        initialValues.description = hashtag.more.description;
-      }
-    }
+    const initialValues = {
+      description: hashtag.getIn(['more', 'description'])
+    };
 
     form.onValues(initialValues);
   }
@@ -92,7 +89,7 @@ class HashtagEditForm extends React.Component {
 
     return (
       <form onSubmit={this.submitHandler}>
-        <input name="id" type="hidden" value={hashtag.id} />
+        <input name="id" type="hidden" value={hashtag.get('id')} />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>

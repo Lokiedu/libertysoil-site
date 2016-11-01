@@ -32,7 +32,7 @@ import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 
 const DiscoverGrid = ({ current_user, i_am_following, triggers, users }) => {
@@ -65,10 +65,11 @@ DiscoverGrid.propTypes = {
   users: MapOfUsersPropType.isRequired
 };
 
-const SuggestionsPage = ({ current_user, dispatch, is_logged_in, i_am_following, messages }) => {
+const SuggestionsPage = ({ current_user, dispatch, is_logged_in, following, messages }) => {
   if (!is_logged_in) {
     return false;
   }
+  const i_am_following = following.get(current_user.get('id'));
 
   const client = new ApiClient(API_HOST);
   const triggers = new ActionsTrigger(client, dispatch);
@@ -90,7 +91,7 @@ const SuggestionsPage = ({ current_user, dispatch, is_logged_in, i_am_following,
         current_user={current_user}
         i_am_following={i_am_following}
         triggers={triggers}
-        users={current_user.suggested_users}
+        users={current_user.get('suggested_users')}
       />
     </BaseSuggestionsPage>
   );
@@ -117,4 +118,15 @@ SuggestionsPage.fetchData = async (params, store, client) => {
   return 200;
 };
 
-export default connect(defaultSelector)(SuggestionsPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('following'),
+  state => state.get('messages'),
+  (current_user, following, messages) => ({
+    following,
+    messages,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SuggestionsPage);

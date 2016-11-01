@@ -46,8 +46,8 @@ export default function SchoolDetails({ current_user, school, triggers }) {
           </div>
           <FollowTagButton
             className="button-midi"
-            current_user={current_user.toJS()}
-            followed_tags={current_user.get('followed_schools').toJS()}
+            current_user={current_user}
+            followed_tags={current_user.get('followed_schools')}
             key="follow"
             tag={school.get('url_name')}
             triggers={triggers}

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { Component } from 'react';
+import i from 'immutable';
 
 import Time from '../time';
 import User from '../user';
@@ -41,10 +42,11 @@ class Comment extends Component {
       comment,
       ui
     } = this.props;
-    const commentUi = ui.comments[comment.id];
-    const nextCommentUi = nextProps.ui.comments[comment.id];
 
-    if (commentUi && nextCommentUi && commentUi.isSaveInProgress && !nextCommentUi.isSaveInProgress && !nextCommentUi.error) {
+    const commentUi = ui.getIn(['comments', comment.get('id')]);
+    const nextCommentUi = nextProps.ui.getIn(['comments', comment.get('id')]);
+
+    if (commentUi && nextCommentUi && commentUi.get('isSaveInProgress') && !nextCommentUi.get('isSaveInProgress') && !nextCommentUi.get('error')) {
       this.setState({
         isEditMode: false
       });
@@ -57,7 +59,7 @@ class Comment extends Component {
     } = this.props;
 
     this.setState({
-      text: comment.text,
+      text: comment.get('text'),
       isEditMode: true
     });
   }
@@ -76,15 +78,17 @@ class Comment extends Component {
       comment,
       triggers
     } = this.props;
+
     const {
       text
     } = this.state;
+
     const commentText = text.trim();
 
     e && e.preventDefault();
 
     if (commentText) {
-      triggers.saveComment(postId, comment.id, commentText);
+      triggers.saveComment(postId, comment.get('id'), commentText);
     }
   }
 
@@ -101,7 +105,7 @@ class Comment extends Component {
       triggers
     } = this.props;
 
-    triggers.deleteComment(postId, comment.id);
+    triggers.deleteComment(postId, comment.get('id'));
   }
 
   renderToolbar = () => {
@@ -111,14 +115,17 @@ class Comment extends Component {
       comment,
       ui
     } = this.props;
+
     const {
       isEditMode
     } = this.state;
-    const commentUi = ui.comments[comment.id] || {};
-    const isButtonsDisabled = commentUi.isSaveInProgress || commentUi.isDeleteInProgress;
+
+    const commentUi = ui.getIn(['comments', comment.get('id')]) || i.Map();
+    const isButtonsDisabled = commentUi.get('isSaveInProgress') || commentUi.get('isDeleteInProgress');
+    const isCurrentUserAuthor = current_user.get('id') == author.get('id');
     let toolbar = null;
 
-    if (current_user && author && current_user.id == author.id && !isEditMode && !isButtonsDisabled) {
+    if (isCurrentUserAuthor && !isEditMode && !isButtonsDisabled) {
       toolbar = (
         <Dropdown>
           <MenuItem onClick={this.editComment}>Edit comment</MenuItem>
@@ -135,13 +142,15 @@ class Comment extends Component {
       comment,
       ui
     } = this.props;
-    let messageComponent = null;
-    const commentUi = ui.comments[comment.id] || {};
 
-    if (commentUi.error) {
+    let messageComponent = null;
+    const commentUi = ui.getIn(['comments', comment.get('id')]) || i.Map();
+    const error = commentUi.get('error');
+
+    if (error) {
       messageComponent = (
         <div className="layout__row">
-          <Message message={commentUi.error} type="ERROR" />
+          <Message message={error} type="ERROR" />
         </div>
       );
     }
@@ -154,11 +163,13 @@ class Comment extends Component {
       comment,
       ui
     } = this.props;
-    const commentUi = ui.comments[comment.id];
+
     const {
       text,
       isEditMode
     } = this.state;
+
+    const commentUi = ui.getIn(['comments', comment.get('id')]) || i.Map();
 
     if (isEditMode) {
       return (
@@ -177,7 +188,7 @@ class Comment extends Component {
             <Button
               className="layout__grid_item"
               color="light_blue"
-              disabled={!text.trim() || (commentUi && commentUi.isSaveInProgress)}
+              disabled={!text.trim() || (commentUi.get('isSaveInProgress'))}
               size="midi"
               title="Save Comment"
               type="submit"
@@ -185,7 +196,7 @@ class Comment extends Component {
             <Button
               className="layout__grid_item"
               color="transparent"
-              disabled={commentUi && commentUi.isSaveInProgress}
+              disabled={commentUi && commentUi.get('isSaveInProgress')}
               size="midi"
               title="Cancel"
               onClick={this.disableEditingComment}
@@ -198,11 +209,11 @@ class Comment extends Component {
     return (
       <div className="comment__body">
         <section className="comment__text">
-          {paragraphify(comment.text)}
+          {paragraphify(comment.get('text'))}
         </section>
         {false &&
           <footer className="comment__footer">
-            <Time className="comment__time" timestamp={comment.updated_at} />
+            <Time className="comment__time" timestamp={comment.get('updated_at')} />
           </footer>
         }
       </div>

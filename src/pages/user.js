@@ -17,8 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -45,7 +45,8 @@ import ApiClient from '../api/client';
 import { addUser } from '../actions/users';
 import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
+
 
 class UserPage extends React.Component {
   static displayName = 'UserPage';
@@ -71,6 +72,7 @@ class UserPage extends React.Component {
   };
 
   static async fetchData(router, store, client) {
+    // TODO: Implement 404 handling
     const userInfo = await client.userInfo(router.params.username);
     const userPosts = client.userPosts(router.params.username);
 
@@ -90,7 +92,6 @@ class UserPage extends React.Component {
       current_user,
       followers,
       following,
-      i_am_following,
       is_logged_in,
       params,
       posts,
@@ -99,18 +100,20 @@ class UserPage extends React.Component {
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
+
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
-    let userPostsRiver = user_posts[page_user.id];
+    let userPostsRiver = user_posts.get(user.get('id'));
     if (!userPostsRiver) {
-      userPostsRiver = [];
+      userPostsRiver = i.List();
     }
 
     const client = new ApiClient(API_HOST);
@@ -123,10 +126,10 @@ class UserPage extends React.Component {
         following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`Posts of ${page_user.fullName} on `} />
+        <Helmet title={`Posts of ${user.get('fullName')} on `} />
         <River
           comments={comments}
           current_user={current_user}
@@ -141,4 +144,25 @@ class UserPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(UserPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('followers'),
+  state => state.get('following'),
+  state => state.get('posts'),
+  state => state.get('user_posts'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, followers, following, posts, user_posts, users, ui) => ({
+    comments,
+    followers,
+    following,
+    posts,
+    user_posts,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector)(UserPage);

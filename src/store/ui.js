@@ -19,10 +19,12 @@ import i from 'immutable';
 
 import * as a from '../actions';
 
-const initialState = i.Map({
+const initialState = i.fromJS({
   sidebarIsVisible: true,
-  progress: i.Map({}),
-  comments: i.Map({})
+  progress: {},
+  comments: {
+    new: {}
+  }
 });
 
 function reducer(state = initialState, action) {

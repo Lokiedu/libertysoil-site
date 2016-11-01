@@ -35,7 +35,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 const InductionDone = () => (
   <div className="area">
@@ -93,15 +93,17 @@ class InductionPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      i_am_following,
       suggested_users,
-      messages
+      messages,
+      following
     } = this.props;
+
+    const i_am_following = following.get(current_user.get('id'));
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    if (!current_user.user.more.first_login) {
+    if (!current_user.getIn(['user', 'more', 'first_login'])) {
       return (
         <div>
           <Header current_user={current_user} is_logged_in={is_logged_in} />
@@ -146,4 +148,17 @@ class InductionPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(InductionPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('following'),
+  state => state.get('messages'),
+  state => state.get('suggested_users'),
+  (current_user, following, messages, suggested_users) => ({
+    following,
+    messages,
+    suggested_users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(InductionPage);

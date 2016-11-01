@@ -15,8 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Map, List } from 'immutable';
-import { cloneDeep } from 'lodash';
+import { Map, fromJS } from 'immutable';
 
 import * as a from '../actions';
 
@@ -39,7 +38,7 @@ export default function reducer(state = initialState, action) {
     case a.posts.ADD_POST: {
       const comments = action.post.post_comments || [];
 
-      state = state.set(action.post.id, List(clearComments(comments)));
+      state = state.set(action.post.id, fromJS(clearComments(comments)));
 
       break;
     }
@@ -53,16 +52,14 @@ export default function reducer(state = initialState, action) {
     case a.geotags.SET_GEOTAG_POSTS:
     case a.posts.SET_RELATED_POSTS: {
       action.posts.forEach(post => {
-        const postCopy = cloneDeep(post);
-
-        state = state.set(post.id, List(clearComments(postCopy.post_comments || [])));
+        state = state.set(post.id, fromJS(clearComments(post.post_comments || [])));
       });
 
       break;
     }
 
     case a.comments.SET_POST_COMMENTS: {
-      state = state.set(action.postId, List(clearComments(action.comments)));
+      state = state.set(action.postId, fromJS(clearComments(action.comments)));
 
       break;
     }

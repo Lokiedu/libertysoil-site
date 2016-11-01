@@ -1,43 +1,62 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2015  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { List } from 'immutable';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 
 
 /**
  * Converts hashtags(labels), schools, and other tags to the same format.
  * { urlId, name, type }
- * @param {Object} params - {hashtags: [], schools: [], geotags: []}
+ * @param {Object} params {hashtags: Immutable.List, schools: Immutable.List, geotags: Immutable.List}
  * @returns {Array}
  */
 export function convertModelsToTags(params = {}) {
   const allTags = [];
 
-  if (Array.isArray(params.geotags)) {
+
+  if (List.isList(params.geotags)) {
     params.geotags.forEach(function (tag) {
       allTags.push({
-        urlId: tag.url_name,
-        name: tag.name,
-        postCount: tag.post_count,
+        urlId: tag.get('url_name'),
+        name: tag.get('name'),
+        postCount: tag.get('post_count'),
         type: TAG_LOCATION
       });
     });
   }
 
-  if (Array.isArray(params.schools)) {
+  if (List.isList(params.schools)) {
     params.schools.forEach(function (school) {
       allTags.push({
-        urlId: school.url_name,
-        name: school.name,
-        postCount: school.post_count,
+        urlId: school.get('url_name'),
+        name: school.get('name'),
+        postCount: school.get('post_count'),
         type: TAG_SCHOOL
       });
     });
   }
 
-  if (Array.isArray(params.hashtags)) {
+  if (List.isList(params.hashtags)) {
     params.hashtags.forEach(function (tag) {
       allTags.push({
-        urlId: tag.name,
-        name: tag.name,
-        postCount: tag.post_count,
+        urlId: tag.get('name'),
+        name: tag.get('name'),
+        postCount: tag.get('post_count'),
         type: TAG_HASHTAG
       });
     });
