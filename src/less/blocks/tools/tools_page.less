@@ -74,6 +74,28 @@
     flex: 1 1;
   }
 
+  // A universal element for items in collection (schools, posts, etc.)
+  &__item {
+    display: block;
+    margin-bottom: 15px;
+    padding: 20px;
+    background-color: white;
+    border-bottom: 2px solid #EDEDED;
+
+    &-selected {
+      background: #FD9315;
+      color: white;
+    }
+
+    &--close {
+      margin-bottom: 1px;
+    }
+
+    &--flex {
+      display: flex;
+    }
+  }
+
   // Column for the selected item's details.
   &__details_col {
     flex: 1 1;

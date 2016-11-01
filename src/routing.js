@@ -39,7 +39,6 @@ import SchoolPage from './pages/school';
 import SchoolEditPage from './pages/school-edit';
 import SettingsPage from './pages/settings';
 import SettingsEmailPage from './pages/settings-email';
-import SettingsPasswordPage from './pages/settings-password';
 import SettingsFollowersPage from './pages/settings-followers';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
@@ -53,6 +52,7 @@ import BaseToolsPage from './pages/base/tools';
 import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
+import PasswordToolPage from './pages/tools/password-tool';
 
 import List from './pages/list';
 import Induction from './pages/induction';
@@ -87,7 +87,6 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
         <Route component={SettingsEmailPage} path="email" onEnter={withAuth} />
-        <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
         <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
       </Route>
       <Route path="/user/:username">
@@ -123,7 +122,12 @@ export function getRoutes(authHandler, fetchHandler) {
           <IndexRedirect to="following" />
           <Route component={PeopleToolPage} path="following" onEnter={withAuth} />
         </Route>
+        <Route path="account">
+          <IndexRedirect to="password" />
+          <Route component={PasswordToolPage} path="password" onEnter={withAuth} />
+        </Route>
       </Route>
+      <Redirect from="/settings/password" to="/tools/account/password" />
     </Route>
   );
 }
