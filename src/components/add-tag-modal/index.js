@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
-import { clone, differenceWith, pick, remove } from 'lodash';
+import i from 'immutable';
 
 import { ArrayOfGeotagsPropType } from './deps';
 import { ArrayOfHashtagsPropType } from './deps';
@@ -30,9 +30,9 @@ import ModalSwitcher from './switcher';
 import AddTagForm from './form';
 
 function AddedTags({ addedTags, onDelete }) {
-  if (!addedTags.geotags.length &&
-      !addedTags.schools.length &&
-      !addedTags.hashtags.length) {
+  if (!addedTags.geotags.size &&
+      !addedTags.schools.size &&
+      !addedTags.hashtags.size) {
     return null;
   }
 
@@ -91,9 +91,9 @@ export default class AddTagModal extends Component {
   };
 
   static defaultProps = {
-    geotags: [],
-    schools: [],
-    hashtags: [],
+    geotags: i.List(),
+    schools: i.List(),
+    hashtags: i.List(),
     onClose: () => {},
     onSave: () => {}
   };
@@ -102,70 +102,66 @@ export default class AddTagModal extends Component {
     super(props);
 
     this.state = {
-      geotags: clone(this.props.geotags),
-      schools: clone(this.props.schools),
-      hashtags: clone(this.props.hashtags)
+      geotags: this.props.addedGeotags,
+      schools: this.props.addedSchools,
+      hashtags: this.props.addedHashtags
     };
   }
 
   reset = () => {
     this.setState({
-      geotags: clone(this.props.geotags),
-      schools: clone(this.props.schools),
-      hashtags: clone(this.props.hashtags)
+      geotags: this.props.addedGeotags,
+      schools: this.props.addedSchools,
+      hashtags: this.props.addedHashtags
     });
   };
 
   _save = () => {
-    this.props.onSave(pick(this.state, 'geotags', 'schools', 'hashtags'));
+    this.props.onSave(this.state);
   };
 
   _addGeotag = (geotag) => {
-    const state = pick(this.state, 'geotags');
-
-    state.geotags.push(geotag);
-
-    this.setState(state);
+    this.setState({
+      geotags: this.state.geotags.push(i.fromJS(geotag))
+    });
   };
 
   _addSchool = (school) => {
-    const state = pick(this.state, 'schools');
-
-    state.schools.push(school);
-
-    this.setState(state);
+    this.setState({
+      schools: this.state.schools.push(i.fromJS(school))
+    });
   };
 
-  _addHashtag = (tag) => {
-    const state = pick(this.state, 'hashtags');
-
-    state.hashtags.push(tag);
-
-    this.setState(state);
+  _addHashtag = (hashtag) => {
+    this.setState({
+      hashtags: this.state.hashtags.push(i.fromJS(hashtag))
+    });
   };
 
   _deleteTag = (displayTag) => {
-    const state = clone(this.state);
-
     switch (displayTag.type) {
       case TAG_LOCATION: {
-        remove(state.geotags, geotag => geotag.url_name === displayTag.urlId);
+        this.setState({
+          geotags: this.state.geotags.filter(geotag => geotag.get('url_name') === displayTag.get('urlId'))
+        });
 
         break;
       }
       case TAG_SCHOOL: {
-        remove(state.schools, school => school.url_name === displayTag.urlId);
+        this.setState({
+          schools: this.state.schools.filter(school => school.get('url_name') === displayTag.get('urlId'))
+        });
 
         break;
       }
       case TAG_HASHTAG: {
-        remove(state.hashtags, hashtag => hashtag.name === displayTag.urlId);
+        this.setState({
+          hashtags: this.state.hashtags.filter(hashtag => hashtag.get('name') === displayTag.get('urlId'))
+        });
 
         break;
       }
     }
-
-    this.setState(state);
   };
 
   _handleClose = (event) => {
@@ -177,20 +173,26 @@ export default class AddTagModal extends Component {
     const {
       allSchools,
       type,
-      onTypeChange
+      onTypeChange,
+      userRecentTags
     } = this.props;
 
     if (!type) {
       return null;
     }
 
-    const recentGeotags = differenceWith(
-      this.props.userRecentTags.geotags, this.state.geotags, (a, b) => a.name === b.name);
-    const recentSchools = differenceWith(
-      this.props.userRecentTags.schools, this.state.schools, (a, b) => a.name === b.name);
-    const recentHashtags = differenceWith(
-      this.props.userRecentTags.hashtags, this.state.hashtags, (a, b) => a.name === b.name);
-    const userRecentTags = { geotags: recentGeotags, schools: recentSchools, hashtags: recentHashtags };
+    // Use only recent tags that haven't been added to the form.
+    const recentGeotags = userRecentTags.get('geotags').filter(lhs =>
+      !this.state.geotags.find(rhs => lhs.get('name') === rhs.get('name'))
+    );
+    const recentHashtags = userRecentTags.get('hashtags').filter(lhs =>
+      !this.state.hashtags.find(rhs => lhs.get('name') === rhs.get('name'))
+    );
+    const recentSchools = userRecentTags.get('schools').filter(lhs =>
+      !this.state.schools.find(rhs => lhs.get('name') === rhs.get('name'))
+    );
+    const userRecentTagsDiff = { geotags: recentGeotags, hashtags: recentHashtags, schools: recentSchools };
+
 
     return (
       <ModalComponent
@@ -211,7 +213,7 @@ export default class AddTagModal extends Component {
             allSchools={allSchools}
             triggers={this.props.triggers}
             type={type}
-            userRecentTags={userRecentTags}
+            userRecentTags={userRecentTagsDiff}
             onAddGeotag={this._addGeotag}
             onAddHashtag={this._addHashtag}
             onAddSchool={this._addSchool}

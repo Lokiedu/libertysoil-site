@@ -1,6 +1,7 @@
 /*eslint-env node, mocha */
 import { shallow } from 'enzyme';
 import { v4 as uuid4 } from 'uuid';
+import i from 'immutable';
 
 import { expect, React } from '../../../test-helpers/expect-unit';
 import FollowButton from '../../../src/components/follow-button';
@@ -35,9 +36,9 @@ describe('Follow button Test', function () {
 
   it('should render "Follow" for unfollowed users', () => {
     const props = {
-      active_user: currentUser,
-      following: [uuid4(), uuid4()],
-      user: userFactory.build()
+      active_user: i.fromJS(currentUser),
+      following: i.fromJS([uuid4(), uuid4()]),
+      user: i.fromJS(userFactory.build())
     };
     const wrapper = shallow(<FollowButton {...props} />);
     return expect(wrapper.text(), 'to be', 'Follow');
@@ -47,9 +48,9 @@ describe('Follow button Test', function () {
     const user = userFactory.build();
 
     const props = {
-      active_user: currentUser,
-      following: [uuid4(), uuid4(), user.id],
-      user
+      active_user: i.fromJS(currentUser),
+      following: i.fromJS([uuid4(), uuid4(), user.id]),
+      user: i.fromJS(user)
     };
     const wrapper = shallow(<FollowButton {...props} />);
     return expect(wrapper.text(), 'to be', 'Following');

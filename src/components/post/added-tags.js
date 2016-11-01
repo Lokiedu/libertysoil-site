@@ -29,7 +29,7 @@ import TagCloud from '../tag-cloud';
 const AddedTags = (props) => {
   const { geotags, hashtags, schools } = props;
 
-  if (!geotags.length && !schools.length && !hashtags.length) {
+  if (!geotags.size && !schools.size && !hashtags.size) {
     return null;
   }
 

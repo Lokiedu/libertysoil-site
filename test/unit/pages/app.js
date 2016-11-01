@@ -17,14 +17,16 @@
  */
 /*eslint-env node, mocha */
 import ga from 'react-google-analytics';
-import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expect-unit';
+import i from 'immutable';
 
+import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expect-unit';
 import { App } from '../../../src/pages/app';
 
+
 const props = {
-  ui: {
+  ui: i.fromJS({
     sidebarIsVisible: false
-  }
+  })
 }
 
 const GAInitializer = ga.Initializer;

@@ -33,7 +33,7 @@ import Sidebar from '../components/sidebar';
 import TagCloud from '../components/tag-cloud';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
 import {
   Page,
@@ -66,7 +66,7 @@ class SchoolCloudPage extends Component {
       school_cloud
     } = this.props;
 
-    const schoolsForCloud = school_cloud.map(id => schools[id]);
+    const schoolsForCloud = school_cloud.map(id => schools.get(id));
 
     return (
       <div>
@@ -100,4 +100,15 @@ class SchoolCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(SchoolCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('schools'),
+  state => state.get('school_cloud'),
+  (current_user, schools, school_cloud) => ({
+    schools,
+    school_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SchoolCloudPage);

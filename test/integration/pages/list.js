@@ -31,13 +31,13 @@ let Post = bookshelf.model('Post');
 let User = bookshelf.model('User');
 
 describe('ListPage', () => {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
   it('anonymous can not open /', async () => {
     await expect('/', 'to redirect');

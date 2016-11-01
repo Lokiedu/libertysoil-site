@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../../prop-types/schools';
 
@@ -76,15 +76,15 @@ function getPageCaption(type, name) {
 function GeotagPageHero({ geotag }) {
   let type = geotag.type;
   const location = {
-    lat: geotag.lat,
-    lon: geotag.lon
+    lat: geotag.get('lat'),
+    lon: geotag.get('lon')
   };
 
   // A lot of admin divisions don't have lat/lon. Attempt to take coords from the country.
-  if (!(location.lat && location.lon) && geotag.country) {
+  if (!(location.lat && location.lon) && geotag.get('country')) {
     type = 'Country';
-    location.lat = geotag.country.lat;
-    location.lon = geotag.country.lon;
+    location.lat = geotag.getIn(['country', 'lat']);
+    location.lon = geotag.getIn(['country', 'lon']);
   }
 
   let zoom;
@@ -127,7 +127,7 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flex
                   limits={limits}
                   preview={preview}
                   what="header image"
-                  where={(<span className="font-bold">{tag.name}</span>)}
+                  where={(<span className="font-bold">{tag.get('name')}</span>)}
                   onSubmit={onSubmit}
                 />
               </div>
@@ -232,7 +232,9 @@ export default class BaseTagPage extends React.Component {
     const {
       is_logged_in,
       current_user,
+      create_post_form,
       actions,
+      schools,
       triggers,
       type,
       tag,
@@ -240,18 +242,14 @@ export default class BaseTagPage extends React.Component {
       editable
     } = this.props;
 
-    let name = tag.url_name;
-    if (tag.name) {
-      name = tag.name;
-    }
-
+    const name = tag.get('name') || tag.get('url_name');
     const pageCaption = getPageCaption(type, name);
 
     let headerPictureUrl;
     if (this.state.head_pic) {
       headerPictureUrl = this.state.head_pic.preview.url;
-    } else if (this.props.tag.more && this.props.tag.more.head_pic) {
-      headerPictureUrl = this.props.tag.more.head_pic.url;
+    } else if (tag.getIn(['more', 'head_pic', 'url'])) {
+      headerPictureUrl = tag.getIn(['more', 'head_pic', 'url']);
     } else {
       headerPictureUrl = DEFAULT_HEADER_PICTURE;
     }
@@ -263,14 +261,22 @@ export default class BaseTagPage extends React.Component {
         createPostForm = (
           <CreatePost
             actions={actions}
-            allSchools={values(this.props.schools)}
-            defaultText={this.props.create_post_form.text}
+            addedGeotags={create_post_form.get('geotags')}
+            addedHashtags={create_post_form.get('hashtags')}
+            addedSchools={create_post_form.get('schools')}
+            allSchools={schools.toList()}
+            defaultText={create_post_form.get('text')}
             triggers={triggers}
-            userRecentTags={current_user.recent_tags}
-            {...this.props.create_post_form}
+            userRecentTags={current_user.get('recent_tags')}
           />
         );
-        addedTags = <AddedTags {...this.props.create_post_form} />;
+        addedTags = (
+          <AddedTags
+            geotags={create_post_form.get('geotags')}
+            hashtags={create_post_form.get('hashtags')}
+            schools={create_post_form.get('schools')}
+          />
+        );
       }
     }
 

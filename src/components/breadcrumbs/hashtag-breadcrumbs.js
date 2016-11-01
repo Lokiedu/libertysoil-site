@@ -30,7 +30,7 @@ const HashtagBreadcrumbs = ({ hashtag }) => (
     <Link title="All Hashtags" to="/tag">
       <TagIcon inactive type={TAG_HASHTAG} />
     </Link>
-    <Tag name={hashtag.name} type={TAG_HASHTAG} urlId={hashtag.name} />
+    <Tag name={hashtag.get('name')} type={TAG_HASHTAG} urlId={hashtag.get('name')} />
   </Breadcrumbs>
 );
 

@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import { find } from 'lodash';
 import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
@@ -32,7 +31,7 @@ import BaseTagPage from './base/tag';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addSchool } from '../actions/schools';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import NotFound from './not-found';
@@ -119,6 +118,7 @@ class SchoolEditPage extends React.Component {
 
   render() {
     const {
+      create_post_form,
       geo,
       schools,
       current_user,
@@ -133,18 +133,14 @@ class SchoolEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const school = find(schools, { url_name: this.props.params.school_name });
-    const countries = geo.countries;
+    const school = schools.find(school => school.get('url_name') === this.props.params.school_name);
+    const countries = geo.get('countries');
 
     if (!school) {
       return false;  // not loaded yet
     }
 
-    if (countries.length === 0) {
-      return false;  // not loaded yet
-    }
-
-    if (!school.id) {
+    if (!school.get('id')) {
       return <NotFound />;
     }
 
@@ -160,9 +156,9 @@ class SchoolEditPage extends React.Component {
         actions={actions}
         triggers={triggers}
         schools={schools}
-        create_post_form={this.props.create_post_form}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`Edit ${school.name} on `} />
+        <Helmet title={`Edit ${school.get('name')} on `} />
         <div className="paper">
           <div className="paper__page">
             <TagEditForm
@@ -181,7 +177,22 @@ class SchoolEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('geo'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, geo, messages, schools) => ({
+    create_post_form,
+    geo,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(SchoolEditPage);

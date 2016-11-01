@@ -43,6 +43,23 @@ export default class ApiClient
     return format_url(urlObj);
   }
 
+  async handleResponseError(response) {
+    if (!response.ok) {
+      let json, errorMessage;
+
+      errorMessage = response.statusText;
+
+      try {
+        json = await response.json();
+        errorMessage = json.error || errorMessage;
+      } catch (e) {
+        throw new Error(errorMessage);
+      }
+
+      throw new Error(errorMessage);
+    }
+  }
+
   async get(relativeUrl, query = {}) {
     let defaultHeaders = {};
 
@@ -50,13 +67,17 @@ export default class ApiClient
       defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
 
-    return fetch(
+    const response = await fetch(
       this.apiUrlForFetch(relativeUrl, query),
       {
         credentials: 'same-origin',
         headers: defaultHeaders
       }
     );
+
+    await this.handleResponseError(response);
+
+    return response;
   }
 
   async head(relativeUrl, query = {}) {
@@ -83,7 +104,7 @@ export default class ApiClient
       defaultHeaders = { Cookie: this.serverReq.headers['cookie'] };
     }
 
-    return fetch(
+    const response = await fetch(
       this.apiUrlForFetch(relativeUrl),
       {
         credentials: 'same-origin',
@@ -91,6 +112,9 @@ export default class ApiClient
         headers: defaultHeaders
       }
     );
+    await this.handleResponseError(response);
+
+    return response;
   }
 
   async post(relativeUrl, data = null) {
@@ -110,7 +134,7 @@ export default class ApiClient
       body = stringify(data);
     }
 
-    return fetch(
+    const response = await fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -119,6 +143,10 @@ export default class ApiClient
         body
       }
     );
+
+    await this.handleResponseError(response);
+
+    return response;
   }
 
   /*
@@ -139,7 +167,7 @@ export default class ApiClient
       body = data;
     }
 
-    return fetch(
+    const response = await fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -148,6 +176,9 @@ export default class ApiClient
         body
       }
     );
+    await this.handleResponseError(response);
+
+    return response;
   }
 
   async postJSON(relativeUrl, data = null) {
@@ -167,7 +198,7 @@ export default class ApiClient
       body = JSON.stringify(data);
     }
 
-    return fetch(
+    const response = await fetch(
       this.apiUrl(relativeUrl),
       {
         credentials: 'same-origin',
@@ -176,6 +207,9 @@ export default class ApiClient
         body
       }
     );
+    await this.handleResponseError(response);
+
+    return response;
   }
 
   async subscriptions(offset = 0) {
@@ -196,8 +230,17 @@ export default class ApiClient
   }
 
   async getAvailableUsername(username) {
+    let json;
     const response = await this.get(`/api/v1/user/available-username/${username}`);
-    const json = await response.json();
+
+    if (!response.ok) {
+      json = await response.json();
+      const error = json.error || response.statusText;
+      throw new Error(error);
+    }
+
+    json = await response.json();
+
     return json.username;
   }
 
@@ -234,7 +277,14 @@ export default class ApiClient
 
   async relatedPosts(postId) {
     const response = await this.get(`/api/v1/post/${postId}/related-posts`);
-    return await response.json();
+
+    const json = await response.json();
+
+    if (!response.ok) {
+      throw new Error(json.error);
+    }
+
+    return json;
   }
 
   async userTags() {

@@ -17,8 +17,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -45,7 +45,8 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
+
 
 class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
@@ -79,7 +80,6 @@ class UserLikesPage extends Component {
       current_user,
       followers,
       following,
-      i_am_following,
       is_logged_in,
       likes_river,
       params,
@@ -88,21 +88,23 @@ class UserLikesPage extends Component {
       users
     } = this.props;
 
-    const page_user = _.find(users, { username: params.username });
-    if (_.isUndefined(page_user)) {
+    const i_am_following = following.get(current_user.get('id'));
+    const user = users.find(user => user.get('username') === params.username);
+
+    if (!user) {
       return null;  // not loaded yet
     }
 
-    if (false === page_user) {
+    if (!user.get('id')) {
       return <NotFound />;
     }
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let userLikesRiver = likes_river[page_user.id];
+    let userLikesRiver = likes_river.get(user.get('id'));
     if (!userLikesRiver) {
-      userLikesRiver = [];
+      userLikesRiver = i.List();
     }
 
     return (
@@ -112,10 +114,10 @@ class UserLikesPage extends Component {
         following={following}
         i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        page_user={page_user}
         triggers={triggers}
+        user={user}
       >
-        <Helmet title={`Likes of ${page_user.fullName} on `} />
+        <Helmet title={`Likes of ${user.get('fullName')} on `} />
         <River
           comments={comments}
           current_user={current_user}
@@ -130,4 +132,25 @@ class UserLikesPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(UserLikesPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('followers'),
+  state => state.get('following'),
+  state => state.get('likes_river'),
+  state => state.get('posts'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, followers, following, likes_river, posts, ui, users) => ({
+    comments,
+    followers,
+    following,
+    likes_river,
+    posts,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(UserLikesPage);

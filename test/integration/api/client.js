@@ -16,10 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
-/* global $dbConfig */
+/* global $dbConfig,$bookshelf */
 import fs from 'fs';
 import { serialize } from 'cookie';
 import AWS from 'mock-aws';
+import { v4 } from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import { login } from '../../../test-helpers/api';
@@ -29,8 +31,8 @@ import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+let bookshelfHelper = initBookshelf($dbConfig);
+let User = bookshelfHelper.model('User');
 
 describe('Client test', () => {
   let client;
@@ -78,16 +80,79 @@ describe('Client test', () => {
   });
 
   it('#deleteComment works', async () => {
-    let result = await client.deleteComment('nonexistingpost', 'nonexistingid');
-
-    expect(result.error, 'to be', 'You are not authorized');
+    return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'You are not authorized');
   });
 
   it('#search works', async () => {
-    const result = await client.search('test');
+    return expect(client.search('test'), 'to be rejected with', 'Search failed');
+  });
 
-    expect(result, 'to be an', 'object');
-    expect(result, 'to have key', 'error');
+  it('#userInfo works', async () => {
+    return expect(client.userInfo('nonexisting'), 'to be rejected with', 'Not Found');
+  });
+
+  it('#getSchool correctly handle non existing school call', async () => {
+    return expect(client.getSchool('nonexisting'), 'to be rejected with', 'Not Found');
+  });
+
+  it('#relatedPosts correctly handle non existing post id ', async () => {
+    return expect(client.relatedPosts(v4()), 'to be rejected with', 'Internal Server Error');
+  });
+
+  it('#userTags correctly handle non authenticated request', async () => {
+    return expect(client.userTags(), 'to be rejected with', 'You are not authorized');
+  });
+
+  it('#userLikedPosts correctly handle errors', async () => {
+    return expect(client.userLikedPosts(), 'to be rejected with', 'You are not authorized');
+  });
+
+  it('#userFavouredPosts correctly handle errors', async () => {
+    return expect(client.userFavouredPosts(), 'to be rejected with', 'You are not authorized');
+  });
+
+  it('#geotagPosts correctly handle non existing geotag', async () => {
+    return expect(client.geotagPosts('nonexistinggeotag'), 'to be rejected with', 'Not Found');
+  });
+
+  it('#city correctly handle non existing entity', async () => {
+    return expect(client.city('nonexistingcity'), 'to be rejected with', 'Not Found');
+  });
+
+  it('#country correctly handle non existing entity', async () => {
+    return expect(client.country('nonexistingcountry'), 'to be rejected with', 'Not Found');
+  });
+
+  it('#like correctly handle non authenticated request', async () => {
+    return expect(client.like(), 'to be rejected with', 'You are not authorized');
+  });
+
+  it('#unlike correctly handle non authenticated request', async () => {
+    return expect(client.unlike('dummyid'), 'to be rejected with', 'You are not authorized');
+  });
+
+  describe('Exception tests', () => {
+    let userModel;
+
+    before(() => {
+      // stub bookshelf model to simulate exception
+      userModel = $bookshelf.model('User');
+      sinon.stub(userModel, 'forge', () => {
+        throw new Error('test');
+      });
+      sinon.stub($bookshelf, 'model', () => {
+        return userModel;
+      });
+    });
+
+    after(() => {
+      $bookshelf.model.restore();
+      userModel.forge.restore();
+    });
+
+    it('should work', async () => {
+      return expect(client.getAvailableUsername('test'), 'to be rejected with', 'test');
+    });
   });
 });
 
@@ -124,3 +189,4 @@ describe('Authenticated client test', () => {
     expect(result.success, 'to be', true);
   });
 });
+

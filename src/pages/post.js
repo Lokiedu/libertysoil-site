@@ -21,6 +21,7 @@ import Helmet from 'react-helmet';
 import Gravatar from 'react-gravatar';
 import { truncate } from 'grapheme-utils';
 import { Link } from 'react-router';
+import i from 'immutable';
 
 import {
   uuid4 as uuid4PropType,
@@ -55,7 +56,7 @@ import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { addPost, setRelatedPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 export class PostPage extends React.Component {
@@ -72,11 +73,18 @@ export class PostPage extends React.Component {
   };
 
   static async fetchData(router, store, client) {
-    const post = await client.postInfo(router.params.uuid);
-    const relatedPosts = client.relatedPosts(router.params.uuid);
+    try {
+      const post = await client.postInfo(router.params.uuid);
+      store.dispatch(addPost(post));
+    } catch (e) {
+      store.dispatch(addPost({ id: router.params.uuid, error: true }));
+      return 404;
+    }
 
-    store.dispatch(addPost(post));
-    store.dispatch(setRelatedPosts(router.params.uuid, await relatedPosts));
+    const relatedPosts = await client.relatedPosts(router.params.uuid);
+    store.dispatch(setRelatedPosts(router.params.uuid, relatedPosts));
+
+    return 200;
   }
 
   render() {
@@ -92,27 +100,24 @@ export class PostPage extends React.Component {
     } = this.props;
 
     const post_uuid = params.uuid;
+    const current_post = posts.get(post_uuid);
 
-    if (!(post_uuid in posts)) {
+    if (!current_post) {
       // not loaded yet
       return null;
     }
 
-    const current_post = posts[post_uuid];
-
-    if (current_post === false) {
+    if (current_post.get('error')) {
       return <NotFound />;
     }
 
-    const author = users[current_post.user_id];
+    const author = users.get(current_post.get('user_id'));
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    const relatedPostIds = related_posts[current_post.id];
-    const relatedPosts = (relatedPostIds)
-                         ? relatedPostIds.map(id => posts[id])
-                         : null;
+    const relatedPosts = (related_posts.get(current_post.get('id')) || i.List())
+      .map(id => posts.get(id));
 
     const authorUrl = getUrl(URL_NAMES.USER, { username: author.username });
     let authorName = author.username;
@@ -123,10 +128,10 @@ export class PostPage extends React.Component {
 
     return (
       <div>
-        <Helmet title={`${current_post.more.pageTitle} on `} />
-        <Header is_logged_in={is_logged_in} current_user={current_user}>
+        <Helmet title={`${current_post.getIn(['more', 'pageTitle'])} on `} />
+        <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo small />
-          <Breadcrumbs title={truncate(current_post.text, { length: 16 })}>
+          <Breadcrumbs title={truncate(current_post.get('text'), { length: 16 })}>
             <Link
               className="user_box__avatar user_box__avatar-round"
               title={authorName}
@@ -138,7 +143,7 @@ export class PostPage extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar />
           <PageMain>
             <PageBody>
               <PageContent>
@@ -157,9 +162,7 @@ export class PostPage extends React.Component {
               </PageContent>
               <SidebarAlt>
                 <RelatedPosts
-                  current_user={current_user}
                   posts={relatedPosts}
-                  triggers={triggers}
                   users={users}
                 />
               </SidebarAlt>
@@ -173,4 +176,21 @@ export class PostPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(PostPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('posts'),
+  state => state.get('related_posts'),
+  state => state.get('ui'),
+  state => state.get('users'),
+  (current_user, comments, posts, related_posts, ui, users) => ({
+    comments,
+    posts,
+    related_posts,
+    ui,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(PostPage);

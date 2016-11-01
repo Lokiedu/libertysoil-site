@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { isEmpty } from 'lodash';
 import { Link } from 'react-router';
 
 import { Geotag as GeotagPropType } from '../../prop-types/geotags';
@@ -31,31 +30,31 @@ const GeotagBreadcrumbs = ({ geotag }) => (
     <Link title="All Geotags" to="/geo">
       <TagIcon inactive type={TAG_PLANET} />
     </Link>
-    {!isEmpty(geotag.continent) &&
+    {!geotag.get('continent') &&
       <Tag
-        inactive={geotag.type != 'Continent'}
-        name={geotag.continent.name}
+        inactive={geotag.get('type') != 'Continent'}
+        name={geotag.getIn(['continent', 'name'])}
         type={TAG_LOCATION}
-        urlId={geotag.continent.url_name}
+        urlId={geotag.getIn(['continent', 'url_name'])}
       />
     }
-    {!isEmpty(geotag.country) &&
+    {!geotag.get('country') &&
       <Tag
-        inactive={geotag.type != 'Country'}
-        name={geotag.country.name}
+        inactive={geotag.get('type') != 'Country'}
+        name={geotag.getIn(['country', 'name'])}
         type={TAG_LOCATION}
-        urlId={geotag.country.url_name}
+        urlId={geotag.getIn(['country', 'url_name'])}
       />
     }
-    {!isEmpty(geotag.admin1) &&
+    {!geotag.get('admin1') &&
       <Tag
-        inactive={geotag.type != 'AdminDivision1'}
-        name={geotag.admin1.name}
+        inactive={geotag.get('type') != 'AdminDivision1'}
+        name={geotag.getIn(['admin1', 'name'])}
         type={TAG_LOCATION}
-        urlId={geotag.admin1.url_name}
+        urlId={geotag.getIn(['admin1', 'url_name'])}
       />
     }
-    <Tag name={geotag.name} type={TAG_LOCATION} urlId={geotag.url_name} />
+    <Tag name={geotag.get('name')} type={TAG_LOCATION} urlId={geotag.get('url_name')} />
   </Breadcrumbs>
 );
 

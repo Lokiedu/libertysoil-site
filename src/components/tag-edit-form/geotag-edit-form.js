@@ -49,12 +49,9 @@ class GeotagEditForm extends React.Component {
       geotag
     } = this.props;
 
-    const initialValues = {};
-    if (geotag) {
-      if (geotag.more) {
-        initialValues.description = geotag.more.description;
-      }
-    }
+    const initialValues = {
+      description: geotag.getIn(['more', 'description'])
+    };
 
     form.onValues(initialValues);
   }
@@ -92,7 +89,7 @@ class GeotagEditForm extends React.Component {
 
     return (
       <form onSubmit={this.submitHandler}>
-        <input name="id" type="hidden" value={geotag.id} />
+        <input name="id" type="hidden" value={geotag.get('id')} />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>

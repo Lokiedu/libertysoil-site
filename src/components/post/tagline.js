@@ -21,15 +21,15 @@ import Tag from '../tag';
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION } from '../../consts/tags';
 
 const TagLine = ({ geotags, hashtags, schools }) => {
-  if ((geotags && hashtags && schools) && (!geotags.length && !hashtags.length && !schools.length)) {
+  if ((geotags && hashtags && schools) && (!geotags.size && !hashtags.size && !schools.size)) {
     return null;
   }
 
   let geotagBlocks;
   if (geotags) {
-    geotagBlocks = geotags.map(school => {
+    geotagBlocks = geotags.map(geotag => {
       return (
-        <Tag key={school.id} name={school.name} type={TAG_LOCATION} urlId={school.url_name} />
+        <Tag key={geotag.get('id')} name={geotag.get('name')} type={TAG_LOCATION} urlId={geotag.get('url_name')} />
       );
     });
   }
@@ -38,7 +38,7 @@ const TagLine = ({ geotags, hashtags, schools }) => {
   if (schools) {
     schoolBlocks = schools.map(school => {
       return (
-        <Tag key={school.id} name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
+        <Tag key={school.get('id')} name={school.get('name')} type={TAG_SCHOOL} urlId={school.get('url_name')} />
       );
     });
   }
@@ -47,7 +47,7 @@ const TagLine = ({ geotags, hashtags, schools }) => {
   if (hashtags) {
     hashtagBlocks = hashtags.map(tag => {
       return (
-        <Tag key={tag.id} name={tag.name} type={TAG_HASHTAG} urlId={tag.name} />
+        <Tag key={tag.get('id')} name={tag.get('name')} type={TAG_HASHTAG} urlId={tag.get('name')} />
       );
     });
   }

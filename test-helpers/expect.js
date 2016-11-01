@@ -2,8 +2,11 @@ import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
 import AWS from 'mock-aws';
+import initBookshelf from '../src/api/db';
 
-import app from '../index';
+global.$bookshelf = initBookshelf(global.$dbConfig);
+
+require('../index');
 
 
 expect.installPlugin(require('unexpected-http'));

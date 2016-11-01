@@ -14,20 +14,42 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
-export function Command(title = 'Command', run = () => {}, { ...params } = {}) {
+export type CommandParams<A> = {
+  args?: Array<A>,
+  status?: boolean
+};
+
+export type CommandResult = {
+  redo?: boolean,
+  success?: boolean
+};
+
+export type CommandRun<A> = <A>(...args: Array<A>) => CommandResult;
+
+export const defaultRun: CommandRun<any> =
+  (): CommandResult => ({ success: true });
+
+export const defaultParams: CommandParams<any> = {
+  args: [],
+  status: true
+};
+
+export function Command<A>(title: string = 'Command', run: CommandRun<A> = defaultRun, params: CommandParams<A> = defaultParams) {
   // use 'title' instead of 'name' in order to avoid conflict with vanilla js Function.name
   this.title = title;
   this.run = run;
 
   if (params.status === undefined) {
-    this.status = true;
+    this.status = defaultParams.status;
   } else {
     this.status = params.status;
   }
 
   if (params.args === undefined) {
-    this.args = [];
+    this.args = defaultParams.args;
   } else {
     this.args = params.args;
   }

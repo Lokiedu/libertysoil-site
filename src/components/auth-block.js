@@ -33,7 +33,7 @@ const AuthBlock = ({ current_user, is_logged_in }) => {
     return (
       <div className="header__toolbar">
         <div className="header__toolbar_item">
-          <User avatar={{ isRound: true }} text={{ hide: true }} user={current_user.user} />
+          <User avatar={{ isRound: true }} text={{ hide: true }} user={current_user.get('user')} />
           <Dropdown>
             <Link className="menu__item" to={getUrl(URL_NAMES.SETTINGS)}>Profile settings</Link>
             <form action={`${API_HOST}${logoutUrl}`} className="menu__item" method="post">

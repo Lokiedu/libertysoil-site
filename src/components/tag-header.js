@@ -45,11 +45,11 @@ function getLikeTriggers(triggers, type) {
 function getLikedTags(user, type) {
   switch (type) {
     case TAG_SCHOOL:
-      return user.liked_schools;
+      return user.get('liked_schools');
     case TAG_HASHTAG:
-      return user.liked_hashtags;
+      return user.get('liked_hashtags');
     case TAG_LOCATION:
-      return user.liked_geotags;
+      return user.get('liked_geotags');
     default:
       return {};
   }
@@ -71,11 +71,11 @@ function getFollowTriggers(triggers, type) {
 function getFollowedTags(user, type) {
   switch (type) {
     case TAG_SCHOOL:
-      return user.followed_schools;
+      return user.get('followed_schools');
     case TAG_HASHTAG:
-      return user.followed_hashtags;
+      return user.get('followed_hashtags');
     case TAG_LOCATION:
-      return user.followed_geotags;
+      return user.get('followed_geotags');
     default:
       return {};
   }
@@ -111,17 +111,9 @@ const TagHeader = (props) => {
 
   const prefix = getTagPrefix(type);
 
-  let name = tag.url_name;
-  if (tag.name) {
-    name = tag.name.trim();
-  }
-
-  let url_name = tag.name;
-  if (tag.url_name) {
-    url_name = tag.url_name;
-  }
-
-  const description = tag.description || (tag.more && tag.more.description);
+  const name = tag.get('name') || tag.get('url_name');
+  const url_name = tag.get('url_name') || tag.get('name');
+  const description = tag.get('description') || tag.getIn(['more', 'description']);
 
   if (is_logged_in) {
     const followTriggers = getFollowTriggers(triggers, type);
@@ -193,8 +185,8 @@ const TagHeader = (props) => {
       toolbarSecondary={toolbarSecondary}
     >
       <TagDescription description={description} />
-      {tag.updated_at &&
-        <p><Time timestamp={tag.updated_at} /></p>
+      {tag.get('updated_at') &&
+        <p><Time timestamp={tag.get('updated_at')} /></p>
       }
     </Panel>
   );

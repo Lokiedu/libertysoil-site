@@ -36,7 +36,7 @@ import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_PLANET } from '../consts/tags';
 import Continent from '../components/continent';
 
@@ -62,11 +62,9 @@ class GeotagCloudPage extends Component {
       geotag_cloud
     } = this.props;
 
-    const geotagsByContinents = geotag_cloud.map(continent => {
-      return Object.assign(continent, {
-        geotags: continent.geotags.map(urlName => geotags[urlName])
-      });
-    });
+    const geotagsByContinents = geotag_cloud.map(continent => (
+      continent.set('geotags', geotags.map(urlName => geotags.get(urlName)))
+    ));
 
     return (
       <div>
@@ -81,7 +79,7 @@ class GeotagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar />
           <PageMain className="page__main-no_space">
             <PageBody>
               <PageContent>
@@ -89,10 +87,10 @@ class GeotagCloudPage extends Component {
                 {
                   geotagsByContinents.map(continent => (
                     <Continent
-                      code={continent.continent_code}
-                      count={continent.geotag_count}
-                      geotags={continent.geotags}
-                      key={continent.continent_code}
+                      code={continent.get('continent_code')}
+                      count={continent.get('geotag_count')}
+                      geotags={continent.get('geotags')}
+                      key={continent.get('continent_code')}
                     />
                   ))
                 }
@@ -107,4 +105,15 @@ class GeotagCloudPage extends Component {
   }
 }
 
-export default connect(defaultSelector)(GeotagCloudPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('geotags'),
+  state => state.get('geotag_cloud'),
+  (current_user, geotags, geotag_cloud) => ({
+    geotags,
+    geotag_cloud,
+    ...current_user
+  })
+);
+
+export default connect(selector)(GeotagCloudPage);

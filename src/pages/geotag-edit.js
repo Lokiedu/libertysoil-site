@@ -20,14 +20,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
-import { values } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { MapOfGeotags as MapOfGeotagsPropType } from '../prop-types/geotags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -100,6 +99,7 @@ class GeotagEditPage extends React.Component {
   render() {
     const {
       is_logged_in,
+      create_post_form,
       current_user,
       resetCreatePostForm,
       updateCreatePostForm,
@@ -113,14 +113,14 @@ class GeotagEditPage extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const geotag = geotags[this.props.params.url_name];
-    const title = geotag ? geotag.name : this.props.params.url_name;
+    const geotag = geotags.get(this.props.params.url_name);
+    const title = geotag ? geotag.get('name') : this.props.params.url_name;
 
     if (!geotag) {
       return null;
     }
 
-    if (!geotag.id) {
+    if (!geotag.get('id')) {
       return <NotFound />;
     }
 
@@ -134,8 +134,8 @@ class GeotagEditPage extends React.Component {
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
-        create_post_form={this.props.create_post_form}
+        schools={schools.toList()}
+        create_post_form={create_post_form}
       >
         <Helmet title={`${title} posts on `} />
         <div className="paper">
@@ -155,7 +155,22 @@ class GeotagEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('geotags'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, geotags, messages, schools) => ({
+    create_post_form,
+    geotags,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(GeotagEditPage);

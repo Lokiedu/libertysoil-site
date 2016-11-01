@@ -11,13 +11,13 @@ let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
 
 describe('pages that are available for anonym', function () {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
 
   describe('when user is not logged in', function () {

@@ -51,15 +51,13 @@ export default class AvatarEditor extends React.Component {
       onUpdateAvatar
     } = this.props;
 
-    let modalName = <span className="font-bold">{user.username}</span>;
+    let modalName = <span className="font-bold">{user.get('username')}</span>;
 
-    if (user.more) {
-      if (user.more.firstName || user.more.lastName) {
-        modalName = [
-          <span className="font-bold" key="avatarEditorName">{user.more.firstName} {user.more.lastName}</span>,
-          ` (${user.username})`
-        ];
-      }
+    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
+      modalName = [
+        <span className="font-bold" key="avatarEditorName">{user.getIn(['more', 'firstName'])} {user.getIn(['more', 'lastName'])}</span>,
+        ` (${user.get('username')})`
+      ];
     }
 
     return (

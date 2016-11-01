@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Immutable from 'immutable';
+import i from 'immutable';
 
 import createSelector from './createSelector';
 
@@ -26,8 +26,8 @@ function selectCurrentUser(state) {
 
   return currentUser.withMutations(function (currentUser) {
     currentUser.set('user', state.getIn(['users', currentUser.get('id')]));
-    currentUser.set('likes', state.getIn(['likes', currentUser.get('id')]) || Immutable.List());
-    currentUser.set('favourites', state.getIn(['favourites', currentUser.get('id')]) || Immutable.List());
+    currentUser.set('likes', state.getIn(['likes', currentUser.get('id')]) || i.List());
+    currentUser.set('favourites', state.getIn(['favourites', currentUser.get('id')]) || i.List());
   });
 }
 

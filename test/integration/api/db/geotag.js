@@ -45,13 +45,13 @@ describe('Geotag', () => {
     }
   });
 
-  after(() => {
+  after(async () => {
     for (let post of posts) {
-      post.destroy();
+      await post.destroy();
     }
 
     for (let geotag of geotags) {
-      geotag.destroy();
+      await geotag.destroy();
     }
   });
 

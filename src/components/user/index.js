@@ -36,7 +36,7 @@ const User = (props) => {
     user
   } = props;
 
-  const userUrl = getUrl(URL_NAMES.USER, { username: user.username });
+  const userUrl = getUrl(URL_NAMES.USER, { username: user.get('username') });
   const render = {};
 
   render.className = 'user_box';

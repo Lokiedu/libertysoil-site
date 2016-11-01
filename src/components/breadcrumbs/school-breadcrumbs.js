@@ -30,7 +30,7 @@ const SchoolBreadcrumbs = ({ school }) => (
     <Link title="All Schools" to="/s">
       <TagIcon inactive type={TAG_SCHOOL} />
     </Link>
-    <Tag name={school.name} type={TAG_SCHOOL} urlId={school.url_name} />
+    <Tag name={school.get('name')} type={TAG_SCHOOL} urlId={school.get('url_name')} />
   </Breadcrumbs>
 );
 

@@ -46,7 +46,7 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    this.props.triggers.likePost(this.props.current_user.id, this.props.post.id);
+    this.props.triggers.likePost(this.props.current_user.get('id'), this.props.post.get('id'));
   };
 
   unlikePost = (event) => {
@@ -57,7 +57,7 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    this.props.triggers.unlikePost(this.props.current_user.id, this.props.post.id);
+    this.props.triggers.unlikePost(this.props.current_user.get('id'), this.props.post.get('id'));
   };
 
   addPostToFavourites = (event) => {
@@ -68,7 +68,7 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    this.props.triggers.favPost(this.props.current_user.id, this.props.post.id);
+    this.props.triggers.favPost(this.props.current_user.get('id'), this.props.post.get('id'));
   };
 
   removePostFromFavourites = (event) => {
@@ -79,7 +79,7 @@ export default class Toolbar extends React.Component {
       return;
     }
 
-    this.props.triggers.unfavPost(this.props.current_user.id, this.props.post.id);
+    this.props.triggers.unfavPost(this.props.current_user.get('id'), this.props.post.get('id'));
   };
 
   render() {
@@ -87,6 +87,9 @@ export default class Toolbar extends React.Component {
       current_user,
       post
     } = this.props;
+
+    const postId = post.get('id');
+
     let likeIcon = 'favorite_border';
     let likeClass = '';
     let favIcon = 'star_border';
@@ -95,17 +98,17 @@ export default class Toolbar extends React.Component {
     let like_action = this.likePost;
     let fav_action = this.addPostToFavourites;
 
-    const isPostAuthor = (current_user && post.user_id == current_user.id);
+    const isPostAuthor = (post.get('user_id') === current_user.get('id'));
 
-    if (current_user) {
-      if (current_user.likes.indexOf(post.id) > -1) {
+    if (current_user.get('id')) {
+      if (current_user.get('likes').includes(postId)) {
         // current user liked this post
         likeIcon = 'favorite';
         likeClass = 'color-red';
         like_action = this.unlikePost;
       }
 
-      if (current_user.favourites.indexOf(post.id) > -1) {
+      if (current_user.get('favourites').includes(postId)) {
         // current user faved this post
         favIcon = 'star';
         favClass = 'color-yellow';
@@ -122,20 +125,20 @@ export default class Toolbar extends React.Component {
       <div className="card__toolbar">
         <span className="card__toolbar_item action" onClick={like_action}>
           <Icon icon={likeIcon} className={likeClass} outline size="small" />
-          {!!post.likers.length &&
-            <span className="card__toolbar_item_value">{post.likers.length}</span>
+          {!!post.get('likers').size &&
+            <span className="card__toolbar_item_value">{post.get('likers').size}</span>
           }
         </span>
         <span className="card__toolbar_item action" onClick={fav_action}>
           <Icon icon={favIcon} className={favClass} outline size="small" />
-          {!!post.favourers.length &&
-            <span className="card__toolbar_item_value">{post.favourers.length}</span>
+          {!!post.get('favourers').size &&
+            <span className="card__toolbar_item_value">{post.get('favourers').size}</span>
           }
         </span>
 
-        <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: post.id })} >
+        <Link className="card__toolbar_item action" to={getUrl(URL_NAMES.POST, { uuid: postId })} >
           <Icon icon="chat_bubble_outline" outline size="small" />
-          <span className="card__toolbar_item_value">{post.comments}</span>
+          <span className="card__toolbar_item_value">{post.get('comments')}</span>
         </Link>
       </div>
     );

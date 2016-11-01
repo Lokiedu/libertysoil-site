@@ -23,6 +23,7 @@ export const TOOLS__SET_SCHOOLS_ALPHABET = 'TOOLS__SET_SCHOOLS_ALPHABET';
 export const TOOLS__ADD_USER_POSTS_TO_RIVER = 'TOOLS__ADD_USER_POSTS_TO_RIVER';
 export const TOOLS__SET_USER_POSTS_RIVER = 'TOOLS__SET_USER_POSTS_RIVER';
 
+export const TOOLS__SET_FOLLOWED_USERS = 'TOOLS__SET_FOLLOWED_USERS';
 
 export function addSchoolsToRiver(schools) {
   return {
@@ -64,5 +65,12 @@ export function setUserPostsRiver(posts) {
   return {
     type: TOOLS__SET_USER_POSTS_RIVER,
     posts
+  };
+}
+
+export function setFollowedUsers(users) {
+  return {
+    type: TOOLS__SET_FOLLOWED_USERS,
+    users
   };
 }

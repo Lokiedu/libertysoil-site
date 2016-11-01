@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { List } from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -37,7 +38,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -70,7 +71,6 @@ class SettingsFollowersPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      i_am_following,
       messages,
       following,
       followers,
@@ -81,14 +81,15 @@ class SettingsFollowersPage extends React.Component {
       return false;
     }
 
+    const i_am_following = following.get(current_user.get('id'));
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-    let followingUsers = following[current_user.id] || [];
-    let followersUsers = followers[current_user.id] || [];
-
-    followingUsers = followingUsers.map(user_id => users[user_id]);
-    followersUsers = followersUsers.map(user_id => users[user_id]);
+    const followingUsers = (following.get(current_user.get('id')) || List())
+      .map(userId => users.get(userId));
+    const followersUsers = (followers.get(current_user.get('id')) || List())
+      .map(userId => users.get(userId));
 
     return (
       <BaseSettingsPage
@@ -134,4 +135,19 @@ class SettingsFollowersPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsFollowersPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  state => state.get('users'),
+  (current_user, messages, following, followers, users) => ({
+    messages,
+    following,
+    followers,
+    users,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsFollowersPage);

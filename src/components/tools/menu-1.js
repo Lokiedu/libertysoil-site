@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { filter } from 'lodash';
 
 import ClickOutsideComponentDecorator from '../../decorators/ClickOutsideComponentDecorator';
 import { toolsMenu } from '../../utils/menu';
@@ -48,7 +47,7 @@ class Menu1 extends React.Component {
 
   render() {
     const root = toolsMenu.getCurrentRoot(this.props.currentPath);
-    const items = filter(toolsMenu.items, item => item.path !== root.path);
+    const items = toolsMenu.items.filter(item => item.path !== root.path);
 
     let arrowIcon = 'keyboard_arrow_down';
     if (this.state.opened) {

@@ -147,27 +147,27 @@ export default class Reviews extends Component {
   render() {
     const { quotes } = this.props;
 
-    if (!quotes || !quotes.length) {
+    if (!quotes || quotes.isEmpty()) {
       return null;
     }
 
-    this.length = quotes.length;
+    this.length = quotes.size;
     let preparedQuotes;
     if (this.state.mobile) {
       preparedQuotes = quotes.map((q, i) => (
         <blockquote className="review" key={i}>
           <p className="review__body content">
-            {q.text}
+            {q.get('text')}
           </p>
           <footer className="review__author">
             <section className="user_box">
-              <img alt="" className="user_box__avatar" height="64px" src={q.avatar_url} width="64px" />
+              <img alt="" className="user_box__avatar" height="64px" src={q.get('avatar_url')} width="64px" />
               <div className="user_box__body user_box__body-flexless">
-                <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                {q.description &&
+                <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
+                {q.get('description') &&
                   <p className="user_box__text">
-                    <a href={q.link}>
-                      {q.description}
+                    <a href={q.get('link')}>
+                      {q.get('description')}
                     </a>
                   </p>
                 }
@@ -189,16 +189,16 @@ export default class Reviews extends Component {
               <Tab.Content index={i} key={i}>
                 <blockquote className="review">
                   <p className={reviewClassName}>
-                    {q.text}
+                    {q.get('text')}
                   </p>
                   <footer className="review__author">
                     <section className="user_box">
                       <div className="user_box__body">
-                        <p className="user_box__name"><b>{q.first_name} {q.last_name}</b></p>
-                        {q.description &&
+                        <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
+                        {q.get('description') &&
                           <p className="user_box__text">
-                            <a href={q.link}>
-                              {q.description}
+                            <a href={q.get('link')}>
+                              {q.get('description')}
                             </a>
                           </p>
                         }
@@ -222,7 +222,7 @@ export default class Reviews extends Component {
                   alt=""
                   className="user_box__avatar review_group__navigation_pic"
                   height={this.state.active === i ? "80" : "64"}
-                  src={q.avatar_url}
+                  src={q.get('avatar_url')}
                   width={this.state.active === i ? "80" : "64"}
                   onMouseOut={this.onImageMouseOut}
                   onMouseOver={this.onImageMouseOver}

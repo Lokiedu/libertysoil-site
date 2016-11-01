@@ -385,7 +385,7 @@ describe('api v1', async () => {
       });
 
       after(async () => {
-        otherPost.destroy();
+        await otherPost.destroy();
       });
 
       describe('Posts', async () => {

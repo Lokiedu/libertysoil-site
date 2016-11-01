@@ -39,7 +39,7 @@ import { Command } from '../utils/command';
 import { addError } from '../actions/messages';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 class SettingsPasswordPage extends React.Component {
   static displayName = 'SettingsPasswordPage';
@@ -153,4 +153,17 @@ class SettingsPasswordPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsPasswordPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsPasswordPage);

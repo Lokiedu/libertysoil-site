@@ -35,7 +35,7 @@ queue.on('error', (err) => {
   process.stderr.write(`${err.message}\n`);
 });
 
-queue.process('register-user-email', async function(job, done) {
+queue.process('register-user-email', async function (job, done) {
   const { username,
           email,
           hash } = job.data;
@@ -49,7 +49,7 @@ queue.process('register-user-email', async function(job, done) {
   }
 });
 
-queue.process('reset-password-email', async function(job, done) {
+queue.process('reset-password-email', async function (job, done) {
   try {
     const html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
     await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
@@ -59,7 +59,7 @@ queue.process('reset-password-email', async function(job, done) {
   }
 });
 
-queue.process('verify-email', async function(job, done) {
+queue.process('verify-email', async function (job, done) {
   try {
     const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
     await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
@@ -69,7 +69,7 @@ queue.process('verify-email', async function(job, done) {
   }
 });
 
-queue.process('on-comment', async function(job, done) {
+queue.process('on-comment', async function (job, done) {
   try {
     const Comment = bookshelf.model('Comment');
 
@@ -98,7 +98,7 @@ queue.process('on-comment', async function(job, done) {
   }
 });
 
-queue.process('new-comment-email', async function(job, done) {
+queue.process('new-comment-email', async function (job, done) {
   try {
     const {
       comment,

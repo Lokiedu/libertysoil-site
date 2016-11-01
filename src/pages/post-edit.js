@@ -46,7 +46,7 @@ import SidebarAlt from '../components/sidebarAlt';
 import EditPost from '../components/edit-post';
 import AddedTags from '../components/post/added-tags';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 import {
   addPost,
@@ -113,36 +113,38 @@ class PostEditPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      posts
+      posts,
+      schools,
+      edit_post_form
     } = this.props;
+
     const postId = this.props.params.uuid;
 
-    if (!(postId in posts)) {
+    if (!posts.get(postId)) {
       // not loaded yet
       return null;
     }
 
-    const post = posts[postId];
+    const post = posts.get(postId);
 
-    if (post.error) {
+    if (post.get('error')) { // TODO: Proper 404 handling
       return <NotFound />;
     }
 
-    if (post.user_id != current_user.id) {
+    if (post.get('user_id') != current_user.get('id')) {
       return null;
     }
 
     const actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    const formState = this.props.edit_post_form;
 
     return (
       <div>
-        <Helmet title={`Edit "${post.more.pageTitle}" post on `} />
+        <Helmet title={`Edit "${post.getIn(['more', 'pageTitle'])}" post on `} />
         <Header
-          is_logged_in={is_logged_in}
           current_user={current_user}
+          is_logged_in={is_logged_in}
         >
           <HeaderLogo small />
           <Breadcrumbs title="Edit post" />
@@ -154,17 +156,24 @@ class PostEditPage extends React.Component {
               <PageContent>
                 <EditPost
                   actions={actions}
-                  allSchools={_.values(this.props.schools)}
-                  userRecentTags={current_user.recent_tags}
+                  allSchools={schools.toList()}
+                  userRecentTags={current_user.get('recent_tags')}
                   post={post}
                   triggers={triggers}
                   onDelete={this._handleDelete}
                   onSubmit={this._handleSubmit}
-                  {...formState}
+                  geotags={edit_post_form.get('geotags')}
+                  hashtags={edit_post_form.get('hashtags')}
+                  schools={edit_post_form.get('schools')}
                 />
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...formState} truncated />
+                <AddedTags
+                  geotags={edit_post_form.get('geotags')}
+                  hashtags={edit_post_form.get('hashtags')}
+                  schools={edit_post_form.get('schools')}
+                  truncated
+                />
               </SidebarAlt>
             </PageBody>
           </PageMain>
@@ -175,7 +184,20 @@ class PostEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('posts'),
+  state => state.get('schools'),
+  state => state.get('edit_post_form'),
+  (current_user, posts, schools, edit_post_form) => ({
+    posts,
+    schools,
+    edit_post_form,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetEditPostForm, updateEditPostForm }, dispatch)
 }))(PostEditPage);

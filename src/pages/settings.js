@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import i from 'immutable';
 
 import {
   mapOf as mapOfPropType,
@@ -39,7 +40,7 @@ import { Command } from '../utils/command';
 import { addUser } from '../actions/users';
 import { addError } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { RolesManager } from '../components/settings';
 
@@ -120,10 +121,7 @@ class SettingsPage extends React.Component {
       return false;
     }
 
-    let roles = [];
-    if (current_user.id && current_user.user.more && current_user.user.more.roles) {
-      roles = current_user.user.more.roles;
-    }
+    const roles = (current_user.getIn(['user', 'more', 'roles']) || i.List()).toJS();
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
@@ -159,4 +157,17 @@ class SettingsPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector)(SettingsPage);
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  state => state.get('following'),
+  state => state.get('followers'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(SettingsPage);

@@ -144,11 +144,11 @@ export default class BaseSettingsPage extends React.Component {
       triggers
     } = this.props;
 
-    const user = current_user.user;
+    const user = current_user.get('user');
 
-    let name = user.username;
-    if (user.more && (user.more.firstName || user.more.lastName)) {
-      name = `${user.more.firstName} ${user.more.lastName}`;
+    let name = user.get('username');
+    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
+      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
     }
 
     return (
@@ -181,7 +181,7 @@ export default class BaseSettingsPage extends React.Component {
                   following={following}
                   ref={c => this.head = c}
                   triggers={triggers}
-                  user={current_user.user}
+                  user={user}
                   onChange={this.handleChange}
                 />
                 <div className="page__content page__content-spacing">

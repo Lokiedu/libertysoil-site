@@ -23,7 +23,7 @@ import { ArrayOfPosts as ArrayOfPostsPropType } from '../prop-types/posts';
 import { ShortPost } from './post';
 
 const RelatedPosts = ({ posts, users }) => {
-  if (!posts || !posts.length) {
+  if (!posts.size) {
     return null;
   }
 
@@ -33,11 +33,11 @@ const RelatedPosts = ({ posts, users }) => {
         <h3>Related posts</h3>
       </div>
       {posts.map(post => {
-        const author = users[post.user_id];
+        const author = users.get(post.get('user_id'));
         let text = 'No text...';
 
-        if (post.text) {
-          text = truncate(post.text, {
+        if (post.get('text')) {
+          text = truncate(post.get('text'), {
             length: 256
           });
         }
@@ -45,11 +45,8 @@ const RelatedPosts = ({ posts, users }) => {
         return (
           <ShortPost
             author={author}
-            key={post.id}
-            post={{
-              ...post,
-              text
-            }}
+            key={post.get('id')}
+            post={post.set('text', text)}
           />
         );
       })}

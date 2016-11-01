@@ -35,10 +35,10 @@ export default class UserText extends React.Component {
 
   getName = () => {
     const { user } = this.props;
-    let name = user.username;
+    let name = user.get('username');
 
-    if (user.more && user.more.firstName && user.more.lastName) {
-      name = `${user.more.firstName} ${user.more.lastName}`;
+    if (user.getIn(['more', 'firstName']) && user.getIn(['more', 'lastName'])) {
+      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
     }
 
     return name.trim();

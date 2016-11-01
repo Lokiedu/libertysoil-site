@@ -15,57 +15,92 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Matches the menu item against the path.
+ */
+function matchItem(item, path) {
+  return (item.regexp && path.match(item.regexp) !== null) ||
+          item.path === path;
+}
+
+/**
+ * Recursive depth-first search on items of MenuTree.
+ */
+function find(currentPath, items) {
+  for (const item of items) {
+    if (matchItem(item, currentPath)) {
+      return item;
+    }
+
+    if (item.children) {
+      const result = find(currentPath, item.children);
+
+      if (result) {
+        return result;
+      }
+    }
+  }
+
+  return null;
+}
+
 export class MenuTree {
   /**
    * Menu item format:
-   *  {
-   *    name: 'Name',
-   *    path: '/path', // string or regexp
-   *    children: [] // optional array of menu items
-   *  }
+   * `
+   *   {
+   *     name: 'Name', // Any property
+   *     path: '/path', // String representing a path.
+   *     regexp: /\/path/, // Optional regexp
+   *     children: [] // Optional array of menu items
+   *   }
+   * `
+   * When `regexp` is specified it will be used for matching instead of `path`.
    * @param {Object[]} items An array of menu items.
    */
   constructor(items) {
     this.items = Object.freeze(items);
   }
 
+  /**
+   * Finds the root menu item for the current path.
+   * @param {String} currentPath A path without a query.
+   */
   getCurrentRoot(currentPath) {
+    // Match children first
     for (const item of this.items) {
-      const current = this.find(currentPath, item.children);
-
-      if (current) {
-        return item;
-      }
-    }
-
-    return null;
-  }
-
-  getCurrent(currentPath) {
-    return this.find(currentPath, this.items);
-  }
-
-  find(currentPath, items) {
-    for (const item of items) {
-      const same = (item.regexp && currentPath.match(item.regexp) !== null) ||
-                    item.path === currentPath;
-      if (same) {
-        return item;
-      }
-
       if (item.children) {
-        const result = this.find(currentPath, item.children);
+        const current = find(currentPath, item.children);
 
-        if (result) {
-          return result;
+        if (current) {
+          return item;
         }
       }
     }
 
+    // then root items
+    for (const item of this.items) {
+      if (matchItem(item, currentPath)) {
+        return item;
+      }
+    }
+
     return null;
+  }
+
+  /**
+   * Finds the matching menu item for the current path.
+   * @param {String} currentPath A path without a query.
+   */
+  getCurrent(currentPath) {
+    return find(currentPath, this.items);
   }
 }
 
+/**
+ * Menu for tool pages (/tools/*).
+ */
 export const toolsMenu = new MenuTree([
   {
     name: 'Account',
@@ -96,6 +131,13 @@ export const toolsMenu = new MenuTree([
     path: '/tools/my',
     children: [
       { name: 'Posts', path: '/tools/my/posts' }
+    ]
+  },
+  {
+    name: 'People',
+    path: '/tools/people',
+    children: [
+      { name: 'Following', path: '/tools/people/following' }
     ]
   }
 ]);

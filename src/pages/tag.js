@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { values } from 'lodash';
+import i from 'immutable';
 
 import {
   url as urlPropType,
@@ -45,7 +45,7 @@ import { addHashtag, setHashtagPosts } from '../actions/hashtags';
 import NotFound from './not-found';
 import River                from '../components/river_of_posts';
 import { ActionsTrigger }   from '../triggers';
-import { defaultSelector }  from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_HASHTAG }      from '../consts/tags';
 import BaseTagPage from './base/tag';
 
@@ -93,6 +93,7 @@ export class TagPage extends Component {
   render() {
     const {
       comments,
+      create_post_form,
       is_logged_in,
       current_user,
       posts,
@@ -110,32 +111,32 @@ export class TagPage extends Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags[params.tag];
+    const tag = hashtags.get(params.tag);
 
     if (!tag) {
       return null;
     }
 
-    if (!tag.id) {
+    if (!tag.get('id')) {
       return <NotFound />;
     }
 
-    const thisTagPosts = tag_posts[tag.name] || [];
+    const thisTagPosts = tag_posts.get(tag.get('name')) || i.List();
 
     return (
       <BaseTagPage
         actions={actions}
-        create_post_form={this.props.create_post_form}
+        create_post_form={create_post_form}
         current_user={current_user}
         is_logged_in={is_logged_in}
         params={this.props.params}
         postsAmount={thisTagPosts.length}
-        schools={values(schools)}
+        schools={schools.toList()}
         tag={tag}
         triggers={triggers}
         type={TAG_HASHTAG}
       >
-        <Helmet title={`"${tag.name}" posts on `} />
+        <Helmet title={`"${tag.get('name')}" posts on `} />
         <River
           comments={comments}
           current_user={current_user}
@@ -150,7 +151,31 @@ export class TagPage extends Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('posts'),
+  state => state.get('tag_posts'),
+  state => state.get('users'),
+  state => state.get('hashtags'),
+  state => state.get('schools'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, posts, tag_posts, users, hashtags, schools, ui) => ({
+    comments,
+    create_post_form,
+    posts,
+    tag_posts,
+    users,
+    hashtags,
+    schools,
+    ui,
+    ...current_user
+  })
+);
+
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(TagPage);

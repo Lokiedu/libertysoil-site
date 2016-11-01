@@ -30,31 +30,31 @@ import Time from './time';
 const TagLikePost = ({ author, post }) => {
   let tag;
 
-  switch (post.type) {
+  switch (post.get('type')) {
     case PostTypes.HASHTAG_LIKE:
       tag = (
         <Tag
-          name={post.liked_hashtag.name}
+          name={post.getIn(['liked_hashtag', 'name'])}
           type={TagTypes.TAG_HASHTAG}
-          urlId={post.liked_hashtag.name}
+          urlId={post.getIn(['liked_hashtag', 'name'])}
         />
       );
       break;
     case PostTypes.SCHOOL_LIKE:
       tag = (
         <Tag
-          name={post.liked_school.name}
+          name={post.getIn(['liked_school', 'name'])}
           type={TagTypes.TAG_SCHOOL}
-          urlId={post.liked_school.url_name}
+          urlId={post.getIn(['liked_school', 'url_name'])}
         />
       );
       break;
     case PostTypes.GEOTAG_LIKE:
       tag = (
         <Tag
-          name={post.liked_geotag.name}
+          name={post.getIn(['liked_geotag', 'name'])}
           type={TagTypes.TAG_LOCATION}
-          urlId={post.liked_geotag.url_name}
+          urlId={post.getIn(['liked_geotag', 'url_name'])}
         />
       );
       break;
@@ -74,7 +74,7 @@ const TagLikePost = ({ author, post }) => {
         </div>
         <div className="layout__grid_item layout__grid_item-wide" />
         <div className="layout__grid_item">
-          <Time className="card__timestamp" timestamp={post.created_at} />
+          <Time className="card__timestamp" timestamp={post.get('created_at')} />
         </div>
       </div>
     </section>

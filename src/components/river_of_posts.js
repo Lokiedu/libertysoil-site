@@ -47,19 +47,21 @@ const RiverOfPostsComponent = (props) => {
     return null;
   }
 
-  const postsWithData = river.map(id => posts[id]);
+  const postsWithData = river.map(id => posts.get(id));
 
   return (
     <div>
       {postsWithData.map((post) => {
-        switch (post.type) {
+        const author = users.get(post.get('user_id'));
+
+        switch (post.get('type')) {
           case PostTypes.HASHTAG_LIKE:
           case PostTypes.SCHOOL_LIKE:
           case PostTypes.GEOTAG_LIKE:
             return (
               <TagLikePost
-                author={users[post.user_id]}
-                key={post.id}
+                author={author}
+                key={post.get('id')}
                 post={post}
               />
             );
@@ -67,10 +69,10 @@ const RiverOfPostsComponent = (props) => {
           case PostTypes.LONG_TEXT:
             return (
               <PostWrapper
-                author={users[post.user_id]}
+                author={author}
                 comments={comments}
                 current_user={current_user}
-                key={post.id}
+                key={post.get('id')}
                 post={post}
                 triggers={triggers}
                 ui={ui}

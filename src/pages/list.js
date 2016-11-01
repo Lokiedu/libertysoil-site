@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -53,7 +52,7 @@ import Button from '../components/button';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 import {
   resetCreatePostForm,
   updateCreatePostForm
@@ -107,7 +106,7 @@ export class List extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.river.length > 4) {
+    if (this.props.river.size > 4) {
       this.setState({ displayLoadMore: true });
     }
   }
@@ -125,7 +124,7 @@ export class List extends React.Component {
     const { river } = this.props;
 
     const triggers = new ActionsTrigger(client, this.props.dispatch);
-    await triggers.loadPostRiver(river.length);
+    await triggers.loadPostRiver(river.size);
   }
 
   loadMore = async (isVisible) => {
@@ -133,11 +132,11 @@ export class List extends React.Component {
 
     const triggers = new ActionsTrigger(client, dispatch);
 
-    if (isVisible && !ui.progress.loadRiverInProgress && this.state.downloadAttemptsCount < 1) {
+    if (isVisible && !ui.getIn(['progress', 'loadRiverInProgress']) && this.state.downloadAttemptsCount < 1) {
       this.setState({
         downloadAttemptsCount: this.state.downloadAttemptsCount + 1
       });
-      const res = await triggers.loadPostRiver(river.length);
+      const res = await triggers.loadPostRiver(river.size);
 
       let displayLoadMore = false;
       if (res === false) { // bad response
@@ -159,7 +158,8 @@ export class List extends React.Component {
     const {
       comments,
       current_user,
-      i_am_following,
+      create_post_form,
+      following,
       is_logged_in,
       posts,
       resetCreatePostForm,
@@ -170,6 +170,8 @@ export class List extends React.Component {
       users
     } = this.props;
 
+    const i_am_following = following.get(current_user.get('id'));
+
     const actions = { resetCreatePostForm, updateCreatePostForm };
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
@@ -179,7 +181,7 @@ export class List extends React.Component {
         <div className="layout layout-align_center layout__space layout__space-double">
           <VisibilitySensor onChange={this.loadMore}>
             <Button
-              title="Load more..." waiting={ui.progress.loadRiverInProgress}
+              title="Load more..." waiting={ui.getIn('progress', 'loadRiverInProgress')}
               onClick={this.loadPostRiverManually}
             />
           </VisibilitySensor>
@@ -198,36 +200,43 @@ export class List extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
+          <Sidebar />
           <PageMain>
             <PageBody>
               <PageContent>
                 <CreatePost
                   actions={actions}
-                  allSchools={values(schools)}
-                  defaultText={this.props.create_post_form.text}
+                  addedGeotags={create_post_form.get('geotags')}
+                  addedHashtags={create_post_form.get('hashtags')}
+                  addedSchools={create_post_form.get('schools')}
+                  allSchools={schools.toList()}
+                  defaultText={create_post_form.get('text')}
                   triggers={triggers}
-                  userRecentTags={current_user.recent_tags}
-                  {...this.props.create_post_form}
+                  userRecentTags={current_user.get('recent_tags')}
                 />
                 <River
-                  river={river}
-                  posts={posts}
-                  users={users}
+                  comments={comments}
                   current_user={current_user}
+                  posts={posts}
+                  river={river}
                   triggers={triggers}
                   ui={ui}
-                  comments={comments}
+                  users={users}
                 />
                 {loadMore}
               </PageContent>
               <SidebarAlt>
-                <AddedTags {...this.props.create_post_form} truncated />
+                <AddedTags
+                  geotags={create_post_form.get('geotags')}
+                  hashtags={create_post_form.get('hashtags')}
+                  schools={create_post_form.get('schools')}
+                  truncated
+                />
                 <SideSuggestedUsers
                   current_user={current_user}
                   i_am_following={i_am_following}
                   triggers={triggers}
-                  users={current_user.suggested_users}
+                  users={current_user.get('suggested_users')}
                 />
               </SidebarAlt>
             </PageBody>
@@ -240,7 +249,30 @@ export class List extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('comments'),
+  state => state.get('create_post_form'),
+  state => state.get('following'),
+  state => state.get('posts'),
+  state => state.get('river'),
+  state => state.get('schools'),
+  state => state.get('users'),
+  state => state.get('ui'),
+  (current_user, comments, create_post_form, following, posts, river, schools, users, ui) => ({
+    comments,
+    create_post_form,
+    following,
+    posts,
+    river,
+    schools,
+    users,
+    ui,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(List);

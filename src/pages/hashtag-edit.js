@@ -20,14 +20,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Helmet from 'react-helmet';
 import { browserHistory } from 'react-router';
-import { values } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { MapOfHashtags as MapOfHashtagsPropType } from '../prop-types/hashtags';
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
-import { defaultSelector } from '../selectors';
+import { createSelector, currentUserSelector } from '../selectors';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -112,19 +111,20 @@ class HashtagEditPage extends React.Component {
     const {
       is_logged_in,
       current_user,
+      create_post_form,
       resetCreatePostForm,
       updateCreatePostForm,
       params,
       hashtags,
       schools,
-      messages
+      messages,
     } = this.props;
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
     const actions = { resetCreatePostForm, updateCreatePostForm };
 
-    const tag = hashtags[params.tag];
+    const tag = hashtags.get(params.tag);
 
     if (!tag) {
       return null;
@@ -141,10 +141,10 @@ class HashtagEditPage extends React.Component {
         is_logged_in={is_logged_in}
         actions={actions}
         triggers={triggers}
-        schools={values(schools)}
-        create_post_form={this.props.create_post_form}
+        schools={schools.toList()}
+        create_post_form={create_post_form}
       >
-        <Helmet title={`"${tag.name}" posts on `} />
+        <Helmet title={`"${tag.get('name')}" posts on `} />
         <div className="paper">
           <div className="paper__page">
             <TagEditForm
@@ -162,7 +162,22 @@ class HashtagEditPage extends React.Component {
   }
 }
 
-export default connect(defaultSelector, dispatch => ({
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('create_post_form'),
+  state => state.get('hashtags'),
+  state => state.get('messages'),
+  state => state.get('schools'),
+  (current_user, create_post_form, hashtags, messages, schools) => ({
+    create_post_form,
+    hashtags,
+    messages,
+    schools,
+    ...current_user
+  })
+);
+
+export default connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
 }))(HashtagEditPage);

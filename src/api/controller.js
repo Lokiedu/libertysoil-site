@@ -311,14 +311,18 @@ export default class ApiController {
 
   userLikedPosts = async (ctx) =>  {
     try {
-      const user_id = await this.bookshelf.knex
-        .select('id')
+      const user = await this.bookshelf.knex
+        .first('id')
         .from('users')
-        .where('users.username', '=', ctx.params.user)
-        .map(row => row.id);
+        .where('users.username', '=', ctx.params.user);
 
-      const posts = await this.getLikedPosts(user_id[0]);
-      ctx.body = posts;
+      if (user) {
+        const posts = await this.getLikedPosts(user.id);
+        ctx.body = posts;
+      } else {
+        ctx.app.logger.warn(`Someone tried read liked posts for '${ctx.params.user}', but there's no such user`);
+        ctx.body = [];
+      }
     } catch (e) {
       ctx.status = 500;
       ctx.body = e.message;
@@ -358,6 +362,7 @@ export default class ApiController {
     });
 
     posts = await hidePostsData(posts, userId, this.bookshelf.knex);
+
     return posts;
   };
 
@@ -379,14 +384,18 @@ export default class ApiController {
 
   userFavouredPosts = async (ctx) => {
     try {
-      const user_id = await this.bookshelf.knex
-        .select('id')
+      const user = await this.bookshelf.knex
+        .first('id')
         .from('users')
-        .where('users.username', '=', ctx.params.user)
-        .map(row => row.id);
+        .where('users.username', '=', ctx.params.user);
 
-      const posts = await this.getFavouredPosts(user_id[0]);
-      ctx.body = posts;
+      if (user) {
+        const posts = await this.getFavouredPosts(user.id);
+        ctx.body = posts;
+      } else {
+        ctx.app.logger.warn(`Someone tried read favoured posts for '${ctx.params.user}', but there's no such user`);
+        ctx.body = [];
+      }
     } catch (e) {
       ctx.status = 500;
       ctx.body = e.message;
@@ -1703,19 +1712,24 @@ export default class ApiController {
 
   getUser = async (ctx) => {
     const User = this.bookshelf.model('User');
-    const u = await User
-      .where({ username: ctx.params.username })
-      .fetch({
-        require: true,
-        withRelated: [
-          'following', 'followers', 'liked_posts',
-          'liked_hashtags', 'liked_schools', 'liked_geotags',
-          'favourited_posts', 'followed_hashtags',
-          'followed_schools', 'followed_geotags'
-        ]
-      });
 
-    ctx.body = u.toJSON();
+    try {
+      const u = await User
+              .where({ username: ctx.params.username })
+              .fetch({
+                require: true,
+                withRelated: [
+                  'following', 'followers', 'liked_posts',
+                  'liked_hashtags', 'liked_schools', 'liked_geotags',
+                  'favourited_posts', 'followed_hashtags',
+                  'followed_schools', 'followed_geotags'
+                ]
+              });
+      ctx.body = u.toJSON();
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
   };
 
   followUser = async (ctx) => {
@@ -2701,7 +2715,8 @@ export default class ApiController {
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
-      ctx.body = { error: e.message };
+      ctx.body = { error: 'Internal Server Error' };
+      ctx.app.logger.error(e);
     }
   };
 

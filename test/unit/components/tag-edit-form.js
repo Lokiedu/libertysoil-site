@@ -19,6 +19,7 @@
 import { mount } from 'enzyme';
 import { v4 as uuid4 } from 'uuid';
 import sinon from 'sinon';
+import i from 'immutable';
 
 import { expect, React } from '../../../test-helpers/expect-unit';
 import { TAG_LOCATION, TAG_HASHTAG } from '../../../src/consts/tags';
@@ -26,13 +27,13 @@ import { TAG_LOCATION, TAG_HASHTAG } from '../../../src/consts/tags';
 import TagEditForm from '../../../src/components/tag-edit-form/tag-edit-form';
 
 describe('TagEditForm', () => {
-  before(() => {
-    sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  });
+  // before(() => {
+  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  // });
 
-  after(() => {
-    console.error.restore();
-  });
+  // after(() => {
+  //   console.error.restore();
+  // });
 
   const date = new Date().toString();
   const uuid = uuid4();
@@ -41,7 +42,7 @@ describe('TagEditForm', () => {
   describe('GeotagEditForm', () => {
     it('MUST render description field with correct initial data', () => {
       const description = 'Geotag test description';
-      const geotag = {
+      const geotag = i.fromJS({
         created_at: date,
         id: uuid,
         more: { description },
@@ -49,11 +50,11 @@ describe('TagEditForm', () => {
         updated_at: date,
         url_name: 'test',
         post_count: 0
-      };
+      });
 
       const wrapper = mount(
         <TagEditForm
-          messages={[]}
+          messages={i.List()}
           processing={false}
           saveHandler={saveHandler}
           tag={geotag}
@@ -72,18 +73,18 @@ describe('TagEditForm', () => {
   describe('HashtagEditForm', () => {
     it('MUST render description field with correct initial data', () => {
       const description = 'Hashtag test description';
-      const hashtag = {
+      const hashtag = i.fromJS({
         created_at: date,
         id: uuid,
         more: { description },
         name: 'test',
         updated_at: date,
         post_count: 0
-      };
+      });
 
       const wrapper = mount(
         <TagEditForm
-          messages={[]}
+          messages={i.List()}
           processing={false}
           saveHandler={saveHandler}
           tag={hashtag}
