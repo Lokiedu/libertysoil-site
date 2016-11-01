@@ -1100,7 +1100,7 @@ export default class ApiController {
     if (!passwordIsValid) {
       ctx.app.logger.warn(`Someone tried to log in as '${username}', but used wrong pasword`);
       ctx.status = 401;
-      ctx.body = { success: false };
+      ctx.body = { success: false, error: 'Invalid username or password' };
       return;
     }
 
