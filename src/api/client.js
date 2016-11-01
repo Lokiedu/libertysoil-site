@@ -230,8 +230,17 @@ export default class ApiClient
   }
 
   async getAvailableUsername(username) {
+    let json;
     const response = await this.get(`/api/v1/user/available-username/${username}`);
-    const json = await response.json();
+
+    if (!response.ok) {
+      json = await response.json();
+      const error = json.error || response.statusText;
+      throw new Error(error);
+    }
+
+    json = await response.json();
+
     return json.username;
   }
 

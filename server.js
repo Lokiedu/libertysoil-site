@@ -97,7 +97,7 @@ const app = new Koa();
 app.logger = logger;
 
 const knexConfig = db_config[exec_env];
-const bookshelf = initBookshelf(knexConfig);
+const bookshelf = global.$bookshelf || initBookshelf(knexConfig);
 const sphinx = initSphinx();
 const api = initApi(bookshelf, sphinx);
 const matchPromisified = promisify(match, { multiArgs: true });

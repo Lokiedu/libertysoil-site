@@ -16,11 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
-/* global $dbConfig */
+/* global $dbConfig,$bookshelf */
 import fs from 'fs';
 import { serialize } from 'cookie';
 import AWS from 'mock-aws';
 import { v4 } from 'uuid';
+import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import { login } from '../../../test-helpers/api';
@@ -30,8 +31,8 @@ import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+let bookshelfHelper = initBookshelf($dbConfig);
+let User = bookshelfHelper.model('User');
 
 describe('Client test', () => {
   let client;
@@ -129,6 +130,30 @@ describe('Client test', () => {
   it('#unlike correctly handle non authenticated request', async () => {
     return expect(client.unlike('dummyid'), 'to be rejected with', 'You are not authorized');
   });
+
+  describe('Exception tests', () => {
+    let userModel;
+
+    before(() => {
+      // stub bookshelf model to simulate exception
+      userModel = $bookshelf.model('User');
+      sinon.stub(userModel, 'forge', () => {
+        throw new Error('test');
+      });
+      sinon.stub($bookshelf, 'model', () => {
+        return userModel;
+      });
+    });
+
+    after(() => {
+      $bookshelf.model.restore();
+      userModel.forge.restore();
+    });
+
+    it('should work', async () => {
+      return expect(client.getAvailableUsername('test'), 'to be rejected with', 'test');
+    });
+  });
 });
 
 describe('Authenticated client test', () => {
@@ -164,3 +189,4 @@ describe('Authenticated client test', () => {
     expect(result.success, 'to be', true);
   });
 });
+
