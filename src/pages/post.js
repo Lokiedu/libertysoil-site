@@ -55,6 +55,7 @@ import SidebarAlt from '../components/sidebarAlt';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { addPost, setRelatedPosts } from '../actions/posts';
+import { addError } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
@@ -81,8 +82,12 @@ export class PostPage extends React.Component {
       return 404;
     }
 
-    const relatedPosts = await client.relatedPosts(router.params.uuid);
-    store.dispatch(setRelatedPosts(router.params.uuid, relatedPosts));
+    try {
+      const relatedPosts = await client.relatedPosts(router.params.uuid);
+      store.dispatch(setRelatedPosts(router.params.uuid, relatedPosts));
+    } catch (e) {
+      store.dispatch(addError(e.message));
+    }
 
     return 200;
   }
@@ -100,8 +105,8 @@ export class PostPage extends React.Component {
     } = this.props;
 
     const post_uuid = params.uuid;
-    const current_post = posts.get(post_uuid);
 
+    const current_post = posts.get(post_uuid);
     if (!current_post) {
       // not loaded yet
       return null;
