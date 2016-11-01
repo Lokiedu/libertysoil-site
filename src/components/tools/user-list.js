@@ -41,7 +41,7 @@ export default function UserList({ onClick, users, selectedUserId }) {
         key={index}
         onClick={handleClick}
       >
-        <Avatar size={23} user={user.toJS()} />
+        <Avatar size={23} user={user} />
         <span className="tools_item__child-padded">{user.get('username')}</span>
       </div>
     );

@@ -39,7 +39,7 @@ export default function UserDetails({ current_user, following, triggers, user })
       <div className="tools_page__details_col">
         <div className="tools_details">
           <div className="tools_details__left_col">
-            <Avatar isRound={false} size={140} user={user.toJS()} />
+            <Avatar isRound={false} size={140} user={user} />
           </div>
           <div>
             <Link className="tools_details__title" to={`/user/${user.get('username')}`}>
@@ -49,10 +49,10 @@ export default function UserDetails({ current_user, following, triggers, user })
               {fullName}
             </div>
             <FollowButton
-              active_user={current_user.toJS()}
-              following={following.toJS()}
+              active_user={current_user}
+              following={following}
               triggers={triggers}
-              user={user.toJS()}
+              user={user}
             />
           </div>
         </div>
