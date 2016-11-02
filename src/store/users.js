@@ -67,6 +67,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.users.ADD_USERS: {
+      const usersById = action.users.reduce((acc, user) => acc[user.id] = cleanUser(user), {});
+      state = state.mergeDeep(i.fromJS(usersById));
+
+      break;
+    }
+
     case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
       const user = action.post.user;
