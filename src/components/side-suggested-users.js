@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { take } from 'lodash';
 
 import {
   ArrayOfUsers as ArrayOfUsersPropType,
@@ -52,7 +51,7 @@ export default class SideSuggestedUsers extends React.Component {
 
   ignoreUser = async (user) => {
     this.setState({ loading: true });
-    await this.props.triggers.ignoreUser(user);
+    await this.props.triggers.ignoreUser(user.get('username'));
     this.setState({ loading: false });
   }
 
@@ -64,7 +63,7 @@ export default class SideSuggestedUsers extends React.Component {
       triggers
     } = this.props;
 
-    if (!users.length) {
+    if (!users.size) {
       return null;
     }
 
@@ -76,7 +75,7 @@ export default class SideSuggestedUsers extends React.Component {
     return (
       <div className="side_block">
         <h4 className="side_block__heading">People to follow:</h4>
-        {take(users, 3).map((user) => (
+        {users.take(3).map((user) => (
           <div className={className} key={`user-${user.get('id')}`}>
             <div className="layout__row layout__row-small">
               <User
@@ -99,7 +98,7 @@ export default class SideSuggestedUsers extends React.Component {
               />
             </div>
           </div>
-        ))}
+        )).toJS()}
       </div>
     );
   }

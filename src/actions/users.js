@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const ADD_USER = 'ADD_USER';
+export const ADD_USERS = 'ADD_USERS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
 export const SET_LIKES = 'SET_LIKES';
@@ -37,6 +38,13 @@ export function addUser(user) {
   return {
     type: ADD_USER,
     user
+  };
+}
+
+export function addUsers(users) {
+  return {
+    type: ADD_USERS,
+    users
   };
 }
 
