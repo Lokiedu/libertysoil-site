@@ -256,9 +256,9 @@ export class ActionsTrigger {
   };
 
 
-  followUser = async (user) => {
+  followUser = async (username) => {
     try {
-      const res = await this.client.follow(user.username);
+      const res = await this.client.follow(username);
 
       if ('user1' in res) {
         this.dispatch(a.users.addUser(res.user1));
@@ -272,9 +272,9 @@ export class ActionsTrigger {
     }
   };
 
-  unfollowUser = async (user) => {
+  unfollowUser = async (username) => {
     try {
-      const res = await this.client.unfollow(user.username);
+      const res = await this.client.unfollow(username);
 
       if ('user1' in res) {
         this.dispatch(a.users.addUser(res.user1));
@@ -545,6 +545,7 @@ export class ActionsTrigger {
     try {
       const result = await this.client.initialSuggestions();
 
+      this.dispatch(a.users.addUsers(result));
       this.dispatch(a.users.setSuggestedUsers(result));
 
       return result;

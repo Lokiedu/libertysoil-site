@@ -38,12 +38,12 @@ export default class FollowButton extends React.Component {
 
   followUser = (event) => {
     event.preventDefault();
-    this.props.triggers.followUser(this.props.user);
+    this.props.triggers.followUser(this.props.user.get('username'));
   }
 
   unfollowUser = (event) => {
     event.preventDefault();
-    this.props.triggers.unfollowUser(this.props.user);
+    this.props.triggers.unfollowUser(this.props.user.get('username'));
   }
 
   render() {
