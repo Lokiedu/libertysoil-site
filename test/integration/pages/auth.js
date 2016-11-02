@@ -68,9 +68,7 @@ describe('Auth page', () => {
   });
 
   describe('Register component', () => {
-    it('availableUsername should work', (done) => {
-      done();
-      return;
+    xit('availableUsername should work', (done) => {
       const testComponent = (
         <Register
           fields={{
