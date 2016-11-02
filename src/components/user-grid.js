@@ -53,7 +53,7 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
         />
       </div>
     </div>
-  ));
+  )).toJS();
 
   return (
     <div className="layout__grids layout__grids-space layout__grid-responsive">

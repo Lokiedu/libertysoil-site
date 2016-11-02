@@ -24,7 +24,7 @@ const initialState = i.List([]);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case users.SET_SUGGESTED_USERS: {
-      state = i.List(action.suggested_users);
+      state = i.List(action.suggested_users.map(user => user.id));
       break;
     }
   }

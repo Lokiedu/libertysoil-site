@@ -87,7 +87,11 @@ export function initBookshelfFromKnex(knex) {
     },
     virtuals: {
       gravatarHash() {
-        return md5(this.get('email'));
+        const email = this.get('email');
+        if (!email) {
+          return '';
+        }
+        return md5(email);
       },
       fullName() {
         const more = this.get('more');

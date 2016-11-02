@@ -95,7 +95,8 @@ class InductionPage extends React.Component {
       is_logged_in,
       suggested_users,
       messages,
-      following
+      following,
+      users
     } = this.props;
 
     const i_am_following = following.get(current_user.get('id'));
@@ -139,7 +140,7 @@ class InductionPage extends React.Component {
               current_user={current_user}
               i_am_following={i_am_following}
               triggers={triggers}
-              users={suggested_users}
+              users={suggested_users.map(id => users.get(id))}
             />
           </div>
         </div>
@@ -153,10 +154,12 @@ const selector = createSelector(
   state => state.get('following'),
   state => state.get('messages'),
   state => state.get('suggested_users'),
-  (current_user, following, messages, suggested_users) => ({
+  state => state.get('users'),
+  (current_user, following, messages, suggested_users, users) => ({
     following,
     messages,
     suggested_users,
+    users,
     ...current_user
   })
 );

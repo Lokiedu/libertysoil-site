@@ -194,7 +194,7 @@ export default class ProfileHeader extends React.Component {
     let followingCount;
     let followersCount;
 
-    if (userFollowing && userFollowing.isEmpty()) {
+    if (userFollowing && !userFollowing.isEmpty()) {
       // if anonym user, then do not show "Manage followers" links next to follow counters
       if (!loggedIn || notCurrentUser) {
         followingCount = (
