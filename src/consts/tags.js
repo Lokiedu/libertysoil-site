@@ -11,6 +11,37 @@ export const SIZE = {
   BIG: 'BIG'
 };
 
+export const TAG_TYPES = {
+  TAG_HASHTAG: {
+    className: 'tag--hashtag',
+    icon: 'hashtag',
+    url: '/tag/'
+  },
+  TAG_LOCATION: {
+    className: 'tag--geotag',
+    icon: 'place',
+    url: '/geo/'
+  },
+  TAG_SCHOOL: {
+    className: 'tag--school',
+    icon: 'school',
+    url: '/s/'
+  },
+  TAG_EVENT: {
+    className: 'tag--event',
+    url: '/e/'
+  },
+  TAG_PLANET: {
+    className: 'tag--planet',
+    url: '/planet',
+    isUrlFinal: true
+  },
+  TAG_MENTION: {
+    className: 'tag--mention',
+    url: '/@/'
+  }
+};
+
 export const TAG_HEADER_SIZE = {
   MIN: {
     width: 700
