@@ -288,9 +288,9 @@ export class ActionsTrigger {
     }
   };
 
-  ignoreUser = async (user) => {
+  ignoreUser = async (username) => {
     try {
-      await this.client.ignoreUser(user.username);
+      await this.client.ignoreUser(username);
       const result = await this.client.userSuggestions();
 
       this.dispatch(a.users.setPersonalizedSuggestedUsers(result));
