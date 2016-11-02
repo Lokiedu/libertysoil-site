@@ -30,6 +30,7 @@ import initBookshelf from '../../../src/api/db';
 import { initState } from '../../../src/store';
 import expect from '../../../test-helpers/expect';
 import UserFactory from '../../../test-helpers/factories/user';
+import { waitForChange } from '../../../test-helpers/wait';
 
 
 const bookshelf = initBookshelf($dbConfig);
@@ -54,23 +55,20 @@ describe('Auth page', () => {
     await bookshelf.knex.raw('DELETE FROM users;');
   });
 
-  it('Login component should work', (done) => {
+  it('Login component should work', async () => {
     const testComponent = <Login onLoginUser={triggers.login} />;
     const wrapper = mount(testComponent);
+
+    const newUserId = waitForChange(() => store.getState().getIn(['current_user', 'id']));
     wrapper.find('#loginUsername').node.value = userAttrs.username;
     wrapper.find('#loginPassword').node.value = userAttrs.password;
     wrapper.find('form').simulate('submit');
 
-    setTimeout(() => {
-      expect(user.get('id'), 'to equal', store.getState().getIn(['current_user', 'id']));
-      done();
-    }, 200);
+    expect(await newUserId, 'to equal', user.get('id'));
   });
 
   describe('Register component', () => {
-    it('availableUsername should work', (done) => {
-      done();
-      return;
+    xit('availableUsername should work', (done) => {
       const testComponent = (
         <Register
           fields={{
@@ -118,7 +116,7 @@ describe('Auth page', () => {
       await user.destroy();
     });
 
-    xit('should check on email currently taken', (done) => {
+    it('should check on email currently taken', async () => {
       const testComponent = (
         <WrappedRegister
           onRegisterUser={() => {}}
@@ -127,14 +125,12 @@ describe('Auth page', () => {
       );
       const wrapper = mount(testComponent);
 
+      const newEmailError = waitForChange(() => wrapper.state().errors.email);
+
       wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
       wrapper.find('#registerForm').simulate('submit');
 
-      setTimeout(() => {
-        expect(wrapper.state().errors.email, 'to equal', 'Email is taken');
-
-        done();
-      }, 100);
+      expect(await newEmailError, 'to equal', 'Email is taken');
     });
 
     xit('Should call "registerUser" trigger with no validation error', (done) => {

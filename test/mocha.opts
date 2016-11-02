@@ -1,4 +1,5 @@
 --compilers js:babel-register
 --require ./test-helpers/init
 --recursive
+--timeout 20000
 --colors
