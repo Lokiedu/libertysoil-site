@@ -220,8 +220,8 @@ export class ActionsTrigger {
         status = true;
       }
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else {
         this.dispatch(a.messages.addError(e.message));
       }

@@ -1788,6 +1788,12 @@ export default class ApiController {
       return;
     }
 
+    if (!ctx.request.body.more) {
+      ctx.status = 400;
+      ctx.body = { error: 'Bad Request' };
+      return;
+    }
+
     const checkit = new Checkit(UserValidators.settings.more);
     try {
       await checkit.run(ctx.request.body.more);
