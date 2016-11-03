@@ -16,35 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-
-import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
-import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
-import {
-  ArrayOfSchools as ArrayOfSchoolsPropType,
-  ArrayOfLightSchools as ArrayOfLightSchoolsPropType
-} from '../prop-types/schools';
+import { Map as ImmutableMap } from 'immutable';
 
 import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
 
-const TagCloud = (props) => {
-  const tags = convertModelsToTags(props)
+// TODO: consider effeciency of using 'only' property
+const TagCloud = ({ only, tags, ...props }) => {
+  let requiredTags = tags;
+  if (only.length > 0) {
+    requiredTags = tags.filter((value, key) => only.includes(key));
+  }
+
+  const preparedTags = convertModelsToTags(requiredTags)
     .map((tag, index) => (
       <Tag
-        addable={props.addable}
-        deletable={props.deletable}
-        key={index}
-        showPostCount={props.showPostCount}
-        truncated={props.truncated}
-        onClick={props.onClick}
-        onDelete={props.onDelete}
+        key={tag.id || index}
         {...tag}
+        {...props}
       />
     ));
 
   return (
     <div className="tags">
-      {tags}
+      {preparedTags}
     </div>
   );
 };
@@ -52,18 +47,13 @@ const TagCloud = (props) => {
 TagCloud.displayName = 'TagCloud';
 
 TagCloud.propTypes = {
-  addable: PropTypes.bool,
-  deletable: PropTypes.bool,
-  geotags: ArrayOfGeotagsPropType,
-  hashtags: ArrayOfHashtagsPropType,
-  onClick: PropTypes.func,
-  onDelete: PropTypes.func,
-  schools: PropTypes.oneOfType([
-    ArrayOfLightSchoolsPropType,
-    ArrayOfSchoolsPropType
-  ]),
-  showPostCount: PropTypes.bool,
-  truncated: PropTypes.bool
+  only: PropTypes.arrayOf(PropTypes.string),
+  tags: PropTypes.shape({})
+};
+
+TagCloud.defaultProps = {
+  only: [],
+  tags: ImmutableMap({})
 };
 
 export default TagCloud;

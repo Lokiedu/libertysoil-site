@@ -45,7 +45,7 @@ export default class TagSwitch extends React.Component {
   };
 
   static defaultProps = {
-    isLink: false, // set to true?
+    isLink: true,
     onClick: () => {}
   };
 
