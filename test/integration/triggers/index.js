@@ -34,25 +34,6 @@ let User = bookshelf.model('User');
 
 describe('ActionsTrigger', () => {
 
-  it('createPost should work', async () => {
-    let store = initState();
-    const userAttrs = UserFactory.build();
-    const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-
-    user.set('email_check_hash', null);
-    await user.save(null, {method: 'update'});
-    let sessionId = await login(userAttrs.username, userAttrs.password);
-    let headers = {
-      "cookie": serialize('connect.sid', sessionId)
-    };
-
-    let client = new ApiClient(API_HOST, {headers});
-    let triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.createPost('short_text', { text: 'lorem ipsum' });
-
-    expect(store.getState().get('river').size, 'to equal', 1);
-  });
-
   describe('#login', async () => {
 
     it('should dispatch correct error for non existing user', async () => {
@@ -74,6 +55,37 @@ describe('ActionsTrigger', () => {
 
       expect(store.getState().get('messages').first().get('message'), 'to equal', 'Please follow the instructions mailed to you during registration.');
       await user.destroy();
+    });
+  });
+
+  describe('Authenticated User', async () => {
+    let user, triggers, client;
+    
+    beforeEach(async () => {
+      const userAttrs = UserFactory.build();
+      user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+
+      user.set('email_check_hash', null);
+      await user.save(null, { method: 'update' });
+      const sessionId = await login(userAttrs.username, userAttrs.password);
+      const headers = {
+        "cookie": serialize('connect.sid', sessionId)
+      };
+
+      client = new ApiClient(API_HOST, { headers });
+    });
+
+    afterEach(async () => {
+      await user.destroy();
+      await bookshelf.knex('posts').del();
+    });
+
+    it('createPost should work', async () => {
+      const store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+      await triggers.createPost('short_text', { text: 'lorem ipsum' });
+
+      expect(store.getState().get('river').size, 'to equal', 1);
     });
   });
 });
