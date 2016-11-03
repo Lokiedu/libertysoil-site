@@ -52,4 +52,16 @@ describe('ActionsTrigger', () => {
 
     expect(store.getState().get('river').size, 'to equal', 1);
   });
+
+  describe('#login', async () => {
+
+    it('should dispatch correct error for non existing user', async () => {
+      const store = initState();
+      const client = new ApiClient(API_HOST);
+      const triggers = new ActionsTrigger(client, store.dispatch);
+      await triggers.login('nonexisting', 'password');
+
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Invalid username or password');
+    });
+  });
 });
