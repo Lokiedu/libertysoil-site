@@ -373,9 +373,9 @@ export class ActionsTrigger {
     } catch (e) {
       // FIXME: enable form again
 
-      if (e.response && ('error' in e.response.body)) {
+      if (e.response && ('error' in e.response)) {
         // FIXME: enable form again
-        const errors = e.response.body.error;
+        const errors = e.response.error;
         let message = '';
         for (const i in errors) {
           errors[i].map((el) => {
