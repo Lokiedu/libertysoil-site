@@ -121,7 +121,7 @@ class SettingsPage extends React.Component {
       return false;
     }
 
-    const roles = (current_user.getIn(['user', 'more', 'roles']) || i.List()).toJS();
+    const roles = current_user.getIn(['user', 'more', 'roles'], i.List()).toJS();
 
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
