@@ -169,10 +169,10 @@ export default class BaseSettingsPage extends React.Component {
           </div>
         </Header>
 
-        <Page>
-          <Sidebar current_user={current_user} />
+        <Page className="page__container--static">
           <PageMain>
             <PageBody>
+              <Sidebar isFixed={false} />
               <PageContent>
                 <ProfileHeader
                   current_user={current_user}
