@@ -85,6 +85,18 @@ describe('ActionsTrigger', () => {
       });
     });
 
+    describe('#registerUser', async () => {
+      it('should work', async () => {
+        const userAttrs = UserFactory.build();
+        const client = new ApiClient(API_HOST);
+        const store = initState();
+        const triggers = new ActionsTrigger(client, store.dispatch);
+
+        await triggers.registerUser(undefined, undefined, undefined, userAttrs.firstName, userAttrs.lastName);
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'The username is required\nThe password is required\nThe email is required\n');
+      });
+    });
+
     describe('#login', async () => {
       it('should dispatch correct error for non existing user', async () => {
         const store = initState();
