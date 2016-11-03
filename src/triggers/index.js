@@ -306,19 +306,12 @@ export class ActionsTrigger {
 
     try {
       const result = await this.client.login({ username, password });
-
-      if (!result.success) {
-        this.dispatch(a.users.setCurrentUser(null));
-        this.dispatch(a.messages.addError('Invalid username or password'));
-        return;
-      }
-
       user = result.user;
     } catch (e) {
       this.dispatch(a.users.setCurrentUser(null));
 
-      if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else if (e.status === 401) {
         this.dispatch(a.messages.addError('Invalid username or password'));
       } else {
