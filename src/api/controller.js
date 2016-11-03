@@ -1234,7 +1234,7 @@ export default class ApiController {
     } catch (e) {
       ctx.app.logger.warn(`Someone tried to reset password using unknown reset-hash`);
       ctx.status = 401;
-      ctx.body = { success: false };
+      ctx.body = { success: false, error: 'Unauthorized' };
       return;
     }
 
