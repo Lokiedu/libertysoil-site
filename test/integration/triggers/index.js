@@ -60,7 +60,7 @@ describe('ActionsTrigger', () => {
 
   describe('Authenticated User', async () => {
     let user, triggers, client;
-    
+
     beforeEach(async () => {
       const userAttrs = UserFactory.build();
       user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
@@ -86,6 +86,20 @@ describe('ActionsTrigger', () => {
       await triggers.createPost('short_text', { text: 'lorem ipsum' });
 
       expect(store.getState().get('river').size, 'to equal', 1);
+    });
+
+    it('#updateUserInfo should work', async () => {
+      let store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+
+      await triggers.updateUserInfo({});
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Bad Request');
+
+      store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+
+      await triggers.updateUserInfo({ more: {} });
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Saved successfully');
     });
   });
 });
