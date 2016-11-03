@@ -20,23 +20,31 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 import createSelector from '../selectors/createSelector';
+import currentUserSelector from '../selectors/currentUser';
+
+import SidebarMenu from './sidebar-menu';
 
 class Sidebar extends React.Component {
   static propTypes = {
+    isFixed: PropTypes.bool,
     isVisible: PropTypes.bool,
     theme: PropTypes.string
   };
 
+  static defaultProps = {
+    isFixed: true
+  };
+
   getClassName = () => {
-    const { theme, isVisible } = this.props;
     const className = classNames('sidebar col col-xs', {
-      'sidebar--visible': isVisible
+      'sidebar--visible': this.props.isVisible,
+      'sidebar--fixed': this.props.isFixed
     });
 
     const finalize = s =>
       className.concat(` col-${s} col-s-${s} col-m-${s} col-l-${s} col-xl-${s}`);
 
-    switch (theme) {
+    switch (this.props.theme) {
       case 'trunc': return finalize(1);
       case 'min': return finalize(2);
       case 'ext': return finalize(6);
@@ -46,14 +54,20 @@ class Sidebar extends React.Component {
 
   render() {
     return (
-      <div className={this.getClassName()}></div>
+      <div className={this.getClassName()}>
+        <SidebarMenu current_user={this.props.current_user} />
+      </div>
     );
   }
 }
 
 const selector = createSelector(
+  currentUserSelector,
   state => state.get('ui'),
-  ui => ({ isVisible: ui.get('sidebarIsVisible') })
+  (current_user, ui) => ({
+    isVisible: ui.get('sidebarIsVisible'),
+    ...current_user
+  })
 );
 
 export default connect(selector)(Sidebar);
