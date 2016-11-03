@@ -63,5 +63,17 @@ describe('ActionsTrigger', () => {
 
       expect(store.getState().get('messages').first().get('message'), 'to equal', 'Invalid username or password');
     });
+
+    it('should dispatch correct error for user with not validated email', async () => {
+      const userAttrs = UserFactory.build();
+      const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+      const store = initState();
+      const client = new ApiClient(API_HOST);
+      const triggers = new ActionsTrigger(client, store.dispatch);
+      await triggers.login(userAttrs.username, userAttrs.password);
+
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Please follow the instructions mailed to you during registration.');
+      await user.destroy();
+    });
   });
 });
