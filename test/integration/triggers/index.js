@@ -33,28 +33,79 @@ let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
 
 describe('ActionsTrigger', () => {
+  describe('Anonymous user', async () => {
+    describe('#newPassword', async() => {
+      let user, userAttrs, client;
 
-  describe('#login', async () => {
+      beforeEach(async () => {
+        userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        client = new ApiClient(API_HOST);
+      });
 
-    it('should dispatch correct error for non existing user', async () => {
-      const store = initState();
-      const client = new ApiClient(API_HOST);
-      const triggers = new ActionsTrigger(client, store.dispatch);
-      await triggers.login('nonexisting', 'password');
+      afterEach(async () => {
+        await user.destroy();
+      });
 
-      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Invalid username or password');
+      it('should dispatch error for non existing hash', async () => {
+        const store = initState();
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        await triggers.newPassword('nonexistinghash', 'test', 'test');
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'Unauthorized');
+      });
+
+      it('should work', async () => {
+        const store = initState();
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        user.set('reset_password_hash', 'hash');
+        await user.save(null, { method: 'update' });
+
+        await triggers.newPassword('hash', 'test', 'test');
+        expect(store.getState().getIn(['ui', 'submitNewPassword']), 'to be true');
+      });
+
+      it('validation should work when passwords do not match', async () => {
+        const store = initState();
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        user.set('reset_password_hash', 'hash');
+        await user.save(null, { method: 'update' });
+
+        await triggers.newPassword('hash', 'test1', 'test2');
+        expect(store.getState().get('messages').first().get('message'), 'to equal', '"password" and "password_repeat" do not exact match.');
+      });
+
+      it('validation should work when no password_repeat provided', async () => {
+        const store = initState();
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        user.set('reset_password_hash', 'hash');
+        await user.save(null, { method: 'update' });
+
+        await triggers.newPassword('hash', 'test1');
+        expect(store.getState().get('messages').first().get('message'), 'to equal', '"password" or "password_repeat" parameter is not provided');
+      });
     });
 
-    it('should dispatch correct error for user with not validated email', async () => {
-      const userAttrs = UserFactory.build();
-      const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-      const store = initState();
-      const client = new ApiClient(API_HOST);
-      const triggers = new ActionsTrigger(client, store.dispatch);
-      await triggers.login(userAttrs.username, userAttrs.password);
+    describe('#login', async () => {
+      it('should dispatch correct error for non existing user', async () => {
+        const store = initState();
+        const client = new ApiClient(API_HOST);
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        await triggers.login('nonexisting', 'password');
 
-      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Please follow the instructions mailed to you during registration.');
-      await user.destroy();
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'Invalid username or password');
+      });
+
+      it('should dispatch correct error for user with not validated email', async () => {
+        const userAttrs = UserFactory.build();
+        const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        const store = initState();
+        const client = new ApiClient(API_HOST);
+        const triggers = new ActionsTrigger(client, store.dispatch);
+        await triggers.login(userAttrs.username, userAttrs.password);
+
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'Please follow the instructions mailed to you during registration.');
+        await user.destroy();
+      });
     });
   });
 
@@ -101,5 +152,6 @@ describe('ActionsTrigger', () => {
       await triggers.updateUserInfo({ more: {} });
       expect(store.getState().get('messages').first().get('message'), 'to equal', 'Saved successfully');
     });
+
   });
 });
