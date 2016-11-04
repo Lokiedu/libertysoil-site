@@ -36,6 +36,7 @@ const SidebarMenuNormal = ({ current_user }) => {
     <Navigation>
       {menuItemsArray.map((item, i) => (
         <NavigationItem
+          {...(item.html || {})}
           className={item.className}
           disabled={item.disabled}
           icon={item.icon}

@@ -59,6 +59,9 @@ export const MENU_ITEMS = {
     icon: {
       icon: 'layers'
     },
+    html: {
+      title: 'Coming soon!'
+    },
     url: () => '/collections'
   }
 };

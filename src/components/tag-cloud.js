@@ -22,7 +22,7 @@ import { convertModelsToTags } from '../utils/tags';
 import Tag from './tag';
 
 // TODO: consider effeciency of using 'only' property
-const TagCloud = ({ only, tags, ...props }) => {
+const TagCloud = ({ className, only, tags, ...props }) => {
   let requiredTags = tags;
   if (only.length > 0) {
     requiredTags = tags.filter((value, key) => only.includes(key));
@@ -37,8 +37,13 @@ const TagCloud = ({ only, tags, ...props }) => {
       />
     ));
 
+  let cn = 'tags';
+  if (className) {
+    cn += ` ${className}`;
+  }
+
   return (
-    <div className="tags">
+    <div className={cn}>
       {preparedTags}
     </div>
   );
