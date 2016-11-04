@@ -23,6 +23,7 @@ import createSelector from '../selectors/createSelector';
 import currentUserSelector from '../selectors/currentUser';
 
 import SidebarMenu from './sidebar-menu';
+import TagsInform from './tags-inform';
 
 class Sidebar extends React.Component {
   static propTypes = {
@@ -56,6 +57,7 @@ class Sidebar extends React.Component {
     return (
       <div className={this.getClassName()}>
         <SidebarMenu current_user={this.props.current_user} />
+        <TagsInform current_user={this.props.current_user} />
       </div>
     );
   }
