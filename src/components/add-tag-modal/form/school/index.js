@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
-import { findIndex } from 'lodash';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -45,8 +44,8 @@ export default class AddSchoolForm extends Component {
   };
 
   _selectRecentlyUsedSchool = (tag) => {
-    const index = findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
-    this._addTag(this.props.userRecentSchools[index]);
+    const index = this.props.userRecentSchools.findIndex(t => t.get('url_name') === tag.urlId);
+    this._addTag(this.props.userRecentSchools.get(index).toJS());
   };
 
   submitHandler = async (e) => {
