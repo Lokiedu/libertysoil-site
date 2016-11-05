@@ -19,6 +19,7 @@
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { serialize } from 'cookie';
+import uuid from 'uuid';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
@@ -34,6 +35,7 @@ import PostFactory from '../../../test-helpers/factories/post';
 let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
 const Post = bookshelf.model('Post');
+const Comment = bookshelf.model('Comment');
 
 
 describe('ActionsTrigger', () => {
@@ -145,6 +147,7 @@ describe('ActionsTrigger', () => {
     afterEach(async () => {
       await user.destroy();
       await bookshelf.knex('posts').del();
+      await bookshelf.knex('comments').del();
     });
 
     it('createPost should work', async () => {
@@ -191,6 +194,30 @@ describe('ActionsTrigger', () => {
 
       await triggers.deleteComment('nonexistingpostid', 'nonexistingcommentid');
       expect(store.getState().getIn(['ui', 'comments', 'nonexistingcommentid', 'error']), 'to equal', 'Not Found');
+    });
+
+    it('#saveComment should work', async () => {
+      let store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+
+      await triggers.saveComment('nonexistingpostid', 'nonexistingcommentid', 'text');
+      expect(store.getState().getIn(['ui', 'comments', 'nonexistingcommentid', 'error']), 'to equal', 'Not Found');
+
+      const post = new Post(PostFactory.build());
+      await post.save(null, { method: 'insert' });
+
+      store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+      const comment = new Comment({
+        id: uuid.v4(),
+        post_id: post.get('id'),
+        user_id: user.get('id'),
+        text: 'test'
+      });
+      await comment.save(null, { method: 'insert' });
+
+      await triggers.saveComment(post.get('id'), comment.get('id'), '');
+      expect(store.getState().getIn(['ui', 'comments', comment.get('id'), 'error']), 'to equal', 'Comment text cannot be empty');
     });
   });
 });
