@@ -184,5 +184,13 @@ describe('ActionsTrigger', () => {
       await triggers.createComment(post.get('id'), '');
       expect(store.getState().getIn(['ui', 'comments', 'new', 'error']), 'to equal', 'Comment text cannot be empty');
     });
+
+    it('#deleteComment should work', async () => {
+      const store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+
+      await triggers.deleteComment('nonexistingpostid', 'nonexistingcommentid');
+      expect(store.getState().getIn(['ui', 'comments', 'nonexistingcommentid', 'error']), 'to equal', 'Not Found');
+    });
   });
 });
