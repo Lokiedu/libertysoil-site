@@ -729,16 +729,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.createComment(postId, comment);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.createCommentFailure(postId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.createCommentSuccess(postId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.createCommentSuccess(postId));
     } catch (e) {
-      this.dispatch(a.messages.addError(e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.createCommentFailure(postId, e.response.error));
+      } else {
+        this.dispatch(a.messages.addError(e.message));
+      }
     }
   };
 

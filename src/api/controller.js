@@ -2964,7 +2964,7 @@ export default class ApiController {
       return;
     }
 
-    if (!('text' in ctx.request.body)) {
+    if (!('text' in ctx.request.body) || !ctx.request.body.text) {
       ctx.status = 400;
       ctx.body = { error: 'Comment text cannot be empty' };
       return;
