@@ -746,16 +746,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.deleteComment(postId, commentId);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.deleteCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
     } catch (e) {
-      this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));
+      } else {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
+      }
     }
   };
 
