@@ -1,3 +1,4 @@
+
 /*
  This file is a part of libertysoil.org website
  Copyright (C) 2015  Loki Education (Social Enterprise)
@@ -27,10 +28,13 @@ import { ActionsTrigger } from '../../../src/triggers';
 import ApiClient from '../../../src/api/client';
 import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
+import PostFactory from '../../../test-helpers/factories/post';
 
 
 let bookshelf = initBookshelf($dbConfig);
 let User = bookshelf.model('User');
+const Post = bookshelf.model('Post');
+
 
 describe('ActionsTrigger', () => {
   describe('Anonymous user', async () => {
@@ -165,5 +169,20 @@ describe('ActionsTrigger', () => {
       expect(store.getState().get('messages').first().get('message'), 'to equal', 'Saved successfully');
     });
 
+    it('#createComment should dispatch correct error for non existing pos', async () => {
+      let store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+
+      await triggers.createComment('nonexistingpost');
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Not Found');
+
+      const post = new Post(PostFactory.build());
+      await post.save(null, { method: 'insert' });
+
+      store = initState();
+      triggers = new ActionsTrigger(client, store.dispatch);
+      await triggers.createComment(post.get('id'), '');
+      expect(store.getState().getIn(['ui', 'comments', 'new', 'error']), 'to equal', 'Comment text cannot be empty');
+    });
   });
 });
