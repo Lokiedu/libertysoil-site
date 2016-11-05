@@ -763,16 +763,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.saveComment(postId, commentId, text);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.saveCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
     } catch (e) {
-      this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));
+      } else {
+        this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
+      }
     }
   };
 

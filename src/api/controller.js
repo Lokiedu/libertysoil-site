@@ -3022,7 +3022,6 @@ export default class ApiController {
       }).fetch({ require: true });
     } catch (e) {
       ctx.status = 404;
-      ctx.body = { error: e.message };
       return;
     }
 
