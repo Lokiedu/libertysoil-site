@@ -811,6 +811,12 @@ export default class ApiController {
           data.required_languages = JSON.stringify(data.required_languages);
         }
 
+        for (const key in data) {
+          if (data[key] === '') {
+            data[key] = null;
+          }
+        }
+
         return data;
       };
 
