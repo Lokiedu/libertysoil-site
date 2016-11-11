@@ -21,7 +21,6 @@ import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
 import { extend, merge as mergeObj } from 'lodash';
 
-
 export default class ApiClient
 {
   host;
@@ -505,6 +504,11 @@ export default class ApiClient
 
   async updateHashtag(uuid, data) {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
+    return await response.json();
+  }
+
+  async createSchool(data) {
+    const response = await this.postJSON('/api/v1/schools/new', data);
     return await response.json();
   }
 
