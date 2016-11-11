@@ -17,8 +17,10 @@
 */
 import React from 'react';
 import pick from 'lodash/pick';
+import last from 'lodash/last';
 import throttle from 'lodash/throttle';
 import { connect } from 'react-redux';
+import { findDOMNode } from 'react-dom';
 
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
@@ -62,6 +64,10 @@ export class AddSchoolToolPage extends React.Component {
     this.triggers = new ActionsTrigger(this.client, this.props.dispatch);
   }
 
+  componentDidMount() {
+    require('smoothscroll-polyfill').polyfill();
+  }
+
   handleSave = async (_, school) => {
     if (!window.confirm('After adding this tag you won\'t be able to edit school name anymore. Are you sure school name is corrent?')) {
       return;
@@ -78,6 +84,7 @@ export class AddSchoolToolPage extends React.Component {
       this.props.dispatch(addError(e.message));
     }
 
+    last(findDOMNode(this).querySelectorAll('.message')).scrollIntoView({ behavior: 'smooth' });
     this.setState({ processing: false, newSchool });
   };
 

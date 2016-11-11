@@ -100,6 +100,7 @@
     "reselect": "^2.0.3",
     "sendgrid": "^2.0.0",
     "slug": "^0.9.1",
+    "smoothscroll-polyfill": "^0.3.4",
     "sphinxapi": "~1.2.1",
     "strftime": "^0.9.2",
     "twitter-text": "^1.13.2",
