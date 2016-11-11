@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
+import { TAG_SCHOOL } from '../../consts/tags';
 import createSelector from '../../selectors/createSelector';
 import { ActionsTrigger } from '../../triggers';
 import { addError, removeAllMessages } from '../../actions/messages';
@@ -29,6 +30,7 @@ import { removeWhitespace } from '../../utils/lang';
 
 import { ExtendableSchoolEditForm } from '../../components/tag-edit-form/school-edit-form';
 import Message from '../../components/message';
+import Tag from '../../components/tag';
 
 export class AddSchoolToolPage extends React.Component {
   static async fetchData(router, store, client) {
@@ -50,7 +52,8 @@ export class AddSchoolToolPage extends React.Component {
     });
 
     this.state = {
-      processing: false
+      processing: false,
+      newSchool: null
     };
   }
 
@@ -66,14 +69,16 @@ export class AddSchoolToolPage extends React.Component {
 
     this.props.dispatch(removeAllMessages());
     this.setState({ processing: true });
+
+    let newSchool = null;
     try {
-      await this.triggers.createSchool(school);
+      newSchool = await this.triggers.createSchool(school);
       this.form.formProps().onValues({});
     } catch (e) {
       this.props.dispatch(addError(e.message));
     }
 
-    this.setState({ processing: false });
+    this.setState({ processing: false, newSchool });
   };
 
   validate = throttle(async (values, errors) => {
@@ -94,9 +99,19 @@ export class AddSchoolToolPage extends React.Component {
   }, 100);
 
   render() {
+    const school = this.state.newSchool;
+
+    let messageVisibility;
+    if (!school) {
+      messageVisibility = 'hidden';
+    }
+
     return (
       <div>
-        <Message internal message="After adding this tag you won't be able to edit school name anymore. Please be sure to get it right the first time!" />
+        <Message internal>
+          After adding this tag you won't be able to edit school name anymore.
+          Please be sure to get it right the first time!"
+        </Message>
         <this.SchoolEditForm
           countries={this.props.countries}
           messages={this.props.messages}
@@ -105,6 +120,23 @@ export class AddSchoolToolPage extends React.Component {
           saveHandler={this.handleSave}
           triggers={pick(this.triggers, ['removeMessage'])}
         />
+        <div className="layout__row" style={{ visibility: messageVisibility }}>
+          <Message internal>
+            <div className="layout">
+              New school:
+              {school &&
+                <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+                  <Tag
+                    name={school.name}
+                    ref={c => this.msg = c}
+                    type={TAG_SCHOOL}
+                    urlId={school.url_name}
+                  />
+                </div>
+              }
+            </div>
+          </Message>
+        </div>
       </div>
     );
   }
