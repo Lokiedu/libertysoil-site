@@ -79,31 +79,43 @@ export default class EditPost extends React.Component {
 
   componentWillMount() {
     const { post } = this.props;
+    const upToDate = this.update(post, this.props.id);
 
-    const newFormState = {
-      id: post.get('id'),
-      geotags: post.get('geotags').toJS(),
-      schools: post.get('schools').toJS(),
-      hashtags: post.get('hashtags').toJS()
-    };
+    if (!upToDate) {
+      const newFormState = {
+        id: post.get('id'),
+        geotags: post.get('geotags').toJS(),
+        schools: post.get('schools').toJS(),
+        hashtags: post.get('hashtags').toJS()
+      };
 
-    this.props.actions.updateEditPostForm(newFormState);
+      this.props.actions.updateEditPostForm(newFormState);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.id === nextProps.post.get('id')) {
-      let hasText = false;
-      if (nextProps.post.get('text').trim()) {
-        hasText = true;
-      }
-
-      this.setState({ upToDate: true, hasText });
+    if (!this.state.upToDate) {
+      this.update(nextProps.post, this.props.id);
     }
   }
 
   componentWillUnmount() {
     this.props.actions.resetEditPostForm();
   }
+
+  update = (post, formPostId) => {
+    if (post.get('id') === formPostId) {
+      let hasText = false;
+      if (post.get('text').trim()) {
+        hasText = true;
+      }
+
+      this.setState({ upToDate: true, hasText });
+      return true;
+    }
+
+    return false;
+  };
 
   _stopPropagation = (e) => {
     if (e) {

@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
-import { findIndex } from 'lodash';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -47,8 +46,8 @@ export default class AddHashtagForm extends Component {
   };
 
   _selectRecentlyUsedHashtag = (tag) => {
-    const index = findIndex(this.props.userRecentHashtags, t => t.name === tag.name);
-    this._addTag(this.props.userRecentHashtags[index]);
+    const index = this.props.userRecentHashtags.findIndex(t => t.get('name') === tag.name);
+    this._addTag(this.props.userRecentHashtags.get(index).toJS());
   };
 
   _addTag = (tag) => {
