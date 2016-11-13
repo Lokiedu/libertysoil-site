@@ -60,7 +60,7 @@ export default function reducer(state = initialState, action) {
 
       if (action.user) {
         if (action.user.more && action.user.more.roles) {
-          state = state.setIn([action.user.id, 'more', 'roles'], action.user.more.roles);
+          state = state.setIn([action.user.id, 'more', 'roles'], i.fromJS(action.user.more.roles));
         }
       }
 
