@@ -34,33 +34,29 @@ export default function UserDetails({ current_user, following, triggers, user })
   const lastName = user.getIn(['more', 'lastName']) || '';
   const fullName = `${firstName} ${lastName}`;
 
-  if (user) {
-    return (
-      <div className="tools_page__details_col">
-        <div className="tools_details">
-          <div className="tools_details__left_col">
-            <Avatar isRound={false} size={140} user={user} />
+  return (
+    <div className="tools_page__details_col">
+      <div className="tools_details">
+        <div className="tools_details__left_col">
+          <Avatar isRound={false} size={140} user={user} />
+        </div>
+        <div>
+          <Link className="tools_details__title" to={`/user/${user.get('username')}`}>
+            {user.get('username')}
+          </Link>
+          <div className="tools_details__description">
+            {fullName}
           </div>
-          <div>
-            <Link className="tools_details__title" to={`/user/${user.get('username')}`}>
-              {user.get('username')}
-            </Link>
-            <div className="tools_details__description">
-              {fullName}
-            </div>
-            <FollowButton
-              active_user={current_user}
-              following={following}
-              triggers={triggers}
-              user={user}
-            />
-          </div>
+          <FollowButton
+            active_user={current_user}
+            following={following}
+            triggers={triggers}
+            user={user}
+          />
         </div>
       </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 }
 
 UserDetails.propTypes = {
