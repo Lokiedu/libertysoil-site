@@ -18,8 +18,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { Map as ImmutableMap } from 'immutable';
 
-import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import {
@@ -46,8 +46,7 @@ class TagCloudPage extends Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    is_logged_in: PropTypes.bool.isRequired,
-    tag_cloud: ArrayOfHashtagsPropType.isRequired
+    is_logged_in: PropTypes.bool.isRequired
   };
 
   static async fetchData(router, store, client) {
@@ -79,7 +78,7 @@ class TagCloudPage extends Component {
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud hashtags={tag_cloud} showPostCount />
+                  <TagCloud tags={tag_cloud} showPostCount />
                 </div>
               </PageContent>
             </PageBody>
@@ -92,9 +91,16 @@ class TagCloudPage extends Component {
   }
 }
 
+const tagCloudSelector = createSelector(
+  state => state.get('tag_cloud'),
+  tag_cloud => ImmutableMap({
+    hashtags: tag_cloud
+  })
+);
+
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('tag_cloud'),
+  tagCloudSelector,
   (current_user, tag_cloud) => ({
     tag_cloud,
     ...current_user

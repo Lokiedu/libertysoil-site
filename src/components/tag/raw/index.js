@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,31 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: -16px;
-  margin-right: -10px;
+*/
+import React, { PropTypes } from 'react';
+import omit from 'lodash/omit';
 
-  > * {
-    margin: 16px 5px 0 1px;
-  }
+import Icon from '../../icon';
+import RawTagName from './name';
 
-  &--row {
-    flex-wrap: nowrap;
-  }
-}
+const RawTag = ({ aside, icon, name, ...props }) => (
+  <div {...omit(props, ['children'])}>
+    <Icon {...icon} />
+    <RawTagName {...name} />
+    {aside}
+  </div>
+);
+
+RawTag.propTypes = {
+  aside: PropTypes.node,
+  icon: PropTypes.shape({}),
+  name: PropTypes.shape({})
+};
+
+RawTag.defaultProps = {
+  aside: false,
+  icon: {},
+  name: {}
+};
+
+export default RawTag;

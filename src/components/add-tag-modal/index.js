@@ -43,9 +43,9 @@ function AddedTags({ addedTags, onDelete }) {
       </div>
       <div className="layout__row add_tag_modal__added_tags">
         <TagCloud
-          deletable
-          onDelete={onDelete}
-          {...addedTags}
+          action="delete"
+          tags={i.fromJS(addedTags)}
+          onClick={onDelete}
         />
       </div>
     </div>

@@ -118,12 +118,8 @@
   width: 100%;
 
   @media @after-base {
-    width: 288px - @space;
+    width: auto;
     margin: 0 0 @space @space;
-  }
-
-  @media @after-base {
-    width: @sidebarWidth - @space;
   }
 }
 
@@ -161,8 +157,14 @@
   }
 }
 
-.page-with_sidebar .page__container {
-  padding-left: @navigationWidth;
+.page-with_sidebar {
+  .page__container {
+    padding-left: @navigationWidth;
+  }
+
+  .page__container--static {
+    padding-left: 0;
+  }
 }
 
 .page__body {
@@ -204,7 +206,7 @@
   }
 
   @media @after-wide {
-    width: 920px;
+    width: 960px;
   }
 
   &-small {

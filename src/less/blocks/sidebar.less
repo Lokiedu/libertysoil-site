@@ -16,38 +16,38 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .sidebar {
-  &:extend(.font-open_sans);
-  padding: @space;
-  width: @navigationWidth;
-  background: #fff;
+  padding-right: 20px;
+  overflow: hidden;
+
+  &.col-2 {
+    padding-right: 0;
+  }
+
+  @media not all and (min-width: 1140px) {
+    .sidebar-fixed();
+  }
+
+  @media @tablet-flexible {
+    width: 240px;
+  }
+
+  &--fixed {
+    .sidebar-fixed();
+  }
+}
+
+.sidebar-fixed() {
   position: fixed;
   left: 0;
   bottom: 0;
   top: @headerHeight;
-  overflow: auto;
-  transform: translateX(-110%);
   z-index: 100;
-  //transition: transform @transition__time @transition__function;
+  transform: translateX(-110%);
+  
+  background: #fff;
+  border-right: 1px solid rgba(211, 211, 211, 0.5);
 
-  &__heading {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #FF2658;
-  }
-
-  &-visible {
+  &.sidebar--visible {
     transform: translateX(0);
-  }
-
-  @media (max-width: 1330px) {
-    box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.09);
-  }
-}
-
-.sidebar__user {
-  padding: 7px;
-
-  .link {
-    border: none;
   }
 }

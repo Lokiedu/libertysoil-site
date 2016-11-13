@@ -18,11 +18,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { Map as ImmutableMap } from 'immutable';
 
-import {
-  MapOfSchools as MapOfSchoolsPropType,
-  SchoolCloud as SchoolCloudPropType
-} from '../prop-types/schools';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import Header from '../components/header';
@@ -48,9 +45,7 @@ class SchoolCloudPage extends Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    is_logged_in: PropTypes.bool.isRequired,
-    school_cloud: SchoolCloudPropType.isRequired,
-    schools: MapOfSchoolsPropType.isRequired
+    is_logged_in: PropTypes.bool.isRequired
   }
 
   static async fetchData(router, store, client) {
@@ -62,11 +57,8 @@ class SchoolCloudPage extends Component {
     const {
       is_logged_in,
       current_user,
-      schools,
       school_cloud
     } = this.props;
-
-    const schoolsForCloud = school_cloud.map(id => schools.get(id));
 
     return (
       <div>
@@ -87,7 +79,7 @@ class SchoolCloudPage extends Component {
               <PageContent>
                 <PageCaption>School cloud</PageCaption>
                 <div className="layout__row">
-                  <TagCloud schools={schoolsForCloud} showPostCount />
+                  <TagCloud showPostCount tags={school_cloud} />
                 </div>
               </PageContent>
             </PageBody>
@@ -100,12 +92,18 @@ class SchoolCloudPage extends Component {
   }
 }
 
-const selector = createSelector(
-  currentUserSelector,
+const schoolsCloudSelector = createSelector(
   state => state.get('schools'),
   state => state.get('school_cloud'),
-  (current_user, schools, school_cloud) => ({
-    schools,
+  (schools, school_cloud) => ImmutableMap({
+    schools: school_cloud.map(id => schools.get(id))
+  })
+);
+
+const selector = createSelector(
+  currentUserSelector,
+  schoolsCloudSelector,
+  (current_user, school_cloud) => ({
     school_cloud,
     ...current_user
   })

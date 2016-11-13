@@ -20,7 +20,7 @@ import { Link } from 'react-router';
 import Time from '../time';
 
 import EditPostButton from './edit-post-button';
-import TagLine from './tagline';
+import TagCloud from '../tag-cloud';
 import Toolbar from './toolbar';
 import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
@@ -74,7 +74,7 @@ class PostFooter extends React.Component {
 
         {hasTags &&
           <footer className="card__footer">
-            <TagLine geotags={post.get('geotags')} hashtags={post.get('hashtags')} schools={post.get('schools')} />
+            <TagCloud tags={post.filter((value, key) => ['geotags', 'hashtags', 'schools'].includes(key))} />
           </footer>
         }
 

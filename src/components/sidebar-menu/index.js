@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,23 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: -16px;
-  margin-right: -10px;
+*/
+import React, { PropTypes } from 'react';
 
-  > * {
-    margin: 16px 5px 0 1px;
-  }
+import SidebarMenuNormal from './normal';
 
-  &--row {
-    flex-wrap: nowrap;
+const SidebarMenu = ({ theme, ...props }) => {
+  switch (theme) {
+    default: return <SidebarMenuNormal {...props} />;
   }
-}
+};
+
+SidebarMenu.propTypes = {
+  theme: PropTypes.string
+};
+
+SidebarMenu.defaultProps = {
+  theme: 'normal'
+};
+
+export default SidebarMenu;

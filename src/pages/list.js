@@ -199,10 +199,10 @@ export class List extends React.Component {
           <Breadcrumbs title="News Feed" />
         </Header>
 
-        <Page>
-          <Sidebar />
+        <Page className="page__container--static">
           <PageMain>
             <PageBody>
+              <Sidebar isFixed={false} />
               <PageContent>
                 <CreatePost
                   actions={actions}

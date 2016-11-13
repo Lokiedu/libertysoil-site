@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,40 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: -16px;
-  margin-right: -10px;
+*/
+import React, { PropTypes } from 'react';
+import { truncate } from 'grapheme-utils';
+import omit from 'lodash/omit';
 
-  > * {
-    margin: 16px 5px 0 1px;
+const RawTagName = ({ collapsed, truncated, name, ...props }) => {
+  if (!name) {
+    return false;
   }
 
-  &--row {
-    flex-wrap: nowrap;
+  let n = name;
+  if (collapsed) {
+    n = '';
+  } else if (truncated) {
+    n = truncate(n, { length: 16 });
   }
-}
+
+  return (
+    <div {...omit(props, ['children'])}>
+      {n}
+    </div>
+  );
+};
+
+RawTagName.propTypes = {
+  collapsed: PropTypes.bool,
+  name: PropTypes.string,
+  truncated: PropTypes.bool
+};
+
+PropTypes.defaultProps = {
+  collapsed: false,
+  name: '',
+  truncated: false
+};
+
+export default RawTagName;

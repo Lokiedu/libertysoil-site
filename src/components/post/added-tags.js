@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { List, Map as ImmutableMap } from 'immutable';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../../prop-types/hashtags';
@@ -26,9 +27,7 @@ import {
 
 import TagCloud from '../tag-cloud';
 
-const AddedTags = (props) => {
-  const { geotags, hashtags, schools } = props;
-
+const AddedTags = ({ geotags, hashtags, schools, ...props }) => {
   if (!geotags.size && !schools.size && !hashtags.size) {
     return null;
   }
@@ -36,7 +35,10 @@ const AddedTags = (props) => {
   return (
     <div className="side_block">
       <h4 className="side_block__heading">Post tags:</h4>
-      <TagCloud {...props} />
+      <TagCloud
+        {...props}
+        tags={ImmutableMap({ geotags, hashtags, schools })}
+      />
     </div>
   );
 };
@@ -50,6 +52,12 @@ AddedTags.propTypes = {
     ArrayOfLightSchoolsPropType,
     ArrayOfSchoolsPropType
   ])
+};
+
+AddedTags.defaultProps = {
+  geotags: List(),
+  hashtags: List(),
+  schools: List()
 };
 
 export default AddedTags;

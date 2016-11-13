@@ -147,10 +147,10 @@ export class PostPage extends React.Component {
           </Breadcrumbs>
         </Header>
 
-        <Page>
-          <Sidebar />
+        <Page className="page__container--static">
           <PageMain>
             <PageBody>
+              <Sidebar isFixed={false} />
               <PageContent>
                 <PostWrapper
                   author={author}

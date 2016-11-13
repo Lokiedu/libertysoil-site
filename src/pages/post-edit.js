@@ -146,9 +146,9 @@ class PostEditPage extends React.Component {
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
-          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
+              <Sidebar current_user={current_user} />
               <PageContent>
                 <EditPost
                   actions={actions}

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -114,8 +115,8 @@ export default class AddSchoolForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={this.props.userRecentSchools}
+                  action="add"
+                  tags={ImmutableMap({ schools: this.props.userRecentSchools })}
                   onClick={this._selectRecentlyUsedSchool}
                 />
               </div>
@@ -125,8 +126,8 @@ export default class AddSchoolForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={popularSchools}
+                  action="add"
+                  tags={ImmutableMap({ schools: popularSchools })}
                 />
               </div>
             </Tab.Content>

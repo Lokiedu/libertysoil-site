@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -110,8 +111,8 @@ export default class AddGeotagForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  geotags={this.props.userRecentGeotags}
+                  action="add"
+                  tags={ImmutableMap({ geotags: this.props.userRecentGeotags })}
                   onClick={this._selectRecentlyUsedGeotag}
                 />
               </div>
@@ -121,8 +122,8 @@ export default class AddGeotagForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  geotags={popularGeotags}
+                  action="add"
+                  tags={ImmutableMap({ geotags: popularGeotags })}
                 />
               </div>
             </Tab.Content>
