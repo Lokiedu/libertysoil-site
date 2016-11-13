@@ -23,6 +23,7 @@ import {
 } from '../../prop-types/common';
 import Avatar from '../user/avatar';
 import FollowButton from '../follow-button';
+import UserRoles from './user-roles';
 
 
 export default function UserDetails({ current_user, following, triggers, user }) {
@@ -37,15 +38,20 @@ export default function UserDetails({ current_user, following, triggers, user })
   return (
     <div className="tools_page__details_col">
       <div className="tools_details">
-        <div className="tools_details__left_col">
+        <Link className="tools_details__left_col" to={`/user/${user.get('username')}`}>
           <Avatar isRound={false} size={140} user={user} />
-        </div>
+        </Link>
         <div>
-          <Link className="tools_details__title" to={`/user/${user.get('username')}`}>
-            {user.get('username')}
-          </Link>
-          <div className="tools_details__description">
-            {fullName}
+          <div className="tools_details__title">
+            <Link to={`/user/${user.get('username')}`}>
+              {user.get('username')}
+              <div className="tools_details__subtext">
+                {fullName}
+              </div>
+            </Link>
+          </div>
+          <div className="tools_details__paragraph">
+            <UserRoles roles={user.getIn(['more', 'roles'])} />
           </div>
           {user.getIn(['more', 'bio']) &&
             <div className="tools_details__description">

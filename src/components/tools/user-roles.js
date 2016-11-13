@@ -15,37 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// The details window for items on tool pages.
-.tools_details {
-  @space: 20px;
-  @doubleSpace: @space * 2;
-  @subtextColor: #888;
+import React from 'react';
 
-  display: flex;
-  padding: 40px;
-  background-color: white;
-  border-bottom: 2px solid #EDEDED;
 
-  // TODO: Implement a framework instead of reinventing utility classes all over and over again.
-  &__title {
-    display: block;
-    margin-bottom: @space;
+export default function UserRoles({ roles }) {
+  if (!roles || !roles.size) {
+    return null;
   }
 
-  &__description {
-    color: @subtextColor;
-    margin-bottom: @space;
-  }
+  const roleElements = roles.map(role => (
+    <span className="user_roles__role" key={role.get('id')} title={role.get('description')}>{role.get('title')}</span>
+  ));
 
-  &__paragraph {
-    padding-bottom: @space;
-  }
-
-  &__left_col {
-    margin-right: @doubleSpace;
-  }
-
-  &__subtext {
-    color: @subtextColor;
-  }
+  return (
+    <div className="user_roles">
+      {roleElements}
+    </div>
+  );
 }
