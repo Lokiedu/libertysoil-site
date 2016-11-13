@@ -47,6 +47,11 @@ export default function UserDetails({ current_user, following, triggers, user })
           <div className="tools_details__description">
             {fullName}
           </div>
+          {user.getIn(['more', 'bio']) &&
+            <div className="tools_details__description">
+              {user.getIn(['more', 'bio'])}
+            </div>
+          }
           <FollowButton
             active_user={current_user}
             following={following}
