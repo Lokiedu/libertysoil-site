@@ -34,19 +34,23 @@ export default function UserDetails({ current_user, following, triggers, user })
   const firstName = user.getIn(['more', 'firstName']) || '';
   const lastName = user.getIn(['more', 'lastName']) || '';
   const fullName = `${firstName} ${lastName}`;
+  const isFollowingCurrentUser = following.get(user.get('id')) && following.get(user.get('id')).includes(current_user.get('id'));
 
   return (
     <div className="tools_page__details_col">
       <div className="tools_details">
         <Link className="tools_details__left_col" to={`/user/${user.get('username')}`}>
           <Avatar isRound={false} size={140} user={user} />
+          {isFollowingCurrentUser &&
+            <div className="people_tool__following_you">Following you</div>
+          }
         </Link>
         <div>
           <div className="tools_details__title">
             <Link to={`/user/${user.get('username')}`}>
-              {user.get('username')}
+              {fullName}
               <div className="tools_details__subtext">
-                {fullName}
+                {user.get('username')}
               </div>
             </Link>
           </div>
@@ -60,7 +64,7 @@ export default function UserDetails({ current_user, following, triggers, user })
           }
           <FollowButton
             active_user={current_user}
-            following={following}
+            following={following.get(current_user.get('id'))}
             triggers={triggers}
             user={user}
           />
