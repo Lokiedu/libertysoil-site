@@ -47,20 +47,16 @@ const NavigationItemPlain = ({
   theme,
   ...props
 }) => {
-  const cn = classNames('navigation-item', {
-    'navigation-item--disabled': disabled,
-    [`${className}`]: className
+  const cn = classNames('navigation-item', className, {
+    'navigation-item--disabled': disabled
   });
 
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
-    const finalIcon = {
-      ...icon,
-      className: classNames('navigation-item__icon', {
-        [icon && icon.className]: icon && icon.className
-      })
-    };
+    const finalIcon = icon.update('className', className =>
+      classNames('navigation-item__icon', className)
+    );
 
     return (
       <div className={cn} {...htmlProps}>
@@ -75,7 +71,7 @@ const NavigationItemPlain = ({
           }
         </div>
         {icon &&
-          <Icon {...finalIcon} />
+          <Icon {...finalIcon.toObject()} />
         }
       </div>
     );
@@ -102,24 +98,18 @@ const NavigationItemAsLink = ({
     onClick = e => e.preventDefault();
   }
 
-  const cn = classNames('navigation-item', {
+  const cn = classNames('navigation-item', className, {
     'navigation-item--disabled': disabled,
-    [`${className}`]: className
   });
 
-  const activeCn = classNames('navigation-item--active', {
-    [`${activeClassName}`]: activeClassName
-  });
+  const activeCn = classNames('navigation-item--active', activeClassName);
 
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
-    const finalIcon = {
-      ...icon,
-      className: classNames('navigation-item__icon', {
-        [icon && icon.className]: icon && icon.className
-      })
-    };
+    const finalIcon = icon.update('className', className =>
+      classNames('navigation-item__icon', className)
+    );
 
     return (
       <Link activeClassName={activeCn} className={cn} to={to} onClick={onClick} {...htmlProps}>
@@ -134,7 +124,7 @@ const NavigationItemAsLink = ({
           }
         </div>
         {icon &&
-          <Icon {...finalIcon} />
+          <Icon {...finalIcon.toObject()} />
         }
       </Link>
     );

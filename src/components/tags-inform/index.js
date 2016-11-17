@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { fromJS } from 'immutable';
 import { omit } from 'lodash';
 
 import TagsInformNormal from './normal';
@@ -35,18 +36,18 @@ export default class TagsInform extends React.Component {
 
   /**
    * An example of result:
-    {
+    fromJS({
       className: 'navigation-item--color_green',
       list: values(current_user.followed_geotags) || [],
       icon: { icon: 'place', className: 'navigation-item__icon--remind_green' },
       unreadPosts: 44,
       url: '/geo/'
-    }
+    })
    */
   getUserPostTags = () => {
     const { current_user } = this.props;
 
-    return {
+    return fromJS({
       geotags: {
         className: 'navigation-item--color_green',
         list: current_user.get('followed_geotags').toList(),
@@ -65,7 +66,7 @@ export default class TagsInform extends React.Component {
         icon: { icon: 'school' },
         url: '/s/'
       }
-    };
+    });
   }
 
   render() {

@@ -17,13 +17,14 @@
 */
 import React from 'react';
 import { values } from 'lodash';
+import { fromJS, Map as ImmutableMap } from 'immutable';
 
 import { MENU_ITEMS } from '../../consts/sidebar-menu';
 
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
 
-const menuItemsArray = values(MENU_ITEMS);
+const menuItemsList = fromJS(values(MENU_ITEMS));
 
 const SidebarMenuNormal = ({ current_user }) => {
   const user = current_user.get('user');
@@ -34,17 +35,17 @@ const SidebarMenuNormal = ({ current_user }) => {
 
   return (
     <Navigation>
-      {menuItemsArray.map((item, i) => (
+      {menuItemsList.map((item, i) => (
         <NavigationItem
-          {...(item.html || {})}
-          className={item.className}
-          disabled={item.disabled}
-          icon={item.icon}
-          key={i}
+          {...(item.get('html', ImmutableMap()).toJS())}
+          className={item.get('className')}
+          disabled={item.get('disabled')}
+          icon={item.get('icon')}
+          key={`${i}_${item.getIn(['title', 'normal'])}`}
           theme="2.0"
-          to={item.url(username)}
+          to={item.get('url')(username)}
         >
-          {item.title.normal}
+          {item.getIn(['title', 'normal'])}
         </NavigationItem>
         ))
       }
