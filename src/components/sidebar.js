@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -24,6 +25,7 @@ import currentUserSelector from '../selectors/currentUser';
 
 import SidebarMenu from './sidebar-menu';
 import TagsInform from './tags-inform';
+import Bookmarks from './bookmarks';
 
 class Sidebar extends React.Component {
   static propTypes = {
@@ -58,18 +60,29 @@ class Sidebar extends React.Component {
       <div className={this.getClassName()}>
         <SidebarMenu current_user={this.props.current_user} />
         <TagsInform current_user={this.props.current_user} />
+        <Bookmarks
+          bookmarks={
+            this.props.current_user.get('bookmarks') ||
+            fromJS([{ url: '/tag/test', title: 'test', icon: { icon: 'star' } }])
+          }
+          dispatch={this.props.dispatch}
+        />
       </div>
     );
   }
 }
 
-const selector = createSelector(
+const inputSelector = createSelector(
   currentUserSelector,
   state => state.get('ui'),
   (current_user, ui) => ({
     isVisible: ui.get('sidebarIsVisible'),
-    ...current_user
+    current_user: current_user.current_user
   })
 );
 
-export default connect(selector)(Sidebar);
+const outputSelector = (dispatch) => ({
+  dispatch
+});
+
+export default connect(inputSelector, outputSelector)(Sidebar);
