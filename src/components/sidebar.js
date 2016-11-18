@@ -65,7 +65,6 @@ class Sidebar extends React.Component {
             this.props.current_user.get('bookmarks') ||
             fromJS([{ url: '/tag/test', title: 'test', icon: { icon: 'star' } }])
           }
-          dispatch={this.props.dispatch}
         />
       </div>
     );
@@ -81,8 +80,4 @@ const inputSelector = createSelector(
   })
 );
 
-const outputSelector = (dispatch) => ({
-  dispatch
-});
-
-export default connect(inputSelector, outputSelector)(Sidebar);
+export default connect(inputSelector)(Sidebar);
