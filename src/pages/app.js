@@ -22,6 +22,7 @@ import Helmet from 'react-helmet';
 
 import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
+import RemoteComponent from '../components/remote-component';
 
 const GAInitializer = ga.Initializer;
 
@@ -73,6 +74,7 @@ export class App extends React.Component {
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {children}
         {gaContent}
+        <RemoteComponent />
       </div>
     );
   }

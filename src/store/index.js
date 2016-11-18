@@ -52,6 +52,7 @@ import comments from './comments';
 import quotes from './quotes';
 import search from './search';
 import tools from './tools';
+import remote, { initialState as remoteInitialState } from './remote';
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -85,7 +86,8 @@ export const theReducer = combineReducers(i.Map({
   comments,
   quotes,
   search,
-  tools
+  tools,
+  remote
 }));
 
 const initialState = i.Map({
@@ -139,7 +141,8 @@ const initialState = i.Map({
       schools: i.List([])
     })
   }),
-  tools: tools.initialState
+  tools: tools.initialState,
+  remote: remoteInitialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
