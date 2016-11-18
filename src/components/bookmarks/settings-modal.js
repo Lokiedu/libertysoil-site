@@ -20,12 +20,18 @@ import classNames from 'classnames';
 
 import Modal from '../modal-component';
 
-const BookmarkSettingsModal = ({ className, hidden, onClose, children, ...props }) => {
-  const cn = classNames(className, { hidden });
+const BookmarkSettingsModal = ({ className, isVisible, onClose, children, ...props }) => {
+  const cn = classNames(className, {
+    hidden: !isVisible
+  });
   return (
-    <Modal className={cn} onClose={onClose} {...props}>
-      <Modal.Head>Bookmark settings</Modal.Head>
-      <Modal.Body>{children}</Modal.Body>
+    <Modal className={cn} containerClassName="bg_color--lightgray" onHide={onClose} {...props}>
+      <Modal.Head>
+        <Modal.Title>Bookmark settings</Modal.Title>
+      </Modal.Head>
+      <Modal.Body>
+        {children}
+      </Modal.Body>
     </Modal>
   );
 };
@@ -33,12 +39,12 @@ const BookmarkSettingsModal = ({ className, hidden, onClose, children, ...props 
 BookmarkSettingsModal.propTypes = {
   children: PropTypes.element,
   className: PropTypes.string,
-  hidden: PropTypes.bool,
+  isVisible: PropTypes.bool,
   onClose: PropTypes.func
 };
 
 BookmarkSettingsModal.defaultProps = {
-  hidden: true,
+  isVisible: false,
   onClose: () => {}
 };
 

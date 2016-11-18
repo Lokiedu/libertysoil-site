@@ -16,20 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { List } from 'immutable';
 
 import { API_HOST } from '../../config';
 import ApiClient from '../../api/client';
 import { ActionsTrigger } from '../../triggers';
+import { addError } from '../../actions/messages';
+import { setRemote, toggleRemote } from '../../actions/remote';
+import createSelector from '../../selectors/createSelector';
 
 import Navigation from '../navigation';
 import Bookmark from './bookmark';
 import BookmarkSettingsModal from './settings-modal';
 import BookmarkSettingsForm from './settings-form';
 
-export default class Bookmarks extends React.Component {
+export class Bookmarks extends React.Component {
   static propTypes = {
-    dispatch: PropTypes.func
+    dispatch: PropTypes.func,
+    isModalVisible: PropTypes.bool
   };
 
   static defaultProps = {
@@ -37,25 +42,26 @@ export default class Bookmarks extends React.Component {
     dispatch: () => {}
   };
 
-  constructor(...args) {
-    super(...args);
-
-    this.state = {
-      activeBookmark: null,
-      displayModal: false,
-      processing: false
-    };
-  }
-
   handleSettingsClick = (bookmarkIndex) => {
-    this.setState({
-      activeBookmark: bookmarkIndex,
-      displayModal: true
-    });
+    this.props.dispatch(setRemote({
+      isVisible: true,
+      component: BookmarkSettingsModal,
+      args: {
+        children: (
+          <BookmarkSettingsForm
+            bookmark={this.props.bookmarks.get(bookmarkIndex)}
+            onSave={this.handleSave}
+          />
+        ),
+        onClose: this.handleModalClose
+      }
+    }));
   };
 
   handleModalClose = () => {
-    this.setState({ displayModal: false });
+    if (this.props.isModalVisible) {
+      this.props.dispatch(toggleRemote(false));
+    }
   };
 
   handleSave = async (bookmarkInfo) => {
@@ -63,24 +69,21 @@ export default class Bookmarks extends React.Component {
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let success = false;
-    this.setState({ processing: true });
     try {
       await triggers.manageBookmark(bookmarkInfo);
       success = true;
     } catch (e) {
-      this.props.dispatch(e.message);
+      this.props.dispatch(addError(e.message));
     }
 
-    this.setState({ processing: false });
     return success;
   };
 
   render() {
-    const bookmarks = this.props.bookmarks;
     return (
       <div>
         <Navigation>
-          {bookmarks.map((item, i) => (
+          {this.props.bookmarks.map((item, i) => (
             <Bookmark
               {...item.toObject()}
               index={i}
@@ -90,17 +93,18 @@ export default class Bookmarks extends React.Component {
           ))}
           {/* new bookmark button */}
         </Navigation>
-        <BookmarkSettingsModal
-          hidden={!this.state.displayModal}
-          onClose={this.handleModalClose}
-        >
-          <BookmarkSettingsForm
-            bookmark={bookmarks.get(this.state.activeBookmark)}
-            processing={this.state.processing}
-            onSave={this.handleSave}
-          />
-        </BookmarkSettingsModal>
       </div>
     );
   }
 }
+
+const inputSelector = createSelector(
+  state => state.getIn(['remote', 'isVisible']),
+  isModalVisible => ({ isModalVisible })
+);
+
+const outputSelector = dispatch => ({
+  dispatch
+});
+
+export default connect(inputSelector, outputSelector)(Bookmarks);
