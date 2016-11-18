@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
+import classNames from 'classnames';
 import { values } from 'lodash';
 
 import bem from '../utils/bemClassNames';
@@ -79,6 +80,7 @@ class ModalComponent extends Component {
       size,
       children,
       className,
+      containerClassName,
       ...props
     } = this.props;
     let cn = bem.makeClassName({
@@ -89,14 +91,12 @@ class ModalComponent extends Component {
         small: size == SIZES.SMALL
       }
     });
-
-    if (className) {
-      cn += ` ${className}`;
-    }
+    cn = classNames(cn, className);
+    const innerClassName = classNames('modal__section', containerClassName);
 
     return (
       <div className={cn} {...props} onClick={this.hide}>
-        <div className="modal__section" ref={c => this.body = c} onClick={this.clickHandler}>
+        <div className={innerClassName} ref={c => this.body = c} onClick={this.clickHandler}>
           {children}
         </div>
       </div>
