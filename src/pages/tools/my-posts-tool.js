@@ -31,6 +31,7 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import Button from '../../components/button';
 import VisibilitySensor from '../../components/visibility-sensor';
+import Icon from '../../components/icon';
 
 
 const LIMIT = 25;
@@ -99,8 +100,26 @@ class MyPostsToolPage extends React.Component {
       <div>
         <Helmet title="My posts tool on " />
         {postsToDisplay.map((post, index) =>
-          <div className="tools_item tools_item-clickable" key={index}>
-            <Link to={`/post/${post.get('id')}`}>{truncate(post.get('text'), { length: 70 })}</Link>
+          <div className="tools_item tools_item-clickable layout layout-align_justify" key={index}>
+            <div>
+              <Link to={`/post/${post.get('id')}`}>{truncate(post.get('text'), { length: 70 })}</Link>
+            </div>
+            <div className="layout">
+              <span className="card__toolbar_item">
+                <Icon icon="favorite_border" outline size="small" />
+                <span className="card__toolbar_item_value">{post.get('likers').size}</span>
+              </span>
+
+              <span className="card__toolbar_item">
+                <Icon icon="star_border" outline size="small" />
+                <span className="card__toolbar_item_value">{post.get('favourers').size}</span>
+              </span>
+
+              <span className="card__toolbar_item" >
+                <Icon icon="chat_bubble_outline" outline size="small" />
+                <span className="card__toolbar_item_value">{post.get('comments')}</span>
+              </span>
+            </div>
           </div>
         )}
         <div className="layout layout-align_center layout__space layout__space-double">
