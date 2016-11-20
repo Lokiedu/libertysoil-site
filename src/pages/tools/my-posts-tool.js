@@ -33,6 +33,8 @@ import Button from '../../components/button';
 import VisibilitySensor from '../../components/visibility-sensor';
 
 
+const LIMIT = 25;
+
 class MyPostsToolPage extends React.Component {
   static displayName = 'SchoolsToolPage';
 
@@ -55,7 +57,7 @@ class MyPostsToolPage extends React.Component {
     const userId = store.getState().getIn(['current_user', 'id']);
     const userName = store.getState().getIn(['users', userId, 'username']);
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.toolsLoadUserPostsRiver(userName, { limit: 25, sort: '-created_at' });
+    await trigger.toolsLoadUserPostsRiver(userName, { limit: LIMIT, sort: '-created_at' });
   }
 
   state = {
@@ -68,7 +70,7 @@ class MyPostsToolPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const trigger = new ActionsTrigger(client, this.props.dispatch);
     const result = await trigger.toolsLoadUserPostsRiver(userName, {
-      limit: 25,
+      limit: LIMIT,
       offset: this.props.user_posts_river.size,
       sort: '-created_at'
     });
@@ -102,7 +104,7 @@ class MyPostsToolPage extends React.Component {
           </div>
         )}
         <div className="layout layout-align_center layout__space layout__space-double">
-          {this.state.displayLoadMore &&
+          {this.state.displayLoadMore && user_posts_river.size >= LIMIT &&
             <VisibilitySensor onChange={this.handleLoadOnSensor}>
               <Button
                 title="Load more..."
