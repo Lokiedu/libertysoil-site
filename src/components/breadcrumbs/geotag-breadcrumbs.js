@@ -30,7 +30,7 @@ const GeotagBreadcrumbs = ({ geotag }) => (
     <Link title="All Geotags" to="/geo">
       <TagIcon inactive type={TAG_PLANET} />
     </Link>
-    {!geotag.get('continent') &&
+    {geotag.get('continent') &&
       <Tag
         inactive={geotag.get('type') != 'Continent'}
         name={geotag.getIn(['continent', 'name'])}
@@ -38,7 +38,7 @@ const GeotagBreadcrumbs = ({ geotag }) => (
         urlId={geotag.getIn(['continent', 'url_name'])}
       />
     }
-    {!geotag.get('country') &&
+    {geotag.get('country') &&
       <Tag
         inactive={geotag.get('type') != 'Country'}
         name={geotag.getIn(['country', 'name'])}
@@ -46,7 +46,7 @@ const GeotagBreadcrumbs = ({ geotag }) => (
         urlId={geotag.getIn(['country', 'url_name'])}
       />
     }
-    {!geotag.get('admin1') &&
+    {geotag.get('admin1') &&
       <Tag
         inactive={geotag.get('type') != 'AdminDivision1'}
         name={geotag.getIn(['admin1', 'name'])}
