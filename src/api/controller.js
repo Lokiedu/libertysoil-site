@@ -1234,7 +1234,7 @@ export default class ApiController {
     } catch (e) {
       ctx.app.logger.warn(`Someone tried to reset password using unknown reset-hash`);
       ctx.status = 401;
-      ctx.body = { success: false };
+      ctx.body = { success: false, error: 'Unauthorized' };
       return;
     }
 
@@ -1785,6 +1785,12 @@ export default class ApiController {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.request.body.more) {
+      ctx.status = 400;
+      ctx.body = { error: 'Bad Request' };
       return;
     }
 
@@ -2958,7 +2964,7 @@ export default class ApiController {
       return;
     }
 
-    if (!('text' in ctx.request.body)) {
+    if (!('text' in ctx.request.body) || !ctx.request.body.text) {
       ctx.status = 400;
       ctx.body = { error: 'Comment text cannot be empty' };
       return;
@@ -3016,7 +3022,6 @@ export default class ApiController {
       }).fetch({ require: true });
     } catch (e) {
       ctx.status = 404;
-      ctx.body = { error: e.message };
       return;
     }
 
@@ -3057,11 +3062,16 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const Comment = this.bookshelf.model('Comment');
 
-    let post_object;
+    let post_object, comment_object;
     try {
       post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
+      comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
 
+    try {
       if (comment_object.get('user_id') != ctx.session.user) {
         ctx.status = 403;
         ctx.body = { error: 'You are not authorized' };

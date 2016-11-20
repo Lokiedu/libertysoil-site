@@ -220,8 +220,8 @@ export class ActionsTrigger {
         status = true;
       }
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else {
         this.dispatch(a.messages.addError(e.message));
       }
@@ -306,19 +306,12 @@ export class ActionsTrigger {
 
     try {
       const result = await this.client.login({ username, password });
-
-      if (!result.success) {
-        this.dispatch(a.users.setCurrentUser(null));
-        this.dispatch(a.messages.addError('Invalid username or password'));
-        return;
-      }
-
       user = result.user;
     } catch (e) {
       this.dispatch(a.users.setCurrentUser(null));
 
-      if (e.response && ('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else if (e.status === 401) {
         this.dispatch(a.messages.addError('Invalid username or password'));
       } else {
@@ -359,8 +352,8 @@ export class ActionsTrigger {
       await this.client.newPassword(hash, password, password_repeat);
       this.dispatch(a.users.submitNewPassword());
     } catch (e) {
-      if (('body' in e.response) && ('error' in e.response.body)) {
-        this.dispatch(a.messages.addError(e.response.body.error));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.messages.addError(e.response.error));
       } else {
         this.dispatch(a.messages.addError(e.message));
       }
@@ -380,9 +373,9 @@ export class ActionsTrigger {
     } catch (e) {
       // FIXME: enable form again
 
-      if (e.response && ('error' in e.response.body)) {
+      if (e.response && ('error' in e.response)) {
         // FIXME: enable form again
-        const errors = e.response.body.error;
+        const errors = e.response.error;
         let message = '';
         for (const i in errors) {
           errors[i].map((el) => {
@@ -736,16 +729,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.createComment(postId, comment);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.createCommentFailure(postId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.createCommentSuccess(postId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.createCommentSuccess(postId));
     } catch (e) {
-      this.dispatch(a.messages.addError(e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.createCommentFailure(postId, e.response.error));
+      } else {
+        this.dispatch(a.messages.addError(e.message));
+      }
     }
   };
 
@@ -755,16 +746,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.deleteComment(postId, commentId);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.deleteCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
     } catch (e) {
-      this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));
+      } else {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.message));
+      }
     }
   };
 
@@ -774,16 +763,14 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.saveComment(postId, commentId, text);
 
-      if (responseBody) {
-        if (responseBody.error) {
-          this.dispatch(a.comments.saveCommentFailure(postId, commentId, responseBody.error));
-        } else {
-          this.dispatch(a.comments.setPostComments(postId, responseBody));
-          this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
-        }
-      }
+      this.dispatch(a.comments.setPostComments(postId, responseBody));
+      this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
     } catch (e) {
-      this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
+      if (e.response && ('error' in e.response)) {
+        this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));
+      } else {
+        this.dispatch(a.comments.saveCommentFailure(postId, commentId, e.message));
+      }
     }
   };
 

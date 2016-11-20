@@ -45,18 +45,26 @@ export default class ApiClient
 
   async handleResponseError(response) {
     if (!response.ok) {
-      let json, errorMessage;
+      let json, errorMessage, e;
 
       errorMessage = response.statusText;
+      const status = response.status;
 
       try {
         json = await response.json();
         errorMessage = json.error || errorMessage;
+        e = extend(
+          new Error(errorMessage),
+          {
+            status,
+            response: json
+          }
+        );
       } catch (e) {
         throw new Error(errorMessage);
       }
 
-      throw new Error(errorMessage);
+      throw e;
     }
   }
 
