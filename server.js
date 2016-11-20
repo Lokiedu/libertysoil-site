@@ -118,7 +118,7 @@ if (exec_env === 'development') {
   const compiler = webpack(webpackConfig);
 
   app.use(convert(webpackDevMiddleware(compiler, {
-    log: logger.debug,
+    log: logger.debug.bind(logger),
     path: '/__webpack_hmr',
     publicPath: webpackConfig.output.publicPath,
     stats: {
