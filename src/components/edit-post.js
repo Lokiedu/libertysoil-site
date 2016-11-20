@@ -95,7 +95,7 @@ export default class EditPost extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.state.upToDate) {
-      this.update(nextProps.post, this.props.id);
+      this.update(nextProps.post, nextProps.id);
     }
   }
 
