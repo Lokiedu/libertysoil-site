@@ -22,7 +22,11 @@ import * as a from '../actions';
 
 const initialState = i.Map({});
 
-const cleanUser = user => {
+function cleanUser(user) {
+  return _.omit(user, ['following', 'followers']);
+}
+
+function extractAssociations(user) {
   const users = {};
 
   if (!user) {
@@ -35,7 +39,6 @@ const cleanUser = user => {
     }
 
     user = _.cloneDeep(user);
-    delete user.following;
   }
 
   if (user.followers) {
@@ -44,19 +47,18 @@ const cleanUser = user => {
     }
 
     user = _.cloneDeep(user);
-    delete user.following;
   }
 
-  users[user.id] = user;
+  users[user.id] = cleanUser(user);
 
   return users;
-};
+}
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.users.ADD_USER:
     case a.users.SET_CURRENT_USER: {
-      state = state.mergeDeep(i.fromJS(cleanUser(action.user)));
+      state = state.mergeDeep(i.fromJS(extractAssociations(action.user)));
 
       if (action.user) {
         if (action.user.more && action.user.more.roles) {
