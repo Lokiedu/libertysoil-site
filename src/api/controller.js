@@ -99,7 +99,6 @@ export default class ApiController {
         qb
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', ctx.params.user)
-          .orderBy('posts.updated_at', 'desc')
           .whereIn('posts.type', ['short_text', 'long_text'])
           .offset(ctx.query.offset);
 
@@ -107,7 +106,7 @@ export default class ApiController {
           qb.limit(ctx.query.limit);
         }
 
-        this.applySortQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, '-updated_at');
       });
 
 
