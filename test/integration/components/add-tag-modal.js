@@ -22,6 +22,7 @@ import { mount } from 'enzyme';
 
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';
+import { waitForChange } from '../../../test-helpers/wait';
 
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import GeotagFactory from '../../../test-helpers/factories/geotag';
@@ -54,20 +55,14 @@ describe('AddTagModal', () => {
       }
     });
 
-    xit('shows suggestions', (done) => {
+    it('shows suggestions', async () => {
       const wrapper = mount(<HashtagSelect />);
       const query = 'kno';
+      const suggestionsLength = waitForChange(() => wrapper.state('suggestions').length);
 
       wrapper.find('.autosuggest__input').simulate('change', { target: { value: query } });
 
-      setTimeout(() => {
-        try {
-          expect(wrapper.state('suggestions').length, 'to equal', 2);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      }, 50);
+      expect(await suggestionsLength, 'to equal', 2);
     });
   });
 
