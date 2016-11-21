@@ -18,7 +18,6 @@
 import React from 'react';
 import pick from 'lodash/pick';
 import last from 'lodash/last';
-import throttle from 'lodash/throttle';
 import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 
@@ -29,6 +28,7 @@ import createSelector from '../../selectors/createSelector';
 import { ActionsTrigger } from '../../triggers';
 import { addError, removeAllMessages } from '../../actions/messages';
 import { removeWhitespace } from '../../utils/lang';
+import debounce from 'debounce-promise';
 
 import { ExtendableSchoolEditForm } from '../../components/tag-edit-form/school-edit-form';
 import Message from '../../components/message';
@@ -88,7 +88,7 @@ export class AddSchoolToolPage extends React.Component {
     this.setState({ processing: false, newSchool });
   };
 
-  validate = throttle(async (values, errors) => {
+  validate = debounce(async (values, errors) => {
     const nextErrors = errors;
     if (values && values.name && !errors.name) {
       const name = removeWhitespace(values.name);
@@ -103,7 +103,7 @@ export class AddSchoolToolPage extends React.Component {
     }
 
     return nextErrors;
-  }, 100);
+  }, 200);
 
   render() {
     const school = this.state.newSchool;
