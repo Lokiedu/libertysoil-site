@@ -743,7 +743,10 @@ export default class ApiController {
 
       await school.save(null, { method: 'insert' });
 
-      ctx.body = school.toJSON();
+      // 'school' variable doesn't contain default school properties (e.g. 'post_count')
+      const newSchool = await School.where({ name }).fetch({ require: true });
+
+      ctx.body = newSchool.toJSON();
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
