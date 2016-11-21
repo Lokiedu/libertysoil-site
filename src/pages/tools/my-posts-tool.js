@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import { truncate } from 'grapheme-utils';
+import { replace } from 'react-router-redux';
 
 import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
 import { MapOfPosts } from '../../prop-types/posts';
@@ -66,18 +67,27 @@ class MyPostsToolPage extends React.Component {
   };
 
   handleLoadPosts = async () => {
+    await this.loadPosts({
+      offset: this.props.user_posts_river.size
+    });
+  };
+
+  loadPosts = async (query = {}) => {
     const userId = this.props.current_user.get('id');
     const userName = this.props.users.getIn([userId, 'username']);
     const client = new ApiClient(API_HOST);
     const trigger = new ActionsTrigger(client, this.props.dispatch);
     const result = await trigger.toolsLoadUserPostsRiver(userName, {
+      ...this.props.location.query,
       limit: LIMIT,
-      offset: this.props.user_posts_river.size,
-      sort: '-created_at'
+      sort: '-created_at',
+      ...query
     });
 
-    if (Array.isArray(result) && result.length === 0) {
+    if (Array.isArray(result) && result.length < LIMIT) {
       this.setState({ displayLoadMore: false });
+    } else {
+      this.setState({ displayLoadMore: true });
     }
   };
 
@@ -85,6 +95,19 @@ class MyPostsToolPage extends React.Component {
     if (isVisible && !this.props.ui.getIn(['progress', 'loadingUserPostsRiver'])) {
       this.handleLoadPosts();
     }
+  };
+
+  handleChangeSorting = async (e) => {
+    const sort = e.target.value;
+
+    this.props.dispatch(replace({
+      pathname: this.props.location.pathname,
+      query: Object.assign(this.props.location.query, {
+        sort
+      })
+    }));
+
+    await this.loadPosts({ offset: 0, sort });
   };
 
   render() {
@@ -95,14 +118,26 @@ class MyPostsToolPage extends React.Component {
     } = this.props;
 
     const postsToDisplay = user_posts_river.map(postId => posts.get(postId));
+    const sortQuery = this.props.location.query.sort || '-created_at';
 
     return (
       <div>
         <Helmet title="My posts tool on " />
+        <div className="tools_page__filter">
+          <span className="micon">sort</span>
+          <select value={sortQuery} onChange={this.handleChangeSorting}>
+            <option value="-created_at">Created at</option>
+            <option value="-updated_at">Last modified</option>
+          </select>
+        </div>
         {postsToDisplay.map((post, index) =>
-          <div className="tools_item tools_item-clickable layout layout-align_justify" key={index}>
+          <Link
+            className="tools_item tools_item-clickable layout layout-align_justify"
+            key={index}
+            to={`/post/${post.get('id')}`}
+          >
             <div>
-              <Link to={`/post/${post.get('id')}`}>{truncate(post.get('text'), { length: 70 })}</Link>
+              {truncate(post.get('text'), { length: 70 })}
             </div>
             <div className="layout">
               <span className="card__toolbar_item">
@@ -120,7 +155,7 @@ class MyPostsToolPage extends React.Component {
                 <span className="card__toolbar_item_value">{post.get('comments')}</span>
               </span>
             </div>
-          </div>
+          </Link>
         )}
         <div className="layout layout-align_center layout__space layout__space-double">
           {this.state.displayLoadMore && user_posts_river.size >= LIMIT &&
