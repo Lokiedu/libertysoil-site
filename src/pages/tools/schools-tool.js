@@ -162,7 +162,7 @@ class SchoolsToolPage extends React.Component {
       <div className="layout">
         <Helmet title="Schools tool on " />
         <div className="tools_page__list_col">
-          <div className="schools_tool__filter">
+          <div className="tools_page__filter">
             <div className="schools_tool__sort">
               <span className="micon">sort</span>
               <select value={sortQuery} onChange={this.handleChangeSorting}>
