@@ -34,6 +34,7 @@ const bookshelf = initBookshelf($dbConfig);
 const Hashtag = bookshelf.model('Hashtag');
 const Geotag = bookshelf.model('Geotag');
 
+
 describe('AddTagModal', () => {
   describe('HashtagSelect', () => {
     const hashtags = Array(3);
@@ -78,6 +79,8 @@ describe('AddTagModal', () => {
           })
         ).save(null, { method: 'insert' });
       }
+
+      await bookshelf.knex.raw(`UPDATE geotags SET tsv = setweight(to_tsvector(coalesce(geotags.name, '')), 'A')`);  // build index
     });
 
     after(async () => {
@@ -86,20 +89,14 @@ describe('AddTagModal', () => {
       }
     });
 
-    xit('shows suggestions', (done) => {
+    it('shows suggestions', async () => {
       const wrapper = mount(<GeotagSelect />);
       const query = 'New';
 
+      const suggestionsLength = waitForChange(() => wrapper.state('suggestions').length);
       wrapper.find('.autosuggest__input').simulate('change', { target: { value: query } });
 
-      setTimeout(() => {
-        try {
-          expect(wrapper.state('suggestions').length, 'to equal', 2);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      }, 50);
+      expect(await suggestionsLength, 'to equal', 2);
     });
   });
 });
