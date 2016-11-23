@@ -15,36 +15,21 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+import React from 'react';
 
-import { users } from '../actions';
 
-const initialState = i.Map({});
-
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case users.ADD_USER:
-    case users.SET_CURRENT_USER: {
-      if (action.user && action.user.followers) {
-        state = state.set(action.user.id, i.List(action.user.followers.map(user => user.id)));
-      }
-
-      break;
-    }
-
-    case users.ADD_USERS: {
-      const ids = action.users.reduce((acc, user) => {
-        if (Array.isArray(user.followers)) {
-          acc[user.id] = user.followers.map(user => user.id);
-        }
-        return acc;
-      }, {});
-
-      state = state.mergeDeep(i.fromJS(ids));
-
-      break;
-    }
+export default function UserRoles({ roles }) {
+  if (!roles || !roles.size) {
+    return null;
   }
 
-  return state;
+  const roleElements = roles.map(role => (
+    <span className="user_roles__role" key={role.get('id')} title={role.get('description')}>{role.get('title')}</span>
+  ));
+
+  return (
+    <div className="user_roles">
+      {roleElements}
+    </div>
+  );
 }

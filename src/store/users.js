@@ -22,7 +22,11 @@ import * as a from '../actions';
 
 const initialState = i.Map({});
 
-const cleanUser = user => {
+function cleanUser(user) {
+  return _.omit(user, ['following', 'followers']);
+}
+
+function extractAssociations(user) {
   const users = {};
 
   if (!user) {
@@ -35,7 +39,6 @@ const cleanUser = user => {
     }
 
     user = _.cloneDeep(user);
-    delete user.following;
   }
 
   if (user.followers) {
@@ -44,19 +47,18 @@ const cleanUser = user => {
     }
 
     user = _.cloneDeep(user);
-    delete user.following;
   }
 
-  users[user.id] = user;
+  users[user.id] = cleanUser(user);
 
   return users;
-};
+}
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.users.ADD_USER:
     case a.users.SET_CURRENT_USER: {
-      state = state.mergeDeep(i.fromJS(cleanUser(action.user)));
+      state = state.mergeDeep(i.fromJS(extractAssociations(action.user)));
 
       if (action.user) {
         if (action.user.more && action.user.more.roles) {
@@ -68,7 +70,10 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.users.ADD_USERS: {
-      const usersById = action.users.reduce((acc, user) => acc[user.id] = cleanUser(user), {});
+      const usersById = action.users.reduce((acc, user) => {
+        acc[user.id] = cleanUser(user);
+        return acc;
+      }, {});
       state = state.mergeDeep(i.fromJS(usersById));
 
       break;
@@ -112,13 +117,6 @@ export default function reducer(state = initialState, action) {
 
     case a.posts.SET_RELATED_POSTS: {
       const users = _.keyBy(action.posts.map(post => post.user), 'id');
-      state = state.mergeDeep(i.fromJS(users));
-
-      break;
-    }
-
-    case a.tools.TOOLS__SET_FOLLOWED_USERS: {
-      const users = _.keyBy(action.users, 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;

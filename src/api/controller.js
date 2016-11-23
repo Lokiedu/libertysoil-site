@@ -1861,6 +1861,31 @@ export default class ApiController {
     }
   };
 
+  getFollowedUsers = async (ctx) => {
+    const User = this.bookshelf.model('User');
+
+    try {
+      const users = await User.collection()
+        .query(qb => {
+          qb.join('followers', 'users.id', 'followers.following_user_id')
+            .where('followers.user_id', ctx.params.id);
+        })
+        .fetch({
+          withRelated: [
+            'following', 'followers', 'liked_posts',
+            'liked_hashtags', 'liked_schools', 'liked_geotags',
+            'favourited_posts', 'followed_hashtags',
+            'followed_schools', 'followed_geotags'
+          ]
+        });
+
+      ctx.body = users;
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+  }
+
   followUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
