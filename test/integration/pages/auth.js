@@ -68,39 +68,6 @@ describe('Auth page', () => {
   });
 
   describe('Register component', () => {
-    xit('availableUsername should work', (done) => {
-      const testComponent = (
-        <Register
-          fields={{
-            username: {},
-            password: {},
-            passwordRepeat: {},
-            email: {},
-            agree: {}
-          }}
-          form={{
-            forceValidate: () => {},
-            isValid: () => {},
-            onValues: () => {},
-            values: () => {}
-          }}
-          onRegisterUser={() => {}}
-          onShowRegisterForm={() => {}}
-        />
-      );
-      const wrapper = mount(testComponent);
-      expect(wrapper.find('#registerUsername').node.value, 'to be empty');
-
-      wrapper.find('#registerFirstName').node.value = 'test_firstname';
-      wrapper.find('#registerLastName').node.value = 'test_lastname';
-      wrapper.find('#registerFirstName').simulate('change');
-      wrapper.find('#registerLastName').simulate('change');
-
-      setTimeout(() => {
-        expect(wrapper.find('#registerUsername').node.value, 'to be non-empty');
-        done();
-      }, 2000);
-    });
   });
 
   describe('Wrapped Register component', () => {
@@ -114,6 +81,25 @@ describe('Auth page', () => {
 
     after(async () => {
       await user.destroy();
+    });
+
+    it('availableUsername should work', async () => {
+      const testComponent = (
+        <WrappedRegister
+          onRegisterUser={() => {}}
+          onShowRegisterForm={() => {}}
+        />
+      );
+      const wrapper = mount(testComponent);
+      expect(wrapper.find('#registerUsername').node.value, 'to be empty');
+
+      wrapper.find('#registerFirstName').node.value = 'John';
+      wrapper.find('#registerFirstName').simulate('change');
+      wrapper.find('#registerLastName').node.value = 'Smith';
+      wrapper.find('#registerLastName').simulate('change');
+
+      const suggestedUsername = waitForChange(() => wrapper.find('#registerUsername').node.value);
+      expect(await suggestedUsername, 'not to be empty');
     });
 
     it('should check on email currently taken', async () => {
