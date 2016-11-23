@@ -68,6 +68,10 @@ export default class VisibilitySensor extends Component {
     this.toggleCheck();
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
+  }
+
   componentWillUnmount() {
     if (this.watch) {
       clearInterval(this.watch);
