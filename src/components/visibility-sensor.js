@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { Component, PropTypes } from 'react';
+import { difference, entries, omit } from 'lodash';
 
 /**
  * Checks visibility of given child nodes*
@@ -65,7 +66,10 @@ export default class VisibilitySensor extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.toggleCheck(nextProps);
+    const next = entries(omit(nextProps, ['children']));
+    const old = entries(omit(this.props, ['children']));
+    const updatedKeys = difference(next, old).map(p => p[0]);
+    this.toggleCheck(nextProps, updatedKeys);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -81,19 +85,23 @@ export default class VisibilitySensor extends Component {
 
   /**
    * Toggles update loop.
-   * @param  {Object} props Props instance.
+   * @param  {Object}        props       Props instance (may be `nextProps`).
+   * @param  {Array<String>} updatedKeys Array of updated properties' names.
    * @return {undefined}
    */
-  toggleCheck(props = this.props) {
-    if (props.active) {
-      if (!this.watch) {
+  toggleCheck(props = this.props, updatedKeys = []) {
+    if (props.active) { // need to work
+      if (this.watch) { // in progress
+        if (updatedKeys.includes('delay')) {
+          clearInterval(this.watch);
+          this.watch = setInterval(this.checkVisibility, props.delay);
+        }
+      } else { // switched off
         this.watch = setInterval(this.checkVisibility, props.delay);
       }
-    } else {
-      if (this.watch) {
-        clearInterval(this.watch);
-        this.watch = null;
-      }
+    } else if (this.watch) { // need to be stopped
+      clearInterval(this.watch);
+      this.watch = null;
     }
   }
 
