@@ -64,8 +64,8 @@ export default class VisibilitySensor extends Component {
     this.toggleCheck();
   }
 
-  componentWillReceiveProps() {
-    this.toggleCheck();
+  componentWillReceiveProps(nextProps) {
+    this.toggleCheck(nextProps);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -79,10 +79,15 @@ export default class VisibilitySensor extends Component {
     }
   }
 
-  toggleCheck() {
-    if (this.props.active) {
+  /**
+   * Toggles update loop.
+   * @param  {Object} props Props instance.
+   * @return {undefined}
+   */
+  toggleCheck(props = this.props) {
+    if (props.active) {
       if (!this.watch) {
-        this.watch = setInterval(this.checkVisibility, this.props.delay);
+        this.watch = setInterval(this.checkVisibility, props.delay);
       }
     } else {
       if (this.watch) {
