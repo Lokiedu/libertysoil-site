@@ -24,9 +24,14 @@ import messageType from '../consts/messageTypeConstants';
 export default class Message extends React.Component {
   static propTypes = {
     i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    internal: PropTypes.bool,
     message: PropTypes.string,
     removeMessage: PropTypes.func,
     type: PropTypes.string
+  };
+
+  static defaultProps = {
+    internal: false
   };
 
   closeHandler = () => {
@@ -39,7 +44,8 @@ export default class Message extends React.Component {
       removeMessage,
       type,
       message,
-      i
+      i,
+      internal
     } = this.props;
     let icon = null;
     let close = null;
@@ -47,7 +53,8 @@ export default class Message extends React.Component {
     const cn = bem.makeClassName({
       block: 'message',
       modifiers: {
-        error: () => (type == messageType.ERROR)
+        error: () => (type == messageType.ERROR),
+        internal: () => internal
       }
     });
 

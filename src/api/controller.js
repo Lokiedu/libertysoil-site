@@ -28,6 +28,7 @@ import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
+import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
@@ -629,6 +630,129 @@ export default class ApiController {
     }
   };
 
+  createSchool = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('name' in ctx.request.body)) {
+      ctx.status = 400;
+      ctx.body = { error: '"name" property is not given' };
+      return;
+    }
+
+    const name = removeWhitespace(ctx.request.body.name);
+
+    if (!name) {
+      ctx.status = 400;
+      ctx.body = { error: '"name" mustn\'t be an empty string' };
+      return;
+    }
+
+    const School = this.bookshelf.model('School');
+
+    try {
+      await School.where({ name }).fetch({ require: true });
+
+      ctx.status = 409;
+      ctx.body = { error: 'School with such name is already registered' };
+      return;
+    } catch (e) {
+      // go next
+    }
+
+    try {
+      const allowedAttributes = [
+        'name', 'description',
+        'lat', 'lon',
+        'is_open', 'principal_name', 'principal_surname',
+        'foundation_year', 'foundation_month', 'foundation_day',
+        'number_of_students', 'org_membership',
+        'teaching_languages', 'required_languages',
+        'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+        'website', 'facebook', 'twitter', 'wikipedia'
+      ];
+
+      const processData = (data) => {
+        if ('is_open' in data) {
+          if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
+            throw new Error("'is_open' has to be boolean or null");
+          }
+        }
+
+        if ('number_of_students' in data) {
+          if (!_.isPlainObject(data.number_of_students)) {
+            throw new Error("'number_of_students' should be an object");
+          }
+        }
+
+        if ('org_membership' in data) {
+          if (!_.isPlainObject(data.org_membership)) {
+            throw new Error("'org_membership' should be an object");
+          }
+        }
+
+        if ('teaching_languages' in data) {
+          if (!_.isArray(data.teaching_languages)) {
+            throw new Error("'teaching_languages' should be an array");
+          }
+          data.teaching_languages = JSON.stringify(data.teaching_languages);
+        }
+
+        if ('required_languages' in data) {
+          if (!_.isArray(data.required_languages)) {
+            throw new Error("'required_languages' should be an array");
+          }
+          data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        for (const key in data) {
+          if (data[key] === '') {
+            data[key] = null;
+          }
+        }
+
+        return data;
+      };
+
+      const attributesWithValues = processData({
+        ..._.pick(ctx.request.body, allowedAttributes),
+        name
+      });
+
+      const properties = {};
+      if (ctx.request.body.more) {
+        for (const fieldName in SchoolValidators.more) {
+          if (fieldName in ctx.request.body.more) {
+            properties[fieldName] = ctx.request.body.more[fieldName];
+          }
+        }
+      }
+
+      properties.last_editor = ctx.session.user;
+      attributesWithValues.more = properties;
+
+      const school = new School({
+        id: uuid.v4()
+      });
+
+      school.set(attributesWithValues);
+      school.set('url_name', slug(attributesWithValues.name));
+
+      await school.save(null, { method: 'insert' });
+
+      // 'school' variable doesn't contain default school properties (e.g. 'post_count')
+      const newSchool = await School.where({ name }).fetch({ require: true });
+
+      ctx.body = newSchool.toJSON();
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  }
+
   updateSchool = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -688,6 +812,12 @@ export default class ApiController {
             throw new Error("'required_languages' should be an array");
           }
           data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        for (const key in data) {
+          if (data[key] === '') {
+            data[key] = null;
+          }
         }
 
         return data;
@@ -937,7 +1067,6 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 

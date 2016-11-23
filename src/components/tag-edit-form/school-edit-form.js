@@ -16,37 +16,43 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import { form as inform } from 'react-inform';
-import { pick } from 'lodash';
-import i from 'immutable';
+import { each, pick, reduce } from 'lodash';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 import { School as SchoolPropType } from '../../prop-types/schools';
+import { removeWhitespace } from '../../utils/lang';
 
 import Button from '../button';
 import GeoInput from '../geo-input';
 import Messages from '../messages';
 import Message from '../message';
 
-const TextInputField = ({ defaultValue, field, name, title, type = 'text' }) => {
-  const id = `input_${name}`;
+const TextInputField = ({ field, name, title, ...props }) => (
+  <div className="layout__row">
+    <label
+      className="layout__block layout__row layout__row-small"
+      htmlFor={`input_${name}`}
+    >
+      {title}
+    </label>
+    <input
+      className="input input-block content layout__row layout__row-small"
+      {...props}
+      {...field}
+      id={`input_${name}`}
+    />
 
-  return (
-    <div className="layout__row">
-      <label className="layout__block layout__row layout__row-small" htmlFor={id}>{title}</label>
-      <input
-        className="input input-block content layout__row layout__row-small"
-        defaultValue={defaultValue}
-        id={id}
-        type={type}
-        {...field}
-      />
+    {field.error &&
+      <Message internal message={field.error} />
+    }
+  </div>
+);
 
-      {field.error &&
-        <Message message={field.error} />
-      }
-    </div>
-  );
+TextInputField.defaultProps = {
+  field: {},
+  type: 'text'
 };
 
 class SchoolEditForm extends React.Component {
@@ -71,19 +77,49 @@ class SchoolEditForm extends React.Component {
     messages: ArrayOfMessagesPropType,
     processing: PropTypes.bool,
     saveHandler: PropTypes.func.isRequired,
-    school: SchoolPropType.isRequired
+    school: SchoolPropType
   };
 
-  componentDidMount() {
-    const {
-      form,
-      school
-     } = this.props;
+  static defaultProps = {
+    school: ImmutableMap()
+  };
 
-    form.onValues(school.toJS());
+  componentWillMount() {
+    const school = this.props.school.toJS();
+
+    if (school.id) {
+      let is_open = 'unknown';
+
+      if (school.is_open === true) {
+        is_open = 'yes';
+      } else if (school.is_open === false) {
+        is_open = 'no';
+      }
+
+      const memberships = {};
+      each(school.org_membership, (row, key) => {
+        memberships[key] = row.is_member;
+      });
+
+      const values = {
+        ...pick(
+          school,
+          [
+            'name', 'description',
+            'principal_name', 'principal_surname',
+            'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+            'website', 'facebook', 'twitter', 'wikipedia'
+          ]
+        ),
+        ...{ is_open },
+        ...memberships
+      };
+
+      this.props.form.onValues(values);
+    }
   }
 
-  submitHandler = (event) => {
+  handleSubmit = (event) => {
     event.preventDefault();
 
     const { fields, form } = this.props;
@@ -104,14 +140,20 @@ class SchoolEditForm extends React.Component {
       isOpenDbValue = false;
     }
 
+    let lat = theForm.lat.value, lon = theForm.lon.value;
+    if ((lat === '0') && (lon === '0')) {
+      lat = undefined;
+      lon = undefined;
+    }
+
     this.props.saveHandler(
       theForm.id.value,
       {
         name: fields.name.value,
         description: fields.description.value,
         country_id: fields.country_id.value,
-        lat: theForm.lat.value,
-        lon: theForm.lon.value,
+        lat,
+        lon,
         is_open: isOpenDbValue,
         principal_name: fields.principal_name.value,
         principal_surname: fields.principal_surname.value,
@@ -142,51 +184,28 @@ class SchoolEditForm extends React.Component {
     const {
       countries,
       fields,
-      form,
       school,
       processing,
       triggers,
       messages
     } = this.props;
-    const initialLocation = { lat: school.get('lat'), lon: school.get('lon') };
 
-    let is_open = 'unknown';
-
-    if (school.get('is_open') === true) {
-      is_open = 'yes';
-    } else if (school.get('is_open') === false) {
-      is_open = 'no';
+    const initialLocation = {};
+    if (school.has('id')) {
+      initialLocation.let = school.get('lat');
+      initialLocation.lon = school.get('lon');
     }
 
-    const memberships = (school.get('org_membership') || i.Map())
-      .map(val => val.get('is_member')).toJS();
-
-    // needed for react-inform
-    const values = {
-      ...pick(
-        school.toJS(),
-        [
-          'name', 'description',
-          'principal_name', 'principal_surname',
-          'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
-          'website', 'facebook', 'twitter', 'wikipedia'
-        ]
-      ),
-      ...{ is_open },
-      ...memberships
-    };
-
     return (
-      <form onSubmit={this.submitHandler}>
+      <form onSubmit={this.handleSubmit}>
         <input name="id" type="hidden" value={school.get('id')} />
 
-        <TextInputField defaultValue={values.name} field={fields.name} name="name" title="Name" />
+        <TextInputField disabled={school.has('name')} field={fields.name} name="name" title="Name" />
 
         <div className="layout__row">
           <label className="layout__block layout__row layout__row-small" htmlFor="is_open">Is it open?</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
-            defaultValue={values.is_open}
             id="is_open"
             {...fields.is_open}
           >
@@ -200,7 +219,6 @@ class SchoolEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="description">Description</label>
           <textarea
             className="input input-block input-textarea content layout__row layout__row-small"
-            defaultValue={values.description}
             id="description"
             {...fields.description}
           />
@@ -210,71 +228,90 @@ class SchoolEditForm extends React.Component {
           <label className="layout__block layout__row layout__row-small" htmlFor="country_id">Country</label>
           <select
             className="input input-block input-select layout__row layout__row-small"
-            defaultValue={values.country}
             id="country_id"
             {...fields.country_id}
           >
             <option value="">unknown</option>
-            {countries.toList().sortBy(c => c.get('name')).map(country => (
+            {countries.toList().sortBy(c => c.get('name')).map(country =>
               <option key={country.get('id')} value={country.get('id')}>{country.get('name')}</option>
-            ))}
+            )}
           </select>
         </div>
 
-        <TextInputField defaultValue={values.postal_code} field={fields.postal_code} name="postal_code" title="Postal Code" />
-        <TextInputField defaultValue={values.city} field={fields.city} name="city" title="City" />
-        <TextInputField defaultValue={values.address1} field={fields.address1} name="address1" title="Address" />
-        <TextInputField defaultValue={values.address2} field={fields.address2} name="address2" title="Address 2" />
-        <TextInputField defaultValue={values.house} field={fields.house} name="house" title="House" />
-        <TextInputField defaultValue={values.phone} field={fields.phone} name="phone" title="Phone" />
+        <TextInputField field={fields.postal_code} name="postal_code" title="Postal Code" />
+        <TextInputField field={fields.city} name="city" title="City" />
+        <TextInputField field={fields.address1} name="address1" title="Address" />
+        <TextInputField field={fields.address2} name="address2" title="Address 2" />
+        <TextInputField field={fields.house} name="house" title="House" />
+        <TextInputField field={fields.phone} name="phone" title="Phone" />
 
         <GeoInput initialLocation={initialLocation} />
 
-        <TextInputField defaultValue={values.principal_name} field={fields.principal_name} name="principal_name" title="Principal Name" />
-        <TextInputField defaultValue={values.principal_surname} field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
+        <TextInputField field={fields.principal_name} name="principal_name" title="Principal Name" />
+        <TextInputField field={fields.principal_surname} name="principal_surname" title="Principal Surname" />
 
-        <TextInputField defaultValue={values.website} field={fields.website} name="website" title="Website" type="url" />
-        <TextInputField defaultValue={values.facebook} field={fields.facebook} name="facebook" title="Facebook" type="url" />
-        <TextInputField defaultValue={values.twitter} field={fields.twitter} name="twitter" title="Twitter" type="url" />
-        <TextInputField defaultValue={values.wikipedia} field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
+        <TextInputField field={fields.website} name="website" title="Website" type="url" />
+        <TextInputField field={fields.facebook} name="facebook" title="Facebook" type="url" />
+        <TextInputField field={fields.twitter} name="twitter" title="Twitter" type="url" />
+        <TextInputField field={fields.wikipedia} name="wikipedia" title="Wikipedia" type="url" />
 
         <div className="layout__row">
           <div className="layout__row">Membership:</div>
 
           <div className="layout__row">
-            <label>ADEC <input defaultChecked={values.adec} name="adec" type="checkbox" {...fields.adec} value="true" /></label>
+            <label>ADEC
+              <input name="adec" type="checkbox" {...fields.adec} />
+            </label>
           </div>
 
           <div className="layout__row">
-            <label>AERO <input defaultChecked={values.aero} name="aero" type="checkbox" {...fields.aero} value="true" /></label>
+            <label>AERO
+              <input name="aero" type="checkbox" {...fields.aero} />
+            </label>
           </div>
 
           {/*
           <div className="layout__row">
-            <label>Australian <input defaultChecked={values.australian} name="australian" type="checkbox" {...fields.australian} value="true"/></label>
+            <label>Australian
+              <input name="australian" type="checkbox" {...fields.australian}/>
+            </label>
           </div>
           */}
 
           <div className="layout__row">
-            <label>EUDEC <input defaultChecked={values.eudec} name="eudec" type="checkbox" {...fields.eudec} value="true" /></label>
+            <label>EUDEC
+              <input name="eudec" type="checkbox" {...fields.eudec} />
+            </label>
           </div>
 
           <div className="layout__row">
-            <label>IDEN <input defaultChecked={values.iden} name="iden" type="checkbox" {...fields.iden} value="true" /></label>
+            <label>IDEN
+              <input name="iden" type="checkbox" {...fields.iden} />
+            </label>
           </div>
 
           <div className="layout__row">
-            <label>AlternativeToSchool.com entry <input defaultChecked={values.alternative_to_school} name="alternative_to_school" type="checkbox" {...fields.alternative_to_school} value="true" /></label>
+            <label>AlternativeToSchool.com entry
+              <input name="alternative_to_school" type="checkbox" {...fields.alternative_to_school} />
+            </label>
           </div>
 
           <div className="layout__row">
-            <label>Wikipedia list of schools entry <input defaultChecked={values.wikipedia_list} name="wikipedia_list" type="checkbox" {...fields.wikipedia_list} value="true" /></label>
+            <label>Wikipedia list of schools entry
+              <input name="wikipedia_list" type="checkbox" {...fields.wikipedia_list} />
+            </label>
           </div>
         </div>
 
         <div className="layout__row layout__space-triple">
           <div className="layout layout__grid layout-align_right">
-            <Button className="button-green" disabled={!form.isValid()} title="Save" type="submit" waiting={processing} />
+            <Button
+              className="button-green"
+              disabled={!this.props.form.isValid()}
+              title="Save"
+              type="submit"
+              waiting={processing}
+            />
           </div>
         </div>
         <Messages messages={messages} removeMessage={triggers.removeMessage} />
@@ -290,10 +327,9 @@ const fields = [
   'website', 'facebook', 'twitter', 'wikipedia',
   'adec', 'aero', 'australian', 'eudec', 'iden', 'alternative_to_school', 'wikipedia_list'
 ];
-const validate = values => {
-  const { name } = values;
+const defaultValidate = (values = {}) => {
   const errors = {};
-
+  const name = removeWhitespace(values.name);
   if (!name) {
     errors.name = 'Name is required';
   }
@@ -301,9 +337,26 @@ const validate = values => {
   return errors;
 };
 
-const WrappedSchoolEditForm = inform({
+export default inform({
   fields,
-  validate
+  validate: defaultValidate
 })(SchoolEditForm);
 
-export default WrappedSchoolEditForm;
+const ExtendableSchoolEditForm = ({ validators }) => inform({
+  fields,
+  validate: values => reduce(
+    [defaultValidate].concat(validators),
+    (e, validate) => validate(values, e),
+    {}
+  )
+})(SchoolEditForm);
+
+ExtendableSchoolEditForm.propTypes = {
+  validators: PropTypes.arrayOf(PropTypes.func)
+};
+
+ExtendableSchoolEditForm.defaultProps = {
+  validate: []
+};
+
+export { ExtendableSchoolEditForm };

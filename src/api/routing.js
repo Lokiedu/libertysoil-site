@@ -68,6 +68,7 @@ export function initApi(bookshelf, sphinx) {
 
   api.get('/school-cloud', controller.getSchoolCloud);
   api.get('/schools', controller.getSchools);
+  api.post('/schools/new', controller.createSchool);
   api.get('/schools-alphabet', controller.getSchoolsAlphabet);
   api.get('/schools/:query', controller.searchSchools);
   api.head('/school/:name', controller.checkSchoolExists);

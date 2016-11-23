@@ -462,6 +462,20 @@ export class ActionsTrigger {
     }
   };
 
+  createSchool = async (schoolFields) => {
+    let school;
+    try {
+      school = await this.client.createSchool(schoolFields);
+      this.dispatch(a.schools.addSchool(school));
+      this.dispatch(a.messages.addMessage('School has been registered successfully'));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+      throw e;
+    }
+
+    return school;
+  }
+
   updateSchool = async (school_uuid, school_fields) => {
     try {
       const result = await this.client.updateSchool(school_uuid, school_fields);
