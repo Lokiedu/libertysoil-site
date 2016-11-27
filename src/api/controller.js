@@ -1860,21 +1860,16 @@ export default class ApiController {
   getFollowedUsers = async (ctx) => {
     const User = this.bookshelf.model('User');
 
-    try {
-      const users = await User.collection()
-        .query(qb => {
-          qb.join('followers', 'users.id', 'followers.following_user_id')
-            .where('followers.user_id', ctx.params.id);
-        })
-        .fetch({
-          withRelated: USER_RELATIONS
-        });
+    const users = await User.collection()
+      .query(qb => {
+        qb.join('followers', 'users.id', 'followers.following_user_id')
+          .where('followers.user_id', ctx.params.id);
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
 
-      ctx.body = users;
-    } catch (e) {
-      ctx.status = 404;
-      return;
-    }
+    ctx.body = users;
   }
 
   followUser = async (ctx) => {
