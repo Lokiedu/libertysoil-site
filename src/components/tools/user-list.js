@@ -55,7 +55,11 @@ export default function UserList({ onClick, users, selectedUserId }) {
 }
 
 UserList.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   selectedUserId: uuid4PropType,
   users: ImmutablePropType(ArrayOfUsersPropType).isRequired
+};
+
+UserList.defaultParams = {
+  onClick: () => { }
 };

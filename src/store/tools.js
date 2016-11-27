@@ -21,11 +21,12 @@ import { tools } from '../actions';
 
 
 const initialState = i.fromJS({
-  schools_river: [], // group things when the state gets clutered
+  schools_river: [],
   all_schools_loaded: false,
   schools_alphabet: [],
   user_posts_river: [],
-  followed_users: []
+  followed_users: [],
+  conversations_river: []
 });
 
 export default function reducer(state = initialState, action) {
@@ -65,6 +66,13 @@ export default function reducer(state = initialState, action) {
     case tools.TOOLS__SET_FOLLOWED_USERS: {
       const ids = action.users.map(u => u.id);
       state = state.set('followed_users', i.List(ids));
+      break;
+    }
+
+    case tools.TOOLS__SET_CONVERSATIONS_RIVER: {
+      const ids = action.users.map(u => u.id);
+      state = state.set('conversations_river', i.List(ids));
+      break;
     }
   }
 
