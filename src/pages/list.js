@@ -113,7 +113,7 @@ export class List extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let displayLoadMore = false;
-    if (nextProps.river.length > 4) {
+    if (nextProps.river.size > 4) {
       displayLoadMore = true;
     }
 
@@ -181,7 +181,7 @@ export class List extends React.Component {
         <div className="layout layout-align_center layout__space layout__space-double">
           <VisibilitySensor onChange={this.loadMore}>
             <Button
-              title="Load more..." waiting={ui.getIn('progress', 'loadRiverInProgress')}
+              title="Load more..." waiting={ui.getIn(['progress', 'loadRiverInProgress'])}
               onClick={this.loadPostRiverManually}
             />
           </VisibilitySensor>
