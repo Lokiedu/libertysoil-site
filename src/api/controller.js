@@ -1872,6 +1872,36 @@ export default class ApiController {
     ctx.body = users;
   }
 
+  getMutualFollows = async (ctx) => {
+    const User = this.bookshelf.model('User');
+    const knex = this.bookshelf.knex;
+
+    // TODO: Is it possible to use joins insted of subqueries here? Which method is faster?
+    const users = await User.collection()
+      .query(qb => {
+        qb
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.user_id = ?', ctx.params.id)
+              .whereRaw('f2.following_user_id = users.id');
+          })
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.following_user_id = ?', ctx.params.id)
+              .whereRaw('f2.user_id = users.id');
+          });
+
+        this.applySortQuery(qb, ctx.query, 'username');
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
+
+    ctx.body = users;
+  }
+
   followUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;

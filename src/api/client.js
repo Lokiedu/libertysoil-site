@@ -261,6 +261,11 @@ export default class ApiClient
     return await response.json();
   }
 
+  async mutualFollows(userId) {
+    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`);
+    return await response.json();
+  }
+
   async checkSchoolExists(name) {
     const result = await this.head(`/api/v1/school/${name}`);
 

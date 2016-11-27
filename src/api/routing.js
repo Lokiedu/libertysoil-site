@@ -89,6 +89,7 @@ export function initApi(bookshelf, sphinx) {
   api.get('/user/recent-geotags', controller.getUserRecentGeotags);
   api.head('/user/:username', controller.checkUserExists);
   api.get('/user/:id/following', controller.getFollowedUsers);
+  api.get('/user/:id/mutual-follows', controller.getMutualFollows);
   api.head('/user/email/:email', controller.checkEmailTaken);
   api.get('/user/available-username/:username', controller.getAvailableUsername);
   api.get('/user/:username', controller.getUser);
