@@ -46,6 +46,19 @@ const POST_RELATIONS = Object.freeze([
   { post_comments: qb => qb.orderBy('created_at') }, 'post_comments.user'
 ]);
 
+const USER_RELATIONS = Object.freeze([
+  'following',
+  'followers',
+  'liked_posts',
+  'favourited_posts',
+  'followed_hashtags',
+  'followed_geotags',
+  'followed_schools',
+  'liked_hashtags',
+  'liked_geotags',
+  'liked_schools'
+]);
+
 export default class ApiController {
   bookshelf;
   sphinx;
@@ -1244,18 +1257,7 @@ export default class ApiController {
       .where({ id: ctx.session.user })
       .fetch({
         require: true,
-        withRelated: [
-          'following',
-          'followers',
-          'liked_posts',
-          'favourited_posts',
-          'followed_hashtags',
-          'followed_geotags',
-          'followed_schools',
-          'liked_hashtags',
-          'liked_geotags',
-          'liked_schools'
-        ]
+        withRelated: USER_RELATIONS
       });
 
     ctx.body = { success: true, user };
@@ -1846,12 +1848,7 @@ export default class ApiController {
               .where({ username: ctx.params.username })
               .fetch({
                 require: true,
-                withRelated: [
-                  'following', 'followers', 'liked_posts',
-                  'liked_hashtags', 'liked_schools', 'liked_geotags',
-                  'favourited_posts', 'followed_hashtags',
-                  'followed_schools', 'followed_geotags'
-                ]
+                withRelated: USER_RELATIONS
               });
       ctx.body = u.toJSON();
     } catch (e) {
@@ -1870,12 +1867,7 @@ export default class ApiController {
             .where('followers.user_id', ctx.params.id);
         })
         .fetch({
-          withRelated: [
-            'following', 'followers', 'liked_posts',
-            'liked_hashtags', 'liked_schools', 'liked_geotags',
-            'favourited_posts', 'followed_hashtags',
-            'followed_schools', 'followed_geotags'
-          ]
+          withRelated: USER_RELATIONS
         });
 
       ctx.body = users;
