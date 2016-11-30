@@ -76,15 +76,13 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
       []
     )}
 
-    {form.isValid() &&
-      <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
-        <DisabledFormSubmit
-          className="button button-wide button-green button--new"
-          type="submit"
-          value="Save"
-        />
-      </div>
-    }
+    <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
+      <DisabledFormSubmit
+        className="button button-wide button-green button--new"
+        type="submit"
+        value="Save"
+      />
+    </div>
   </form>
 );
 
