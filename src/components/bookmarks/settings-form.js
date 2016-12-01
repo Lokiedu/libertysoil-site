@@ -18,11 +18,11 @@
 import React, { PropTypes } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { form as inform, from } from 'react-inform';
-import { browserHistory } from 'react-router';
-import matchRoutes from 'react-router/lib/matchRoutes';
-import { isNil } from 'lodash';
+import debounce from 'debounce-promise';
 
-import { getRoutes } from '../../routing';
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
+import MESSAGE_TYPES from '../../consts/messageTypeConstants';
 
 import Button from '../button';
 import Message from '../message';
@@ -87,19 +87,19 @@ class BookmarkSettingsForm extends React.Component {
             Title
           </label>
           <input className="input input-block input-narrow input-transparent" id="bookmark_title" {...fields.title} />
-          {fields.title.error &&
-            <Message message={fields.title.error} />
-          }
         </div>
+        {fields.title.error &&
+          <Message message={fields.title.error} type={MESSAGE_TYPES.ERROR} />
+        }
         <div className="form__row tools_page__item tools_page__item--close">
           <label className="form__label form__label--short" htmlFor="bookmark_url">
             Url
           </label>
-          <input className="input input-block input-narrow input-transparent" id="bookmark_url" {...fields.url} />
-          {fields.url.error &&
-            <Message message={fields.url.error} />
-          }
+          <input className="input input-block input-narrow   input-transparent" id="bookmark_url" {...fields.url} />
         </div>
+        {fields.url.error &&
+          <Message message={fields.url.error} type={MESSAGE_TYPES.ERROR} />
+        }
         <div className="tools_page__item tools_page__item--close">
           <div className="layout layout__grid layout-align_right">
             <Button
@@ -116,28 +116,41 @@ class BookmarkSettingsForm extends React.Component {
   }
 }
 
-const validateUrl = async (url) => {
-  if (!url) {
+const validateNonEmpty = v => v && v.trim();
+
+const validateUrlHost = url => {
+  const u = url.trim();
+  if (u[0] !== '/') {
+    if (
+        u.lastIndexOf(API_HOST, 0) !== 0 &&
+        u.lastIndexOf(API_HOST.replace(/^https?:\/\//, ''), 0) !== 0
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const validateUrlMatch = debounce(async url => {
+  const client = new ApiClient(API_HOST);
+  try {
+    await client.checkUrl(url.trim());
+  } catch (e) {
     return false;
   }
-
-  const createLocation = browserHistory.createLocation;
-  const routes = getRoutes(() => {}, () => {});
-
-  const ret = (result) => {
-    console.log(result);
-  }
-  
-  await matchRoutes(routes, createLocation(url), (error, match) => {
-    ret(!isNil(match), match);
-  });
-}
+  return true;
+}, 500);
 
 const WrappedBookmarkSettingsForm = inform(from({
   icon: {},
-  title: {},
+  title: {
+    'Enter title': validateNonEmpty
+  },
   url: {
-    'Invalid url': validateUrl
+    'Enter url': validateNonEmpty,
+    'Invalid url (only internal links are allowed)': validateUrlHost,
+    'There\'s no such page in LibertySoil': validateUrlMatch
   }
 }))(BookmarkSettingsForm);
 
