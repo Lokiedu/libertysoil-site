@@ -30,6 +30,7 @@ import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
 import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
+import * as urlUtils from '../utils/url';
 import config from '../../config';
 import {
   User as UserValidators,
@@ -37,7 +38,7 @@ import {
   Hashtag as HashtagValidators,
   Geotag as GeotagValidators
 } from './db/validators';
-
+import { getRoutes } from '../routing';
 
 const bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
@@ -3242,6 +3243,51 @@ export default class ApiController {
 
     await post_object.save(null, { method: 'update' });
     await this.getPostComments(ctx);
+  };
+
+  validateUrl = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('url' in ctx.query)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter is not given' };
+      return;
+    }
+
+    const url = ctx.query.url.trim().toLowerCase();
+    const withProtocol = urlUtils.hasProtocol(url);
+
+    const API_HOST = process.env.API_HOST || 'http://localhost:8000';
+    const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
+
+    if (!urlUtils.checkMatchHosts(url, allowedHosts, withProtocol)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
+      return;
+    }
+
+    const resourceUrl = urlUtils.getResourceUrl(url, allowedHosts, withProtocol);
+    const handle = () => {};
+    const routeTree = getRoutes(handle, handle);
+
+    try {
+      const matches = await urlUtils.checkMatchRoutes(resourceUrl, routeTree);
+
+      if (!matches) {
+        ctx.status = 404;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    ctx.body = { success: true };
   };
 
   // ========== Helpers ==========

@@ -660,4 +660,13 @@ export default class ApiClient
     const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
     return await response.json();
   }
+
+  async checkUrl(url) {
+    // if (url.lastIndexOf(this.host, 0) !== 0) { // String.prototype.startsWith
+    //   return;
+    // }
+
+    const response = await this.get('/api/v1/url', { url });
+    return await response.json();
+  }
 }
