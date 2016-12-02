@@ -1,14 +1,13 @@
 import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
-import { format as format_url } from 'url';
 import AWS from 'mock-aws';
 import initBookshelf from '../src/api/db';
+import querystring from 'querystring';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
 require('../index');
-
 
 expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));
@@ -24,32 +23,37 @@ let subjectToRequest = (subject) => {
     };
   }
 
-  if (isPlainObject(subject) && "url" in subject) {
+  if (isPlainObject(subject) && 'url' in subject) {
     let result = {
       url: subject.url,
       host: 'localhost',
       port: 8000
     };
 
-    if ("session" in subject) {
-      result = merge(result, {
-        headers: {
-          "Cookie": serialize('connect.sid', subject.session)
-        }});
-    }
+    // let result = parseUrl(API_HOST.concat(subject.url));
 
     if ('query' in subject) {
-      result = merge(result, format_url(result));
+      result = merge(result, {
+        url: `${result.url}?${querystring.stringify(subject.query)}`
+      });
     }
 
-    delete subject["url"];
-    delete subject["session"];
-    delete subject["query"];
-    result = merge(result, subject);
+    if ('session' in subject) {
+      result = merge(result, {
+        headers: {
+          'Cookie': serialize('connect.sid', subject.session)
+        }
+      });
+    }
+
+    delete subject['url'];
+    delete subject['session'];
+    delete subject['query'];
+
     return merge(result, subject);
   }
 
-  throw new Error('Unexpected format of test-subject')
+  throw new Error('Unexpected format of test-subject');
 };
 
 expect.addAssertion('to have body an array', function (expect, subject, value) {
