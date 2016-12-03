@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import bcrypt from 'bcrypt';
 import { Factory } from 'rosie';
-const faker = require('faker');
+import faker from 'faker';
 
 import { bookshelf } from '../db';
 
