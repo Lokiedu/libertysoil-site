@@ -19,16 +19,20 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { debounce } from 'lodash';
+import zxcvbn from 'zxcvbn';
 
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
-import { removeMessage } from '../../actions/messages';
+import { addMessage, removeMessage } from '../../actions/messages';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 import SettingsPasswordForm from '../../components/settings/password-form';
 import Messages from '../../components/messages';
+
+const WEAK_PASSWORD_MESSAGE = 'Password is weak. Consider adding more words or symbols';
 
 class PasswordToolPage extends React.Component {
   static displayName = 'PasswordToolPage';
@@ -47,6 +51,22 @@ class PasswordToolPage extends React.Component {
     const triggers = new ActionsTrigger(client, store.dispatch);
     await triggers.loadUserInfo(currentUserUsername);
   }
+
+  handleChange = debounce(values => {
+    if (values.newPassword) {
+      if (zxcvbn(values.newPassword).score <= 1) {
+        this.props.actions.addMessage(WEAK_PASSWORD_MESSAGE);
+        return;
+      }
+    }
+
+    const index = this.props.messages.findIndex(item =>
+      item.get('message') === WEAK_PASSWORD_MESSAGE
+    );
+    if (index >= 0) {
+      this.props.actions.removeMessage(index);
+    }
+  }, 300);
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -74,6 +94,7 @@ class PasswordToolPage extends React.Component {
         <Helmet title="Password tool on " />
         <SettingsPasswordForm
           ref={c => this.form = c}
+          onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
         <div className="layout__row">
@@ -93,7 +114,10 @@ const inputSelector = createSelector(
 );
 
 const outputSelector = dispatch => ({
-  actions: { ...bindActionCreators({ removeMessage }, dispatch) }, dispatch
+  actions: {
+    ...bindActionCreators({ addMessage, removeMessage }, dispatch)
+  },
+  dispatch
 });
 
 export default connect(inputSelector, outputSelector)(PasswordToolPage);

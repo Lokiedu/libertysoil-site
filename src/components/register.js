@@ -19,7 +19,9 @@ import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
 import { keys, omit, reduce } from 'lodash';
+import zxcvbn from 'zxcvbn';
 
+import MESSAGE_TYPES from '../consts/messageTypeConstants';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import Message from './message';
@@ -83,7 +85,8 @@ export class Register extends React.Component {
     this.usernameManuallyChanged = false;
     this.state = {
       firstName: '',
-      lastName: ''
+      lastName: '',
+      passwordWarning: ''
     };
   }
 
@@ -97,6 +100,22 @@ export class Register extends React.Component {
     this.username.removeEventListener('focus', this.handleUsernameFocus);
     this.username.removeEventListener('blur', this.handleUsernameBlur);
     this.username.removeEventListener('input', this.handleUsernameInput);
+  }
+
+  handleFormChange = event => {
+    const t = event.target;
+    if (t.name === 'password') {
+      if (t.value) {
+        if (zxcvbn(t.value).score <= 1) {
+          this.setState({
+            passwordWarning: 'Password is weak. Consider adding more words or symbols'
+          });
+          return;
+        }
+      }
+
+      this.setState({ passwordWarning: '' });
+    }
   }
 
   handleSubmit = (event) => {
@@ -198,7 +217,7 @@ export class Register extends React.Component {
             <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
           </div>
         </header>
-        <form action="" className="layout__row" id="registerForm" onSubmit={this.handleSubmit}>
+        <form action="" className="layout__row" id="registerForm" onChange={this.handleFormChange} onSubmit={this.handleSubmit}>
           <div className="layout__row">
             <div className="layout__row layout__row-double">
               <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
@@ -237,7 +256,7 @@ export class Register extends React.Component {
                 {...htmlFields.username}
               />
               {fields.username.error &&
-                <Message message={fields.username.error} />
+                <Message message={fields.username.error} type={MESSAGE_TYPES.ERROR} />
               }
             </div>
             <div className="layout__row layout__row-double">
@@ -251,7 +270,10 @@ export class Register extends React.Component {
                 {...htmlFields.password}
               />
               {fields.password.error &&
-                <Message message={fields.password.error} />
+                <Message message={fields.password.error} type={MESSAGE_TYPES.ERROR} />
+              }
+              {this.state.passwordWarning &&
+                <Message message={this.state.passwordWarning} />
               }
             </div>
             <div className="layout__row layout__row-double">
@@ -265,7 +287,7 @@ export class Register extends React.Component {
                 {...htmlFields.passwordRepeat}
               />
               {fields.passwordRepeat.error &&
-                <Message message={fields.passwordRepeat.error} />
+                <Message message={fields.passwordRepeat.error} type={MESSAGE_TYPES.ERROR} />
               }
             </div>
             <div className="layout__row layout__row-double">
@@ -280,13 +302,13 @@ export class Register extends React.Component {
                 {...htmlFields.email}
               />
               {fields.email.error &&
-                <Message message={fields.email.error} />
+                <Message message={fields.email.error} type={MESSAGE_TYPES.ERROR} />
               }
             </div>
           </div>
           <div className="layout__row layout__row-double">
             {fields.agree.error &&
-              <Message message={fields.agree.error} />
+              <Message message={fields.agree.error} type={MESSAGE_TYPES.ERROR} />
             }
             {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
             <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
