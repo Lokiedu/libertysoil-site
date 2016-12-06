@@ -603,6 +603,13 @@ export function initBookshelfFromKnex(knex) {
     model: Post
   });
 
+  const Bookmark = bookshelf.Model.extend({
+    tableName: 'bookmarks',
+    user() {
+      return this.belongsTo(User);
+    }
+  });
+
   // adding to registry
   bookshelf.model('User', User);
   bookshelf.model('Post', Post);
@@ -615,6 +622,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Geotag', Geotag);
   bookshelf.model('Comment', Comment);
   bookshelf.model('Quote', Quote);
+  bookshelf.model('Bookmark', Bookmark);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
