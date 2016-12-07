@@ -27,12 +27,12 @@ module.exports = {
         enforce: 'post',
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
-        loader: 'transform/cacheable?brfs'
+        loader: 'transform-loader/cacheable?brfs'
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           cacheDirectory: true,
           presets: [
@@ -42,11 +42,11 @@ module.exports = {
           ]
         }
       },
-      { test: /\.json$/, loader: 'json' },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style', loader: 'css!postcss' }) },
-      { test: /\.less$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style', loader: 'css!postcss!less' }) },
-      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000' },
-      { test: /\.(png|jpg|svg)$/, loader: 'file?name=[hash].[ext]' }
+      { test: /\.json$/, loader: 'json-loader' },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!postcss-loader' }) },
+      { test: /\.less$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!postcss-loader!less-loader' }) },
+      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=15000' },
+      { test: /\.(png|jpg|svg)$/, loader: 'file-loader?name=[hash].[ext]' }
     ]
   },
 
@@ -57,7 +57,6 @@ module.exports = {
     ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.DedupePlugin(),
     new ExtractTextPlugin({
       filename: 'styles.css',
       allChunks: true
