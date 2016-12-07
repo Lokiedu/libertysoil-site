@@ -21,7 +21,6 @@ import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
 import { extend, merge as mergeObj } from 'lodash';
 
-
 export default class ApiClient
 {
   host;
@@ -45,18 +44,26 @@ export default class ApiClient
 
   async handleResponseError(response) {
     if (!response.ok) {
-      let json, errorMessage;
+      let json, errorMessage, e;
 
       errorMessage = response.statusText;
+      const status = response.status;
 
       try {
         json = await response.json();
         errorMessage = json.error || errorMessage;
+        e = extend(
+          new Error(errorMessage),
+          {
+            status,
+            response: json
+          }
+        );
       } catch (e) {
         throw new Error(errorMessage);
       }
 
-      throw new Error(errorMessage);
+      throw e;
     }
   }
 
@@ -246,6 +253,11 @@ export default class ApiClient
 
   async userInfo(username) {
     const response = await this.get(`/api/v1/user/${username}`);
+    return await response.json();
+  }
+
+  async followedUsers(userId) {
+    const response = await this.get(`/api/v1/user/${userId}/following`);
     return await response.json();
   }
 
@@ -497,6 +509,11 @@ export default class ApiClient
 
   async updateHashtag(uuid, data) {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
+    return await response.json();
+  }
+
+  async createSchool(data) {
+    const response = await this.postJSON('/api/v1/schools/new', data);
     return await response.json();
   }
 

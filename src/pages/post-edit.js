@@ -146,21 +146,22 @@ class PostEditPage extends React.Component {
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
-          <Sidebar current_user={current_user} />
           <PageMain>
             <PageBody>
+              <Sidebar current_user={current_user} />
               <PageContent>
                 <EditPost
                   actions={actions}
                   allSchools={schools.toList()}
-                  userRecentTags={current_user.get('recent_tags')}
-                  post={post}
-                  triggers={triggers}
-                  onDelete={this._handleDelete}
-                  onSubmit={this._handleSubmit}
                   geotags={edit_post_form.get('geotags')}
                   hashtags={edit_post_form.get('hashtags')}
+                  id={edit_post_form.get('id')}
+                  post={post}
                   schools={edit_post_form.get('schools')}
+                  triggers={triggers}
+                  userRecentTags={current_user.get('recent_tags')}
+                  onDelete={this._handleDelete}
+                  onSubmit={this._handleSubmit}
                 />
               </PageContent>
               <SidebarAlt>

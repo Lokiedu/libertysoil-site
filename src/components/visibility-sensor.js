@@ -16,7 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { Component, PropTypes } from 'react';
+import { difference, entries, omit } from 'lodash';
 
+/**
+ * Checks visibility of given child nodes*
+ * *Correctly: visibility of the wrapper covered around children
+ *
+ * Computes an update loop with `props.delay` ms interval between iterations.
+ * Calls `props.onChange(isVisible)` after each noticed change of visibility status.
+ * May be toggled off and on by passing `props.active`.
+ * Calls `props.onMount(isVisible)` right after mounting or first `props.active === true`
+ *
+ * @param {Boolean}  active   Is component active
+ * @param {Node}     children
+ * @param {Number}   delay    Interval of update
+ * @param {Function} onChange Called after change of visibility status
+ * @param {Function} onMount  Called at the start of work cycle
+ *
+ * @property {Number}  watch      Represents intervalID of 'update loop'
+ * @property {Boolean} wasVisible Was the root node visible in the last update?
+ *
+ * @method getVisibility Checks and returns node's current visibility status.
+ */
 export default class VisibilitySensor extends Component {
   static propTypes = {
     active: PropTypes.bool,
@@ -27,8 +48,9 @@ export default class VisibilitySensor extends Component {
   };
 
   static defaultProps = {
-    delay: 1000,
     active: true,
+    delay: 1000,
+    onChange: () => {},
     onMount: () => {}
   };
 
@@ -43,8 +65,15 @@ export default class VisibilitySensor extends Component {
     this.toggleCheck();
   }
 
-  componentWillReceiveProps() {
-    this.toggleCheck();
+  componentWillReceiveProps(nextProps) {
+    const next = entries(omit(nextProps, ['children']));
+    const old = entries(omit(this.props, ['children']));
+    const updatedKeys = difference(next, old).map(p => p[0]);
+    this.toggleCheck(nextProps, updatedKeys);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
   }
 
   componentWillUnmount() {
@@ -54,24 +83,32 @@ export default class VisibilitySensor extends Component {
     }
   }
 
-  toggleCheck() {
-    switch (this.props.active) {
-      case true: {
-        if (!this.watch) {
-          this.watch = setInterval(this.checkVisibility, this.props.delay);
-        }
-        break;
-      }
-      case false: {
-        if (this.watch) {
+  /**
+   * Toggles update loop.
+   * @param  {Object}        props       Props instance (may be `nextProps`).
+   * @param  {Array<String>} updatedKeys Array of updated properties' names.
+   * @return {undefined}
+   */
+  toggleCheck(props = this.props, updatedKeys = []) {
+    if (props.active) { // need to work
+      if (this.watch) { // in progress
+        if (updatedKeys.includes('delay')) {
           clearInterval(this.watch);
-          this.watch = null;
+          this.watch = setInterval(this.checkVisibility, props.delay);
         }
-        break;
+      } else { // switched off
+        this.watch = setInterval(this.checkVisibility, props.delay);
       }
+    } else if (this.watch) { // need to be stopped
+      clearInterval(this.watch);
+      this.watch = null;
     }
   }
 
+  /**
+   * Checks and returns node's current visibility status.
+   * @return {Boolean}
+   */
   getVisibility() {
     return this.checkVisibility();
   }
@@ -83,41 +120,28 @@ export default class VisibilitySensor extends Component {
       return ((w - p > 0) && (p - w < w));
     }
 
-    let isVisible;
-
-    if (!pos.width) {
-      isVisible = false;
-    } else {
-      switch (check(pos.top, win.height) || check(pos.bottom, win.height)) {
-        case true: {
-          if (check(pos.right, win.width) || check(pos.left, win.width)) {
-            isVisible = true;
-          } else {
-            isVisible = false;
-          }
-          break;
-        }
-
-        case false: {
-          isVisible = false;
-          break;
+    let isVisible = false;
+    if (pos.width) {
+      if (check(pos.top, win.height) || check(pos.bottom, win.height)) {
+        if (check(pos.right, win.width) || check(pos.left, win.width)) {
+          isVisible = true;
         }
       }
     }
 
-    if (typeof this.wasVisible === 'object') {
+    if (this.wasVisible === null) {
       this.props.onMount(isVisible);
     } else if (isVisible !== this.wasVisible) {
       this.props.onChange(isVisible);
     }
-    this.wasVisible = isVisible;
 
+    this.wasVisible = isVisible;
     return isVisible;
   };
 
   render() {
     return (
-      <div className="visibility_sensor" ref={(c) => this.node = c}>
+      <div className="visibility_sensor" ref={c => this.node = c}>
         {this.props.children}
       </div>
     );

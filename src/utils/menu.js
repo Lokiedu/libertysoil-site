@@ -107,14 +107,9 @@ export const toolsMenu = new MenuTree([
     path: '/tools/account',
     children: [
       {
-        name: 'Welcome',
-        path: '/tools/account'
-      },
-      {
         name: 'Your security',
-        path: '/tools/account/security',
         children: [
-          { name: 'Password change', path: '/tools/account/password-change' }
+          { name: 'Password', path: '/tools/account/password' }
         ]
       }
     ]
@@ -138,13 +133,6 @@ export const toolsMenu = new MenuTree([
     path: '/tools/people',
     children: [
       { name: 'Following', path: '/tools/people/following' }
-    ]
-  },
-  {
-    name: 'Account',
-    path: '/tools/account',
-    children: [
-      { name: 'Password', path: '/tools/account/password' }
     ]
   }
 ]);

@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
-import { findIndex } from 'lodash';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -47,8 +47,8 @@ export default class AddHashtagForm extends Component {
   };
 
   _selectRecentlyUsedHashtag = (tag) => {
-    const index = findIndex(this.props.userRecentHashtags, t => t.name === tag.name);
-    this._addTag(this.props.userRecentHashtags[index]);
+    const index = this.props.userRecentHashtags.findIndex(t => t.get('name') === tag.name);
+    this._addTag(this.props.userRecentHashtags.get(index).toJS());
   };
 
   _addTag = (tag) => {
@@ -106,8 +106,8 @@ export default class AddHashtagForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  hashtags={this.props.userRecentHashtags}
+                  action="add"
+                  tags={ImmutableMap({ hashtags: this.props.userRecentHashtags })}
                   onClick={this._selectRecentlyUsedHashtag}
                 />
               </div>
@@ -117,8 +117,8 @@ export default class AddHashtagForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  hashtags={popularHashtags}
+                  action="add"
+                  tags={ImmutableMap({ hashtags: popularHashtags })}
                 />
               </div>
             </Tab.Content>

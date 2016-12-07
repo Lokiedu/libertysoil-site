@@ -30,12 +30,12 @@ module.exports = {
         enforce: 'post',
         test: /\.js$/,
         include: /node_modules\/grapheme-breaker/,
-        loader: 'transform/cacheable?brfs'
+        loader: 'transform-loader/cacheable?brfs'
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           cacheDirectory: true,
           presets: [
@@ -45,16 +45,17 @@ module.exports = {
           ],
           env: {
             development: {
-              presets: ['react-hmre']
+              presets: ['react-hmre'],
+              plugins: ['tcomb']
             }
           }
         }
       },
-      { test: /\.json$/, loader: 'json' },
-      { test: /\.css$/, loader: 'style?sourceMap!css?sourceMap!postcss' },
-      { test: /\.less$/, loader: 'style?sourceMap!css?sourceMap!postcss!less?sourceMap' },
-      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=15000' },
-      { test: /\.(png|jpg|svg)$/, loader: 'url?limit=15000' }
+      { test: /\.json$/, loader: 'json-loader' },
+      { test: /\.css$/, loader: 'style-loader?sourceMap!css-loader?sourceMap!postcss-loader' },
+      { test: /\.less$/, loader: 'style-loader?sourceMap!css-loader?sourceMap!postcss-loader!less-loader?sourceMap' },
+      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=15000' },
+      { test: /\.(png|jpg|svg)$/, loader: 'url-loader?limit=15000' }
     ]
   },
 

@@ -31,6 +31,19 @@ export default function reducer(state = initialState, action) {
 
       break;
     }
+
+    case users.ADD_USERS: {
+      const ids = action.users.reduce((acc, user) => {
+        if (Array.isArray(user.followers)) {
+          acc[user.id] = user.followers.map(user => user.id);
+        }
+        return acc;
+      }, {});
+
+      state = state.mergeDeep(i.fromJS(ids));
+
+      break;
+    }
   }
 
   return state;

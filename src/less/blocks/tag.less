@@ -14,144 +14,118 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 .tag {
-  @height: 23px;
-  @icon-size: @height;
-
-  @heightBig: 37px;
-  @icon-sizeBig: @heightBig;
-
-  &:extend(.font-open_sans);
+  height: 23px;
   display: flex;
-  align-items: stretch;
-  position: relative;
-  height: @height;
-  /* background-color: white; */
-  border: 1px solid #ccc;
-  border-radius: 11px;
-  font-size: 11px;
-  margin-left: 1px;
+  flex-direction: row;
+  align-items: center;
+  
+  border-width: 1px;
+  border-style: solid;
+  color: #000;
 
-  &:hover {
-    .tag__action {
-      opacity: 1;
-    }
-  }
-
-  &-size_big {
-    height: @heightBig;
-    min-width: @heightBig;
-    border-radius: 17px;
-    border: none;
-
-    .tag__icon_wrapper {
-      width: @heightBig;
-      height: @heightBig;
-      margin: 0;
-      top: 0;
-      left: 0;
-    }
-
-    .tag__icon {
-      width: @heightBig;
-      height: @heightBig;
-      line-height: @heightBig;
-      font-size: 18px;
-    }
-  }
-
-  &-clickable {
-    cursor: pointer;
-  }
-
-  &-inactive {
-    border-color: #d0d0d0!important;
-
-    .tag_icon {
-      background: #d0d0d0!important;
-    }
-  }
-
-  &__icon_wrapper {
-    position: relative;
-    left: -2px;
-    top: -1px;
-    margin-right: -5px;
-    width: 23px;
-    height: 23px;
+  &__name {
+    padding-left: 6px;
+    padding-right: 10px;
+    font-size: 11px;
+    line-height: 11px;
   }
 
   &__icon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 23px;
-    height: 23px;
+    position: relative;
+    padding: 4px;
+    width: 22px;
+    height: 22px;
+    border-width: 1px;
+    border-style: solid;
+    border-left: none;
+    color: white;
+    
+    &[class*="tag__icon--action"] {
+      cursor: pointer;
+      &::before {
+        &:extend(.micon);
+        &:extend(.micon-small);
+        
+        padding-top: 1px;
+        padding-right: 1px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: inherit;
+        height: inherit;
+
+        display: none;
+        border-radius: 50%;
+
+        text-align: center;
+      }
+    }
+
+    .tag-icon-action(@name, @icon) {
+      &--action_@{name} {
+        &::before {
+          content: ~"'@{icon}'";
+        }
+      }
+    }
+
+    .tag-icon-action(@name: ~"delete", @icon: ~"clear");
+    .tag-icon-action(@name: ~"add", @icon: ~"add");
   }
 
-  &__name {
-    padding: 0 10px 0 8px;
-    line-height: 19px;
-    color: #333;
+  &:hover {
+    [class*="tag__icon--action"] {
+      position: relative;
+      
+      .micon {
+        opacity: 0;
+      }
+
+      &::before {
+        display: block;
+      }
+    }
   }
 
-  &__post_count {
+  &__badge {
     padding-right: 10px;
+    font-size: 11px;
     line-height: 19px;
     color: @color__dark_gray;
   }
 
-  &__action {
-    cursor: pointer;
-    line-height: @height;
-    opacity: 0;
-    z-index: 10;
-    background: #ccc;
-    color: #fff;
-    font-size: 15px;
+  &--round {
     border-radius: 11px;
-    text-align: center;
   }
 
-  &-hashtag {
-    border-color: #689ACA;
+  .tag-type(@name, @color) {
+    &--@{name} {
+      border-color: @color;
 
-    .tag__action {
-      background: #689ACA;
+      .tag__icon {
+        border-color: @color;
+        background-color: @color;
+      }
     }
   }
 
-  &-school {
-    border-color: #DC3457;
+  .tag-type(@name: ~"hashtag", @color: #689ACA);
+  .tag-type(@name: ~"school", @color: #DC3457);
+  .tag-type(@name: ~"geotag", @color: #47B8E7);
+  .tag-type(@name: ~"event", @color: #98C646);
+  .tag-type(@name: ~"mention", @color: #F8A232);
+  
+  &--theme_minified {
+    background-color: #fff;
+    border: none;
 
-    .tag__action {
-      background: #DC3457;
-    }
-  }
-
-  &-event {
-    border-color: #98C646;
-
-    .tag__action {
-      background: #98C646;
-    }
-  }
-
-  &-mention {
-    border-color: #F8A232;
-
-    .tag__action {
-      background: #F8A232;
-    }
-  }
-
-  &-location {
-    border-color: #47B8E7;
-
-    .tag__action {
-      background: #47B8E7;
+    .tag__name {
+      padding: 0 10px;
     }
   }
 }

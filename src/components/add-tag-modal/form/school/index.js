@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes, Component } from 'react';
-import { findIndex } from 'lodash';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Tab, Tabs } from '../../deps';
 import { TagCloud } from '../../deps';
@@ -45,8 +45,8 @@ export default class AddSchoolForm extends Component {
   };
 
   _selectRecentlyUsedSchool = (tag) => {
-    const index = findIndex(this.props.userRecentSchools, t => t.url_name === tag.urlId);
-    this._addTag(this.props.userRecentSchools[index]);
+    const index = this.props.userRecentSchools.findIndex(t => t.get('url_name') === tag.urlId);
+    this._addTag(this.props.userRecentSchools.get(index).toJS());
   };
 
   submitHandler = async (e) => {
@@ -115,8 +115,8 @@ export default class AddSchoolForm extends Component {
               Used recently:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={this.props.userRecentSchools}
+                  action="add"
+                  tags={ImmutableMap({ schools: this.props.userRecentSchools })}
                   onClick={this._selectRecentlyUsedSchool}
                 />
               </div>
@@ -126,8 +126,8 @@ export default class AddSchoolForm extends Component {
               Popular:
               <div className="layout__row">
                 <TagCloud
-                  addable
-                  schools={popularSchools}
+                  action="add"
+                  tags={ImmutableMap({ schools: popularSchools })}
                 />
               </div>
             </Tab.Content>

@@ -33,10 +33,10 @@ import Sidebar from '../components/sidebar';
 
 
 const NotFound = ({ is_logged_in, current_user }) => {
-  let pageClassName = null;
+  let pageClassName = 'page__container--static';
 
   if (!is_logged_in) {
-    pageClassName = 'page__container-no_sidebar';
+    pageClassName += ' page__container-no_sidebar';
   }
 
   return (
@@ -44,9 +44,9 @@ const NotFound = ({ is_logged_in, current_user }) => {
       <Helmet title="Page not found at " />
       <Header current_user={current_user} is_logged_in={is_logged_in} />
       <Page className={pageClassName}>
-        <Sidebar />
         <PageMain>
           <PageBody>
+            <Sidebar isFixed={false} />
             <PageContent>
               <section className="box">
                 <div className="box__title">

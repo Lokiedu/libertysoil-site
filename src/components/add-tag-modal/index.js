@@ -43,9 +43,9 @@ function AddedTags({ addedTags, onDelete }) {
       </div>
       <div className="layout__row add_tag_modal__added_tags">
         <TagCloud
-          deletable
-          onDelete={onDelete}
-          {...addedTags}
+          action="delete"
+          tags={i.fromJS(addedTags)}
+          onClick={onDelete}
         />
       </div>
     </div>
@@ -142,21 +142,21 @@ export default class AddTagModal extends Component {
     switch (displayTag.type) {
       case TAG_LOCATION: {
         this.setState({
-          geotags: this.state.geotags.filter(geotag => geotag.get('url_name') === displayTag.get('urlId'))
+          geotags: this.state.geotags.filter(geotag => geotag.get('url_name') !== displayTag.urlId)
         });
 
         break;
       }
       case TAG_SCHOOL: {
         this.setState({
-          schools: this.state.schools.filter(school => school.get('url_name') === displayTag.get('urlId'))
+          schools: this.state.schools.filter(school => school.get('url_name') !== displayTag.urlId)
         });
 
         break;
       }
       case TAG_HASHTAG: {
         this.setState({
-          hashtags: this.state.hashtags.filter(hashtag => hashtag.get('name') === displayTag.get('urlId'))
+          hashtags: this.state.hashtags.filter(hashtag => hashtag.get('name') !== displayTag.urlId)
         });
 
         break;

@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { List } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
-
 
 /**
  * Converts hashtags(labels), schools, and other tags to the same format.
@@ -25,12 +25,11 @@ import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
  * @param {Object} params {hashtags: Immutable.List, schools: Immutable.List, geotags: Immutable.List}
  * @returns {Array}
  */
-export function convertModelsToTags(params = {}) {
+export function convertModelsToTags(params = ImmutableMap({})) {
   const allTags = [];
 
-
-  if (List.isList(params.geotags)) {
-    params.geotags.forEach(function (tag) {
+  if (List.isList(params.get('geotags'))) {
+    params.get('geotags').forEach(function (tag) {
       allTags.push({
         urlId: tag.get('url_name'),
         name: tag.get('name'),
@@ -40,8 +39,8 @@ export function convertModelsToTags(params = {}) {
     });
   }
 
-  if (List.isList(params.schools)) {
-    params.schools.forEach(function (school) {
+  if (List.isList(params.get('schools'))) {
+    params.get('schools').forEach(function (school) {
       allTags.push({
         urlId: school.get('url_name'),
         name: school.get('name'),
@@ -51,8 +50,8 @@ export function convertModelsToTags(params = {}) {
     });
   }
 
-  if (List.isList(params.hashtags)) {
-    params.hashtags.forEach(function (tag) {
+  if (List.isList(params.get('hashtags'))) {
+    params.get('hashtags').forEach(function (tag) {
       allTags.push({
         urlId: tag.get('name'),
         name: tag.get('name'),

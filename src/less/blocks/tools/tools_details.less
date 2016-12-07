@@ -26,6 +26,7 @@
   background-color: white;
   border-bottom: 2px solid #EDEDED;
 
+  // TODO: Implement a framework instead of reinventing utility classes all over and over again.
   &__title {
     display: block;
     margin-bottom: @space;
@@ -36,7 +37,16 @@
     margin-bottom: @space;
   }
 
+  &__paragraph {
+    padding-bottom: @space;
+  }
+
   &__left_col {
+    flex-shrink: 0;
     margin-right: @doubleSpace;
+  }
+
+  &__subtext {
+    color: @subtextColor;
   }
 }

@@ -4,6 +4,7 @@
 [ignore]
 .*/node_modules/fbjs/*
 .*/node_modules/react-leaflet/*
+.*/node_modules/typechecker/es2015/index.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/attachRenderer.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/backend.js
 

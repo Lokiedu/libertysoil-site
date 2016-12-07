@@ -35,6 +35,7 @@ import { ActionsTrigger } from '../../triggers';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { setFollowedUsers } from '../../actions/tools';
+import { addUsers } from '../../actions/users';
 import UserDetails from '../../components/tools/user-details';
 import UserList from '../../components/tools/user-list';
 
@@ -58,9 +59,9 @@ class PeopleToolPage extends React.Component {
       return;
     }
 
-    const userInfo = await client.userInfo(state.getIn(['users', currentUserId, 'username']));
-    const followedUsers = userInfo.following;
-    store.dispatch(setFollowedUsers(followedUsers));
+    const users = await client.followedUsers(currentUserId);
+    store.dispatch(setFollowedUsers(users));
+    store.dispatch(addUsers(users));
   }
 
   state = {
@@ -96,7 +97,7 @@ class PeopleToolPage extends React.Component {
         />
         <UserDetails
           current_user={current_user}
-          following={following.get(current_user.get('id'))}
+          following={following}
           triggers={triggers}
           user={selectedUser}
         />

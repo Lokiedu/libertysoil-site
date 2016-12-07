@@ -28,6 +28,7 @@ import { format as format_url, parse as parse_url } from 'url';
 
 import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
+import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import {
@@ -98,7 +99,6 @@ export default class ApiController {
         qb
           .join('users', 'users.id', 'posts.user_id')
           .where('users.username', '=', ctx.params.user)
-          .orderBy('posts.updated_at', 'desc')
           .whereIn('posts.type', ['short_text', 'long_text'])
           .offset(ctx.query.offset);
 
@@ -106,7 +106,7 @@ export default class ApiController {
           qb.limit(ctx.query.limit);
         }
 
-        this.applySortQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, '-updated_at');
       });
 
 
@@ -629,6 +629,129 @@ export default class ApiController {
     }
   };
 
+  createSchool = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('name' in ctx.request.body)) {
+      ctx.status = 400;
+      ctx.body = { error: '"name" property is not given' };
+      return;
+    }
+
+    const name = removeWhitespace(ctx.request.body.name);
+
+    if (!name) {
+      ctx.status = 400;
+      ctx.body = { error: '"name" mustn\'t be an empty string' };
+      return;
+    }
+
+    const School = this.bookshelf.model('School');
+
+    try {
+      await School.where({ name }).fetch({ require: true });
+
+      ctx.status = 409;
+      ctx.body = { error: 'School with such name is already registered' };
+      return;
+    } catch (e) {
+      // go next
+    }
+
+    try {
+      const allowedAttributes = [
+        'name', 'description',
+        'lat', 'lon',
+        'is_open', 'principal_name', 'principal_surname',
+        'foundation_year', 'foundation_month', 'foundation_day',
+        'number_of_students', 'org_membership',
+        'teaching_languages', 'required_languages',
+        'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+        'website', 'facebook', 'twitter', 'wikipedia'
+      ];
+
+      const processData = (data) => {
+        if ('is_open' in data) {
+          if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
+            throw new Error("'is_open' has to be boolean or null");
+          }
+        }
+
+        if ('number_of_students' in data) {
+          if (!_.isPlainObject(data.number_of_students)) {
+            throw new Error("'number_of_students' should be an object");
+          }
+        }
+
+        if ('org_membership' in data) {
+          if (!_.isPlainObject(data.org_membership)) {
+            throw new Error("'org_membership' should be an object");
+          }
+        }
+
+        if ('teaching_languages' in data) {
+          if (!_.isArray(data.teaching_languages)) {
+            throw new Error("'teaching_languages' should be an array");
+          }
+          data.teaching_languages = JSON.stringify(data.teaching_languages);
+        }
+
+        if ('required_languages' in data) {
+          if (!_.isArray(data.required_languages)) {
+            throw new Error("'required_languages' should be an array");
+          }
+          data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        for (const key in data) {
+          if (data[key] === '') {
+            data[key] = null;
+          }
+        }
+
+        return data;
+      };
+
+      const attributesWithValues = processData({
+        ..._.pick(ctx.request.body, allowedAttributes),
+        name
+      });
+
+      const properties = {};
+      if (ctx.request.body.more) {
+        for (const fieldName in SchoolValidators.more) {
+          if (fieldName in ctx.request.body.more) {
+            properties[fieldName] = ctx.request.body.more[fieldName];
+          }
+        }
+      }
+
+      properties.last_editor = ctx.session.user;
+      attributesWithValues.more = properties;
+
+      const school = new School({
+        id: uuid.v4()
+      });
+
+      school.set(attributesWithValues);
+      school.set('url_name', slug(attributesWithValues.name));
+
+      await school.save(null, { method: 'insert' });
+
+      // 'school' variable doesn't contain default school properties (e.g. 'post_count')
+      const newSchool = await School.where({ name }).fetch({ require: true });
+
+      ctx.body = newSchool.toJSON();
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  }
+
   updateSchool = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -688,6 +811,12 @@ export default class ApiController {
             throw new Error("'required_languages' should be an array");
           }
           data.required_languages = JSON.stringify(data.required_languages);
+        }
+
+        for (const key in data) {
+          if (data[key] === '') {
+            data[key] = null;
+          }
         }
 
         return data;
@@ -937,7 +1066,6 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
     ctx.body = posts;
   };
 
@@ -1234,7 +1362,7 @@ export default class ApiController {
     } catch (e) {
       ctx.app.logger.warn(`Someone tried to reset password using unknown reset-hash`);
       ctx.status = 401;
-      ctx.body = { success: false };
+      ctx.body = { success: false, error: 'Unauthorized' };
       return;
     }
 
@@ -1732,6 +1860,31 @@ export default class ApiController {
     }
   };
 
+  getFollowedUsers = async (ctx) => {
+    const User = this.bookshelf.model('User');
+
+    try {
+      const users = await User.collection()
+        .query(qb => {
+          qb.join('followers', 'users.id', 'followers.following_user_id')
+            .where('followers.user_id', ctx.params.id);
+        })
+        .fetch({
+          withRelated: [
+            'following', 'followers', 'liked_posts',
+            'liked_hashtags', 'liked_schools', 'liked_geotags',
+            'favourited_posts', 'followed_hashtags',
+            'followed_schools', 'followed_geotags'
+          ]
+        });
+
+      ctx.body = users;
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+  }
+
   followUser = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -1785,6 +1938,12 @@ export default class ApiController {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
       ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.request.body.more) {
+      ctx.status = 400;
+      ctx.body = { error: 'Bad Request' };
       return;
     }
 
@@ -2958,7 +3117,7 @@ export default class ApiController {
       return;
     }
 
-    if (!('text' in ctx.request.body)) {
+    if (!('text' in ctx.request.body) || !ctx.request.body.text) {
       ctx.status = 400;
       ctx.body = { error: 'Comment text cannot be empty' };
       return;
@@ -3016,7 +3175,6 @@ export default class ApiController {
       }).fetch({ require: true });
     } catch (e) {
       ctx.status = 404;
-      ctx.body = { error: e.message };
       return;
     }
 
@@ -3057,11 +3215,16 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const Comment = this.bookshelf.model('Comment');
 
-    let post_object;
+    let post_object, comment_object;
     try {
       post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
+      comment_object = await Comment.where({ id: ctx.params.comment_id, post_id: ctx.params.id }).fetch({ require: true });
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
 
+    try {
       if (comment_object.get('user_id') != ctx.session.user) {
         ctx.status = 403;
         ctx.body = { error: 'You are not authorized' };

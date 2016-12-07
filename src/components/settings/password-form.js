@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { form as inform, from, DisabledFormSubmit } from 'react-inform';
 import { omit, reduce } from 'lodash';
 import classNames from 'classnames';
-import zxcvbn from 'zxcvbn';
 
 import Message from '../message';
 
@@ -77,15 +76,13 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
       []
     )}
 
-    {form.isValid() &&
-      <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
-        <DisabledFormSubmit
-          className="button button-wide button-green button--new"
-          type="submit"
-          value="Save"
-        />
-      </div>
-    }
+    <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
+      <DisabledFormSubmit
+        className="button button-wide button-green button--new"
+        type="submit"
+        value="Save"
+      />
+    </div>
   </form>
 );
 
@@ -127,13 +124,6 @@ const validateNewPasswordChars = (password) => {
   return true;
 };
 
-const validateComplexity = (password) => {
-  if (zxcvbn(password).score < 3) {
-    return false;
-  }
-  return true;
-};
-
 const validateNewPasswordRepeat = (newPasswordRepeat, form) => {
   if (form.newPassword !== newPasswordRepeat) {
     return false;
@@ -148,8 +138,7 @@ const WrappedPasswordForm = inform(from({
   newPassword: {
     'Enter new password': n => n,
     'Password must contain at least 8 symbols': validateNewPassword,
-    'Password must contain only ASCII characters': validateNewPasswordChars,
-    'Password is too weak. Consider adding more words or symbols': validateComplexity
+    'Password must contain only ASCII characters': validateNewPasswordChars
   },
   newPasswordRepeat: {
     'Passwords don\'t match': validateNewPasswordRepeat

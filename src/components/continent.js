@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
@@ -40,7 +41,7 @@ const Continent = ({ code, count, geotags }) => {
         {name} <span className="continent__amount">({count})</span>
       </Link>
       <div className="layout__row">
-        <TagCloud geotags={geotags} showPostCount />
+        <TagCloud showPostCount tags={ImmutableMap({ geotags })} />
       </div>
     </div>
   );
