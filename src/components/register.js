@@ -132,8 +132,8 @@ export class Register extends React.Component {
       fields.username.value,
       fields.password.value,
       fields.email.value,
-      htmlForm.firstName.value,
-      htmlForm.lastName.value
+      htmlForm.querySelector('input[name=firstName]').value,
+      htmlForm.querySelector('input[name=lastName]').value
     );
   };
 

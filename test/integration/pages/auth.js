@@ -19,13 +19,11 @@
 /* global $dbConfig,setTimeout */
 import React from 'react';
 import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
 
 import { API_HOST } from '../../../src/config';
 import ApiClient from '../../../src/api/client';
 import { ActionsTrigger } from '../../../src/triggers';
 import Login from '../../../src/components/login';
-import WrappedRegister, { Register } from '../../../src/components/register';
 import initBookshelf from '../../../src/api/db';
 import { initState } from '../../../src/store';
 import expect from '../../../test-helpers/expect';
@@ -65,85 +63,5 @@ describe('Auth page', () => {
     wrapper.find('form').simulate('submit');
 
     expect(await newUserId, 'to equal', user.get('id'));
-  });
-
-  describe('Register component', () => {
-  });
-
-  describe('Wrapped Register component', () => {
-    let userAttrs, user;
-    const email = 'test@example.com';
-
-    before(async () => {
-      userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, email);
-    });
-
-    after(async () => {
-      await user.destroy();
-    });
-
-    it('availableUsername should work', async () => {
-      const testComponent = (
-        <WrappedRegister
-          onRegisterUser={() => {}}
-          onShowRegisterForm={() => {}}
-        />
-      );
-      const wrapper = mount(testComponent);
-      expect(wrapper.find('#registerUsername').node.value, 'to be empty');
-
-      wrapper.find('#registerFirstName').node.value = 'John';
-      wrapper.find('#registerFirstName').simulate('change');
-      wrapper.find('#registerLastName').node.value = 'Smith';
-      wrapper.find('#registerLastName').simulate('change');
-
-      const suggestedUsername = waitForChange(() => wrapper.find('#registerUsername').node.value);
-      expect(await suggestedUsername, 'not to be empty');
-    });
-
-    it('should check on email currently taken', async () => {
-      const testComponent = (
-        <WrappedRegister
-          onRegisterUser={() => {}}
-          onShowRegisterForm={() => {}}
-        />
-      );
-      const wrapper = mount(testComponent);
-
-      const newEmailError = waitForChange(() => wrapper.state().errors.email);
-
-      wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
-      wrapper.find('#registerForm').simulate('submit');
-
-      expect(await newEmailError, 'to equal', 'Email is taken');
-    });
-
-    xit('Should call "registerUser" trigger with no validation error', (done) => {
-      const username = 'test2';
-      const testComponent = (
-        <WrappedRegister
-          onRegisterUser={triggers.registerUser}
-          onShowRegisterForm={() => {}}
-        />
-      );
-      const wrapper = mount(testComponent);
-
-      wrapper.find('#registerUsername').simulate('change', { target: { value: username } });
-      wrapper.find('#registerPassword').simulate('change', { target: { value: 'test2password' } });
-      wrapper.find('#registerPasswordRepeat').simulate('change', { target: { value: 'test2password' } });
-      wrapper.find('#registerEmail').simulate('change', { target: { value: 'test2@example.com' } });
-      wrapper.find('#registerAgree').simulate('change', { target: { value: true } });
-
-      setTimeout(async () => {
-        wrapper.find('#registerForm').simulate('submit');
-
-        setTimeout(async () => {
-          expect(await User.where({ username }).fetch({ require: true }), 'not to be empty');
-
-          done();
-        }, 2000);
-      }, 2000);
-    });
   });
 });
