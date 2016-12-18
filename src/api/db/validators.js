@@ -90,4 +90,8 @@ const Hashtag = {
   }
 };
 
-export { User, School, Hashtag, Geotag };
+const UserMessage = {
+  text: ['string', 'minLength:1', 'required']
+};
+
+export { User, School, Hashtag, Geotag, UserMessage };

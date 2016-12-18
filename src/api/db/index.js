@@ -85,6 +85,12 @@ export function initBookshelfFromKnex(knex) {
     post_subscriptions() {
       return this.belongsToMany(Post, 'post_subscriptions');
     },
+    inbox() {
+      return this.hasMany(UserMessage, 'reciever_id');
+    },
+    outbox() {
+      return this.hasMany(UserMessage, 'sender_id');
+    },
     virtuals: {
       gravatarHash() {
         const email = this.get('email');
@@ -599,6 +605,16 @@ export function initBookshelfFromKnex(knex) {
     tableName: 'quotes'
   });
 
+  const UserMessage = bookshelf.Model.extend({
+    tableName: 'user_messages',
+    sender() {
+      return this.belongsTo(User, 'sender_id');
+    },
+    reciever() {
+      return this.belongsTo(User, 'reciever_id');
+    }
+  });
+
   const Posts = bookshelf.Collection.extend({
     model: Post
   });
@@ -615,6 +631,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Geotag', Geotag);
   bookshelf.model('Comment', Comment);
   bookshelf.model('Quote', Quote);
+  bookshelf.model('UserMessage', UserMessage);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

@@ -35,7 +35,8 @@ import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
-  Geotag as GeotagValidators
+  Geotag as GeotagValidators,
+  UserMessage as UserMessageValidators
 } from './db/validators';
 
 
@@ -3261,7 +3262,76 @@ export default class ApiController {
     await this.getPostComments(ctx);
   };
 
+  sendMessage = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!this.areMutuallyFollowed(ctx.session.user, ctx.params.id)) {
+      ctx.status = 403;
+      ctx.body = { error: 'You must be mutually followed with this user to be able to message them' };
+      return;
+    }
+
+    try {
+      await new Checkit(UserMessageValidators).run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    const User = this.bookshelf.model('User');
+
+    const currentUser = await new User({ id: ctx.session.user }).fetch({ require: true });
+    const message = await currentUser.outbox().create({
+      reciever_id: ctx.params.id,
+      text: ctx.request.body.text
+    });
+
+    ctx.body = await message.fetch();
+  }
+
+  /**
+   * Gets a chain of messages between the current user and the specified in params.
+   */
+  getUserMessages = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const UserMessage = this.bookshelf.model('UserMessage');
+
+    const messages = await UserMessage.collection()
+      .query(qb => {
+        qb
+          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          .orWhere({ sender_id: ctx.params.id, reciever_id: ctx.session.user })
+          .orderBy('created_at', 'ASC');
+      })
+      .fetch();
+
+    ctx.body = messages;
+  }
+
   // ========== Helpers ==========
+
+  async areMutuallyFollowed(user1Id, user2Id) {
+    const knex = this.bookshelf.knex;
+
+    const userFollows = await knex('followers')
+      .where({ user_id: user1Id, following_user_id: user2Id })
+      .count();
+    const userBeingFollowed = await knex('followers')
+      .where({ user_id: user2Id, following_user_id: user1Id })
+      .count();
+
+    return userFollows.count != '0' && userBeingFollowed.count != '0';
+  }
 
   countComments = async (posts) => {
     const ids = posts.map(post => {

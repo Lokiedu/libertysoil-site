@@ -451,6 +451,16 @@ export default class ApiClient
     return await response.json();
   }
 
+  async sendMessage(userId, text) {
+    const response = await this.postJSON(`/api/v1/user/${userId}/messages`, { text });
+    return await response.json();
+  }
+
+  async userMessages(userId) {
+    const response = await this.get(`/api/v1/user/${userId}/messages`);
+    return await response.json();
+  }
+
   async registerUser(userData) {
     const response = await this.post(`/api/v1/users`, userData);
     return await response.json();
