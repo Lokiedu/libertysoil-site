@@ -15,36 +15,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// Visual block used in item lists on tool pages.
-.tools_item {
-  @space: 20px;
+// When updating the whole message chain.
+export const SET_USER_MESSAGES = 'SET_USER_MESSAGES';
+// When sending a new message.
+export const ADD_USER_MESSAGE = 'ADD_USER_MESSAGE';
 
-  display: flex;
-  margin-bottom: 15px;
-  padding: @space;
-  background-color: white;
-  border-bottom: 2px solid #EDEDED;
+export function setUserMessages(userId, messages) {
+  return {
+    type: SET_USER_MESSAGES,
+    messages,
+    userId
+  };
+}
 
-  &-selected {
-    background: #FD9315;
-    color: white;
-
-    > .tools_item__icon {
-      color: white;
-    }
-  }
-
-  &-clickable {
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &__child-padded {
-    margin-left: @space;
-  }
-
-  &__icon {
-    color: @color__gray;
-  }
+export function addUserMessage(userId, message) {
+  return {
+    type: ADD_USER_MESSAGE,
+    message,
+    userId
+  };
 }

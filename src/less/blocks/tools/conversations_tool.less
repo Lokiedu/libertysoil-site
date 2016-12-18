@@ -1,0 +1,77 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+.conversations_tool {
+  &__messages {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__message {
+    position: relative;
+    display: flex;
+    margin-bottom: 20px;
+    padding: 20px 20px 30px 20px;
+    align-items: center;
+    background-color: white;
+    border: 1px solid @color__gray;
+    max-width: 60%;
+    min-width: 170px; // to fit the time
+
+    &-my {
+      align-self: flex-end;
+      flex-flow: row-reverse;
+
+      > .conversations_tool__avatar {
+        margin-left: 10px;
+      }
+
+      > .conversations_tool__time {
+        right: 20px;
+      }
+    }
+
+    &-their {
+      align-self: flex-start;
+
+      > .conversations_tool__avatar {
+        margin-right: 10px;
+      }
+
+      > .conversations_tool__time {
+        left: 20px;
+      }
+    }
+  }
+
+  &__avatar {
+    align-self: flex-start;
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  &__time {
+    position: absolute;
+    bottom: 2px;
+    color: @color__gray;
+    font-size: 13px;
+  }
+}

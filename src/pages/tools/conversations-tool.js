@@ -19,7 +19,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
+import i from 'immutable';
 
+import ApiClient from '../../api/client';
+import { ActionsTrigger } from '../../triggers';
 import {
   Immutable as ImmutablePropType
 } from '../../prop-types/common';
@@ -31,10 +34,11 @@ import createSelector from '../../selectors/createSelector';
 import { setConversationsRiver } from '../../actions/tools';
 import { addUsers } from '../../actions/users';
 import { getUrl } from '../../utils/urlGenerator';
-import { URL_NAMES } from '../../config';
+import { API_HOST, URL_NAMES } from '../../config';
 
 import Avatar from '../../components/user/avatar';
 import Icon from '../../components/icon';
+import Conversation from '../../components/tools/conversation';
 
 
 class ConversationsToolPage extends React.Component {
@@ -58,31 +62,92 @@ class ConversationsToolPage extends React.Component {
     store.dispatch(addUsers(users));
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedUserId: null
+    };
+    this.client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(this.client, this.props.dispatch);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timeoutId);
+  }
+
+  handleSelectUser = async (selectedUserId) => {
+    this.setState({ selectedUserId });
+    await this.updateMessages(selectedUserId);
+  };
+
+  handleSendMessage = async (userId, text) => {
+    this.triggers.sendMessage(userId, text);
+  };
+
+  updateMessages = async (selectedUserId) => {
+    clearTimeout(this.timeoutId);
+
+    if (selectedUserId) {
+      await this.triggers.updateUserMessages(selectedUserId);
+
+      this.timeoutId = setTimeout(this.updateMessages.bind(this, selectedUserId), 30 * 1000);
+    }
+  }
+
   render() {
     const {
+      current_user,
       conversations_river,
-      users
+      users,
+      user_messages
     } = this.props;
 
+    const currentUser = users.get(current_user.get('id'));
+    const selectedUser = users.get(this.state.selectedUserId);
+    const selectedUserMessages = user_messages.get(this.state.selectedUserId) || i.List();
+
+
     const followedUsers = conversations_river.map(id => users.get(id));
-    const userItems = followedUsers.map((user, index) => (
-      <div
-        className="tools_item layout-align_justify"
-        key={index}
-      >
-        <Link className="layout" to={getUrl(URL_NAMES.USER, { username: user.get('username') })}>
-          <Avatar size={23} user={user} />
-          <span className="tools_item__child-padded">{user.get('username')}</span>
-        </Link>
-        <Icon className="action" color="gray" icon="message" />
-      </div>
-    ));
+    const userItems = followedUsers.map((user, index) => {
+      const handleClick = () => this.handleSelectUser(user.get('id'));
+      const isSelected = this.state.selectedUserId === user.get('id');
+      let className = 'tools_item layout-align_justify';
+      if (isSelected) {
+        className += ' tools_item-selected';
+      }
+
+      return (
+        <div
+          className={className}
+          key={index}
+        >
+          <Link className="layout" to={getUrl(URL_NAMES.USER, { username: user.get('username') })}>
+            <Avatar size={23} user={user} />
+            <span className="tools_item__child-padded">{user.get('username')}</span>
+          </Link>
+          <Icon
+            className="tools_item__icon action"
+            icon="message"
+            onClick={handleClick}
+          />
+        </div>
+      );
+    });
 
     return (
       <div className="layout">
-        <Helmet title="Followed people tool on " />
+        <Helmet title="Conversations on " />
         <div className="tools_page__list_col">
           {userItems}
+        </div>
+
+        <div className="tools_page__details_col">
+          <Conversation
+            currentUser={currentUser}
+            messages={selectedUserMessages}
+            selectedUser={selectedUser}
+            onSend={this.handleSendMessage}
+          />
         </div>
       </div>
     );
@@ -90,11 +155,15 @@ class ConversationsToolPage extends React.Component {
 }
 
 const selector = createSelector(
+  state => state.get('current_user'),
   state => state.getIn(['tools', 'conversations_river']), // for the list of followed users
   state => state.get('users'),
-  (conversations_river, users) => ({
+  state => state.get('user_messages'),
+  (current_user, conversations_river, users, user_messages) => ({
+    current_user,
     conversations_river,
-    users
+    users,
+    user_messages
   })
 );
 

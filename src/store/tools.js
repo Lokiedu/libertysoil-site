@@ -20,7 +20,7 @@ import i from 'immutable';
 import { tools } from '../actions';
 
 
-const initialState = i.fromJS({
+export const initialState = i.fromJS({
   schools_river: [],
   all_schools_loaded: false,
   schools_alphabet: [],
@@ -29,7 +29,7 @@ const initialState = i.fromJS({
   conversations_river: []
 });
 
-export default function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case tools.TOOLS__ADD_SCHOOLS_TO_RIVER: {
       const ids = i.List(action.schools.map(school => school.id));

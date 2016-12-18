@@ -15,36 +15,28 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// Visual block used in item lists on tool pages.
-.tools_item {
-  @space: 20px;
+import i from 'immutable';
 
-  display: flex;
-  margin-bottom: 15px;
-  padding: @space;
-  background-color: white;
-  border-bottom: 2px solid #EDEDED;
+import { userMessages } from '../actions';
 
-  &-selected {
-    background: #FD9315;
-    color: white;
 
-    > .tools_item__icon {
-      color: white;
+// user_id => list of messages
+export const initialState = i.Map();
+
+export function reducer(state = initialState, action) {
+  switch (action.type) {
+    case userMessages.SET_USER_MESSAGES: {
+      state = state.set(action.userId, i.fromJS(action.messages));
+
+      break;
+    }
+
+    case userMessages.ADD_USER_MESSAGE: {
+      state = state.update(action.userId, messages => (messages || i.List()).push(i.fromJS(action.message)));
+
+      break;
     }
   }
 
-  &-clickable {
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &__child-padded {
-    margin-left: @space;
-  }
-
-  &__icon {
-    color: @color__gray;
-  }
+  return state;
 }

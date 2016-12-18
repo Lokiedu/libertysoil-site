@@ -3269,7 +3269,8 @@ export default class ApiController {
       return;
     }
 
-    if (!this.areMutuallyFollowed(ctx.session.user, ctx.params.id)) {
+    const areMutuallyFollowed = await this.areMutuallyFollowed(ctx.session.user, ctx.params.id);
+    if (!areMutuallyFollowed) {
       ctx.status = 403;
       ctx.body = { error: 'You must be mutually followed with this user to be able to message them' };
       return;
@@ -3314,6 +3315,16 @@ export default class ApiController {
           .orderBy('created_at', 'ASC');
       })
       .fetch();
+    await UserMessage.collection()
+      .query(qb => {
+        qb
+          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          // TODO: Replace with a single orWhere() when knex is upgraded from 0.10
+          .orWhere({ sender_id: ctx.params.id })
+          .andWhere({ reciever_id: ctx.session.user })
+          .orderBy('created_at', 'ASC');
+      })
+      .fetch();
 
     ctx.body = messages;
   }
@@ -3330,7 +3341,7 @@ export default class ApiController {
       .where({ user_id: user2Id, following_user_id: user1Id })
       .count();
 
-    return userFollows.count != '0' && userBeingFollowed.count != '0';
+    return parseInt(userFollows[0].count, 10) > 0 && parseInt(userBeingFollowed[0].count, 10) > 0;
   }
 
   countComments = async (posts) => {

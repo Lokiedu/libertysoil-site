@@ -51,7 +51,8 @@ import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
 import search from './search';
-import tools from './tools';
+import * as tools from './tools';
+import * as user_messages from './user_messages';
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -85,7 +86,8 @@ export const theReducer = combineReducers(i.Map({
   comments,
   quotes,
   search,
-  tools
+  tools: tools.reducer,
+  user_messages: user_messages.reducer
 }));
 
 const initialState = i.Map({
@@ -139,7 +141,8 @@ const initialState = i.Map({
       schools: i.List([])
     })
   }),
-  tools: tools.initialState
+  tools: tools.initialState,
+  user_messages: user_messages.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
