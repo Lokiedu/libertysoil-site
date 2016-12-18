@@ -96,4 +96,68 @@ describe('User', () => {
       await unmutualUser.destroy();
     });
   });
+
+  describe('GET /api/v1/user/:id/messages', () => {
+    it('returns a list of messages created by both users', async () => {
+      const user2 = await createUser();
+
+      await user.outbox().create({ reciever_id: user2.id, text: 'From me' });
+      await user.inbox().create({ sender_id: user2.id, text: 'To me' });
+
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/user/${user2.id}/messages`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        [{ text: 'From me' }, { text: 'To me' }]
+      );
+
+      await user2.destroy();
+    });
+  });
+
+  describe('POST /api/v1/user/:id/messages', () => {
+    let user2;
+
+    before(async () => {
+      user2 = await createUser();
+
+      await user.following().attach(user2.id);
+      await user.followers().attach(user2.id);
+    });
+
+    after(async () => {
+      await user2.destroy();
+    });
+
+    it('creates a message', async () => {
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/user/${user2.id}/messages`,
+          method: 'POST',
+          body: { text: 'Message' }
+        },
+        'body to satisfy',
+        { text: 'Message' }
+      );
+    });
+
+    it('returns a error if users are not mutually followed', async () => {
+      await user.followers().detach(user2.id);
+
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/user/${user2.id}/messages`,
+          method: 'POST',
+          body: { text: 'Message' }
+        },
+        'body to satisfy',
+        { error: expect.it('to be ok') }
+      );
+    });
+  });
 });
