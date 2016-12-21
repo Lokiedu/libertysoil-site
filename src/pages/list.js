@@ -61,6 +61,8 @@ import { clearRiver } from '../actions/river';
 
 const client = new ApiClient(API_HOST);
 
+export const LOAD_MORE_LIMIT = 4;
+
 export class List extends React.Component {
   static displayName = 'List';
 
@@ -106,14 +108,14 @@ export class List extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.river.size > 4) {
+    if (this.props.river.size > LOAD_MORE_LIMIT) {
       this.setState({ displayLoadMore: true });
     }
   }
 
   componentWillReceiveProps(nextProps) {
     let displayLoadMore = false;
-    if (nextProps.river.size > 4) {
+    if (nextProps.river.size > LOAD_MORE_LIMIT) {
       displayLoadMore = true;
     }
 

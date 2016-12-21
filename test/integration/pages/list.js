@@ -18,17 +18,17 @@
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
-import { v4 as uuid4 } from 'uuid';
-import sinon from 'sinon';
+// import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 import { login } from '../../../test-helpers/api';
+import { createPost } from '../../../test-helpers/factories/post';
+import { LOAD_MORE_LIMIT } from '../../../src/pages/list';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let Post = bookshelf.model('Post');
-let User = bookshelf.model('User');
+const bookshelf = initBookshelf($dbConfig);
+const User = bookshelf.model('User');
 
 describe('ListPage', () => {
   // before(() => {
@@ -46,6 +46,7 @@ describe('ListPage', () => {
   describe('when user is logged in', () => {
     let user;
     let sessionId;
+    const posts = [];
 
     before(async () => {
       await bookshelf.knex('users').del();
@@ -57,6 +58,15 @@ describe('ListPage', () => {
 
     after(async () => {
       await user.destroy();
+    });
+
+    beforeEach(async () => {
+    });
+
+    afterEach(async () => {
+      posts.forEach(async (post) => {
+        await post.destroy();
+      });
     });
 
     it('user can open / and see posting form', async () => {
@@ -72,33 +82,31 @@ describe('ListPage', () => {
     });
 
     describe('when user made a post', () => {
-      let post;
-
-      before(async () => {
-        // FIXME: extract code from controller into model and reuse here
-        post = new Post({
-          id: uuid4(),
-          type: 'short_text',
-          user_id: user.get('id'),
-          text: 'Lorem ipsum'
-        });
-        await post.save(null, {method: 'insert'});
-      });
-
-      after(async () => {
-        await post.destroy();
-      });
 
       it('user can open / and see 1 post there', async () => {
-        let context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+        const posts = [];
+        posts.push(await createPost(user));
+        const context = await expect({ url: '/', session: sessionId }, 'to open successfully');
 
-        let document = jsdom(context.httpResponse.body);
+        const document = jsdom(context.httpResponse.body);
 
-        let pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
-        await expect(pageContent, 'to have child', '.box-post');  // posting form
+        const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
+        await expect(pageContent, 'to contain elements matching', '.box-post');  // posting form
+        await expect(pageContent, 'to contain elements matching', '.card');  // post card
+        await expect(pageContent, 'to contain no elements matching', 'button[title="Load more..."]');  // no load more button
+      });
 
-        let postsContainer = pageContent.childNodes[0];
-        await expect(postsContainer, 'to have children');
+      it('Load more button is visible', async () => {
+        const posts = [];
+        for (let i = 0; i < LOAD_MORE_LIMIT + 1; ++i) { // create one more posts than limit on list page
+          posts.push(await createPost(user));
+        }
+        const context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+
+        const document = jsdom(context.httpResponse.body);
+
+        const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
+        await expect(pageContent, 'to contain elements matching', 'button[title="Load more..."]');  // no load more button
       });
     });
   });
