@@ -91,6 +91,10 @@ export const Hashtag = {
 };
 
 export const Bookmark = {
+  more: ['required', 'plainObject'],
+  'more.description': ['string'],
+  'more.icon': ['string'],
+  ord: ['integer'],
   title: ['required', 'string'],
   url: [
     'required',
@@ -101,8 +105,5 @@ export const Bookmark = {
         }
       }
     }
-  ],
-  more: {
-    order: ['number']
-  }
+  ]
 };
