@@ -36,7 +36,8 @@ import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
-  Geotag as GeotagValidators
+  Geotag as GeotagValidators,
+  Bookmark as BookmarkValidators
 } from './db/validators';
 import { getRoutes } from '../routing';
 
@@ -3245,6 +3246,116 @@ export default class ApiController {
     await this.getPostComments(ctx);
   };
 
+  createBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const checkit = new Checkit(BookmarkValidators);
+    try {
+      await checkit.run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+      await this.validateUrl(ctx2);
+
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+
+    const req = ctx.request.body;
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let url = req.url.replace(/^([a-zA-Z]{3,}:\/\/)?([^\/]{1,})?/, '');
+    if (url.length !== 1 && url[url.length - 1] !== '/') {
+      url = url.replace(/\/$/, '');
+    }
+
+    let ord;
+    if ('ord' in req) {
+      const knex = this.bookshelf.knex;
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .where('ord', '>=', req.ord)
+              .andWhere('user_id', ctx.session.user)
+              .set(knex.raw('ord = ord + 1'));
+          });
+
+        await q.fetchAll();
+        ord = req.ord;
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+      }
+    } else {
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .where('user_id', ctx.session.user)
+              .max('ord');
+          });
+
+        ord = await q.fetchAll();
+        ord = await ord.toJSON();
+        if (_.isNil(ord[0].max)) {
+          ord = 1;
+        } else {
+          ord = ord[0].max + 1;
+        }
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+      }
+    }
+
+    const bk = new Bookmark({
+      user_id: ctx.session.user,
+      title: req.title,
+      url,
+      ord
+    });
+
+    if (!_.isNil(req.more)) {
+      const attrs = {};
+      const allowedAttributes = ['description', 'icon'];
+      for (const attr of allowedAttributes) {
+        attrs[attr] = req.more[attr];
+      }
+
+      bk.set('more', attrs);
+    }
+
+    try {
+      await bk.save(null, { method: 'insert' });
+
+      ctx.body = bk.toJSON();
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
   validateUrl = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -3277,7 +3388,7 @@ export default class ApiController {
     try {
       const matches = await urlUtils.checkMatchRoutes(resourceUrl, routeTree);
 
-      if (!matches) {
+      if (!matches) { 
         ctx.status = 404;
         return;
       }
@@ -3287,6 +3398,7 @@ export default class ApiController {
       return;
     }
 
+    ctx.status = 200;
     ctx.body = { success: true };
   };
 
