@@ -22,6 +22,7 @@ import * as a from '../actions';
 
 export const initialState = i.Map({
   id: null,
+  bookmarks: i.Map({}),
   hashtags: i.List([]),
   geotags: i.List([]),
   schools: i.List([]),
@@ -52,6 +53,7 @@ export default function reducer(state = initialState, action) {
       }
 
       if (newUid) {
+        const bookmarks = _.keyBy(action.user.bookmarks, 'id');
         const followedTags = _.keyBy(action.user.followed_hashtags, 'name');
         const followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
         const followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
@@ -61,6 +63,7 @@ export default function reducer(state = initialState, action) {
         const postSubscriptions = _.map(action.user.post_subscriptions, 'id');
 
         state = state.withMutations(state => {
+          state.set('bookmarks', i.fromJS(bookmarks));
           state.set('followed_hashtags', i.fromJS(followedTags));
           state.set('followed_geotags', i.fromJS(followedGeotags));
           state.set('followed_schools', i.fromJS(followedSchools));
@@ -196,6 +199,26 @@ export default function reducer(state = initialState, action) {
       state = state.updateIn(['post_subscriptions'], val => {
         return val.delete(val.indexOf(action.post_id));
       });
+
+      break;
+    }
+
+    case a.bookmarks.UPDATE_BOOKMARKS: {
+      state = state.mergeIn(['bookmarks'], i.fromJS(action.bookmarks));
+
+      break;
+    }
+
+    case a.bookmarks.ADD_BOOKMARK: {
+      state = state.update('bookmarks', bookmarks => {
+        return bookmarks.set(action.bookmark.id, i.fromJS(action.bookmark));
+      });
+
+      break;
+    }
+
+    case a.bookmarks.SET_BOOKMARKS: {
+      state = state.set('bookmarks', i.fromJS(action.bookmarks));
 
       break;
     }

@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { pick } from 'lodash';
 import { List } from 'immutable';
 
 import { API_HOST } from '../../config';
@@ -26,6 +27,7 @@ import { addError } from '../../actions/messages';
 import { setRemote, toggleRemote } from '../../actions/remote';
 import createSelector from '../../selectors/createSelector';
 
+import Button from '../button';
 import Navigation from '../navigation';
 import Bookmark from './bookmark';
 import BookmarkSettingsModal from './settings-modal';
@@ -42,14 +44,14 @@ export class Bookmarks extends React.Component {
     dispatch: () => {}
   };
 
-  handleSettingsClick = (bookmarkIndex) => {
+  handleSettingsClick = (bookmarkId) => {
     this.props.dispatch(setRemote({
       isVisible: true,
       component: BookmarkSettingsModal,
       args: {
         children: (
           <BookmarkSettingsForm
-            bookmark={this.props.bookmarks.get(bookmarkIndex)}
+            bookmark={this.props.bookmarks.get(bookmarkId)}
             onSave={this.handleSave}
           />
         ),
@@ -65,12 +67,17 @@ export class Bookmarks extends React.Component {
   };
 
   handleSave = async (bookmarkInfo) => {
+    const data = bookmarkInfo;
+    if (!data.more) {
+      data.more = {};
+    }
+
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     let success = false;
     try {
-      await triggers.manageBookmark(bookmarkInfo);
+      await triggers.manageBookmark(data);
       success = true;
     } catch (e) {
       this.props.dispatch(addError(e.message));
@@ -83,15 +90,19 @@ export class Bookmarks extends React.Component {
     return (
       <div>
         <Navigation>
-          {this.props.bookmarks.map((item, i) => (
+          {this.props.bookmarks.toList().map(item => (
             <Bookmark
-              {...item.toObject()}
-              index={i}
-              key={item.get('url')}
+              {...pick(item.toObject(), ['url', 'title', 'id'])}
+              description={item.getIn(['more', 'description'])}
+              icon={item.getIn(['more', 'icon'])}
+              key={item.get('id')}
               onSettingsClick={this.handleSettingsClick}
             />
           ))}
-          {/* new bookmark button */}
+          <Button
+            title="New bookmark"
+            onClick={this.handleSettingsClick}
+          />
         </Navigation>
       </div>
     );

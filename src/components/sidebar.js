@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -60,12 +59,7 @@ class Sidebar extends React.Component {
       <div className={this.getClassName()}>
         <SidebarMenu current_user={this.props.current_user} />
         <TagsInform current_user={this.props.current_user} />
-        <Bookmarks
-          bookmarks={
-            this.props.current_user.get('bookmarks') ||
-            fromJS([{ url: '/tag/test', title: 'test', icon: { icon: 'star' } }])
-          }
-        />
+        <Bookmarks bookmarks={this.props.current_user.get('bookmarks')} />
       </div>
     );
   }

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { fromJS } from 'immutable';
 
 import NavigationItem from '../navigation-item';
 import Icon from '../icon';
@@ -52,18 +53,19 @@ export default class Bookmark extends React.Component {
 
   handleSettingsClick = (e) => {
     e.preventDefault();
-    this.props.onSettingsClick(this.props.index);
+    this.props.onSettingsClick(this.props.id);
   };
 
   render() {
-    const { title, url, ...props } = this.props;
+    const { description, icon, title, url } = this.props;
 
     return (
       <NavigationItem
         badge={this.iconComponent}
+        icon={fromJS({ icon })}
         theme="2.0"
         to={url}
-        {...props}
+        title={description}
       >
         {title}
       </NavigationItem>

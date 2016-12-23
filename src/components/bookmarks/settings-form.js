@@ -35,7 +35,7 @@ class BookmarkSettingsForm extends React.Component {
   };
 
   static defaultProps = {
-    bookmark: ImmutableMap(),
+    bookmark: ImmutableMap({ more: ImmutableMap() }),
     onSave: () => {}
   };
 
@@ -50,6 +50,7 @@ class BookmarkSettingsForm extends React.Component {
   componentWillMount() {
     const bookmark = this.props.bookmark;
     this.props.form.onValues({
+      description: bookmark.getIn(['more', 'descripion']),
       title: bookmark.get('title'),
       url: bookmark.get('url')
     });
@@ -65,6 +66,7 @@ class BookmarkSettingsForm extends React.Component {
     e.preventDefault();
     this.toggleProcessing();
 
+    const nativeForm = event.target;
     const { form } = this.props;
     form.forceValidate();
     if (!form.isValid()) {
@@ -73,7 +75,13 @@ class BookmarkSettingsForm extends React.Component {
 
     const newValues = form.values();
 
-    this.props.onSave(newValues);
+    await this.props.onSave({
+      id: nativeForm.id.value,
+      more: { description: newValues.description },
+      title: newValues.title,
+      url: newValues.url
+    });
+
     this.toggleProcessing();
   };
 
@@ -82,6 +90,7 @@ class BookmarkSettingsForm extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
+        <input id="bookmark_id" name="id" type="hidden" value={this.props.bookmark.get('id')} />
         <div className="form__row tools_page__item tools_page__item--close">
           <label className="form__label form__label--short" htmlFor="bookmark_title">
             Title
@@ -95,10 +104,23 @@ class BookmarkSettingsForm extends React.Component {
           <label className="form__label form__label--short" htmlFor="bookmark_url">
             Url
           </label>
-          <input className="input input-block input-narrow   input-transparent" id="bookmark_url" {...fields.url} />
+          <input className="input input-block input-narrow input-transparent" id="bookmark_url" {...fields.url} />
         </div>
         {fields.url.error &&
           <Message message={fields.url.error} type={MESSAGE_TYPES.ERROR} />
+        }
+        <div className="form__row tools_page__item tools_page__item--close">
+          <label className="form__label form__label--short" htmlFor="bookmark_description">
+            Description
+          </label>
+          <input
+            className="input input-block input-narrow input-transparent"
+            id="bookmark_description"
+            {...fields.description}
+          />
+        </div>
+        {fields.description.error &&
+          <Message message={fields.description.error} type={MESSAGE_TYPES.ERROR} />
         }
         <div className="tools_page__item tools_page__item--close">
           <div className="layout layout__grid layout-align_right">
@@ -144,6 +166,7 @@ const validateUrlMatch = debounce(async url => {
 
 const WrappedBookmarkSettingsForm = inform(from({
   icon: {},
+  description: {},
   title: {
     'Enter title': validateNonEmpty
   },

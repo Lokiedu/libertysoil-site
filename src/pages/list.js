@@ -94,7 +94,8 @@ export class List extends React.Component {
       trigger.loadSchools(),
       trigger.loadPostRiver(),
       trigger.loadPersonalizedSuggestions(),
-      trigger.loadUserRecentTags()
+      trigger.loadUserRecentTags(),
+      trigger.loadBookmarks()
     ]);
   }
 
