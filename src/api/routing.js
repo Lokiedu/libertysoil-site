@@ -84,6 +84,7 @@ export function initApi(bookshelf, sphinx) {
   //api.get('/cities/', controller.getCities);
   api.get('/city/:id', controller.getCity);
 
+  api.get('/user/bookmarks', controller.getBookmarks);
   api.get('/user/recent-hashtags', controller.getUserRecentHashtags);
   api.get('/user/recent-schools', controller.getUserRecentSchools);
   api.get('/user/recent-geotags', controller.getUserRecentGeotags);

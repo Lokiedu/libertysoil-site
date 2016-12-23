@@ -1247,6 +1247,7 @@ export default class ApiController {
       .fetch({
         require: true,
         withRelated: [
+          'bookmarks',
           'following',
           'followers',
           'liked_posts',
@@ -3277,6 +3278,7 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
+      return;
     }
 
     const req = ctx.request.body;
@@ -3287,7 +3289,7 @@ export default class ApiController {
       url = url.replace(/\/$/, '');
     }
 
-    let ord;
+    let ord, affected;
     if ('ord' in req) {
       const knex = this.bookshelf.knex;
       try {
@@ -3295,16 +3297,19 @@ export default class ApiController {
           .query(qb => {
             qb
               .table('bookmarks')
+              .update({ ord: knex.raw('ord + 1') })
               .where('ord', '>=', req.ord)
               .andWhere('user_id', ctx.session.user)
-              .set(knex.raw('ord = ord + 1'));
+              .returning('*');
           });
 
-        await q.fetchAll();
+        affected = await q.fetchAll();
+        affected = await affected.toJSON();
         ord = req.ord;
       } catch (e) {
         ctx.status = 500;
         ctx.body = { error: e.message };
+        return;
       }
     } else {
       try {
@@ -3316,6 +3321,7 @@ export default class ApiController {
               .max('ord');
           });
 
+        affected = [];
         ord = await q.fetchAll();
         ord = await ord.toJSON();
         if (_.isNil(ord[0].max)) {
@@ -3326,6 +3332,7 @@ export default class ApiController {
       } catch (e) {
         ctx.status = 500;
         ctx.body = { error: e.message };
+        return;
       }
     }
 
@@ -3348,8 +3355,37 @@ export default class ApiController {
 
     try {
       await bk.save(null, { method: 'insert' });
+      const target = await Bookmark
+        .where({ id: bk.get('id') })
+        .fetch({ require: true });
 
-      ctx.body = bk.toJSON();
+      affected = _.keyBy(affected, 'id');
+      ctx.body = { success: true, affected, target };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  getBookmarks = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    try {
+      let bookmarks = await Bookmark.collection()
+        .query(qb => { qb.where({ user_id: ctx.session.user }); })
+        .fetch();
+
+      bookmarks = await bookmarks.toJSON();
+      bookmarks = _.keyBy(bookmarks, 'id');
+
+      ctx.status = 200;
+      ctx.body = { bookmarks };
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
@@ -3388,7 +3424,7 @@ export default class ApiController {
     try {
       const matches = await urlUtils.checkMatchRoutes(resourceUrl, routeTree);
 
-      if (!matches) { 
+      if (!matches) {
         ctx.status = 404;
         return;
       }

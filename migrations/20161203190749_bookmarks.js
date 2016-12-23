@@ -8,9 +8,13 @@ export async function up(knex, Promise) {
     table.jsonb('more');
     table.timestamp('created_at', true).defaultTo(knex.raw("(now() at time zone 'utc')"));
     table.timestamp('updated_at', true).defaultTo(knex.raw("(now() at time zone 'utc')"));
-
-    table.unique(['user_id', 'ord']);
   });
+
+  await knex.raw(`
+    ALTER TABLE "bookmarks"
+    ADD UNIQUE ("user_id", "ord")
+      DEFERRABLE INITIALLY IMMEDIATE
+  `);
 }
 
 export async function down(knex, Promise) {

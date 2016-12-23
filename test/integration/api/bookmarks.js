@@ -139,4 +139,78 @@ describe('Bookmarks', () => {
       });
     });
   });
+
+  describe('POST /api/v1/bookmarks', () => {
+    describe('Authenticated users', () => {
+      let user, sessionId;
+      const reqWith = (bookmark) => ({
+        url: '/api/v1/bookmarks',
+        method: 'POST',
+        body: bookmark,
+        session: sessionId,
+      })
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        user.set('email_check_hash', null);
+        await user.save(null, { method: 'update' });
+
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(async () => {
+        await user.destroy();
+      });
+
+      it('handle different url versions successfully', async () => {
+        const urls = [
+          '/s', '/s/',
+          'localhost:8000/s', 'localhost:8000/s/',
+          'http://localhost:8000/s', 'http://localhost:8000/s/'
+        ];
+        const bookmark = {
+          title: 'Schools',
+          description: 'All schools page'
+        };
+
+        for (const url of urls) {
+          await expect(reqWith({ ...bookmark, url }), 'body to satisfy', {
+            ...bookmark,
+            url: '/s'
+          });
+        }
+      });
+
+      it('create bookmark successfully', async () => {
+        const bookmark = {
+          description: 'All schools page',
+          title: 'All schools',
+          url: '/s'
+        };
+
+        await expect(reqWith(bookmark), 'body to satisfy', bookmark);
+      });
+
+      xit('create bookmarks with default properties', async () => {
+        const bookmark = {
+          url: '/s'
+        };
+
+        await expect(reqWith(bookmark), 'body to satisfy', {
+          ...bookmark,
+          title: 'All schools',
+          description: 'All schools page'
+        });
+      });
+
+      it('fetches successfully', async () => {
+        await expect(
+          { url: '/s/' }, 'when parsed as HTML',
+          'queried for', 'title', 'to have text',
+          'All schools'
+        );
+      })
+    });
+  });
 });
