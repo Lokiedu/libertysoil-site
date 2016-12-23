@@ -669,4 +669,14 @@ export default class ApiClient
     const response = await this.get('/api/v1/url', { url });
     return await response.json();
   }
+
+  async createBookmark(data) {
+    const response = await this.postJSON('/api/v1/bookmarks', data);
+    return await response.json();
+  }
+
+  async getBookmarks() {
+    const response = await this.get('/api/v1/user/bookmarks');
+    return await response.json();
+  }
 }

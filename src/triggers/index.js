@@ -17,6 +17,7 @@
  */
 import { browserHistory } from 'react-router';
 import { toSpreadArray } from '../utils/lang';
+import { isNil } from 'lodash';
 
 import * as a from '../actions';
 
@@ -819,6 +820,52 @@ export class ActionsTrigger {
     try {
       await this.client.unsubscribeFromPost(postId);
       this.dispatch(a.users.unsubscribeFromPost(postId));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  manageBookmark = async (data) => {
+    if (isNil(data.id)) {
+      await this.createBookmark(data);
+    } else {
+      await this.updateBookmark(data);
+    }
+  }
+
+  createBookmark = async (data) => {
+    try {
+      const response = await this.client.createBookmark(data);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.bookmarks.addBookmark(response.target));
+        this.dispatch(a.messages.addMessage('Bookmark has been created'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  updateBookmark = async (data) => {
+    try {
+      const response = await this.client.updateBookmark(data);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.bookmarks.addBookmark(response.target));
+        this.dispatch(a.messages.addMessage('Bookmark has been updated'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  loadBookmarks = async () => {
+    try {
+      const response = await this.client.getBookmarks();
+
+      this.dispatch(a.bookmarks.setBookmarks(response.bookmarks));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
