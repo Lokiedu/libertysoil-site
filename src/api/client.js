@@ -24,34 +24,35 @@ import { stringify } from 'querystring';
 import { extend, merge as mergeObj } from 'lodash';
 
 import type { Email, Integer, Success, UrlNode } from '../definitions/common';
-import type { GeotagId, Geotag } from '../definitions/geotags';
+import type { GeotagId, Geotag, Continent } from '../definitions/geotags';
 import type { HashtagId, Hashtag } from '../definitions/hashtags';
 import type { SchoolId, School } from '../definitions/schools';
 import type { Password, UserId, UserRecentTags, UserMore, User, Username } from '../definitions/users';
 import type { UserUpdateablePostData, Post, PostType, PostId } from '../definitions/posts';
+import type { Attachment } from '../definitions/attachments';
 
 export default class ApiClient
 {
-  host;
-  serverReq = null;
+  host: string;
+  serverReq: any = null;
 
-  constructor(host, serverReq = null) {
+  constructor(host: string, serverReq: any = null) {
     this.host = host;
     this.serverReq = serverReq;
   }
 
-  apiUrl(relativeUrl) {
+  apiUrl(relativeUrl: string): string {
     return `${this.host}${relativeUrl}`;
   }
 
-  apiUrlForFetch(relativeUrl, query = {}) {
+  apiUrlForFetch(relativeUrl: string, query: Object = {}): string {
     const urlObj = parse_url(this.apiUrl(relativeUrl));
     urlObj.query = mergeObj(urlObj.query, query);
 
     return format_url(urlObj);
   }
 
-  async handleResponseError(response) {
+  async handleResponseError(response: Object) {
     if (!response.ok) {
       let json, errorMessage, e;
 
@@ -76,7 +77,7 @@ export default class ApiClient
     }
   }
 
-  async get(relativeUrl, query = {}) {
+  async get(relativeUrl: string, query: Object = {}): Promise<Object> {
     let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -96,7 +97,7 @@ export default class ApiClient
     return response;
   }
 
-  async head(relativeUrl, query = {}) {
+  async head(relativeUrl: string, query: Object = {}): Promise<Object> {
     let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -113,7 +114,7 @@ export default class ApiClient
     );
   }
 
-  async del(relativeUrl) {
+  async del(relativeUrl: string): Promise<Object> {
     let defaultHeaders = {};
 
     if (this.serverReq !== null && 'cookie' in this.serverReq.headers) {
@@ -133,7 +134,7 @@ export default class ApiClient
     return response;
   }
 
-  async post(relativeUrl, data = null) {
+  async post(relativeUrl: string, data: any = null): Promise<Object> {
     let headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
@@ -169,7 +170,7 @@ export default class ApiClient
     *post without setting content type
   */
 
-  async postMultipart(relativeUrl, data = null) {
+  async postMultipart(relativeUrl: string, data: any = null): Promise<Object> {
     let headers = {},
       body;
 
@@ -197,7 +198,7 @@ export default class ApiClient
     return response;
   }
 
-  async postJSON(relativeUrl, data = null) {
+  async postJSON(relativeUrl: string, data: any = null): Promise<Object> {
     let headers = {
         'Content-Type': 'application/json'
       },
@@ -245,7 +246,7 @@ export default class ApiClient
     return result.ok;
   }
 
-  async getAvailableUsername(username: Username) {
+  async getAvailableUsername(username: Username): Promise<Username> {
     let json;
     const response = await this.get(`/api/v1/user/available-username/${username}`);
 
@@ -260,12 +261,12 @@ export default class ApiClient
     return json.username;
   }
 
-  async userInfo(username: Username) {
+  async userInfo(username: Username): Promise<User> {
     const response = await this.get(`/api/v1/user/${username}`);
     return await response.json();
   }
 
-  async followedUsers(userId) {
+  async followedUsers(userId: UserId): Promise<Array<User>> {
     const response = await this.get(`/api/v1/user/${userId}/following`);
     return await response.json();
   }
@@ -281,17 +282,17 @@ export default class ApiClient
     return await response.json();
   }
 
-  async schools(query = {}): Promise<{ schools: Array<School> }> {
+  async schools(query: Object = {}): Promise<{ schools: Array<School> }> {
     const response = await this.get('/api/v1/schools', query);
     return await response.json();
   }
 
-  async schoolsAlphabet() {
+  async schoolsAlphabet(): Promise<Array<string>> {
     const response = await this.get('/api/v1/schools-alphabet');
     return await response.json();
   }
 
-  async userPosts(username: Username, query = {}): Promise<Array<Post>> {
+  async userPosts(username: Username, query: Object = {}): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/user/${username}`, query);
     return await response.json();
   }
@@ -323,7 +324,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async getLikedPosts(username): Promise<Array<Post>> {
+  async getLikedPosts(username: Username): Promise<Array<Post>> {
     const response = await this.get(`/api/v1/posts/liked/${username}`);
     return await response.json();
   }
@@ -348,17 +349,17 @@ export default class ApiClient
     return await response.json();
   }
 
-  async city(city_id) {
+  async city(city_id: GeotagId): Promise<Geotag> {
     const response = await this.get(`/api/v1/city/${city_id}`);
     return await response.json();
   }
 
-  async countries() {
+  async countries(): Promise<Array<Geotag>> {
     const response = await this.get(`/api/v1/countries/`);
     return await response.json();
   }
 
-  async country(country_code: string) {
+  async country(country_code: string): Promise<Geotag> {
     const response = await this.get(`/api/v1/country/${country_code}`);
     return await response.json();
   }
@@ -418,17 +419,17 @@ export default class ApiClient
     return await response.json();
   }
 
-  async ignoreUser(userName: Username) {
+  async ignoreUser(userName: Username): Promise<Success> {
     const response = await this.post(`/api/v1/user/${userName}/ignore`);
     return await response.json();
   }
 
-  async updateUser(user: { more: UserMore }) {
+  async updateUser(user: { more: UserMore }): Promise<User> {
     const response = await this.postJSON(`/api/v1/user`, user);
     return await response.json();
   }
 
-  async changePassword(old_password: Password, new_password: Password) {
+  async changePassword(old_password: Password, new_password: Password): Promise<Success> {
     const response = await this.postJSON(`/api/v1/user/password`, { old_password, new_password });
 
     if (response.status !== 200) {
@@ -439,13 +440,13 @@ export default class ApiClient
     return response.json();
   }
 
-  async resetPassword(email: Email) {
+  async resetPassword(email: Email): Promise<Success> {
     const response = await this.postJSON(`/api/v1/resetpassword`, { email });
 
     return await response.json();
   }
 
-  async newPassword(hash, password: Password, password_repeat: Password) {
+  async newPassword(hash: string, password: Password, password_repeat: Password): Promise<Success> {
     const response = await this.postJSON(`/api/v1/newpassword/${hash}`, { password, password_repeat });
     return await response.json();
   }
@@ -455,17 +456,17 @@ export default class ApiClient
     return await response.json();
   }
 
-  async registerUser(userData) {
+  async registerUser(userData: Object): Promise<Success & { user: User }> {
     const response = await this.post(`/api/v1/users`, userData);
     return await response.json();
   }
 
-  async login(loginData) {
+  async login(loginData: { password: string, username: string }): Promise<Success & { user: User }> {
     const response = await this.post(`/api/v1/session`, loginData);
     return await response.json();
   }
 
-  async userSuggestions() {
+  async userSuggestions(): Promise<Array<User>> {
     const response = await this.get(`/api/v1/suggestions/personalized`);
     return await response.json();
   }
@@ -485,7 +486,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async initialSuggestions() {
+  async initialSuggestions(): Promise<Array<User>> {
     const response = await this.get(`/api/v1/suggestions/initial`);
     return await response.json();
   }
@@ -497,6 +498,7 @@ export default class ApiClient
 
   async createPost(type: PostType, data: UserUpdateablePostData): Promise<Post> {
     if (process.env.NODE_ENV === 'development') {
+      // $FlowTcombIssue
       data = UserUpdateablePostData.update(data, { type: { '$set': type } });
     } else {
       data.type = type;
@@ -515,32 +517,39 @@ export default class ApiClient
     return await response.json();
   }
 
-  async updateGeotag(uuid: GeotagId, data): Promise<Geotag> {
+  async updateGeotag(uuid: GeotagId, data: Object): Promise<Geotag> {
     const response = await this.postJSON(`/api/v1/geotag/${uuid}`, data);
     return await response.json();
   }
 
-  async updateHashtag(uuid: HashtagId, data): Promise<Hashtag> {
+  async updateHashtag(uuid: HashtagId, data: Object): Promise<Hashtag> {
     const response = await this.postJSON(`/api/v1/tag/${uuid}`, data);
     return await response.json();
   }
 
-  async createSchool(data): Promise<School> {
+  async createSchool(data: Object): Promise<School> {
     const response = await this.postJSON('/api/v1/schools/new', data);
     return await response.json();
   }
 
-  async updateSchool(uuid: SchoolId, data): Promise<School> {
+  async updateSchool(uuid: SchoolId, data: Object): Promise<School> {
     const response = await this.postJSON(`/api/v1/school/${uuid}`, data);
     return await response.json();
   }
 
-  async pickpoint(options) {
+  async pickpoint(options: Object): Promise<Object> {
     const response = await this.get('/api/v1/pickpoint', options);
     return await response.json();
   }
 
-  async search(query) {
+  async search(query: string): Promise<{
+    comments?: Array<Object>,
+    geotags?: Array<Geotag>,
+    hashtags?: Array<Hashtag>,
+    schools?: Array<School>,
+    posts?: Array<Post>,
+    users?: Array<User>
+  }> {
     const response = await this.get(`/api/v1/search/${query}`);
     return await response.json();
   }
@@ -550,7 +559,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async searchHashtags(query): Promise<Array<Hashtag>> {
+  async searchHashtags(query: string): Promise<Array<Hashtag>> {
     const response = await this.get(`/api/v1/tags/search/${query}`);
     return await response.json();
   }
@@ -570,7 +579,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async searchSchools(query): Promise<Array<School>> {
+  async searchSchools(query: string): Promise<Array<School>> {
     const response = await this.get(`/api/v1/schools/search/${query}`);
     return await response.json();
   }
@@ -585,7 +594,11 @@ export default class ApiClient
     return await response.json();
   }
 
-  async geotagCloud() {
+  async geotagCloud(): Promise<Array<{
+    continent_code: Continent,
+    geotag_count: Integer,
+    geotags: Array<Geotag>
+  }>> {
     const response = await this.get('/api/v1/geotag-cloud');
     return await response.json();
   }
@@ -611,22 +624,22 @@ export default class ApiClient
     return await response.json();
   }
 
-  async getHashtag(name: UrlNode): Promise<Hashag> {
+  async getHashtag(name: UrlNode): Promise<Hashtag> {
     const response = await this.get(`/api/v1/tag/${name}`);
     return await response.json();
   }
 
-  async searchGeotags(query): Promise<Array<Geotag>> {
+  async searchGeotags(query: string): Promise<Array<Geotag>> {
     const response = await this.get(`/api/v1/geotags/search/${query}`);
     return await response.json();
   }
 
-  async getQuotes() {
+  async getQuotes(): Promise<Array<Object>> {
     const response = await this.get('/api/v1/quotes');
     return await response.json();
   }
 
-  async uploadImage(images) {
+  async uploadImage(images: Array<any>): Promise<Array<Attachment>> {
     const data = new FormData;
     images.forEach((image) => {
       data.append("files", image);
@@ -636,7 +649,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async processImage(id, transforms, derived_id = null) {
+  async processImage(id: string, transforms: Array<Object>, derived_id: any = null): Promise<Success & Attachment> {
     const response = await this.postJSON('/api/v1/image', {
       original_id: id,
       transforms: JSON.stringify(transforms),
@@ -645,31 +658,31 @@ export default class ApiClient
     return await response.json();
   }
 
-  async createComment(postId: PostId, text) {
+  async createComment(postId: PostId, text: string): Promise<Array<Object>> {
     const response = await this.post(`/api/v1/post/${postId}/comments`, {
       text
     });
     return await response.json();
   }
 
-  async deleteComment(postId: PostId, commentId) {
+  async deleteComment(postId: PostId, commentId: string): Promise<Array<Object>> {
     const response = await this.del(`/api/v1/post/${postId}/comment/${commentId}`);
     return await response.json();
   }
 
-  async saveComment(postId: PostId, commentId, text) {
+  async saveComment(postId: PostId, commentId: string, text: string): Promise<Array<Object>> {
     const response = await this.post(`/api/v1/post/${postId}/comment/${commentId}`, {
       text
     });
     return await response.json();
   }
 
-  async subscribeToPost(postId: PostId) {
+  async subscribeToPost(postId: PostId): Promise<Success> {
     const response = await this.post(`/api/v1/post/${postId}/subscribe`);
     return await response.json();
   }
 
-  async unsubscribeFromPost(postId: PostId) {
+  async unsubscribeFromPost(postId: PostId): Promise<Success> {
     const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
     return await response.json();
   }

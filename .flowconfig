@@ -7,6 +7,9 @@
 .*/node_modules/typechecker/es2015/index.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/attachRenderer.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/backend.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/copyWithSet.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/getData012.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/getData.js
 
 [libs]
 ./src/definitions/lib
@@ -18,3 +21,5 @@ esproposal.class_instance_fields=enable
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
+
+suppress_comment=\\(.\\|\n\\)*\\$FlowTcombIssue

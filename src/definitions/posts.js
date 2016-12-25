@@ -41,7 +41,8 @@ export type UserUpdateablePostData = {
   hashtags?: Array<Hashtag>,
   minor_update?: ?boolean,
   schools?: Array<LightSchool>,
-  text?: string
+  text?: string,
+  type?: PostType
 };
 
 export type Post = UserUpdateablePostData & {
