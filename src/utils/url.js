@@ -18,6 +18,7 @@
 import { createMemoryHistory } from 'history';
 import { createRoutes } from 'react-router';
 import matchRoutes from 'react-router/lib/matchRoutes';
+import { parse, format } from 'url';
 import isNil from 'lodash/isNil';
 
 export default async function validateUrl(rawUrl = '', allowedHosts = [], routeTree = {}) {
@@ -28,7 +29,7 @@ export default async function validateUrl(rawUrl = '', allowedHosts = [], routeT
     return false;
   }
 
-  const resourceUrl = getResourceUrl(url, allowedHosts, withProtocol);
+  const resourceUrl = getResourceUrl(url);
   return await checkMatchRoutes(resourceUrl, routeTree);
 }
 
@@ -36,27 +37,18 @@ export function hasProtocol(url = '') {
   return !!url.match(/^[a-zA-Z]{1,}:\/\//);
 }
 
-export function getResourceUrl(url = '', allowedHosts = [], withProtocol = false) {
-  let resourceUrl = url;
+export function getResourceUrl(url = '') {
+  const res = parse(url);
+  if (res.pathname) {
+    const slashes = res.pathname.match(/\//g);
+    if (Array.isArray(slashes) && slashes.length > 1 && !res.pathname.endsWith('//')) {
+      res.pathname = res.pathname.slice(0, -1);
+    }
 
-  if (withProtocol) {
-    for (const host of allowedHosts) {
-      if (url.startsWith(host)) {
-        resourceUrl = url.replace(host, '');
-        break;
-      }
-    }
-  } else if (url[0] !== '/') {
-    for (const host of allowedHosts) {
-      const h = host.replace(/^https?:\/\//, '');
-      if (url.startsWith(h)) {
-        resourceUrl = url.replace(h, '');
-        break;
-      }
-    }
+    return parse(format(res)).path;
   }
 
-  return resourceUrl;
+  return `/${res.search || ''}`;
 }
 
 export function checkMatchHosts(rawUrl = '', allowedHosts = [], withProtocol = false) {

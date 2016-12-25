@@ -3284,11 +3284,7 @@ export default class ApiController {
 
     const req = ctx.request.body;
     const Bookmark = this.bookshelf.model('Bookmark');
-
-    let url = req.url.replace(/^([a-zA-Z]{3,}:\/\/)?([^\/]{1,})?/, '');
-    if (url.length !== 1 && url[url.length - 1] !== '/') {
-      url = url.replace(/\/$/, '');
-    }
+    const url = urlUtils.getResourceUrl(req.url);
 
     let ord, affected;
     if ('ord' in req) {
