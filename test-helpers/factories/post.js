@@ -17,9 +17,28 @@
 */
 import uuid from 'uuid';
 import { Factory } from 'rosie';
+import { bookshelf } from '../db';
+
 const faker = require('faker');
 
-export default new Factory()
-  .attr('id', () => uuid.v4())
-  .attr('text', () => faker.lorem.paragraph())
-  .attr('type', 'short_text');
+const PostFactory = new Factory()
+      .attr('id', () => uuid.v4())
+      .attr('text', () => faker.lorem.paragraph())
+      .attr('type', 'short_text');
+
+export default PostFactory;
+
+
+const Post = bookshelf.model('Post');
+
+export async function createPost(author) {
+  const attrs = PostFactory.build();
+
+  return await new Post({
+    id: attrs.id,
+    type: attrs.type,
+    user_id: author.get('id'),
+    text: attrs.text
+  })
+    .save(null, { method: 'insert' });
+}
