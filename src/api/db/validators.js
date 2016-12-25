@@ -96,14 +96,5 @@ export const Bookmark = {
   'more.icon': ['string'],
   ord: ['integer'],
   title: ['required', 'string'],
-  url: [
-    'required',
-    {
-      rule: (val) => {
-        if (!val.match(/^\//)) {
-          throw new Error('The url must be internal to LibertySoil site.');
-        }
-      }
-    }
-  ]
+  url: ['required', 'string']
 };
