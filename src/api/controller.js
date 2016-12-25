@@ -46,6 +46,19 @@ const POST_RELATIONS = Object.freeze([
   { post_comments: qb => qb.orderBy('created_at') }, 'post_comments.user'
 ]);
 
+const USER_RELATIONS = Object.freeze([
+  'following',
+  'followers',
+  'liked_posts',
+  'favourited_posts',
+  'followed_hashtags',
+  'followed_geotags',
+  'followed_schools',
+  'liked_hashtags',
+  'liked_geotags',
+  'liked_schools'
+]);
+
 export default class ApiController {
   bookshelf;
   sphinx;
@@ -1244,18 +1257,7 @@ export default class ApiController {
       .where({ id: ctx.session.user })
       .fetch({
         require: true,
-        withRelated: [
-          'following',
-          'followers',
-          'liked_posts',
-          'favourited_posts',
-          'followed_hashtags',
-          'followed_geotags',
-          'followed_schools',
-          'liked_hashtags',
-          'liked_geotags',
-          'liked_schools'
-        ]
+        withRelated: USER_RELATIONS
       });
 
     ctx.body = { success: true, user };
@@ -1846,12 +1848,7 @@ export default class ApiController {
               .where({ username: ctx.params.username })
               .fetch({
                 require: true,
-                withRelated: [
-                  'following', 'followers', 'liked_posts',
-                  'liked_hashtags', 'liked_schools', 'liked_geotags',
-                  'favourited_posts', 'followed_hashtags',
-                  'followed_schools', 'followed_geotags'
-                ]
+                withRelated: USER_RELATIONS
               });
       ctx.body = u.toJSON();
     } catch (e) {
@@ -1863,26 +1860,46 @@ export default class ApiController {
   getFollowedUsers = async (ctx) => {
     const User = this.bookshelf.model('User');
 
-    try {
-      const users = await User.collection()
-        .query(qb => {
-          qb.join('followers', 'users.id', 'followers.following_user_id')
-            .where('followers.user_id', ctx.params.id);
-        })
-        .fetch({
-          withRelated: [
-            'following', 'followers', 'liked_posts',
-            'liked_hashtags', 'liked_schools', 'liked_geotags',
-            'favourited_posts', 'followed_hashtags',
-            'followed_schools', 'followed_geotags'
-          ]
-        });
+    const users = await User.collection()
+      .query(qb => {
+        qb.join('followers', 'users.id', 'followers.following_user_id')
+          .where('followers.user_id', ctx.params.id);
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
 
-      ctx.body = users;
-    } catch (e) {
-      ctx.status = 404;
-      return;
-    }
+    ctx.body = users;
+  }
+
+  getMutualFollows = async (ctx) => {
+    const User = this.bookshelf.model('User');
+    const knex = this.bookshelf.knex;
+
+    // TODO: Is it possible to use joins insted of subqueries here? Which method is faster?
+    const users = await User.collection()
+      .query(qb => {
+        qb
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.user_id = ?', ctx.params.id)
+              .whereRaw('f2.following_user_id = users.id');
+          })
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.following_user_id = ?', ctx.params.id)
+              .whereRaw('f2.user_id = users.id');
+          });
+
+        this.applySortQuery(qb, ctx.query, 'username');
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
+
+    ctx.body = users;
   }
 
   followUser = async (ctx) => {
