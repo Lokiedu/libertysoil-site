@@ -25,11 +25,13 @@ import initBookshelf from '../../../src/api/db';
 
 import UserFactory from '../../../test-helpers/factories/user';
 import BookmarkFactory from '../../../test-helpers/factories/bookmark';
+import PostFactory from '../../../test-helpers/factories/post';
 import { login } from '../../../test-helpers/api';
 
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
 const Bookmark = bookshelf.model('Bookmark');
+const Post = bookshelf.model('Post');
 
 describe('Bookmarks', () => {
   describe('ApiController.checkUrl()', () => {
@@ -72,7 +74,11 @@ describe('Bookmarks', () => {
     };
 
     describe('Authenticated users', () => {
-      const reqWith = url => ({ ...requestDefault, session: sessionId, query: { url } });
+      const reqWith = (url, meta = false) => ({
+        ...requestDefault,
+        session: sessionId,
+        query: { url, meta }
+      });
       let user, sessionId;
 
       before(async () => {
@@ -143,6 +149,50 @@ describe('Bookmarks', () => {
           await expect(reqWith(url), 'to open successfully');
         }
       });
+
+      it('fetches page metadata', async () => {
+        const listOfUrls = [
+          'localhost:8000/geo', '/geo', 'http://localhost:8000/geo'
+        ];
+
+        const needMeta = true;
+        for (const url of listOfUrls) {
+          await expect(reqWith(url, needMeta), 'body to satisfy', {
+            success: true,
+            meta: { title: 'Geotags of LibertySoil.org' }
+          });
+        }
+      });
+
+      describe('Pages unavailable to user', () => {
+        let post, author;
+
+        before(async () => {
+          const userAttrs = UserFactory.build();
+          author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+          await author.save({ email_check_hash: null }, { method: 'update' });
+
+          post = new Post(PostFactory.build({ user_id: author.get('id') }));
+          await post.save(null, { method: 'insert' });
+        });
+
+        after(async () => {
+          await post.destroy();
+          await author.destroy();
+        });
+
+        it('doesn\'t fetch metadata', async () => {
+          const needMeta = true;
+          await expect(
+            reqWith(`/post/edit/${post.get('id')}`, needMeta),
+            'body to satisfy',
+            {
+              success: true,
+              meta: { title: 'Page not found at LibertySoil.org' } // look at PostEditPage sources
+            }
+          );
+        });
+      });
     });
   });
 
@@ -200,18 +250,6 @@ describe('Bookmarks', () => {
           success: true,
           affected: {},
           target: bookmark
-        });
-      });
-
-      xit('create bookmarks with default properties', async () => {
-        const bookmark = {
-          url: '/s'
-        };
-
-        await expect(reqWith(bookmark), 'body to satisfy', {
-          ...bookmark,
-          title: 'All schools',
-          description: 'All schools page'
         });
       });
 
