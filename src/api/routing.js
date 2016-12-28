@@ -140,5 +140,6 @@ export function initApi(bookshelf, sphinx) {
 
   api.get('/url', controller.validateUrl);
   api.post('/bookmarks', controller.createBookmark);
+  api.delete('/bookmark/:id', controller.deleteBookmark);
   return api.routes();
 }
