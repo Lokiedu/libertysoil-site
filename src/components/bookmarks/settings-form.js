@@ -56,6 +56,17 @@ class BookmarkSettingsForm extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.bookmark !== this.props.bookmark) {
+      const bookmark = nextProps.bookmark;
+      this.props.form.onValues({
+        description: bookmark.getIn(['more', 'description']),
+        title: bookmark.get('title'),
+        url: bookmark.get('url')
+      });
+    }
+  }
+
   toggleProcessing = () => {
     this.setState({
       processing: !this.state.processing
