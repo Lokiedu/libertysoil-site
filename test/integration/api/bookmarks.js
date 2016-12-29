@@ -24,6 +24,7 @@ import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 
 import UserFactory from '../../../test-helpers/factories/user';
+import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import BookmarkFactory from '../../../test-helpers/factories/bookmark';
 import PostFactory from '../../../test-helpers/factories/post';
 import { login } from '../../../test-helpers/api';
@@ -32,9 +33,10 @@ const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
 const Bookmark = bookshelf.model('Bookmark');
 const Post = bookshelf.model('Post');
+const Hashtag = bookshelf.model('Hashtag');
 
 describe('Bookmarks', () => {
-  describe('ApiController.checkUrl()', () => {
+  describe('GET /api/v1/url', () => {
     describe('Not authenticated users', () => {
       const requestDefault = {
         url: '/api/v1/url',
@@ -67,7 +69,7 @@ describe('Bookmarks', () => {
 });
 
 describe('Bookmarks', () => {
-  describe('ApiController.checkUrl()', () => {
+  describe('GET /api/v1/url', () => {
     const requestDefault = {
       url: '/api/v1/url',
       method: 'GET'
@@ -150,18 +152,70 @@ describe('Bookmarks', () => {
         }
       });
 
-      it('fetches page metadata', async () => {
-        const listOfUrls = [
-          'localhost:8000/geo', '/geo', 'http://localhost:8000/geo'
-        ];
+      describe('Fetches page metadata', () => {
+        describe('common routes', () => {
+          it('succeeds', async () => {
+            const listOfUrls = [
+              'localhost:8000/geo', '/geo', 'http://localhost:8000/geo',
+              'localhost:8000/geo/', '/geo/', 'http://localhost:8000/geo/'
+            ];
 
-        const needMeta = true;
-        for (const url of listOfUrls) {
-          await expect(reqWith(url, needMeta), 'body to satisfy', {
-            success: true,
-            meta: { title: 'Geotags of LibertySoil.org' }
+            const needMeta = true;
+            for (const url of listOfUrls) {
+              await expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: 'Geotags of LibertySoil.org' }
+              });
+            }
           });
-        }
+        });
+
+        describe('routes with params', () => {
+          let tag, user;
+          before(done => {
+            const userAttrs = UserFactory.build();
+            tag = new Hashtag(HashtagFactory.build());
+
+            Promise.all([
+              tag.save(null, { method: 'insert' }),
+              User.create(userAttrs.username, userAttrs.password, userAttrs.email)
+            ]).then(([, u]) => { user = u; done(); }, e => done(e));
+          });
+
+          after(() =>
+            Promise.all([tag.destroy(), user.destroy()])
+          );
+
+          it('succeed on hashtag\'s page', async () => {
+            const tagName = tag.get('name');
+            const listOfUrls = [
+              `localhost:8000/tag/${tagName}`, `localhost:8000/tag/${tagName}/`
+            ];
+
+            const needMeta = true;
+            for (const url of listOfUrls) {
+              await expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: `"${tagName}" posts on LibertySoil.org` }
+              });
+            }
+          });
+
+          it('succeed on user\'s page', async () => {
+            const username = user.get('username');
+            const listOfUrls = [
+              `localhost:8000/user/${username}`, `localhost:8000/user/${username}/`
+            ];
+
+            const needMeta = true;
+            for (const url of listOfUrls) {
+              await expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: `Posts of ${username} on LibertySoil.org` }
+              });
+            }
+          });
+        });
       });
 
       describe('Pages unavailable to user', () => {
@@ -188,7 +242,7 @@ describe('Bookmarks', () => {
             'body to satisfy',
             {
               success: true,
-              meta: { title: 'Page not found at LibertySoil.org' } // look at PostEditPage sources
+              meta: { title: '' }
             }
           );
         });
@@ -204,7 +258,7 @@ describe('Bookmarks', () => {
         method: 'POST',
         body: bookmark,
         session: sessionId,
-      })
+      });
 
       before(async () => {
         const userAttrs = UserFactory.build();
@@ -219,24 +273,61 @@ describe('Bookmarks', () => {
         await user.destroy();
       });
 
-      it('handle different url versions successfully', async () => {
-        const urls = [
-          '/s', '/s/',
-          'localhost:8000/s', 'localhost:8000/s/',
-          'http://localhost:8000/s', 'http://localhost:8000/s/'
-        ];
-        const bookmark = {
-          title: 'Schools',
-          more: { description: 'All schools page' }
-        };
+      describe('handle different url versions successfully', () => {
+        before(async () => {
+          await Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch();
+        });
 
-        for (let i = 0; i < urls.length; ++i) {
-          await expect(reqWith({ ...bookmark, url: urls[i] }), 'body to satisfy', {
-            success: true,
-            affected: {},
-            target: { ...bookmark, ord: i + 1, url: '/s' }
-          });
-        }
+        afterEach(async () => {
+          await Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch();
+        });
+
+        it('addresses with 1 level depth', async () => {
+          const urls = [
+            '/s', '/s/',
+            'localhost:8000/s', 'localhost:8000/s/',
+            'http://localhost:8000/s', 'http://localhost:8000/s/'
+          ];
+          const bookmark = {
+            title: 'Schools',
+            more: { description: 'All schools page' }
+          };
+
+          for (let i = 0; i < urls.length; ++i) {
+            await expect(reqWith({ ...bookmark, url: urls[i] }), 'body to satisfy', {
+              success: true,
+              affected: {},
+              target: { ...bookmark, ord: i + 1, url: '/s' }
+            });
+          }
+        });
+
+        it('addresses with 2 level depth', async () => {
+          const username = user.get('username');
+          const urls = [
+            `/user/${username}`, `/user/${username}/`,
+            `localhost:8000/user/${username}/`, `localhost:8000/user/${username}/`,
+            `http://localhost:8000/user/${username}/`, `http://localhost:8000/user/${username}/`
+          ];
+          const bookmark = {
+            title: `Posts of ${username} on LibertySoil.org`,
+            more: { description: 'Profile' }
+          };
+
+          for (let i = 0; i < urls.length; ++i) {
+            await expect(reqWith({ ...bookmark, url: urls[i] }), 'body to satisfy', {
+              success: true,
+              affected: {},
+              target: { ...bookmark, ord: i + 1, url: `/user/${username}` }
+            });
+          }
+        });
       });
 
       it('create bookmark successfully', async () => {

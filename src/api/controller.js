@@ -3364,6 +3364,8 @@ export default class ApiController {
     }
   };
 
+  updateBookmark = async () => {};
+
   deleteBookmark = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
@@ -3461,13 +3463,13 @@ export default class ApiController {
       return;
     }
 
-    const url = ctx.query.url.trim().toLowerCase();
+    const url = ctx.query.url.trim();
     const withProtocol = urlUtils.hasProtocol(url);
 
     const API_HOST = process.env.API_HOST || 'http://localhost:8000';
     const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
 
-    if (!urlUtils.checkMatchHosts(url, allowedHosts, withProtocol)) {
+    if (!urlUtils.checkMatchHosts(url.toLowerCase(), allowedHosts, withProtocol)) {
       ctx.status = 400;
       ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
       return;
@@ -3554,7 +3556,7 @@ export default class ApiController {
       return;
     }
 
-    const url = ctx.query.url.trim().toLowerCase();
+    const url = ctx.query.url.trim();
     const withProtocol = urlUtils.hasProtocol(url);
 
     const API_HOST = process.env.API_HOST || 'http://localhost:8000';

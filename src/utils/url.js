@@ -39,14 +39,14 @@ export default async function validateUrl(rawUrl = '', allowedHosts = [], routeT
 }
 
 export function hasProtocol(url = '') {
-  return !!url.match(/^[a-zA-Z]{1,}:\/\//);
+  return !!url.match(/^[a-z]{1,}:\/\//i);
 }
 
 export function getResourceUrl(url = '') {
   const res = parse(url);
   if (res.pathname) {
     const slashes = res.pathname.match(/\//g);
-    if (Array.isArray(slashes) && slashes.length > 1 && !res.pathname.endsWith('//')) {
+    if (Array.isArray(slashes) && slashes.length > 1 && res.pathname.match(/[^\/]\/$/)) {
       res.pathname = res.pathname.slice(0, -1);
     }
 
