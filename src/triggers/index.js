@@ -861,6 +861,19 @@ export class ActionsTrigger {
     }
   }
 
+  deleteBookmark = async (bookmarkId) => {
+    try {
+      const response = await this.client.deleteBookmark(bookmarkId);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.messages.addMessage('Bookmark has been deleted'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
+
   loadBookmarks = async () => {
     try {
       const response = await this.client.getBookmarks();

@@ -206,6 +206,10 @@ export default function reducer(state = initialState, action) {
     case a.bookmarks.UPDATE_BOOKMARKS: {
       state = state.mergeIn(['bookmarks'], i.fromJS(action.bookmarks));
 
+      const id = _.findKey(action.bookmarks, b => b === null);
+      if (id) {
+        state = state.update('bookmarks', bs => bs.delete(id));
+      }
       break;
     }
 
