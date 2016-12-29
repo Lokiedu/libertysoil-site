@@ -45,6 +45,11 @@ export class Bookmarks extends React.Component {
   };
 
   handleSettingsClick = (bookmarkId) => {
+    let title = 'Create bookmark';
+    // FIXME: bookmarkId may be an event object
+    if (typeof bookmarkId === 'string') {
+      title = 'Edit bookmark';
+    }
     this.props.dispatch(setRemote({
       isVisible: true,
       component: BookmarkSettingsModal,
@@ -52,9 +57,11 @@ export class Bookmarks extends React.Component {
         children: (
           <BookmarkSettingsForm
             bookmark={this.props.bookmarks.get(bookmarkId)}
+            onDelete={this.handleDelete}
             onSave={this.handleSave}
           />
         ),
+        title,
         onClose: this.handleModalClose
       }
     }));
@@ -63,6 +70,18 @@ export class Bookmarks extends React.Component {
   handleModalClose = () => {
     if (this.props.isModalVisible) {
       this.props.dispatch(toggleRemote(false));
+    }
+  };
+
+  handleDelete = async (bookmarkId) => {
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
+
+    try {
+      await triggers.deleteBookmark(bookmarkId);
+      this.handleModalClose();
+    } catch (e) {
+      this.props.dispatch(addError(e.message));
     }
   };
 
@@ -90,7 +109,7 @@ export class Bookmarks extends React.Component {
     return (
       <div>
         <Navigation>
-          {this.props.bookmarks.toList().map(item => (
+          {this.props.bookmarks.toList().sortBy(b => b.get('ord')).map(item => (
             <Bookmark
               {...pick(item.toObject(), ['url', 'title', 'id'])}
               description={item.getIn(['more', 'description'])}
@@ -100,7 +119,8 @@ export class Bookmarks extends React.Component {
             />
           ))}
           <Button
-            title="New bookmark"
+            className="button button-wide button-hover_grey button-transparent"
+            title="Create bookmark"
             onClick={this.handleSettingsClick}
           />
         </Navigation>

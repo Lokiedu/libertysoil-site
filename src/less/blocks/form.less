@@ -13,8 +13,29 @@
       font-weight: bold;
 
       &--short {
-        flex-basis: 30px;
+        margin-right: 10px;
+        flex-basis: 80px;
       }
     }
+
+    &--in_progress {
+      position: relative;
+    }
+
+    &--in_progress::after {
+      &:extend(.micon);
+      &:extend(.micon-rotate);
+      &:extend(.micon-midl);
+      content: 'refresh';
+      position: absolute;
+      right: 5px;
+      z-index: 100;
+
+      color: black;
+    }
+  }
+
+  &--inactive {
+    opacity: 0.5;
   }
 }

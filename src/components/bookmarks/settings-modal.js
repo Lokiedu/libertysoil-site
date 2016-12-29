@@ -20,14 +20,14 @@ import classNames from 'classnames';
 
 import Modal from '../modal-component';
 
-const BookmarkSettingsModal = ({ className, isVisible, onClose, children, ...props }) => {
+const BookmarkSettingsModal = ({ className, isVisible, onClose, children, title, ...props }) => {
   const cn = classNames(className, {
     hidden: !isVisible
   });
   return (
     <Modal className={cn} containerClassName="bg_color--lightgray" onHide={onClose} {...props}>
       <Modal.Head>
-        <Modal.Title>Bookmark settings</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Head>
       <Modal.Body>
         {children}
