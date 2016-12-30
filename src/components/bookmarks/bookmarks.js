@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
-import { List } from 'immutable';
+import { Map as ImmutableMap, List } from 'immutable';
 
 import { API_HOST } from '../../config';
 import ApiClient from '../../api/client';
@@ -27,11 +27,13 @@ import { addError } from '../../actions/messages';
 import { setRemote, toggleRemote } from '../../actions/remote';
 import createSelector from '../../selectors/createSelector';
 
-import Button from '../button';
 import Navigation from '../navigation';
+import NavigationItem from '../navigation-item';
 import Bookmark from './bookmark';
 import BookmarkSettingsModal from './settings-modal';
 import BookmarkSettingsForm from './settings-form';
+
+const AddBookmarkIcon = ImmutableMap({ icon: 'add' });
 
 export class Bookmarks extends React.Component {
   static propTypes = {
@@ -98,6 +100,7 @@ export class Bookmarks extends React.Component {
     try {
       await triggers.manageBookmark(data);
       success = true;
+      this.handleModalClose();
     } catch (e) {
       this.props.dispatch(addError(e.message));
     }
@@ -118,11 +121,14 @@ export class Bookmarks extends React.Component {
               onSettingsClick={this.handleSettingsClick}
             />
           ))}
-          <Button
-            className="button button-wide button-hover_grey button-transparent"
-            title="Create bookmark"
+          <NavigationItem
+            className="action"
+            icon={AddBookmarkIcon}
+            theme="2.0"
             onClick={this.handleSettingsClick}
-          />
+          >
+            Create bookmark
+          </NavigationItem>
         </Navigation>
       </div>
     );

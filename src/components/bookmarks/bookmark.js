@@ -40,7 +40,8 @@ export default class Bookmark extends React.Component {
   };
 
   static defaultProps = {
-    onSettingsClick: () => {}
+    onSettingsClick: () => {},
+    icon: 'star'
   };
 
   constructor(...args) {
@@ -61,6 +62,7 @@ export default class Bookmark extends React.Component {
 
     return (
       <NavigationItem
+        className="navigation-item--color_blue"
         badge={this.iconComponent}
         icon={fromJS({ icon })}
         theme="2.0"

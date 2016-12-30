@@ -172,7 +172,6 @@ class BookmarkSettingsForm extends React.Component {
     e.preventDefault();
     this.toggleProcessing('submit');
 
-    const nativeForm = event.target;
     const { form } = this.props;
     form.forceValidate();
     if (!form.isValid()) {
@@ -180,9 +179,8 @@ class BookmarkSettingsForm extends React.Component {
     }
 
     const newValues = form.values();
-
     await this.props.onSave({
-      id: nativeForm.id.value,
+      ...this.props.bookmark.toJS(),
       more: { description: newValues.description },
       title: newValues.title,
       url: newValues.url
@@ -215,7 +213,6 @@ class BookmarkSettingsForm extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <input id="bookmark_id" name="id" type="hidden" value={bookmarkId} />
         <Field
           field={fields.url}
           name="Url"
