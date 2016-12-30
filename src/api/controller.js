@@ -3364,7 +3364,131 @@ export default class ApiController {
     }
   };
 
-  updateBookmark = async () => {};
+  updateBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.params.id) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const checkit = Checkit(BookmarkValidators);
+    try {
+      await checkit.run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let bookmark;
+    try {
+      bookmark = await Bookmark.where({ id: ctx.params.id }).fetch({ require: true });
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+
+    if (bookmark.get('user_id') !== ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not allowed to update this bookmark' };
+      return;
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+
+      await this.validateUrl(ctx2);
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    let newOrd = ctx.request.body.ord;
+    const oldOrd = bookmark.get('ord');
+    let affected = {};
+
+    if (newOrd !== oldOrd) {
+      let q = Bookmark.forge().query(qb => {
+        qb
+          .table('bookmarks')
+          .where('user_id', ctx.session.user)
+          .max('ord');
+      });
+      const max = (await (await q.fetchAll()).toJSON())[0].max;
+      if (max < newOrd) {
+        newOrd = max;
+      }
+
+      await bookmark.save({ ord: max + 1 }, { method: 'update' });
+
+      let op;
+      const knex = this.bookshelf.knex;
+      q = Bookmark.forge().query(qb => {
+        if (newOrd < oldOrd) {
+          op = '+';
+          qb.where('ord', '>=', newOrd).andWhere('ord', '<', oldOrd);
+        } else {
+          op = '-';
+          qb.where('ord', '>', oldOrd).andWhere('ord', '<=', newOrd);
+        }
+
+        qb
+          .andWhere({ user_id: ctx.session.user })
+          .update({ ord: knex.raw(`ord ${op} 1`) })
+          .returning('*');
+      });
+
+      affected = _.keyBy(await (await q.fetchAll()).toJSON(), 'id');
+    }
+
+    bookmark.set('url', urlUtils.getResourceUrl(ctx.request.body.url));
+    bookmark.set('title', ctx.request.body.title);
+    bookmark.set('ord', newOrd);
+
+    if (!_.isNil(ctx.request.body.more)) {
+      const attrs = {};
+      const allowedAttributes = ['description', 'icon'];
+      for (const attr of allowedAttributes) {
+        attrs[attr] = ctx.request.body.more[attr];
+      }
+
+      bookmark.set('more', attrs);
+    }
+
+    bookmark.attributes.updated_at = new Date().toJSON();
+
+    try {
+      await bookmark.save(null, { method: 'update' });
+      await bookmark.fetch({ require: true });
+
+      ctx.status = 200;
+      ctx.body = {
+        target: await bookmark.toJSON(),
+        success: true,
+        affected
+      };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
 
   deleteBookmark = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {

@@ -608,4 +608,168 @@ describe('Bookmarks', () => {
       });
     });
   });
+
+  describe('POST /api/v1/bookmark/:id', () => {
+    const reqWith = (bookmark, sessionId) => ({
+      url: `/api/v1/bookmark/${bookmark.id}`,
+      method: 'POST',
+      body: bookmark,
+      session: sessionId
+    });
+
+    describe('User doesn\'t have permissions', () => {
+      let author, bookmark;
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        bookmark = new Bookmark(BookmarkFactory.build({ user_id: author.get('id') }));
+        await bookmark.save({ ord: 1 }, { method: 'insert' });
+      });
+
+      after(() => Promise.all([bookmark.destroy(), author.destroy()]));
+
+      it('fails with 403 for anonymous', async () => {
+        const b = Object.assign(await bookmark.toJSON(), { title: 'Updated', more: {} });
+        await expect(
+          reqWith(b, undefined),
+          'body to satisfy',
+          { error: 'You are not authorized' }
+        );
+      });
+
+      describe('Non-author', () => {
+        let user, sessionId;
+        before(async () => {
+          const userAttrs = UserFactory.build();
+          user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+          await user.save({ email_check_hash: null }, { method: 'update' });
+          sessionId = await login(userAttrs.username, userAttrs.password);
+        });
+
+        after(() => user.destroy());
+
+        it('fails with 403', async () => {
+          const b = Object.assign(await bookmark.toJSON(), { title: 'Updated', more: {} });
+          await expect(
+            reqWith(b, sessionId),
+            'body to satisfy',
+            { error: 'You are not allowed to update this bookmark' }
+          );
+        });
+      });
+    });
+
+    describe('Bookmark does not exist', () => {
+      let user, sessionId;
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        await user.save({ email_check_hash: null }, { method: 'update' });
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(() => user.destroy());
+
+      it('fails with 404', async () => {
+        const bookmark = { id: uuid.v4(), title: '123', url: '/', more: {} };
+        await expect(
+          reqWith(bookmark, sessionId),
+          'to open not found'
+        );
+      });
+    });
+
+    describe('Bookmark exists', () => {
+      let user, userId, sessionId, bookmark, bookmarks;
+      const BOOKMARKS_NUMBER = 10;
+      const BOOKMARK_ORD = 5;
+      const initialCharCode = 'a'.charCodeAt();
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        await user.save({ email_check_hash: null }, { method: 'update' });
+        userId = user.get('id');
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+    
+      beforeEach(() => {
+        bookmarks = {};
+        const toSave = [];
+        for (let i = 0; i < BOOKMARKS_NUMBER; ++i) {
+          const attrs = BookmarkFactory.build({
+            title: String.fromCharCode(initialCharCode + i),
+            ord: i,
+            user_id: userId
+          });
+
+          const b = new Bookmark(attrs);
+          toSave.push(b.save(null, { method: 'insert' }));
+
+          bookmarks[attrs.id] = b.toJSON();
+          if (i === BOOKMARK_ORD) {
+            bookmark = bookmarks[attrs.id];
+          }
+        }
+
+        return Promise.all(toSave);
+      });
+
+      afterEach(() => Bookmark.forge()
+        .query(qb => qb.where({ user_id: userId }).delete())
+        .fetchAll({ require: true })
+      );
+
+      after(() => user.destroy());
+
+      describe('update without changing the order', () => {
+        it('does not affect rest bookmarks', async () => {
+          const b = { ...bookmark, title: 'Updated' }
+          await expect(
+            reqWith(b, sessionId),
+            'body to satisfy',
+            { success: true, affected: {}, target: b }
+          );
+        });
+      });
+
+      describe('update with increase order value', () => {
+        it('affects bookmarks which ord <- [(oldOrd + 1)..newOrd]', async () => {
+          const NEW_ORD = 8;
+          const bs = {};
+          for (const b of Object.values(bookmarks)) {
+            if (b.ord > BOOKMARK_ORD && b.ord <= NEW_ORD) {
+              bs[b.id] = b;
+              --bs[b.id].ord;
+            }
+          }
+          const b = { ...bookmark, title: 'Updated', ord: NEW_ORD };
+          await expect(
+            reqWith(b, sessionId),
+            'body to satisfy',
+            { success: true, affected: bs, target: b }
+          );
+        });
+      });
+
+      describe('update with decrease order value', () => {
+        it('affects bookmarks which ord <- [newOrd..(oldOrd - 1)]', async () => {
+          const NEW_ORD = 2;
+          const bs = {};
+          for (const b of Object.values(bookmarks)) {
+            if (b.ord >= NEW_ORD && b.ord < BOOKMARK_ORD) {
+              bs[b.id] = b;
+              ++bs[b.id].ord;
+            }
+          }
+          const b = { ...bookmark, title: 'Updated', ord: NEW_ORD };
+          await expect(
+            reqWith(b, sessionId),
+            'body to satisfy',
+            { success: true, affected: bs, target: b }
+          );
+        });
+      });
+    });
+  });
 });
