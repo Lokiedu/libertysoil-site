@@ -49,6 +49,9 @@ export function initBookshelfFromKnex(knex) {
     posts() {
       return this.hasMany(Post, 'user_id');
     },
+    bookmarks() {
+      return this.hasMany(Bookmark, 'user_id');
+    },
     following() {
       return this.belongsToMany(User, 'followers', 'user_id', 'following_user_id');
     },
@@ -603,6 +606,13 @@ export function initBookshelfFromKnex(knex) {
     model: Post
   });
 
+  const Bookmark = bookshelf.Model.extend({
+    tableName: 'bookmarks',
+    user() {
+      return this.belongsTo(User, 'user_id');
+    }
+  });
+
   // adding to registry
   bookshelf.model('User', User);
   bookshelf.model('Post', Post);
@@ -615,6 +625,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Geotag', Geotag);
   bookshelf.model('Comment', Comment);
   bookshelf.model('Quote', Quote);
+  bookshelf.model('Bookmark', Bookmark);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

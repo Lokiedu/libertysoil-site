@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-const User = {
+export const User = {
   registration: {
     username: [
       'required',
@@ -68,21 +68,21 @@ const User = {
   }
 };
 
-const School = {
+export const School = {
   more: {
     head_pic: ['plainObject'],
     last_editor: ['string']
   }
 };
 
-const Geotag = {
+export const Geotag = {
   more: {
     description: ['string'],
     last_editor: ['string']
   }
 };
 
-const Hashtag = {
+export const Hashtag = {
   more: {
     description: ['string'],
     head_pic: ['plainObject'],
@@ -90,4 +90,15 @@ const Hashtag = {
   }
 };
 
-export { User, School, Hashtag, Geotag };
+export const Bookmark = {
+  base: {
+    ord: ['integer'],
+    title: ['required', 'string'],
+    url: ['required', 'string'],
+    more: ['plainObject']
+  },
+  more: {
+    'description': ['string'],
+    'icon': ['string'],
+  }
+};
