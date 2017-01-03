@@ -61,11 +61,29 @@ describe('Tag Cloud page', () => {
 
     let tag = await expect(tagsContent, 'queried for first', '.tag__name');
     await expect(tag, 'to have text', 'foo-hashtag-name');
-
   });
 
-  it('specific tag page works', async () => {
-    let context = await expect({ url: '/tag/foo-hashtag-name' }, 'to open successfully');
-  });
+  describe('Specific hashtag page', () => {
+    it('works for existing hashtag', async () => {
+      const context = await expect({ url: '/tag/foo-hashtag-name' }, 'to open successfully');
 
+      const document = jsdom(context.httpResponse.body);
+      await expect(
+        document.head,
+        'queried for first', 'title',
+        'to have text', '"foo-hashtag-name" posts on LibertySoil.org'
+      );
+    });
+
+    it('renders NotFound page for non-existent hashtag', async () => {
+      const context = await expect({ url: '/tag/ghbvth'}, 'to open not found');
+
+      const document = jsdom(context.httpResponse.body);
+      await expect(
+        document.head,
+        'queried for first', 'title',
+        'to have text', 'Page not found at LibertySoil.org'
+      );
+    });
+  });
 });
