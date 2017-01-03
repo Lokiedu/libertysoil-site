@@ -31,6 +31,9 @@ import { hidePostsData } from '../utils/posts';
 import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
+import { API_HOST } from '../config';
+import { getRoutes } from '../routing';
+import * as urlUtils from '../utils/url';
 import {
   User as UserValidators,
   School as SchoolValidators,
@@ -3242,6 +3245,50 @@ export default class ApiController {
 
     await post_object.save(null, { method: 'update' });
     await this.getPostComments(ctx);
+  };
+
+  validateUrl = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('url' in ctx.query)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter is not given' };
+      return;
+    }
+
+    const url = ctx.query.url.trim();
+    const withProtocol = urlUtils.hasProtocol(url);
+
+    const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
+
+    if (!urlUtils.checkMatchHosts(url, allowedHosts, withProtocol)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
+      return;
+    }
+
+    const resourceUrl = urlUtils.getResourceUrl(url, allowedHosts, withProtocol);
+    const handle = () => {};
+    const routeTree = getRoutes(handle, handle);
+
+    try {
+      const matches = await urlUtils.checkMatchRoutes(resourceUrl, routeTree);
+
+      if (!matches) {
+        ctx.status = 404;
+        return;
+      }
+
+      ctx.status = 200;
+      ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
   };
 
   // ========== Helpers ==========

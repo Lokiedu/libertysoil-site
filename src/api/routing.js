@@ -137,6 +137,6 @@ export function initApi(bookshelf, sphinx) {
   api.get('/search/:query', controller.search);
   api.get('/search-quick/:query', controller.searchStats);
 
-
+  api.get('/url', controller.validateUrl);
   return api.routes();
 }
