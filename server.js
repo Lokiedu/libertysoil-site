@@ -278,14 +278,9 @@ app.use(async function reactMiddleware(ctx) {
         ctx.status = fetchHandler.status;
       }
 
-      // taken from https://github.com/facebook/fbjs/blob/df9047fec0bbd1e64635ae369c045975777cba7c/packages/fbjs/src/core/ExecutionEnvironment.js
-      const canUseDOM = !!(
-        typeof window !== 'undefined' &&
-        window.document &&
-        window.document.createElement
-      );
-
-      const metadata = canUseDOM ? Helmet.peek() : Helmet.rewind();
+      // we always render Helmet's metadata as tags like <title></title>
+      Helmet.canUseDOM = false;
+      const metadata = Helmet.rewind();
 
       ctx.staus = 200;
       ctx.body = template({ state, html, metadata });
