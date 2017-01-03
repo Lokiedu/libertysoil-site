@@ -1,6 +1,8 @@
 import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
+import { format as format_url } from 'url';
+import qs from 'querystring';
 import AWS from 'mock-aws';
 import initBookshelf from '../src/api/db';
 
@@ -37,8 +39,15 @@ let subjectToRequest = (subject) => {
         }});
     }
 
+    if ('query' in subject) {
+      result = merge(result, {
+        url: `${result.url}?${qs.stringify(subject.query)}`
+      });
+    }
+
     delete subject["url"];
     delete subject["session"];
+    delete subject['query'];
     result = merge(result, subject);
     return merge(result, subject);
   }
