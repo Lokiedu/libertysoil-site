@@ -13,7 +13,7 @@
     "flowtype"
   ],
   "parserOptions": {
-    "ecmaVersion": 2107,
+    "ecmaVersion": 2017,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -23,12 +23,9 @@
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
     },
-    "import/ignore": [
-      "node_modules"
-    ],
     "react": {
       "pragma": "React",
-      "version": "15.0"
+      "version": "15.4"
     }
   },
   "env": {
@@ -37,7 +34,7 @@
     "node": true
   },
   "rules": {
-    "babel/array-bracket-spacing": [2, "never"],
+    "array-bracket-spacing": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-return": 2,
     "eol-last": 2,
@@ -53,7 +50,7 @@
     "no-var": 2,
     "no-warning-comments": 1,
     "babel/object-curly-spacing": [2, "always"],
-    "babel/object-shorthand": 2,
+    "object-shorthand": 2,
     "padded-blocks": [2, "never"],
     "prefer-const": 2,
     "prefer-template": 2,
