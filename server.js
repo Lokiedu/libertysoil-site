@@ -37,9 +37,8 @@ import createRequestLogger from './src/utils/bunyan-koa-request';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
-import { Router, RouterContext, match, useRouterHistory } from 'react-router';
+import { Router, RouterContext, match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import Helmet from 'react-helmet';
 
@@ -241,8 +240,7 @@ app.use(async function reactMiddleware(ctx) {
     </Router>
   );
 
-  const memoryHistory = useRouterHistory(createMemoryHistory)();
-  const history = syncHistoryWithStore(memoryHistory, store, { selectLocationState: state => state.get('routing') });
+  const history = syncHistoryWithStore(createMemoryHistory(), store, { selectLocationState: state => state.get('routing') });
   const routes = makeRoutes(history);
 
   try {
