@@ -461,12 +461,12 @@ export default class ApiClient
     return await response.json();
   }
 
-  async sendMessage(userId, text) {
+  async sendMessage(userId: UserId, text: string) {
     const response = await this.postJSON(`/api/v1/user/${userId}/messages`, { text });
     return await response.json();
   }
 
-  async userMessages(userId) {
+  async userMessages(userId: UserId) {
     const response = await this.get(`/api/v1/user/${userId}/messages`);
     return await response.json();
   }
