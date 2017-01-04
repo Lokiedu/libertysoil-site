@@ -166,9 +166,9 @@ app.use(async (ctx, next) => {
 
 app.keys = ['libertysoil'];
 
-app.use(convert(cors({
+app.use(cors({
   allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-})));
+}));
 
 app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
 
@@ -187,7 +187,7 @@ app.use(createRequestLogger({ level: 'info', logger }));
 
 app.use(mount('/api/v1', api));
 
-app.use(convert(serve(`${__dirname}/public/`, { index: false, defer: false })));
+app.use(serve(`${__dirname}/public/`, { index: false, defer: false }));
 
 app.use(async function reactMiddleware(ctx) {
   const store = initState();
