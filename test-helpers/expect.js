@@ -3,6 +3,7 @@ import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
 import { format as format_url } from 'url';
 import qs from 'querystring';
+import omit from 'lodash/omit';
 import AWS from 'mock-aws';
 import initBookshelf from '../src/api/db';
 
@@ -45,11 +46,7 @@ let subjectToRequest = (subject) => {
       });
     }
 
-    delete subject["url"];
-    delete subject["session"];
-    delete subject['query'];
-    result = merge(result, subject);
-    return merge(result, subject);
+    return merge(result, omit(subject, ['session', 'query', 'url']));
   }
 
   throw new Error('Unexpected format of test-subject')
