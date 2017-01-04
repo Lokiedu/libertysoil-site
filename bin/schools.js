@@ -100,6 +100,14 @@ const getBool = (str) => {
   return null;
 };
 
+function sqlStringOrNull(str) {
+  if (str.length === 0) {
+    return 'NULL';
+  }
+
+  return `'${str}'`;
+}
+
 async function action() {
   const spinner = ora('reading data');
   spinner.start();
@@ -138,6 +146,7 @@ async function action() {
       const city = obj['City'].trim();
       const address1 = obj['Street address1'].trim();
       const address2 = obj['Street address2'].trim();
+      const address = Knex.raw(`concat_ws(E',\\n', ${sqlStringOrNull(address1)}, ${sqlStringOrNull(address2)})`);
       const house = obj['House address'].trim();
       const postal_code = obj['Post code'].trim();
       const website = obj['Website URL/Name'].trim();
@@ -187,7 +196,7 @@ async function action() {
       const [principal_name, principal_surname] = _principal_name.length > 0 ? _principal_name.split(' ') : ['', ''];
 
       const foundation_date = obj['Date School Was Founded'].trim();
-      let foundation_year = null, foundation_month = null, foundation_day = null;
+      let foundation_year = null, foundation_month = 1, foundation_day = 1;
 
       if (foundation_date.length === 4) {
         foundation_year = parseInt(foundation_date, 10);
@@ -238,12 +247,12 @@ async function action() {
       return {
         name, url_name,
         is_open,
-        country_id, city, address1, address2, house, postal_code,
+        country_id, city, address, house, postal_code,
         website, phone, facebook, twitter,
         teaching_languages,
-        foundation_day, foundation_month, foundation_year,
         principal_name, principal_surname,
-        org_membership
+        org_membership,
+        foundation_date: Knex.raw(`make_date(${foundation_year}, ${foundation_month}, ${foundation_day})`)
       };
     })
     .filter(Boolean);

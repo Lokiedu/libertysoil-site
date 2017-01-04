@@ -159,8 +159,7 @@ class SchoolEditForm extends React.Component {
         principal_surname: fields.principal_surname.value,
         postal_code: fields.postal_code.value,
         city: fields.city.value,
-        address1: fields.address1.value,
-        address2: fields.address2.value,
+        address: fields.address.value,
         house: fields.house.value,
         phone: fields.phone.value,
         website: fields.website.value,
@@ -240,8 +239,7 @@ class SchoolEditForm extends React.Component {
 
         <TextInputField field={fields.postal_code} name="postal_code" title="Postal Code" />
         <TextInputField field={fields.city} name="city" title="City" />
-        <TextInputField field={fields.address1} name="address1" title="Address" />
-        <TextInputField field={fields.address2} name="address2" title="Address 2" />
+        <TextInputField field={fields.address} name="address" title="Address" />
         <TextInputField field={fields.house} name="house" title="House" />
         <TextInputField field={fields.phone} name="phone" title="Phone" />
 
@@ -323,7 +321,7 @@ class SchoolEditForm extends React.Component {
 const fields = [
   'name', 'description', 'is_open',
   'principal_name', 'principal_surname',
-  'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
+  'country_id', 'postal_code', 'city', 'address', 'house', 'phone',
   'website', 'facebook', 'twitter', 'wikipedia',
   'adec', 'aero', 'australian', 'eudec', 'iden', 'alternative_to_school', 'wikipedia_list'
 ];
