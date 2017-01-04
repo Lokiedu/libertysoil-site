@@ -17,7 +17,7 @@
 
  @flow
 */
-declare module 'tcomb' {
-  declare type Predicate = (x: any) => boolean;
-  declare interface $Refinement<Predicate> {}
+declare module 'url' {
+  declare function parse(url: string): Object;
+  declare function format(urlObj: Object): string;
 }

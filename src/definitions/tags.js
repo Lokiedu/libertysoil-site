@@ -17,7 +17,11 @@
 
  @flow
 */
-declare module 'tcomb' {
-  declare type Predicate = (x: any) => boolean;
-  declare interface $Refinement<Predicate> {}
-}
+import type { Uuid4 } from './common';
+import type { Attachment } from './attachments';
+
+export type TagMore = {
+  description?: string,
+  head_pic?: Attachment,
+  last_editor?: Uuid4
+};
