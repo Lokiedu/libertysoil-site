@@ -823,4 +823,22 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   }
+
+  sendMessage = async (userId, text) => {
+    try {
+      const message = await this.client.sendMessage(userId, text);
+      this.dispatch(a.userMessages.addUserMessage(userId, message));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  updateUserMessages = async (userId) => {
+    try {
+      const messages = await this.client.userMessages(userId);
+      this.dispatch(a.userMessages.setUserMessages(userId, messages));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
 }

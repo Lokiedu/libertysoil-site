@@ -35,7 +35,8 @@ import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
-  Geotag as GeotagValidators
+  Geotag as GeotagValidators,
+  UserMessage as UserMessageValidators
 } from './db/validators';
 
 
@@ -44,6 +45,19 @@ const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
   'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
   { post_comments: qb => qb.orderBy('created_at') }, 'post_comments.user'
+]);
+
+const USER_RELATIONS = Object.freeze([
+  'following',
+  'followers',
+  'liked_posts',
+  'favourited_posts',
+  'followed_hashtags',
+  'followed_geotags',
+  'followed_schools',
+  'liked_hashtags',
+  'liked_geotags',
+  'liked_schools'
 ]);
 
 export default class ApiController {
@@ -1244,18 +1258,7 @@ export default class ApiController {
       .where({ id: ctx.session.user })
       .fetch({
         require: true,
-        withRelated: [
-          'following',
-          'followers',
-          'liked_posts',
-          'favourited_posts',
-          'followed_hashtags',
-          'followed_geotags',
-          'followed_schools',
-          'liked_hashtags',
-          'liked_geotags',
-          'liked_schools'
-        ]
+        withRelated: USER_RELATIONS
       });
 
     ctx.body = { success: true, user };
@@ -1846,12 +1849,7 @@ export default class ApiController {
               .where({ username: ctx.params.username })
               .fetch({
                 require: true,
-                withRelated: [
-                  'following', 'followers', 'liked_posts',
-                  'liked_hashtags', 'liked_schools', 'liked_geotags',
-                  'favourited_posts', 'followed_hashtags',
-                  'followed_schools', 'followed_geotags'
-                ]
+                withRelated: USER_RELATIONS
               });
       ctx.body = u.toJSON();
     } catch (e) {
@@ -1863,26 +1861,46 @@ export default class ApiController {
   getFollowedUsers = async (ctx) => {
     const User = this.bookshelf.model('User');
 
-    try {
-      const users = await User.collection()
-        .query(qb => {
-          qb.join('followers', 'users.id', 'followers.following_user_id')
-            .where('followers.user_id', ctx.params.id);
-        })
-        .fetch({
-          withRelated: [
-            'following', 'followers', 'liked_posts',
-            'liked_hashtags', 'liked_schools', 'liked_geotags',
-            'favourited_posts', 'followed_hashtags',
-            'followed_schools', 'followed_geotags'
-          ]
-        });
+    const users = await User.collection()
+      .query(qb => {
+        qb.join('followers', 'users.id', 'followers.following_user_id')
+          .where('followers.user_id', ctx.params.id);
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
 
-      ctx.body = users;
-    } catch (e) {
-      ctx.status = 404;
-      return;
-    }
+    ctx.body = users;
+  }
+
+  getMutualFollows = async (ctx) => {
+    const User = this.bookshelf.model('User');
+    const knex = this.bookshelf.knex;
+
+    // TODO: Is it possible to use joins insted of subqueries here? Which method is faster?
+    const users = await User.collection()
+      .query(qb => {
+        qb
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.user_id = ?', ctx.params.id)
+              .whereRaw('f2.following_user_id = users.id');
+          })
+          .whereExists(function () {
+            this.select('*')
+              .from(knex.raw('followers as f2'))
+              .whereRaw('f2.following_user_id = ?', ctx.params.id)
+              .whereRaw('f2.user_id = users.id');
+          });
+
+        this.applySortQuery(qb, ctx.query, 'username');
+      })
+      .fetch({
+        withRelated: USER_RELATIONS
+      });
+
+    ctx.body = users;
   }
 
   followUser = async (ctx) => {
@@ -3244,7 +3262,87 @@ export default class ApiController {
     await this.getPostComments(ctx);
   };
 
+  sendMessage = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const areMutuallyFollowed = await this.areMutuallyFollowed(ctx.session.user, ctx.params.id);
+    if (!areMutuallyFollowed) {
+      ctx.status = 403;
+      ctx.body = { error: 'You must be mutually followed with this user to be able to message them' };
+      return;
+    }
+
+    try {
+      await new Checkit(UserMessageValidators).run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    const User = this.bookshelf.model('User');
+
+    const currentUser = await new User({ id: ctx.session.user }).fetch({ require: true });
+    const message = await currentUser.outbox().create({
+      reciever_id: ctx.params.id,
+      text: ctx.request.body.text
+    });
+
+    ctx.body = await message.fetch();
+  }
+
+  /**
+   * Gets a chain of messages between the current user and the specified in params.
+   */
+  getUserMessages = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const UserMessage = this.bookshelf.model('UserMessage');
+
+    const messages = await UserMessage.collection()
+      .query(qb => {
+        qb
+          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          .orWhere({ sender_id: ctx.params.id, reciever_id: ctx.session.user })
+          .orderBy('created_at', 'ASC');
+      })
+      .fetch();
+    await UserMessage.collection()
+      .query(qb => {
+        qb
+          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          // TODO: Replace with a single orWhere() when knex is upgraded from 0.10
+          .orWhere({ sender_id: ctx.params.id })
+          .andWhere({ reciever_id: ctx.session.user })
+          .orderBy('created_at', 'ASC');
+      })
+      .fetch();
+
+    ctx.body = messages;
+  }
+
   // ========== Helpers ==========
+
+  async areMutuallyFollowed(user1Id, user2Id) {
+    const knex = this.bookshelf.knex;
+
+    const userFollows = await knex('followers')
+      .where({ user_id: user1Id, following_user_id: user2Id })
+      .count();
+    const userBeingFollowed = await knex('followers')
+      .where({ user_id: user2Id, following_user_id: user1Id })
+      .count();
+
+    return parseInt(userFollows[0].count, 10) > 0 && parseInt(userBeingFollowed[0].count, 10) > 0;
+  }
 
   countComments = async (posts) => {
     const ids = posts.map(post => {

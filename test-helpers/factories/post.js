@@ -18,8 +18,8 @@
 import uuid from 'uuid';
 import { Factory } from 'rosie';
 import { bookshelf } from '../db';
+import faker from 'faker';
 
-const faker = require('faker');
 
 const PostFactory = new Factory()
       .attr('id', () => uuid.v4())

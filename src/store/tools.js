@@ -20,15 +20,16 @@ import i from 'immutable';
 import { tools } from '../actions';
 
 
-const initialState = i.fromJS({
-  schools_river: [], // group things when the state gets clutered
+export const initialState = i.fromJS({
+  schools_river: [],
   all_schools_loaded: false,
   schools_alphabet: [],
   user_posts_river: [],
-  followed_users: []
+  followed_users: [],
+  conversations_river: []
 });
 
-export default function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case tools.TOOLS__ADD_SCHOOLS_TO_RIVER: {
       const ids = i.List(action.schools.map(school => school.id));
@@ -65,6 +66,13 @@ export default function reducer(state = initialState, action) {
     case tools.TOOLS__SET_FOLLOWED_USERS: {
       const ids = action.users.map(u => u.id);
       state = state.set('followed_users', i.List(ids));
+      break;
+    }
+
+    case tools.TOOLS__SET_CONVERSATIONS_RIVER: {
+      const ids = action.users.map(u => u.id);
+      state = state.set('conversations_river', i.List(ids));
+      break;
     }
   }
 

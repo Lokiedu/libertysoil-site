@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,41 +14,24 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-@color__text: #464646;
-@color__background: #fefffe;
-@color__page_background: #e8e7e5;
+*/
+// When updating the whole message chain.
+export const SET_USER_MESSAGES = 'SET_USER_MESSAGES';
+// When sending a new message.
+export const ADD_USER_MESSAGE = 'ADD_USER_MESSAGE';
 
-@color__block_background: #fff;
-@color__border: #d3d2d1;
-@color__panel_bg: #f2eae3;
+export function setUserMessages(userId, messages) {
+  return {
+    type: SET_USER_MESSAGES,
+    messages,
+    userId
+  };
+}
 
-@color__green: #50a844;
-@color__red: #fc2c5b;
-@color__blue: #40b7e9;
-@color__dark_blue: #689ACA;
-@color__gray: #d3d2d1;
-@color__dark_gray: #666;
-@color__darker: #333;
-@color__yellow: #efc242;
-
-.color {
-  &-red {
-    color: @color__red;
-  }
-  &-yellow {
-    color: @color__yellow;
-  }
-  &-blue {
-    color: @color__blue;
-  }
-  &-green {
-    color: @color__green;
-  }
-  &-gray {
-    color: @color__gray;
-  }
-  &-dark_gray {
-    color: @color__dark_gray;
-  }
+export function addUserMessage(userId, message) {
+  return {
+    type: ADD_USER_MESSAGE,
+    message,
+    userId
+  };
 }

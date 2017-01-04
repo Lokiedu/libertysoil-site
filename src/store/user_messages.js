@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,41 +14,29 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-@color__text: #464646;
-@color__background: #fefffe;
-@color__page_background: #e8e7e5;
+*/
+import i from 'immutable';
 
-@color__block_background: #fff;
-@color__border: #d3d2d1;
-@color__panel_bg: #f2eae3;
+import { userMessages } from '../actions';
 
-@color__green: #50a844;
-@color__red: #fc2c5b;
-@color__blue: #40b7e9;
-@color__dark_blue: #689ACA;
-@color__gray: #d3d2d1;
-@color__dark_gray: #666;
-@color__darker: #333;
-@color__yellow: #efc242;
 
-.color {
-  &-red {
-    color: @color__red;
+// user_id => list of messages
+export const initialState = i.Map();
+
+export function reducer(state = initialState, action) {
+  switch (action.type) {
+    case userMessages.SET_USER_MESSAGES: {
+      state = state.set(action.userId, i.fromJS(action.messages));
+
+      break;
+    }
+
+    case userMessages.ADD_USER_MESSAGE: {
+      state = state.update(action.userId, messages => (messages || i.List()).push(i.fromJS(action.message)));
+
+      break;
+    }
   }
-  &-yellow {
-    color: @color__yellow;
-  }
-  &-blue {
-    color: @color__blue;
-  }
-  &-green {
-    color: @color__green;
-  }
-  &-gray {
-    color: @color__gray;
-  }
-  &-dark_gray {
-    color: @color__dark_gray;
-  }
+
+  return state;
 }

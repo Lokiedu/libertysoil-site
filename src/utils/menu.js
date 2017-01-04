@@ -134,5 +134,9 @@ export const toolsMenu = new MenuTree([
     children: [
       { name: 'Following', path: '/tools/people/following' }
     ]
+  },
+  {
+    name: 'Conversations',
+    path: '/tools/conversations'
   }
 ]);

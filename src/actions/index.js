@@ -35,3 +35,5 @@ export const users = require('./users');
 export const quotes = require('./quotes');
 
 export const tools = require('./tools');
+
+export const userMessages = require('./user-messages');

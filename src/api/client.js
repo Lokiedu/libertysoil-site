@@ -261,6 +261,11 @@ export default class ApiClient
     return await response.json();
   }
 
+  async mutualFollows(userId) {
+    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`);
+    return await response.json();
+  }
+
   async checkSchoolExists(name) {
     const result = await this.head(`/api/v1/school/${name}`);
 
@@ -443,6 +448,16 @@ export default class ApiClient
 
   async unfollow(userName) {
     const response = await this.post(`/api/v1/user/${userName}/unfollow`);
+    return await response.json();
+  }
+
+  async sendMessage(userId, text) {
+    const response = await this.postJSON(`/api/v1/user/${userId}/messages`, { text });
+    return await response.json();
+  }
+
+  async userMessages(userId) {
+    const response = await this.get(`/api/v1/user/${userId}/messages`);
     return await response.json();
   }
 

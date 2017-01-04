@@ -1,5 +1,5 @@
 import { Factory } from 'rosie';
-const faker = require('faker');
+import faker from 'faker';
 import slug from 'slug';
 
 export default new Factory()
