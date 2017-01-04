@@ -72,13 +72,13 @@ export class TagPage extends Component {
 
     try {
       hashtag = await hashtag;
+      store.dispatch(addHashtag(hashtag));
     } catch (e) {
       store.dispatch(addHashtag({ name: router.params.tag }));
 
       return 404;
     }
 
-    store.dispatch(addHashtag(hashtag));
     store.dispatch(setHashtagPosts(router.params.tag, await tagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);

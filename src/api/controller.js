@@ -2621,7 +2621,7 @@ export default class ApiController {
 
       ctx.body = hashtag;
     } catch (e) {
-      ctx.body = [];
+      ctx.status = 404;
       ctx.body = { error: e.message };
     }
   };

@@ -72,12 +72,18 @@ class UserPage extends React.Component {
   };
 
   static async fetchData(router, store, client) {
-    // TODO: Implement 404 handling
-    const userInfo = await client.userInfo(router.params.username);
-    const userPosts = client.userPosts(router.params.username);
+    let userInfo;
+    try {
+      userInfo = await client.userInfo(router.params.username);
+      store.dispatch(addUser(userInfo));
 
-    store.dispatch(addUser(userInfo));
-    store.dispatch(setUserPosts(userInfo.id, await userPosts));
+      const userPosts = await client.userPosts(router.params.username);
+      store.dispatch(setUserPosts(userInfo.id, userPosts));
+      return 200;
+    } catch (e) {
+      store.dispatch(addUser({ username: router.params.username }));
+      return 404;
+    }
   }
 
   getChildContext() {

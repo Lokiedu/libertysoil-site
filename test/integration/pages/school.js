@@ -41,7 +41,16 @@ describe('School page', () => {
   // after(() => {
   //   console.error.restore();
   // });
+  it('renders NotFound page for non-existent school', async () => {
+    const context = await expect({ url: '/s/non-existent-school'}, 'to open not found');
 
+    const document = jsdom(context.httpResponse.body);
+    await expect(
+      document.head,
+      'queried for first', 'title',
+      'to have text', 'Page not found at LibertySoil.org'
+    );
+  });
 
   describe('when user is logged in', () => {
     let user;

@@ -37,6 +37,7 @@ import { ActionsTrigger } from '../triggers';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import { TAG_HASHTAG } from '../consts/tags';
+import NotFound from '../pages/not-found';
 
 class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';
@@ -128,6 +129,10 @@ class HashtagEditPage extends React.Component {
 
     if (!tag) {
       return null;
+    }
+
+    if (!tag.get('id')) {
+      return <NotFound />;
     }
 
     return (

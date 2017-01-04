@@ -135,6 +135,7 @@ expect.addAssertion('to open not found', function (expect, subject, value) {
     .then(function (context) {
     const status = context.httpResponse.statusLine.statusCode;
     expect(status, 'to equal', 404);
+    return context;
   });
 });
 
