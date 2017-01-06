@@ -52,8 +52,8 @@ import NotFound from './not-found';
 import BaseTagPage from './base/tag';
 
 
-export class GeotagPage extends Component {
-  static displayName = 'GeotagPage';
+export class UnwrappedGeotagPage extends Component {
+  static displayName = 'UnwrappedGeotagPage';
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
@@ -177,7 +177,8 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector, dispatch => ({
+const GeotagPage = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
-}))(GeotagPage);
+}))(UnwrappedGeotagPage);
+export default GeotagPage;

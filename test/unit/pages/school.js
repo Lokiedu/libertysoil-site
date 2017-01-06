@@ -22,7 +22,7 @@ import uuid from 'uuid';
 import i from 'immutable';
 
 import { expect, React } from '../../../test-helpers/expect-unit';
-import { SchoolPage } from '../../../src/pages/school';
+import { UnwrappedSchoolPage } from '../../../src/pages/school';
 import { TAG_SCHOOL } from '../../../src/consts/tags';
 import TagHeader from '../../../src/components/tag-header';
 import NotFound from '../../../src/pages/not-found';
@@ -38,7 +38,7 @@ describe('School page', () => {
 
   it('renders nothing if school hasn\'t been loaded yet', () => {
     const wrapper = shallow(
-      <SchoolPage
+      <UnwrappedSchoolPage
         comments={i.Map()}
         is_logged_in={false}
         params={{ school_name: 'test' }}
@@ -56,7 +56,7 @@ describe('School page', () => {
   xit('MUST report an error for invalid school object', () => {
     expect(() => {
       shallow(
-        <SchoolPage
+        <UnwrappedSchoolPage
           comments={i.Map()}
           is_logged_in={false}
           params={{ school_name: 'test' }}
@@ -107,7 +107,7 @@ describe('test', () => {
 
   it('renders <NotFound /> if no school found', () => {
     const wrapper = shallow(
-      <SchoolPage
+      <UnwrappedSchoolPage
         comments={i.Map()}
         is_logged_in={false}
         params={{ school_name: 'test' }}

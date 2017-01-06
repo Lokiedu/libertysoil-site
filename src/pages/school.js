@@ -49,7 +49,7 @@ import BaseTagPage from './base/tag';
 import NotFound from './not-found';
 
 
-export class SchoolPage extends React.Component {
+export class UnwrappedSchoolPage extends React.Component {
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
     current_user: CurrentUserPropType,
@@ -167,7 +167,8 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector, dispatch => ({
+const SchoolPage = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
-}))(SchoolPage);
+}))(UnwrappedSchoolPage);
+export default SchoolPage;

@@ -21,7 +21,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import WrappedRegister from '../../../src/components/register';
+import Register from '../../../src/components/register';
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';
 import UserFactory from '../../../test-helpers/factories/user';
@@ -31,7 +31,7 @@ import { waitForChange, waitForTrue } from '../../../test-helpers/wait';
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
 
-describe('Auth page', () => {
+describe('UnwpappedAuth page', () => {
   let user, userAttrs;
 
   before(async () => {
@@ -62,7 +62,7 @@ describe('Auth page', () => {
 
     it('availableUsername should work', async () => {
       const testComponent = (
-        <WrappedRegister
+        <Register
           onRegisterUser={() => {}}
           onShowRegisterForm={() => {}}
         />
@@ -81,7 +81,7 @@ describe('Auth page', () => {
 
     it('should check on email currently taken', async () => {
       const testComponent = (
-        <WrappedRegister
+        <Register
           onRegisterUser={() => {}}
           onShowRegisterForm={() => {}}
         />
@@ -100,7 +100,7 @@ describe('Auth page', () => {
       const userAttrs = UserFactory.build();
       const onRegisterUser = sinon.spy();
       const testComponent = (
-        <WrappedRegister
+        <Register
           onRegisterUser={onRegisterUser}
           onShowRegisterForm={() => {}}
         />

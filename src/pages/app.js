@@ -25,8 +25,8 @@ import { ActionsTrigger } from '../triggers';
 
 const GAInitializer = ga.Initializer;
 
-export class App extends React.Component {
-  static displayName = 'App';
+export class UnwrappedApp extends React.Component {
+  static displayName = 'UnwrappedApp';
 
   static propTypes = {
     children: PropTypes.element.isRequired,
@@ -83,4 +83,5 @@ const selector = createSelector(
   ui => ({ ui })
 );
 
-export default connect(selector)(App);
+const App = connect(selector)(UnwrappedApp);
+export default App;

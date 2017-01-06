@@ -56,7 +56,7 @@ import PasswordToolPage from './pages/tools/password-tool';
 import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 
-import List from './pages/list';
+import ListPage from './pages/list';
 import Induction from './pages/induction';
 import Welcome from './pages/welcome';
 
@@ -72,7 +72,7 @@ export function getRoutes(authHandler, fetchHandler) {
 
   return (
     <Route component={App}>
-      <Route component={List} path="/" onEnter={withAuth} />
+      <Route component={ListPage} path="/" onEnter={withAuth} />
       <Route component={Induction} path="/induction" onEnter={withAuth} />
       <Route component={SuggestionsPage} path="/suggestions" onEnter={withAuth} />
       <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />

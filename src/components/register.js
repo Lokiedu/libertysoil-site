@@ -47,7 +47,7 @@ class SuccessContent extends Component {
   }
 }
 
-export class Register extends React.Component {
+export class UnwrappedRegister extends React.Component {
   static displayName = 'Register';
 
   static propTypes = {
@@ -355,7 +355,7 @@ const validatePasswordRepeat = (passwordRepeat, form) => {
   return true;
 };
 
-const WrappedRegister = inform(from({
+const Register = inform(from({
   username: {
     'You must enter username to continue': u => u,
     'Username is taken': checkUsernameNotTaken
@@ -375,6 +375,6 @@ const WrappedRegister = inform(from({
   agree: {
     'You have to agree to Terms before registering': a => a
   }
-}))(Register);
+}))(UnwrappedRegister);
 
-export default WrappedRegister;
+export default Register;

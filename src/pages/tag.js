@@ -51,8 +51,8 @@ import BaseTagPage from './base/tag';
 import NotFound from './not-found';
 
 
-export class TagPage extends Component {
-  static displayName = 'TagPage';
+export class UnwrappedTagPage extends Component {
+  static displayName = 'UnwrappedTagPage';
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
@@ -177,7 +177,8 @@ const selector = createSelector(
 );
 
 
-export default connect(selector, dispatch => ({
+const TagPage = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
-}))(TagPage);
+}))(UnwrappedTagPage);
+export default TagPage;

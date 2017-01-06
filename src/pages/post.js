@@ -61,7 +61,7 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
 import NotFound from './not-found';
 
-export class PostPage extends React.Component {
+export class UnwrappedPostPage extends React.Component {
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
     current_user: CurrentUserPropType,
@@ -199,4 +199,5 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector)(PostPage);
+const PostPage = connect(selector)(UnwrappedPostPage);
+export default PostPage;

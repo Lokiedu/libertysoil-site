@@ -22,7 +22,7 @@ import uuid from 'uuid';
 import sinon from 'sinon';
 import i from 'immutable';
 
-import { List } from '../../../src/pages/list';
+import { UnwrappedListPage } from '../../../src/pages/list';
 import Header from '../../../src/components/header';
 import Footer from '../../../src/components/footer';
 import HeaderLogo from '../../../src/components/header-logo';
@@ -34,7 +34,7 @@ import Breadcrumbs from '../../../src/components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../../../src/components/side-suggested-users';
 import CreatePost from '../../../src/components/create-post';
 
-describe('List page with redux', () => {
+describe('UnwrappedListPage page with redux', () => {
   // before(() => {
   //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   // });
@@ -46,7 +46,7 @@ describe('List page with redux', () => {
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
-      <List
+      <UnwrappedListPage
         comments={i.Map()}
         create_post_form={i.fromJS({ text: 'foo' })}
         current_user={i.fromJS({

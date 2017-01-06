@@ -20,7 +20,7 @@ import { shallow } from 'enzyme';
 import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import { PostPage } from '../../../src/pages/post';
+import { UnwrappedPostPage } from '../../../src/pages/post';
 import NotFound from '../../../src/pages/not-found';
 
 
@@ -29,7 +29,7 @@ describe('Post page', () => {
 
   it('MUST render nothing when post hasn\'t been fetched yet', () => {
     const wrapper = shallow(
-      <PostPage
+      <UnwrappedPostPage
         comments={i.Map()}
         is_logged_in={false}
         params={{ uuid: uuid4Example }}
@@ -44,7 +44,7 @@ describe('Post page', () => {
   it('MUST render as <NotFound /> page when post doesn\'t exist', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
-      <PostPage
+      <UnwrappedPostPage
         comments={i.Map()}
         is_logged_in={false}
         params={{ uuid: uuid4Example }}

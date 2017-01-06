@@ -63,8 +63,8 @@ const client = new ApiClient(API_HOST);
 
 export const LOAD_MORE_LIMIT = 4;
 
-export class List extends React.Component {
-  static displayName = 'List';
+export class UnwrappedListPage extends React.Component {
+  static displayName = 'UnwrappedListPage';
 
   static propTypes = {
     comments: CommentsByCategoryPropType.isRequired,
@@ -274,7 +274,8 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector, dispatch => ({
+const ListPage = connect(selector, dispatch => ({
   dispatch,
   ...bindActionCreators({ resetCreatePostForm, updateCreatePostForm }, dispatch)
-}))(List);
+}))(UnwrappedListPage);
+export default ListPage;

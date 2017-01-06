@@ -21,10 +21,10 @@ import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import sinon from 'sinon';
 import i from 'immutable';
 
-import { GeotagPage } from '../../../src/pages/geotag';
+import { UnwrappedGeotagPage } from '../../../src/pages/geotag';
 import NotFound from '../../../src/pages/not-found';
 
-describe('GeotagPage', () => {
+describe('UnwrappedGeotagPage', () => {
   // before(() => {
   //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   // });
@@ -35,7 +35,7 @@ describe('GeotagPage', () => {
 
   it('MUST render nothing when geotag is not yet loaded', () => {
     const wrapper = shallow(
-      <GeotagPage
+      <UnwrappedGeotagPage
         comments={i.Map()}
         geotag_posts={i.Map()}
         geotags={i.Map()}

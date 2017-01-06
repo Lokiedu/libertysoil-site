@@ -21,7 +21,7 @@ import Helmet from 'react-helmet';
 import sinon from 'sinon';
 import i from 'immutable';
 
-import { Auth } from '../../../src/pages/auth';
+import { UnwpappedAuth } from '../../../src/pages/auth';
 import Messages from '../../../src/components/messages';
 import Header from '../../../src/components/header';
 import HeaderLogo from '../../../src/components/header-logo';
@@ -30,7 +30,7 @@ import Footer from '../../../src/components/footer';
 import Register from '../../../src/components/register';
 
 
-describe('Auth page with redux', function() {
+describe('UnwpappedAuth page with redux', function() {
   // before(() => {
   //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   // });
@@ -42,7 +42,7 @@ describe('Auth page with redux', function() {
 
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={i.List()} ui={i.Map()} />);
+    renderer.render(<UnwpappedAuth is_logged_in messages={i.List()} ui={i.Map()} />);
 
     return expect(
       renderer,
@@ -54,7 +54,7 @@ describe('Auth page with redux', function() {
 
   it('MUST render passed messages', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
+    renderer.render(<UnwpappedAuth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
 
     return expect(
       renderer,
@@ -67,7 +67,7 @@ describe('Auth page with redux', function() {
 
   it('MUST pass ui.registrationSuccess to Register component', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Auth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
+    renderer.render(<UnwpappedAuth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
 
     return expect(
       renderer,

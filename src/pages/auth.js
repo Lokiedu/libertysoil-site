@@ -40,7 +40,7 @@ import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
-export class Auth extends React.Component {
+export class UnwpappedAuth extends React.Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
@@ -149,4 +149,5 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector)(Auth);
+const Auth = connect(selector)(UnwpappedAuth);
+export default Auth;

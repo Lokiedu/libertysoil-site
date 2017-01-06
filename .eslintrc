@@ -69,7 +69,7 @@
     "import/namespace": 2,
     "import/no-duplicates": 2,
     "import/no-extraneous-dependencies": 2,
-    "import/no-named-as-default": 1,
+    "import/no-named-as-default": 2,
     "import/no-named-as-default-member": 2,
     "import/no-unresolved": 2,
     "import/order": 2,
