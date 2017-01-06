@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { throttle, pick } from 'lodash';
+import { throttle } from 'lodash';
 
 import ModalComponent from '../modal-component';
 import Message from '../message';
@@ -26,6 +26,7 @@ export default class UpdatePictureModal extends React.Component {
   static displayName = 'UpdatePictureModal';
 
   static propTypes = {
+    flexible: PropTypes.bool,
     limits: PropTypes.shape({}),
     onClose: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
@@ -147,11 +148,11 @@ export default class UpdatePictureModal extends React.Component {
   }
 
   render() {
-    const { what, where } = this.props;
-
     if (!this.props.visible) {
       return null;
     }
+
+    const { preview, flexible, what, where } = this.props;
 
     return (
       <ModalComponent ref={c => this.modal = c} size="big" onHide={this.closeHandler}>
@@ -166,9 +167,10 @@ export default class UpdatePictureModal extends React.Component {
           }
           <UpdatePictureForm
             ref={c => this.form = c}
+            flexible={flexible}
+            preview={preview}
             onChange={this.changeHandler}
             onClear={this.changeHandler}
-            {...pick(this.props, ['preview', 'flexible'])}
           />
         </ModalComponent.Body>
         <ModalComponent.Actions>

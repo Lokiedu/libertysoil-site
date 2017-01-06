@@ -33,7 +33,6 @@ const NavigationItem = (props) => {
 NavigationItem.displayName = 'NavigationItem';
 
 NavigationItem.propTypes = {
-  activeClassName: PropTypes.string,
   to: PropTypes.string
 };
 

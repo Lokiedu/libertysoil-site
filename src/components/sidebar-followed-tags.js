@@ -29,9 +29,10 @@ export default class SidebarFollowedTags extends React.Component {
   static displayName = 'SidebarFollowedTags';
 
   static propTypes = {
-    geotags: ArrayOfGeotagsPropType,
-    hashtags: ArrayOfHashtagsPropType,
-    schools: ArrayOfSchoolsPropType
+    // [geotags, hashtags, schools] are used by convertModelsToTags()
+    geotags: ArrayOfGeotagsPropType,    // eslint-disable-line react/no-unused-prop-types
+    hashtags: ArrayOfHashtagsPropType,  // eslint-disable-line react/no-unused-prop-types
+    schools: ArrayOfSchoolsPropType     // eslint-disable-line react/no-unused-prop-types
   };
 
   _collectTags() {

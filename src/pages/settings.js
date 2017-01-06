@@ -27,8 +27,7 @@ import {
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import {
   ArrayOfUsersId as ArrayOfUsersIdPropType,
-  CurrentUser as CurrentUserPropType,
-  MapOfUsers as MapOfUsersPropType
+  CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
 import BasicInfoForm from '../components/settings/basic-info-form';
@@ -54,8 +53,7 @@ class SettingsPage extends React.Component {
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     is_logged_in: PropTypes.bool.isRequired,
-    messages: ArrayOfMessagesPropType,
-    users: MapOfUsersPropType.isRequired
+    messages: ArrayOfMessagesPropType
   };
 
   static async fetchData(router, store, client) {

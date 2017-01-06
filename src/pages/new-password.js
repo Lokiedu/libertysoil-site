@@ -45,7 +45,6 @@ const SuccessMessage = () => (
 
 class PasswordForm extends React.Component {
   static propTypes = {
-    messages: ArrayOfMessagesPropType,
     onSubmit: PropTypes.func
   };
 

@@ -23,7 +23,6 @@ import Helmet from 'react-helmet';
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import {
   ArrayOfUsers as ArrayOfUsersPropType,
-  ArrayOfUsersId as ArrayOfUsersIdPropType,
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
@@ -57,7 +56,6 @@ class InductionPage extends React.Component {
   static propTypes = {
     current_user: CurrentUserPropType,
     dispatch: PropTypes.func,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     messages: ArrayOfMessagesPropType,
     suggested_users: ArrayOfUsersPropType

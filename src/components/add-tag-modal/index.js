@@ -69,13 +69,13 @@ export default class AddTagModal extends Component {
   static displayName = 'AddTagModal';
 
   static propTypes = {
+    addedGeotags: ArrayOfGeotagsPropType,
+    addedHashtags: ArrayOfHashtagsPropType,
+    addedSchools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType]),
     allSchools: ArrayOfSchoolsPropType.isRequired,
-    geotags: ArrayOfGeotagsPropType,
-    hashtags: ArrayOfHashtagsPropType,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
-    schools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType]),
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired,
       checkGeotagExists: PropTypes.func.isRequired
@@ -89,9 +89,9 @@ export default class AddTagModal extends Component {
   };
 
   static defaultProps = {
-    geotags: i.List(),
-    schools: i.List(),
-    hashtags: i.List(),
+    addedGeotags: i.List(),
+    addedSchools: i.List(),
+    addedHashtags: i.List(),
     onClose: () => {},
     onSave: () => {}
   };

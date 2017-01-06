@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { pick } from 'lodash';
 
 import UpdatePictureModal from './update-picture-modal';
 
@@ -24,6 +23,7 @@ export default class UpdatePicture extends React.Component {
   static displayName = 'UpdatePicture';
 
   static propTypes = {
+    flexible: PropTypes.bool,
     limits: PropTypes.shape({
       min: PropTypes.shape({
         width: PropTypes.number,
@@ -69,6 +69,7 @@ export default class UpdatePicture extends React.Component {
   };
 
   render() {
+    const { flexible, limits, preview, what, where } = this.props;
     return (
       <div className="update_picture">
         <button className="update_picture__camera" onClick={this.open}>
@@ -76,9 +77,13 @@ export default class UpdatePicture extends React.Component {
         </button>
         <UpdatePictureModal
           visible={this.state.modalVisible}
+          flexible={flexible}
+          limits={limits}
+          preview={preview}
+          what={what}
+          where={where}
           onClose={this.close}
           onSubmit={this.submitHandler}
-          {...pick(this.props, ['what', 'where', 'limits', 'preview', 'flexible'])}
         />
       </div>
     );

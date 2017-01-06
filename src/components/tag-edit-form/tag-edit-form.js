@@ -41,8 +41,6 @@ TagEditForm.displayName = 'TagEditForm';
 
 TagEditForm.propTypes = {
   countries: PropTypes.shape({}),
-  processing: PropTypes.bool.isRequired,
-  saveHandler: PropTypes.func.isRequired,
   tag: PropTypes.shape({}).isRequired,
   type: PropTypes.string.isRequired
 };

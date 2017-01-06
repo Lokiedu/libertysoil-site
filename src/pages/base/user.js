@@ -24,8 +24,7 @@ import {
 } from '../../prop-types/common';
 import {
   ArrayOfUsersId as ArrayOfUsersIdPropType,
-  CurrentUser as CurrentUserPropType,
-  User as UserPropType
+  CurrentUser as CurrentUserPropType
 } from '../../prop-types/users';
 
 import {
@@ -167,9 +166,7 @@ BaseUserPage.propTypes = {
   current_user: CurrentUserPropType,
   followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
   following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
-  i_am_following: ArrayOfUsersIdPropType,
-  is_logged_in: PropTypes.bool.isRequired,
-  page_user: UserPropType.isRequired
+  is_logged_in: PropTypes.bool.isRequired
 };
 
 export default BaseUserPage;

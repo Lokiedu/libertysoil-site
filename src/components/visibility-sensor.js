@@ -89,15 +89,19 @@ export default class VisibilitySensor extends Component {
    * @param  {Array<String>} updatedKeys Array of updated properties' names.
    * @return {undefined}
    */
-  toggleCheck(props = this.props, updatedKeys = []) {
-    if (props.active) { // need to work
+  toggleCheck(props, updatedKeys = []) {
+    const active = props ? props.active : this.props.active;
+
+    if (active) { // need to work
+      const delay = props ? props.delay : this.props.delay;
+
       if (this.watch) { // in progress
         if (updatedKeys.includes('delay')) {
           clearInterval(this.watch);
-          this.watch = setInterval(this.checkVisibility, props.delay);
+          this.watch = setInterval(this.checkVisibility, delay);
         }
       } else { // switched off
-        this.watch = setInterval(this.checkVisibility, props.delay);
+        this.watch = setInterval(this.checkVisibility, delay);
       }
     } else if (this.watch) { // need to be stopped
       clearInterval(this.watch);

@@ -61,7 +61,6 @@ DiscoverGrid.displayName = 'DiscoverGrid';
 DiscoverGrid.propTypes = {
   current_user: CurrentUserPropType,
   i_am_following: ArrayOfUsersIdPropType,
-  is_logged_in: PropTypes.bool.isRequired,
   triggers: PropTypes.shape({}),
   users: MapOfUsersPropType.isRequired
 };
@@ -103,7 +102,6 @@ SuggestionsPage.displayName = 'SuggestionsPage';
 SuggestionsPage.propTypes = {
   current_user: CurrentUserPropType,
   dispatch: PropTypes.func,
-  i_am_following: ArrayOfUsersIdPropType,
   is_logged_in: PropTypes.bool.isRequired,
   messages: ArrayOfMessagesPropType
 };

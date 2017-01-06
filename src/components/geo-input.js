@@ -28,12 +28,7 @@ export default class GeoInput extends React.Component {
     initialLocation: PropTypes.shape({
       lat: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       lon: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    }),
-    onSelect: PropTypes.func
-  };
-
-  static defaultProps = {
-    onSelect: (/* pos */) => {}
+    })
   };
 
   constructor(props) {

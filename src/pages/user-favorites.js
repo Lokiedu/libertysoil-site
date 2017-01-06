@@ -59,7 +59,6 @@ class UserFavoritesPage extends React.Component {
     favourites_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       username: urlPropType.isRequired

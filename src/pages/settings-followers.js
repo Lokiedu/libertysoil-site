@@ -49,7 +49,6 @@ class SettingsFollowersPage extends React.Component {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     messages: ArrayOfMessagesPropType,
     users: MapOfUsersPropType.isRequired

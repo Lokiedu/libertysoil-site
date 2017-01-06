@@ -24,7 +24,6 @@ import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/
 import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 import {
-  ArrayOfUsersId as ArrayOfUsersIdPropType,
   MapOfUsers as MapOfUsersPropType,
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
@@ -72,7 +71,6 @@ export class UnwrappedListPage extends React.Component {
       text: PropTypes.string.isRequired
     }),
     current_user: CurrentUserPropType.isRequired,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,

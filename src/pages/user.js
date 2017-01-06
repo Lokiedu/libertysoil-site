@@ -57,7 +57,6 @@ class UserPage extends React.Component {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     location: PropTypes.shape({}).isRequired,
     params: PropTypes.shape({

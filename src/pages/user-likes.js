@@ -57,7 +57,6 @@ class UserLikesPage extends Component {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     likes_river: mapOfPropType(uuid4PropType, ArrayOfPostsIdPropType).isRequired,
     params: PropTypes.shape({

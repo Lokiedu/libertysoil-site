@@ -41,10 +41,11 @@ class MyPostsToolPage extends React.Component {
   static displayName = 'SchoolsToolPage';
 
   static propTypes = {
-    current_user: ImmutablePropType(PropTypes.shape({
+    // FIXME: [current_user, dispatch, users] are used in loadPosts, but ESLint doesn't see them :-/
+    current_user: ImmutablePropType(PropTypes.shape({  // eslint-disable-line react/no-unused-prop-types
       id: uuid4
     })),
-    dispatch: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,  // eslint-disable-line react/no-unused-prop-types
     posts: ImmutablePropType(MapOfPosts).isRequired,
     ui: ImmutablePropType(PropTypes.shape({
       progress: ImmutablePropType(PropTypes.shape({
@@ -52,7 +53,7 @@ class MyPostsToolPage extends React.Component {
       })).isRequired
     })),
     user_posts_river: ImmutablePropType(PropTypes.arrayOf(uuid4)).isRequired,
-    users: ImmutablePropType(MapOfUsers)
+    users: ImmutablePropType(MapOfUsers)  // eslint-disable-line react/no-unused-prop-types
   };
 
   static async fetchData(router, store, client) {

@@ -48,7 +48,6 @@ export default class ProfileHeader extends React.Component {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
-    i_am_following: ArrayOfUsersIdPropType,
     onChange: PropTypes.func.isRequired,
     triggers: PropTypes.shape({
       addError: PropTypes.func.isRequired,

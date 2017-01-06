@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import omit from 'lodash/omit';
-import pick from 'lodash/pick';
 
 import { castObject } from '../../utils/lang';
 
@@ -36,7 +35,6 @@ export default class Tag extends React.Component {
   static displayName = 'Tag';
 
   static propTypes = {
-    className: PropTypes.string,
     collapsed: PropTypes.bool,
     icon: PropTypes.oneOfType([
       PropTypes.string,
@@ -61,9 +59,10 @@ export default class Tag extends React.Component {
     size: this.props.size.toLowerCase()
   });
 
-  renderName = () => (
-    pick(this.props, ['collapsed', 'name', 'truncated'])
-  );
+  renderName = () => {
+    const { collapsed, name, truncated } = this.props;
+    return { collapsed, name, truncated };
+  };
 
   render() {
     const htmlProps = omit(this.props, ['collapsed', 'size', 'theme', 'truncated']);

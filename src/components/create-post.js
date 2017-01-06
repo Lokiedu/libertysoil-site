@@ -36,8 +36,10 @@ class CreatePost extends React.Component {
       resetCreatePostForm: PropTypes.func,
       updateCreatePostForm: PropTypes.func
     }),
+    addedGeotags: ArrayOfGeotagsPropType,
+    addedHashtags: ArrayOfHashtagsPropType,
+    addedSchools: ArrayOfSchoolsPropType,
     allSchools: ArrayOfSchoolsPropType,
-    defaultText: PropTypes.string,
     fields: PropTypes.shape({
       minor_update: PropTypes.shape().isRequired,
       text: PropTypes.shape().isRequired
@@ -47,9 +49,6 @@ class CreatePost extends React.Component {
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
     }).isRequired,
-    geotags: ArrayOfGeotagsPropType,
-    hashtags: ArrayOfHashtagsPropType,
-    schools: ArrayOfSchoolsPropType,
     triggers: PropTypes.shape({
       createPost: PropTypes.func.isRequired,
       loadUserRecentTags: PropTypes.func.isRequired,

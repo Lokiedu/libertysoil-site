@@ -22,7 +22,6 @@ import i from 'immutable';
 
 import { url as urlPropType } from '../prop-types/common';
 import {
-  ArrayOfUsersId as ArrayOfUsersIdPropType,
   CurrentUser as CurrentUserPropType,
   MapOfUsers as MapOfUsersPropType
 } from '../prop-types/users';
@@ -42,7 +41,6 @@ class AboutUserPage extends React.Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    i_am_following: ArrayOfUsersIdPropType,
     is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       username: urlPropType.isRequired
