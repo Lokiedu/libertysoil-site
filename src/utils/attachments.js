@@ -1,6 +1,7 @@
+import crypto from 'crypto';
+
 import AWS from 'aws-sdk';
 import bluebird from 'bluebird';
-import crypto from 'crypto';
 
 import config from '../../config';
 

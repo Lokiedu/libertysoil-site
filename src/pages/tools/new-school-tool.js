@@ -20,6 +20,7 @@ import pick from 'lodash/pick';
 import last from 'lodash/last';
 import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
+import debounce from 'debounce-promise';
 
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
@@ -28,7 +29,6 @@ import createSelector from '../../selectors/createSelector';
 import { ActionsTrigger } from '../../triggers';
 import { addError, removeAllMessages } from '../../actions/messages';
 import { removeWhitespace } from '../../utils/lang';
-import debounce from 'debounce-promise';
 
 import { ExtendableSchoolEditForm } from '../../components/tag-edit-form/school-edit-form';
 import Message from '../../components/message';

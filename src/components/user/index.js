@@ -19,12 +19,12 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import { User as UserPropType } from '../../prop-types/users';
+import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 import Avatar from './avatar';
 import AvatarEditor from './avatar-editor';
 import UserText from './user-text';
 
-import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 const User = (props) => {
   const {

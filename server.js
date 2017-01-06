@@ -33,7 +33,6 @@ import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
-import createRequestLogger from './src/utils/bunyan-koa-request';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -42,6 +41,7 @@ import { Router, RouterContext, match, createMemoryHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux';
 import Helmet from 'react-helmet';
 
+import createRequestLogger from './src/utils/bunyan-koa-request';
 import { getRoutes } from './src/routing';
 import { AuthHandler, FetchHandler } from './src/utils/loader';
 import { initApi } from './src/api/routing';

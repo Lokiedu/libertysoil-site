@@ -17,14 +17,15 @@
  */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import Time from '../time';
 
-import EditPostButton from './edit-post-button';
-import TagCloud from '../tag-cloud';
-import Toolbar from './toolbar';
-import User from '../user';
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 import { Post } from '../../prop-types/posts';
+import Time from '../time';
+import TagCloud from '../tag-cloud';
+import User from '../user';
+
+import Toolbar from './toolbar';
+import EditPostButton from './edit-post-button';
 
 
 class PostFooter extends React.Component {

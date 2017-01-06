@@ -27,14 +27,15 @@ import {
   MapOfUsers as MapOfUsersPropType
 } from '../prop-types/users';
 
-import NotFound from './not-found';
-import BaseUserPage from './base/user';
-
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import NotFound from './not-found';
+import BaseUserPage from './base/user';
+
 
 class AboutUserPage extends React.Component {
   static displayName = 'AboutUserPage';

@@ -30,7 +30,6 @@ import { createSelector, currentUserSelector } from '../selectors';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import BaseTagPage from './base/tag';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addHashtag } from '../actions/hashtags';
 import { ActionsTrigger } from '../triggers';
@@ -38,6 +37,9 @@ import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
 import { TAG_HASHTAG } from '../consts/tags';
 import NotFound from '../pages/not-found';
+
+import BaseTagPage from './base/tag';
+
 
 class HashtagEditPage extends React.Component {
   static displayName = 'HashtagEditPage';

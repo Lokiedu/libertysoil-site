@@ -27,12 +27,13 @@ import {
   MapOfUsers as MapOfUsersPropType
 } from '../prop-types/users';
 
-import BaseSuggestionsPage from './base/suggestions';
 import UserGrid from '../components/user-grid';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import BaseSuggestionsPage from './base/suggestions';
 
 
 const DiscoverGrid = ({ current_user, i_am_following, triggers, users }) => {

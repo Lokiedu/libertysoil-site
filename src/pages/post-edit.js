@@ -33,7 +33,6 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
-import NotFound from './not-found';
 import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Header from '../components/header';
@@ -53,6 +52,9 @@ import {
   resetEditPostForm,
   updateEditPostForm
 } from '../actions/posts';
+
+import NotFound from './not-found';
+
 
 class PostEditPage extends React.Component {
   static displayName = 'PostEditPage';

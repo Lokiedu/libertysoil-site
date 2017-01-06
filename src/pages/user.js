@@ -36,8 +36,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
-import NotFound from './not-found';
-import BaseUserPage from './base/user';
 import River from '../components/river_of_posts';
 
 import { API_HOST } from '../config';
@@ -46,6 +44,9 @@ import { addUser } from '../actions/users';
 import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import NotFound from './not-found';
+import BaseUserPage from './base/user';
 
 
 class UserPage extends React.Component {

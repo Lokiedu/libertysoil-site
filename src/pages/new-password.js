@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { Link } from 'react-router';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
@@ -25,7 +26,6 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
-import { Link } from 'react-router';
 
 import {
   Page,

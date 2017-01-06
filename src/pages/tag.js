@@ -42,12 +42,14 @@ import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addHashtag, setHashtagPosts } from '../actions/hashtags';
 
-import NotFound from './not-found';
 import River                from '../components/river_of_posts';
 import { ActionsTrigger }   from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_HASHTAG }      from '../consts/tags';
+
 import BaseTagPage from './base/tag';
+import NotFound from './not-found';
+
 
 export class TagPage extends Component {
   static displayName = 'TagPage';

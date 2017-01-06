@@ -72,7 +72,7 @@
     "import/no-named-as-default": 1,
     "import/no-named-as-default-member": 2,
     "import/no-unresolved": 2,
-    "import/order": 1,
+    "import/order": 2,
 
     "lodash/callback-binding": 2,
     "lodash/collection-method-value": 2,

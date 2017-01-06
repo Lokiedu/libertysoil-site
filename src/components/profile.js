@@ -28,14 +28,14 @@ import {
   CurrentUser as CurrentUserPropType,
   User as UserPropType
 } from '../prop-types/users';
+import { Command } from '../utils/command';
+import { getUrl, URL_NAMES } from '../utils/urlGenerator';
+import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
 import User from './user';
 import FollowButton from './follow-button';
 import UpdatePicture from './update-picture/update-picture';
 
-import { Command } from '../utils/command';
-import { getUrl, URL_NAMES } from '../utils/urlGenerator';
-import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
 export default class ProfileHeader extends React.Component {
   static displayName = 'ProfileHeader';

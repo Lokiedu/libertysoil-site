@@ -17,10 +17,11 @@
 
  @flow
 */
-import fetch from 'isomorphic-fetch';
-import FormData from 'form-data';
 import { format as format_url, parse as parse_url } from 'url';
 import { stringify } from 'querystring';
+
+import fetch from 'isomorphic-fetch';
+import FormData from 'form-data';
 import { extend, merge as mergeObj } from 'lodash';
 
 import type { Email, Integer, Success, UrlNode } from '../definitions/common';

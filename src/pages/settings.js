@@ -31,7 +31,6 @@ import {
   MapOfUsers as MapOfUsersPropType
 } from '../prop-types/users';
 
-import BaseSettingsPage from './base/settings';
 import BasicInfoForm from '../components/settings/basic-info-form';
 
 import ApiClient from '../api/client';
@@ -43,6 +42,9 @@ import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 
 import { RolesManager } from '../components/settings';
+
+import BaseSettingsPage from './base/settings';
+
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';

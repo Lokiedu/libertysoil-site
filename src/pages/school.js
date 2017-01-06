@@ -40,12 +40,13 @@ import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { setSchoolPosts, addSchool } from '../actions/schools';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import NotFound from './not-found';
-import BaseTagPage from './base/tag';
 import River from '../components/river_of_posts';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_SCHOOL } from '../consts/tags';
+
+import BaseTagPage from './base/tag';
+import NotFound from './not-found';
 
 
 export class SchoolPage extends React.Component {

@@ -19,8 +19,9 @@ import React, { PropTypes } from 'react';
 import { uniqueId, pick } from 'lodash';
 
 import { Command } from '../../utils/command';
-import Role from './role';
 import { ROLES } from '../../consts/profileConstants';
+
+import Role from './role';
 
 
 export default class RolesManager extends React.Component {

@@ -17,10 +17,11 @@
  */
 import React, { PropTypes } from 'react';
 
+import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
+
 import GeotagBreadcrumbs from './geotag-breadcrumbs';
 import SchoolBreadcrumbs from './school-breadcrumbs';
 import HashtagBreadcrumbs from './hashtag-breadcrumbs';
-import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 
 const TagBreadcrumbs = ({ tag, type }) => {
   switch (type) {

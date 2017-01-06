@@ -45,7 +45,6 @@ import {
 } from '../components/page';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import HeaderLogo from '../components/header-logo';
-import NotFound from './not-found';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import { ShortTextPost, PostWrapper } from '../components/post';
@@ -59,6 +58,8 @@ import { addError } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+
+import NotFound from './not-found';
 
 export class PostPage extends React.Component {
   static propTypes = {

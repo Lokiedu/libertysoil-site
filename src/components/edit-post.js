@@ -24,10 +24,10 @@ import {
   ArrayOfSchools as ArrayOfSchoolsPropType,
   ArrayOfLightSchools as ArrayOfLightSchoolsPropType
 } from '../prop-types/schools';
+import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 
 import Button from './button';
 import TagIcon from './tag-icon';
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import AddTagModal from './add-tag-modal';
 
 export default class EditPost extends React.Component {

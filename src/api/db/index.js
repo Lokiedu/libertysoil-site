@@ -16,6 +16,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import crypto from 'crypto';
+
 import md5 from 'md5';
 import Knex from 'knex';
 import Bookshelf from 'bookshelf';
@@ -25,7 +27,6 @@ import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import crypto from 'crypto';
 import { break as breakGraphemes } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 

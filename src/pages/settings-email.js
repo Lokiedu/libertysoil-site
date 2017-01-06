@@ -21,12 +21,14 @@ import Helmet from 'react-helmet';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
-import BaseSettingsPage from './base/settings';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import BaseSettingsPage from './base/settings';
+
 
 class SettingsEmailPage extends React.Component {
   static displayName = 'SettingsPasswordPage';

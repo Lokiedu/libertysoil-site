@@ -42,13 +42,15 @@ import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addGeotag, setGeotagPosts } from '../actions/geotags';
 
-import NotFound from './not-found';
 import River from '../components/river_of_posts';
-import BaseTagPage from './base/tag';
 
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_LOCATION } from '../consts/tags';
+
+import NotFound from './not-found';
+import BaseTagPage from './base/tag';
+
 
 export class GeotagPage extends Component {
   static displayName = 'GeotagPage';

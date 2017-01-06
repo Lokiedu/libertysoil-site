@@ -18,9 +18,10 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
-import Autosuggest from './autosuggest';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
+
+import Autosuggest from './autosuggest';
 
 
 export default class PickpointInput extends React.Component {

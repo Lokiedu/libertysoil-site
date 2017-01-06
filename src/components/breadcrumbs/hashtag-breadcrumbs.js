@@ -19,11 +19,11 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { Hashtag as HashtagPropType } from '../../prop-types/hashtags';
-
+import { TAG_HASHTAG } from '../../consts/tags';
 import Tag from '../tag';
 import TagIcon from '../tag-icon';
+
 import Breadcrumbs from './breadcrumbs';
-import { TAG_HASHTAG } from '../../consts/tags';
 
 const HashtagBreadcrumbs = ({ hashtag }) => (
   <Breadcrumbs>

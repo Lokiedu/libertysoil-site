@@ -31,7 +31,6 @@ import {
   MapOfUsers as MapOfUsersPropType
 } from '../prop-types/users';
 
-import BaseSettingsPage from './base/settings';
 import UserGrid from '../components/user-grid';
 
 import ApiClient from '../api/client';
@@ -39,6 +38,9 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import BaseSettingsPage from './base/settings';
+
 
 class SettingsFollowersPage extends React.Component {
   static displayName = 'SettingsPasswordPage';

@@ -21,9 +21,9 @@ import { sortBy } from 'lodash';
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
+import { convertModelsToTags } from '../utils/tags';
 
 import SidebarFollowedTag from './sidebar-followed-tag';
-import { convertModelsToTags } from '../utils/tags';
 
 export default class SidebarFollowedTags extends React.Component {
   static displayName = 'SidebarFollowedTags';

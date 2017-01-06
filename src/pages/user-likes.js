@@ -36,8 +36,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
-import NotFound from './not-found';
-import BaseUserLikesPage from './base/user';
 import River from '../components/river_of_posts';
 
 import ApiClient from '../api/client';
@@ -46,6 +44,9 @@ import { addUser } from '../actions/users';
 import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import NotFound from './not-found';
+import BaseUserLikesPage from './base/user';
 
 
 class UserLikesPage extends Component {

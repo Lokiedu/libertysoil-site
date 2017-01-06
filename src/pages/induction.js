@@ -27,7 +27,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
-import BaseInductionPage from './base/induction';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import UserGrid from '../components/user-grid';
@@ -36,6 +35,9 @@ import { API_HOST } from '../config';
 import { addUser } from '../actions/users';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+
+import BaseInductionPage from './base/induction';
+
 
 const InductionDone = () => (
   <div className="area">

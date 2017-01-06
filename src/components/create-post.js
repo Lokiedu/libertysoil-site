@@ -22,12 +22,11 @@ import { form as inform, DisabledFormSubmit } from 'react-inform';
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
 import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools';
+import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
+import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
 import TagIcon from './tag-icon';
 import MoreButton from './more-button';
-
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
-import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import AddTagModal from './add-tag-modal';
 
 class CreatePost extends React.Component {

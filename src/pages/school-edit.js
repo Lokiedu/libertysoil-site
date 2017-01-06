@@ -27,15 +27,16 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
-import BaseTagPage from './base/tag';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addSchool } from '../actions/schools';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 import TagEditForm from '../components/tag-edit-form/tag-edit-form';
-import NotFound from './not-found';
 import { TAG_SCHOOL } from '../consts/tags';
+
+import BaseTagPage from './base/tag';
+import NotFound from './not-found';
 
 
 class SchoolEditPage extends React.Component {

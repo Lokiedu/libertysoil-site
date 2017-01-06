@@ -19,11 +19,11 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { Geotag as GeotagPropType } from '../../prop-types/geotags';
-
+import { TAG_LOCATION, TAG_PLANET } from '../../consts/tags';
 import Tag from '../tag';
 import TagIcon from '../tag-icon';
+
 import Breadcrumbs from './breadcrumbs';
-import { TAG_LOCATION, TAG_PLANET } from '../../consts/tags';
 
 const GeotagBreadcrumbs = ({ geotag }) => (
   <Breadcrumbs>

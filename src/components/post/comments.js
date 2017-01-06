@@ -20,9 +20,10 @@ import React, {
   Component
 } from 'react';
 
+import message from '../../utils/message';
+
 import Comment from './comment';
 import CreateComment from './create-comment';
-import message from '../../utils/message';
 
 const CommentsPlaceholder = ({ count, ...props }) => (
   <article className="comment comment-placeholder" {...props}>

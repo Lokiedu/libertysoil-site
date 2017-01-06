@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../consts/tags';
 
 import Panel from './panel';
 import Time from './time';
@@ -26,7 +27,6 @@ import FollowTagButton from './follow-tag-button';
 import Tag from './tag';
 import LikeTagButton from './like-tag-button';
 import TagDescription from './tag-description';
-import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../consts/tags';
 
 
 function getLikeTriggers(triggers, type) {

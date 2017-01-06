@@ -19,11 +19,11 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { School as SchoolPropType } from '../../prop-types/schools';
-
+import { TAG_SCHOOL } from '../../consts/tags';
 import Tag from '../tag';
 import TagIcon from '../tag-icon';
+
 import Breadcrumbs from './breadcrumbs';
-import { TAG_SCHOOL } from '../../consts/tags';
 
 const SchoolBreadcrumbs = ({ school }) => (
   <Breadcrumbs>

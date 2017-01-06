@@ -31,12 +31,12 @@ import createSelector from '../selectors/createSelector';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 import { clearSearchResults } from '../actions/search';
+import bem from '../utils/bemClassNames';
+import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
 import Icon from './icon';
 import ListItem from './list-item';
 import TagIcon from './tag-icon';
-import bem from '../utils/bemClassNames';
-import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
 class Search extends Component {
   static displayName = 'Search';
