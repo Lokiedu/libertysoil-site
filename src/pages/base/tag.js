@@ -39,8 +39,7 @@ import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
-import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG } from '../../consts/tags';
-import { TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
+import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG, TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
   switch (type) {

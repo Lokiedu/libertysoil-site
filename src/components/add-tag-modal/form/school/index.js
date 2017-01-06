@@ -18,8 +18,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 
-import { Tab, Tabs } from '../../deps';
-import { TagCloud } from '../../deps';
+import { Tab, Tabs, TagCloud } from '../../deps';
 
 import SchoolSelect from './select';
 

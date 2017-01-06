@@ -18,9 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { find } from 'lodash';
 
-import { ArrayOfSchoolsPropType } from '../../deps';
-
-import { Autosuggest } from '../../deps';
+import { ArrayOfSchoolsPropType, Autosuggest } from '../../deps';
 
 export default class SchoolSelect extends Component {
   static displayName = 'SchoolSelect';

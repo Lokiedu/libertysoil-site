@@ -18,13 +18,11 @@
 import React, { PropTypes, Component } from 'react';
 import i from 'immutable';
 
-import { ArrayOfGeotagsPropType } from './deps';
-import { ArrayOfHashtagsPropType } from './deps';
-import { ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType } from './deps';
-
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from './deps';
-import { ModalComponent } from './deps';
-import { TagCloud } from './deps';
+import {
+  ArrayOfGeotagsPropType, ArrayOfHashtagsPropType, ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType,
+  TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS,
+  ModalComponent, TagCloud
+} from './deps';
 
 import ModalSwitcher from './switcher';
 import AddTagForm from './form';

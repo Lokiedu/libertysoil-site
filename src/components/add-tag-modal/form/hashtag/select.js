@@ -18,9 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
-import { Autosuggest } from '../../deps';
-import { ApiClient } from '../../deps';
-import { API_HOST } from '../../deps';
+import { Autosuggest, ApiClient, API_HOST } from '../../deps';
 
 export default class HashtagSelect extends Component {
   static displayName = 'HashtagSelect';

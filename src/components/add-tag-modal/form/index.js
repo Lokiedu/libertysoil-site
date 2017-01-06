@@ -17,11 +17,12 @@
 */
 import React, { PropTypes } from 'react';
 
-import { ArrayOfGeotagsPropType } from '../deps';
-import { ArrayOfHashtagsPropType } from '../deps';
-import { ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType } from '../deps';
-
-import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS } from '../deps';
+import {
+  ArrayOfGeotagsPropType,
+  ArrayOfHashtagsPropType,
+  ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType,
+  TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL, IMPLEMENTED_TAGS
+} from '../deps';
 
 import AddGeotagForm from './geotag';
 import AddHashtagForm from './hashtag';

@@ -18,8 +18,7 @@
 import React, { PropTypes } from 'react';
 import { filter } from 'lodash';
 
-import { IMPLEMENTED_TAGS } from '../deps';
-import { TagIcon } from '../deps';
+import { IMPLEMENTED_TAGS, TagIcon } from '../deps';
 
 import ModalSwitcherItem from './item';
 
