@@ -43,6 +43,7 @@
     "key-spacing": [2, { "beforeColon": false }],
     "keyword-spacing": 2,
     "no-else-return": 2,
+    "no-multiple-empty-lines": 2,
     "no-native-reassign": 2,
     "no-nested-ternary": 2,
     "no-spaced-func": 2,
