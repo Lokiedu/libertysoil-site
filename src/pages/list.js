@@ -141,7 +141,7 @@ export class UnwrappedListPage extends React.Component {
       let displayLoadMore = false;
       if (res === false) { // bad response
         displayLoadMore = true;
-      } else if (res.length) { // no more posts
+      } else if (res.length > 0) { // got some posts
         displayLoadMore = true;
       }
       this.setState({ displayLoadMore });
