@@ -103,7 +103,7 @@
     "react/jsx-no-target-blank": 2,
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
-    "react/jsx-sort-props": [1, { "callbacksLast": true }],
+    "react/jsx-sort-props": [0, { "callbacksLast": true }],
     "react/jsx-space-before-closing": [2, "always"],
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,
