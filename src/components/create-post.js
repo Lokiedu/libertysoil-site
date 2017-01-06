@@ -207,6 +207,9 @@ class CreatePost extends React.Component {
     const textProps = { ...fields.text };
     delete textProps.error;
 
+    const minorUpdateProps = { ...fields.minor_update };
+    delete minorUpdateProps.error;
+
     return (
       <div className="box box-post box-space_bottom create_post">
         <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
@@ -259,7 +262,7 @@ class CreatePost extends React.Component {
                            on their feeds but will be able to see it on your page."
                   >
                     <span className="checkbox__label-left">Minor update (?)</span>
-                    <input name="minor_update" type="checkbox" {...fields.minor_update} />
+                    <input name="minor_update" type="checkbox" {...minorUpdateProps} />
                   </label>
                 </div>
               </div>
