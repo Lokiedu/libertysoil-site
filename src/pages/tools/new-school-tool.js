@@ -116,8 +116,8 @@ export class AddSchoolToolPage extends React.Component {
     return (
       <div>
         <Message internal>
-          After adding this tag you won't be able to edit school name anymore.
-          Please be sure to get it right the first time!"
+          After adding this tag you won&apos;t be able to edit school name anymore.
+          Please be sure to get it right the first time!
         </Message>
         <this.SchoolEditForm
           countries={this.props.countries}

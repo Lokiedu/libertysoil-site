@@ -117,6 +117,7 @@
     "react/no-multi-comp": 0,
     "react/no-set-state": 1,
     "react/no-string-refs": 2,
+    "react/no-unescaped-entities": 2,
     "react/no-unknown-property": 2,
     "react/no-unused-prop-types": [ 1, { "skipShapeProps": true } ],
     "react/prefer-es6-class": 1,
