@@ -37,6 +37,7 @@
     "array-bracket-spacing": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-return": 2,
+    "curly": 2,
     "eol-last": 2,
     "indent": [2, 2, { "SwitchCase": 1 }],
     "key-spacing": [2, { "beforeColon": false }],

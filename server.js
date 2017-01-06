@@ -136,7 +136,9 @@ if (exec_env === 'development') {
     watcher.on('all', function () {
       logger.debug('Clearing /src/api/ cache from server');
       Object.keys(require.cache).forEach(function (id) {
-        if (/\/src\/api\//.test(id)) delete require.cache[id];
+        if (/\/src\/api\//.test(id)) {
+          delete require.cache[id];
+        }
       });
     });
   });
@@ -146,7 +148,9 @@ if (exec_env === 'development') {
   compiler.plugin('done', function () {
     logger.debug('Clearing /src/ cache from server');
     Object.keys(require.cache).forEach(function (id) {
-      if (/\/src\//.test(id)) delete require.cache[id];
+      if (/\/src\//.test(id)) {
+        delete require.cache[id];
+      }
     });
   });
 }
