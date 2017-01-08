@@ -3282,13 +3282,13 @@ export default class ApiController {
       return;
     }
 
+    const knex = this.bookshelf.knex;
     const req = ctx.request.body;
     const Bookmark = this.bookshelf.model('Bookmark');
     const url = urlUtils.getResourceUrl(req.url);
 
-    let ord, affected;
+    let affected = [];
     if ('ord' in req) {
-      const knex = this.bookshelf.knex;
       try {
         const q = Bookmark.forge()
           .query(qb => {
@@ -3302,35 +3302,16 @@ export default class ApiController {
 
         affected = await q.fetchAll();
         affected = await affected.toJSON();
-        ord = req.ord;
       } catch (e) {
         ctx.status = 500;
         ctx.body = { error: e.message };
         return;
       }
-    } else {
-      try {
-        const q = Bookmark.forge()
-          .query(qb => {
-            qb
-              .table('bookmarks')
-              .where('user_id', ctx.session.user)
-              .max('ord');
-          });
+    }
 
-        affected = [];
-        ord = await q.fetchAll();
-        ord = await ord.toJSON();
-        if (_.isNil(ord[0].max)) {
-          ord = 1;
-        } else {
-          ord = ord[0].max + 1;
-        }
-      } catch (e) {
-        ctx.status = 500;
-        ctx.body = { error: e.message };
-        return;
-      }
+    let ord = req.ord;
+    if (!Number.isInteger(ord)) {
+      ord = knex('bookmarks').select(knex.raw('coalesce(max(ord) + 1, 1)'));
     }
 
     const bk = new Bookmark({
