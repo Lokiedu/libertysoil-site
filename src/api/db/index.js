@@ -164,6 +164,31 @@ export function initBookshelfFromKnex(knex) {
     return obj;
   };
 
+  User.updateBookmarkCounters = async function () {
+    await knex.table('users')
+      .update({ more: knex.raw(`
+          more || CONCAT(
+            '{"bookmark_count":',
+            '(SELECT COUNT(*) FROM bookmarks WHERE bookmarks.user_id = users.id)::integer',
+            '}'
+          )::jsonb
+        )`
+      ) });
+  };
+
+  // User.incrementBookmarkCounters = async function (id) {
+  //   return knex('users')
+  //     .update({ more: knex.raw(`
+  //         more || CONCAT(
+  //           '{"bookmark_count":',
+  //           COALESCE(more->>'bookmark_count', '0')::integer + 1,
+  //           '}'
+  //         )::jsonb
+  //       )`
+  //     ) })
+  //     .where({ id });
+  // }
+
   const Post = bookshelf.Model.extend({
     tableName: 'posts',
     user() {

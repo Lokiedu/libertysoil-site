@@ -38,7 +38,8 @@ import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
-  Geotag as GeotagValidators
+  Geotag as GeotagValidators,
+  Bookmark as BookmarkValidators
 } from './db/validators';
 
 
@@ -3285,6 +3286,165 @@ export default class ApiController {
 
       ctx.status = 200;
       ctx.body = { success: true };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  createBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    {
+      const checkit = new Checkit(BookmarkValidators.base);
+      try {
+        await checkit.run(ctx.request.body);
+      } catch (e) {
+        ctx.status = 400;
+        ctx.body = { error: e.toJSON() };
+        return;
+      }
+    }
+
+    if ('more' in ctx.request.body) {
+      const checkit = new Checkit(BookmarkValidators.more);
+      try {
+        await checkit.run(ctx.request.body.more);
+      } catch (e) {
+        ctx.status = 400;
+        ctx.body = { error: e.toJSON() };
+        return;
+      }
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+
+      // provides an opportunity to create links to
+      // non-existing but possible pages
+      // (they must belong to existing route)
+      await this.validateUrl(ctx2);
+
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    const req = ctx.request.body;
+    const url = urlUtils.getResourceUrl(req.url);
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let ord, affected;
+    if ('ord' in req) {
+      const knex = this.bookshelf.knex;
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .update({ ord: knex.raw('ord + 1') })
+              .where('ord', '>=', req.ord)
+              .andWhere('user_id', ctx.session.user)
+              .returning('*');
+          });
+
+        affected = await (await q.fetchAll()).toJSON();
+        ord = req.ord;
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    } else {
+      try {
+        // const q = Bookmark.forge()
+        //   .query(qb => {
+        //     qb
+        //       .table('bookmarks')
+        //       .where('user_id', ctx.session.user)
+        //       .max('ord');
+        //   });
+
+        affected = [];
+        // ord = await (await q.fetchAll()).toJSON();
+        // if (_.isNil(ord[0].max)) {
+        //   ord = 1;
+        // } else {
+        //   ord = ord[0].max + 1;
+        // }
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    }
+
+    const bookmark = new Bookmark({
+      user_id: ctx.session.user,
+      title: req.title,
+      url
+      // ord
+    });
+
+    if ('more' in ctx.request.body) {
+      const attrs = {};
+      const allowedAttributes = Object.keys(BookmarkValidators.more);
+      for (const attr of allowedAttributes) {
+        attrs[attr] = req.more[attr];
+      }
+
+      bookmark.set('more', attrs);
+    }
+
+    try {
+      if (!req.ord) {
+        const b = await bookmark.toJSON();
+        const knex = this.bookshelf.knex;
+        
+        await knex.transaction(t =>
+          t
+            .raw('set transaction isolation level serializable;')
+            .then(() => {
+              return t
+                .table('users')
+                .where({ id: ctx.session.user })
+                .select(knex.raw(`more->'bookmark_count' as count`))
+                .forUpdate();
+            })
+            .then(res => {
+              const ord = parseInt(res[0].count || '0', 10) + 1;
+              return t
+                .update({ more: knex.raw(`jsonb_set(more, '{bookmark_count}', '${ord}')`) })
+                .from('users')
+                .where({ id: ctx.session.user })
+                .then(() => {
+                  console.log(ord);
+                  return t
+                    .insert({ ...b, ord })
+                    .into('bookmarks');
+                })
+            })
+        );
+      } else {
+        await bookmark.save(null, { method: 'insert' });
+      }
+      await bookmark.fetch({ require: true });
+
+      affected = _.keyBy(affected, 'id');
+      ctx.body = { success: true, target: bookmark, affected };
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };

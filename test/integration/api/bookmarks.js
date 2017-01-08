@@ -22,9 +22,11 @@ import { login } from '../../../test-helpers/api';
 import initBookshelf from '../../../src/api/db';
 
 import UserFactory from '../../../test-helpers/factories/user';
+import BookmarkFactory from '../../../test-helpers/factories/bookmark';
 
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
+const Bookmark = bookshelf.model('Bookmark');
 
 describe('Bookmarks', () => {
   describe('GET /api/v1/url', () => {
@@ -140,6 +142,97 @@ describe('Bookmarks', () => {
         }
 
         return Promise.all(expectations);
+      });
+    });
+  });
+
+  describe('POST /api/v1/bookmarks', () => {
+    describe('Not authenticated users', () => {
+      const bookmark = BookmarkFactory.build();
+
+      it('fails', () =>
+        expect(
+          { method: 'POST', url: '/api/v1/bookmarks', body: bookmark },
+          'body to satisfy',
+          { error: 'You are not authorized' }
+        )
+      );
+    });
+
+    describe('Authenticated users', () => {
+      let user, sessionId;
+      const reqWith = bookmark => ({
+        url: '/api/v1/bookmarks',
+        method: 'POST',
+        body: bookmark,
+        session: sessionId,
+      });
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        await user.save({ email_check_hash: null }, { method: 'update' });
+
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(() => user.destroy());
+
+      describe('handle different url versions successfully', () => {
+        before(() =>
+          Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch()
+        );
+
+        afterEach(() =>
+          Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch()
+        );
+
+        it('addresses with 1 level depth', () => {
+          const urls = [
+            '/s', '/s/',
+            'localhost:8000/s', 'localhost:8000/s/',
+            'http://localhost:8000/s', 'http://localhost:8000/s/'
+          ];
+          const bookmark = { title: 'Schools', url: '/s' };
+          const response = { success: true, affected: {}, target: bookmark };
+          const expectations = [];
+          for (const url of urls) {
+            expectations.push(
+              expect(reqWith({ ...bookmark, url }), 'body to satisfy', response)
+            );
+          }
+
+          return Promise.all(expectations);
+        });
+
+        it('addresses with 2 level depth', () => {
+          const username = user.get('username');
+          const urls = [
+            `/user/${username}`, `/user/${username}/`,
+            `localhost:8000/user/${username}/`, `localhost:8000/user/${username}/`,
+            `http://localhost:8000/user/${username}/`, `http://localhost:8000/user/${username}/`
+          ];
+          const bookmark = {
+            title: `Posts of ${username} on LibertySoil.org`,
+            url: `/user/${username}`
+          };
+
+          const response = { success: true, affected: {}, target: bookmark };
+          const expectations = [];
+          for (const url of urls) {
+            expectations.push(
+              expect(reqWith({ ...bookmark, url }), 'body to satisfy', response)
+            );
+          }
+
+          return Promise.all(expectations);
+        });
       });
     });
   });

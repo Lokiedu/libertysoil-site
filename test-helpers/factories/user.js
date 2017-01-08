@@ -13,4 +13,4 @@ export default new Factory()
   .attr('password', () => faker.internet.password())
   .attr('hashed_password', ['password'], password => bcrypt.hashSync(password, 10))
   .attr('email_check_hash', '')
-  .attr('more', { first_login: false });
+  .attr('more', { bookmark_count: 0, first_login: false });

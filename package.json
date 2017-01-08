@@ -11,7 +11,7 @@
   "scripts": {
     "start": "NODE_ENV=development run-p run:app run:tasks",
     "docker-start": "NODE_ENV=production DB_ENV=staging run-s webpack:build:prod update-db:production run:app",
-    "test": "NODE_ENV=development DB_ENV=test run-s reset-db:test mocha",
+    "test": "NODE_ENV=development DEBUG=knex:tx DB_ENV=test run-s reset-db:test mocha",
     "coverage": "NODE_ENV=development DB_ENV=test npm run coverage:run",
     "travis": "NODE_ENV=development DB_ENV=travis run-s reset-db:travis travis:test lint flow",
     "travis:test": "run-s coverage:run coverage:coveralls coverage:clean",
@@ -35,7 +35,8 @@
     "webpack:build:prod": "NODE_ENV=production webpack --config webpack.prod.config.js",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
-    "update-post-counters": "babel-node bin/postCounters.js"
+    "update-post-counters": "babel-node bin/postCounters.js",
+    "update-bookmark-counters": "babel-node bin/bookmarkCounters.js"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
