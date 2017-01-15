@@ -25,7 +25,7 @@ import messageType from '../consts/messageTypeConstants';
 const initialState = i.List([]);
 
 function removeDuplicate(state, action) {
-  const index = state.findIndex(item => item.message === action.message);
+  const index = state.findIndex(item => item.message === action.payload.message);
 
   if (index >= 0) {
     return state.delete(index);
@@ -35,7 +35,7 @@ function removeDuplicate(state, action) {
 
 export default function reducer(state = initialState, action) {
   if (find([messages.ADD_ERROR, messages.ADD_MESSAGE], a => a === action.type)) {
-    const index = state.findIndex(item => item.get('message') === action.message);
+    const index = state.findIndex(item => item.get('message') === action.payload.message);
     if (index !== -1) {
       state = state.delete(index);
     }
@@ -47,7 +47,7 @@ export default function reducer(state = initialState, action) {
 
       state = state.push(i.fromJS({
         type: messageType.ERROR,
-        message: action.message
+        message: action.payload.message
       }));
       break;
     }
@@ -57,13 +57,13 @@ export default function reducer(state = initialState, action) {
 
       state = state.push(i.fromJS({
         type: messageType.MESSAGE,
-        message: action.message
+        message: action.payload.message
       }));
       break;
     }
 
     case messages.REMOVE_MESSAGE: {
-      state = state.remove(action.index);
+      state = state.remove(action.payload.index);
       break;
     }
 

@@ -24,7 +24,7 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case users.SET_LIKES: {
-      state = state.set(action.user_id, i.List(action.likes));
+      state = state.set(action.payload.user_id, i.List(action.payload.likes));
       break;
     }
   }

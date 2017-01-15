@@ -27,7 +27,7 @@ const initialState = i.Map({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case geo.SET_COUNTRIES: {
-      state = state.set('countries', i.fromJS(_.keyBy(action.countries, 'id')));
+      state = state.set('countries', i.fromJS(_.keyBy(action.payload.countries, 'id')));
       break;
     }
   }

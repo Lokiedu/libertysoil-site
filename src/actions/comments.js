@@ -32,80 +32,100 @@ export const SET_POST_COMMENTS = 'SET_POST_COMMENTS';
 export function saveCommentStart(postId, commentId) {
   return {
     type: SAVE_COMMENT__START,
-    postId,
-    commentId
+    payload: {
+      postId,
+      commentId
+    }
   };
 }
 
 export function saveCommentSuccess(postId, commentId) {
   return {
     type: SAVE_COMMENT__SUCCESS,
-    postId,
-    commentId
+    payload: {
+      postId,
+      commentId
+    }
   };
 }
 
 export function saveCommentFailure(postId, commentId, message) {
   return {
     type: SAVE_COMMENT__FAILURE,
-    postId,
-    commentId,
-    message
+    payload: {
+      postId,
+      commentId,
+      message
+    }
   };
 }
 
 export function deleteCommentStart(postId, commentId) {
   return {
     type: DELETE_COMMENT__START,
-    postId,
-    commentId
+    payload: {
+      postId,
+      commentId
+    }
   };
 }
 
 export function deleteCommentSuccess(postId, commentId) {
   return {
     type: DELETE_COMMENT__SUCCESS,
-    postId,
-    commentId
+    payload: {
+      postId,
+      commentId
+    }
   };
 }
 
 export function deleteCommentFailure(postId, commentId, message) {
   return {
     type: DELETE_COMMENT__FAILURE,
-    postId,
-    commentId,
-    message
+    payload: {
+      postId,
+      commentId,
+      message
+    }
   };
 }
 
 export function createCommentStart(postId, text) {
   return {
     type: CREATE_COMMENT__START,
-    postId,
-    text
+    payload: {
+      postId,
+      text
+    }
   };
 }
 
 export function createCommentSuccess(postId) {
   return {
     type: CREATE_COMMENT__SUCCESS,
-    postId
+    payload: {
+      postId
+    }
   };
 }
 
 export function createCommentFailure(postId, message) {
   return {
     type: CREATE_COMMENT__FAILURE,
-    postId,
-    message
+    payload: {
+      postId,
+      message
+    }
   };
 }
 
 export function setPostComments(postId, comments) {
   return {
     type: SET_POST_COMMENTS,
-    postId,
-    comments
+    payload: {
+      postId,
+      comments
+    }
   };
 }

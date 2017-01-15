@@ -27,7 +27,7 @@ import { SET_CURRENT_USER } from '../../../src/actions/users';
 describe('combined reducer "theReducer"', function() {
 
   it('is should not throw any error when action SET_CURRENT_USER and action.user equals null', function() {
-    theReducer(i.Map({}), {type: SET_CURRENT_USER, user: null});
+    theReducer(i.Map({}), { type: SET_CURRENT_USER, payload: { user: null } });
   });
 
   it('should not rewrite user followers existing data', () => {
@@ -45,13 +45,15 @@ describe('combined reducer "theReducer"', function() {
       initialState,
       {
         type: SET_CURRENT_USER,
-        user: {
-          following: [
-            {
-              id: 1,
-              username: 'new-foo'
-            }
-          ]
+        payload: {
+          user: {
+            following: [
+              {
+                id: 1,
+                username: 'new-foo'
+              }
+            ]
+          }
         }
       }
     );

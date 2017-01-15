@@ -24,13 +24,13 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case posts.SET_USER_POSTS: {
-      state = state.set(action.user_id, i.List(action.posts.map(post => post.id)));
+      state = state.set(action.payload.user_id, i.List(action.payload.posts.map(post => post.id)));
       break;
     }
 
     case posts.REMOVE_POST: {
       for (const user_id of state.keys()) {
-        const idx = state.get(user_id).findIndex(user_post_id => (user_post_id === action.id));
+        const idx = state.get(user_id).findIndex(user_post_id => (user_post_id === action.payload.id));
 
         if (idx >= 0) {
           state = state.deleteIn([user_id, idx]);

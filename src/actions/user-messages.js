@@ -23,15 +23,19 @@ export const ADD_USER_MESSAGE = 'ADD_USER_MESSAGE';
 export function setUserMessages(userId, messages) {
   return {
     type: SET_USER_MESSAGES,
-    messages,
-    userId
+    payload: {
+      messages,
+      userId
+    }
   };
 }
 
 export function addUserMessage(userId, message) {
   return {
     type: ADD_USER_MESSAGE,
-    message,
-    userId
+    payload: {
+      message,
+      userId
+    }
   };
 }

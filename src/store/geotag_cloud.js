@@ -25,7 +25,7 @@ const initialState = i.List([]);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case geotags.SET_GEOTAG_CLOUD: {
-      const continents = action.continents.map(continent => {
+      const continents = action.payload.continents.map(continent => {
         return Object.assign(continent, {
           geotags: _.map(continent.geotags, 'url_name')
         });

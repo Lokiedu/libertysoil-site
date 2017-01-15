@@ -24,7 +24,7 @@ const initialState = i.List([]);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case hashtags.SET_HASHTAG_CLOUD: {
-      state = i.fromJS(action.hashtags);
+      state = i.fromJS(action.payload.hashtags);
       break;
     }
   }

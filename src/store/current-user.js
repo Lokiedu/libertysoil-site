@@ -44,7 +44,7 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.users.SET_CURRENT_USER: {
       const oldUid = state.get('id');
-      const newUid = action.user ? action.user.id : null;
+      const newUid = action.payload.user ? action.payload.user.id : null;
 
       // UID is changed. means logout or re-login. Do the cleanup
       if (oldUid !== newUid) {
@@ -52,13 +52,13 @@ export default function reducer(state = initialState, action) {
       }
 
       if (newUid) {
-        const followedTags = _.keyBy(action.user.followed_hashtags, 'name');
-        const followedSchools = _.keyBy(action.user.followed_schools, 'url_name');
-        const followedGeotags = _.keyBy(action.user.followed_geotags, 'url_name');
-        const likedHashtags = _.keyBy(action.user.liked_hashtags, 'name');
-        const likedSchools = _.keyBy(action.user.liked_schools, 'url_name');
-        const likedGeotags = _.keyBy(action.user.liked_geotags, 'url_name');
-        const postSubscriptions = _.map(action.user.post_subscriptions, 'id');
+        const followedTags = _.keyBy(action.payload.user.followed_hashtags, 'name');
+        const followedSchools = _.keyBy(action.payload.user.followed_schools, 'url_name');
+        const followedGeotags = _.keyBy(action.payload.user.followed_geotags, 'url_name');
+        const likedHashtags = _.keyBy(action.payload.user.liked_hashtags, 'name');
+        const likedSchools = _.keyBy(action.payload.user.liked_schools, 'url_name');
+        const likedGeotags = _.keyBy(action.payload.user.liked_geotags, 'url_name');
+        const postSubscriptions = _.map(action.payload.user.post_subscriptions, 'id');
 
         state = state.withMutations(state => {
           state.set('followed_hashtags', i.fromJS(followedTags));
@@ -75,9 +75,9 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.tags.SET_USER_TAGS: {
-      const hashtags = _.take(action.hashtags, 5);
-      const schools = _.take(action.schools, 5);
-      const geotags = _.take(action.geotags, 5);
+      const hashtags = _.take(action.payload.hashtags, 5);
+      const schools = _.take(action.payload.schools, 5);
+      const geotags = _.take(action.payload.geotags, 5);
 
       if (hashtags) {
         state = state.set('hashtags', i.fromJS(hashtags));
@@ -101,92 +101,92 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.tags.SET_USER_RECENT_TAGS: {
-      state = state.set('recent_tags', i.fromJS(action.recent_tags));
+      state = state.set('recent_tags', i.fromJS(action.payload.recent_tags));
 
       break;
     }
 
     case a.hashtags.ADD_USER_FOLLOWED_HASHTAG: {
-      state = state.setIn(['followed_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
+      state = state.setIn(['followed_hashtags', action.payload.hashtag.name], i.fromJS(action.payload.hashtag));
 
       break;
     }
 
     case a.hashtags.REMOVE_USER_FOLLOWED_HASHTAG: {
-      state = state.deleteIn(['followed_hashtags', action.hashtag.name]);
+      state = state.deleteIn(['followed_hashtags', action.payload.hashtag.name]);
 
       break;
     }
 
     case a.schools.ADD_USER_FOLLOWED_SCHOOL: {
-      state = state.setIn(['followed_schools', action.school.url_name], i.fromJS(action.school));
+      state = state.setIn(['followed_schools', action.payload.school.url_name], i.fromJS(action.payload.school));
 
       break;
     }
 
     case a.schools.REMOVE_USER_FOLLOWED_SCHOOL: {
-      state = state.deleteIn(['followed_schools', action.school.url_name]);
+      state = state.deleteIn(['followed_schools', action.payload.school.url_name]);
 
       break;
     }
 
     case a.users.SET_PERSONALIZED_SUGGESTED_USERS: {
-      state = state.set('suggested_users', i.fromJS(action.suggested_users));
+      state = state.set('suggested_users', i.fromJS(action.payload.suggested_users));
 
       break;
     }
 
     case a.geotags.ADD_USER_FOLLOWED_GEOTAG: {
-      state = state.setIn(['followed_geotags', action.geotag.url_name], i.fromJS(action.geotag));
+      state = state.setIn(['followed_geotags', action.payload.geotag.url_name], i.fromJS(action.payload.geotag));
 
       break;
     }
 
     case a.geotags.REMOVE_USER_FOLLOWED_GEOTAG: {
-      state = state.deleteIn(['followed_geotags', action.geotag.url_name]);
+      state = state.deleteIn(['followed_geotags', action.payload.geotag.url_name]);
 
       break;
     }
 
     case a.hashtags.ADD_LIKED_HASHTAG: {
-      state = state.setIn(['liked_hashtags', action.hashtag.name], i.fromJS(action.hashtag));
+      state = state.setIn(['liked_hashtags', action.payload.hashtag.name], i.fromJS(action.payload.hashtag));
 
       break;
     }
 
     case a.hashtags.REMOVE_LIKED_HASHTAG: {
-      state = state.deleteIn(['liked_hashtags', action.hashtag.name]);
+      state = state.deleteIn(['liked_hashtags', action.payload.hashtag.name]);
 
       break;
     }
 
     case a.schools.ADD_LIKED_SCHOOL: {
-      state = state.setIn(['liked_schools', action.school.url_name], i.fromJS(action.school));
+      state = state.setIn(['liked_schools', action.payload.school.url_name], i.fromJS(action.payload.school));
 
       break;
     }
 
     case a.schools.REMOVE_LIKED_SCHOOL: {
-      state = state.deleteIn(['liked_schools', action.school.url_name]);
+      state = state.deleteIn(['liked_schools', action.payload.school.url_name]);
 
       break;
     }
 
     case a.geotags.ADD_LIKED_GEOTAG: {
-      state = state.setIn(['liked_geotags', action.geotag.url_name], i.fromJS(action.geotag));
+      state = state.setIn(['liked_geotags', action.payload.geotag.url_name], i.fromJS(action.payload.geotag));
 
       break;
     }
 
     case a.geotags.REMOVE_LIKED_GEOTAG: {
-      state = state.deleteIn(['liked_geotags', action.geotag.url_name]);
+      state = state.deleteIn(['liked_geotags', action.payload.geotag.url_name]);
 
       break;
     }
 
     case a.users.SUBSCRIBE_TO_POST: {
       state = state.updateIn(['post_subscriptions'], val => {
-        return val.push(action.post_id);
+        return val.push(action.payload.post_id);
       });
 
       break;
@@ -194,7 +194,7 @@ export default function reducer(state = initialState, action) {
 
     case a.users.UNSUBSCRIBE_FROM_POST: {
       state = state.updateIn(['post_subscriptions'], val => {
-        return val.delete(val.indexOf(action.post_id));
+        return val.delete(val.indexOf(action.payload.post_id));
       });
 
       break;

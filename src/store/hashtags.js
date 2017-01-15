@@ -25,14 +25,14 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case h.ADD_HASHTAG: {
-      const hashtag = action.hashtag;
+      const hashtag = action.payload.hashtag;
       state = state.set(hashtag.name, i.fromJS(hashtag));
 
       break;
     }
 
     case h.SET_HASHTAGS: {
-      const hashtags = _.keyBy(action.hashtags, 'name');
+      const hashtags = _.keyBy(action.payload.hashtags, 'name');
       state = state.merge(i.fromJS(hashtags));
 
       break;

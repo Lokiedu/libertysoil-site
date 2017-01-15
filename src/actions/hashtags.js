@@ -29,56 +29,72 @@ export const REMOVE_USER_FOLLOWED_HASHTAG = 'REMOVE_USER_FOLLOWED_HASHTAG';
 export function addHashtag(hashtag) {
   return {
     type: ADD_HASHTAG,
-    hashtag
+    payload: {
+      hashtag
+    }
   };
 }
 
 export function setHashtags(hashtags) {
   return {
     type: SET_HASHTAGS,
-    hashtags
+    payload: {
+      hashtags
+    }
   };
 }
 
 export function setHashtagPosts(hashtag, posts) {
   return {
     type: SET_HASHTAG_POSTS,
-    hashtag,
-    posts
+    payload: {
+      hashtag,
+      posts
+    }
   };
 }
 
 export function setHashtagCloud(hashtags) {
   return {
     type: SET_HASHTAG_CLOUD,
-    hashtags
+    payload: {
+      hashtags
+    }
   };
 }
 
 export function addLikedHashtag(hashtag) {
   return {
     type: ADD_LIKED_HASHTAG,
-    hashtag
+    payload: {
+      hashtag
+    }
   };
 }
 
 export function removeLikedHashtag(hashtag) {
   return {
     type: REMOVE_LIKED_HASHTAG,
-    hashtag
+    payload: {
+      hashtag
+    }
   };
 }
 
 export function addUserFollowedHashtag(hashtag) {
   return {
     type: ADD_USER_FOLLOWED_HASHTAG,
-    hashtag
+    payload: {
+      hashtag
+    }
   };
 }
 
 export function removeUserFollowedHashtag(hashtag) {
   return {
     type: REMOVE_USER_FOLLOWED_HASHTAG,
-    hashtag
+    payload: {
+      hashtag
+    }
   };
 }

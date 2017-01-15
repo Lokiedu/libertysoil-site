@@ -21,15 +21,19 @@ export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
 export function setUserTags(tags) {
   return {
     type: SET_USER_TAGS,
-    hashtags: tags.hashtags,
-    schools: tags.schools,
-    geotags: tags.geotags
+    payload: {
+      hashtags: tags.hashtags,
+      schools: tags.schools,
+      geotags: tags.geotags
+    }
   };
 }
 
 export function setUserRecentTags(recent_tags) {
   return {
     type: SET_USER_RECENT_TAGS,
-    recent_tags
+    payload: {
+      recent_tags
+    }
   };
 }

@@ -30,13 +30,13 @@ export default function reducer(state = initialState, action) {
     }
 
     case river.ADD_POST_TO_RIVER: {
-      state = state.unshift(action.post.id);
+      state = state.unshift(action.payload.post.id);
 
       break;
     }
 
     case river.SET_POSTS_TO_RIVER: {
-      const posts = action.posts.map(post => post.id);
+      const posts = action.payload.posts.map(post => post.id);
 
       posts.forEach(postID => {
         if (!state.includes(postID)) {
@@ -48,7 +48,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case posts.REMOVE_POST: {
-      const idx = state.findIndex(river_post_id => (river_post_id === action.id));
+      const idx = state.findIndex(river_post_id => (river_post_id === action.payload.id));
 
       if (idx >= 0) {
         state = state.remove(idx);

@@ -25,7 +25,7 @@ const initialState = i.List([]);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case schools.SET_SCHOOL_CLOUD: {
-      state = i.fromJS(_.map(action.schools, 'id'));
+      state = i.fromJS(_.map(action.payload.schools, 'id'));
       break;
     }
   }

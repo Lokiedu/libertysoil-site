@@ -29,56 +29,72 @@ export const REMOVE_USER_FOLLOWED_SCHOOL = 'REMOVE_USER_FOLLOWED_SCHOOL';
 export function addSchool(school) {
   return {
     type: ADD_SCHOOL,
-    school
+    payload: {
+      school
+    }
   };
 }
 
 export function setSchools(schools) {
   return {
     type: SET_SCHOOLS,
-    schools
+    payload: {
+      schools
+    }
   };
 }
 
 export function setSchoolPosts(school, posts) {
   return {
     type: SET_SCHOOL_POSTS,
-    school,
-    posts
+    payload: {
+      school,
+      posts
+    }
   };
 }
 
 export function setSchoolCloud(schools) {
   return {
     type: SET_SCHOOL_CLOUD,
-    schools
+    payload: {
+      schools
+    }
   };
 }
 
 export function addLikedSchool(school) {
   return {
     type: ADD_LIKED_SCHOOL,
-    school
+    payload: {
+      school
+    }
   };
 }
 
 export function removeLikedSchool(school) {
   return {
     type: REMOVE_LIKED_SCHOOL,
-    school
+    payload: {
+      school
+    }
   };
 }
 
 export function addUserFollowedSchool(school) {
   return {
     type: ADD_USER_FOLLOWED_SCHOOL,
-    school
+    payload: {
+      school
+    }
   };
 }
 
 export function removeUserFollowedSchool(school) {
   return {
     type: REMOVE_USER_FOLLOWED_SCHOOL,
-    school
+    payload: {
+      school
+    }
   };
 }

@@ -24,14 +24,14 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.river.ADD_POST_TO_RIVER: {
-      const schools = action.post.schools;
+      const schools = action.payload.post.schools;
 
       schools.forEach(tag => {
         let posts = i.List([]);
         if (state.get(tag.id)) {
           posts = state.get(tag.id);
         }
-        posts = posts.unshift(action.post.id);
+        posts = posts.unshift(action.payload.post.id);
 
         state = state.set(tag.id, posts);
       });
@@ -39,13 +39,13 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.schools.SET_SCHOOL_POSTS: {
-      state = state.set(action.school.id, i.List(action.posts.map(post => post.id)));
+      state = state.set(action.payload.school.id, i.List(action.payload.posts.map(post => post.id)));
       break;
     }
 
     case a.posts.REMOVE_POST: {
       for (const schoolId of state.keys()) {
-        const idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.id));
+        const idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.payload.id));
 
         if (idx >= 0) {
           state = state.deleteIn([schoolId, idx]);

@@ -29,28 +29,36 @@ export const TOOLS__SET_CONVERSATIONS_RIVER = 'TOOLS__SET_CONVERSATIONS_RIVER';
 export function addSchoolsToRiver(schools) {
   return {
     type: TOOLS__ADD_SCHOOLS_TO_RIVER,
-    schools
+    payload: {
+      schools
+    }
   };
 }
 
 export function setSchoolsRiver(schools) {
   return {
     type: TOOLS__SET_SCHOOLS_RIVER,
-    schools
+    payload: {
+      schools
+    }
   };
 }
 
 export function setAllSchoolsLoaded(value) {
   return {
     type: TOOLS__SET_ALL_SCHOOLS_LOADED,
-    value
+    payload: {
+      value
+    }
   };
 }
 
 export function setSchoolsAlphabet(alphabet) {
   return {
     type: TOOLS__SET_SCHOOLS_ALPHABET,
-    alphabet
+    payload: {
+      alphabet
+    }
   };
 }
 
@@ -58,27 +66,35 @@ export function setSchoolsAlphabet(alphabet) {
 export function addUserPostsToRiver(posts) {
   return {
     type: TOOLS__ADD_USER_POSTS_TO_RIVER,
-    posts
+    payload: {
+      posts
+    }
   };
 }
 
 export function setUserPostsRiver(posts) {
   return {
     type: TOOLS__SET_USER_POSTS_RIVER,
-    posts
+    payload: {
+      posts
+    }
   };
 }
 
 export function setFollowedUsers(users) {
   return {
     type: TOOLS__SET_FOLLOWED_USERS,
-    users
+    payload: {
+      users
+    }
   };
 }
 
 export function setConversationsRiver(users) {
   return {
     type: TOOLS__SET_CONVERSATIONS_RIVER,
-    users
+    payload: {
+      users
+    }
   };
 }

@@ -26,7 +26,7 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
-      const postCopy = _.cloneDeep(action.post);
+      const postCopy = _.cloneDeep(action.payload.post);
 
       delete postCopy.user;
       delete postCopy.post_comments;
@@ -46,7 +46,7 @@ export default function reducer(state = initialState, action) {
     case a.posts.SET_RELATED_POSTS:
     case a.tools.TOOLS__ADD_USER_POSTS_TO_RIVER:
     case a.tools.TOOLS__SET_USER_POSTS_RIVER: {
-      const postsWithoutUsers = _.keyBy(action.posts.map(post => {
+      const postsWithoutUsers = _.keyBy(action.payload.posts.map(post => {
         const postCopy = _.cloneDeep(post);
 
         delete postCopy.user;
@@ -61,29 +61,29 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.posts.REMOVE_POST: {
-      state = state.remove(action.id);
+      state = state.remove(action.payload.id);
       break;
     }
 
     case a.users.SET_LIKES: {
       // FIXME: move to separate reducer?
-      if (action.post_id) {
-        state = state.setIn([action.post_id, 'likers'], action.likers);
+      if (action.payload.post_id) {
+        state = state.setIn([action.payload.post_id, 'likers'], action.payload.likers);
       }
       break;
     }
 
     case a.users.SET_FAVOURITES: {
       // FIXME: move to separate reducer?
-      if (action.post_id) {
-        state = state.setIn([action.post_id, 'favourers'], action.favourers);
+      if (action.payload.post_id) {
+        state = state.setIn([action.payload.post_id, 'favourers'], action.payload.favourers);
       }
       break;
     }
 
     case a.comments.SET_POST_COMMENTS: {
-      if (action.postId && action.comments) {
-        state = state.setIn([action.postId, 'comments'], action.comments.length);
+      if (action.payload.postId && action.payload.comments) {
+        state = state.setIn([action.payload.postId, 'comments'], action.payload.comments.length);
       }
       break;
     }

@@ -34,7 +34,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case posts.UPDATE_CREATE_POST_FORM: {
-      state = state.merge(action.create_post_form);
+      state = state.merge(action.payload.create_post_form);
       break;
     }
   }

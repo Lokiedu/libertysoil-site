@@ -33,46 +33,58 @@ export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 export function addPost(post) {
   return {
     type: ADD_POST,
-    post
+    payload: {
+      post
+    }
   };
 }
 
 export function removePost(id) {
   return {
     type: REMOVE_POST,
-    id
+    payload: {
+      id
+    }
   };
 }
 
 export function setRelatedPosts(post_id, posts) {
   return {
     type: SET_RELATED_POSTS,
-    post_id,
-    posts
+    payload: {
+      post_id,
+      posts
+    }
   };
 }
 
 export function setUserPosts(user_id, posts) {
   return {
     type: SET_USER_POSTS,
-    user_id,
-    posts
+    payload: {
+      user_id,
+      posts
+    }
   };
 }
 
 export function setCountryPosts(countryCode, posts) {
   return {
     type: SET_COUNTRY_POSTS,
-    countryCode,
-    posts
+    payload: {
+      countryCode,
+      posts
+    }
   };
 }
 
 export function setCityPosts(cityId, posts) {
   return {
     type: SET_CITY_POSTS,
-    cityId,
-    posts
+    payload: {
+      cityId,
+      posts
+    }
   };
 }
 
@@ -85,7 +97,9 @@ export function resetCreatePostForm() {
 export function updateCreatePostForm(create_post_form) {
   return {
     type: UPDATE_CREATE_POST_FORM,
-    create_post_form
+    payload: {
+      create_post_form
+    }
   };
 }
 
@@ -98,6 +112,8 @@ export function resetEditPostForm() {
 export function updateEditPostForm(edit_post_form) {
   return {
     type: UPDATE_EDIT_POST_FORM,
-    edit_post_form
+    payload: {
+      edit_post_form
+    }
   };
 }

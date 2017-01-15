@@ -30,7 +30,7 @@ const initialState = Map({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case search.SET_SEARCH_RESULTS:
-      state = state.set('results', fromJS(action.results));
+      state = state.set('results', fromJS(action.payload.results));
       break;
 
     case search.CLEAR_SEARCH_RESULTS:
