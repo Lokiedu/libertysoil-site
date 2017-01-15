@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import { find } from 'lodash';
+import { find, isPlainObject, isError } from 'lodash';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { messages } from '../actions';
@@ -71,6 +71,34 @@ export default function reducer(state = initialState, action) {
     case messages.REMOVE_ALL_MESSAGES: {
       state = state.clear();
       break;
+    }
+
+    // Process FSA error objects
+    default: {
+      if (action.error) {
+        if (action.meta && action.meta.display) {
+          let message = action.payload;
+          if (isError(message) || isPlainObject(message)) {
+            message = message.message;
+          }
+
+          state = state.push(i.fromJS({
+            type: messageType.ERROR,
+            message
+          }));
+        } else {
+          state = state.push(i.fromJS({
+            type: messageType.ERROR,
+            message: 'Something went wrong'
+          }));
+        }
+
+        if (isPlainObject(action.payload)) {
+          console.error(action.payload.message); // eslint-disable-line no-console
+        } else {
+          console.error(action.payload);// eslint-disable-line no-console
+        }
+      }
     }
   }
 
