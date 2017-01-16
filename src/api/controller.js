@@ -3282,82 +3282,63 @@ export default class ApiController {
       return;
     }
 
+    const knex = this.bookshelf.knex;
     const req = ctx.request.body;
     const Bookmark = this.bookshelf.model('Bookmark');
     const url = urlUtils.getResourceUrl(req.url);
 
-    let ord, affected;
-    if ('ord' in req) {
-      const knex = this.bookshelf.knex;
-      try {
-        const q = Bookmark.forge()
-          .query(qb => {
-            qb
-              .table('bookmarks')
-              .update({ ord: knex.raw('ord + 1') })
-              .where('ord', '>=', req.ord)
-              .andWhere('user_id', ctx.session.user)
-              .returning('*');
-          });
-
-        affected = await q.fetchAll();
-        affected = await affected.toJSON();
-        ord = req.ord;
-      } catch (e) {
-        ctx.status = 500;
-        ctx.body = { error: e.message };
-        return;
-      }
-    } else {
-      try {
-        const q = Bookmark.forge()
-          .query(qb => {
-            qb
-              .table('bookmarks')
-              .where('user_id', ctx.session.user)
-              .max('ord');
-          });
-
-        affected = [];
-        ord = await q.fetchAll();
-        ord = await ord.toJSON();
-        if (_.isNil(ord[0].max)) {
-          ord = 1;
-        } else {
-          ord = ord[0].max + 1;
-        }
-      } catch (e) {
-        ctx.status = 500;
-        ctx.body = { error: e.message };
-        return;
-      }
-    }
-
-    const bk = new Bookmark({
-      user_id: ctx.session.user,
-      title: req.title,
-      url,
-      ord
-    });
-
-    if (!_.isNil(req.more)) {
-      const attrs = {};
-      const allowedAttributes = ['description', 'icon'];
-      for (const attr of allowedAttributes) {
-        attrs[attr] = req.more[attr];
-      }
-
-      bk.set('more', attrs);
-    }
-
     try {
-      await bk.save(null, { method: 'insert' });
-      const target = await Bookmark
-        .where({ id: bk.get('id') })
-        .fetch({ require: true });
+      await knex.transaction(async trx => {
+        let affected = [];
 
-      affected = _.keyBy(affected, 'id');
-      ctx.body = { success: true, affected, target };
+        await knex('users')
+          .transacting(trx)
+          .select(knex.raw(`pg_advisory_xact_lock('bookmarks'::regclass::int, hashtext(?))`, ctx.session.user));
+
+        if ('ord' in req) {
+          const q = Bookmark.forge()
+            .query(qb => {
+              qb
+                .table('bookmarks')
+                .update({ ord: knex.raw('ord + 1') })
+                .where('ord', '>=', req.ord)
+                .andWhere('user_id', ctx.session.user)
+                .returning('*');
+            });
+
+          affected = await (await q.fetchAll(null, { transacting: trx })).toJSON();
+        }
+
+        let ord = req.ord;
+        if (!Number.isInteger(ord)) {
+          ord = knex('bookmarks').select(knex.raw('coalesce(max(ord) + 1, 1)'));
+        }
+
+        const bk = new Bookmark({
+          user_id: ctx.session.user,
+          title: req.title,
+          url,
+          ord
+        });
+
+        if (!_.isNil(req.more)) {
+          const attrs = {};
+          const allowedAttributes = ['description', 'icon'];
+          for (const attr of allowedAttributes) {
+            attrs[attr] = req.more[attr];
+          }
+
+          bk.set('more', attrs);
+        }
+
+        await bk.save(null, { method: 'insert', transacting: trx });
+        const target = await Bookmark
+          .where({ id: bk.get('id') })
+          .fetch({ require: true, transacting: trx });
+
+        affected = _.keyBy(affected, 'id');
+        ctx.body = { success: true, affected, target };
+      });
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
