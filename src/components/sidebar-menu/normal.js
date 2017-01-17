@@ -16,14 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
-import { values } from 'lodash';
+import { values, omit } from 'lodash';
 
 import { MENU_ITEMS } from '../../consts/sidebar-menu';
 
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
-
-const menuItemsArray = values(MENU_ITEMS);
 
 const SidebarMenuNormal = ({ current_user }) => {
   const user = current_user.get('user');
@@ -31,6 +29,11 @@ const SidebarMenuNormal = ({ current_user }) => {
   if (user) {
     username = user.get('username');
   }
+
+  const itemsToIgnore = ['likes', 'favourites']
+    .filter(item => !current_user.get(item).size);
+
+  const menuItemsArray = values(omit(MENU_ITEMS, itemsToIgnore));
 
   return (
     <Navigation>
