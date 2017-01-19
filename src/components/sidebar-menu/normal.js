@@ -33,6 +33,8 @@ const SidebarMenuNormal = ({ current_user }) => {
   const itemsToIgnore = ['likes', 'favourites']
     .filter(item => !current_user.get(item).size);
 
+  itemsToIgnore.push('collections'); // wait for 'collections' to be released
+
   const menuItemsArray = values(omit(MENU_ITEMS, itemsToIgnore));
 
   return (
