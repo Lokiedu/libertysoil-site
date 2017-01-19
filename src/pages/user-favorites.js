@@ -47,8 +47,7 @@ import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 
 import NotFound from './not-found';
-import BaseUserFavoritesPage from './base/user';
-
+import BaseUserPageWithoutHeader from './base/user-without_header';
 
 class UserFavoritesPage extends React.Component {
   static displayName = 'UserFavoritesPage';
@@ -109,7 +108,7 @@ class UserFavoritesPage extends React.Component {
     }
 
     return (
-      <BaseUserFavoritesPage
+      <BaseUserPageWithoutHeader
         current_user={current_user}
         followers={followers}
         following={following}
@@ -128,7 +127,7 @@ class UserFavoritesPage extends React.Component {
           ui={ui}
           users={users}
         />
-      </BaseUserFavoritesPage>
+      </BaseUserPageWithoutHeader>
     );
   }
 }
