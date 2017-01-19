@@ -78,59 +78,63 @@ const BaseUserPageWithoutHeader = (props) => {
           </Breadcrumbs>
         </div>
       </Header>
+
       <Page className="page__container--static">
         <PageMain>
           <PageBody>
             <Sidebar isFixed={false} />
             <PageContent>
-              <div className="layout__space-double">
-                <div className="layout__grid tabs">
-                  <div className="layout__grid_item">
-                    <IndexLink activeClassName="tabs__link-active" className="tabs__link" to={`/user/${user.get('username')}`}>Posts</IndexLink>
-                  </div>
-                  {showLikesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/likes`}
-                        visible
-                      >
-                        Likes
-                      </PageContentLink>
-                    </div>
-                  }
-                  {showFavouritesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/favorites`}
-                        visible
-                      >
-                        Favorites
-                      </PageContentLink>
-                    </div>
-                  }
-                  {showBioLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/bio`}
-                        visible
-                      >
-                        Bio
-                      </PageContentLink>
-                    </div>
-                  }
-                </div>
-              </div>
-              <div className="layout__row layout__row-double">
-                {children}
-              </div>
+              {children}
             </PageContent>
-            <SidebarAlt />
+            <SidebarAlt>
+              <div className="tabs">
+                <div className="short_post short_post-spacing">
+                  <IndexLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={`/user/${user.get('username')}`}
+                  >
+                    Posts
+                  </IndexLink>
+                </div>
+                {showLikesLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/likes`}
+                      visible
+                    >
+                      Likes
+                    </PageContentLink>
+                  </div>
+                }
+                {showFavouritesLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/favorites`}
+                      visible
+                    >
+                      Favorites
+                    </PageContentLink>
+                  </div>
+                }
+                {showBioLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/bio`}
+                      visible
+                    >
+                      Bio
+                    </PageContentLink>
+                  </div>
+                }
+              </div>
+            </SidebarAlt>
           </PageBody>
         </PageMain>
       </Page>
