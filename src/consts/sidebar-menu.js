@@ -38,7 +38,7 @@ export const MENU_ITEMS = {
     },
     url: (username) => `/user/${username}/likes`
   },
-  favorites: {
+  favourites: {
     className: 'navigation-item--color_green',
     title: {
       min: 'Favs',

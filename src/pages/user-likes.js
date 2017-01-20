@@ -46,8 +46,7 @@ import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 
 import NotFound from './not-found';
-import BaseUserLikesPage from './base/user';
-
+import BaseUserPageWithoutHeader from './base/user-without_header';
 
 class UserLikesPage extends Component {
   static displayName = 'UserLikesPage';
@@ -108,7 +107,7 @@ class UserLikesPage extends Component {
     }
 
     return (
-      <BaseUserLikesPage
+      <BaseUserPageWithoutHeader
         current_user={current_user}
         followers={followers}
         following={following}
@@ -127,7 +126,7 @@ class UserLikesPage extends Component {
           ui={ui}
           users={users}
         />
-      </BaseUserLikesPage>
+      </BaseUserPageWithoutHeader>
     );
   }
 }
