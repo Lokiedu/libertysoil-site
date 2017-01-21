@@ -16,21 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 
-import { createSelector } from '../selectors';
 import { ActionsTrigger } from '../triggers';
 
 const GAInitializer = ga.Initializer;
 
-export class UnwrappedApp extends React.Component {
+export default class App extends React.Component {
   static displayName = 'UnwrappedApp';
 
   static propTypes = {
-    children: PropTypes.element.isRequired,
-    ui: PropTypes.shape({})
+    children: PropTypes.element.isRequired
   };
 
   static async fetchData(router, store, client) {
@@ -52,24 +49,15 @@ export class UnwrappedApp extends React.Component {
   }
 
   render() {
-    const {
-      children,
-      ui
-    } = this.props;
+    const { children } = this.props;
 
     let gaContent;
-
     if (process.env.GOOGLE_ANALYTICS_ID) {
       gaContent = <GAInitializer />;
     }
 
-    let className = 'page';
-    if (ui.get('sidebarIsVisible')) {
-      className += ' page-with_sidebar';
-    }
-
     return (
-      <div className={className}>
+      <div className="page">
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {children}
         {gaContent}
@@ -77,11 +65,3 @@ export class UnwrappedApp extends React.Component {
     );
   }
 }
-
-const selector = createSelector(
-  state => state.get('ui'),
-  ui => ({ ui })
-);
-
-const App = connect(selector)(UnwrappedApp);
-export default App;

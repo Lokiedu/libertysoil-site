@@ -157,16 +157,6 @@
   }
 }
 
-.page-with_sidebar {
-  .page__container {
-    padding-left: @navigationWidth;
-  }
-
-  .page__container--static {
-    padding-left: 0;
-  }
-}
-
 .page__body {
   display: flex;
   flex: 1;
@@ -230,7 +220,6 @@
 .page__body_content {
   &:extend(.layout);
   &:extend(.layout-rows);
-  flex: 1;
 }
 
 .page__footer {
@@ -240,11 +229,6 @@
 .page__content {
   flex: 1;
   padding: 0 0 @doubleSpace 0;
-
-  @media @before-normal {
-    flex: none;
-    width: 100%;
-  }
 
   &-mobile_space {
     @media @before-normal {

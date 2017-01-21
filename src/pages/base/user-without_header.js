@@ -79,10 +79,10 @@ const BaseUserPageWithoutHeader = (props) => {
         </div>
       </Header>
 
-      <Page className="page__container--static">
+      <Page>
         <PageMain>
           <PageBody>
-            <Sidebar isFixed={false} />
+            <Sidebar />
             <PageContent>
               {children}
             </PageContent>

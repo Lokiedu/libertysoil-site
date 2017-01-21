@@ -102,6 +102,7 @@ const BaseUserPage = (props) => {
             user={user}
           />
           <PageBody>
+            <Sidebar />
             <PageContent>
               <div className="layout__space-double">
                 <div className="layout__grid tabs">

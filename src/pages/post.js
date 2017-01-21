@@ -148,10 +148,10 @@ export class UnwrappedPostPage extends React.Component {
           </Breadcrumbs>
         </Header>
 
-        <Page className="page__container--static">
+        <Page>
           <PageMain>
             <PageBody>
-              <Sidebar isFixed={false} />
+              <Sidebar />
               <PageContent>
                 <PostWrapper
                   author={author}
