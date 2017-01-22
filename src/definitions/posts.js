@@ -36,6 +36,15 @@ export type PostMore = {
   pageTitle?: string
 };
 
+export type PostDraftData = {
+  geotags?: Array<GeotagId>,
+  hashtags?: Array<string>,
+  minor_update?: ?boolean,
+  schools?: Array<string>,
+  text?: string,
+  type?: PostType
+};
+
 export type UserUpdateablePostData = {
   geotags?: Array<Geotag>,
   hashtags?: Array<Hashtag>,
