@@ -49,19 +49,19 @@ export default class TagsInform extends React.Component {
     return {
       geotags: {
         className: 'navigation-item--color_green',
-        list: current_user.get('followed_geotags').toList(),
+        list: current_user.get('followed_geotags').toList().take(4),
         icon: { icon: 'place' },
         url: '/geo/'
       },
       hashtags: {
         className: 'navigation-item--color_blue',
-        list: current_user.get('followed_hashtags').toList(),
+        list: current_user.get('followed_hashtags').toList().take(4),
         icon: { icon: 'hashtag' },
         url: '/tag/'
       },
       schools: {
         className: 'navigation-item--color_red',
-        list: current_user.get('followed_schools').toList(),
+        list: current_user.get('followed_schools').toList().take(4),
         icon: { icon: 'school' },
         url: '/s/'
       }

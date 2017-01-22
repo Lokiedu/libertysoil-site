@@ -28,4 +28,31 @@
   &--row {
     flex-wrap: nowrap;
   }
+
+  &--queue {
+    width: 180px;
+
+    & > * {
+      min-width: 38px;
+      flex-basis: content;
+      flex-shrink: 200;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      &:nth-child(1) {
+        flex-shrink: 0.1;
+      }
+      &:nth-child(2) {
+        flex-shrink: 100;
+      }
+    }
+
+    @media @tablet {
+      width: 60px;
+    }
+
+    @media @tablet-flexible {
+      display: none;
+    }
+  }
 }
