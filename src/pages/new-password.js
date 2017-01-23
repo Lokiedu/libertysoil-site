@@ -163,7 +163,7 @@ class PasswordPage extends React.Component {
     return (
       <div>
         <Helmet title="Set New Password for " />
-        <Header is_logged_in={is_logged_in} />
+        <Header is_logged_in={is_logged_in} needMenu={false} />
 
         <Page className="page__container-no_sidebar">
           <PageMain>
