@@ -22,12 +22,14 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
 import Search from './search';
+import TopMenu from './top-menu';
 
 const HeaderComponent = ({
   children,
   className,
   current_user,
   is_logged_in,
+  needMenu,
   ...props
 }) => {
   let cn = 'header page__header';
@@ -36,21 +38,26 @@ const HeaderComponent = ({
   }
 
   return (
-    <div {...props} className={cn}>
-      <div className="header__body">
-        <div className="header__content">
-          {!React.Children.count(children) &&
-            <HeaderLogo small />
-          }
-          {children}
-        </div>
-        <div className="header__toolbar">
-          <div className="header__toolbar_item header__toolbar_item-right_space">
-            <Search />
+    <div>
+      <div {...props} className={cn}>
+        <div className="header__body">
+          <div className="header__content">
+            {!React.Children.count(children) &&
+              <HeaderLogo small />
+            }
+            {children}
           </div>
-          <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+          <div className="header__toolbar">
+            <div className="header__toolbar_item header__toolbar_item-right_space">
+              <Search />
+            </div>
+            <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+          </div>
         </div>
       </div>
+      {needMenu &&
+        <TopMenu is_logged_in={is_logged_in} />
+      }
     </div>
   );
 };
@@ -62,6 +69,10 @@ HeaderComponent.propTypes = {
   className: PropTypes.string,
   current_user: CurrentUserPropType,
   is_logged_in: PropTypes.bool.isRequired
+};
+
+HeaderComponent.defaultProps = {
+  needMenu: true
 };
 
 export default HeaderComponent;
