@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const UI__SET_PROGRESS = 'UI__SET_PROGRESS';
-export const UI__TOGGLE_SIDEBAR = 'UI__TOGGLE_SIDEBAR';
+export const UI__TOGGLE_MENU = 'UI__TOGGLE_MENU';
 
 export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
@@ -28,9 +28,9 @@ export function setProgress(progress, value) {
   };
 }
 
-export function toggleSidebar(isVisible) {
+export function toggleMenu(isVisible) {
   return {
-    type: UI__TOGGLE_SIDEBAR,
+    type: UI__TOGGLE_MENU,
     isVisible
   };
 }

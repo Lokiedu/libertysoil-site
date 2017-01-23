@@ -16,11 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 import * as a from '../actions';
 
 const initialState = i.fromJS({
-  sidebarIsVisible: true,
+  mobileMenuIsVisible: false,
   progress: {},
   comments: {
     new: {}
@@ -29,15 +30,23 @@ const initialState = i.fromJS({
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.ui.UI__TOGGLE_SIDEBAR:
+    case LOCATION_CHANGE:
       {
-        let isVisible = !state.get('sidebarIsVisible');
+        if (state.get('mobileMenuIsVisible')) {
+          state = state.set('mobileMenuIsVisible', false);
+        }
+
+        break;
+      }
+    case a.ui.UI__TOGGLE_MENU:
+      {
+        let isVisible = !state.get('mobileMenuIsVisible');
 
         if (action.isVisible != undefined) {
           isVisible = action.isVisible;
         }
 
-        state = state.set('sidebarIsVisible', isVisible);
+        state = state.set('mobileMenuIsVisible', isVisible);
 
         break;
       }
