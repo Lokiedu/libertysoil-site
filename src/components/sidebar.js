@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 import createSelector from '../selectors/createSelector';
 import currentUserSelector from '../selectors/currentUser';
@@ -27,8 +26,6 @@ import TagsInform from './tags-inform';
 
 class Sidebar extends React.Component {
   static propTypes = {
-    isFixed: PropTypes.bool,
-    isVisible: PropTypes.bool,
     theme: PropTypes.string
   };
 
@@ -37,13 +34,8 @@ class Sidebar extends React.Component {
   };
 
   getClassName = () => {
-    const className = classNames('sidebar col col-xs', {
-      'sidebar--visible': this.props.isVisible,
-      'sidebar--fixed': this.props.isFixed
-    });
-
     const finalize = s =>
-      className.concat(` col-${s} col-s-${s} col-m-${s} col-l-${s} col-xl-${s}`);
+      `sidebar col col-xs col-${s} col-s-${s} col-m-${s} col-l-${s} col-xl-${s}`;
 
     switch (this.props.theme) {
       case 'trunc': return finalize(1);
@@ -67,7 +59,7 @@ const selector = createSelector(
   currentUserSelector,
   state => state.get('ui'),
   (current_user, ui) => ({
-    isVisible: ui.get('sidebarIsVisible'),
+    isVisible: ui.get('sidebarIsVisible'), // FIXME: mobile version
     ...current_user
   })
 );

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .sidebar {
+  .small();
   padding-right: 20px;
   overflow: hidden;
 
@@ -23,31 +24,50 @@
     padding-right: 0;
   }
 
-  @media not all and (min-width: 1140px) {
-    .sidebar-fixed();
+  @media @tablet {
+    .medium();
   }
 
-  @media @tablet-flexible {
-    width: 240px;
+  @media @narrow-desktop, @standard-desktop, @widescreen-desktop {
+    .large();
   }
 
-  &--fixed {
-    .sidebar-fixed();
+  .small() {
+    width: 60px;
+    flex-basis: auto;
+  }
+
+  .medium() {
+    width: 140px;
+    flex-basis: auto;
+
+    .menu__item(~"news", ~"Feed");
+    .menu__item(~"likes", ~"Likes");
+    .menu__item(~"favs", ~"Favs");
+    .menu__item(~"collect", ~"Collect.");
+  }
+
+  .large() {
+    width: 260px;
+
+    .menu__item(~"news", ~"News Feed");
+    .menu__item(~"likes", ~"My Likes");
+    .menu__item(~"favs", ~"My Favorites");
+    .menu__item(~"collect", ~"Collections");
+  }
+
+  .extra-large {
+    width: 360px;
+
+    .menu__item(~"news", ~"News Feed");
+    .menu__item(~"likes", ~"My Likes");  
+    .menu__item(~"favs", ~"My Favorites");
+    .menu__item(~"collect", ~"Collections"); 
   }
 }
 
-.sidebar-fixed() {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  top: @headerHeight;
-  z-index: 100;
-  transform: translateX(-110%);
-  
-  background: #fff;
-  border-right: 1px solid rgba(211, 211, 211, 0.5);
-
-  &.sidebar--visible {
-    transform: translateX(0);
+.menu__item(@key, @value) {
+  .menu__@{key} .navigation-item__content::before {
+    content: ~"'@{value}'";
   }
 }

@@ -39,20 +39,17 @@ const SidebarMenuNormal = ({ current_user }) => {
 
   return (
     <Navigation>
-      {menuItemsArray.map((item, i) => (
+      {menuItemsArray.map(item =>
         <NavigationItem
           {...(item.html || {})}
           className={item.className}
           disabled={item.disabled}
           icon={item.icon}
-          key={i}
+          key={item.title}
           theme="2.0"
           to={item.url(username)}
-        >
-          {item.title.normal}
-        </NavigationItem>
-        ))
-      }
+        />
+      )}
     </Navigation>
   );
 };
