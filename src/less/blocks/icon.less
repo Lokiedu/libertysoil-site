@@ -22,4 +22,21 @@
     height: 37px;
     border-radius: 50%;
   }
+
+  .tag-type(@name, @color) {
+    &--type {
+      &_@{name} {
+        border-color: @color;
+        background-color: @color;
+      }
+    }
+  }
+
+  .tag-type(@name: ~"hashtag", @color: #689ACA);
+  .tag-type(@name: ~"school", @color: #DC3457);
+  .tag-type(@name: ~"geotag", @color: #47B8E7);
+
+  &--inactive {
+    background-color: #d0d0d0;
+  }
 }

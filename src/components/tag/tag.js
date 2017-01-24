@@ -40,6 +40,7 @@ export default class Tag extends React.Component {
       PropTypes.string,
       PropTypes.shape()
     ]),
+    inactive: PropTypes.bool,
     name: PropTypes.string,
     size: PropTypes.string,
     theme: PropTypes.string,
@@ -56,7 +57,8 @@ export default class Tag extends React.Component {
 
   renderIcon = () => ({
     ...castObject(this.props.icon, 'icon'),
-    size: this.props.size.toLowerCase()
+    size: this.props.size.toLowerCase(),
+    inactive: this.props.inactive
   });
 
   renderName = () => {
@@ -65,7 +67,9 @@ export default class Tag extends React.Component {
   };
 
   render() {
-    const htmlProps = omit(this.props, ['collapsed', 'size', 'theme', 'truncated']);
+    const htmlProps = omit(this.props, [
+      'collapsed', 'size', 'theme', 'truncated', 'inactive'
+    ]);
     const finalProps = {
       ...htmlProps,
       icon: this.renderIcon(),

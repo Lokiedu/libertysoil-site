@@ -54,10 +54,10 @@ export default class BasicTag extends React.Component {
   getClassName = () => {
     const { className, round, type } = this.props;
 
-    return classNames('tag', TAG_TYPES[type].className, {
-      'tag--round': round,
-      [className]: !!className
-    });
+    return classNames(
+      className, TAG_TYPES[type].className,
+      'tag', { 'tag--round': round }
+    );
   };
 
   renderAside = () => {
@@ -80,19 +80,20 @@ export default class BasicTag extends React.Component {
 
   renderIcon = () => {
     const { icon, type, round } = this.props;
+    const typeIcon = TAG_TYPES[type].icon || {};
 
     const iconConf = {
       ...icon,
-      className: classNames('tag__icon', {
-        [icon.className]: !!icon.className,
-        'tag--round': round
-      })
+      className: classNames(
+        icon.className, typeIcon.className,
+        'tag__icon', { 'tag--round': round }
+      )
     };
 
     if (!iconConf.icon) {
       return {
         ...iconConf,
-        icon: TAG_TYPES[type].icon
+        icon: typeIcon.icon
       };
     }
 
@@ -103,9 +104,7 @@ export default class BasicTag extends React.Component {
     const { name } = this.props;
     return {
       ...name,
-      className: classNames('tag__name', {
-        [name.className]: !!name.className
-      })
+      className: classNames('tag__name', name.className)
     };
   };
 
