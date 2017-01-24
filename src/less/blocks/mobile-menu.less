@@ -1,0 +1,188 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+.hamburger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 20px 12px;
+  width: 60px;
+  height: 60px;
+  background-color: #efefef;
+  cursor: pointer;
+
+  &::before, &::after, &__line {
+    display: block;
+    flex-grow: 1;
+    height: 4px;
+    background-color: #434343;
+    border-radius: 2px;
+  }
+
+  &::before, &::after {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    content: '';
+  }
+
+  &::before {
+    top: 20px;
+  }
+
+  &::after {
+    bottom: 20px;
+  }
+
+  &__line {
+    margin: auto;
+  }
+}
+
+.mobile-menu {
+  &__hamburger {
+    display: none;
+    
+    @media @tablet-flexible {
+      display: flex;
+    }
+  }
+
+  &__container {
+    display: none;
+    overflow-y: auto;
+    background-color: rgba(67, 67, 67, 0.9);
+
+    .modal__section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      background: transparent;
+    }
+
+    @media @tablet-flexible {
+      display: flex;
+    }
+  }
+
+  &__row {
+    height: 60px;
+    width: 100%;
+  }
+
+
+  &__close {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+
+    &-button {
+      position: relative;
+      width: 60px;
+      height: 60px;
+
+      cursor: pointer;
+
+      &::before, &::after {
+        position: absolute;
+        display: block;
+        top: calc(50% - 1px);
+        left: 10px;
+        width: 40px;
+        height: 3px;
+
+        background-color: #fff;
+        content: '';
+      }
+
+      &::before {
+        transform: rotate(45deg);
+      }
+
+      &::after {
+        transform: rotate(135deg);
+      }
+    }
+  }
+
+  &__item {
+    margin-bottom: 1px;
+    padding-left: 16px;
+    border-bottom: 1px solid #a3a3a3;
+    font-size: 16px;
+    color: #000;
+    background-color: #d9d9d9;
+
+    .navigation-item__icon {
+      position: relative;
+      flex-basis: 60px;
+      height: 59px;
+      border-left: 1px solid #a3a3a3;
+      background-color: #b7b7b7;
+      color: #b7b7b7;
+
+      svg {
+        z-index: 1;
+      }
+
+      &::before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #d9d9d9;
+        content: '';
+        z-index: 0;
+      }
+    }
+
+    &.navigation-item--active, &:hover {
+      background-color: #d9d9d9;
+      
+      .navigation-item__content-box { 
+        background-color: inherit;
+      }
+    }
+
+    &.navigation-item--active::after {
+      content: none;
+    }
+
+    &--to_home::before {
+      content: 'Home';
+    }
+
+    &--to_schools::before {
+      content: 'All schools in the world';
+    }
+
+    &--to_locations::before {
+      content: 'Locations';
+    }
+
+    &--to_people::before {
+      content: 'People';
+    }
+  }
+}
