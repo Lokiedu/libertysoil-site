@@ -18,14 +18,13 @@
 import React, { Component, PropTypes } from 'react';
 import { find } from 'lodash';
 
-import { ArrayOfSchoolsPropType, Autosuggest } from '../../deps';
+import { Autosuggest, ApiClient, API_HOST } from '../../deps';
 
 export default class SchoolSelect extends Component {
   static displayName = 'SchoolSelect';
 
   static propTypes = {
     onSelect: PropTypes.func,
-    schools: ArrayOfSchoolsPropType
   };
 
   static defaultProps = {
@@ -35,6 +34,8 @@ export default class SchoolSelect extends Component {
 
   constructor(props) {
     super(props);
+
+    this.client = new ApiClient(API_HOST);
 
     this.state = {
       suggestions: [],
@@ -56,9 +57,8 @@ export default class SchoolSelect extends Component {
     return find(this.state.suggestions, s => s.name === this.state.value);
   }
 
-  _getSuggestions = ({ value }) => {
-    const regex = new RegExp(`^${value.trim()}`, 'i');
-    const suggestions = this.props.schools.filter(school => regex.test(school.get('name'))).take(5).toJS();
+  _getSuggestions = async ({ value }) => {
+    const suggestions = await this.client.schools({ startWith: value.trim(), limit: 5 });
 
     this.setState({ suggestions });
   };

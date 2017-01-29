@@ -38,7 +38,6 @@ export default class EditPost extends React.Component {
       resetEditPostForm: PropTypes.func,
       updateEditPostForm: PropTypes.func
     }),
-    allSchools: ArrayOfSchoolsPropType,
     geotags: ArrayOfGeotagsPropType,
     hashtags: ArrayOfHashtagsPropType,
     id: PropTypes.string,
@@ -230,7 +229,6 @@ export default class EditPost extends React.Component {
 
   render() {
     const {
-      allSchools,
       post
     } = this.props;
 
@@ -314,7 +312,6 @@ export default class EditPost extends React.Component {
         </form>
         {this.state.upToDate &&
           <AddTagModal
-            allSchools={allSchools}
             ref={(c) => this._addTagModal = c}
             triggers={this.props.triggers}
             type={addTagModalType}

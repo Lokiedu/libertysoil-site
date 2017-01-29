@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { uuid4 as uuid4PropType } from '../prop-types/common';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -65,8 +64,7 @@ class PostEditPage extends React.Component {
     params: PropTypes.shape({
       uuid: uuid4PropType.isRequired
     }),
-    posts: MapOfPostsPropType.isRequired,
-    schools: MapOfSchoolsPropType.isRequired
+    posts: MapOfPostsPropType.isRequired
   };
 
   static async fetchData(router, store, client) {
@@ -114,7 +112,6 @@ class PostEditPage extends React.Component {
       current_user,
       is_logged_in,
       posts,
-      schools,
       edit_post_form
     } = this.props;
 
@@ -154,7 +151,6 @@ class PostEditPage extends React.Component {
               <PageContent>
                 <EditPost
                   actions={actions}
-                  allSchools={schools.toList()}
                   geotags={edit_post_form.get('geotags')}
                   hashtags={edit_post_form.get('hashtags')}
                   id={edit_post_form.get('id')}

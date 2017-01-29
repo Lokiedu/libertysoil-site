@@ -72,7 +72,6 @@ export default class AddTagModal extends Component {
     addedGeotags: ArrayOfGeotagsPropType,
     addedHashtags: ArrayOfHashtagsPropType,
     addedSchools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType]),
-    allSchools: ArrayOfSchoolsPropType.isRequired,
     onClose: PropTypes.func,
     onSave: PropTypes.func,
     onTypeChange: PropTypes.func,
@@ -169,7 +168,6 @@ export default class AddTagModal extends Component {
 
   render() {
     const {
-      allSchools,
       type,
       onTypeChange,
       userRecentTags
@@ -208,7 +206,6 @@ export default class AddTagModal extends Component {
         <ModalComponent.Body>
           <AddTagForm
             addedTags={this.state}
-            allSchools={allSchools}
             triggers={this.props.triggers}
             type={type}
             userRecentTags={userRecentTagsDiff}
