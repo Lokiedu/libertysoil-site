@@ -29,7 +29,6 @@ import cors from 'kcors';
 import serve from 'koa-static';
 import bodyParser from 'koa-bodyparser';
 import mount from 'koa-mount';
-import chokidar from 'chokidar';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
@@ -124,34 +123,6 @@ if (exec_env === 'development') {
     }
   })));
   app.use(convert(webpackHotMiddleware(compiler)));
-
-  // Taken from https://github.com/glenjamin/ultimate-hot-reloading-example/blob/master/server.js
-
-  // Do "hot-reloading" of express stuff on the server
-  // Throw away cached modules and re-require next time
-  // Ensure there's no important state in there!
-  const watcher = chokidar.watch('./src/api');
-  watcher.on('ready', function () {
-    watcher.on('all', function () {
-      logger.debug('Clearing /src/api/ cache from server');
-      Object.keys(require.cache).forEach(function (id) {
-        if (/\/src\/api\//.test(id)) {
-          delete require.cache[id];
-        }
-      });
-    });
-  });
-
-  // Do "hot-reloading" of react stuff on the server
-  // Throw away the cached client modules and let them be re-required next time
-  compiler.plugin('done', function () {
-    logger.debug('Clearing /src/ cache from server');
-    Object.keys(require.cache).forEach(function (id) {
-      if (/\/src\//.test(id)) {
-        delete require.cache[id];
-      }
-    });
-  });
 }
 
 app.use(async (ctx, next) => {
