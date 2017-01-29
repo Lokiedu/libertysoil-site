@@ -106,6 +106,7 @@ app.on('error', (e) => {
 });
 
 if (exec_env === 'development') {
+  require('dotenv').config(); // TODO: Add dotenv-webpack to webpack config after separating the webpack server.
   logger.level('debug');
 
   const webpackDevMiddleware = require('koa-webpack-dev-middleware');
