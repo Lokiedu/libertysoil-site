@@ -488,15 +488,6 @@ export class ActionsTrigger {
     }
   };
 
-  loadSchools = async () => {
-    try {
-      const result = await this.client.schools();
-      this.dispatch(a.schools.setSchools(result));
-    } catch (e) {
-      this.dispatch(a.messages.addError(e.message));
-    }
-  };
-
   toolsLoadSchoolsRiver = async (query = {}, triggerUiChanges = true) => {
     if (triggerUiChanges) {
       this.dispatch(a.ui.setProgress('loadingSchoolsRiver', true));

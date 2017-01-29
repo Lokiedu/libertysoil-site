@@ -79,10 +79,8 @@ export class UnwrappedSchoolPage extends React.Component {
     store.dispatch(setSchoolPosts(school, await posts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await Promise.all([
-      trigger.loadSchools(),
-      trigger.loadUserRecentTags()
-    ]);
+    await trigger.loadUserRecentTags();
+
 
     return 200;
   }

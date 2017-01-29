@@ -84,10 +84,7 @@ export class UnwrappedTagPage extends Component {
     store.dispatch(setHashtagPosts(router.params.tag, await tagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
-    Promise.all([
-      trigger.loadSchools(),
-      trigger.loadUserRecentTags()
-    ]);
+    await trigger.loadUserRecentTags();
 
     return 200;
   }

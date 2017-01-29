@@ -87,7 +87,6 @@ export class UnwrappedListPage extends React.Component {
     store.dispatch(clearRiver());
 
     await Promise.all([
-      trigger.loadSchools(),
       trigger.loadPostRiver(),
       trigger.loadPersonalizedSuggestions(),
       trigger.loadUserRecentTags()

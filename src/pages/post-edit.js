@@ -68,13 +68,7 @@ class PostEditPage extends React.Component {
   };
 
   static async fetchData(router, store, client) {
-    const noSchoolsLoaded = store.getState().get('schools').isEmpty();
     const trigger = new ActionsTrigger(client, store.dispatch);
-    let schoolsPromise;
-
-    if (noSchoolsLoaded) {
-      schoolsPromise = trigger.loadSchools();
-    }
 
     try {
       const post = await client.postInfo(router.params.uuid);
@@ -82,10 +76,6 @@ class PostEditPage extends React.Component {
     } catch (e) {
       store.dispatch(addPost({ error: true, id: router.params.uuid }));
       return 404;
-    }
-
-    if (noSchoolsLoaded) {
-      await schoolsPromise;
     }
 
     await trigger.loadUserRecentTags();
