@@ -29,7 +29,7 @@ import type { GeotagId, Geotag, Continent } from '../definitions/geotags';
 import type { HashtagId, Hashtag } from '../definitions/hashtags';
 import type { SchoolId, School } from '../definitions/schools';
 import type { Password, UserId, UserRecentTags, UserMore, User, Username } from '../definitions/users';
-import type { UserUpdateablePostData, Post, PostType, PostId } from '../definitions/posts';
+import type { PostDraftData, Post, PostType, PostId } from '../definitions/posts';
 import type { Attachment } from '../definitions/attachments';
 
 export default class ApiClient
@@ -512,10 +512,10 @@ export default class ApiClient
     return await response.json();
   }
 
-  async createPost(type: PostType, data: UserUpdateablePostData): Promise<Post> {
+  async createPost(type: PostType, data: PostDraftData): Promise<Post> {
     if (process.env.NODE_ENV === 'development') {
       // $FlowTcombIssue
-      data = UserUpdateablePostData.update(data, { type: { '$set': type } });
+      data = PostDraftData.update(data, { type: { '$set': type } });
     } else {
       data.type = type;
     }
@@ -523,7 +523,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async updatePost(uuid: PostId, data: UserUpdateablePostData): Promise<Post> {
+  async updatePost(uuid: PostId, data: PostDraftData): Promise<Post> {
     const response = await this.postJSON(`/api/v1/post/${uuid}`, data);
     return await response.json();
   }
