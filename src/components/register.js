@@ -83,6 +83,7 @@ export class UnwrappedRegister extends React.Component {
 
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
+    this.listenersRemoved = false;
     this.state = {
       firstName: '',
       lastName: '',
@@ -96,11 +97,24 @@ export class UnwrappedRegister extends React.Component {
     this.username.addEventListener('input', this.handleUsernameInput);
   }
 
-  componentWillUnmount() {
-    this.username.removeEventListener('focus', this.handleUsernameFocus);
-    this.username.removeEventListener('blur', this.handleUsernameBlur);
-    this.username.removeEventListener('input', this.handleUsernameInput);
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.registration_success && !this.props.registration_success) {
+      this.removeListeners();
+    }
   }
+
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
+  removeListeners = () => {
+    if (!this.listenersRemoved && this.username) {
+      this.username.removeEventListener('focus', this.handleUsernameFocus);
+      this.username.removeEventListener('blur', this.handleUsernameBlur);
+      this.username.removeEventListener('input', this.handleUsernameInput);
+      this.listenersRemoved = true;
+    }
+  };
 
   handleFormChange = event => {
     const t = event.target;
