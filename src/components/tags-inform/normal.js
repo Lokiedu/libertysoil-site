@@ -44,6 +44,7 @@ const TagsInformNormal = ({ tags, ...props }) => (
               tags={ImmutableMap({ [tagTypeTitle]: tagType.list })}
               theme="min"
               truncated
+              smartCollapsing
             />
           </NavigationItem>
         );

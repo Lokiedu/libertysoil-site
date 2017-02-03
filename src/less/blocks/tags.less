@@ -16,6 +16,43 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .tags {
+  &--row {
+    flex-wrap: nowrap;
+  }
+
+  &--queue {
+    //width: 180px;
+
+    @media @tablet {
+      //width: 60px;
+    }
+
+    @media @tablet-flexible {
+
+    }
+  }
+
+  &--count_1 {
+    .tags--body {
+      display: flex;
+      max-width: 100%;
+    }
+
+    .tags--container {
+      max-width: 100%;
+
+      > * {
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+.tags--body {
+  display: inline-flex;
+}
+
+.tags--container {
   display: flex;
   flex-wrap: wrap;
   margin-top: -16px;
@@ -23,36 +60,5 @@
 
   > * {
     margin: 16px 5px 0 1px;
-  }
-
-  &--row {
-    flex-wrap: nowrap;
-  }
-
-  &--queue {
-    width: 180px;
-
-    & > * {
-      min-width: 38px;
-      flex-basis: content;
-      flex-shrink: 200;
-      text-overflow: ellipsis;
-      overflow: hidden;
-
-      &:nth-child(1) {
-        flex-shrink: 0.1;
-      }
-      &:nth-child(2) {
-        flex-shrink: 100;
-      }
-    }
-
-    @media @tablet {
-
-    }
-
-    @media @tablet-flexible {
-
-    }
   }
 }

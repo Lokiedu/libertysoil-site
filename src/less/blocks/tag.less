@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  
+
   border-width: 1px;
   border-style: solid;
   color: #000;
@@ -47,13 +47,13 @@
     border-style: solid;
     border-left: none;
     color: white;
-    
+
     &[class*="tag__icon--action"] {
       cursor: pointer;
       &::before {
         &:extend(.micon);
         &:extend(.micon-small);
-        
+
         padding-top: 2px;
         padding-right: 2px;
         position: absolute;
@@ -86,7 +86,7 @@
   &:hover {
     [class*="tag__icon--action"] {
       position: relative;
-      
+
       .micon {
         opacity: 0;
       }
@@ -125,13 +125,19 @@
   &--inactive {
     border-color: #d0d0d0;
   }
-  
+
   &--theme_minified {
     background-color: #fff;
     border: none;
+    min-width: 0;
 
     .tag__name {
       padding: 0 10px;
+    }
+
+    .tag__icon {
+      border: none;
+      color: inherit;
     }
   }
 
