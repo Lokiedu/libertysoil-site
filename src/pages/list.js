@@ -21,7 +21,6 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
-import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 import {
   MapOfUsers as MapOfUsersPropType,
@@ -74,7 +73,6 @@ export class UnwrappedListPage extends React.Component {
     is_logged_in: PropTypes.bool.isRequired,
     posts: MapOfPostsPropType.isRequired,
     river: PropTypes.arrayOf(PropTypes.string).isRequired,
-    schools: MapOfSchoolsPropType.isRequired,
     ui: PropTypes.shape({
       progress: PropTypes.shape({
         loadRiverInProgress: PropTypes.boolean
@@ -89,7 +87,6 @@ export class UnwrappedListPage extends React.Component {
     store.dispatch(clearRiver());
 
     await Promise.all([
-      trigger.loadSchools(),
       trigger.loadPostRiver(),
       trigger.loadPersonalizedSuggestions(),
       trigger.loadUserRecentTags()
@@ -164,7 +161,6 @@ export class UnwrappedListPage extends React.Component {
       posts,
       resetCreatePostForm,
       river,
-      schools,
       ui,
       updateCreatePostForm,
       users
@@ -209,7 +205,6 @@ export class UnwrappedListPage extends React.Component {
                   addedGeotags={create_post_form.get('geotags')}
                   addedHashtags={create_post_form.get('hashtags')}
                   addedSchools={create_post_form.get('schools')}
-                  allSchools={schools.toList()}
                   defaultText={create_post_form.get('text')}
                   triggers={triggers}
                   userRecentTags={current_user.get('recent_tags')}

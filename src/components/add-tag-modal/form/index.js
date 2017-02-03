@@ -30,7 +30,6 @@ import AddSchoolForm from './school';
 
 const AddTagForm = ({
   addedTags: { geotags, schools, hashtags },
-  allSchools,
   onAddGeotag, onAddHashtag, onAddSchool,
   type,
   userRecentTags,
@@ -58,7 +57,6 @@ const AddTagForm = ({
       return (
         <AddSchoolForm
           addedSchools={schools}
-          allSchools={allSchools}
           triggers={triggers}
           userRecentSchools={userRecentTags.schools}
           onAddSchool={onAddSchool}
@@ -77,7 +75,6 @@ AddTagForm.propTypes = {
     hashtags: ArrayOfHashtagsPropType,
     schools: PropTypes.oneOfType([ArrayOfSchoolsPropType, ArrayOfLightSchoolsPropType])
   }),
-  allSchools: ArrayOfSchoolsPropType,
   onAddGeotag: PropTypes.func.isRequired,
   onAddHashtag: PropTypes.func.isRequired,
   onAddSchool: PropTypes.func.isRequired,

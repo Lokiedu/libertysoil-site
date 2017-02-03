@@ -39,7 +39,6 @@ class CreatePost extends React.Component {
     addedGeotags: ArrayOfGeotagsPropType,
     addedHashtags: ArrayOfHashtagsPropType,
     addedSchools: ArrayOfSchoolsPropType,
-    allSchools: ArrayOfSchoolsPropType,
     fields: PropTypes.shape({
       minor_update: PropTypes.shape().isRequired,
       text: PropTypes.shape().isRequired
@@ -273,7 +272,6 @@ class CreatePost extends React.Component {
           addedGeotags={this.props.addedGeotags}
           addedHashtags={this.props.addedHashtags}
           addedSchools={this.props.addedSchools}
-          allSchools={this.props.allSchools}
           ref={(c) => this._addTagModal = c}
           triggers={this.props.triggers}
           type={addTagModalType}

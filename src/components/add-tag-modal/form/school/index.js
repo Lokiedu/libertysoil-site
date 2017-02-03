@@ -31,9 +31,6 @@ export default class AddSchoolForm extends Component {
     addedSchools: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string
     })).isRequired,
-    allSchools: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string
-    })).isRequired,
     onAddSchool: PropTypes.func.isRequired,
     triggers: PropTypes.shape({
       checkSchoolExists: PropTypes.func.isRequired
@@ -67,10 +64,6 @@ export default class AddSchoolForm extends Component {
       return;
     }
 
-    if (!this.props.allSchools.find(s => s.get('name') === school.name)) {
-      return;
-    }
-
     this._input.reset();
 
     this.props.onAddSchool(school);
@@ -99,7 +92,6 @@ export default class AddSchoolForm extends Component {
                     <SchoolSelect
                       placeholder="Start typing..."
                       ref={(c) => this._input = c}
-                      schools={this.props.allSchools}
                       onSelect={this._addTag}
                     />
                   </div>

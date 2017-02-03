@@ -18,8 +18,6 @@
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
-import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../../prop-types/schools';
-
 import {
   Page,
   PageMain,
@@ -151,7 +149,6 @@ export default class BaseTagPage extends React.Component {
     }).isRequired,
     children: PropTypes.node,
     postsAmount: PropTypes.number,
-    schools: ArrayOfSchoolsPropType.isRequired,
     tag: PropTypes.shape({}).isRequired,
     type: PropTypes.string.isRequired
   };
@@ -233,7 +230,6 @@ export default class BaseTagPage extends React.Component {
       current_user,
       create_post_form,
       actions,
-      schools,
       triggers,
       type,
       tag,
@@ -263,7 +259,6 @@ export default class BaseTagPage extends React.Component {
             addedGeotags={create_post_form.get('geotags')}
             addedHashtags={create_post_form.get('hashtags')}
             addedSchools={create_post_form.get('schools')}
-            allSchools={schools.toList()}
             defaultText={create_post_form.get('text')}
             triggers={triggers}
             userRecentTags={current_user.get('recent_tags')}

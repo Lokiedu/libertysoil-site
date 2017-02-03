@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { MapOfSchools as MapOfSchoolsPropType } from '../prop-types/schools';
 import { uuid4 as uuid4PropType } from '../prop-types/common';
 import { MapOfPosts as MapOfPostsPropType } from '../prop-types/posts';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -65,18 +64,11 @@ class PostEditPage extends React.Component {
     params: PropTypes.shape({
       uuid: uuid4PropType.isRequired
     }),
-    posts: MapOfPostsPropType.isRequired,
-    schools: MapOfSchoolsPropType.isRequired
+    posts: MapOfPostsPropType.isRequired
   };
 
   static async fetchData(router, store, client) {
-    const noSchoolsLoaded = store.getState().get('schools').isEmpty();
     const trigger = new ActionsTrigger(client, store.dispatch);
-    let schoolsPromise;
-
-    if (noSchoolsLoaded) {
-      schoolsPromise = trigger.loadSchools();
-    }
 
     try {
       const post = await client.postInfo(router.params.uuid);
@@ -84,10 +76,6 @@ class PostEditPage extends React.Component {
     } catch (e) {
       store.dispatch(addPost({ error: true, id: router.params.uuid }));
       return 404;
-    }
-
-    if (noSchoolsLoaded) {
-      await schoolsPromise;
     }
 
     await trigger.loadUserRecentTags();
@@ -114,7 +102,6 @@ class PostEditPage extends React.Component {
       current_user,
       is_logged_in,
       posts,
-      schools,
       edit_post_form
     } = this.props;
 
@@ -154,7 +141,6 @@ class PostEditPage extends React.Component {
               <PageContent>
                 <EditPost
                   actions={actions}
-                  allSchools={schools.toList()}
                   geotags={edit_post_form.get('geotags')}
                   hashtags={edit_post_form.get('hashtags')}
                   id={edit_post_form.get('id')}

@@ -85,10 +85,7 @@ export class UnwrappedGeotagPage extends Component {
     store.dispatch(setGeotagPosts(router.params.url_name, await geotagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
-    Promise.all([
-      trigger.loadSchools(),
-      trigger.loadUserRecentTags()
-    ]);
+    await trigger.loadUserRecentTags();
 
     return 200;
   }

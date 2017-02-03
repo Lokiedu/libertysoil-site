@@ -63,14 +63,9 @@ class SchoolEditPage extends React.Component {
     const props = store.getState();
     const trigger = new ActionsTrigger(client, store.dispatch);
 
-    const promises = [];
-    promises.push(trigger.loadSchools());
-
     if (props.get('geo').get('countries').size === 0) {
-      promises.push(trigger.getCountries());
+      await trigger.getCountries();
     }
-
-    await Promise.all(promises);
 
     return 200;
   }

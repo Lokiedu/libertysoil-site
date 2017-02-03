@@ -60,9 +60,6 @@ class GeotagEditPage extends React.Component {
       return 404;
     }
 
-    const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.loadSchools();
-
     return 200;
   }
 
