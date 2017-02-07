@@ -114,22 +114,34 @@
 }
 
 .page__sidebar {
-  margin: 0 0 @space 0;
-  width: 100%;
+  //margin: 0 0 @space 0;
+  //width: 100%;
 
-  @media @after-base {
+  /*@media @after-base {
     width: auto;
     margin: 0 0 @space @space;
-  }
+  }*/
 }
 
 .page__main {
   flex: 1;
   min-height: 512px;
   padding-top: @space;
+  margin-right: auto;
+  margin-left: auto;
 
   &-no_space {
     padding-top: 0;
+  }
+
+  @media @fluidMobileWide {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
+
+  @media @fluidDesktop, @fluidDesktopWide {
+    margin-left: 20px;
+    margin-right: 20px;
   }
 }
 
@@ -160,9 +172,9 @@
 .page__body {
   display: flex;
   flex: 1;
-  margin-left: auto;
-  margin-right: auto;
   flex-wrap: wrap;
+  width: 320px;
+  margin: auto;
 
   &-up {
     position: relative;
@@ -174,29 +186,12 @@
     display: block;
   }
 
-  @media @before-small {
-    margin-left: 0;
-    margin-right: 0;
+  @media @fluidMobileWide, @fluidTablet, @fluidDesktop {
+    width: auto;
   }
 
-  @media @after-base {
-
-  }
-
-  @media @after-small {
-    width: 480px;
-  }
-
-  @media @after-normal {
-    width: 768px;
-  }
-
-  @media @after-base {
-    width: 834px;
-  }
-
-  @media @after-wide {
-    width: 960px;
+  @media @fluidDesktopWide {
+    width: @fluidMaxWidth;
   }
 
   &-small {
@@ -222,6 +217,43 @@
   &:extend(.layout-rows);
 }
 
+.page__sidebar {
+  overflow: hidden;
+  width: 100%;
+
+  @media @fluidMobileWide {
+
+  }
+
+  @media @fluidTablet {
+    width: 240px;
+    padding-right: 20px;
+  }
+
+  @media @fluidDesktop {
+    width: 280px;
+    padding-right: 20px;
+  }
+
+  @media @fluidDesktopWide {
+    width: 320px;
+    padding-right: 20px;
+  }
+
+  &-alt {
+    padding-right: 0;
+
+    @media @fluidTablet {
+      padding-left: 20px;
+    }
+
+    @media @fluidDesktop, @fluidDesktopWide {
+      flex: 1;
+      padding-left: 20px;
+    }
+  }
+}
+
 .page__footer {
 
 }
@@ -230,11 +262,14 @@
   flex: 1;
   padding: 0 0 @doubleSpace 0;
 
-  &-mobile_space {
-    @media @before-normal {
-      padding-right: @space;
-      padding-left: @space;
-    }
+  @media @fluidDesktop {
+    flex: none;
+    width: 560px;
+  }
+
+  @media @fluidDesktopWide {
+    flex: none;
+    width: 740px;
   }
 }
 

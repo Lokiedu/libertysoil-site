@@ -47,7 +47,7 @@ class Sidebar extends React.Component {
 
   render() {
     return (
-      <div className={this.getClassName()}>
+      <div className="sidebar page__sidebar">
         <SidebarMenu current_user={this.props.current_user} />
         <TagsInform current_user={this.props.current_user} />
       </div>

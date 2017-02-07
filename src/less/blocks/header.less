@@ -25,6 +25,7 @@
   right: 0;
   left: 0;
   z-index: 100;
+  box-sizing: border-box;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.09);
 
   &-transparent {
@@ -44,6 +45,11 @@
 .header__body {
   display: flex;
   height: 36px;
+  margin: auto;
+
+  @media @fluidDesktopWide {
+    width: @fluidMaxWidth;
+  }
 }
 
 .header__content {
@@ -76,7 +82,7 @@
   &-right_space {
     margin-right: @space;
   }
-  
+
   &-left_space {
     margin-right: @space;
   }

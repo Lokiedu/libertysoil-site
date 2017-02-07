@@ -21,6 +21,16 @@
 @standard-desktop: ~"(min-width: 1140px) and (max-width: 1340px)";
 @widescreen-desktop: ~"(min-width: 1340px)";
 
+
+/* Fluid responsive steps */
+@fluidMaxWidth: 1367px;
+@fluidMobileWide: ~"(min-width: 441px) and (max-width: 768px)";
+@fluidTablet: ~"(min-width: 769px) and (max-width: 1024px)";
+@fluidDesktop: ~"(min-width: 1025px) and (max-width: 1366px)";
+@fluidDesktopWide: ~"(min-width: 1367px)";
+
+
+
 @col-base: 60px;
 @margin-base: 20px;
 
@@ -91,11 +101,11 @@
   .show-if-true(@_size, @_n, @_i: 1) when (@_i =< @_n) {
     .col-@{size}-@{_i} {
       .column(@_i);
-      
+
       &-h {
         .column((@_i / 2));
       }
-      
+
       &-q {
         .column((@_i / 4));
       }
@@ -182,7 +192,7 @@
   flex-wrap: wrap;
   margin: 20px;
   border: 1px solid black;
-  
+
   @media not all and @tablet-flexible {
     flex: 0 0 120px;
   }

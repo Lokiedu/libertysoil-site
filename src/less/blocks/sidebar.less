@@ -17,12 +17,6 @@
  */
 .sidebar {
   .small();
-  padding-right: 20px;
-  overflow: hidden;
-
-  &.col-2 {
-    padding-right: 0;
-  }
 
   @media @tablet {
     .medium();
@@ -30,15 +24,25 @@
 
   @media @narrow-desktop, @standard-desktop, @widescreen-desktop {
     .large();
+
+    .menu__item(~"news", ~"Feed");
+    .menu__item(~"likes", ~"Likes");
+    .menu__item(~"favs", ~"Favs");
+    .menu__item(~"collect", ~"Collect.");
   }
 
   .small() {
-    width: 60px;
+    /* width: 60px; */
     flex-basis: auto;
+
+    .menu__item(~"news", ~"Feed");
+    .menu__item(~"likes", ~"Likes");
+    .menu__item(~"favs", ~"Favs");
+    .menu__item(~"collect", ~"Collect.");
   }
 
   .medium() {
-    width: 140px;
+    /* width: 140px; */
     flex-basis: auto;
 
     .menu__item(~"news", ~"Feed");
@@ -48,7 +52,7 @@
   }
 
   .large() {
-    width: 260px;
+    /* width: 260px; */
 
     .menu__item(~"news", ~"News Feed");
     .menu__item(~"likes", ~"My Likes");
@@ -57,12 +61,12 @@
   }
 
   .extra-large {
-    width: 360px;
+    /* width: 360px; */
 
     .menu__item(~"news", ~"News Feed");
-    .menu__item(~"likes", ~"My Likes");  
+    .menu__item(~"likes", ~"My Likes");
     .menu__item(~"favs", ~"My Favorites");
-    .menu__item(~"collect", ~"Collections"); 
+    .menu__item(~"collect", ~"Collections");
   }
 }
 
