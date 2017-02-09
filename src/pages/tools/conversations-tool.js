@@ -31,6 +31,7 @@ import {
   MapOfUsers
 } from '../../prop-types/users';
 import createSelector from '../../selectors/createSelector';
+import currentUserSelector from '../../selectors/currentUser';
 import { setConversationsRiver } from '../../actions/tools';
 import { addUsers } from '../../actions/users';
 import { getUrl } from '../../utils/urlGenerator';
@@ -39,6 +40,18 @@ import { API_HOST, URL_NAMES } from '../../config';
 import Avatar from '../../components/user/avatar';
 import Icon from '../../components/icon';
 import Conversation from '../../components/tools/conversation';
+
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../../components/page';
+import SidebarAlt from '../../components/sidebarAlt';
+import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
+import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
 
 
 class ConversationsToolPage extends React.Component {
@@ -58,17 +71,37 @@ class ConversationsToolPage extends React.Component {
     }
 
     const users = await client.mutualFollows(currentUserId);
-    store.dispatch(setConversationsRiver(users));
-    store.dispatch(addUsers(users));
+    if (users.length > 0) {
+      store.dispatch(setConversationsRiver(users));
+      store.dispatch(addUsers(users));
+
+      const triggers = new ActionsTrigger(client, store.dispatch);
+      const firstUserId = users[0].id;
+      await triggers.updateUserMessages(firstUserId);
+    }
   }
 
   constructor(props) {
     super(props);
+
     this.state = {
       selectedUserId: null
     };
+
     this.client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(this.client, this.props.dispatch);
+  }
+
+  componentWillMount() {
+    const firstUser = this.props.conversations_river.first();
+    this.setState({ selectedUserId: firstUser });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.state.selectedUserId) {
+      const firstUser = nextProps.conversations_river.first();
+      this.setState({ selectedUserId: firstUser });
+    }
   }
 
   componentWillUnmount() {
@@ -135,32 +168,43 @@ class ConversationsToolPage extends React.Component {
     });
 
     return (
-      <div className="layout">
+      <div>
         <Helmet title="Conversations on " />
-        <div className="tools_page__list_col">
-          {userItems}
-        </div>
+        <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
+          <HeaderLogo small />
+        </Header>
 
-        <div className="tools_page__details_col">
-          <Conversation
-            currentUser={currentUser}
-            messages={selectedUserMessages}
-            selectedUser={selectedUser}
-            onSend={this.handleSendMessage}
-          />
-        </div>
+        <Page>
+          <PageMain>
+            <PageBody>
+              <Sidebar />
+              <PageContent>
+                <Conversation
+                  currentUser={currentUser}
+                  messages={selectedUserMessages}
+                  selectedUser={selectedUser}
+                  onSend={this.handleSendMessage}
+                />
+              </PageContent>
+              <SidebarAlt>
+                {userItems}
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
+        <Footer />
       </div>
     );
   }
 }
 
 const selector = createSelector(
-  state => state.get('current_user'),
-  state => state.getIn(['tools', 'conversations_river']), // for the list of followed users
+  currentUserSelector,
+  state => state.getIn(['tools', 'conversations_river']),
   state => state.get('users'),
   state => state.get('user_messages'),
   (current_user, conversations_river, users, user_messages) => ({
-    current_user,
+    ...current_user,
     conversations_river,
     users,
     user_messages
