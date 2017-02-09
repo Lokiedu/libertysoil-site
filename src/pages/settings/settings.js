@@ -21,39 +21,28 @@ import Helmet from 'react-helmet';
 import i from 'immutable';
 
 import {
-  mapOf as mapOfPropType,
-  uuid4 as uuid4PropType
-} from '../prop-types/common';
-import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
-import {
-  ArrayOfUsersId as ArrayOfUsersIdPropType,
   CurrentUser as CurrentUserPropType
-} from '../prop-types/users';
+} from '../../prop-types/users';
 
-import BasicInfoForm from '../components/settings/basic-info-form';
+import BasicInfoForm from '../../components/settings/basic-info-form';
 
-import ApiClient from '../api/client';
-import { API_HOST } from '../config';
-import { Command } from '../utils/command';
-import { addUser } from '../actions/users';
-import { addError } from '../actions/messages';
-import { ActionsTrigger } from '../triggers';
-import { createSelector, currentUserSelector } from '../selectors';
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
+import { addUser } from '../../actions/users';
+import { addError } from '../../actions/messages';
+import { ActionsTrigger } from '../../triggers';
+import { createSelector, currentUserSelector } from '../../selectors';
 
-import { RolesManager } from '../components/settings';
-
-import BaseSettingsPage from './base/settings';
-
+import Button from '../../components/button';
+import { RolesManager } from '../../components/settings';
+import ProfileHeader from '../../components/profile';
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
-    following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType).isRequired,
     is_logged_in: PropTypes.bool.isRequired,
-    messages: ArrayOfMessagesPropType
   };
 
   static async fetchData(router, store, client) {
@@ -71,48 +60,60 @@ class SettingsPage extends React.Component {
     store.dispatch(addUser(await userInfo));
   }
 
-  handleChange = (command) => {
-    if (this.base) {
-      this.base.handleChange(command);
-    }
-  };
+  constructor(props) {
+    super(props);
 
-  // BasicInfoForm uses react-inform's onChange that can't generate Command independently
-  handleFormChange = () => {
-    const command = new Command('basic-info-form', this.handleSave);
-    this.handleChange(command);
-  };
+    this.state = {
+      unsaved: false,
+      processing: false
+    };
+
+    const client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
+  }
 
   handleSave = async () => {
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
+    this.setState({ processing: true });
+
     const formValues = this.form.formProps().values();
+    const roles = this.roles.getRoles();
 
     let success;
     try {
-      success = await triggers.updateUserInfo({
+      success = await this.triggers.updateUserInfo({
         more: {
           bio: formValues.bio,
-          summary: formValues.summary
+          summary: formValues.summary,
+          roles
         }
       });
+
+      // Save pictures
+      success = success && await this.head.saveAll();
     } catch (e) {
       success = false;
       this.handleError(e.message);
     }
 
+    this.setState({ processing: false, unsaved: !success });
+
     return { success };
   };
+
+  handleFormChange = () => {
+    // FIXME: react-inform calls onChange upon initialization.
+    this.setState({ unsaved: true });
+  }
 
   handleError = (e) => {
     this.props.dispatch(addError(e.message));
   };
 
+  // TODO: Make ProfileHeader, BasicInfoForm, and RolesManager managed instead of using refs.
   render() {
     const {
       current_user,
       is_logged_in,
-      messages,
       following,
       followers
     } = this.props;
@@ -123,21 +124,19 @@ class SettingsPage extends React.Component {
 
     const roles = current_user.getIn(['user', 'more', 'roles'], i.List()).toJS();
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
     return (
-      <BaseSettingsPage
-        ref={c => this.base = c}
-        current_user={current_user}
-        followers={followers}
-        following={following}
-        is_logged_in={is_logged_in}
-        messages={messages}
-        triggers={triggers}
-        onSave={this.handleSave}
-      >
+      <div>
         <Helmet title="Your Profile Settings on " />
+        <ProfileHeader
+          current_user={current_user}
+          editable
+          followers={followers}
+          following={following}
+          onChange={this.handleFormChange}
+          ref={c => this.head = c}
+          triggers={this.triggers}
+          user={current_user.get('user')}
+        />
         <BasicInfoForm
           current_user={current_user}
           ref={c => this.form = c}
@@ -146,27 +145,34 @@ class SettingsPage extends React.Component {
         <div className="paper__page">
           <h2 className="content__sub_title layout__row">Roles</h2>
           <RolesManager
+            ref={c => this.roles = c}
             roles={roles}
-            onChange={this.handleChange}
-            onError={this.handleError}
-            onSave={triggers.updateUserInfo}
+            onChange={this.handleFormChange}
           />
         </div>
-      </BaseSettingsPage>
+        {this.state.unsaved &&
+          <div className="paper__page layout__raw_grid layout__raw_grid--reverse tools_page__item--flex">
+            <Button
+              className="button button-wide button-green button--new"
+              title="Save changes"
+              waiting={this.state.processing}
+              onClick={this.handleSave}
+            />
+          </div>
+        }
+      </div>
     );
   }
 }
 
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('messages'),
   state => state.get('following'),
   state => state.get('followers'),
-  (current_user, messages, following, followers) => ({
-    messages,
+  (current_user, following, followers) => ({
+    ...current_user,
     following,
-    followers,
-    ...current_user
+    followers
   })
 );
 

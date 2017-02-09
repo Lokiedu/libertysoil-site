@@ -28,8 +28,8 @@ describe('routes that are unavailable for guests', function () {
     let routes = [
       '/',
       '/settings',
+      '/settings/email',
       '/settings/password',
-      '/tools/account/password',
       '/settings/followers'
     ];
 

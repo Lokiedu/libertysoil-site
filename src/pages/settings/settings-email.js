@@ -19,15 +19,10 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
-import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
-
-import ApiClient from '../api/client';
-import { API_HOST } from '../config';
-import { addUser } from '../actions/users';
-import { ActionsTrigger } from '../triggers';
-import { createSelector, currentUserSelector } from '../selectors';
-
-import BaseSettingsPage from './base/settings';
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
+import { ActionsTrigger } from '../../triggers';
+import { createSelector, currentUserSelector } from '../../selectors';
 
 
 class SettingsEmailPage extends React.Component {
@@ -35,22 +30,7 @@ class SettingsEmailPage extends React.Component {
 
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    messages: ArrayOfMessagesPropType
   };
-
-  static async fetchData(router, store, client) {
-    const props = store.getState();
-    const currentUserId = props.get('current_user').get('id');
-
-    if (currentUserId === null) {
-      return;
-    }
-
-    const currentUser = props.get('users').get(currentUserId);
-
-    const userInfo = client.userInfo(currentUser.get('username'));
-    store.dispatch(addUser(await userInfo));
-  }
 
   handleMuteAllPosts = async () => {
     const client = new ApiClient(API_HOST);
@@ -67,27 +47,14 @@ class SettingsEmailPage extends React.Component {
     const {
       current_user,
       is_logged_in,
-      messages,
-      following,
-      followers
     } = this.props;
 
     if (!is_logged_in) {
       return false;
     }
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
     return (
-      <BaseSettingsPage
-        current_user={current_user}
-        followers={followers}
-        following={following}
-        is_logged_in={is_logged_in}
-        messages={messages}
-        triggers={triggers}
-      >
+      <div>
         <Helmet title="Email Settings on " />
         <div className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Email settings</h2>
@@ -106,7 +73,7 @@ class SettingsEmailPage extends React.Component {
             </form>
           </div>
         </div>
-      </BaseSettingsPage>
+      </div>
     );
   }
 }

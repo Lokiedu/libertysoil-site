@@ -26,30 +26,16 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
-import currentUserSelector from '../../selectors/currentUser';
 import { addMessage, removeMessage } from '../../actions/messages';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 import SettingsPasswordForm from '../../components/settings/password-form';
-import Messages from '../../components/messages';
-
-import {
-  Page,
-  PageMain,
-  PageBody,
-  PageContent
-} from '../../components/page';
-import SidebarAlt from '../../components/sidebarAlt';
-import Header from '../../components/header';
-import HeaderLogo from '../../components/header-logo';
-import Footer from '../../components/footer';
-import Sidebar from '../../components/sidebar';
 
 
 const WEAK_PASSWORD_MESSAGE = 'Password is weak. Consider adding more words or symbols';
 
-class PasswordToolPage extends React.Component {
-  static displayName = 'PasswordToolPage';
+class SettingsPasswordPage extends React.Component {
+  static displayName = 'SettingsPasswordPage';
 
   static propTypes = {
     actions: PropTypes.shape({
@@ -58,13 +44,6 @@ class PasswordToolPage extends React.Component {
     dispatch: PropTypes.func,
     messages: ArrayOfMessagesPropType
   };
-
-  static async fetchData(router, store, client) {
-    const currentUserId = store.getState().getIn(['current_user', 'id']);
-    const currentUserUsername = store.getState().getIn(['users', currentUserId, 'username']);
-    const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.loadUserInfo(currentUserUsername);
-  }
 
   handleChange = debounce(values => {
     if (values.newPassword) {
@@ -103,49 +82,22 @@ class PasswordToolPage extends React.Component {
   };
 
   render() {
-    const {
-      current_user
-    } = this.props;
-
     return (
       <div>
-        <Helmet title="Password tool on " />
-        <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
-          <HeaderLogo small />
-        </Header>
-
-        <Page>
-          <PageMain>
-            <PageBody>
-              <Sidebar />
-              <PageContent>
-                <SettingsPasswordForm
-                  ref={c => this.form = c}
-                  onChange={this.handleChange}
-                  onSubmit={this.handleSubmit}
-                />
-                <div className="layout__row">
-                  <Messages
-                    messages={this.props.messages}
-                    removeMessage={this.props.actions.removeMessage}
-                  />
-                </div>
-              </PageContent>
-              <SidebarAlt />
-            </PageBody>
-          </PageMain>
-        </Page>
-        <Footer />
+        <Helmet title="Change password on " />
+        <SettingsPasswordForm
+          ref={c => this.form = c}
+          onChange={this.handleChange}
+          onSubmit={this.handleSubmit}
+        />
       </div>
     );
   }
 }
 
 const inputSelector = createSelector(
-  currentUserSelector,
   state => state.get('messages'),
   (current_user, messages) => ({
-    ...current_user,
     messages
   })
 );
@@ -157,4 +109,4 @@ const outputSelector = dispatch => ({
   dispatch
 });
 
-export default connect(inputSelector, outputSelector)(PasswordToolPage);
+export default connect(inputSelector, outputSelector)(SettingsPasswordPage);

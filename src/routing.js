@@ -37,9 +37,11 @@ import UserFavoritesPage from './pages/user-favorites';
 import AboutUserPage from './pages/user-bio';
 import SchoolPage from './pages/school';
 import SchoolEditPage from './pages/school-edit';
-import SettingsPage from './pages/settings';
-import SettingsEmailPage from './pages/settings-email';
-import SettingsFollowersPage from './pages/settings-followers';
+import BaseSettingsPage from './pages/base/settings';
+import SettingsPage from './pages/settings/settings';
+import SettingsEmailPage from './pages/settings/settings-email';
+import SettingsFollowersPage from './pages/settings/settings-followers';
+import SettingsPasswordPage from './pages/settings/settings-password';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
 import HashtagEditPage from './pages/hashtag-edit';
@@ -51,7 +53,6 @@ import GeotagEditPage from './pages/geotag-edit';
 import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
-import PasswordToolPage from './pages/tools/password-tool';
 import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 
@@ -85,10 +86,11 @@ export function getRoutes(authHandler, fetchHandler) {
           <Route component={HashtagEditPage} path="/tag/:tag/edit" onEnter={withAuth} />
         </Route>
       </Route>
-      <Route path="/settings">
+      <Route component={BaseSettingsPage} path="/settings">
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
         <Route component={SettingsEmailPage} path="email" onEnter={withAuth} />
         <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
+        <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
       </Route>
       <Route path="/user/:username">
         <IndexRoute component={UserPage} onEnter={withoutAuth} />
@@ -124,13 +126,8 @@ export function getRoutes(authHandler, fetchHandler) {
           <IndexRedirect to="following" />
           <Route component={PeopleToolPage} path="following" onEnter={withAuth} />
         </Route>
-        <Route path="account">
-          <IndexRedirect to="password" />
-          <Route component={PasswordToolPage} path="password" onEnter={withAuth} />
-        </Route>
         <Route component={ConversationsToolPage} path="conversations" onEnter={withAuth} />
       </Route>
-      <Redirect from="/settings/password" to="/tools/account/password" />
     </Route>
   );
 }
