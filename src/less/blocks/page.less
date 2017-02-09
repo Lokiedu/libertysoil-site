@@ -98,9 +98,13 @@
 .page__main {
   flex: 1;
   min-height: 512px;
-  padding-top: @space;
+  padding-top: 40px;
   margin-right: auto;
   margin-left: auto;
+
+  &-small_height {
+    min-height: auto;
+  }
 
   @media @fluidMobileWide {
     margin-left: 60px;
