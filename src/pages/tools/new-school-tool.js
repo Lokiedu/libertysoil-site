@@ -21,11 +21,13 @@ import last from 'lodash/last';
 import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 import debounce from 'debounce-promise';
+import Helmet from 'react-helmet';
 
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { TAG_SCHOOL } from '../../consts/tags';
 import createSelector from '../../selectors/createSelector';
+import currentUserSelector from '../../selectors/currentUser';
 import { ActionsTrigger } from '../../triggers';
 import { addError, removeAllMessages } from '../../actions/messages';
 import { removeWhitespace } from '../../utils/lang';
@@ -33,6 +35,19 @@ import { removeWhitespace } from '../../utils/lang';
 import { ExtendableSchoolEditForm } from '../../components/tag-edit-form/school-edit-form';
 import Message from '../../components/message';
 import Tag from '../../components/tag';
+
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../../components/page';
+import SidebarAlt from '../../components/sidebarAlt';
+import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
+import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
+
 
 export class AddSchoolToolPage extends React.Component {
   static async fetchData(router, store, client) {
@@ -106,6 +121,10 @@ export class AddSchoolToolPage extends React.Component {
   }, 200);
 
   render() {
+    const {
+      current_user
+    } = this.props;
+
     const school = this.state.newSchool;
 
     let messageVisibility;
@@ -115,44 +134,65 @@ export class AddSchoolToolPage extends React.Component {
 
     return (
       <div>
-        <Message internal>
-          After adding this tag you won&apos;t be able to edit school name anymore.
-          Please be sure to get it right the first time!
-        </Message>
-        <this.SchoolEditForm
-          countries={this.props.countries}
-          messages={this.props.messages}
-          processing={this.state.processing}
-          ref={c => this.form = c}
-          saveHandler={this.handleSave}
-          triggers={pick(this.triggers, ['removeMessage'])}
-        />
-        <div className="layout__row" style={{ visibility: messageVisibility }}>
-          <Message internal>
-            <div className="layout">
-              New school:
-              {school &&
-                <div style={{ display: 'inline-block', marginLeft: '10px' }}>
-                  <Tag
-                    name={school.name}
-                    ref={c => this.msg = c}
-                    type={TAG_SCHOOL}
-                    urlId={school.url_name}
-                  />
+        <Helmet title="New school on " />
+        <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
+          <HeaderLogo small />
+        </Header>
+
+        <Page>
+          <PageMain>
+            <PageBody>
+              <Sidebar />
+              <PageContent>
+                <Message internal>
+                  After adding this tag you won&apos;t be able to edit school name anymore.
+                  Please be sure to get it right the first time!
+                </Message>
+                <this.SchoolEditForm
+                  countries={this.props.countries}
+                  messages={this.props.messages}
+                  processing={this.state.processing}
+                  ref={c => this.form = c}
+                  saveHandler={this.handleSave}
+                  triggers={pick(this.triggers, ['removeMessage'])}
+                />
+                <div className="layout__row" style={{ visibility: messageVisibility }}>
+                  <Message internal>
+                    <div className="layout">
+                      New school:
+                      {school &&
+                        <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+                          <Tag
+                            name={school.name}
+                            ref={c => this.msg = c}
+                            type={TAG_SCHOOL}
+                            urlId={school.url_name}
+                          />
+                        </div>
+                      }
+                    </div>
+                  </Message>
                 </div>
-              }
-            </div>
-          </Message>
-        </div>
+              </PageContent>
+            </PageBody>
+            <SidebarAlt />
+          </PageMain>
+        </Page>
+        <Footer />
       </div>
     );
   }
 }
 
 const inputSelector = createSelector(
+  currentUserSelector,
   state => state.getIn(['geo', 'countries']),
   state => state.get('messages'),
-  (countries, messages) => ({ countries, messages })
+  (current_user, countries, messages) => ({
+    ...current_user,
+    countries,
+    messages
+  })
 );
 const outputSelector = dispatch => ({ dispatch });
 
