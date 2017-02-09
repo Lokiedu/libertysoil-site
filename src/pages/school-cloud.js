@@ -73,9 +73,9 @@ class SchoolCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
-          <PageMain className="page__main-no_space">
+          <PageMain>
             <PageBody>
+              <Sidebar current_user={current_user} />
               <PageContent>
                 <PageCaption>School cloud</PageCaption>
                 <div className="layout__row">

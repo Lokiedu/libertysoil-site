@@ -72,9 +72,9 @@ class TagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar />
-          <PageMain className="page__main-no_space">
+          <PageMain>
             <PageBody>
+              <Sidebar />
               <PageContent>
                 <PageCaption>Tag cloud</PageCaption>
                 <div className="layout__row">

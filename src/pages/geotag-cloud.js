@@ -79,9 +79,9 @@ class GeotagCloudPage extends Component {
         </Header>
 
         <Page>
-          <Sidebar />
-          <PageMain className="page__main-no_space">
+          <PageMain>
             <PageBody>
+              <Sidebar />
               <PageContent>
                 <PageCaption>Geotag cloud</PageCaption>
                 {
