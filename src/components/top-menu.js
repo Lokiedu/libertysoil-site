@@ -18,15 +18,12 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-
+import { toggleMenu } from '../actions/ui';
 import {
   Page,
   PageMain,
-  PageBody,
-  PageContent
+  PageBody
 } from './page';
-
-import { toggleMenu } from '../actions/ui';
 
 class TopMenu extends React.Component {
   static displayName = 'TopMenu';

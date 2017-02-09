@@ -26,7 +26,6 @@ import {
   Page,
   PageMain,
   PageCaption,
-  PageHero,
   PageBody,
   PageContent
 } from '../components/page';
