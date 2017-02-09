@@ -26,7 +26,8 @@ import TagsInform from './tags-inform';
 
 class Sidebar extends React.Component {
   static propTypes = {
-    theme: PropTypes.string
+    theme: PropTypes.string,
+    isEmpty: PropTypes.bool
   };
 
   static defaultProps = {
@@ -46,6 +47,12 @@ class Sidebar extends React.Component {
   };
 
   render() {
+    if (this.props.isEmpty) {
+      return (
+        <div className="sidebar page__sidebar"></div>
+      );
+    }
+
     return (
       <div className="sidebar page__sidebar">
         <SidebarMenu current_user={this.props.current_user} />
