@@ -24,8 +24,8 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case river.SET_POSTS_TO_FAVOURITES_RIVER: {
-      const posts = i.List(action.posts.map(post => post.id));
-      state = state.set(action.user_id, posts);
+      const posts = i.List(action.payload.posts.map(post => post.id));
+      state = state.set(action.payload.user_id, posts);
       break;
     }
   }

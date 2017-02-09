@@ -24,14 +24,14 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.river.ADD_POST_TO_RIVER: {
-      const geotags = action.post.geotags;
+      const geotags = action.payload.post.geotags;
 
       geotags.forEach(tag => {
         let posts = i.List([]);
         if (state.get(tag.name)) {
           posts = state.get(tag.name);
         }
-        posts = posts.unshift(action.post.id);
+        posts = posts.unshift(action.payload.post.id);
 
         state = state.set(tag.name, posts);
       });
@@ -39,13 +39,13 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.geotags.SET_GEOTAG_POSTS: {
-      state = state.set(action.geotag, i.List(action.posts.map(post => post.id)));
+      state = state.set(action.payload.geotag, i.List(action.payload.posts.map(post => post.id)));
       break;
     }
 
     case a.posts.REMOVE_POST: {
       for (const geotagName of state.keys()) {
-        const idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.id));
+        const idx = state.get(geotagName).findIndex(geotagPostId => (geotagPostId === action.payload.id));
 
         if (idx >= 0) {
           state = state.deleteIn([geotagName, idx]);

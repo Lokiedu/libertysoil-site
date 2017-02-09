@@ -24,7 +24,7 @@ const initialState = i.List([]);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case quotes.SET_QUOTES: {
-      state = i.fromJS(action.quotes);
+      state = i.fromJS(action.payload.quotes);
     }
   }
 

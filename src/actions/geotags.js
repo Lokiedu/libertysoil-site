@@ -29,56 +29,72 @@ export const REMOVE_USER_FOLLOWED_GEOTAG = 'REMOVE_USER_FOLLOWED_GEOTAG';
 export function addGeotag(geotag) {
   return {
     type: ADD_GEOTAG,
-    geotag
+    payload: {
+      geotag
+    }
   };
 }
 
 export function setGeotags(geotags) {
   return {
     type: SET_GEOTAGS,
-    geotags
+    payload: {
+      geotags
+    }
   };
 }
 
 export function setGeotagPosts(geotag, posts) {
   return {
     type: SET_GEOTAG_POSTS,
-    geotag,
-    posts
+    payload: {
+      geotag,
+      posts
+    }
   };
 }
 
 export function setGeotagCloud(continents) {
   return {
     type: SET_GEOTAG_CLOUD,
-    continents
+    payload: {
+      continents
+    }
   };
 }
 
 export function addLikedGeotag(geotag) {
   return {
     type: ADD_LIKED_GEOTAG,
-    geotag
+    payload: {
+      geotag
+    }
   };
 }
 
 export function removeLikedGeotag(geotag) {
   return {
     type: REMOVE_LIKED_GEOTAG,
-    geotag
+    payload: {
+      geotag
+    }
   };
 }
 
 export function addUserFollowedGeotag(geotag) {
   return {
     type: ADD_USER_FOLLOWED_GEOTAG,
-    geotag
+    payload: {
+      geotag
+    }
   };
 }
 
 export function removeUserFollowedGeotag(geotag) {
   return {
     type: REMOVE_USER_FOLLOWED_GEOTAG,
-    geotag
+    payload: {
+      geotag
+    }
   };
 }

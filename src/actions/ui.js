@@ -23,15 +23,19 @@ export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 export function setProgress(progress, value) {
   return {
     type: UI__SET_PROGRESS,
-    progress,
-    value
+    payload: {
+      progress,
+      value
+    }
   };
 }
 
 export function toggleMenu(isVisible) {
   return {
     type: UI__TOGGLE_MENU,
-    isVisible
+    payload: {
+      isVisible
+    }
   };
 }
 

@@ -26,7 +26,9 @@ export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 export function addPostToRiver(post) {
   return {
     type: ADD_POST_TO_RIVER,
-    post
+    payload: {
+      post
+    }
   };
 }
 
@@ -39,22 +41,28 @@ export function clearRiver() {
 export function setPostsToRiver(posts) {
   return {
     type: SET_POSTS_TO_RIVER,
-    posts
+    payload: {
+      posts
+    }
   };
 }
 
 export function setPostsToLikesRiver(user_id, posts) {
   return {
     type: SET_POSTS_TO_LIKES_RIVER,
-    user_id,
-    posts
+    payload: {
+      user_id,
+      posts
+    }
   };
 }
 
 export function setPostsToFavouritesRiver(user_id, posts) {
   return {
     type: SET_POSTS_TO_FAVOURITES_RIVER,
-    user_id,
-    posts
+    payload: {
+      user_id,
+      posts
+    }
   };
 }

@@ -25,14 +25,14 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case g.ADD_GEOTAG: {
-      const geotag = action.geotag;
+      const geotag = action.payload.geotag;
       state = state.set(geotag.url_name, i.fromJS(geotag));
 
       break;
     }
 
     case g.SET_GEOTAG_CLOUD: {
-      const geotags = action.continents.reduce((acc, next) => {
+      const geotags = action.payload.continents.reduce((acc, next) => {
         return acc.concat(next.geotags);
       }, []);
       state = i.fromJS(_.keyBy(geotags, 'url_name'));
@@ -41,7 +41,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case g.SET_GEOTAGS: {
-      const geotags = _.keyBy(action.geotags, 'url_name');
+      const geotags = _.keyBy(action.payload.geotags, 'url_name');
       state = i.fromJS(geotags);
 
       break;

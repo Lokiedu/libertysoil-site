@@ -22,20 +22,26 @@ export const ADD_CITY = 'ADD_CITY';
 export function setCountries(countries) {
   return {
     type: SET_COUNTRIES,
-    countries
+    payload: {
+      countries
+    }
   };
 }
 
 export function addCountry(country) {
   return {
     type: ADD_COUNTRY,
-    country
+    payload: {
+      country
+    }
   };
 }
 
 export function addCity(city) {
   return {
     type: ADD_CITY,
-    city
+    payload: {
+      city
+    }
   };
 }

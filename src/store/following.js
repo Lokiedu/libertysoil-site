@@ -25,15 +25,15 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case users.ADD_USER:
     case users.SET_CURRENT_USER: {
-      if (action.user && action.user.following) {
-        state = state.set(action.user.id, i.List(action.user.following.map(user => user.id)));
+      if (action.payload.user && action.payload.user.following) {
+        state = state.set(action.payload.user.id, i.List(action.payload.user.following.map(user => user.id)));
       }
 
       break;
     }
 
     case users.ADD_USERS: {
-      const ids = action.users.reduce((acc, user) => {
+      const ids = action.payload.users.reduce((acc, user) => {
         if (Array.isArray(user.following)) {
           acc[user.id] = user.following.map(user => user.id);
         }

@@ -24,21 +24,27 @@ export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 export function addError(message) {
   return {
     type: ADD_ERROR,
-    message
+    payload: {
+      message
+    }
   };
 }
 
 export function addMessage(message) {
   return {
     type: ADD_MESSAGE,
-    message
+    payload: {
+      message
+    }
   };
 }
 
 export function removeMessage(index) {
   return {
     type: REMOVE_MESSAGE,
-    index
+    payload: {
+      index
+    }
   };
 }
 

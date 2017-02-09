@@ -42,8 +42,8 @@ function reducer(state = initialState, action) {
       {
         let isVisible = !state.get('mobileMenuIsVisible');
 
-        if (action.isVisible != undefined) {
-          isVisible = action.isVisible;
+        if (action.payload.isVisible != undefined) {
+          isVisible = action.payload.isVisible;
         }
 
         state = state.set('mobileMenuIsVisible', isVisible);
@@ -52,7 +52,7 @@ function reducer(state = initialState, action) {
       }
     case a.ui.UI__SET_PROGRESS:
       {
-        state = state.setIn(['progress', action.progress], action.value);
+        state = state.setIn(['progress', action.payload.progress], action.payload.value);
         break;
       }
     case a.users.SUBMIT_RESET_PASSWORD:
@@ -77,14 +77,14 @@ function reducer(state = initialState, action) {
       }
     case a.comments.SAVE_COMMENT__START:
       {
-        state = state.setIn(['comments', action.commentId, 'error'], '');
-        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], true);
+        state = state.setIn(['comments', action.payload.commentId, 'error'], '');
+        state = state.setIn(['comments', action.payload.commentId, 'isSaveInProgress'], true);
         break;
       }
     case a.comments.DELETE_COMMENT__START:
       {
-        state = state.setIn(['comments', action.commentId, 'error'], '');
-        state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], true);
+        state = state.setIn(['comments', action.payload.commentId, 'error'], '');
+        state = state.setIn(['comments', action.payload.commentId, 'isDeleteInProgress'], true);
         break;
       }
     case a.comments.CREATE_COMMENT__START:
@@ -95,7 +95,7 @@ function reducer(state = initialState, action) {
       }
     case a.comments.SAVE_COMMENT__SUCCESS:
       {
-        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        state = state.setIn(['comments', action.payload.commentId, 'isSaveInProgress'], false);
         break;
       }
     case a.comments.CREATE_COMMENT__SUCCESS:
@@ -105,25 +105,25 @@ function reducer(state = initialState, action) {
       }
     case a.comments.DELETE_COMMENT__SUCCESS:
       {
-        state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], false);
+        state = state.setIn(['comments', action.payload.commentId, 'isDeleteInProgress'], false);
         break;
       }
     case a.comments.SAVE_COMMENT__FAILURE:
       {
-        state = state.setIn(['comments', action.commentId, 'error'], action.message);
-        state = state.setIn(['comments', action.commentId, 'isSaveInProgress'], false);
+        state = state.setIn(['comments', action.payload.commentId, 'error'], action.payload.message);
+        state = state.setIn(['comments', action.payload.commentId, 'isSaveInProgress'], false);
         break;
       }
     case a.comments.CREATE_COMMENT__FAILURE:
       {
-        state = state.setIn(['comments', 'new', 'error'], action.message);
+        state = state.setIn(['comments', 'new', 'error'], action.payload.message);
         state = state.setIn(['comments', 'new', 'isCreateInProgress'], false);
         break;
       }
     case a.comments.DELETE_COMMENT__FAILURE:
       {
-        state = state.setIn(['comments', action.commentId, 'error'], action.message);
-        state = state.setIn(['comments', action.commentId, 'isDeleteInProgress'], false);
+        state = state.setIn(['comments', action.payload.commentId, 'error'], action.payload.message);
+        state = state.setIn(['comments', action.payload.commentId, 'isDeleteInProgress'], false);
         break;
       }
   }

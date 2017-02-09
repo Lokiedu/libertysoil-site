@@ -26,13 +26,13 @@ export const initialState = i.Map();
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case userMessages.SET_USER_MESSAGES: {
-      state = state.set(action.userId, i.fromJS(action.messages));
+      state = state.set(action.payload.userId, i.fromJS(action.payload.messages));
 
       break;
     }
 
     case userMessages.ADD_USER_MESSAGE: {
-      state = state.update(action.userId, messages => (messages || i.List()).push(i.fromJS(action.message)));
+      state = state.update(action.payload.userId, messages => (messages || i.List()).push(i.fromJS(action.payload.message)));
 
       break;
     }

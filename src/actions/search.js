@@ -21,7 +21,9 @@ export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 export function setSearchResults(results) {
   return {
     type: SET_SEARCH_RESULTS,
-    results
+    payload: {
+      results
+    }
   };
 }
 

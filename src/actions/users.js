@@ -37,55 +37,69 @@ export const UNSUBSCRIBE_FROM_POST = 'UNSUBSCRIBE_FROM_POST';
 export function addUser(user) {
   return {
     type: ADD_USER,
-    user
+    payload: {
+      user
+    }
   };
 }
 
 export function addUsers(users) {
   return {
     type: ADD_USERS,
-    users
+    payload: {
+      users
+    }
   };
 }
 
 export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
-    user
+    payload: {
+      user
+    }
   };
 }
 
 export function setLikes(user_id, likes, post_id, likers) {
   return {
     type: SET_LIKES,
-    user_id,
-    likes,
-    post_id,
-    likers
+    payload: {
+      user_id,
+      likes,
+      post_id,
+      likers
+    }
   };
 }
 
 export function setFavourites(user_id, favourites, post_id, favourers) {
   return {
     type: SET_FAVOURITES,
-    user_id,
-    favourites,
-    post_id,
-    favourers
+    payload: {
+      user_id,
+      favourites,
+      post_id,
+      favourers
+    }
   };
 }
 
 export function setSuggestedUsers(suggested_users) {
   return {
     type: SET_SUGGESTED_USERS,
-    suggested_users
+    payload: {
+      suggested_users
+    }
   };
 }
 
 export function setPersonalizedSuggestedUsers(suggested_users) {
   return {
     type: SET_PERSONALIZED_SUGGESTED_USERS,
-    suggested_users
+    payload: {
+      suggested_users
+    }
   };
 }
 
@@ -116,13 +130,17 @@ export function submitNewPassword() {
 export function subscribeToPost(post_id) {
   return {
     type: SUBSCRIBE_TO_POST,
-    post_id
+    payload: {
+      post_id
+    }
   };
 }
 
 export function unsubscribeFromPost(post_id) {
   return {
     type: UNSUBSCRIBE_FROM_POST,
-    post_id
+    payload: {
+      post_id
+    }
   };
 }

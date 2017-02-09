@@ -20,6 +20,8 @@ export const SET_QUOTES = 'SET_QUOTES';
 export function setQuotes(quotes) {
   return {
     type: SET_QUOTES,
-    quotes
+    payload: {
+      quotes
+    }
   };
 }

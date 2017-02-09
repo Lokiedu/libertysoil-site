@@ -41,14 +41,14 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case s.ADD_SCHOOL: {
-      const school = cleanupSchoolObject(action.school);
+      const school = cleanupSchoolObject(action.payload.school);
       state = state.set(school.id, i.fromJS(school));
 
       break;
     }
 
     case s.SET_SCHOOLS: {
-      const schools = keyBy(action.schools.map(school => cleanupSchoolObject(school)), 'id');
+      const schools = keyBy(action.payload.schools.map(school => cleanupSchoolObject(school)), 'id');
       state = state.merge(i.fromJS(schools));
 
       break;

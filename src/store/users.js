@@ -58,11 +58,11 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.users.ADD_USER:
     case a.users.SET_CURRENT_USER: {
-      state = state.mergeDeep(i.fromJS(extractAssociations(action.user)));
+      state = state.mergeDeep(i.fromJS(extractAssociations(action.payload.user)));
 
-      if (action.user) {
-        if (action.user.more && action.user.more.roles) {
-          state = state.setIn([action.user.id, 'more', 'roles'], i.fromJS(action.user.more.roles));
+      if (action.payload.user) {
+        if (action.payload.user.more && action.payload.user.more.roles) {
+          state = state.setIn([action.payload.user.id, 'more', 'roles'], i.fromJS(action.payload.user.more.roles));
         }
       }
 
@@ -70,7 +70,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.users.ADD_USERS: {
-      const usersById = action.users.reduce((acc, user) => {
+      const usersById = action.payload.users.reduce((acc, user) => {
         acc[user.id] = cleanUser(user);
         return acc;
       }, {});
@@ -81,13 +81,13 @@ export default function reducer(state = initialState, action) {
 
     case a.posts.ADD_POST:
     case a.river.ADD_POST_TO_RIVER: {
-      const user = action.post.user;
+      const user = action.payload.post.user;
       if (!user) {
         // the post hasn't been found; adding a fake
         break;
       }
 
-      const comment_authors = action.post.post_comments.map(comment => comment.user);
+      const comment_authors = action.payload.post.post_comments.map(comment => comment.user);
       const users = _.keyBy(_.uniqBy([user, ...comment_authors], 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
@@ -100,8 +100,8 @@ export default function reducer(state = initialState, action) {
     case a.schools.SET_SCHOOL_POSTS:
     case a.hashtags.SET_HASHTAG_POSTS:
     case a.geotags.SET_GEOTAG_POSTS: {
-      const authors = action.posts.map(post => post.user);
-      const comment_authors = _.flatten(action.posts.map(post => post.post_comments.map(comment => comment.user)));
+      const authors = action.payload.posts.map(post => post.user);
+      const comment_authors = _.flatten(action.payload.posts.map(post => post.post_comments.map(comment => comment.user)));
       const users = _.keyBy(_.uniqBy([...authors, ...comment_authors], 'id'), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
@@ -109,14 +109,14 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.comments.SET_POST_COMMENTS: {
-      const users = _.keyBy(_.map(action.comments, comment => comment.user), 'id');
+      const users = _.keyBy(_.map(action.payload.comments, comment => comment.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;
     }
 
     case a.posts.SET_RELATED_POSTS: {
-      const users = _.keyBy(action.posts.map(post => post.user), 'id');
+      const users = _.keyBy(action.payload.posts.map(post => post.user), 'id');
       state = state.mergeDeep(i.fromJS(users));
 
       break;
