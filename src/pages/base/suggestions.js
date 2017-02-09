@@ -28,15 +28,17 @@ import {
 } from '../../components/page';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 
 const BaseSuggestionsPage = ({ children, current_user, is_logged_in, messages, triggers }) => (
   <div>
     <Header current_user={current_user} is_logged_in={is_logged_in} />
 
-    <Page className="page__container-no_sidebar">
+    <Page>
       <PageMain>
         <PageBody>
+          <Sidebar isEmpty />
           <PageContent>
             <Messages messages={messages} removeMessage={triggers.removeMessage} />
             <div className="paper">

@@ -23,9 +23,16 @@ const Page = ({ children, className = '' }) => (
   </div>
 );
 
-const PageCaption = ({ children }) => (
-  <header className="page__caption">
-    <h1>{children}</h1>
+const PageCaption = ({ children, icon }) => (
+  <header className="page_head">
+    <h1 className="page_head__title">
+      {children}
+    </h1>
+    {icon &&
+      <div className="page_head__icon">
+        {icon}
+      </div>
+    }
   </header>
 );
 

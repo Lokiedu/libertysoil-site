@@ -18,8 +18,12 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-
 import { toggleMenu } from '../actions/ui';
+import {
+  Page,
+  PageMain,
+  PageBody
+} from './page';
 
 class TopMenu extends React.Component {
   static displayName = 'TopMenu';
@@ -38,15 +42,25 @@ class TopMenu extends React.Component {
 
   render() {
     return (
-      <div className="top-menu layout layout-align_vertical">
-        <div className="mobile-menu__hamburger hamburger" onClick={this.props.toggleMenu}>
-          <div className="hamburger__line" />
+      <div>
+        <div className="top-menu layout layout-align_vertical">
+          <div className="mobile-menu__hamburger hamburger" onClick={this.props.toggleMenu}>
+            <div className="hamburger__line" />
+          </div>
         </div>
         {!this.props.is_logged_in &&
-          <div className="layout__space_left layout__space">
-            <span className="font--underlined">Welcome</span> to <span className="font--underlined">Liberty</span>!
-            Please <Link className="font--underlined clean-hover" to="/auth#register">register</Link> or <Link className="font--underlined clean-hover" to="/auth">log in</Link>.
-          </div>
+          <Page>
+            <PageMain className="page__main-small_height">
+              <PageBody>
+                <div className="paper paper-wide">
+                  <div className="paper__page">
+                    <span className="font--underlined">Welcome</span> to <span className="font--underlined">Liberty</span>!
+                    Please <Link className="font--underlined clean-hover" to="/auth#register">register</Link> or <Link className="font--underlined clean-hover" to="/auth">log in</Link>.
+                  </div>
+                </div>
+              </PageBody>
+            </PageMain>
+          </Page>
         }
       </div>
     );

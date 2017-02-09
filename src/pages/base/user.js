@@ -160,7 +160,55 @@ const BaseUserPage = (props) => {
                 {children}
               </div>
             </PageContent>
-            <SidebarAlt />
+            <SidebarAlt>
+              <div className="tabs">
+                <div className="short_post short_post-spacing">
+                  <IndexLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={`/user/${user.get('username')}`}
+                  >
+                    Posts
+                  </IndexLink>
+                </div>
+                {showLikesLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/likes`}
+                      visible
+                    >
+                      Likes
+                    </PageContentLink>
+                  </div>
+                }
+                {showFavouritesLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/favorites`}
+                      visible
+                    >
+                      Favorites
+                    </PageContentLink>
+                  </div>
+                }
+                {showBioLink &&
+                  <div className="short_post short_post-spacing">
+                    <PageContentLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/bio`}
+                      visible
+                    >
+                      Bio
+                    </PageContentLink>
+                  </div>
+                }
+              </div>
+            </SidebarAlt>
           </PageBody>
         </PageMain>
       </Page>
