@@ -51,7 +51,6 @@
     "bluebird": "^3.1.1",
     "bookshelf": "^0.10.0",
     "bunyan": "^1.8.1",
-    "chokidar": "^1.4.2",
     "classnames": "~2.2.5",
     "crypto": "0.0.3",
     "debounce-promise": "^2.1.1",
