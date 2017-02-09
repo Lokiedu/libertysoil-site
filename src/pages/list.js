@@ -195,10 +195,10 @@ export class UnwrappedListPage extends React.Component {
           <Breadcrumbs title="News Feed" />
         </Header>
 
-        <Page className="page__container--static">
+        <Page>
           <PageMain>
             <PageBody>
-              <Sidebar isFixed={false} />
+              <Sidebar />
               <PageContent>
                 <CreatePost
                   actions={actions}

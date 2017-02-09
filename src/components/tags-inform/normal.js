@@ -40,7 +40,7 @@ const TagsInformNormal = ({ tags, ...props }) => (
             theme="2.0"
           >
             <TagCloud
-              className="tags--row"
+              className="tags--row tags--queue"
               tags={ImmutableMap({ [tagTypeTitle]: tagType.list })}
               theme="min"
               truncated

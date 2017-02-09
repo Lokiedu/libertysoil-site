@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,24 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.font {
-  &-open_sans {
-    font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  &-light {
-    font-weight: 300;
-  }
-  
-  &-bold {
-    font-weight: 800;
+
+export function getName(user) {
+  let name = user.get('username');
+
+  if (user.getIn(['more', 'firstName']) && user.getIn(['more', 'lastName'])) {
+    name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
   }
 
-  &--underlined {
-    text-decoration: underline;
-
-    &.clean-hover:hover {
-      text-decoration: none;
-    }
-  }
+  return name.trim();
 }

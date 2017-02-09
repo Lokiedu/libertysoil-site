@@ -32,34 +32,26 @@ import Header from '../components/header';
 import Sidebar from '../components/sidebar';
 
 
-const NotFound = ({ is_logged_in, current_user }) => {
-  let pageClassName = 'page__container--static';
-
-  if (!is_logged_in) {
-    pageClassName += ' page__container-no_sidebar';
-  }
-
-  return (
-    <div>
-      <Helmet title="Page not found at " />
-      <Header current_user={current_user} is_logged_in={is_logged_in} />
-      <Page className={pageClassName}>
-        <PageMain>
-          <PageBody>
-            <Sidebar isFixed={false} />
-            <PageContent>
-              <section className="box">
-                <div className="box__title">
-                  <p><strong>Page Not Found</strong></p>
-                </div>
-              </section>
-            </PageContent>
-          </PageBody>
-        </PageMain>
-      </Page>
-    </div>
-  );
-};
+const NotFound = ({ is_logged_in, current_user }) => (
+  <div>
+    <Helmet title="Page not found at " />
+    <Header current_user={current_user} is_logged_in={is_logged_in} />
+    <Page>
+      <PageMain>
+        <PageBody>
+          <Sidebar />
+          <PageContent>
+            <section className="box">
+              <div className="box__title">
+                <p><strong>Page Not Found</strong></p>
+              </div>
+            </section>
+          </PageContent>
+        </PageBody>
+      </PageMain>
+    </Page>
+  </div>
+);
 
 NotFound.displayName = 'NotFound';
 

@@ -17,7 +17,8 @@
 */
 
 .tag {
-  height: 23px;
+  max-width: 135px;
+  height: 24px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -30,14 +31,18 @@
     padding-left: 6px;
     padding-right: 10px;
     font-size: 11px;
-    line-height: 11px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__icon {
     position: relative;
-    padding: 4px;
-    width: 22px;
-    height: 22px;
+    padding: 6px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
     border-width: 1px;
     border-style: solid;
     border-left: none;
@@ -49,8 +54,8 @@
         &:extend(.micon);
         &:extend(.micon-small);
         
-        padding-top: 1px;
-        padding-right: 1px;
+        padding-top: 2px;
+        padding-right: 2px;
         position: absolute;
         top: 0;
         left: 0;
@@ -100,7 +105,7 @@
   }
 
   &--round {
-    border-radius: 11px;
+    border-radius: 12px;
   }
 
   .tag-type(@name, @color) {

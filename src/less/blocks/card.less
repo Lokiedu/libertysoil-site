@@ -55,6 +55,12 @@
 
   &__toolbars {
     &:extend(.layout);
+
+    @media (max-width: 380px) {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
   }
 }
 
@@ -123,11 +129,14 @@
 
   &-right {
     flex: none!important;
-    margin-left: @space;
 
     .card__toolbar_item {
       margin-right: 0;
       margin-left: 10px;
+
+      &:first-child {
+        margin-left: 0;
+      }
     }
   }
 

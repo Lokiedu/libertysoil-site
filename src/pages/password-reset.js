@@ -95,6 +95,7 @@ export class PasswordResetPage extends React.Component {
           <Header
             className="header-transparent"
             is_logged_in={is_logged_in}
+            needMenu={false}
           />
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>

@@ -21,7 +21,6 @@ import { pick } from 'lodash';
 import {
   Page,
   PageMain,
-  PageCaption,
   PageHero,
   PageBody,
   PageContent
@@ -37,6 +36,7 @@ import Sidebar          from '../../components/sidebar';
 import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
+import Tag              from '../../components/tag';
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG, TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
 
 function formInitialTags(type, value) {
@@ -64,9 +64,14 @@ function getPageCaption(type, name) {
   }
 
   return (
-    <PageCaption>
-      {caption}
-    </PageCaption>
+    <div className="page_head">
+      <h1 className="page_head__title">
+        {caption}
+      </h1>
+      <div className="page_head__icon">
+        <Tag size="BIG" type={type} />
+      </div>
+    </div>
   );
 }
 
@@ -282,37 +287,34 @@ export default class BaseTagPage extends React.Component {
         </Header>
 
         <Page>
-          <Sidebar current_user={current_user} />
-          <PageMain className="page__main-no_space">
-            {pageCaption}
-            <TagPageHero
-              editable={editable}
-              flexible
-              limits={{ min: TAG_HEADER_SIZE.MIN, max: TAG_HEADER_SIZE.BIG }}
-              preview={TAG_HEADER_SIZE.PREVIEW}
-              tag={tag}
-              type={type}
-              url={headerPictureUrl}
-              onSubmit={this.addPicture}
-            />
+          <PageMain>
             <PageBody className="page__body-up">
-              <TagHeader
-                current_user={current_user}
-                editable={editable}
-                is_logged_in={is_logged_in}
-                newPost={this.toggleForm}
-                postsAmount={postsAmount}
-                tag={tag}
-                triggers={triggers}
-                type={type}
-              />
-
-            </PageBody>
-            <PageBody className="page__body-up">
+              <Sidebar current_user={current_user} />
               <PageContent>
+                {createPostForm}
+                {pageCaption}
+                <TagPageHero
+                  editable={editable}
+                  flexible
+                  limits={{ min: TAG_HEADER_SIZE.MIN, max: TAG_HEADER_SIZE.BIG }}
+                  preview={TAG_HEADER_SIZE.PREVIEW}
+                  tag={tag}
+                  type={type}
+                  url={headerPictureUrl}
+                  onSubmit={this.addPicture}
+                />
+                <TagHeader
+                  current_user={current_user}
+                  editable={editable}
+                  is_logged_in={is_logged_in}
+                  newPost={this.toggleForm}
+                  postsAmount={postsAmount}
+                  tag={tag}
+                  triggers={triggers}
+                  type={type}
+                />
                 <div className="layout__space-double" />
                 <div className="layout__row">
-                  {createPostForm}
                   {this.props.children}
                 </div>
               </PageContent>

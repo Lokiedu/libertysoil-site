@@ -33,6 +33,7 @@ import {
   PageBody,
   PageContent
 } from '../../components/page';
+import Avatar from '../../components/user/avatar';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
@@ -42,6 +43,7 @@ import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
 import User from '../../components/user';
+import { getName } from '../../utils/user';
 
 // FIXME: These links won't hide/show properly if following/unfollowing is performed directly on the page.
 // Something is wrong with the redux state.
@@ -91,18 +93,26 @@ const BaseUserPage = (props) => {
       </Header>
 
       <Page>
-        <Sidebar />
-        <PageMain className="page__main-no_space">
-          <ProfileHeader
-            current_user={current_user}
-            editable={false}
-            followers={followers}
-            following={following}
-            triggers={triggers}
-            user={user}
-          />
+        <PageMain>
           <PageBody>
+            <Sidebar />
             <PageContent>
+              <div className="page_head">
+                <h1 className="page_head__title">
+                  {getName(user)}
+                </h1>
+                <div className="page_head__icon">
+                  <Avatar user={user} size={37} />
+                </div>
+              </div>
+              <ProfileHeader
+                current_user={current_user}
+                editable={false}
+                followers={followers}
+                following={following}
+                triggers={triggers}
+                user={user}
+              />
               <div className="layout__space-double">
                 <div className="layout__grid tabs">
                   <div className="layout__grid_item">

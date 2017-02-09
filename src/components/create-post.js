@@ -243,7 +243,7 @@ class CreatePost extends React.Component {
               </div>
             </div>
             {expanded &&
-              <div className="layout__row layout layout-align_vertical">
+              <div className="layout__row layout layout-align_vertical create_post__toolbar">
                 <div className="layout__grid_item">
                   <DisabledFormSubmit
                     className="button button-wide button-red"

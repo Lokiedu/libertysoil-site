@@ -18,11 +18,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 import { Immutable as ImmutablePropType } from '../prop-types/common';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
-import { toggleSidebar } from '../actions/ui';
 import currentUserSelector from '../selectors/currentUser';
 import createSelector from '../selectors/createSelector';
 
@@ -33,38 +33,25 @@ class HeaderLogo extends Component {
     current_user: ImmutablePropType(CurrentUserPropType)
   };
 
-  handleClick = () => {
-    const {
-      dispatch
-    } = this.props;
-
-    dispatch(toggleSidebar());
-  };
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
+  }
 
   render() {
     const {
       current_user,
       small
     } = this.props;
-    const className = ['logo'];
-    let logoBody = null;
 
-    if (small) {
-      className.push('logo-size_small');
-    }
-
-    logoBody = (
-      <div className={className.join(' ')}>
+    const logoBody = (
+      <div className={classNames('logo', { 'logo-size_small': small })}>
         <span className="logo__title">Liberty Soil</span>
       </div>
     );
 
     if (current_user.get('id')) {
       return (
-        <div
-          onClick={this.handleClick}
-          className="header__logo action"
-        >
+        <div className="header__logo action">
           {logoBody}
         </div>
       );
@@ -79,10 +66,8 @@ class HeaderLogo extends Component {
 }
 
 const selector = createSelector(
-  state => state.get('ui'),
   currentUserSelector,
-  (ui, current_user) => ({
-    ui,
+  current_user => ({
     ...current_user
   })
 );

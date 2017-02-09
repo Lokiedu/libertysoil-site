@@ -17,51 +17,39 @@
 */
 export const MENU_ITEMS = {
   news: {
-    className: 'navigation-item--color_blue',
-    title: {
-      min: 'News',
-      normal: 'News Feed'
-    },
+    className: 'navigation-item--color_blue menu__news',
     icon: {
       icon: 'public'
     },
+    title: 'news',
     url: () => '/'
   },
   likes: {
-    className: 'navigation-item--color_red',
-    title: {
-      min: 'Likes',
-      normal: 'My Likes'
-    },
+    className: 'navigation-item--color_red menu__likes',
     icon: {
       icon: 'favorite'
     },
+    title: 'likes',
     url: (username) => `/user/${username}/likes`
   },
   favourites: {
-    className: 'navigation-item--color_green',
-    title: {
-      min: 'Favs',
-      normal: 'My Favorites'
-    },
+    className: 'navigation-item--color_green menu__favs',
     icon: {
       icon: 'star'
     },
+    title: 'favs',
     url: (username) => `/user/${username}/favorites`
   },
   collections: {
-    className: 'navigation-item--color_blue navigation-item--disabled',
+    className: 'navigation-item--color_blue navigation-item--disabled menu__collect',
     disabled: true,
-    title: {
-      min: 'Collect.',
-      normal: 'Collections'
-    },
     icon: {
       icon: 'layers'
     },
     html: {
       title: 'Coming soon!'
     },
+    title: 'collect',
     url: () => '/collections'
   }
 };

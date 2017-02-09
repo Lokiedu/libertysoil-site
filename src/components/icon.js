@@ -19,9 +19,9 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import * as MdIconPack from 'react-icons/lib/md';
-import { FaHashtag } from 'react-icons/lib/fa';
+import { FaHashtag, FaAt } from 'react-icons/lib/fa';
 
-const FaIconPack = { FaHashtag };
+const FaIconPack = { FaHashtag, FaAt };
 
 function findIcon(iconName) {
   const camelized = iconName.replace(/(?:^|[-_])(\w)/g, (match, c) =>

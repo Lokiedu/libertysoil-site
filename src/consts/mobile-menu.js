@@ -15,24 +15,37 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.font {
-  &-open_sans {
-    font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+export const MENU_ITEMS = [
+  {
+    className: 'mobile-menu__item--to_home',
+    icon: {
+      icon: 'public'
+    },
+    title: 'home',
+    url: () => '/'
+  },
+  {
+    className: 'mobile-menu__item--to_schools',
+    icon: {
+      icon: 'school'
+    },
+    title: 'schools',
+    url: () => '/s'
+  },
+  {
+    className: 'mobile-menu__item--to_locations',
+    icon: {
+      icon: 'location-on'
+    },
+    title: 'locations',
+    url: () => '/geo'
+  },
+  {
+    className: 'mobile-menu__item--to_people',
+    icon: {
+      icon: 'at'
+    },
+    title: 'people',
+    url: () => '/tools/people'
   }
-  
-  &-light {
-    font-weight: 300;
-  }
-  
-  &-bold {
-    font-weight: 800;
-  }
-
-  &--underlined {
-    text-decoration: underline;
-
-    &.clean-hover:hover {
-      text-decoration: none;
-    }
-  }
-}
+];
