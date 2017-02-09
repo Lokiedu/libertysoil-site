@@ -116,7 +116,7 @@ export function getRoutes(authHandler, fetchHandler) {
         <Redirect from="tags" to="schools" />
         <Route component={SchoolsToolPage} path="schools" onEnter={withAuth} />
         <Route component={NewSchoolToolPage} path="schools/new" onEnter={withAuth} />
-        <Route path="my">
+        <Route component={BaseSettingsPage} path="my">
           <IndexRedirect to="posts" />
           <Route component={MyPostsToolPage} path="posts" onEnter={withAuth} />
         </Route>
