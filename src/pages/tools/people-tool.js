@@ -39,6 +39,18 @@ import { addUsers } from '../../actions/users';
 import UserDetails from '../../components/tools/user-details';
 import UserList from '../../components/tools/user-list';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../../components/page';
+import SidebarAlt from '../../components/sidebarAlt';
+import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
+import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
+
 
 class PeopleToolPage extends React.Component {
   static displayName = 'PeopleToolPage';
@@ -88,19 +100,35 @@ class PeopleToolPage extends React.Component {
     const selectedUser = users.get(selectedUserId);
 
     return (
-      <div className="layout">
-        <Helmet title="Followed people tool on " />
-        <UserList
-          selectedUserId={selectedUserId}
-          users={followedUsers}
-          onClick={this.handleSelectUser}
-        />
-        <UserDetails
-          current_user={current_user}
-          following={following}
-          triggers={triggers}
-          user={selectedUser}
-        />
+      <div>
+        <Helmet title="Followed people on " />
+        <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
+          <HeaderLogo small />
+        </Header>
+
+        <Page>
+          <PageMain>
+            <PageBody>
+              <Sidebar />
+              <PageContent>
+                <UserDetails
+                  current_user={current_user}
+                  following={following}
+                  triggers={triggers}
+                  user={selectedUser}
+                />
+              </PageContent>
+              <SidebarAlt>
+                <UserList
+                  selectedUserId={selectedUserId}
+                  users={followedUsers}
+                  onClick={this.handleSelectUser}
+                />
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
+        <Footer />
       </div>
     );
   }
