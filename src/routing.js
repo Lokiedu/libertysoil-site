@@ -55,6 +55,7 @@ import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
 import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
+import SearchPage from './pages/search';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
@@ -112,6 +113,7 @@ export function getRoutes(authHandler, fetchHandler) {
           <Route component={GeotagEditPage} path="/geo/:url_name/edit" onEnter={withAuth} />
         </Route>
       </Route>
+      <Route component={SearchPage} path="/search" onEnter={withoutAuth} />
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
       <Route path="/tools">
