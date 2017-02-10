@@ -18,7 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import { debounce, take } from 'lodash';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
@@ -136,6 +136,15 @@ class Search extends Component {
     }
   };
 
+  onKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      browserHistory.push({
+        pathname: '/search',
+        query: { q: this.state.query }
+      });
+    }
+  };
+
   renderResults = () => {
     const { results } = this.props;
     const { isOpened, query } = this.state;
@@ -235,6 +244,7 @@ class Search extends Component {
             value={query}
             onChange={this.updateQuery}
             onClick={this.actionClick}
+            onKeyDown={this.onKeyDown}
           />
           {!loading &&
             <Icon
