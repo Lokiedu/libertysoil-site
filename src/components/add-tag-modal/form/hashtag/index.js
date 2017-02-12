@@ -103,23 +103,21 @@ export default class AddHashtagForm extends Component {
 
             <Tab.Content className={tabClassName} index={1}>
               Used recently:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ hashtags: this.props.userRecentHashtags })}
-                  onClick={this._selectRecentlyUsedHashtag}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ hashtags: this.props.userRecentHashtags })}
+                onClick={this._selectRecentlyUsedHashtag}
+              />
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={2}>
               Popular:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ hashtags: popularHashtags })}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ hashtags: popularHashtags })}
+              />
             </Tab.Content>
           </div>
         </Tabs>
