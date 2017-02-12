@@ -16,13 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const MENU_ITEMS = {
+  all: {
+    className: 'navigation-item--color_blue menu__all',
+    icon: {
+      icon: 'public'
+    },
+    title: 'all',
+    url: () => '/all'
+  },
   news: {
     className: 'navigation-item--color_blue menu__news',
     icon: {
       icon: 'public'
     },
     title: 'news',
-    url: () => '/'
+    url: () => '/feed'
   },
   likes: {
     className: 'navigation-item--color_red menu__likes',
