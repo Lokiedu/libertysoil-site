@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 
 const SidebarAlt = ({ children }) => (
-  <div className="page__sidebar page__sidebar-alt">
+  <div className="page__sidebar page__sidebar--side_right">
     {children}
   </div>
 );
