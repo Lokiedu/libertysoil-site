@@ -34,7 +34,7 @@ const clearComments = (comments) => (
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.river.ADD_POST_TO_RIVER:
+    case a.posts.CREATE_POST:
     case a.posts.ADD_POST: {
       const comments = action.payload.post.post_comments || [];
 

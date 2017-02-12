@@ -15,22 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ADD_POST_TO_RIVER = 'ADD_POST_TO_RIVER';
-
 export const CLEAR_RIVER = 'CLEAR_RIVER';
 
 export const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
-
-export function addPostToRiver(post) {
-  return {
-    type: ADD_POST_TO_RIVER,
-    payload: {
-      post
-    }
-  };
-}
 
 export function clearRiver() {
   return {

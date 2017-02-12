@@ -25,7 +25,7 @@ const initialState = i.Map({});
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case a.posts.ADD_POST:
-    case a.river.ADD_POST_TO_RIVER: {
+    case a.posts.CREATE_POST: {
       const postCopy = _.cloneDeep(action.payload.post);
 
       delete postCopy.user;

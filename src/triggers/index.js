@@ -184,8 +184,7 @@ export class ActionsTrigger {
   createPost = async (type, data) => {
     try {
       const result = await this.client.createPost(type, data);
-      this.dispatch(a.river.addPostToRiver(result));
-      this.dispatch(a.users.subscribeToPost(result.id));
+      this.dispatch(a.posts.createPost(result));
 
       const userTags = await this.client.userTags();
       this.dispatch(a.tags.setUserTags(userTags));

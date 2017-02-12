@@ -80,7 +80,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.posts.ADD_POST:
-    case a.river.ADD_POST_TO_RIVER: {
+    case a.posts.CREATE_POST: {
       const user = action.payload.post.user;
       if (!user) {
         // the post hasn't been found; adding a fake
