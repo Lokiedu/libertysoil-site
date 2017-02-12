@@ -33,6 +33,7 @@ import likes_river from './likes_river';
 import messages from './messages';
 import posts from './posts';
 import river from './river';
+import all_posts from './all_posts';
 import schools from './schools';
 import school_posts from './school_posts';
 import hashtags from './hashtags';
@@ -54,6 +55,7 @@ import search from './search';
 import * as tools from './tools';
 import * as user_messages from './user_messages';
 
+
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
   current_user,
@@ -69,6 +71,7 @@ export const theReducer = combineReducers(i.Map({
   messages,
   posts,
   river,
+  all_posts,
   schools,
   school_posts,
   hashtags,
@@ -122,6 +125,7 @@ const initialState = i.Map({
   posts: i.Map({}),
   related_posts: i.Map({}),
   river: i.List([]),
+  all_posts: i.List([]),
   schools: i.Map({}),
   school_posts: i.Map({}),
   suggested_users: i.List([]),

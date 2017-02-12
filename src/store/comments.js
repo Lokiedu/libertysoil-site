@@ -43,6 +43,8 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.allPosts.ADD_POSTS_TO_ALL_POSTS:
+    case a.allPosts.SET_ALL_POSTS:
     case a.river.SET_POSTS_TO_RIVER:
     case a.river.SET_POSTS_TO_LIKES_RIVER:
     case a.river.SET_POSTS_TO_FAVOURITES_RIVER:

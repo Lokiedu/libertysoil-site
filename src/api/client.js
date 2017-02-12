@@ -235,6 +235,11 @@ export default class ApiClient
     return await response.json();
   }
 
+  async allPosts(query: Object = {}): Promise<Array<Post>> {
+    const response = await this.get('/api/v1/posts/all', query);
+    return await response.json();
+  }
+
   async checkUserExists(username: Username): Promise<boolean> {
     const result = await this.head(`/api/v1/user/${username}`);
 

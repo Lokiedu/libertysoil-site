@@ -565,6 +565,28 @@ export class ActionsTrigger {
     }
   };
 
+  loadAllPosts = async (query) => {
+    let result = false;
+
+    this.dispatch(a.ui.setProgress('loadAllPostsInProgress', true));
+
+    try {
+      result = await this.client.allPosts(query);
+
+      if (query.offset && query.offset > 0) {
+        this.dispatch(a.allPosts.addPosts(result));
+      } else {
+        this.dispatch(a.allPosts.setPosts(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadAllPostsInProgress', false));
+
+    return result;
+  };
+
   loadPostRiver = async (offset) => {
     this.dispatch(a.ui.setProgress('loadRiverInProgress', true));
 
