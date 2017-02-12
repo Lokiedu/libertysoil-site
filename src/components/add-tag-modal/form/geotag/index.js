@@ -58,18 +58,11 @@ export default class AddGeotagForm extends Component {
   }
 
   _addTag = (geotag) => {
-    const { addedGeotags } = this.props;
-
-    if (!geotag.id) {
-      return;
-    }
-
-    if (addedGeotags.find(g => g.id === geotag.id)) {
+    if (!geotag.id || this.props.addedGeotags.find(g => g.get('id') === geotag.id)) {
       return;
     }
 
     this._input.reset();
-
     this.props.onAddGeotag(geotag);
   };
 

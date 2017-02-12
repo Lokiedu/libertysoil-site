@@ -51,18 +51,15 @@ export default class AddHashtagForm extends Component {
   };
 
   _addTag = (tag) => {
-    const { addedHashtags } = this.props;
-
     if (tag.name.length < 3) {
       return;
     }
 
-    if (addedHashtags.find(addedTag => addedTag.name === tag.name)) {
+    if (this.props.addedHashtags.find(t => t.get('name') === tag.name)) {
       return;
     }
 
     this._input.reset();
-
     this.props.onAddHashtag(tag);
   };
 
