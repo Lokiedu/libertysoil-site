@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import omit from 'lodash/omit';
 
 import { castObject } from '../../utils/lang';
@@ -66,12 +67,21 @@ export default class Tag extends React.Component {
     return { collapsed, name, truncated };
   };
 
+  getClassName = () => {
+    const { className, inactive, size } = this.props;
+    return classNames(className, {
+      'tag--inactive': inactive,
+      [`tag--size_${size.toLowerCase()}`]: size
+    });
+  }
+
   render() {
     const htmlProps = omit(this.props, [
-      'collapsed', 'size', 'theme', 'truncated', 'inactive'
+      'collapsed', 'inactive', 'theme', 'truncated', 'inactive',
     ]);
     const finalProps = {
       ...htmlProps,
+      className: this.getClassName(),
       icon: this.renderIcon(),
       name: this.renderName()
     };

@@ -93,6 +93,8 @@
 
       &::before {
         display: block;
+        position: relative;
+        top: -1px;
       }
     }
   }
@@ -119,6 +121,10 @@
   .tag-type(@name: ~"geotag", @color: #47B8E7);
   .tag-type(@name: ~"event", @color: #98C646);
   .tag-type(@name: ~"mention", @color: #F8A232);
+
+  &--inactive {
+    border-color: #d0d0d0;
+  }
   
   &--theme_minified {
     background-color: #fff;
@@ -126,6 +132,14 @@
 
     .tag__name {
       padding: 0 10px;
+    }
+  }
+
+  &--size_big {
+    height: 37px;
+
+    &.tag--round {
+      border-radius: 18.5px;
     }
   }
 }

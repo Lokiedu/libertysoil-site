@@ -16,6 +16,10 @@
     padding: 0;
   }
 
+  &--round {
+    border-radius: 50%;
+  }
+
   &--size_big {
     padding: 4px;
     width: 37px;
@@ -37,6 +41,7 @@
   .tag-type(@name: ~"geotag", @color: #47B8E7);
 
   &--inactive {
+    border-color: #d0d0d0;
     background-color: #d0d0d0;
   }
 }

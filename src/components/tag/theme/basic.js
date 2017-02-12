@@ -86,7 +86,7 @@ export default class BasicTag extends React.Component {
       ...icon,
       className: classNames(
         icon.className, typeIcon.className,
-        'tag__icon', { 'tag--round': round }
+        'tag__icon', { 'icon--round': round }
       )
     };
 
