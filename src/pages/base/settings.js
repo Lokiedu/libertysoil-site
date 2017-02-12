@@ -170,7 +170,7 @@ export default class BaseSettingsPage extends React.Component {
         </Header>
 
         <Page>
-          <PageMain>
+          <PageMain className="page__main--without-right">
             <PageBody>
               <Sidebar />
               <PageContent>
