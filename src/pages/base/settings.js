@@ -139,76 +139,76 @@ class BaseSettingsPage extends React.Component {
                 </div>
               </PageContent>
               <SidebarAlt>
-                <div className="tabs">
-                  <div className="short_post short_post-spacing">
+                <div className="aux-nav">
+                  <div className="aux-nav__item">
                     <IndexLink
-                      activeClassName="tabs__link-active color-dark_blue"
-                      className="tabs__link"
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
                       to={getUrl(URL_NAMES.SETTINGS)}
                     >
                       Basic info
                     </IndexLink>
                   </div>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={getUrl(URL_NAMES.CHANGE_PASSWORD)}
-                    visible
-                  >
-                    Change password
-                  </PageContentLink>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={'/tools/my'}
-                    visible
-                  >
-                    My
-                  </PageContentLink>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={'/tools/people/following'}
-                    visible
-                  >
-                    People
-                  </PageContentLink>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={'/tools/conversations'}
-                    visible
-                  >
-                    Conversations
-                  </PageContentLink>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={getUrl(URL_NAMES.EMAIL_SETTINGS)}
-                    visible
-                  >
-                    Notification settings
-                  </PageContentLink>
-                </div>
-                <div className="short_post short_post-spacing">
-                  <PageContentLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}
-                    visible
-                  >
-                    Followers
-                  </PageContentLink>
+                  <div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={getUrl(URL_NAMES.CHANGE_PASSWORD)}
+                      visible
+                    >
+                      Change password
+                    </PageContentLink>
+                  </div>
+                  {/*<div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={'/tools/my'}
+                      visible
+                    >
+                      My
+                    </PageContentLink>
+                  </div>*/}
+                  {/*<div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={'/tools/people/following'}
+                      visible
+                    >
+                      People
+                    </PageContentLink>
+                  </div>*/}
+                  {/*<div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={'/tools/conversations'}
+                      visible
+                    >
+                      Conversations
+                    </PageContentLink>
+                  </div>*/}
+                  <div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={getUrl(URL_NAMES.EMAIL_SETTINGS)}
+                      visible
+                    >
+                      Notification settings
+                    </PageContentLink>
+                  </div>
+                  <div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}
+                      visible
+                    >
+                      Followers
+                    </PageContentLink>
+                  </div>
                 </div>
               </SidebarAlt>
             </PageBody>
