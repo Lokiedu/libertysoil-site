@@ -58,18 +58,11 @@ export default class AddGeotagForm extends Component {
   }
 
   _addTag = (geotag) => {
-    const { addedGeotags } = this.props;
-
-    if (!geotag.id) {
-      return;
-    }
-
-    if (addedGeotags.find(g => g.id === geotag.id)) {
+    if (!geotag.id || this.props.addedGeotags.find(g => g.get('id') === geotag.id)) {
       return;
     }
 
     this._input.reset();
-
     this.props.onAddGeotag(geotag);
   };
 
@@ -108,23 +101,21 @@ export default class AddGeotagForm extends Component {
 
             <Tab.Content className={tabClassName} index={1}>
               Used recently:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ geotags: this.props.userRecentGeotags })}
-                  onClick={this._selectRecentlyUsedGeotag}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ geotags: this.props.userRecentGeotags })}
+                onClick={this._selectRecentlyUsedGeotag}
+              />
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={2}>
               Popular:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ geotags: popularGeotags })}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ geotags: popularGeotags })}
+              />
             </Tab.Content>
 
           </div>

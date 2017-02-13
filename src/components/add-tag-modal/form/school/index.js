@@ -58,14 +58,11 @@ export default class AddSchoolForm extends Component {
   };
 
   _addTag = (school) => {
-    const { addedSchools } = this.props;
-
-    if (addedSchools.find(s => s.get('name') === school.name)) {
+    if (this.props.addedSchools.find(s => s.get('name') === school.name)) {
       return;
     }
 
     this._input.reset();
-
     this.props.onAddSchool(school);
   };
 
@@ -104,23 +101,21 @@ export default class AddSchoolForm extends Component {
 
             <Tab.Content className={tabClassName} index={1}>
               Used recently:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ schools: this.props.userRecentSchools })}
-                  onClick={this._selectRecentlyUsedSchool}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ schools: this.props.userRecentSchools })}
+                onClick={this._selectRecentlyUsedSchool}
+              />
             </Tab.Content>
 
             <Tab.Content className={tabClassName} index={2}>
               Popular:
-              <div className="layout__row">
-                <TagCloud
-                  action="add"
-                  tags={ImmutableMap({ schools: popularSchools })}
-                />
-              </div>
+              <TagCloud
+                action="add"
+                className="add_tag_modal__tags-panel"
+                tags={ImmutableMap({ schools: popularSchools })}
+              />
             </Tab.Content>
           </div>
         </Tabs>
