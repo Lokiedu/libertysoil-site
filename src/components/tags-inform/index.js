@@ -55,7 +55,7 @@ export default class TagsInform extends React.Component {
       },
       hashtags: {
         className: 'navigation-item--color_blue',
-        list: current_user.get('followed_hashtags').toList().take(4),
+        list: current_user.get('followed_hashtags').toList().take(6),
         icon: { icon: 'hashtag' },
         url: '/tag/'
       },

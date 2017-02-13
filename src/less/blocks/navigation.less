@@ -27,7 +27,7 @@
 
   margin: 1px 0;
   min-height: 42px;
-  
+
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -36,7 +36,7 @@
 
   font-size: 14px;
   color: #a3a3a3;
-  
+
   // elements
   // content wrapper
   &__content-box {
@@ -52,9 +52,11 @@
   &__content {
     align-self: center;
     padding-left: 20px;
-    width: auto;
+    padding-right: 5px;
+    overflow: hidden;
+    flex: 1;
   }
-  
+
   &__badge {
     display: inline-block;
     width: 20px;
@@ -79,7 +81,7 @@
 
     &--remind {
       position: relative;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -90,7 +92,7 @@
       }
     }
   }
-  
+
   // modifiers
   &--active {
     position: relative;
@@ -109,7 +111,7 @@
       position: absolute;
       top: calc(50% - 14px);
       right: -13px;
-      
+
       display: block;
       width: 4px;
       height: 14px;
@@ -132,7 +134,7 @@
 
   &:hover {
     color: #000;
-    
+
     .navigation-item__content-box {
       background-color: #f5f5f5;
     }

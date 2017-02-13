@@ -29,11 +29,15 @@ const RawTagName = ({ collapsed, truncated, name, ...props }) => {
     n = truncate(n, { length: 16 });
   }
 
-  return (
-    <div {...omit(props, ['children'])}>
-      {n}
-    </div>
-  );
+  if (n) {
+    return (
+      <div {...omit(props, ['children'])}>
+        {n}
+      </div>
+    );
+  }
+
+  return false;
 };
 
 RawTagName.propTypes = {
