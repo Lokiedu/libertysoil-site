@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -17,40 +17,41 @@
 */
 import i from 'immutable';
 
-import * as a from '../actions';
+import { posts, allPosts } from '../actions';
 
-const initialState = i.Map({});
+const initialState = i.List([]);
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.posts.CREATE_POST: {
-      const schools = action.payload.post.schools;
+    case posts.CREATE_POST: {
+      state = state.unshift(action.payload.post.id);
 
-      schools.forEach(tag => {
-        let posts = i.List([]);
-        if (state.get(tag.id)) {
-          posts = state.get(tag.id);
-        }
-        posts = posts.unshift(action.payload.post.id);
-
-        state = state.set(tag.id, posts);
-      });
       break;
     }
 
-    case a.schools.SET_SCHOOL_POSTS: {
-      state = state.set(action.payload.school.id, i.List(action.payload.posts.map(post => post.id)));
+    case allPosts.ADD_POSTS_TO_ALL_POSTS: {
+      const postIds = action.payload.posts.map(post => post.id);
+
+      state = state.concat(i.List(postIds));
+
       break;
     }
 
-    case a.posts.REMOVE_POST: {
-      for (const schoolId of state.keys()) {
-        const idx = state.get(schoolId).findIndex(schoolPostId => (schoolPostId === action.payload.id));
+    case allPosts.SET_ALL_POSTS: {
+      const postIds = action.payload.posts.map(post => post.id);
 
-        if (idx >= 0) {
-          state = state.deleteIn([schoolId, idx]);
-        }
+      state = i.List(postIds);
+
+      break;
+    }
+
+    case posts.REMOVE_POST: {
+      const idx = state.findIndex(river_post_id => (river_post_id === action.payload.id));
+
+      if (idx >= 0) {
+        state = state.remove(idx);
       }
+
       break;
     }
   }

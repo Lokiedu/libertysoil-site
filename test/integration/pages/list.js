@@ -70,7 +70,7 @@ describe('ListPage', () => {
     });
 
     it('user can open / and see posting form', async () => {
-      let context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+      let context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
       let document = jsdom(context.httpResponse.body);
 
@@ -86,7 +86,7 @@ describe('ListPage', () => {
       it('user can open / and see 1 post there', async () => {
         const posts = [];
         posts.push(await createPost(user));
-        const context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+        const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
         const document = jsdom(context.httpResponse.body);
 
@@ -101,7 +101,7 @@ describe('ListPage', () => {
         for (let i = 0; i < LOAD_MORE_LIMIT + 1; ++i) { // create one more posts than limit on list page
           posts.push(await createPost(user));
         }
-        const context = await expect({ url: '/', session: sessionId }, 'to open successfully');
+        const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
         const document = jsdom(context.httpResponse.body);
 

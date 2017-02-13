@@ -15,6 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+export const CREATE_POST = 'CREATE_POST';
 export const ADD_POST = 'ADD_POST';
 export const REMOVE_POST = 'REMOVE_POST';
 
@@ -29,6 +30,15 @@ export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
+
+export function createPost(post) {
+  return {
+    type: CREATE_POST,
+    payload: {
+      post
+    }
+  };
+}
 
 export function addPost(post) {
   return {

@@ -15,26 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ui = require('./ui');
-export const search = require('./search');
-export const messages = require('./messages');
 
-export const tags = require('./tags');
-export const hashtags = require('./hashtags');
-export const geotags = require('./geotags');
-export const schools = require('./schools');
-
-export const geo = require('./geo');
-
-export const posts = require('./posts');
-export const river = require('./river');
-export const comments = require('./comments');
-
-export const users = require('./users');
-
-export const quotes = require('./quotes');
-
-export const tools = require('./tools');
-
-export const userMessages = require('./user-messages');
-export const allPosts = require('./all-posts');
+export const POST_SORTING_TYPES = [
+  { name: 'Newest', value: '-created_at', isDefault: true },
+  { name: 'Last modified', value: '-updated_at' }
+];

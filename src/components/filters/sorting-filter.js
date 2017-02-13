@@ -15,26 +15,24 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const ui = require('./ui');
-export const search = require('./search');
-export const messages = require('./messages');
+import React from 'react';
+import FilterLink from './filter-link';
 
-export const tags = require('./tags');
-export const hashtags = require('./hashtags');
-export const geotags = require('./geotags');
-export const schools = require('./schools');
 
-export const geo = require('./geo');
+export default function SortingFilter({ location, sortingTypes }) {
+  const continents = sortingTypes.map((item, i) => (
+    <FilterLink
+      isDefault={item.isDefault}
+      key={i}
+      location={location}
+      query={{ sort: item.value }}
+      title={item.name}
+    />
+  ));
 
-export const posts = require('./posts');
-export const river = require('./river');
-export const comments = require('./comments');
-
-export const users = require('./users');
-
-export const quotes = require('./quotes');
-
-export const tools = require('./tools');
-
-export const userMessages = require('./user-messages');
-export const allPosts = require('./all-posts');
+  return (
+    <div className="aux-nav">
+      {continents}
+    </div>
+  );
+}

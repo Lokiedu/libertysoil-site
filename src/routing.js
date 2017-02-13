@@ -26,6 +26,7 @@ import React from 'react';
 import { combineHandlers, combineHandlersAsync } from './utils/loader';
 
 import App from './pages/app';
+import IndexPage from './pages/index-page';
 import Auth from './pages/auth';
 import NewPassword from './pages/new-password';
 import PasswordReset from './pages/password-reset';
@@ -56,6 +57,7 @@ import PeopleToolPage from './pages/tools/people-tool';
 import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 import SearchPage from './pages/search';
+import AllPostsPage from './pages/all-posts';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
@@ -73,7 +75,9 @@ export function getRoutes(authHandler, fetchHandler) {
 
   return (
     <Route component={App}>
-      <Route component={ListPage} path="/" onEnter={withAuth} />
+      <Route path="/" component={IndexPage} onEnter={withoutAuth} />
+      <Route component={AllPostsPage} path="/all" onEnter={withoutAuth} />
+      <Route component={ListPage} path="/feed" onEnter={withAuth} />
       <Route component={Induction} path="/induction" onEnter={withAuth} />
       <Route component={SuggestionsPage} path="/suggestions" onEnter={withAuth} />
       <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />

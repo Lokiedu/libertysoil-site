@@ -94,8 +94,20 @@ export default class ApiController {
   };
 
   allPosts = async (ctx) => {
-    const Posts = this.bookshelf.collection('Posts');
-    const posts = new Posts();
+    const Post = this.bookshelf.model('Post');
+    const posts = Post.collection().query(qb => {
+      this.applySortQuery(qb, ctx.query, '-created_at');
+      this.applyLimitQuery(qb, ctx.query, 10);
+      this.applyOffsetQuery(qb, ctx.query);
+
+      if ('continent' in ctx.query) {
+        qb
+          .distinct('posts.*')
+          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+          .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+          .where('geotags.continent_code', ctx.query.continent);
+      }
+    });
     let response = await posts.fetch({ require: false, withRelated: POST_RELATIONS });
     response = response.map(post => {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -3399,6 +3411,18 @@ export default class ApiController {
   applyStartsWithQuery(qb, query) {
     if ('startsWith' in query) {
       qb.where('name', 'ILIKE', `${query.startsWith}%`);
+    }
+  }
+
+  applyLimitQuery(qb, query, defaultValue = null) {
+    if ('limit' in query || defaultValue) {
+      qb.limit(query.limit || defaultValue);
+    }
+  }
+
+  applyOffsetQuery(qb, query, defaultValue = null) {
+    if ('offset' in query || defaultValue) {
+      qb.offset(query.offset || defaultValue);
     }
   }
 }

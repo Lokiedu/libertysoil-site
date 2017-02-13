@@ -23,7 +23,7 @@ const initialState = i.Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case a.river.ADD_POST_TO_RIVER: {
+    case a.posts.CREATE_POST: {
       const hashtags = action.payload.post.hashtags;
 
       hashtags.forEach(tag => {

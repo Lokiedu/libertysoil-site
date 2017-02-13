@@ -80,7 +80,7 @@ export default function reducer(state = initialState, action) {
     }
 
     case a.posts.ADD_POST:
-    case a.river.ADD_POST_TO_RIVER: {
+    case a.posts.CREATE_POST: {
       const user = action.payload.post.user;
       if (!user) {
         // the post hasn't been found; adding a fake
@@ -94,6 +94,8 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.allPosts.ADD_POSTS_TO_ALL_POSTS:
+    case a.allPosts.SET_ALL_POSTS:
     case a.river.SET_POSTS_TO_RIVER:
     case a.river.SET_POSTS_TO_LIKES_RIVER:
     case a.river.SET_POSTS_TO_FAVOURITES_RIVER:

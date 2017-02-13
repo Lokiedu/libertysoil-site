@@ -29,7 +29,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case river.ADD_POST_TO_RIVER: {
+    case posts.CREATE_POST: {
       state = state.unshift(action.payload.post.id);
 
       break;
