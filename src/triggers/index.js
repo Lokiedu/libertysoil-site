@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { browserHistory } from 'react-router';
+import { batchActions } from 'redux-batched-actions';
 import { toSpreadArray } from '../utils/lang';
+
 
 import * as a from '../actions';
 
@@ -184,8 +186,10 @@ export class ActionsTrigger {
   createPost = async (type, data) => {
     try {
       const result = await this.client.createPost(type, data);
-      this.dispatch(a.river.addPostToRiver(result));
-      this.dispatch(a.users.subscribeToPost(result.id));
+      this.dispatch(batchActions([
+        a.river.addPostToRiver(result),
+        a.users.subscribeToPost(result.id)
+      ]));
 
       const userTags = await this.client.userTags();
       this.dispatch(a.tags.setUserTags(userTags));
@@ -215,8 +219,10 @@ export class ActionsTrigger {
       const res = await this.client.updateUser(user);
 
       if ('user' in res) {
-        this.dispatch(a.messages.addMessage('Saved successfully'));
-        this.dispatch(a.users.addUser(res.user));
+        this.dispatch(batchActions([
+          a.messages.addMessage('Saved successfully'),
+          a.users.addUser(res.user)
+        ]));
         status = true;
       }
     } catch (e) {
@@ -260,12 +266,18 @@ export class ActionsTrigger {
     try {
       const res = await this.client.follow(username);
 
+      const actions = [];
+
       if ('user1' in res) {
-        this.dispatch(a.users.addUser(res.user1));
-        this.dispatch(a.users.addUser(res.user2));
+        actions.push(
+          a.users.addUser(res.user1),
+          a.users.addUser(res.user2)
+        );
       }
 
-      this.dispatch(a.river.clearRiver());
+      actions.push(a.river.clearRiver());
+
+      this.dispatch(batchActions(actions));
       this.loadPostRiver();
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -276,12 +288,18 @@ export class ActionsTrigger {
     try {
       const res = await this.client.unfollow(username);
 
+      const actions = [];
+
       if ('user1' in res) {
-        this.dispatch(a.users.addUser(res.user1));
-        this.dispatch(a.users.addUser(res.user2));
+        actions.push(
+          a.users.addUser(res.user1),
+          a.users.addUser(res.user2)
+        );
       }
 
-      this.dispatch(a.river.clearRiver());
+      actions.push(a.river.clearRiver());
+
+      this.dispatch(batchActions(actions));
       this.loadPostRiver();
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -324,9 +342,11 @@ export class ActionsTrigger {
     }
 
     try {
-      this.dispatch(a.users.setCurrentUser(user));
-      this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
-      this.dispatch(a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
+      this.dispatch(batchActions([
+        a.users.setCurrentUser(user),
+        a.users.setLikes(user.id, user.liked_posts.map(like => like.id)),
+        a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id))
+      ]));
 
       if (!user.more || user.more.first_login) {
         browserHistory.push('/induction');
@@ -409,8 +429,10 @@ export class ActionsTrigger {
       }
 
       const userTags = await this.client.userTags();
-      this.dispatch(a.tags.setUserTags(userTags));
-      this.dispatch(a.posts.removePost(post_uuid));
+      this.dispatch(batchActions([
+        a.tags.setUserTags(userTags),
+        a.posts.removePost(post_uuid)
+      ]));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
       throw e;
@@ -466,8 +488,10 @@ export class ActionsTrigger {
     let school;
     try {
       school = await this.client.createSchool(schoolFields);
-      this.dispatch(a.schools.addSchool(school));
-      this.dispatch(a.messages.addMessage('School has been registered successfully'));
+      this.dispatch(batchActions([
+        a.schools.addSchool(school),
+        a.messages.addMessage('School has been registered successfully')
+      ]));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
       throw e;
@@ -521,20 +545,23 @@ export class ActionsTrigger {
   toolsLoadUserPostsRiver = async (userName, query = {}) => {
     this.dispatch(a.ui.setProgress('loadingUserPostsRiver', true));
 
+    const actions = [];
     let result;
     try {
       result = await this.client.userPosts(userName, query);
 
       if (!query.offset) {
-        this.dispatch(a.tools.setUserPostsRiver(result));
+        actions.push(a.tools.setUserPostsRiver(result));
       } else {
-        this.dispatch(a.tools.addUserPostsToRiver(result));
+        actions.push(a.tools.addUserPostsToRiver(result));
       }
     } catch (e) {
-      this.dispatch(a.messages.addError(e.message));
+      actions.push(a.messages.addError(e.message));
     }
 
-    this.dispatch(a.ui.setProgress('loadingUserPostsRiver', false));
+    actions.push(a.ui.setProgress('loadingUserPostsRiver', false));
+
+    this.dispatch(batchActions(actions));
 
     return result;
   };
@@ -543,8 +570,10 @@ export class ActionsTrigger {
     try {
       const result = await this.client.initialSuggestions();
 
-      this.dispatch(a.users.addUsers(result));
-      this.dispatch(a.users.setSuggestedUsers(result));
+      this.dispatch(batchActions([
+        a.users.addUsers(result),
+        a.users.setSuggestedUsers(result)
+      ]));
 
       return result;
     } catch (e) {
@@ -569,16 +598,20 @@ export class ActionsTrigger {
   loadPostRiver = async (offset) => {
     this.dispatch(a.ui.setProgress('loadRiverInProgress', true));
 
+    const actions = [];
+
+    let result = false;
     try {
-      const result = await this.client.subscriptions(offset);
-      this.dispatch(a.river.setPostsToRiver(result));
-      this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
-      return result;
+      result = await this.client.subscriptions(offset);
+      actions.push(a.river.setPostsToRiver(result));
     } catch (e) {
-      this.dispatch(a.messages.addError(e.message));
-      this.dispatch(a.ui.setProgress('loadRiverInProgress', false));
-      return false;
+      actions.push(a.messages.addError(e.message));
     }
+
+    actions.push(a.ui.setProgress('loadRiverInProgress', false));
+    this.dispatch(batchActions(actions));
+
+    return result;
   };
 
   loadTagCloud = async () => {
@@ -617,8 +650,10 @@ export class ActionsTrigger {
   loadSchoolCloud = async () => {
     try {
       const result = await this.client.schoolCloud();
-      this.dispatch(a.schools.setSchools(result));
-      this.dispatch(a.schools.setSchoolCloud(result));
+      this.dispatch(batchActions([
+        a.schools.setSchools(result),
+        a.schools.setSchoolCloud(result)
+      ]));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
@@ -734,8 +769,10 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.createComment(postId, comment);
 
-      this.dispatch(a.comments.setPostComments(postId, responseBody));
-      this.dispatch(a.comments.createCommentSuccess(postId));
+      this.dispatch(batchActions([
+        a.comments.setPostComments(postId, responseBody),
+        a.comments.createCommentSuccess(postId)
+      ]));
     } catch (e) {
       if (e.response && ('error' in e.response)) {
         this.dispatch(a.comments.createCommentFailure(postId, e.response.error));
@@ -751,8 +788,10 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.deleteComment(postId, commentId);
 
-      this.dispatch(a.comments.setPostComments(postId, responseBody));
-      this.dispatch(a.comments.deleteCommentSuccess(postId, commentId));
+      this.dispatch(batchActions([
+        a.comments.setPostComments(postId, responseBody),
+        a.comments.deleteCommentSuccess(postId, commentId)
+      ]));
     } catch (e) {
       if (e.response && ('error' in e.response)) {
         this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));
@@ -768,8 +807,10 @@ export class ActionsTrigger {
     try {
       const responseBody = await this.client.saveComment(postId, commentId, text);
 
-      this.dispatch(a.comments.setPostComments(postId, responseBody));
-      this.dispatch(a.comments.saveCommentSuccess(postId, commentId));
+      this.dispatch(batchActions([
+        a.comments.setPostComments(postId, responseBody),
+        a.comments.saveCommentSuccess(postId, commentId)
+      ]));
     } catch (e) {
       if (e.response && ('error' in e.response)) {
         this.dispatch(a.comments.deleteCommentFailure(postId, commentId, e.response.error));

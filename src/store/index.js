@@ -20,6 +20,7 @@ import { compose, createStore, applyMiddleware } from 'redux';
 import { combineReducers } from 'redux-immutablejs';
 import { browserHistory } from 'react-router';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
+import { enableBatching } from 'redux-batched-actions';
 
 import current_user, { initialState as currentUserInitialState } from './current-user';
 import create_post_form from './create_post_form';
@@ -149,7 +150,7 @@ const browserHasDevTools = typeof window === 'object' && typeof window.devToolsE
 
 export function initState(state = initialState) {
   const store = createStore(
-    theReducer,
+    enableBatching(theReducer),
     i.fromJS(state),
     compose(
       applyMiddleware(routerMiddleware(browserHistory)),

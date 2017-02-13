@@ -103,6 +103,7 @@
     "react-router": "~3.0.0",
     "react-router-redux": "~4.0.7",
     "redux": "~3.6.0",
+    "redux-batched-actions": "^0.1.5",
     "redux-immutablejs": "0.0.8",
     "reselect": "^2.0.3",
     "sendgrid": "^2.0.0",
