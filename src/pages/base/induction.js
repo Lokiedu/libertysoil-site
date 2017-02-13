@@ -27,7 +27,6 @@ import {
 } from '../../components/page';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
-import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 
 const BaseInductionPage = (props) => {
@@ -46,8 +45,7 @@ const BaseInductionPage = (props) => {
       <Header current_user={current_user} is_logged_in={is_logged_in} />
 
       <Page>
-        <Sidebar />
-        <PageMain>
+        <PageMain className="page__main--only-content">
           <PageBody>
             <PageContent>
               <div className="paper">

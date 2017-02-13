@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import classNames from 'classnames';
 
 const Page = ({ children, className = '' }) => (
-  <div className={`page__container ${className}`}>
+  <div className={classNames('page__container', className)}>
     {children}
   </div>
 );
@@ -52,20 +53,20 @@ const PageHero = ({ children, url }) => (
 );
 
 
-const PageMain = ({ children, className = '', ...props }) => (
-  <div className={`page__main ${className}`} {...props}>
+const PageMain = ({ children, className, ...props }) => (
+  <div className={classNames('page__main', className)} {...props}>
     {children}
   </div>
 );
 
-const PageBody = ({ children, className = '', ...props }) => (
-  <div className={`page__body ${className}`} {...props}>
+const PageBody = ({ children, className, ...props }) => (
+  <div className={classNames('page__body', className)} {...props}>
     {children}
   </div>
 );
 
-const PageContent = ({ children, className = '' }) => (
-  <div className={`page__content ${className}`}>
+const PageContent = ({ children, className }) => (
+  <div className={classNames('page__content', className)}>
     {children}
   </div>
 );

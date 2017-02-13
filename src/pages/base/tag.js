@@ -256,14 +256,21 @@ export default class BaseTagPage extends React.Component {
 
     let createPostForm;
     let addedTags;
+    let tagsAttached = false;
     if (is_logged_in) {
       if (this.state.form) {
+        const geotags = create_post_form.get('geotags');
+        const hashtags = create_post_form.get('hashtags');
+        const schools = create_post_form.get('schools');
+        tagsAttached = geotags.size || hashtags.size || schools.size;
+        tagsAttached = !!tagsAttached;
+
         createPostForm = (
           <CreatePost
             actions={actions}
-            addedGeotags={create_post_form.get('geotags')}
-            addedHashtags={create_post_form.get('hashtags')}
-            addedSchools={create_post_form.get('schools')}
+            addedGeotags={geotags}
+            addedHashtags={hashtags}
+            addedSchools={schools}
             defaultText={create_post_form.get('text')}
             triggers={triggers}
             userRecentTags={current_user.get('recent_tags')}
@@ -271,9 +278,9 @@ export default class BaseTagPage extends React.Component {
         );
         addedTags = (
           <AddedTags
-            geotags={create_post_form.get('geotags')}
-            hashtags={create_post_form.get('hashtags')}
-            schools={create_post_form.get('schools')}
+            geotags={geotags}
+            hashtags={hashtags}
+            schools={schools}
           />
         );
       }
@@ -287,7 +294,7 @@ export default class BaseTagPage extends React.Component {
         </Header>
 
         <Page>
-          <PageMain>
+          <PageMain className={!tagsAttached && 'page__main--without-right'}>
             <PageBody className="page__body-up">
               <Sidebar current_user={current_user} />
               <PageContent>
@@ -318,9 +325,11 @@ export default class BaseTagPage extends React.Component {
                   {this.props.children}
                 </div>
               </PageContent>
-              <SidebarAlt>
-                {addedTags}
-              </SidebarAlt>
+              {tagsAttached &&
+                <SidebarAlt>
+                  {addedTags}
+                </SidebarAlt>
+              }
             </PageBody>
           </PageMain>
         </Page>

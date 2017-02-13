@@ -54,7 +54,7 @@ class Sidebar extends React.Component {
     }
 
     return (
-      <div className="sidebar page__sidebar">
+      <div className="sidebar page__sidebar page__sidebar--side_left">
         <SidebarMenu current_user={this.props.current_user} />
         <TagsInform current_user={this.props.current_user} />
       </div>
