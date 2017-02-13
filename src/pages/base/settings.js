@@ -16,11 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Link, IndexLink } from 'react-router';
-import { find, findIndex } from 'lodash';
 
-import { Command } from '../../utils/command';
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
+import { createSelector, currentUserSelector } from '../../selectors';
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
+import { ActionsTrigger } from '../../triggers';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 
@@ -30,118 +33,47 @@ import {
   PageBody,
   PageContent
 } from '../../components/page';
-import Button from '../../components/button';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
-import ProfileHeader from '../../components/profile';
 import User from '../../components/user';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
+import SidebarAlt from '../../components/sidebarAlt';
+import PageContentLink from '../../components/page-content-link';
 
-export default class BaseSettingsPage extends React.Component {
+import Avatar from '../../components/user/avatar';
+import { getName } from '../../utils/user';
+
+class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
 
   static propTypes = {
     children: PropTypes.node,
-    messages: ArrayOfMessagesPropType,
-    triggers: PropTypes.shape({
-      addError: PropTypes.func.isRequired,
-      removeMessage: PropTypes.func.isRequired,
-      removeAllMessages: PropTypes.func.isRequired
-    })
+    messages: ArrayOfMessagesPropType
   };
+
+  static async fetchData(router, store, client) {
+    const currentUserId = store.getState().getIn(['current_user', 'id']);
+    const currentUserUsername = store.getState().getIn(['users', currentUserId, 'username']);
+    const triggers = new ActionsTrigger(client, store.dispatch);
+    await triggers.loadUserInfo(currentUserUsername);
+  }
 
   constructor(props) {
     super(props);
 
-    this.commands = [];
-    this.state = {
-      processing: false,
-      unsaved: false
-    };
+    const client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
   }
-
-  processing = () => this.state.processing;
-
-  _getNewPictures() {
-    return this.head._getNewPictures();
-  }
-
-  _clearPreview() {
-    this.head._clearPreview();
-  }
-
-  /**
-   * Receives all commands to execute right after click on "Save" button
-   * @param {Command} command  The command to execute
-   */
-  handleChange = (command) => {
-    if (command instanceof Command) {
-      const index = findIndex(this.commands, c => c.title === command.title);
-
-      if (index >= 0) {
-        this.commands[index] = command;
-      } else {
-        this.commands.push(command);
-      }
-    }
-
-    if (find(this.commands, { status: true })) {
-      this.props.triggers.removeAllMessages();
-      this.setState({ unsaved: true });
-    }
-  };
-
-  /**
-   * Processes all active commands (command.params.status == true) received by handleChange()
-   */
-  handleSave = async () => {
-    this.setState({ processing: true });
-    let success = true;
-
-    const processQueue = async () => {
-      for (let i = this.commands.length - 1; i >= 0; --i) {
-        const command = this.commands[i];
-
-        if (command.status) {
-          const result = await command.run.apply(null, command.args);
-
-          if (result.redo) {
-            ++i;
-            continue;
-          }
-
-          if (result.success) {
-            this.commands.splice(i, 1);
-          } else {
-            success = !!result.success;
-          }
-        }
-      }
-    };
-
-    await processQueue();
-    if (success) {
-      this.commands = [];
-    }
-
-    this.setState({
-      processing: false,
-      unsaved: !success
-    });
-  };
 
   render() {
     const {
       children,
       is_logged_in,
       current_user,
-      following,
-      followers,
-      messages,
-      triggers
+      messages
     } = this.props;
 
     const user = current_user.get('user');
@@ -174,16 +106,6 @@ export default class BaseSettingsPage extends React.Component {
             <PageBody>
               <Sidebar />
               <PageContent>
-                <ProfileHeader
-                  current_user={current_user}
-                  editable
-                  followers={followers}
-                  following={following}
-                  ref={c => this.head = c}
-                  triggers={triggers}
-                  user={user}
-                  onChange={this.handleChange}
-                />
                 <div className="page__content page__content-spacing">
                   <div className="layout__row layout-small">
                     <div className="layout__grid layout__space tabs">
@@ -197,37 +119,98 @@ export default class BaseSettingsPage extends React.Component {
                   </div>
                   <div className="paper layout">
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                      {children}
-                    </div>
-                    <div className="layout-normal layout__grid_item layout__grid_item-fill page__content_sidebar">
-                      <div className="tabs tabs-theme_settings">
-                        <div className="tabs__menu">
-                          <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.SETTINGS)}>Basic info</IndexLink>
-                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.EMAIL_SETTINGS)}>Email settings</Link>
-                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}>Manage Followers</Link>
-                          <Link activeClassName="tabs__title-active" className="tabs__title tabs__link" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
+                      <div className="page_head">
+                        <h1 className="page_head__title">
+                          {getName(user)}
+                        </h1>
+                        <div className="page_head__icon">
+                          <Avatar user={user} size={37} />
                         </div>
                       </div>
+                      {children}
                     </div>
                   </div>
                   <div className="layout__row">
                     <Messages
                       messages={messages}
-                      removeMessage={triggers.removeMessage}
+                      removeMessage={this.triggers.removeMessage}
                     />
                   </div>
-                  {this.state.unsaved &&
-                    <div className="void">
-                      <Button
-                        className="button-green"
-                        title="Save changes"
-                        waiting={this.state.processing}
-                        onClick={this.handleSave}
-                      />
-                    </div>
-                  }
                 </div>
               </PageContent>
+              <SidebarAlt>
+                <div className="tabs">
+                  <div className="short_post short_post-spacing">
+                    <IndexLink
+                      activeClassName="tabs__link-active color-dark_blue"
+                      className="tabs__link"
+                      to={getUrl(URL_NAMES.SETTINGS)}
+                    >
+                      Basic info
+                    </IndexLink>
+                  </div>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={getUrl(URL_NAMES.CHANGE_PASSWORD)}
+                    visible
+                  >
+                    Change password
+                  </PageContentLink>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={'/tools/my'}
+                    visible
+                  >
+                    My
+                  </PageContentLink>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={'/tools/people/following'}
+                    visible
+                  >
+                    People
+                  </PageContentLink>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={'/tools/conversations'}
+                    visible
+                  >
+                    Conversations
+                  </PageContentLink>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={getUrl(URL_NAMES.EMAIL_SETTINGS)}
+                    visible
+                  >
+                    Notification settings
+                  </PageContentLink>
+                </div>
+                <div className="short_post short_post-spacing">
+                  <PageContentLink
+                    activeClassName="tabs__link-active color-dark_blue"
+                    className="tabs__link"
+                    to={getUrl(URL_NAMES.MANAGE_FOLLOWERS)}
+                    visible
+                  >
+                    Followers
+                  </PageContentLink>
+                </div>
+              </SidebarAlt>
             </PageBody>
           </PageMain>
         </Page>
@@ -236,3 +219,16 @@ export default class BaseSettingsPage extends React.Component {
     );
   }
 }
+
+const selector = createSelector(
+  currentUserSelector,
+  state => state.get('messages'),
+  (current_user, messages, following, followers) => ({
+    messages,
+    following,
+    followers,
+    ...current_user
+  })
+);
+
+export default connect(selector)(BaseSettingsPage);

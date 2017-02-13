@@ -35,6 +35,18 @@ import AlphabetFilter from '../../components/tools/alphabet-filter';
 import SchoolList from '../../components/tools/school-list';
 import SchoolDetails from '../../components/tools/school-details';
 
+import {
+  Page,
+  PageMain,
+  PageBody,
+  PageContent
+} from '../../components/page';
+import SidebarAlt from '../../components/sidebarAlt';
+import Header from '../../components/header';
+import HeaderLogo from '../../components/header-logo';
+import Footer from '../../components/footer';
+import Sidebar from '../../components/sidebar';
+
 
 const LIMIT = 25;
 
@@ -159,45 +171,59 @@ class SchoolsToolPage extends React.Component {
     const selectedSchool = schools.get(selectedSchoolId);
 
     return (
-      <div className="layout">
+      <div>
         <Helmet title="Schools tool on " />
-        <div className="tools_page__list_col">
-          <div className="tools_page__filter">
-            <div className="schools_tool__sort">
-              <span className="micon">sort</span>
-              <select value={sortQuery} onChange={this.handleChangeSorting}>
-                <option value="name">Alphabetically</option>
-                <option value="-updated_at">Last modified</option>
-              </select>
-            </div>
-            <AlphabetFilter
-              alphabet={schools_alphabet}
-              selectedLetter={this.props.location.query.startWith}
-              onSelect={this.handleSelectLetter}
-            />
-          </div>
-          <SchoolList
-            schools={schoolsToDisplay}
-            selectedSchoolId={selectedSchoolId}
-            onClick={this.handleSelectSchool}
-          />
-          <div className="layout layout-align_center layout__space layout__space-double">
-            {!this.props.all_schools_loaded &&
-              <VisibilitySensor onChange={this.handleLoadOnSensor}>
-                <Button
-                  title="Load more..."
-                  waiting={ui.getIn(['progress', 'loadingSchoolsRiver'])}
-                  onClick={this.handleLoadSchools}
+        <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
+          <HeaderLogo small />
+        </Header>
+
+        <Page>
+          <PageMain>
+            <PageBody>
+              <Sidebar />
+              <PageContent>
+                <SchoolDetails
+                  current_user={current_user}
+                  school={selectedSchool}
+                  triggers={followSchoolTriggers}
                 />
-              </VisibilitySensor>
-            }
-          </div>
-        </div>
-        <SchoolDetails
-          current_user={current_user}
-          school={selectedSchool}
-          triggers={followSchoolTriggers}
-        />
+              </PageContent>
+              <SidebarAlt>
+                <div className="tools_page__filter">
+                  <div className="schools_tool__sort">
+                    <span className="micon">sort</span>
+                    <select value={sortQuery} onChange={this.handleChangeSorting}>
+                      <option value="name">Alphabetically</option>
+                      <option value="-updated_at">Last modified</option>
+                    </select>
+                  </div>
+                  <AlphabetFilter
+                    alphabet={schools_alphabet}
+                    selectedLetter={this.props.location.query.startWith}
+                    onSelect={this.handleSelectLetter}
+                  />
+                </div>
+                <SchoolList
+                  schools={schoolsToDisplay}
+                  selectedSchoolId={selectedSchoolId}
+                  onClick={this.handleSelectSchool}
+                />
+                <div className="layout layout-align_center layout__space layout__space-double">
+                  {!this.props.all_schools_loaded &&
+                    <VisibilitySensor onChange={this.handleLoadOnSensor}>
+                      <Button
+                        title="Load more..."
+                        waiting={ui.getIn(['progress', 'loadingSchoolsRiver'])}
+                        onClick={this.handleLoadSchools}
+                      />
+                    </VisibilitySensor>
+                  }
+                </div>
+              </SidebarAlt>
+            </PageBody>
+          </PageMain>
+        </Page>
+        <Footer />
       </div>
     );
   }

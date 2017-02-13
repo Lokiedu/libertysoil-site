@@ -28,7 +28,6 @@ import {
   CurrentUser as CurrentUserPropType,
   User as UserPropType
 } from '../prop-types/users';
-import { Command } from '../utils/command';
 import { getUrl, URL_NAMES } from '../utils/urlGenerator';
 import { AVATAR_SIZE, PROFILE_HEADER_SIZE } from '../consts/profileConstants';
 
@@ -48,7 +47,7 @@ export default class ProfileHeader extends React.Component {
     current_user: CurrentUserPropType,
     followers: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
     following: mapOfPropType(uuid4PropType, ArrayOfUsersIdPropType),
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     triggers: PropTypes.shape({
       addError: PropTypes.func.isRequired,
       updateUserInfo: PropTypes.func.isRequired,
@@ -82,6 +81,10 @@ export default class ProfileHeader extends React.Component {
 
   _clearPreview() {
     this.setState({ avatar: null, head_pic: null });
+  }
+
+  saveAll = async () => {
+    return Promise.all(['avatar', 'head_pic'].map(this.handleSave));
   }
 
   handleSave = async (name) => {
@@ -120,11 +123,7 @@ export default class ProfileHeader extends React.Component {
       this.setState({ avatar: { production: null, preview: null } });
     }
 
-    const command = new Command('avatar', this.handleSave, {
-      status: !!production,
-      args: ['avatar']
-    });
-    this.props.onChange(command);
+    this.props.onChange();
   };
 
   addHeaderPicture = async ({ production, preview }) => {
@@ -145,11 +144,7 @@ export default class ProfileHeader extends React.Component {
       this.setState({ head_pic: { production: null, preview: null } });
     }
 
-    const command = new Command('head_pic', this.handleSave, {
-      status: !!production,
-      args: ['head_pic']
-    });
-    this.props.onChange(command);
+    this.props.onChange();
   };
 
   render() {

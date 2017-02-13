@@ -76,7 +76,7 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
       []
     )}
 
-    <div className="layout__raw_grid layout__raw_grid--reverse tools_page__item tools_page__item--close tools_page__item--flex">
+    <div className="paper__page layout__raw_grid layout__raw_grid--reverse">
       <DisabledFormSubmit
         className="button button-wide button-green button--new"
         type="submit"

@@ -26,7 +26,6 @@ import { uuid4, Immutable as ImmutablePropType } from '../../prop-types/common';
 import { MapOfPosts } from '../../prop-types/posts';
 import { MapOfUsers } from '../../prop-types/users';
 import createSelector from '../../selectors/createSelector';
-import currentUserSelector from '../../selectors/currentUser';
 import { ActionsTrigger } from '../../triggers';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
@@ -123,7 +122,8 @@ class MyPostsToolPage extends React.Component {
 
     return (
       <div>
-        <Helmet title="My posts tool on " />
+        <Helmet title="My posts on " />
+
         <div className="tools_page__filter">
           <span className="micon">sort</span>
           <select value={sortQuery} onChange={this.handleChangeSorting}>
@@ -179,13 +179,11 @@ const selector = createSelector(
   state => state.get('posts'),
   state => state.getIn(['tools', 'user_posts_river']),
   state => state.get('users'),
-  currentUserSelector,
-  (ui, posts, user_posts_river, users, current_user) => ({
+  (ui, posts, user_posts_river, users) => ({
     ui,
     posts,
     user_posts_river,
-    users,
-    ...current_user
+    users
   })
 );
 

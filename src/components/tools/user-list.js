@@ -48,7 +48,7 @@ export default function UserList({ onClick, users, selectedUserId }) {
   });
 
   return (
-    <div className="tools_page__list_col">
+    <div>
       {items}
     </div>
   );

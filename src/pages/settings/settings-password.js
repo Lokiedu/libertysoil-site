@@ -30,12 +30,12 @@ import { addMessage, removeMessage } from '../../actions/messages';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../../prop-types/messages';
 import SettingsPasswordForm from '../../components/settings/password-form';
-import Messages from '../../components/messages';
+
 
 const WEAK_PASSWORD_MESSAGE = 'Password is weak. Consider adding more words or symbols';
 
-class PasswordToolPage extends React.Component {
-  static displayName = 'PasswordToolPage';
+class SettingsPasswordPage extends React.Component {
+  static displayName = 'SettingsPasswordPage';
 
   static propTypes = {
     actions: PropTypes.shape({
@@ -44,13 +44,6 @@ class PasswordToolPage extends React.Component {
     dispatch: PropTypes.func,
     messages: ArrayOfMessagesPropType
   };
-
-  static async fetchData(router, store, client) {
-    const currentUserId = store.getState().getIn(['current_user', 'id']);
-    const currentUserUsername = store.getState().getIn(['users', currentUserId, 'username']);
-    const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.loadUserInfo(currentUserUsername);
-  }
 
   handleChange = debounce(values => {
     if (values.newPassword) {
@@ -91,18 +84,12 @@ class PasswordToolPage extends React.Component {
   render() {
     return (
       <div>
-        <Helmet title="Password tool on " />
+        <Helmet title="Change password on " />
         <SettingsPasswordForm
           ref={c => this.form = c}
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
-        <div className="layout__row">
-          <Messages
-            messages={this.props.messages}
-            removeMessage={this.props.actions.removeMessage}
-          />
-        </div>
       </div>
     );
   }
@@ -110,7 +97,9 @@ class PasswordToolPage extends React.Component {
 
 const inputSelector = createSelector(
   state => state.get('messages'),
-  messages => ({ messages })
+  (current_user, messages) => ({
+    messages
+  })
 );
 
 const outputSelector = dispatch => ({
@@ -120,4 +109,4 @@ const outputSelector = dispatch => ({
   dispatch
 });
 
-export default connect(inputSelector, outputSelector)(PasswordToolPage);
+export default connect(inputSelector, outputSelector)(SettingsPasswordPage);
