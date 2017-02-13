@@ -16,10 +16,32 @@
     padding: 0;
   }
 
+  &--round {
+    border-radius: 50%;
+  }
+
   &--size_big {
     padding: 4px;
     width: 37px;
     height: 37px;
     border-radius: 50%;
+  }
+
+  .tag-type(@name, @color) {
+    &--type {
+      &_@{name} {
+        border-color: @color;
+        background-color: @color;
+      }
+    }
+  }
+
+  .tag-type(@name: ~"hashtag", @color: #689ACA);
+  .tag-type(@name: ~"school", @color: #DC3457);
+  .tag-type(@name: ~"geotag", @color: #47B8E7);
+
+  &--inactive {
+    border-color: #d0d0d0;
+    background-color: #d0d0d0;
   }
 }

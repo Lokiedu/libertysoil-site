@@ -37,6 +37,8 @@ import Tag from './tag';
 export default class TagSwitch extends React.Component {
   static propTypes = {
     action: PropTypes.string,
+    collapsed: PropTypes.bool,
+    inactive: PropTypes.bool,
     isLink: PropTypes.bool,
     name: PropTypes.string,
     onClick: PropTypes.func,

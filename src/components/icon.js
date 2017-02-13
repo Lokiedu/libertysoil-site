@@ -37,6 +37,7 @@ const IconComponent = ({
   color,
   disabled,
   icon,
+  inactive,
   onClick,
   outline,
   spin,
@@ -48,6 +49,7 @@ const IconComponent = ({
   const classNameIcon = classNames('icon', {
     'icon-outline': outline,
     'icon-disabled': disabled,
+    'icon--inactive': inactive,
     'micon-rotate': spin,
     [`micon-${size}`]: size,
     [`icon--size_${size}`]: size,

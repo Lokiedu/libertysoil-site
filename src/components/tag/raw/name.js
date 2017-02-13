@@ -20,14 +20,12 @@ import { truncate } from 'grapheme-utils';
 import omit from 'lodash/omit';
 
 const RawTagName = ({ collapsed, truncated, name, ...props }) => {
-  if (!name) {
+  if (!name || collapsed) {
     return false;
   }
 
   let n = name;
-  if (collapsed) {
-    n = '';
-  } else if (truncated) {
+  if (truncated) {
     n = truncate(n, { length: 16 });
   }
 
