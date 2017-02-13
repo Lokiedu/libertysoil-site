@@ -26,4 +26,8 @@ export default class IndexPage extends React.Component {
 
     return { status: 307, redirectTo: '/feed' };
   }
+
+  render() {
+    return null;
+  }
 }
