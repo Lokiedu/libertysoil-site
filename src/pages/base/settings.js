@@ -146,7 +146,7 @@ class BaseSettingsPage extends React.Component {
                       className="aux-nav__link"
                       to={getUrl(URL_NAMES.SETTINGS)}
                     >
-                      Basic info
+                      Your Bio
                     </IndexLink>
                   </div>
                   <div className="aux-nav__item">
