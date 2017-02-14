@@ -94,4 +94,23 @@ const UserMessage = {
   text: ['string', 'minLength:1', 'required']
 };
 
-export { User, School, Hashtag, Geotag, UserMessage };
+const ProfilePost = {
+  text: ['required', 'string', 'minLength:200'],
+  html: ['string', 'minLength:200'],
+  type: [
+    'required',
+    val => {
+      if (!ProfilePost.TYPES.includes(val)) {
+        throw new Error('Invalid post type');
+      }
+    }
+  ],
+  user_id: ['required', 'uuid'],
+  more: ['plainObject']
+};
+
+ProfilePost.TYPES = [
+  'text'
+];
+
+export { User, School, Hashtag, Geotag, UserMessage, ProfilePost };
