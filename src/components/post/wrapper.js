@@ -19,8 +19,8 @@ import React from 'react';
 
 import { CommentsByCategory as CommentsByCategoryPropType } from '../../prop-types/comments';
 
-import bem from '../../utils/bemClassNames';
 import PostFooter from './footer';
+import Brief from './brief';
 import Preview from './preview';
 import Comments from './comments';
 
@@ -35,22 +35,26 @@ const PostWrapper = ({
   current_user,
   ui
 }) => {
-  const cardClassName = bem.makeClassName({
-    block: 'card',
-    modifiers: {
-
-    }
-  });
-
   return (
-    <section className={cardClassName}>
-      <Preview post={post} />
-
-      <div className="card__content">
-        {children}
+    <section className="card">
+      <div className="card__container">
+        <Preview post={post} />
+        <div className="card__content">
+          {children}
+        </div>
+        <PostFooter
+          current_user={current_user}
+          post={post}
+          triggers={triggers}
+        />
       </div>
 
-      <PostFooter author={author} current_user={current_user} post={post} triggers={triggers} />
+      <Brief
+        author={author}
+        current_user={current_user}
+        post={post}
+        triggers={triggers}
+      />
       <Comments
         showAllComments={showAllComments}
         comments={comments}
@@ -60,7 +64,6 @@ const PostWrapper = ({
         users={users}
         ui={ui}
       />
-
     </section>
   );
 };

@@ -45,7 +45,7 @@ module.exports = {
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.css$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!postcss-loader' }) },
       { test: /\.less$/, loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!postcss-loader!less-loader' }) },
-      { test: /\.(ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=15000' },
+      { test: /\.(otf|ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=15000' },
       { test: /\.(png|jpg|svg)$/, loader: 'file-loader?name=[hash].[ext]' }
     ]
   },

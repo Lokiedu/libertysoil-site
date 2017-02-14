@@ -14,28 +14,25 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import { Link } from 'react-router';
 
-import Icon from '../icon';
+import { URL_NAMES, getUrl } from '../../../utils/urlGenerator';
 
-import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
-
-const EditPostButton = ({ current_user, post }) => {
-  if (current_user.get('id') !== post.get('user_id')) {
-    return null;
+export default class EditPost extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
   }
 
-  const postEditUrl = getUrl(URL_NAMES.EDIT_POST, { uuid: post.get('id') });
+  render() {
+    const { userId, authorId, postId } = this.props;
+    if (userId !== authorId) {
+      return null;
+    }
 
-  return (
-    <div className="card__toolbar_item">
-      <Link to={postEditUrl}>
-        <Icon icon="edit" outline size="small" />
-      </Link>
-    </div>
-  );
-};
+    const postEditUrl = getUrl(URL_NAMES.EDIT_POST, { uuid: postId });
 
-export default EditPostButton;
+    return <Link to={postEditUrl}>Edit post</Link>;
+  }
+}

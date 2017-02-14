@@ -8,6 +8,14 @@
     border-radius: 50%;
     background: #fff;
     padding: 5px;
+
+    &--red {
+      background: @color__red;
+    }
+
+    &--dark_green {
+      background: @color__dark_green;
+    }
   }
 
   &-midi.icon-outline {
@@ -20,11 +28,18 @@
     border-radius: 50%;
   }
 
-  &--size_big {
-    padding: 4px;
-    width: 37px;
-    height: 37px;
-    border-radius: 50%;
+  &--size {
+    &_small {
+      width: 32px;
+      height: 32px;
+      padding: 5px 4px;
+    }
+    &_big {
+      padding: 4px;
+      width: 37px;
+      height: 37px;
+      border-radius: 50%;
+    }
   }
 
   .tag-type(@name, @color) {

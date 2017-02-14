@@ -17,6 +17,7 @@
  */
 .card {
   //overflow: hidden;
+  background-color: #f9f9f9;
 
   & + & {
     margin-top: @space;
@@ -55,12 +56,31 @@
 
   &__toolbars {
     &:extend(.layout);
+    margin-right: 10px;
 
     @media (max-width: 380px) {
       align-items: center;
       justify-content: center;
       flex-direction: column;
     }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &__container {
+    margin-bottom: 1px;
+    background: #fff;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &__slug {
+    padding: 0px 15px;
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
   }
 }
 
@@ -70,7 +90,6 @@
 }
 
 .card__content {
-  background: #fff;
   padding: 20px 20px 0 20px;
   line-height: 1.4;
   overflow: auto; // fix empty p
@@ -86,19 +105,24 @@
 
 .card__meta {
   background: #fff;
-  padding: 20px 15px 10px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .card__owner {
-  color: @color__darker;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
 }
 
 .card__timestamp {
   font-size: 12px;
   color: @color__dark_gray;
+  white-space: nowrap;
 }
 
 .card__read_link {
@@ -110,34 +134,32 @@
 }
 
 .card__footer {
-  padding: 15px;
-  background: #f9f8f8;
-  position: relative;
+  // &:extend(.layout);
+  // &:extend(.layout-wrap);
+  // &:extend(.layout-align_justify);
+  // &:extend(.layout-align_vertical);
 
+  > .tags {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+
+  padding-left: 10px;
   &-colored {
     background: @color__panel_bg;
   }
 }
 
 .card__toolbar {
-  display: flex;
-  flex: 1;
+  &:extend(.layout);
+  &:extend(.layout-align_justify);
 
-  &:first-child {
-    margin-top: 0;
+  &:last-child {
+    flex: 1;
   }
 
-  &-right {
-    flex: none!important;
-
-    .card__toolbar_item {
-      margin-right: 0;
-      margin-left: 10px;
-
-      &:first-child {
-        margin-left: 0;
-      }
-    }
+  &--group {
+    &:extend(.layout);
   }
 
   &_item_value {
@@ -147,13 +169,15 @@
 }
 
 .card__toolbar_item {
+  width: 60px;
+  height: 60px;
   display: flex;
-  margin-right: 10px;
   align-items: center;
+  justify-content: center;
 
   &:hover {
     .icon {
-      color: #000;
+      opacity: 0.7;
     }
   }
 }

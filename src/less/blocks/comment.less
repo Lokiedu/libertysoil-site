@@ -1,11 +1,5 @@
 .comment {
-  padding: 10px 15px 10px 21px;
   margin: 1px 0 0 0;
-  background: #fff;
-
-  &-placeholder {
-    background: #f9f8f8;
-  }
 
   &-transparent {
     background: none;
@@ -13,6 +7,11 @@
 
   .dropdown__trigger {
     color: @color__gray;
+  }
+
+  &--placeholder {
+    padding: 12px 0px;
+    color: #999999;
   }
 }
 
@@ -22,15 +21,17 @@
 }
 
 .comment__header {
+  padding-top: 15px;
+  padding-bottom: 9px;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  width: 27px;
-  height: 17px;
+  width: 60px;
   overflow: hidden;
 }
 
 .comment__author {
-  margin: 0 10px 0 0;
+  margin-right: 14px;
 }
 
 .comment__toolbar {
@@ -52,22 +53,50 @@
 }
 
 .comment__body {
+  padding: 15px;
   flex: 1;
+  background: #fff;
 }
 
 .comment__edit {
+  margin: 8px 60px 8px 0;
   flex: 1;
+  font-size: 14px;
+
+  .input {
+    border: none;
+  }
 }
 
 .comment__text {
   margin: 1px 0 0 0;
-  &:extend(.font-open_sans);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
 
   p + p {
     margin-top: 8px;
   }
+}
+
+.comment__dropdown {
+  padding-top: 9px;
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /*
+    .micon {
+      font-size: 30px;
+      color: #3b5d99;
+    }
+
+    &.dropdown-closed .micon {
+      width: 60px;
+      padding: 8px;
+      color: #dddddd;
+    }
+  */
 }
 
 .comment__time {
@@ -79,5 +108,5 @@
 }
 
 .comment__edit_area {
-  min-height: 200px
+  // min-height: 200px
 }
