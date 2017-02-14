@@ -15,6 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+@font-face {
+  font-family: 'San Francisco';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../../../public/fonts/SanFranciscoDisplay-Regular.otf) format('opentype');
+}
+
 .font {
   &-open_sans {
     font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -34,5 +41,9 @@
     &.clean-hover:hover {
       text-decoration: none;
     }
+  }
+
+  &--family_san-francisco {
+    font-family: 'San Francisco', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
   }
 }
