@@ -17,15 +17,15 @@
 */
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
+import classNames from 'classnames';
 
-import bem from '../../utils/bemClassNames';
 import Button from '../button';
 import User from '../user';
 import Textarea from '../textarea';
 import Message from '../message';
 
 const AddCommentPlaceholder = (props) => (
-  <article className="comment comment-transparent" {...props}>
+  <article className="comment comment--placeholder comment-transparent" {...props}>
     <div className="comment__container">
       <div className="comment__header" />
       <div className="comment__text action link">
@@ -121,54 +121,41 @@ export default class CreateComment extends Component {
   };
 
   render() {
-    const {
-      current_user,
-      className,
-      ui
-    } = this.props;
-
-    const {
-      isExpanded,
-      comment
-    } = this.state;
-
-    const blockClassName = bem.makeClassName({
-      block: 'create_comment',
-      modifiers: {
-        expanded: isExpanded
-      }
-    });
-
-    const commentUi = ui.getIn(['comments', 'new']);
+    const { current_user, className } = this.props;
+    const cn = classNames('comment', className);
 
     if (!current_user) {
       return (
-        <div className={`${blockClassName} ${className} content`}>
+        <div className={`${cn} content`}>
           You can not comment. Please <Link to="/auth">register or log in</Link>.
         </div>
       );
     }
-
-    if (!isExpanded) {
+    if (!this.state.isExpanded) {
       return <AddCommentPlaceholder onClick={this.expand} />;
     }
 
+    const { comment } = this.state;
+    const commentUi = this.props.ui.getIn(['comments', 'new']);
+
     return (
-      <form className={`${blockClassName} ${className}`} onSubmit={this.postComment}>
-        <div className="layout">
-          <div className="layout__grid_item">
-            <User
-              avatar={{ size: 32 }}
-              text={{ hide: true }}
-              user={current_user.get('user')}
-            />
+      <form className={`${cn} create_comment`} onSubmit={this.postComment}>
+        <div className="comment__container">
+          <div className="comment__header">
+            <div className="comment__author">
+              <User
+                avatar={{ size: 24, isRound: false }}
+                text={{ hide: true }}
+                user={current_user.get('user')}
+              />
+            </div>
           </div>
-          <div className="layout__grid_item layout__grid_item-wide">
+          <div className="create_comment__body">
             <div className="layout__row">
               <Textarea
                 autoFocus
-                className="input input-block create_comment__input"
-                placeholder="Add Comment"
+                className="input input-block create_comment__input font--family_san-francisco"
+                placeholder="Add comment"
                 value={comment}
                 onChange={this.updateComment}
               />
@@ -176,10 +163,10 @@ export default class CreateComment extends Component {
             <div className="layout__row">
               <Button
                 className="layout__grid_item"
-                color="light_blue"
+                color="green"
                 disabled={!comment.trim() || commentUi.get('isCreateInProgress')}
                 size="midi"
-                title="Post"
+                title="Add comment"
                 type="submit"
               />
               <Button

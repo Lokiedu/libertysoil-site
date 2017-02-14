@@ -26,11 +26,11 @@ import Comment from './comment';
 import CreateComment from './create-comment';
 
 const CommentsPlaceholder = ({ count, ...props }) => (
-  <article className="comment comment-placeholder" {...props}>
+  <article className="comment comment--placeholder" {...props}>
     <div className="comment__container">
       <div className="comment__header" />
       <div className="comment__text action link">
-        {message.compile('{count, plural, one{1 comment} other{# comments}}')({ count })}
+        {message.compile('{count, plural, one{1 more comment} other{# more comments}}')({ count })}
       </div>
     </div>
   </article>
@@ -134,7 +134,6 @@ class Comments extends Component {
       <div>
         {this.renderComments()}
         <CreateComment
-          className="card__footer"
           current_user={current_user}
           postId={post.get('id')}
           triggers={triggers}

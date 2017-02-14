@@ -23,8 +23,10 @@
 @color__border: #d3d2d1;
 @color__panel_bg: #f2eae3;
 
-@color__green: #50a844;
-@color__red: #fc2c5b;
+@color__white: #fff;
+@color__green: #169867;
+@color__dark_green: #0f7f11;
+@color__red: #e96776;
 @color__blue: #40b7e9;
 @color__dark_blue: #689ACA;
 @color__gray: #d3d2d1;
@@ -33,6 +35,9 @@
 @color__yellow: #efc242;
 
 .color {
+  &-white {
+    color: @color__white;
+  }
   &-red {
     color: @color__red;
   }
@@ -47,6 +52,9 @@
   }
   &-green {
     color: @color__green;
+  }
+  &-dark_green {
+    color: @color__dark_green;
   }
   &-gray {
     color: @color__gray;

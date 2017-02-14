@@ -126,8 +126,10 @@ class Comment extends Component {
     let toolbar = null;
 
     if (isCurrentUserAuthor && !isEditMode && !isButtonsDisabled) {
+      // TODO: use 'brightness1' as Dropdown.props.iconClosed
+      // look at .comment__dropdown definition
       toolbar = (
-        <Dropdown>
+        <Dropdown className="comment__dropdown">
           <MenuItem onClick={this.editComment}>Edit comment</MenuItem>
           <MenuItem onClick={this.deleteComment}>Delete</MenuItem>
         </Dropdown>
@@ -179,7 +181,7 @@ class Comment extends Component {
         >
           <div className="layout__row">
             <Textarea
-              className="input input-block comment__edit_area"
+              className="input input-block"
               value={text}
               onChange={this.updateCommentText}
             />
@@ -187,10 +189,10 @@ class Comment extends Component {
           <div className="layout__row layout">
             <Button
               className="layout__grid_item"
-              color="light_blue"
+              color="green"
               disabled={!text.trim() || (commentUi.get('isSaveInProgress'))}
               size="midi"
-              title="Save Comment"
+              title="Save comment"
               type="submit"
             />
             <Button
@@ -226,11 +228,11 @@ class Comment extends Component {
     } = this.props;
 
     return (
-      <article className="comment">
+      <article className="comment font--family_san-francisco">
         <div className="comment__container">
           <header className="comment__header">
             <div className="comment__author">
-              <User avatar={{ size: 17 }} text={{ hide: true }} user={author} />
+              <User avatar={{ size: 24, isRound: false }} text={{ hide: true }} user={author} />
             </div>
           </header>
           {this.renderBody()}
