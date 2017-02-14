@@ -48,3 +48,5 @@ export const URL = {
 };
 
 export const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
+
+export const INTERCOM_APP_ID = process.env.INTERCOM_APP_ID;
