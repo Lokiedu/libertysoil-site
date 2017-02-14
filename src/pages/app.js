@@ -20,6 +20,8 @@ import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 
 import { ActionsTrigger } from '../triggers';
+import { INTERCOM_APP_ID } from '../config';
+import WrappedIntercom from '../components/intercom';
 
 const GAInitializer = ga.Initializer;
 
@@ -48,6 +50,10 @@ export default class App extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.children !== this.props.children;
+  }
+
   render() {
     const { children } = this.props;
 
@@ -56,11 +62,18 @@ export default class App extends React.Component {
       gaContent = <GAInitializer />;
     }
 
+    let url = '';
+    if (this.props.location) {
+      url = this.props.location.pathname
+        .concat(this.props.location.search);
+    }
+
     return (
       <div className="page">
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {children}
         {gaContent}
+        <WrappedIntercom app_id={INTERCOM_APP_ID} url={url} />
       </div>
     );
   }

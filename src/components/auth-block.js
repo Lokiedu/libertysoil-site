@@ -21,10 +21,15 @@ import { Link } from 'react-router';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { API_HOST } from '../config';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
+import { IntercomAPI } from './intercom';
 
 import Avatar from './user/avatar';
 import { v2 as Dropdown } from './dropdown';
 import MenuItem from './menu-item';
+
+function handleLogout() {
+  IntercomAPI('shutdown');
+}
 
 const menuItems = username => ([
   { key: 'profile',
@@ -33,7 +38,7 @@ const menuItems = username => ([
     node: <Link to={getUrl(URL_NAMES.SETTINGS)}>Profile settings</Link> },
   { key: 'logout',
     node: (
-      <form action={`${API_HOST}/api/v1/logout`} method="post">
+      <form action={`${API_HOST}/api/v1/logout`} method="post" onSubmit={handleLogout}>
         <button
           className="button button-transparent button-wide button-caption_left"
           type="submit"
