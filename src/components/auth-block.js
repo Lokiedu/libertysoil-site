@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
-
 import { API_HOST } from '../config';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
