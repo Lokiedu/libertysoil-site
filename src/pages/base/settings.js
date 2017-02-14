@@ -156,7 +156,7 @@ class BaseSettingsPage extends React.Component {
                       to={getUrl(URL_NAMES.CHANGE_PASSWORD)}
                       visible
                     >
-                      Change password
+                      Change Password
                     </PageContentLink>
                   </div>
                   {/*<div className="aux-nav__item">
@@ -196,7 +196,7 @@ class BaseSettingsPage extends React.Component {
                       to={getUrl(URL_NAMES.EMAIL_SETTINGS)}
                       visible
                     >
-                      Notification settings
+                      Notification Settings
                     </PageContentLink>
                   </div>
                   <div className="aux-nav__item">
