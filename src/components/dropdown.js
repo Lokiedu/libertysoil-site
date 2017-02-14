@@ -16,8 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
+import Icon from './icon';
 
 class Dropdown extends Component {
   static displayName = 'Dropdown';
@@ -28,6 +30,11 @@ class Dropdown extends Component {
     this.state = {
       isVisible: props.isVisible || false
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props
+        || nextState.isVisible !== this.state.isVisible;
   }
 
   onClickOutside = () => {
@@ -43,24 +50,30 @@ class Dropdown extends Component {
   };
 
   render() {
-    const {
-      className,
-      ...props
-    } = this.props;
-    const state = this.state;
+    const { className, icon, iconOpen, iconClosed, ...props } = this.props;
 
-    let dropdownClassName = `dropdown ${className}`;
+    const dropdownClassName = classNames('dropdown', className, {
+      'dropdown-open': this.state.isVisible,
+      'dropdown-closed': !this.state.isVisible
+    });
 
-    if (state.isVisible) {
-      dropdownClassName = `${dropdownClassName} dropdown-open`;
+    let i;
+    if (icon) {
+      i = icon;
+    } else if (!this.state.isVisible && iconClosed) {
+      i = iconClosed;
+    } else if (this.state.isVisible && iconOpen) {
+      i = iconOpen;
+    } else {
+      i = 'arrow_drop_down';
     }
 
     return (
       <div className={dropdownClassName} {...props}>
         <div className="dropdown__trigger action" onClick={this.toggleVisibility}>
-          <span className="micon micon-small">arrow_drop_down</span>
+          <Icon className="micon micon-small" icon={i} />
         </div>
-        <div className="dropdown__body" onClick={this.toggleVisibility}>
+        <div className="dropdown__body">
           {props.children}
         </div>
       </div>
