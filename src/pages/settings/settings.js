@@ -18,7 +18,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import i from 'immutable';
 
 import {
   CurrentUser as CurrentUserPropType
@@ -34,7 +33,6 @@ import { ActionsTrigger } from '../../triggers';
 import { createSelector, currentUserSelector } from '../../selectors';
 
 import Button from '../../components/button';
-import { RolesManager } from '../../components/settings';
 import ProfileHeader from '../../components/profile';
 
 class SettingsPage extends React.Component {
@@ -122,8 +120,6 @@ class SettingsPage extends React.Component {
       return false;
     }
 
-    const roles = current_user.getIn(['user', 'more', 'roles'], i.List()).toJS();
-
     return (
       <div>
         <Helmet title="Your Profile Settings on " />
@@ -142,14 +138,6 @@ class SettingsPage extends React.Component {
           ref={c => this.form = c}
           onChange={this.handleFormChange}
         />
-        <div className="paper__page">
-          <h2 className="content__sub_title layout__row">Roles</h2>
-          <RolesManager
-            ref={c => this.roles = c}
-            roles={roles}
-            onChange={this.handleFormChange}
-          />
-        </div>
         {this.state.unsaved &&
           <div className="paper__page layout__raw_grid layout__raw_grid--reverse tools_page__item--flex">
             <Button
