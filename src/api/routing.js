@@ -98,6 +98,12 @@ export function initApi(bookshelf, sphinx) {
   api.post('/user/:username/follow', controller.followUser);
   api.post('/user/:username/unfollow', controller.unfollowUser);
   api.post('/user/:username/ignore', controller.ignoreUser);
+  api.get('/user/:username/profile-posts', controller.getProfilePosts);
+
+  api.get('/profile-post/:id', controller.getProfilePost);
+  api.post('/profile-posts', controller.createProfilePost);
+  api.post('/profile-post/:id', controller.updateProfilePost);
+  api.delete('/profile-post/:id', controller.deleteProfilePost);
 
   api.get('/user/verify/:hash', controller.verifyEmail);
   api.post('/user/', controller.updateUser);
