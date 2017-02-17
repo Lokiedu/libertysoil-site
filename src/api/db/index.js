@@ -30,6 +30,7 @@ import { hash as bcryptHash } from 'bcrypt';
 import { break as breakGraphemes } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 import Checkit from 'checkit';
+import MarkdownIt from 'markdown-it';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 import { ProfilePost as ProfilePostValidations } from './validators';
@@ -37,6 +38,8 @@ import { ProfilePost as ProfilePostValidations } from './validators';
 
 const bcryptHashAsync = promisify(bcryptHash);
 promisifyAll(OnigRegExp.prototype);
+
+const postMarkdown = new MarkdownIt();
 
 export function initBookshelfFromKnex(knex) {
   const bookshelf = Bookshelf(knex);
@@ -625,6 +628,13 @@ export function initBookshelfFromKnex(knex) {
     tableName: 'profile_posts',
     initialize() {
       this.on('saving', this.validate.bind(this));
+      this.on('saving', this.renderMarkdown.bind(this));
+    },
+    renderMarkdown(model) {
+      if (_.isString(model.get('text'))) {
+        const html = postMarkdown.render(model.get('text'));
+        model.set('html', html);
+      }
     },
     validate() {
       return new Checkit(ProfilePostValidations).run(this.toJSON());
