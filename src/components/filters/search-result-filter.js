@@ -28,6 +28,7 @@ export default function SearchResultFilter({ location }) {
       location={location}
       query={{ show: type.value }}
       title={type.name}
+      combine={type.combine}
     />
   ));
 
