@@ -49,24 +49,26 @@ export default class PostBrief extends React.Component {
           {post.getIn(['more', 'pageTitle'])}
         </div>
 
-        <Dropdown className="card__toolbar_item" icon="more_vert">
-          <MenuItem>
-            <Subscribe
-              is_logged_in={!!userId}
-              postId={postId}
-              subscriptions={current_user.get('post_subscriptions')}
-              onSubscribeToPost={triggers.subscribeToPost}
-              onUnsubscribeFromPost={triggers.unsubscribeFromPost}
-            />
-          </MenuItem>
-          <MenuItem>
-            <EditPost
-              authorId={post.get('user_id')}
-              userId={userId}
-              postId={postId}
-            />
-          </MenuItem>
-        </Dropdown>
+        {current_user.get('id') &&
+          <Dropdown className="card__toolbar_item" icon="more_vert">
+            <MenuItem>
+              <Subscribe
+                is_logged_in={!!userId}
+                postId={postId}
+                subscriptions={current_user.get('post_subscriptions')}
+                onSubscribeToPost={triggers.subscribeToPost}
+                onUnsubscribeFromPost={triggers.unsubscribeFromPost}
+              />
+            </MenuItem>
+            <MenuItem>
+              <EditPost
+                authorId={post.get('user_id')}
+                userId={userId}
+                postId={postId}
+              />
+            </MenuItem>
+          </Dropdown>
+        }
       </div>
     );
   }
