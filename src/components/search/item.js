@@ -24,6 +24,12 @@ import ListItem from '../list-item';
 import TagIcon from '../tag-icon';
 import User from '../user';
 
+const iconProps = {
+  big: true,
+  className: 'tag_icon-wide',
+  round: false 
+};
+
 export default class SearchItem extends React.Component {
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
@@ -36,19 +42,19 @@ export default class SearchItem extends React.Component {
     switch (type) {
       case TAG_LOCATION:
       case TAG_PLANET: {
-        itemIcon = <TagIcon big type={TAG_LOCATION} {...props} />;
+        itemIcon = <TagIcon {...iconProps} type={TAG_LOCATION} {...props} />;
         itemName = name;
         itemUrl = `/geo/${urlId}`;
         break;
       }
       case TAG_HASHTAG: {
-        itemIcon = <TagIcon big type={TAG_HASHTAG} {...props} />;
+        itemIcon = <TagIcon {...iconProps} type={TAG_HASHTAG} {...props} />;
         itemName = name;
         itemUrl = `/tag/${name}`;
         break;
       }
       case TAG_SCHOOL: {
-        itemIcon = <TagIcon big type={TAG_SCHOOL} {...props} />;
+        itemIcon = <TagIcon {...iconProps} type={TAG_SCHOOL} {...props} />;
         itemName = name;
         itemUrl = `/s/${urlId}`;
         break;
@@ -80,8 +86,8 @@ export default class SearchItem extends React.Component {
     }
 
     return (
-      <Link to={itemUrl}>
-        <ListItem icon={itemIcon}>
+      <Link className="list_item list_item--no_space" to={itemUrl}>
+        <ListItem className="list_item--no_space" icon={itemIcon}>
           {itemName}
         </ListItem>
       </Link>
