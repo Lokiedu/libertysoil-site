@@ -36,9 +36,11 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
+import SidebarAlt from '../components/sidebarAlt';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import SearchSection from '../components/search/section';
+import SearchResultFilter from '../components/filters/search-result-filter';
 
 class SearchPage extends Component {
   static displayName = 'SearchPage';
@@ -77,6 +79,9 @@ class SearchPage extends Component {
           <PageMain>
             <PageBody>
               <Sidebar />
+              <SidebarAlt side="left">
+                <SearchResultFilter location={this.props.location} />
+              </SidebarAlt>
               <PageContent>
                 <PageCaption>Search</PageCaption>
                 <div>
