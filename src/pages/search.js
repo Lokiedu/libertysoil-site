@@ -19,6 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import isEqual from 'lodash/isEqual';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -42,6 +43,8 @@ import SearchSection from '../components/search/section';
 import SearchResultFilter from '../components/filters/search-result-filter';
 import SearchPageBar from '../components/search/page-bar';
 
+const client = new ApiClient(API_HOST);
+
 class SearchPage extends Component {
   static displayName = 'SearchPage';
 
@@ -55,15 +58,24 @@ class SearchPage extends Component {
     await triggers.search(router.location.query.q);
   }
 
+  constructor(...props) {
+    super(...props);
+    this.triggers = new ActionsTrigger(client, this.props.dispatch);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const nextQuery = nextProps.location.query;
+    if (!isEqual(this.props.location.query, nextQuery)) {
+      this.triggers.search(nextQuery);
+    }
+  }
+
   render() {
     const {
       is_logged_in,
       current_user,
       search
     } = this.props;
-
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <div>
@@ -95,7 +107,7 @@ class SearchPage extends Component {
                         current_user={current_user}
                         items={section.get('items')}
                         key={section.get('type')}
-                        triggers={triggers}
+                        triggers={this.triggers}
                         type={section.get('type')}
                       />
                     )
