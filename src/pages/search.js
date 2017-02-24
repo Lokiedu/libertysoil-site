@@ -27,7 +27,6 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import {
   Page,
   PageMain,
-  PageCaption,
   PageBody,
   PageContent
 } from '../components/page';
@@ -41,6 +40,7 @@ import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import SearchSection from '../components/search/section';
 import SearchResultFilter from '../components/filters/search-result-filter';
+import SearchPageBar from '../components/search/page-bar';
 
 class SearchPage extends Component {
   static displayName = 'SearchPage';
@@ -83,7 +83,7 @@ class SearchPage extends Component {
                 <SearchResultFilter location={this.props.location} />
               </SidebarAlt>
               <PageContent>
-                <PageCaption>Search</PageCaption>
+                <SearchPageBar location={this.props.location} />
                 <div>
                   {search.get('results')
                     .map((items, type) =>
