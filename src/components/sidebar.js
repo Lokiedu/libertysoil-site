@@ -21,6 +21,9 @@ import { connect } from 'react-redux';
 import createSelector from '../selectors/createSelector';
 import currentUserSelector from '../selectors/currentUser';
 import { toggleMenu } from '../actions/ui';
+import ApiClient from '../api/client';
+import { ActionsTrigger } from '../triggers';
+import { API_HOST } from '../config';
 
 import SidebarMenu from './sidebar-menu';
 import TagsInform from './tags-inform';
@@ -64,11 +67,22 @@ class Sidebar extends React.Component {
     this.state = {
       isMobile: true
     };
+
+    const client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
   }
 
   componentDidMount() {
     window.matchMedia('(min-width: 768px)')
       .addListener(this.handleViewChange);
+
+    // Currently, only the Sidebar needs to display message counters.
+    // In the future, it might be better to move message status updating into the App.
+    this.triggers.loadUserMessagesStatus();
+
+    this.messageIntervalId = setInterval(async () => {
+      await this.triggers.loadUserMessagesStatus();
+    }, 20 * 1000);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -79,6 +93,8 @@ class Sidebar extends React.Component {
   componentWillUnmount() {
     window.matchMedia('(min-width: 768px)')
       .removeListener(this.handleViewChange);
+
+    clearInterval(this.messageIntervalId);
   }
 
   handleViewChange = (nonMobileQuery) => {
@@ -103,7 +119,7 @@ class Sidebar extends React.Component {
     }
 
     const sidebarBody = [
-      <SidebarMenu current_user={this.props.current_user} key="menu" />,
+      <SidebarMenu current_user={this.props.current_user} user_messages={this.props.user_messages} key="menu" />,
       <TagsInform current_user={this.props.current_user} key="tags" />
     ];
 
@@ -134,9 +150,11 @@ class Sidebar extends React.Component {
 const selector = createSelector(
   currentUserSelector,
   state => state.getIn(['ui', 'mobileMenuIsVisible']),
-  (current_user, isMobileMenuOn) => ({
+  state => state.get('user_messages'),
+  (current_user, isMobileMenuOn, user_messages) => ({
+    ...current_user,
     isMobileMenuOn,
-    ...current_user
+    user_messages
   })
 );
 

@@ -56,7 +56,7 @@ import SchoolsToolPage from './pages/tools/schools-tool';
 import MyPostsToolPage from './pages/tools/my-posts-tool';
 import PeopleToolPage from './pages/tools/people-tool';
 import NewSchoolToolPage from './pages/tools/new-school-tool';
-import ConversationsToolPage from './pages/tools/conversations-tool';
+import ConversationsPage from './pages/conversations';
 import SearchPage from './pages/search';
 import AllPostsPage from './pages/all-posts';
 
@@ -134,8 +134,8 @@ export function getRoutes(authHandler, fetchHandler) {
           <IndexRedirect to="following" />
           <Route component={PeopleToolPage} path="following" onEnter={withAuth} />
         </Route>
-        <Route component={ConversationsToolPage} path="conversations" onEnter={withAuth} />
       </Route>
+      <Route component={ConversationsPage} path="/+talk" onEnter={withAuth} />
     </Route>
   );
 }

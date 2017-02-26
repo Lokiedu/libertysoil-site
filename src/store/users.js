@@ -69,6 +69,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.userMessages.LOAD_MESSAGEABLE_USERS:
     case a.users.ADD_USERS: {
       const usersById = action.payload.users.reduce((acc, user) => {
         acc[user.id] = cleanUser(user);

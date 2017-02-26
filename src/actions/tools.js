@@ -89,12 +89,3 @@ export function setFollowedUsers(users) {
     }
   };
 }
-
-export function setConversationsRiver(users) {
-  return {
-    type: TOOLS__SET_CONVERSATIONS_RIVER,
-    payload: {
-      users
-    }
-  };
-}

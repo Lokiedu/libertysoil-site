@@ -26,11 +26,12 @@
   }
 
   &__link {
-    display: block;
+    display: flex;
     min-height: 42px;
     margin-bottom: 2px;
     padding: 10px 24px 10px 20px;
     background-color: #FAFAFA;
+    align-items: center;
   }
 
   &__link--active {
@@ -52,5 +53,15 @@
       background-color: @active-icon;
       border-radius: 2px;
     }
+  }
+
+  &__icon--left {
+    margin-right: 20px;
+  }
+
+  &__count {
+    color: #888;
+    font-size: 12px;
+    margin-left: auto;
   }
 }

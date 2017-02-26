@@ -487,12 +487,12 @@ export default class ApiClient {
     return await response.json();
   }
 
-  async updateMessage(messageId: UserMessageId, text: string): Promise<UserMessage> {
+  async updateUserMessage(messageId: UserMessageId, text: string): Promise<UserMessage> {
     const response = await this.postJSON(`/api/v1/user-message/${messageId}`, { text });
     return await response.json();
   }
 
-  async deleteMessage(messageId: UserMessageId): Promise<Success> {
+  async deleteUserMessage(messageId: UserMessageId): Promise<Success> {
     const response = await this.del(`/api/v1/user-message/${messageId}`);
     return await response.json();
   }

@@ -23,7 +23,7 @@ import { MENU_ITEMS } from '../../consts/sidebar-menu';
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
 
-const SidebarMenuNormal = ({ current_user }) => {
+const SidebarMenuNormal = ({ current_user, user_messages }) => {
   const user = current_user.get('user');
   let username = '';
   if (user) {
@@ -34,8 +34,10 @@ const SidebarMenuNormal = ({ current_user }) => {
     .filter(item => !current_user.get(item).size);
 
   itemsToIgnore.push('collections'); // wait for 'collections' to be released
+  itemsToIgnore.push('talk');
 
   const menuItemsArray = values(omit(MENU_ITEMS, itemsToIgnore));
+  const talkItem = MENU_ITEMS['talk'];
 
   return (
     <Navigation>
@@ -50,6 +52,18 @@ const SidebarMenuNormal = ({ current_user }) => {
           to={item.url(username)}
         />
       )}
+      <NavigationItem
+        className={talkItem.className}
+        disabled={talkItem.disabled}
+        icon={talkItem.icon}
+        key={talkItem.title}
+        theme="2.0"
+        to={talkItem.url(username)}
+      >
+        {user_messages.get('numUnread') > 0 &&
+          <span className="aux-nav__count"> {user_messages.get('numUnread')}</span>
+        }
+      </NavigationItem>
     </Navigation>
   );
 };
