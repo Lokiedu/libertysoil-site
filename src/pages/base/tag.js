@@ -23,6 +23,7 @@ import {
   PageMain,
   PageHero,
   PageBody,
+  PageCaption,
   PageContent
 }                       from '../../components/page';
 import Header           from '../../components/header';
@@ -64,14 +65,13 @@ function getPageCaption(type, name) {
   }
 
   return (
-    <div className="page_head">
-      <h1 className="page_head__title">
+    <PageCaption
+      iconRight={<Tag size="BIG" type={type} />}
+    >
+      <h1 className="page-head__title">
         {caption}
       </h1>
-      <div className="page_head__icon">
-        <Tag size="BIG" type={type} />
-      </div>
-    </div>
+    </PageCaption>
   );
 }
 

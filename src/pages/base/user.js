@@ -33,7 +33,6 @@ import {
   PageBody,
   PageContent
 } from '../../components/page';
-import Avatar from '../../components/user/avatar';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
@@ -43,7 +42,7 @@ import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
 import User from '../../components/user';
-import { getName } from '../../utils/user';
+import { UserCaption } from '../../components/page/captions';
 
 // FIXME: These links won't hide/show properly if following/unfollowing is performed directly on the page.
 // Something is wrong with the redux state.
@@ -96,14 +95,7 @@ const BaseUserPage = (props) => {
           <PageBody>
             <Sidebar />
             <PageContent>
-              <div className="page_head">
-                <h1 className="page_head__title">
-                  {getName(user)}
-                </h1>
-                <div className="page_head__icon">
-                  <Avatar user={user} size={37} />
-                </div>
-              </div>
+              <UserCaption user={user} />
               <ProfileHeader
                 current_user={current_user}
                 editable={false}

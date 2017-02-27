@@ -17,6 +17,8 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { isString } from 'lodash';
+
 
 const Page = ({ children, className = '' }) => (
   <div className={classNames('page__container', className)}>
@@ -24,18 +26,30 @@ const Page = ({ children, className = '' }) => (
   </div>
 );
 
-const PageCaption = ({ children, icon }) => (
-  <header className="page_head">
-    <h1 className="page_head__title">
-      {children}
-    </h1>
-    {icon &&
-      <div className="page_head__icon">
-        {icon}
+const PageCaption = ({ children, iconLeft, iconRight }) => {
+  let title = children;
+  if (isString(children)) {
+    title = <h1 className="page-head__title">{children}</h1>;
+  }
+
+  return (
+    <header className="page-head">
+      {iconLeft &&
+        <div className="page-head__icon">
+          {iconLeft}
+        </div>
+      }
+      <div className="page-head__title-wrapper">
+        {title}
       </div>
-    }
-  </header>
-);
+      {iconRight &&
+        <div className="page-head__icon">
+          {iconRight}
+        </div>
+      }
+    </header>
+  );
+};
 
 const PageHero = ({ children, url }) => (
   <div className="page__hero">

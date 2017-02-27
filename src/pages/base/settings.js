@@ -42,9 +42,8 @@ import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 import SidebarAlt from '../../components/sidebarAlt';
 import PageContentLink from '../../components/page-content-link';
+import { UserCaption } from '../../components/page/captions';
 
-import Avatar from '../../components/user/avatar';
-import { getName } from '../../utils/user';
 
 class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -117,16 +116,10 @@ class BaseSettingsPage extends React.Component {
                       </div>
                     </div>
                   </div>
+                  <UserCaption user={user} />
                   <div className="layout">
+
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                      <div className="page_head">
-                        <h1 className="page_head__title">
-                          {getName(user)}
-                        </h1>
-                        <div className="page_head__icon">
-                          <Avatar user={user} size={37} />
-                        </div>
-                      </div>
                       {children}
                     </div>
                   </div>
