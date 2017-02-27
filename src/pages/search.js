@@ -24,6 +24,7 @@ import isEqual from 'lodash/isEqual';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+import { SEARCH_SORTING_TYPES } from '../consts/search';
 
 import {
   Page,
@@ -42,6 +43,7 @@ import { createSelector, currentUserSelector } from '../selectors';
 import SearchSection from '../components/search/section';
 import SearchResultFilter from '../components/filters/search-result-filter';
 import SearchPageBar from '../components/search/page-bar';
+import SortingFilter from '../components/filters/sorting-filter';
 
 const client = new ApiClient(API_HOST);
 
@@ -92,6 +94,10 @@ class SearchPage extends Component {
             <PageBody>
               <Sidebar />
               <SidebarAlt side="left">
+                <SortingFilter
+                  location={this.props.location}
+                  sortingTypes={SEARCH_SORTING_TYPES}
+                />
                 <SearchResultFilter location={this.props.location} />
               </SidebarAlt>
               <PageContent>

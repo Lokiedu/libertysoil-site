@@ -27,3 +27,8 @@ export const SEARCH_RESULTS = [
   { name: 'People', value: 'people',
     combine: { except: ['all'] } },
 ];
+
+export const SEARCH_SORTING_TYPES = [
+  { name: 'By relevance', value: '-q', isDefault: true },
+  { name: 'Newest', value: '-updated_at' }
+];
