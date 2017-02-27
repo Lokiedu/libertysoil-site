@@ -17,6 +17,7 @@
 */
 import React from 'react';
 import { Link } from 'react-router';
+import classNames from 'classnames';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../../consts/tags';
 
@@ -24,11 +25,11 @@ import ListItem from '../list-item';
 import TagIcon from '../tag-icon';
 import User from '../user';
 
-const iconProps = {
+const iconProps = (type) => ({
   big: true,
-  className: 'tag_icon-wide',
-  round: false 
-};
+  className: classNames('tag_icon-wide', 'search__result-icon--type_'.concat(type)),
+  round: false
+});
 
 export default class SearchItem extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -42,19 +43,19 @@ export default class SearchItem extends React.Component {
     switch (type) {
       case TAG_LOCATION:
       case TAG_PLANET: {
-        itemIcon = <TagIcon {...iconProps} type={TAG_LOCATION} {...props} />;
+        itemIcon = <TagIcon {...iconProps('geotag')} type={TAG_LOCATION} {...props} />;
         itemName = name;
         itemUrl = `/geo/${urlId}`;
         break;
       }
       case TAG_HASHTAG: {
-        itemIcon = <TagIcon {...iconProps} type={TAG_HASHTAG} {...props} />;
+        itemIcon = <TagIcon {...iconProps('hashtag')} type={TAG_HASHTAG} {...props} />;
         itemName = name;
         itemUrl = `/tag/${name}`;
         break;
       }
       case TAG_SCHOOL: {
-        itemIcon = <TagIcon {...iconProps} type={TAG_SCHOOL} {...props} />;
+        itemIcon = <TagIcon {...iconProps('school')} type={TAG_SCHOOL} {...props} />;
         itemName = name;
         itemUrl = `/s/${urlId}`;
         break;

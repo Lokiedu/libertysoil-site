@@ -33,7 +33,7 @@ export default class SearchSection extends React.Component {
         return items.map(post =>
           <PostBrief
             author={post.get('user')}
-            className="list_item list_item--no_space"
+            className="search__result--type_post"
             key={post.get('id')}
             post={post}
             {...props}
