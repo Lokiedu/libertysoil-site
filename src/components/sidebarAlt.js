@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
-const SidebarAlt = ({ children }) => (
-  <div className="page__sidebar page__sidebar--side_right">
+const SidebarAlt = ({ children, side }) => (
+  <div className={classNames('page__sidebar page__sidebar--type_alt', `page__sidebar--side_${side}`)}>
     {children}
   </div>
 );
@@ -26,7 +27,12 @@ const SidebarAlt = ({ children }) => (
 SidebarAlt.displayName = 'SidebarAlt';
 
 SidebarAlt.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  side: PropTypes.oneOf(['left', 'right'])
+};
+
+SidebarAlt.defaultProps = {
+  side: 'right'
 };
 
 export default SidebarAlt;

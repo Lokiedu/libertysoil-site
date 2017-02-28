@@ -91,35 +91,37 @@ class SearchPage extends Component {
 
         <Page>
           <PageMain>
-            <PageBody>
+            <PageBody className="search__page">
               <Sidebar />
-              <SidebarAlt side="left">
-                <SortingFilter
-                  location={this.props.location}
-                  sortingTypes={SEARCH_SORTING_TYPES}
-                />
-                <SearchResultFilter location={this.props.location} />
-              </SidebarAlt>
-              <PageContent>
+              <div className="search__content">
                 <SearchPageBar location={this.props.location} />
-                <div>
-                  {search.get('results')
-                    .map((items, type) =>
-                      ImmutableMap({ type, items })
-                    )
-                    .toList()
-                    .map(section =>
-                      <SearchSection
-                        current_user={current_user}
-                        items={section.get('items')}
-                        key={section.get('type')}
-                        triggers={this.triggers}
-                        type={section.get('type')}
-                      />
-                    )
-                  }
-                </div>
-              </PageContent>
+                <SidebarAlt side="left">
+                  <SortingFilter
+                    location={this.props.location}
+                    sortingTypes={SEARCH_SORTING_TYPES}
+                  />
+                  <SearchResultFilter location={this.props.location} />
+                </SidebarAlt>
+                <PageContent>
+                  <div>
+                    {search.get('results')
+                      .map((items, type) =>
+                        ImmutableMap({ type, items })
+                      )
+                      .toList()
+                      .map(section =>
+                        <SearchSection
+                          current_user={current_user}
+                          items={section.get('items')}
+                          key={section.get('type')}
+                          triggers={this.triggers}
+                          type={section.get('type')}
+                        />
+                      )
+                    }
+                  </div>
+                </PageContent>
+              </div>
             </PageBody>
           </PageMain>
         </Page>
