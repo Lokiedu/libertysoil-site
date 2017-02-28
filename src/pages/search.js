@@ -20,6 +20,8 @@ import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import isEqual from 'lodash/isEqual';
+import intersection from 'lodash/intersection';
+import clone from 'lodash/clone';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -44,6 +46,25 @@ import SearchSection from '../components/search/section';
 import SearchResultFilter from '../components/filters/search-result-filter';
 import SearchPageBar from '../components/search/page-bar';
 import SortingFilter from '../components/filters/sorting-filter';
+
+function filterSections(query = {}) {
+  const visible = ['geotags', 'hashtags', 'schools', 'posts', 'people'];
+  if (!query.show || query.show === 'all') {
+    return visible;
+  }
+
+  let queried = clone(query.show);
+  if (!Array.isArray(queried)) {
+    queried = [queried];
+  }
+
+  const index = queried.indexOf('locations');
+  if (index >= 0) {
+    queried[index] = 'geotags';
+  }
+
+  return intersection(visible, queried);
+}
 
 const client = new ApiClient(API_HOST);
 
@@ -76,8 +97,11 @@ class SearchPage extends Component {
     const {
       is_logged_in,
       current_user,
+      location,
       search
     } = this.props;
+
+    const visibleSections = filterSections(location.query);
 
     return (
       <div>
@@ -94,17 +118,20 @@ class SearchPage extends Component {
             <PageBody className="search__page">
               <Sidebar />
               <div className="search__content">
-                <SearchPageBar location={this.props.location} />
+                <SearchPageBar location={location} />
                 <SidebarAlt side="left">
                   <SortingFilter
-                    location={this.props.location}
+                    location={location}
                     sortingTypes={SEARCH_SORTING_TYPES}
                   />
-                  <SearchResultFilter location={this.props.location} />
+                  <SearchResultFilter location={location} />
                 </SidebarAlt>
                 <PageContent>
                   <div>
                     {search.get('results')
+                      .filter((_, key) =>
+                        visibleSections.find(t => key === t)
+                      )
                       .map((items, type) =>
                         ImmutableMap({ type, items })
                       )
