@@ -84,7 +84,7 @@ describe('Client test', () => {
   });
 
   it('#search works', async () => {
-    return expect(client.search('test'), 'to be rejected with', 'Search failed');
+    return expect(client.search({ q: 'test' }), 'to be rejected with', 'Search failed');
   });
 
   it('#userInfo works', async () => {
