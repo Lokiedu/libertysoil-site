@@ -118,6 +118,11 @@ class SearchPage extends Component {
       visibleSections = filterSections(location.query);
     }
 
+    let offset;
+    if (location.query.offset) {
+      offset = parseInt(location.query.offset);
+    }
+
     return (
       <div>
         <Helmet title="Search of " />
@@ -140,7 +145,7 @@ class SearchPage extends Component {
                     sortingTypes={SEARCH_SORTING_TYPES}
                   />
                   <SearchResultFilter
-                    fixedType={this.props.params.type}
+                    fixedType={params.type}
                     location={location}
                   />
                 </SidebarAlt>
@@ -148,17 +153,20 @@ class SearchPage extends Component {
                   <div>
                     {search.get('results')
                       .filter((_, key) =>
-                        visibleSections.find(t => key === t)
+                        !!visibleSections.find(t => key === t)
                       )
-                      .map((items, type) =>
-                        ImmutableMap({ type, items })
+                      .map((payload, type) =>
+                        ImmutableMap({ type, payload })
                       )
                       .toList()
                       .map(section =>
                         <SearchSection
+                          count={section.getIn(['payload', 'count'])}
                           current_user={current_user}
-                          items={section.get('items')}
+                          items={section.getIn(['payload', 'items'])}
                           key={section.get('type')}
+                          needPaging={!!params.type}
+                          offset={offset}
                           triggers={this.triggers}
                           type={section.get('type')}
                         />

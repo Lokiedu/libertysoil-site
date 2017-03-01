@@ -210,3 +210,25 @@
     }
   }
 }
+
+.search__paging {
+  margin-top: 20px;
+  margin-left: 60px;
+
+  &-item {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    & + &::before {
+      content: '|';
+      padding: 0 10px;
+    }
+  }
+}
+
+

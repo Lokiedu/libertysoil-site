@@ -32,3 +32,5 @@ export const SEARCH_SORTING_TYPES = [
   { name: 'By relevance', value: '-q', isDefault: true },
   { name: 'Newest', value: '-updated_at' }
 ];
+
+export const SEARCH_RESULTS_PER_PAGE = 20;

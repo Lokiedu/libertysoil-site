@@ -16,13 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
+import { Link } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
 
+import { SEARCH_RESULTS_PER_PAGE } from '../../consts/search';
 import { convertModelsToTags } from '../../utils/tags';
 import { PostBrief } from '../post';
 import SearchItem from './item';
+import SearchPaging from './paging';
 
 export default class SearchSection extends React.Component {
+  static defaultProps = {
+    offset: 0
+  };
+
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
   }
@@ -59,23 +66,70 @@ export default class SearchSection extends React.Component {
     }
   };
 
-  render() {
-    const { type, items, ...props } = this.props;
-    const rendered = this.renderItems(type, items, props);
+  toShowMore = location => {
+    let type;
+    if (this.props.type === 'geotags') {
+      type = 'locations';
+    } else {
+      type = this.props.type;
+    }
 
-    const length = rendered.length || rendered.size;
+    return {
+      ...location,
+      pathname: '/search/'.concat(type),
+      query: {
+        ...location.query,
+        show: undefined
+      }
+    };
+  }
+
+  render() {
+    const { count, items, offset, needPaging, type, ...props } = this.props;
+    if (!items.size) {
+      return null;
+    }
+
+    let itemsToRender;
+    if (needPaging) {
+      itemsToRender = items
+        .slice(offset, offset + SEARCH_RESULTS_PER_PAGE);
+    } else {
+      itemsToRender = items
+        .slice(offset, offset + SEARCH_RESULTS_PER_PAGE / 2);
+    }
+
+    const rendered = this.renderItems(type, itemsToRender, props);
 
     let description;
-    if (length > 1) {
-      description = `${length} ${type} found:`;
+    if (count > 1) {
+      description = `${count} ${type} found:`;
     } else {
       description = `1 ${type.slice(0, -1)} found:`;
+    }
+
+    let paging;
+    if (needPaging) {
+      paging = (
+        <SearchPaging
+          limit={count}
+          offset={offset}
+          resultsPerPage={SEARCH_RESULTS_PER_PAGE}
+        />
+      );
+    } else if (count > SEARCH_RESULTS_PER_PAGE / 2) {
+      paging = (
+        <Link className="search__paging search__paging-item" to={this.toShowMore}>
+          Show more
+        </Link>
+      );
     }
 
     return (
       <div className="search__section">
         <h3 className="search__title">{description}</h3>
         {rendered}
+        {paging}
       </div>
     );
   }

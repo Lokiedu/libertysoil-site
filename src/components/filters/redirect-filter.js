@@ -21,17 +21,22 @@ import { Link } from 'react-router';
 import { diff, merge } from './filter-link';
 
 function getNewUrl(m, query, combine, redirectTo, mixed, location) {
+  let nextQuery;
+  if (combine) {
+    nextQuery = m(combine, query, { ...location.query, ...mixed });
+  } else {
+    nextQuery = { ...location.query, ...query };
+  }
+  delete nextQuery.offset;
+
   return {
     ...location,
-    offset: undefined,
     pathname: redirectTo,
-    query: combine
-      ? m(combine, query, { ...location.query, ...mixed })
-      : { ...location.query, ...query }
+    query: nextQuery
   };
 }
 
-export default function FilterLink({ isDefault, mixedQuery, title, query, combine, redirectTo }) {
+export default function RedirectFilter({ isDefault, mixedQuery, title, query, combine, redirectTo }) {
   let className = 'aux-nav__link';
   let urlFunction = getNewUrl.bind(null, merge, query, combine, redirectTo, mixedQuery);
 
