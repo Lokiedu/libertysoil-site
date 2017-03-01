@@ -16,10 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
+import { findDOMNode } from 'react-dom';
 import { Link } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
 
 import { SEARCH_RESULTS_PER_PAGE } from '../../consts/search';
+import { offsetTop } from '../../utils/browser';
 import { convertModelsToTags } from '../../utils/tags';
 import { PostBrief } from '../post';
 import SearchItem from './item';
@@ -84,6 +86,16 @@ export default class SearchSection extends React.Component {
     };
   }
 
+  handlePageChange = () => {
+    if (window && document) {
+      const top = offsetTop(findDOMNode(this.body)) - 80;
+      const windowTop = document.documentElement.scrollTop || document.body.scrollTop;
+      if (windowTop > top) {
+        window.scrollTo(0, top);
+      }
+    }
+  };
+
   render() {
     const { count, items, offset, needPaging, type, ...props } = this.props;
     if (!items.size) {
@@ -115,18 +127,23 @@ export default class SearchSection extends React.Component {
           limit={count}
           offset={offset}
           resultsPerPage={SEARCH_RESULTS_PER_PAGE}
+          onPageChange={this.handlePageChange}
         />
       );
     } else if (count > SEARCH_RESULTS_PER_PAGE / 2) {
       paging = (
-        <Link className="search__paging search__paging-item" to={this.toShowMore}>
+        <Link
+          className="search__paging search__paging-item"
+          onClick={this.props.onSectionPageOpen}
+          to={this.toShowMore}
+        >
           Show more
         </Link>
       );
     }
 
     return (
-      <div className="search__section">
+      <div className="search__section" ref={c => this.body = c}>
         <h3 className="search__title">{description}</h3>
         {rendered}
         {paging}

@@ -74,12 +74,20 @@ export default class SearchPaging extends React.Component {
     return (
       <div className="search__paging">
         {offset !== 0 &&
-          <Link className="search__paging-item" to={this.prev}>
+          <Link
+            className="search__paging-item"
+            onClick={this.props.onPageChange}
+            to={this.prev}
+          >
             {prevDescription}
           </Link>
         }
         {(!limit || nextOffset < limit) &&
-          <Link className="search__paging-item" to={this.next}>
+          <Link
+            className="search__paging-item"
+            onClick={this.props.onPageChange}
+            to={this.next}
+          >
             {nextDescription}
           </Link>
         }

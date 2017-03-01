@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
@@ -27,6 +28,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { SEARCH_SORTING_TYPES } from '../consts/search';
+import { offsetTop } from '../utils/browser';
 
 import {
   Page,
@@ -102,6 +104,16 @@ class SearchPage extends Component {
     }
   }
 
+  handleSectionPageOpen = () => {
+    if (window && document) {
+      const top = offsetTop(findDOMNode(this.searchResults)) - 50;
+      const windowTop = document.documentElement.scrollTop || document.body.scrollTop;
+      if (windowTop > top) {
+        window.scrollTo(0, top);
+      }
+    }
+  };
+
   render() {
     const {
       is_logged_in,
@@ -149,30 +161,29 @@ class SearchPage extends Component {
                     location={location}
                   />
                 </SidebarAlt>
-                <PageContent>
-                  <div>
-                    {search.get('results')
-                      .filter((_, key) =>
-                        !!visibleSections.find(t => key === t)
-                      )
-                      .map((payload, type) =>
-                        ImmutableMap({ type, payload })
-                      )
-                      .toList()
-                      .map(section =>
-                        <SearchSection
-                          count={section.getIn(['payload', 'count'])}
-                          current_user={current_user}
-                          items={section.getIn(['payload', 'items'])}
-                          key={section.get('type')}
-                          needPaging={!!params.type}
-                          offset={offset}
-                          triggers={this.triggers}
-                          type={section.get('type')}
-                        />
-                      )
-                    }
-                  </div>
+                <PageContent ref={c => this.searchResults = c}>
+                  {search.get('results')
+                    .filter((_, key) =>
+                      !!visibleSections.find(t => key === t)
+                    )
+                    .map((payload, type) =>
+                      ImmutableMap({ type, payload })
+                    )
+                    .toList()
+                    .map(section =>
+                      <SearchSection
+                        count={section.getIn(['payload', 'count'])}
+                        current_user={current_user}
+                        items={section.getIn(['payload', 'items'])}
+                        key={section.get('type')}
+                        needPaging={!!params.type}
+                        offset={offset}
+                        triggers={this.triggers}
+                        type={section.get('type')}
+                        onSectionPageOpen={this.handleSectionPageOpen}
+                      />
+                    )
+                  }
                 </PageContent>
               </div>
             </PageBody>
