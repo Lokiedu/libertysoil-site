@@ -19,3 +19,4 @@ export { default as ShortTextPost } from './short-text-post';
 export { default as ShortPost } from './short-post';
 export { default as PostWrapper } from './wrapper';
 export { default as EditPost } from './edit-short-post';  // ToDo: export meta-component instead
+export { default as PostBrief } from './brief';

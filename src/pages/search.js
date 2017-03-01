@@ -16,11 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
-import { take } from 'lodash';
 
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import {
@@ -35,12 +36,9 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
-import TagIcon from '../components/tag-icon';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
-import ListItem from '../components/list-item';
-
+import SearchSection from '../components/search/section';
 
 class SearchPage extends Component {
   static displayName = 'SearchPage';
@@ -62,18 +60,8 @@ class SearchPage extends Component {
       search
     } = this.props;
 
-    const search_response_object = search.toJSON();
-
-    let tags = [];
-    for (const section of Object.keys(search_response_object.results)) {
-      tags = tags.concat(
-        search_response_object.results[section].map(tag =>
-          ({ tagType: section, ...tag })
-        )
-      );
-    }
-
-    tags = take(tags, 100);
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, this.props.dispatch);
 
     return (
       <div>
@@ -92,47 +80,21 @@ class SearchPage extends Component {
               <PageContent>
                 <PageCaption>Search</PageCaption>
                 <div>
-                  {tags.map((tag, i) => {
-                    let icon, name, url;
-
-                    switch (tag.tagType) {
-                      case 'geotags': {
-                        icon = <TagIcon big type={TAG_LOCATION} />;
-                        name = tag.name;
-                        url = `/geo/${tag.url_name}`;
-                        break;
-                      }
-                      case 'hashtags': {
-                        icon = <TagIcon big type={TAG_HASHTAG} />;
-                        name = tag.name;
-                        url = `/tag/${tag.name}`;
-                        break;
-                      }
-                      case 'schools': {
-                        icon = <TagIcon big type={TAG_SCHOOL} />;
-                        name = tag.name;
-                        url = `/s/${tag.url_name}`;
-                        break;
-                      }
-                      case 'posts': {
-                        icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
-                        name = tag.more.pageTitle;
-                        url = `/post/${tag.id}`;
-                        break;
-                      }
-                      default:
-                        console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
-                        return null;
-                    }
-
-                    return (
-                      <Link key={i} to={url}>
-                        <ListItem icon={icon}>
-                          {name}
-                        </ListItem>
-                      </Link>
-                    );
-                  })}
+                  {search.get('results')
+                    .map((items, type) =>
+                      ImmutableMap({ type, items })
+                    )
+                    .toList()
+                    .map(section =>
+                      <SearchSection
+                        current_user={current_user}
+                        items={section.get('items')}
+                        key={section.get('type')}
+                        triggers={triggers}
+                        type={section.get('type')}
+                      />
+                    )
+                  }
                 </div>
               </PageContent>
             </PageBody>
