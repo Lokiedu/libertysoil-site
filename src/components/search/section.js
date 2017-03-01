@@ -20,7 +20,10 @@ import { findDOMNode } from 'react-dom';
 import { Link } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
 
-import { SEARCH_RESULTS_PER_PAGE } from '../../consts/search';
+import {
+  SEARCH_RESULTS_PER_PAGE,
+  SEARCH_SECTIONS_COUNTABILITY
+} from '../../consts/search';
 import { offsetTop } from '../../utils/browser';
 import { convertModelsToTags } from '../../utils/tags';
 import { PostBrief } from '../post';
@@ -115,9 +118,9 @@ export default class SearchSection extends React.Component {
 
     let description;
     if (count > 1) {
-      description = `${count} ${type} found:`;
+      description = `${count} ${SEARCH_SECTIONS_COUNTABILITY[type][1]} found:`;
     } else {
-      description = `1 ${type.slice(0, -1)} found:`;
+      description = `1 ${SEARCH_SECTIONS_COUNTABILITY[type][0]} found:`;
     }
 
     let paging;

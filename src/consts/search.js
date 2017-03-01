@@ -34,3 +34,13 @@ export const SEARCH_SORTING_TYPES = [
 ];
 
 export const SEARCH_RESULTS_PER_PAGE = 20;
+
+export const SEARCH_SECTIONS_COUNTABILITY = {
+  comments: ['comment', 'comments'],
+  geotags: ['geotag', 'geotags'],
+  locations: ['location', 'locations'],
+  hashtags: ['hashtag', 'hashtags'],
+  people: ['person', 'people'],
+  posts: ['post', 'posts'],
+  schools: ['school', 'schools']
+};
