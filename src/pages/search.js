@@ -78,7 +78,12 @@ class SearchPage extends Component {
 
   static async fetchData(router, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.search(router.location.query.q);
+
+    const query = router.location.query;
+    if (router.type) {
+      query.show = router.type;
+    }
+    await triggers.search(query);
   }
 
   constructor(...props) {
@@ -87,7 +92,11 @@ class SearchPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const nextQuery = nextProps.location.query;
+    const nextQuery = clone(nextProps.location.query);
+    if (nextProps.params.type) {
+      nextQuery.show = nextProps.params.type;
+    }
+
     if (!isEqual(this.props.location.query, nextQuery)) {
       this.triggers.search(nextQuery);
     }
@@ -98,10 +107,16 @@ class SearchPage extends Component {
       is_logged_in,
       current_user,
       location,
+      params,
       search
     } = this.props;
 
-    const visibleSections = filterSections(location.query);
+    let visibleSections;
+    if (params.type) {
+      visibleSections = filterSections({ show: params.type });
+    } else {
+      visibleSections = filterSections(location.query);
+    }
 
     return (
       <div>
@@ -124,7 +139,10 @@ class SearchPage extends Component {
                     location={location}
                     sortingTypes={SEARCH_SORTING_TYPES}
                   />
-                  <SearchResultFilter location={location} />
+                  <SearchResultFilter
+                    fixedType={this.props.params.type}
+                    location={location}
+                  />
                 </SidebarAlt>
                 <PageContent>
                   <div>

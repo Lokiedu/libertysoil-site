@@ -19,18 +19,39 @@ import React from 'react';
 import { SEARCH_RESULTS } from '../../consts/search';
 
 import FilterLink from './filter-link';
+import RedirectFilter from './redirect-filter';
 
-export default function SearchResultFilter({ location }) {
-  const types = SEARCH_RESULTS.map(type => (
-    <FilterLink
-      isDefault={type.isDefault}
-      key={type.value}
-      location={location}
-      query={{ show: type.value }}
-      title={type.name}
-      combine={type.combine}
-    />
-  ));
+export default function SearchResultFilter({ location, fixedType }) {
+  let types;
+  if (fixedType) {
+    const mixedQuery = { show: fixedType };
+    types = SEARCH_RESULTS.map(type => {
+      const value = type.value;
+      return (
+        <RedirectFilter
+          isDefault={value === fixedType}
+          key={value}
+          location={location}
+          mixedQuery={mixedQuery}
+          redirectTo="/search"
+          query={{ show: value }}
+          title={type.name}
+          combine={type.combine}
+        />
+      );
+    });
+  } else {
+    types = SEARCH_RESULTS.map(type => (
+      <FilterLink
+        isDefault={type.isDefault}
+        key={type.value}
+        location={location}
+        query={{ show: type.value }}
+        title={type.name}
+        combine={type.combine}
+      />
+    ));
+  }
 
   return (
     <div className="aux-nav">

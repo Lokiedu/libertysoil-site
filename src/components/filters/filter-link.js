@@ -19,7 +19,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { difference, intersection, mergeWith, isNil, uniq } from 'lodash';
 
-function merge(combine, query, other) {
+export function merge(combine, query, other) {
   const { except = [] } = combine;
 
   return mergeWith(query, other, (a, b) => {
@@ -38,7 +38,7 @@ function merge(combine, query, other) {
 
 // here and below:
 // early declarations, for-loops - performance reasons
-function diff(_, exclude, inspect) {
+export function diff(_, exclude, inspect) {
   const result = {};
   let inspectProp, excludeProp, keys, l, i, k;
   for (i = 0, keys = Object.keys(inspect), l = keys.length; i < l; ++i) {

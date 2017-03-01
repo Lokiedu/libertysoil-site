@@ -565,7 +565,7 @@ export default class ApiClient
     return await response.json();
   }
 
-  async search(query: string): Promise<{
+  async search(query: Object): Promise<{
     comments?: Array<Object>,
     geotags?: Array<Geotag>,
     hashtags?: Array<Hashtag>,
