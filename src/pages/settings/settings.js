@@ -23,8 +23,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../../prop-types/users';
 
-import BasicInfoForm from '../../components/settings/basic-info-form';
-
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { addUser } from '../../actions/users';
@@ -73,19 +71,9 @@ class SettingsPage extends React.Component {
   handleSave = async () => {
     this.setState({ processing: true });
 
-    const formValues = this.form.formProps().values();
-
     let success;
     try {
-      success = await this.triggers.updateUserInfo({
-        more: {
-          bio: formValues.bio,
-          summary: formValues.summary
-        }
-      });
-
-      // Save pictures
-      success = success && await this.head.saveAll();
+      success = await this.head.saveAll();
     } catch (e) {
       success = false;
       this.handleError(e.message);
@@ -97,7 +85,6 @@ class SettingsPage extends React.Component {
   };
 
   handleFormChange = () => {
-    // FIXME: react-inform calls onChange upon initialization.
     this.setState({ unsaved: true });
   }
 
@@ -130,11 +117,6 @@ class SettingsPage extends React.Component {
           ref={c => this.head = c}
           triggers={this.triggers}
           user={current_user.get('user')}
-        />
-        <BasicInfoForm
-          current_user={current_user}
-          ref={c => this.form = c}
-          onChange={this.handleFormChange}
         />
         {this.state.unsaved &&
           <div className="paper__page layout__raw_grid layout__raw_grid--reverse tools_page__item--flex">
