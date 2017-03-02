@@ -74,15 +74,13 @@ class SettingsPage extends React.Component {
     this.setState({ processing: true });
 
     const formValues = this.form.formProps().values();
-    const roles = this.roles.getRoles();
 
     let success;
     try {
       success = await this.triggers.updateUserInfo({
         more: {
           bio: formValues.bio,
-          summary: formValues.summary,
-          roles
+          summary: formValues.summary
         }
       });
 
