@@ -144,6 +144,8 @@ function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flex
   }
 }
 
+// TODO: Should we get rid of the base tag page at all? There aren't many similarities between the tag pages now.
+
 export default class BaseTagPage extends React.Component {
   static displayName = 'BaseTagPage';
 
@@ -239,7 +241,8 @@ export default class BaseTagPage extends React.Component {
       type,
       tag,
       postsAmount,
-      editable
+      editable,
+      sidebarAlt
     } = this.props;
 
     const name = tag.get('name') || tag.get('url_name');
@@ -325,11 +328,12 @@ export default class BaseTagPage extends React.Component {
                   {this.props.children}
                 </div>
               </PageContent>
-              {tagsAttached &&
-                <SidebarAlt>
-                  {addedTags}
-                </SidebarAlt>
-              }
+              <SidebarAlt>
+                {tagsAttached &&
+                  addedTags
+                }
+                {sidebarAlt}
+              </SidebarAlt>
             </PageBody>
           </PageMain>
         </Page>
