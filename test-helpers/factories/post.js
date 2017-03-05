@@ -17,9 +17,12 @@
 */
 import uuid from 'uuid';
 import { Factory } from 'rosie';
-import { bookshelf } from '../db';
 import faker from 'faker';
 
+import { bookshelf } from '../db';
+
+
+const Post = bookshelf.model('Post');
 
 const PostFactory = new Factory()
       .attr('id', () => uuid.v4())
@@ -28,17 +31,7 @@ const PostFactory = new Factory()
 
 export default PostFactory;
 
-
-const Post = bookshelf.model('Post');
-
-export async function createPost(author) {
-  const attrs = PostFactory.build();
-
-  return await new Post({
-    id: attrs.id,
-    type: attrs.type,
-    user_id: author.get('id'),
-    text: attrs.text
-  })
+export async function createPost(attrs = {}) {
+  return await new Post(PostFactory.build(attrs))
     .save(null, { method: 'insert' });
 }

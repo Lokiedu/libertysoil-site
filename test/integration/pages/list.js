@@ -85,7 +85,7 @@ describe('ListPage', () => {
 
       it('user can open / and see 1 post there', async () => {
         const posts = [];
-        posts.push(await createPost(user));
+        posts.push(await createPost({ user_id: user.id }));
         const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
         const document = jsdom(context.httpResponse.body);
@@ -99,7 +99,7 @@ describe('ListPage', () => {
       it('Load more button is visible', async () => {
         const posts = [];
         for (let i = 0; i < LOAD_MORE_LIMIT + 1; ++i) { // create one more posts than limit on list page
-          posts.push(await createPost(user));
+          posts.push(await createPost({ user_id: user.id }));
         }
         const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
