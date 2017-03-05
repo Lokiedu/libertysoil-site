@@ -853,4 +853,22 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   }
+
+  loadContinentNav = async (continentId) => {
+    try {
+      const [continents, countries] = await Promise.all([
+        this.client.getGeotags({ type: 'Continent', sort: 'url_name' }),
+        this.client.getGeotags({
+          continent_id: continentId,
+          limit: 3,
+          sort: '-hierarchy_post_count',
+          type: 'Country'
+        })
+      ]);
+
+      this.dispatch(a.geotags.setContinentNav(continents, countries));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
 }

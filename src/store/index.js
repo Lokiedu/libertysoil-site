@@ -54,6 +54,7 @@ import quotes from './quotes';
 import search from './search';
 import * as tools from './tools';
 import * as user_messages from './user_messages';
+import * as continent_nav from './continent_nav';
 
 
 export const theReducer = combineReducers(i.Map({
@@ -89,6 +90,7 @@ export const theReducer = combineReducers(i.Map({
   comments,
   quotes,
   search,
+  continent_nav: continent_nav.reducer,
   tools: tools.reducer,
   user_messages: user_messages.reducer
 }));
@@ -146,7 +148,8 @@ const initialState = i.Map({
     })
   }),
   tools: tools.initialState,
-  user_messages: user_messages.initialState
+  user_messages: user_messages.initialState,
+  continent_nav: continent_nav.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
