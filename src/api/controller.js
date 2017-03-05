@@ -2617,6 +2617,28 @@ export default class ApiController {
     }
   };
 
+  getGeotags = async (ctx) => {
+    const Geotag = this.bookshelf.model('Geotag');
+
+    const ALLOWED_ATTRIBUTE_QUERIES = [
+      'type',
+      'country_code', 'continent_code',
+      'continent_id', 'country_id', 'admin1_id',
+      'name', 'url_name'
+    ];
+
+    const geotags = await Geotag.collection()
+      .query(qb => {
+        this.applyLimitQuery(qb, ctx.query, 10);
+        this.applyOffsetQuery(qb, ctx.query, 0);
+        this.applySortQuery(qb, ctx.query, 'url_name');
+        qb.where(_.pick(ctx.query, ALLOWED_ATTRIBUTE_QUERIES));
+      })
+      .fetch();
+
+    ctx.body = geotags;
+  };
+
   getHashtag = async (ctx) => {
     const Hashtag = this.bookshelf.model('Hashtag');
 

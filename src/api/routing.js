@@ -129,6 +129,7 @@ export function initApi(bookshelf, sphinx) {
   api.head('/geotag/:name', controller.checkGeotagExists);
   api.get('/geotag/:url_name', controller.getGeotag);
   api.post('/geotag/:id', controller.updateGeotag);
+  api.get('/geotags', controller.getGeotags);
   api.get('/geotags/search/:query', controller.searchGeotags);
   api.post('/geotag/:url_name/follow', controller.followGeotag);
   api.post('/geotag/:url_name/unfollow', controller.unfollowGeotag);

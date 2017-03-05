@@ -645,6 +645,11 @@ export default class ApiClient
     return await response.json();
   }
 
+  async getGeotags(query: Object = {}): Promise<Array<Geotag>> {
+    const response = await this.get(`/api/v1/geotags`, query);
+    return await response.json();
+  }
+
   async getHashtag(name: UrlNode): Promise<Hashtag> {
     const response = await this.get(`/api/v1/tag/${name}`);
     return await response.json();
