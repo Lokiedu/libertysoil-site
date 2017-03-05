@@ -3389,22 +3389,26 @@ export default class ApiController {
 
   /**
    * Sets 'order by' for the {@link qb} depending on the 'sort' query parameter.
-   * Syntax: `?sort=column` for ASC or `?sort=-column` for DESC.
-   * Doesn't support multiple columns at this point.
+   * Syntax: `?sort=column1,-column2,column3`
    * @param qb Knex query builder.
    * @param {Object} query An object containing query parameters.
    */
   applySortQuery(qb, query, defaultValue = null) {
     if ('sort' in query || defaultValue) {
-      let column = query.sort || defaultValue;
-      let order = 'ASC';
+      const columns = (query.sort || defaultValue).split(',');
 
-      if (column[0] == '-') {
-        column = column.substring(1);
-        order = 'DESC';
-      }
+      const queryString = columns.map(column => {
+        let order = 'ASC';
 
-      qb.orderBy(column, order);
+        if (column[0] == '-') {
+          column = column.substring(1);
+          order = 'DESC';
+        }
+
+        return `${column} ${order}`;
+      }).join(', ');
+
+      qb.orderByRaw(queryString);
     }
   }
 
