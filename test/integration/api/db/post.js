@@ -16,36 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
-/* global $dbConfig */
 import expect from '../../../../test-helpers/expect';
-import GeotagFactory from '../../../../test-helpers/factories/geotag';
-import PostFactory from '../../../../test-helpers/factories/post';
-import SchoolFactory from '../../../../test-helpers/factories/school';
-import HashtagFactory from '../../../../test-helpers/factories/hashtag';
-import initBookshelf from '../../../../src/api/db';
+import { createUser } from '../../../../test-helpers/factories/user';
+import { createGeotag } from '../../../../test-helpers/factories/geotag';
+import { createPost } from '../../../../test-helpers/factories/post';
+import { createSchool } from '../../../../test-helpers/factories/school';
+import { createHashtag } from '../../../../test-helpers/factories/hashtag';
 
-
-const bookshelf = initBookshelf($dbConfig);
-const Geotag = bookshelf.model('Geotag');
-const Post = bookshelf.model('Post');
-const School = bookshelf.model('School');
-const Hashtag = bookshelf.model('Hashtag');
 
 describe('Post', () => {
-  let post, school;
+  let post, school, user;
 
   before(async () => {
-    post = await new Post(PostFactory.build({})).save(null, {method: 'insert'});
-    school = await new School(SchoolFactory.build({updated_at: null})).save(null, {method: 'insert'});
+    user = await createUser();
+    post = await createPost({ user_id: user.id });
+    school = await createSchool({ updated_at: null });
   });
 
   after(async () => {
     await post.destroy();
     await school.destroy();
+    await user.destroy();
   });
 
   it('attachSchool updates school updated_at field', async () => {
-    await school.refresh(); // refrsesh from database
+    await school.refresh();
     expect(school.get('updated_at'), 'to be null');
     await post.attachSchools(school.get('name'));
 
@@ -54,12 +49,25 @@ describe('Post', () => {
   });
 
   describe('geotags', () => {
-    let geotags = [];
-    let geotagIds = [];
+    const geotags = [];
+    const geotagIds = [];
+    let continent, country, city;
+
 
     before(async () => {
+      continent = await createGeotag({ type: 'Continent' });
+      country = await createGeotag({
+        type: 'Country',
+        continent_id: continent.id
+      });
+      city = await createGeotag({
+        type: 'City',
+        continent_id: continent.id,
+        country_id: country.id
+      });
+
       for (let i = 0; i < 2; ++i) {
-        let geotag = await new Geotag(GeotagFactory.build()).save(null, { method: 'insert' });
+        const geotag = await createGeotag();
         await geotag.refresh();
         geotags.push(geotag);
         geotagIds.push(geotag.id);
@@ -67,16 +75,21 @@ describe('Post', () => {
     });
 
     after(async () => {
-      for (let geotag of geotags) {
+      for (const geotag of geotags) {
         await geotag.destroy();
       }
+
+      await city.destroy();
+      await country.destroy();
+      await continent.destroy();
     });
 
     afterEach(async () => {
-      await post.geotags().detach(geotagIds);
+      const allGeotags = geotags.concat(continent, country, city);
+      await post.geotags().detach(allGeotags.map(t => t.id));
 
-      for (let geotag of geotags) {
-        await geotag.save({ post_count: 0 });
+      for (const geotag of allGeotags) {
+        await geotag.save({ post_count: 0, hierarchy_post_count: 0 });
       }
     });
 
@@ -87,6 +100,21 @@ describe('Post', () => {
         await post.attachGeotags(geotagIds);
         await geotags[0].refresh();
         expect(geotags[0].get('post_count'), 'to equal', 1);
+      });
+
+      it('increments hierarchy_post_count for all parents', async () => {
+        expect(continent.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+        expect(country.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+        expect(city.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+
+        await post.attachGeotags([city.id]);
+
+        await continent.refresh();
+        expect(continent.attributes, 'to satisfy', { hierarchy_post_count: 1 });
+        await country.refresh();
+        expect(country.attributes, 'to satisfy', { hierarchy_post_count: 1 });
+        await city.refresh();
+        expect(city.attributes, 'to satisfy', { hierarchy_post_count: 1 });
       });
     });
 
@@ -100,21 +128,42 @@ describe('Post', () => {
         await geotags[0].refresh();
         expect(geotags[0].get('post_count'), 'to equal', 0);
       });
+
+
+      it('decrements hierarchy_post_count for all parents', async () => {
+        await post.attachGeotags([city.id]);
+
+        await continent.refresh();
+        expect(continent.attributes, 'to satisfy', { hierarchy_post_count: 1 });
+        await country.refresh();
+        expect(country.attributes, 'to satisfy', { hierarchy_post_count: 1 });
+        await city.refresh();
+        expect(city.attributes, 'to satisfy', { hierarchy_post_count: 1 });
+
+        await post.detachGeotags([city.id]);
+
+        await continent.refresh();
+        expect(continent.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+        await country.refresh();
+        expect(country.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+        await city.refresh();
+        expect(city.attributes, 'to satisfy', { hierarchy_post_count: 0 });
+      });
     });
 
     describe('#updateGeotags', () => {
       it('sets correct post_count', async () => {
         await post.updateGeotags(geotagIds);
 
-        for (let geotag of geotags) {
+        for (const geotag of geotags) {
           await geotag.refresh();
           expect(geotag.get('post_count'), 'to equal', 1);
         }
 
-        let newGeotag = await new Geotag(GeotagFactory.build()).save(null, { method: 'insert' });
+        const newGeotag = await createGeotag();
         await post.updateGeotags([newGeotag.id]);
 
-        for (let geotag of geotags) {
+        for (const geotag of geotags) {
           await geotag.refresh();
           expect(geotag.get('post_count'), 'to equal', 0);
         }
@@ -128,12 +177,12 @@ describe('Post', () => {
   });
 
   describe('schools', () => {
-    let schools = [];
-    let schoolNames = [];
+    const schools = [];
+    const schoolNames = [];
 
     before(async () => {
       for (let i = 0; i < 2; ++i) {
-        let school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
+        const school = await createSchool();
         await school.refresh();
         schools.push(school);
         schoolNames.push(school.get('name'));
@@ -141,7 +190,7 @@ describe('Post', () => {
     });
 
     after(async () => {
-      for (let school of schools) {
+      for (const school of schools) {
         await school.destroy();
       }
     });
@@ -149,7 +198,7 @@ describe('Post', () => {
     afterEach(async () => {
       await post.schools().detach(schools.map(school => school.id));
 
-      for (let school of schools) {
+      for (const school of schools) {
         await school.save({ post_count: 0 });
       }
     });
@@ -180,15 +229,15 @@ describe('Post', () => {
       it('sets correct post_count', async () => {
         await post.updateSchools(schoolNames);
 
-        for (let school of schools) {
+        for (const school of schools) {
           await school.refresh();
           expect(school.get('post_count'), 'to equal', 1);
         }
 
-        let newSchool = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
+        const newSchool = await createSchool();
         await post.updateSchools([newSchool.get('name')]);
 
-        for (let school of schools) {
+        for (const school of schools) {
           await school.refresh();
           expect(school.get('post_count'), 'to equal', 0);
         }
@@ -202,12 +251,12 @@ describe('Post', () => {
   });
 
   describe('hashtags', () => {
-    let hashtags = [];
-    let hashtagNames = [];
+    const hashtags = [];
+    const hashtagNames = [];
 
     before(async () => {
       for (let i = 0; i < 2; ++i) {
-        let hashtag = await new Hashtag(HashtagFactory.build()).save(null, { method: 'insert' });
+        const hashtag = await createHashtag();
         await hashtag.refresh();
         hashtags.push(hashtag);
         hashtagNames.push(hashtag.get('name'));
@@ -215,7 +264,7 @@ describe('Post', () => {
     });
 
     after(async () => {
-      for (let hashtag of hashtags) {
+      for (const hashtag of hashtags) {
         await hashtag.destroy();
       }
     });
@@ -223,7 +272,7 @@ describe('Post', () => {
     afterEach(async () => {
       await post.hashtags().detach(hashtags.map(hashtag => hashtag.id));
 
-      for (let hashtag of hashtags) {
+      for (const hashtag of hashtags) {
         await hashtag.save({ post_count: 0 });
       }
     });
@@ -254,15 +303,15 @@ describe('Post', () => {
       it('sets correct post_count', async () => {
         await post.updateHashtags(hashtagNames);
 
-        for (let hashtag of hashtags) {
+        for (const hashtag of hashtags) {
           await hashtag.refresh();
           expect(hashtag.get('post_count'), 'to equal', 1);
         }
 
-        let newHashtag = await new Hashtag(HashtagFactory.build()).save(null, { method: 'insert' });
+        const newHashtag = await createHashtag();
         await post.updateHashtags([newHashtag.get('name')]);
 
-        for (let hashtag of hashtags) {
+        for (const hashtag of hashtags) {
           await hashtag.refresh();
           expect(hashtag.get('post_count'), 'to equal', 0);
         }
