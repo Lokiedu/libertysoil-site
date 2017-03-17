@@ -95,8 +95,8 @@ const UserMessage = {
 };
 
 const ProfilePost = {
-  text: ['required', 'string', 'minLength:200'],
-  html: ['string', 'minLength:200'],
+  text: ['string', 'maxLength:200', 'required'],
+  html: ['string'],
   type: [
     'required',
     val => {

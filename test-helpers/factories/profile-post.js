@@ -6,7 +6,7 @@ import { bookshelf } from '../db';
 
 const ProfilePostFactory = new Factory()
   .attr('type', 'text')
-  .attr('text', () => faker.lorem.paragraphs(10));
+  .attr('text', () => faker.lorem.sentence());
 
 export default ProfilePostFactory;
 
