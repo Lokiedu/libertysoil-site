@@ -630,7 +630,7 @@ export function initBookshelfFromKnex(knex) {
       this.on('saving', this.validate.bind(this));
       this.on('saving', this.renderMarkdown.bind(this));
     },
-    renderMarkdown(model) {
+    renderMarkdown(model = this) {
       if (_.isString(model.get('text'))) {
         const html = postMarkdown.render(model.get('text'));
         model.set('html', html);

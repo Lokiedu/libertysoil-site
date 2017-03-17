@@ -3403,8 +3403,11 @@ export default class ApiController {
       const post = await new ProfilePost()
         .where({ id: ctx.params.id, user_id: ctx.session.user })
         .fetch({ require: true });
-      await post.save(_.pick(ctx.request.body, ['text', 'type', 'more']), { patch: true });
 
+      post.set(_.pick(ctx.request.body, ['text', 'type', 'more']));
+      post.renderMarkdown();
+
+      await post.save(null, { method: 'update' });
       ctx.body = await post.refresh();
     } catch (e) {
       this.processError(ctx, e);
