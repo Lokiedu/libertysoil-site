@@ -30,10 +30,8 @@ describe('ProfilePost', () => {
     user = await createUser();
     sessionId = await login(user.get('username'), user.get('password'));
 
-    profilePosts.push(
-      await createProfilePost(user.id),
-      await createProfilePost(user.id)
-    );
+    profilePosts.unshift(await createProfilePost(user.id));
+    profilePosts.unshift(await createProfilePost(user.id));
   });
 
   after(async () => {

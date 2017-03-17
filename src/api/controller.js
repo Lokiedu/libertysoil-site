@@ -3406,6 +3406,7 @@ export default class ApiController {
 
       post.set(_.pick(ctx.request.body, ['text', 'type', 'more']));
       post.renderMarkdown();
+      post.set('updated_at', new Date().toJSON());
 
       await post.save(null, { method: 'update' });
       ctx.body = await post.refresh();
