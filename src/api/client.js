@@ -710,8 +710,8 @@ export default class ApiClient
     return await response.json();
   }
 
-  async profilePosts(username: string): Promise<Array<ProfilePost>> {
-    const response = await this.get(`/api/v1/user/${username}/profile-posts`);
+  async profilePosts(username: string, offset: Integer = 0, limit: Integer = 10): Promise<Array<ProfilePost>> {
+    const response = await this.get(`/api/v1/user/${username}/profile-posts?offset=${offset}&limit=${limit}`);
     return await response.json();
   }
 

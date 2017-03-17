@@ -39,15 +39,67 @@ describe('ProfilePost', () => {
   });
 
   describe('GET /api/v1/user/:username/profile-posts', () => {
-    it(`returns all user's profile posts`, async () => {
-      await expect(
-        {
-          url: `/api/v1/user/${user.get('username')}/profile-posts`,
-          method: 'GET'
-        },
-        'body to satisfy',
-        profilePosts.map(p => ({ id: p.id }))
-      );
+    it(`returns specified number of user's profile posts (10 by default)`, () => {
+      return Promise.all([
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          profilePosts.map(p => ({ id: p.id }))
+        ),
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts?limit=1`,
+            method: 'GET'
+          },
+          'to have body array length', 1
+        ),
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts?limit=1`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: profilePosts[0].id }]
+        )
+      ]);
+    });
+
+    it(`returns user's profile posts with offset (0 by default)`, () => {
+      return Promise.all([
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          profilePosts.map(p => ({ id: p.id }))
+        ),
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts?offset=1`,
+            method: 'GET'
+          },
+          'to have body array length', 1
+        ),
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts?offset=1`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: profilePosts[1].id }]
+        ),
+        expect(
+          {
+            url: `/api/v1/user/${user.get('username')}/profile-posts?offset=2`,
+            method: 'GET'
+          },
+          'to have body array length', 0
+        )
+      ]);
     });
   });
 

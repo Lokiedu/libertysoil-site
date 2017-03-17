@@ -3347,9 +3347,13 @@ export default class ApiController {
 
     try {
       const user = await new User({ username: ctx.params.username }).fetch({ require: true });
+      const offset = ('offset' in ctx.query) ? parseInt(ctx.query.offset, 10) : 0;
+      const limit = ('limit' in ctx.query) ? parseInt(ctx.query.limit, 10) : 10;
       const posts = await user.profile_posts()
         .query(qb => {
           qb
+            .offset(offset)
+            .limit(limit)
             .orderBy('updated_at', 'desc');
         }).fetch();
 
