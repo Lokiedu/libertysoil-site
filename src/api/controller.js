@@ -3347,7 +3347,11 @@ export default class ApiController {
 
     try {
       const user = await new User({ username: ctx.params.username }).fetch({ require: true });
-      const posts = await user.profile_posts().fetch();
+      const posts = await user.profile_posts()
+        .query(qb => {
+          qb
+            .orderBy('updated_at', 'desc');
+        }).fetch();
 
       ctx.body = posts;
     } catch (e) {
