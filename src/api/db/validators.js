@@ -63,7 +63,9 @@ const User = {
       first_login: ['boolean'],
       avatar: ['plainObject'],
       head_pic: ['plainObject'],
-      mute_all_posts: ['boolean']
+      mute_all_posts: ['boolean'],
+      firstName: ['string'],
+      lastName: ['string']
     }
   }
 };
