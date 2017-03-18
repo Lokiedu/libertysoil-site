@@ -19,12 +19,30 @@ import React, { Component, PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import ga from 'react-google-analytics';
 import { keys, omit, reduce } from 'lodash';
+import debounce from 'debounce-promise';
 import zxcvbn from 'zxcvbn';
 
 import MESSAGE_TYPES from '../consts/messageTypeConstants';
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import Message from './message';
+
+const client = new ApiClient(API_HOST);
+
+function debounceCached(f, timeout = 250) {
+  // eslint-disable-next-line no-var
+  var cache = {};
+  return debounce(async function (s) {
+    if (cache[s] === undefined) {
+      cache[s] = await f(s);
+    }
+    return cache[s];
+  }, timeout);
+}
+
+const getAvailableUsername = debounceCached(async (username) =>
+  await client.getAvailableUsername(username)
+);
 
 class SuccessContent extends Component {
   clickHandler = (event) => {
@@ -78,8 +96,8 @@ export class UnwrappedRegister extends React.Component {
     registration_success: PropTypes.bool
   };
 
-  constructor() {
-    super();
+  constructor(...args) {
+    super(...args);
 
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
@@ -151,11 +169,6 @@ export class UnwrappedRegister extends React.Component {
     );
   };
 
-  getAvailableUsername = async (username) => {
-    const client = new ApiClient(API_HOST);
-    return await client.getAvailableUsername(username);
-  };
-
   handleNameChange = async (event) => {
     const field = event.target;
     const attr = field.getAttribute('name');
@@ -176,7 +189,7 @@ export class UnwrappedRegister extends React.Component {
 
     result = result.trim();
     if (result) {
-      result = await this.getAvailableUsername(result);
+      result = await getAvailableUsername(result);
     }
     this.changeUsername(result);
   };
@@ -345,15 +358,13 @@ export class UnwrappedRegister extends React.Component {
   }
 }
 
-const checkEmailNotTaken = (email) => {
-  const client = new ApiClient(API_HOST);
-  return client.checkEmailTaken(email).then(taken => !taken);
-};
+const checkEmailNotTaken = debounceCached(email =>
+  client.checkEmailTaken(email).then(taken => !taken)
+);
 
-const checkUsernameNotTaken = (username) => {
-  const client = new ApiClient(API_HOST);
-  return client.checkUserExists(username).then(exists => !exists);
-};
+const checkUsernameNotTaken = debounceCached(username =>
+  client.checkUserExists(username).then(exists => !exists)
+);
 
 const validatePassword = (password) => {
   if (password && password.length < 8) {
