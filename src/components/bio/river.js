@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2017  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,40 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
+import { Link } from 'react-router';
 import isUndefined from 'lodash/isUndefined';
 
+import { getName } from '../../utils/user';
 import { PROFILE_POST_TYPES as t } from '../../consts/postTypeConstants';
+import BasicRiverItem from '../river/theme/basic';
+import Icon from '../icon';
+import Time from '../time';
+import User from '../user';
 import ProfilePost from './post';
+
+const SignUpIcon = ({ user }) => (
+  <div className="bio__icon--type_signup layout layout-align_center layout-align_vertical">
+    <User
+      avatar={SignUpIcon.avatarConfig}
+      text={SignUpIcon.userTextConfig}
+      user={user}
+    />
+    <Icon
+      color="gray"
+      icon="arrow-right"
+      pack="fa"
+    />
+    <div className="logo logo-size_small">
+      <span className="logo__title">Liberty Soil</span>
+    </div>
+  </div>
+);
+SignUpIcon.avatarConfig = {
+  isRound: false, size: 26
+};
+SignUpIcon.userTextConfig = {
+  hide: true
+};
 
 const ProfilePostsRiver = (props) => {
   const { river } = props;
@@ -59,6 +89,26 @@ const ProfilePostsRiver = (props) => {
 
         return item;
       })}
+      {!props.hasMore &&
+        <BasicRiverItem
+          className="river-item--type_text bio__river-item bio__river-item--type_signup"
+          icon={<SignUpIcon user={author} />}
+        >
+          <div>
+            <Link
+              className="color-dark_blue bio__link"
+              to={'/user/'.concat(author.get('username'))}
+            >
+              {getName(author)}
+            </Link>&nbsp;
+            joined LibertySoil.org!
+            <div className="bio__timestamp">
+              <Time className="font-bold" format="%A" timestamp={author.get('created_at')} />&nbsp;
+              <Time format="%Y.%m.%d, %H:%M" timestamp={author.get('created_at')} />
+            </div>
+          </div>
+        </BasicRiverItem>
+      }
     </div>
   );
 };
