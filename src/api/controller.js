@@ -1988,6 +1988,7 @@ export default class ApiController {
     }
 
     const User = this.bookshelf.model('User');
+    const ProfilePost = this.bookshelf.model('ProfilePost');
 
     try {
       const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
@@ -2000,10 +2001,31 @@ export default class ApiController {
         }
       }
 
+      const newPictures = {};
+      ['avatar', 'head_pic'].forEach(fieldName => {
+        const updated = properties[fieldName];
+        if (updated) {
+          const old = user.get('more')[fieldName];
+          if (!old) {
+            newPictures[fieldName] = updated;
+          } else if (updated.attachment_id !== old.attachment_id) {
+            newPictures[fieldName] = updated;
+          }
+        }
+      });
+
       properties = _.extend(user.get('more'), properties);
       user.set('more', properties);
 
       await user.save(null, { method: 'update' });
+
+      await Promise.all(Object.keys(newPictures).map(type =>
+        new ProfilePost({
+          more: newPictures[type],
+          user_id: ctx.session.user,
+          type
+        }).save(null, { method: 'insert' })
+      ));
 
       ctx.body = { user };
     } catch (e) {
@@ -3389,6 +3411,11 @@ export default class ApiController {
     postAttrs.user_id = ctx.session.user;
 
     const post = new ProfilePost(postAttrs);
+    if (postAttrs.type === 'text' && !postAttrs.text.trim()) {
+      ctx.status = 400;
+      ctx.body = { error: 'Profile post\'s text is missing' };
+      return;
+    }
 
     try {
       await post.save();

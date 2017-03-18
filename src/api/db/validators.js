@@ -97,7 +97,7 @@ const UserMessage = {
 };
 
 const ProfilePost = {
-  text: ['string', 'maxLength:200', 'required'],
+  text: ['string', 'maxLength:200'],
   html: ['string'],
   type: [
     'required',
@@ -112,7 +112,9 @@ const ProfilePost = {
 };
 
 ProfilePost.TYPES = [
-  'text'
+  'text',
+  'head_pic',
+  'avatar'
 ];
 
 export { User, School, Hashtag, Geotag, UserMessage, ProfilePost };
