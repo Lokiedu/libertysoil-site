@@ -30,7 +30,9 @@ import { removeAllMessages } from '../../actions/messages';
 import { ActionsTrigger } from '../../triggers';
 import { createSelector, currentUserSelector } from '../../selectors';
 
+import Button from '../../components/button';
 import User from '../../components/user';
+import VisibilitySensor from '../../components/visibility-sensor';
 import RiverItemCreateForm from '../../components/river/type/text/create-form';
 import ProfilePostsRiver from '../../components/bio/river';
 
@@ -40,6 +42,7 @@ class SettingsPage extends React.Component {
   static propTypes = {
     current_user: CurrentUserPropType,
     is_logged_in: PropTypes.bool.isRequired,
+    loadProfilePostsInProgress: PropTypes.bool,
     profile_posts: PropTypes.arrayOf(PropTypes.shape()).isRequired
   };
 
@@ -66,6 +69,10 @@ class SettingsPage extends React.Component {
   constructor(props, ...args) {
     super(props, ...args);
 
+    this.state = {
+      displayLoadMore: true
+    };
+
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
   }
@@ -88,6 +95,29 @@ class SettingsPage extends React.Component {
     return await this.triggers.removeProfilePost(profilePost, user);
   };
 
+  handleLoadMoreClick = async () => {
+    const res = await this.triggers.loadUserProfilePosts(
+      this.props.current_user.getIn(['user', 'username']),
+      this.props.profile_posts.size
+    );
+
+    this.setState({
+      displayLoadMore: res === false || res.length === 10
+    });
+  };
+
+  handleLoadMoreVisibilityChange = async (isVisible) => {
+    if (isVisible && !this.props.loadProfilePostsInProgress) {
+      const res = await this.triggers.loadUserProfilePosts(
+        this.props.current_user.getIn(['user', 'username']), this.props.profile_posts.size
+      );
+
+      this.setState({
+        displayLoadMore: res === false || res.length === 10
+      });
+    }
+  };
+
   render() {
     if (!this.props.is_logged_in) {
       return false;
@@ -96,17 +126,36 @@ class SettingsPage extends React.Component {
     const { current_user } = this.props;
     const user = current_user.get('user');
 
+    let loadMore;
+    if (this.props.profile_posts.size >= 10 && this.state.displayLoadMore) {
+      loadMore = (
+        <div className="layout layout-align_center layout__space layout__space-double">
+          <VisibilitySensor onChange={this.handleLoadMoreVisibilityChange}>
+            <Button
+              title="Load more..."
+              waiting={this.props.loadProfilePostsInProgress}
+              onClick={this.handleLoadMoreClick}
+            />
+          </VisibilitySensor>
+        </div>
+      );
+    } else {
+      loadMore = null;
+    }
+
     return (
       <div>
         <Helmet title="Your Profile Settings on " />
         <ProfilePostsRiver
           author={user}
           current_user={current_user}
+          hasMore={this.props.profile_posts.size >= 10 && this.state.displayLoadMore}
           posts={this.props.posts}
           river={this.props.profile_posts}
           onDelete={this.triggers.removeProfilePost}
           onUpdate={this.handleUpdateProfilePost}
         />
+        {loadMore}
 
         <div className="bio__create-post">
           <h5 className="bio__title">Add a new post to your Bio:</h5>
@@ -151,9 +200,11 @@ const selector = createSelector(
     })
   ),
   state => state.get('posts'),
-  (userRelated, posts) => ({
+  state => state.getIn(['ui', 'progress', 'loadProfilePostsInProgress']),
+  (userRelated, posts, loadProfilePostsInProgress) => ({
     ...userRelated,
-    posts
+    posts,
+    loadProfilePostsInProgress
   })
 );
 
