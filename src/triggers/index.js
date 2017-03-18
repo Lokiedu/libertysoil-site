@@ -16,8 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { browserHistory } from 'react-router';
-import { toSpreadArray } from '../utils/lang';
+import { Map as ImmutableMap } from 'immutable';
 
+import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
 export class ActionsTrigger {
@@ -899,12 +900,25 @@ export class ActionsTrigger {
     return success;
   }
 
-  removeProfilePost = async (profilePost) => {
+  removeProfilePost = async (profilePost, user) => {
     const postId = profilePost.get('id');
     const userId = profilePost.get('user_id');
+    const postType = profilePost.get('type');
 
     let success = false;
     try {
+      if (postType === 'avatar' || postType === 'head_pic') {
+        const userpic = user.getIn(['more', postType], ImmutableMap());
+        if (userpic.get('attachment_id') === profilePost.getIn(['more', 'attachment_id'])) {
+          const result = await this.client.updateUser({ more: { [postType]: null } });
+          if ('user' in result) {
+            this.dispatch(a.users.addUser(result.user));
+          } else {
+            return success;
+          }
+        }
+      }
+
       const result = await this.client.deleteProfilePost(postId);
       success = result.success;
       if (success) {
