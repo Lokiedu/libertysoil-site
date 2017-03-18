@@ -853,4 +853,66 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   }
+
+  loadUserProfilePosts = async (username, offset = 0, limit = 10) => {
+    this.dispatch(a.ui.setProgress('loadProfilePostsInProgress', true));
+
+    let result;
+    try {
+      result = await this.client.profilePosts(username, offset, limit);
+      if (result.length > 0) {
+        this.dispatch(a.posts.setProfilePosts(
+          result[0].user_id,
+          result,
+          offset
+        ));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadProfilePostsInProgress', false));
+    return result;
+  }
+
+  createProfilePost = async (attrs) => {
+    let success = false;
+    try {
+      const post = await this.client.createProfilePost(attrs);
+      this.dispatch(a.posts.addProfilePost(post));
+      success = true;
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+    return success;
+  }
+
+  updateProfilePost = async (profilePostId, attrs) => {
+    let success = false;
+    try {
+      const post = await this.client.updateProfilePost(profilePostId, attrs);
+      this.dispatch(a.posts.updateProfilePost(post));
+      success = true;
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+    return success;
+  }
+
+  removeProfilePost = async (profilePost) => {
+    const postId = profilePost.get('id');
+    const userId = profilePost.get('user_id');
+
+    let success = false;
+    try {
+      const result = await this.client.deleteProfilePost(postId);
+      success = result.success;
+      if (success) {
+        this.dispatch(a.posts.removeProfilePost(postId, userId));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+    return success;
+  }
 }
