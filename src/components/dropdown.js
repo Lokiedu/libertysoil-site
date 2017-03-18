@@ -24,6 +24,10 @@ import Icon from './icon';
 class Dropdown extends Component {
   static displayName = 'Dropdown';
 
+  static defaultProps = {
+    theme: 'old'
+  };
+
   constructor(props) {
     super(props);
 
@@ -50,12 +54,13 @@ class Dropdown extends Component {
   };
 
   render() {
-    const { className, icon, iconOpen, iconClosed, ...props } = this.props;
+    const { className, icon, iconOpen, iconClosed, theme, ...props } = this.props;
 
-    const dropdownClassName = classNames('dropdown', className, {
-      'dropdown-open': this.state.isVisible,
-      'dropdown-closed': !this.state.isVisible
-    });
+    const dropdownClassName =
+      classNames('dropdown', `dropdown--theme_${theme}`, className, {
+        'dropdown-open': this.state.isVisible,
+        'dropdown-closed': !this.state.isVisible
+      });
 
     let i;
     if (icon) {

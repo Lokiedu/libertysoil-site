@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import classNames from 'classnames';
 
 const MenuItem = ({
   children,
+  className,
   ...props
 }) => (
-  <div className="menu__item action" {...props}>
+  <div className={classNames('menu__item action', className)} {...props}>
     {children}
   </div>
 );

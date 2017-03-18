@@ -7,6 +7,7 @@
   display: block;
   white-space: nowrap;
   padding: 3px 0;
+  background-color: #fff;
 
   &:hover {
     color: @color__red;
@@ -14,5 +15,19 @@
 
   &:empty {
     display: none;
+  }
+
+  &--theme_new {
+    padding: 12px 14px 14px 14px;
+    min-width: 135px;
+    font-size: 14px;
+
+    &:hover {
+      color: #6b78f9;
+    }
+
+    & + & {
+      margin-top: 1px;
+    }
   }
 }
