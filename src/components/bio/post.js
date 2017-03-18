@@ -17,6 +17,7 @@
 */
 /* eslint react/no-danger: 0 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import BasicRiverItem from '../river/theme/basic';
 import RiverItemCreateForm from '../river/type/text/create-form';
@@ -100,9 +101,13 @@ export default class ProfilePost extends React.Component {
       );
     }
 
+    const isCurrentUser = current_user.get('id') === author.get('id');
+
     return (
       <BasicRiverItem
-        className="river-item--type_text"
+        className={classNames('river-item--type_text', {
+          'river-item--space_right': !isCurrentUser
+        })}
         icon={[
           <div className="bio__timestamp bio__timestamp--disappearing" key="timestamp">
             <Time format="%Y.%m.%d" timestamp={post.get('updated_at')} />
@@ -115,7 +120,7 @@ export default class ProfilePost extends React.Component {
             />
           </div>
         ]}
-        menuItems={current_user.get('id') === author.get('id') && [
+        menuItems={isCurrentUser && [
           <MenuItem
             className="menu__item--theme_new"
             key="delete"

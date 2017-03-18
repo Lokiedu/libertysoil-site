@@ -35,6 +35,7 @@ import User from '../../components/user';
 import VisibilitySensor from '../../components/visibility-sensor';
 import RiverItemCreateForm from '../../components/river/type/text/create-form';
 import ProfilePostsRiver from '../../components/bio/river';
+import BioInformer from '../../components/bio/informer';
 
 class SettingsPage extends React.Component {
   static displayName = 'SettingsPage';
@@ -156,6 +157,8 @@ class SettingsPage extends React.Component {
           onUpdate={this.handleUpdateProfilePost}
         />
         {loadMore}
+
+        <BioInformer username={user.get('username')} />
 
         <div className="bio__create-post">
           <h5 className="bio__title">Add a new post to your Bio:</h5>
