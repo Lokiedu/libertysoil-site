@@ -31,6 +31,11 @@ export const UPDATE_CREATE_POST_FORM = 'UPDATE_CREATE_POST_FORM';
 export const RESET_EDIT_POST_FORM = 'RESET_EDIT_POST_FORM';
 export const UPDATE_EDIT_POST_FORM = 'UPDATE_EDIT_POST_FORM';
 
+export const ADD_PROFILE_POST = 'ADD_PROFILE_POST';
+export const REMOVE_PROFILE_POST = 'REMOVE_PROFILE_POST';
+export const SET_PROFILE_POSTS = 'SET_PROFILE_POSTS';
+export const UPDATE_PROFILE_POST = 'UPDATE_PROFILE_POST';
+
 export function createPost(post) {
   return {
     type: CREATE_POST,
@@ -124,6 +129,45 @@ export function updateEditPostForm(edit_post_form) {
     type: UPDATE_EDIT_POST_FORM,
     payload: {
       edit_post_form
+    }
+  };
+}
+
+export function addProfilePost(post) {
+  return {
+    type: ADD_PROFILE_POST,
+    payload: {
+      post
+    }
+  };
+}
+
+export function removeProfilePost(postId, userId) {
+  return {
+    type: REMOVE_PROFILE_POST,
+    payload: {
+      id: postId,
+      userId
+    }
+  };
+}
+
+export function setProfilePosts(userId, posts, offset = 0) {
+  return {
+    type: SET_PROFILE_POSTS,
+    payload: {
+      userId,
+      posts,
+      offset
+    }
+  };
+}
+
+export function updateProfilePost(post) {
+  return {
+    type: UPDATE_PROFILE_POST,
+    payload: {
+      post
     }
   };
 }

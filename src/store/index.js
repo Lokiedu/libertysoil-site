@@ -54,7 +54,7 @@ import quotes from './quotes';
 import search from './search';
 import * as tools from './tools';
 import * as user_messages from './user_messages';
-
+import * as profile_posts from './profile_posts';
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -90,7 +90,8 @@ export const theReducer = combineReducers(i.Map({
   quotes,
   search,
   tools: tools.reducer,
-  user_messages: user_messages.reducer
+  user_messages: user_messages.reducer,
+  profile_posts: profile_posts.reducer
 }));
 
 const initialState = i.Map({
@@ -146,7 +147,8 @@ const initialState = i.Map({
     })
   }),
   tools: tools.initialState,
-  user_messages: user_messages.initialState
+  user_messages: user_messages.initialState,
+  profile_posts: profile_posts.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';

@@ -62,6 +62,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.posts.REMOVE_PROFILE_POST:
     case a.posts.REMOVE_POST: {
       state = state.remove(action.payload.id);
       break;
@@ -87,6 +88,17 @@ export default function reducer(state = initialState, action) {
       if (action.payload.postId && action.payload.comments) {
         state = state.setIn([action.payload.postId, 'comments'], action.payload.comments.length);
       }
+      break;
+    }
+    case a.posts.SET_PROFILE_POSTS: {
+      const posts = _.keyBy(action.payload.posts, 'id');
+      state = state.merge(i.fromJS(posts));
+      break;
+    }
+    case a.posts.UPDATE_PROFILE_POST:
+    case a.posts.ADD_PROFILE_POST: {
+      const post = action.payload.post;
+      state = state.set(post.id, i.fromJS(post));
       break;
     }
   }
