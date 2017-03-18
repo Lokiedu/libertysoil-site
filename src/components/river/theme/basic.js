@@ -38,7 +38,7 @@ export default class BasicRiverItem extends React.Component {
         }
         menu={menuItems &&
           <div className="river-item__menu">
-            <Dropdown theme="new" className="">
+            <Dropdown iconClosed="fiber-manual-record" theme="new">
               {menuItems}
             </Dropdown>
           </div>
