@@ -76,6 +76,7 @@ class SettingsPage extends React.Component {
       displayLoadMore: true
     };
 
+    this.loadMoreAutomatically = false;
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
   }
@@ -99,6 +100,10 @@ class SettingsPage extends React.Component {
   };
 
   handleLoadMoreClick = async () => {
+    if (!this.loadMoreAutomatically) {
+      this.loadMoreAutomatically = true;
+    }
+
     const res = await this.triggers.loadUserProfilePosts(
       this.props.current_user.getIn(['user', 'username']),
       this.props.profile_posts.size
@@ -110,6 +115,10 @@ class SettingsPage extends React.Component {
   };
 
   handleLoadMoreVisibilityChange = async (isVisible) => {
+    if (!this.loadMoreAutomatically) {
+      return;
+    }
+
     if (isVisible && !this.props.loadProfilePostsInProgress) {
       const res = await this.triggers.loadUserProfilePosts(
         this.props.current_user.getIn(['user', 'username']), this.props.profile_posts.size
