@@ -26,6 +26,7 @@ import Icon from '../icon';
 import Time from '../time';
 import User from '../user';
 import ProfilePost from './post';
+import PictureChangePost from './picture-change-post';
 
 const SignUpIcon = ({ user }) => (
   <div className="bio__icon--type_signup layout layout-align_center layout-align_vertical">
@@ -73,6 +74,18 @@ const ProfilePostsRiver = (props) => {
                 post={post}
                 onDelete={onDelete}
                 onUpdate={onUpdate}
+              />
+            );
+            break;
+          }
+          case t.PROFILE_PIC_CHANGE:
+          case t.USER_PIC_CHANGE: {
+            item = (
+              <PictureChangePost
+                author={author}
+                current_user={current_user}
+                post={post}
+                onDelete={onDelete}
               />
             );
             break;
