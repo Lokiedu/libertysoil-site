@@ -15,13 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 export function getName(user) {
-  let name = user.get('username');
-
-  if (user.getIn(['more', 'firstName']) && user.getIn(['more', 'lastName'])) {
-    name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
+  const fullName = user.get('fullName');
+  if (fullName === ' ') {
+    return user.get('username');
   }
 
-  return name.trim();
+  return fullName;
 }
