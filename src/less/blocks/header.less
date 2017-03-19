@@ -47,6 +47,11 @@
   
   &--colored {
     background-color: #f1f1f1;
+    transition: opacity 0.25s ease-out;
+
+    &:hover {
+      opacity: 0.75;
+    }
   }
 }
 
@@ -94,5 +99,11 @@
 
   &-left_space {
     margin-right: @space;
+  }
+}
+
+.header__auth {
+  > *, .dropdown__trigger {
+    height: 100%;
   }
 }
