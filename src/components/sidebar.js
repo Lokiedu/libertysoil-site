@@ -20,43 +20,106 @@ import { connect } from 'react-redux';
 
 import createSelector from '../selectors/createSelector';
 import currentUserSelector from '../selectors/currentUser';
+import { toggleMenu } from '../actions/ui';
 
 import SidebarMenu from './sidebar-menu';
 import TagsInform from './tags-inform';
 
-class Sidebar extends React.Component {
-  static propTypes = {
-    isEmpty: PropTypes.bool,
-    theme: PropTypes.string
-  };
-
-  static defaultProps = {
-    isFixed: true
-  };
-
-  getClassName = () => {
+/*
+  function getClassName(theme) {
     const finalize = s =>
       `sidebar col col-xs col-${s} col-s-${s} col-m-${s} col-l-${s} col-xl-${s}`;
 
-    switch (this.props.theme) {
+    switch (theme) {
       case 'trunc': return finalize(1);
       case 'min': return finalize(2);
       case 'ext': return finalize(6);
       default: return finalize(4);
     }
+  }
+*/
+
+const defaultClassName = [
+  'sidebar',
+  'page__sidebar',
+  'page__sidebar--side_left',
+  'page__sidebar--type_main'
+].join(' ');
+
+class Sidebar extends React.Component {
+  static propTypes = {
+    isEmpty: PropTypes.bool,
+    isMobileMenuOn: PropTypes.bool
+    // theme: PropTypes.string
+  };
+
+  static defaultProps = {
+    isMobileMenuOn: false
+  };
+
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = {
+      isMobile: true
+    };
+  }
+
+  componentDidMount() {
+    window.matchMedia('(min-width: 768px)')
+      .addListener(this.handleViewChange);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props ||
+      nextState.isMobile !== this.state.isMobile;
+  }
+
+  componentWillUnmount() {
+    window.matchMedia('(min-width: 768px)')
+      .removeListener(this.handleViewChange);
+  }
+
+  handleViewChange = (nonMobileQuery) => {
+    if (nonMobileQuery.matches) {
+      this.setState({ isMobile: false });
+    } else {
+      this.setState({ isMobile: true });
+    }
+  };
+
+  handleClose = () => {
+    this.props.dispatch(toggleMenu(false));
+  };
+
+  handleClickInside = (event) => {
+    event.stopPropagation();
   };
 
   render() {
     if (this.props.isEmpty) {
+      return <div className="sidebar page__sidebar" />;
+    }
+
+    const sidebarBody = [
+      <SidebarMenu current_user={this.props.current_user} key="menu" />,
+      <TagsInform current_user={this.props.current_user} key="tags" />
+    ];
+
+    const displayMobileMenu =
+      this.props.isMobileMenuOn && this.state.isMobile;
+    if (displayMobileMenu) {
       return (
-        <div className="sidebar page__sidebar" />
+        <div className={defaultClassName.concat(' mobile-menu')} onClick={this.handleClose}>
+          <div className="mobile-menu__section" onClick={this.handleClickInside}>
+            {sidebarBody}
+          </div>
+        </div>
       );
     }
 
     return (
-      <div className="sidebar page__sidebar page__sidebar--side_left">
-        <SidebarMenu current_user={this.props.current_user} />
-        <TagsInform current_user={this.props.current_user} />
+      <div className={defaultClassName}>
+        {sidebarBody}
       </div>
     );
   }
@@ -64,9 +127,9 @@ class Sidebar extends React.Component {
 
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('ui'),
-  (current_user, ui) => ({
-    isVisible: ui.get('sidebarIsVisible'), // FIXME: mobile version
+  state => state.getIn(['ui', 'mobileMenuIsVisible']),
+  (current_user, isMobileMenuOn) => ({
+    isMobileMenuOn,
     ...current_user
   })
 );

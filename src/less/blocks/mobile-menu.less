@@ -16,68 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 .mobile-menu {
-  &__container {
-    display: flex;
-    overflow-y: auto;
-    background-color: rgba(67, 67, 67, 0.9);
+  &:extend(.modal);
+  display: flex;
+  align-items: flex-start;
+  overflow-y: auto;
+  background-color: rgba(67, 67, 67, 0.9);
 
-    .modal__section {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 0;
-      width: 100%;
-      max-width: 100%;
-      background: transparent;
-    }
-
-    @media (min-width: 768px) {
-      display: none;
-    }
+  .mobile-menu__section {
+    &:extend(.page__main);
+    padding-top: 0;
+    margin-top: 75px;
+    min-height: auto;
+    background: transparent;
   }
 
-  &__row {
-    height: 60px;
-    width: 100%;
+  @media (min-width: 768px) {
+    display: none;
   }
 
-
-  &__close {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-start;
-
-    &-button {
-      position: relative;
-      width: 60px;
-      height: 60px;
-
-      cursor: pointer;
-
-      &::before, &::after {
-        position: absolute;
-        display: block;
-        top: calc(50% - 1px);
-        left: 10px;
-        width: 40px;
-        height: 3px;
-
-        background-color: #fff;
-        content: '';
-      }
-
-      &::before {
-        transform: rotate(45deg);
-      }
-
-      &::after {
-        transform: rotate(135deg);
-      }
-    }
-  }
-
-  &__item {
+  .navigation-item {
     margin-bottom: 1px;
     padding-left: 16px;
     border-bottom: 1px solid #a3a3a3;
@@ -87,6 +44,7 @@
 
     .navigation-item__icon {
       position: relative;
+      padding-left: 14px;
       flex-basis: 60px;
       height: 59px;
       border-left: 1px solid #a3a3a3;
@@ -121,21 +79,9 @@
     &.navigation-item--active::after {
       content: none;
     }
+  }
 
-    &--to_home::before {
-      content: 'Home';
-    }
-
-    &--to_schools::before {
-      content: 'All schools in the world';
-    }
-
-    &--to_locations::before {
-      content: 'Locations';
-    }
-
-    &--to_people::before {
-      content: 'People';
-    }
+  .navigation {
+    margin-bottom: 0;
   }
 }
