@@ -18,7 +18,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 import { Immutable as ImmutablePropType } from '../prop-types/common';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -38,13 +37,10 @@ class HeaderLogo extends Component {
   }
 
   render() {
-    const {
-      current_user,
-      small
-    } = this.props;
+    const { current_user } = this.props;
 
     const logoBody = (
-      <div className={classNames('logo', { 'logo-size_small': small })}>
+      <div className="logo">
         <span className="logo__title">Liberty Soil</span>
       </div>
     );

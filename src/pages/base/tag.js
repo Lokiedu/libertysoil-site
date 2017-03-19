@@ -289,7 +289,7 @@ export default class BaseTagPage extends React.Component {
     return (
       <div>
         <Header is_logged_in={is_logged_in} current_user={current_user}>
-          <HeaderLogo small />
+          <HeaderLogo />
           <TagBreadcrumbs type={type} tag={tag} />
         </Header>
 

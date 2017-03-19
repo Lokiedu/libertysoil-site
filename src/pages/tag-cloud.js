@@ -65,7 +65,7 @@ class TagCloudPage extends Component {
       <div>
         <Helmet title="Tags of " />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
-          <HeaderLogo small />
+          <HeaderLogo />
           <Breadcrumbs title="All Hashtags">
             <TagIcon big type={TAG_HASHTAG} />
           </Breadcrumbs>

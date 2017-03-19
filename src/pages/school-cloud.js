@@ -64,7 +64,7 @@ class SchoolCloudPage extends Component {
       <div>
         <Helmet title="Tags of " />
         <Header is_logged_in={is_logged_in} current_user={current_user}>
-          <HeaderLogo small />
+          <HeaderLogo />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Schools">
               <TagIcon big type={TAG_SCHOOL} />

@@ -43,7 +43,7 @@ const HeaderComponent = ({
         <div className="header__body">
           <div className="header__content">
             {!React.Children.count(children) &&
-              <HeaderLogo small />
+              <HeaderLogo />
             }
             {children}
           </div>

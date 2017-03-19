@@ -171,7 +171,7 @@ class ConversationsToolPage extends React.Component {
       <div>
         <Helmet title="Conversations on " />
         <Header current_user={current_user} is_logged_in={!!current_user.get('id')}>
-          <HeaderLogo small />
+          <HeaderLogo />
         </Header>
 
         <Page>

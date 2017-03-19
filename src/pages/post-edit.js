@@ -131,7 +131,7 @@ class PostEditPage extends React.Component {
           current_user={current_user}
           is_logged_in={is_logged_in}
         >
-          <HeaderLogo small />
+          <HeaderLogo />
           <Breadcrumbs title="Edit post" />
         </Header>
         <Page>
