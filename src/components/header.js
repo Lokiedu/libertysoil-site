@@ -48,9 +48,7 @@ const HeaderComponent = ({
             {children}
           </div>
           <div className="header__toolbar">
-            <div className="header__toolbar_item header__toolbar_item-right_space">
-              <Search />
-            </div>
+            <Search />
             <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
           </div>
         </div>
