@@ -51,14 +51,14 @@ class HeaderLogo extends Component {
 
     if (current_user.get('id')) {
       return (
-        <div className="header__logo action">
+        <div className="header__corner header__corner--colored action">
           {logoBody}
         </div>
       );
     }
 
     return (
-      <Link to="/" className="header__logo action">
+      <Link to="/" className="header__corner action">
         {logoBody}
       </Link>
     );
