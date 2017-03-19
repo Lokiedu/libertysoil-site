@@ -25,6 +25,8 @@ import {
   PageBody
 } from './page';
 
+import Icon from './icon';
+
 class TopMenu extends React.Component {
   static displayName = 'TopMenu';
   static propTypes = {
@@ -44,9 +46,12 @@ class TopMenu extends React.Component {
     return (
       <div>
         <div className="top-menu layout layout-align_vertical">
-          <div className="mobile-menu__hamburger hamburger" onClick={this.props.toggleMenu}>
-            <div className="hamburger__line" />
-          </div>
+          <Icon
+            className="action top-menu__icon"
+            icon="home"
+            onClick={this.props.toggleMenu}
+            pack="fa"
+          />
         </div>
         {!this.props.is_logged_in &&
           <Page>

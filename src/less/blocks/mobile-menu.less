@@ -15,56 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.hamburger {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 20px 12px;
-  width: 60px;
-  height: 60px;
-  background-color: #efefef;
-  cursor: pointer;
-
-  &::before, &::after, &__line {
-    display: block;
-    flex-grow: 1;
-    height: 4px;
-    background-color: #434343;
-    border-radius: 2px;
-  }
-
-  &::before, &::after {
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    content: '';
-  }
-
-  &::before {
-    top: 20px;
-  }
-
-  &::after {
-    bottom: 20px;
-  }
-
-  &__line {
-    margin: auto;
-  }
-}
-
 .mobile-menu {
-  &__hamburger {
-    display: none;
-    
-    @media @tablet-flexible {
-      display: flex;
-    }
-  }
-
   &__container {
-    display: none;
+    display: flex;
     overflow-y: auto;
     background-color: rgba(67, 67, 67, 0.9);
 
@@ -79,8 +32,8 @@
       background: transparent;
     }
 
-    @media @tablet-flexible {
-      display: flex;
+    @media (min-width: 768px) {
+      display: none;
     }
   }
 
