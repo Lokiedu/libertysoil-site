@@ -88,50 +88,42 @@ const BaseUserPageWithoutHeader = (props) => {
             </PageContent>
             <SidebarAlt>
               <div className="tabs">
-                <div className="short_post short_post-spacing">
-                  <IndexLink
-                    activeClassName="tabs__link-active color-dark_blue"
-                    className="tabs__link"
-                    to={`/user/${user.get('username')}`}
-                  >
-                    Posts
-                  </IndexLink>
-                </div>
+                <IndexLink
+                  activeClassName="color-dark_blue"
+                  className="short_post short_post-spacing"
+                  to={`/user/${user.get('username')}`}
+                >
+                  Posts
+                </IndexLink>
                 {showLikesLink &&
-                  <div className="short_post short_post-spacing">
-                    <PageContentLink
-                      activeClassName="tabs__link-active color-dark_blue"
-                      className="tabs__link"
-                      to={`/user/${user.get('username')}/likes`}
-                      visible
-                    >
-                      Likes
-                    </PageContentLink>
-                  </div>
+                  <PageContentLink
+                    activeClassName="color-dark_blue"
+                    className="short_post short_post-spacing"
+                    to={`/user/${user.get('username')}/likes`}
+                    visible
+                  >
+                    Likes
+                  </PageContentLink>
                 }
                 {showFavouritesLink &&
-                  <div className="short_post short_post-spacing">
-                    <PageContentLink
-                      activeClassName="tabs__link-active color-dark_blue"
-                      className="tabs__link"
-                      to={`/user/${user.get('username')}/favorites`}
-                      visible
-                    >
-                      Favorites
-                    </PageContentLink>
-                  </div>
+                  <PageContentLink
+                    activeClassName="color-dark_blue"
+                    className="short_post short_post-spacing"
+                    to={`/user/${user.get('username')}/favorites`}
+                    visible
+                  >
+                    Favorites
+                  </PageContentLink>
                 }
                 {showBioLink &&
-                  <div className="short_post short_post-spacing">
-                    <PageContentLink
-                      activeClassName="tabs__link-active color-dark_blue"
-                      className="tabs__link"
-                      to={`/user/${user.get('username')}/bio`}
-                      visible
-                    >
-                      Bio
-                    </PageContentLink>
-                  </div>
+                  <PageContentLink
+                    activeClassName="color-dark_blue"
+                    className="short_post short_post-spacing"
+                    to={`/user/${user.get('username')}/bio`}
+                    visible
+                  >
+                    Bio
+                  </PageContentLink>
                 }
               </div>
             </SidebarAlt>
