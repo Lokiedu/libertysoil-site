@@ -18,52 +18,99 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import i from 'immutable';
+import { List, Map as ImmutableMap } from 'immutable';
 
 import { url as urlPropType } from '../prop-types/common';
 import {
-  CurrentUser as CurrentUserPropType,
-  MapOfUsers as MapOfUsersPropType
+  CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
+import { getName } from '../utils/user';
 import { addUser } from '../actions/users';
+import { removeAllMessages } from '../actions/messages';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 
+import ProfilePostsRiver from '../components/bio/river';
+import Avatar from '../components/user/avatar';
+import Button from '../components/button';
+import VisibilitySensor from '../components/visibility-sensor';
 import NotFound from './not-found';
-import BaseUserPage from './base/user';
+import BaseUserPageWithoutHeader from './base/user-without_header';
 
-
-class AboutUserPage extends React.Component {
-  static displayName = 'AboutUserPage';
+class UserBioPage extends React.Component {
+  static displayName = 'UserBioPage';
 
   static propTypes = {
     current_user: CurrentUserPropType,
     is_logged_in: PropTypes.bool.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     params: PropTypes.shape({
       username: urlPropType.isRequired
-    }).isRequired,
-    users: MapOfUsersPropType.isRequired
+    }).isRequired
+  };
+
+  static defaultProps = {
+    profile_posts: List()
   };
 
   static async fetchData(router, store, client) {
-    const userInfo = client.userInfo(router.params.username);
-    store.dispatch(addUser(await userInfo));
+    try {
+      const user = await client.userInfo(router.params.username);
+      store.dispatch(addUser(user));
+
+      const triggers = new ActionsTrigger(client, store.dispatch);
+      await triggers.loadUserProfilePosts(user.username);
+    } catch (e) {
+      store.dispatch(addUser({ username: router.params.username }));
+    }
   }
 
-  render() {
-    const {
-      current_user,
-      following,
-      is_logged_in,
-      params,
-      users
-    } = this.props;
+  constructor(props, ...args) {
+    super(props, ...args);
 
-    const i_am_following = following.get(current_user.get('id'));
-    const user = users.find(user => user.get('username') === params.username);
+    this.state = {
+      displayLoadMore: true
+    };
+
+    const client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
+  }
+
+  handleUpdateProfilePost = async (profilePostId, text) => {
+    this.props.dispatch(removeAllMessages());
+    return await this.triggers.updateProfilePost(
+      profilePostId, { type: 'text', text }
+    );
+  };
+
+  handleLoadMoreClick = async () => {
+    const res = await this.triggers.loadUserProfilePosts(
+      this.props.current_user.getIn(['user', 'username']),
+      this.props.profile_posts.size
+    );
+
+    this.setState({
+      displayLoadMore: res === false || res.length === 10
+    });
+  };
+
+  handleLoadMoreVisibilityChange = async (isVisible) => {
+    if (isVisible && !this.props.loadProfilePostsInProgress) {
+      const res = await this.triggers.loadUserProfilePosts(
+        this.props.current_user.getIn(['user', 'username']), this.props.profile_posts.size
+      );
+
+      this.setState({
+        displayLoadMore: res === false || res.length === 10
+      });
+    }
+  };
+
+  render() {
+    const { current_user, is_logged_in, user } = this.props;
 
     if (!user) {
       return null;  // not loaded yet
@@ -73,44 +120,78 @@ class AboutUserPage extends React.Component {
       return <NotFound />;
     }
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    let linesOfBio = <p>No information provided...</p>;
-    if (user.getIn(['more', 'bio'])) {
-      linesOfBio = user.getIn(['more', 'bio']).split('\n').map((line, i) => <p key={`bio-${i}`}>{line}</p>);
+    let loadMore;
+    if (this.props.profile_posts.size >= 10 && this.state.displayLoadMore) {
+      loadMore = (
+        <div className="layout layout-align_center layout__space layout__space-double">
+          <VisibilitySensor onChange={this.handleLoadMoreVisibilityChange}>
+            <Button
+              title="Load more..."
+              waiting={this.props.loadProfilePostsInProgress}
+              onClick={this.handleLoadMoreClick}
+            />
+          </VisibilitySensor>
+        </div>
+      );
+    } else {
+      loadMore = null;
     }
 
+    const name = getName(user);
+
     return (
-      <BaseUserPage
+      <BaseUserPageWithoutHeader
         current_user={current_user}
-        followers={i.Map()}
-        following={following}
-        i_am_following={i_am_following}
         is_logged_in={is_logged_in}
-        triggers={triggers}
         user={user}
       >
-        <Helmet title={`${user.get('fullName')} on `} />
-        <div className="paper">
-          <div className="paper__page content">
-            {linesOfBio}
+        <Helmet title={`${name} on `} />
+        <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
+          <div className="page_head">
+            <h1 className="page_head__title">
+              {name}
+            </h1>
+            <div className="page_head__icon">
+              <Avatar user={user} size={37} />
+            </div>
           </div>
+          <ProfilePostsRiver
+            author={user}
+            current_user={current_user}
+            hasMore={this.props.profile_posts.size >= 10 && this.state.displayLoadMore}
+            posts={this.props.posts}
+            river={this.props.profile_posts}
+            triggers={this.triggers}
+            onDelete={this.triggers.removeProfilePost}
+            onUpdate={this.handleUpdateProfilePost}
+          />
+          {loadMore}
         </div>
-      </BaseUserPage>
+      </BaseUserPageWithoutHeader>
     );
   }
 }
 
 const selector = createSelector(
+  createSelector(
+    (state, props) => state.get('users').find(user =>
+      user.get('username') === props.params.username
+    ),
+    state => state.get('profile_posts'),
+    (user, profile_posts) => ({
+      profile_posts: profile_posts.get((user || ImmutableMap()).get('id')),
+      user
+    })
+  ),
   currentUserSelector,
-  state => state.get('following'),
-  state => state.get('users'),
-  (current_user, following, users) => ({
-    following,
-    users,
-    ...current_user
+  state => state.get('posts'),
+  state => state.getIn(['ui', 'progress', 'loadProfilePostsInProgress']),
+  (userRelated, current_user, posts, loadProfilePostsInProgress) => ({
+    ...userRelated,
+    ...current_user,
+    posts,
+    loadProfilePostsInProgress
   })
 );
 
-export default connect(selector)(AboutUserPage);
+export default connect(selector)(UserBioPage);

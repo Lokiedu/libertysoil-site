@@ -63,7 +63,9 @@ const User = {
       first_login: ['boolean'],
       avatar: ['plainObject'],
       head_pic: ['plainObject'],
-      mute_all_posts: ['boolean']
+      mute_all_posts: ['boolean'],
+      firstName: ['string'],
+      lastName: ['string']
     }
   }
 };
@@ -94,4 +96,25 @@ const UserMessage = {
   text: ['string', 'minLength:1', 'required']
 };
 
-export { User, School, Hashtag, Geotag, UserMessage };
+const ProfilePost = {
+  text: ['string', 'maxLength:200'],
+  html: ['string'],
+  type: [
+    'required',
+    val => {
+      if (!ProfilePost.TYPES.includes(val)) {
+        throw new Error('Invalid post type');
+      }
+    }
+  ],
+  user_id: ['required', 'uuid'],
+  more: ['plainObject']
+};
+
+ProfilePost.TYPES = [
+  'text',
+  'head_pic',
+  'avatar'
+];
+
+export { User, School, Hashtag, Geotag, UserMessage, ProfilePost };

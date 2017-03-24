@@ -66,7 +66,6 @@ const BaseUserPage = (props) => {
     user.get('liked_geotags') && user.get('liked_geotags').size
   );
   const showFavouritesLink = user.get('favourited_posts') && !!user.get('favourited_posts').size;
-  const showBioLink = !!user.getIn(['more', 'bio']);
 
   let name = user.get('username');
 
@@ -142,18 +141,16 @@ const BaseUserPage = (props) => {
                       </PageContentLink>
                     </div>
                   }
-                  {showBioLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/bio`}
-                        visible
-                      >
-                        Bio
-                      </PageContentLink>
-                    </div>
-                  }
+                  <div className="layout__grid_item">
+                    <PageContentLink
+                      activeClassName="tabs__link-active"
+                      className="tabs__link"
+                      to={`/user/${user.get('username')}/bio`}
+                      visible
+                    >
+                      Bio
+                    </PageContentLink>
+                  </div>
                 </div>
               </div>
               <div className="layout__row layout__row-double">
@@ -189,16 +186,14 @@ const BaseUserPage = (props) => {
                     Favorites
                   </PageContentLink>
                 }
-                {showBioLink &&
-                  <PageContentLink
-                    activeClassName="color-dark_blue"
-                    className="tabs__link short_post short_post-spacing"
-                    to={`/user/${user.get('username')}/bio`}
-                    visible
-                  >
-                    Bio
-                  </PageContentLink>
-                }
+                <PageContentLink
+                  activeClassName="color-dark_blue"
+                  className="tabs__link short_post short_post-spacing"
+                  to={`/user/${user.get('username')}/bio`}
+                  visible
+                >
+                  Bio
+                </PageContentLink>
               </div>
             </SidebarAlt>
           </PageBody>

@@ -1988,6 +1988,7 @@ export default class ApiController {
     }
 
     const User = this.bookshelf.model('User');
+    const ProfilePost = this.bookshelf.model('ProfilePost');
 
     try {
       const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
@@ -2000,10 +2001,31 @@ export default class ApiController {
         }
       }
 
+      const newPictures = {};
+      ['avatar', 'head_pic'].forEach(fieldName => {
+        const updated = properties[fieldName];
+        if (updated) {
+          const old = user.get('more')[fieldName];
+          if (!old) {
+            newPictures[fieldName] = updated;
+          } else if (updated.attachment_id !== old.attachment_id) {
+            newPictures[fieldName] = updated;
+          }
+        }
+      });
+
       properties = _.extend(user.get('more'), properties);
       user.set('more', properties);
 
       await user.save(null, { method: 'update' });
+
+      await Promise.all(Object.keys(newPictures).map(type =>
+        new ProfilePost({
+          more: newPictures[type],
+          user_id: ctx.session.user,
+          type
+        }).save(null, { method: 'insert' })
+      ));
 
       ctx.body = { user };
     } catch (e) {
@@ -3342,7 +3364,139 @@ export default class ApiController {
     ctx.body = messages;
   }
 
+  getProfilePosts = async (ctx) => {
+    const User = this.bookshelf.model('User');
+
+    try {
+      const user = await new User({ username: ctx.params.username }).fetch({ require: true });
+      const offset = ('offset' in ctx.query) ? parseInt(ctx.query.offset, 10) : 0;
+      const limit = ('limit' in ctx.query) ? parseInt(ctx.query.limit, 10) : 10;
+      const posts = await user.profile_posts()
+        .query(qb => {
+          qb
+            .offset(offset)
+            .limit(limit)
+            .orderBy('updated_at', 'desc');
+        }).fetch();
+
+      ctx.body = posts;
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
+  getProfilePost = async (ctx) => {
+    const ProfilePost = this.bookshelf.model('ProfilePost');
+
+    try {
+      const post = await new ProfilePost({ id: ctx.params.id })
+        .fetch({ require: true });
+
+      ctx.body = post;
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
+  createProfilePost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const ProfilePost = this.bookshelf.model('ProfilePost');
+
+    const postAttrs = _.pick(ctx.request.body, ['text', 'type', 'more']);
+    postAttrs.user_id = ctx.session.user;
+
+    const post = new ProfilePost(postAttrs);
+    if (postAttrs.type === 'text' && !postAttrs.text.trim()) {
+      ctx.status = 400;
+      ctx.body = { error: 'Profile post\'s text is missing' };
+      return;
+    }
+
+    try {
+      await post.save();
+      ctx.body = await post.fetch();
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
+  updateProfilePost = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const ProfilePost = this.bookshelf.model('ProfilePost');
+
+    try {
+      const post = await new ProfilePost()
+        .where({ id: ctx.params.id, user_id: ctx.session.user })
+        .fetch({ require: true });
+
+      post.set(_.pick(ctx.request.body, ['text', 'type', 'more']));
+      post.renderMarkdown();
+      post.set('updated_at', new Date().toJSON());
+
+      await post.save(null, { method: 'update' });
+      ctx.body = await post.refresh();
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
+  deleteProfilePost = async (ctx) => {
+    const ProfilePost = this.bookshelf.model('ProfilePost');
+
+    try {
+      await new ProfilePost({ id: ctx.params.id, user_id: ctx.session.user })
+        .destroy({ require: true });
+
+      ctx.body = {
+        success: true
+      };
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
   // ========== Helpers ==========
+
+  /**
+   * Sets the response body in case of error
+   * ```
+   * {
+   *   errors: { fieldName: ['Some message']] }, // Only if e is a Checkit.Error
+   *   error: 'Human readable message'
+   * }
+   * ```
+   * @param ctx Koa context
+   * @param {Error} e
+   */
+  processError(ctx, e) {
+    ctx.status = 500;
+
+    if (e instanceof Checkit.Error) {
+      ctx.body = {
+        errors: e.toJSON(),
+        error: e.toString()
+      };
+    } else if (e instanceof this.bookshelf.NotFoundError) {
+      ctx.status = 404;
+      ctx.body = {
+        error: 'Not Found'
+      };
+    } else {
+      ctx.body = {
+        error: e.message
+      };
+    }
+  }
 
   async areMutuallyFollowed(user1Id, user2Id) {
     const knex = this.bookshelf.knex;

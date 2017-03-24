@@ -117,7 +117,7 @@ class BaseSettingsPage extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className="paper layout">
+                  <div className="layout">
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
                       <div className="page_head">
                         <h1 className="page_head__title">

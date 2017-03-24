@@ -1,0 +1,248 @@
+/*
+ This file is a part of libertysoil.org website
+ Copyright (C) 2016  Loki Education (Social Enterprise)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+.bio {
+  &__river {}
+
+  &__river-item {
+    padding: 20px 0;
+    background-color: #f9f9f9;
+
+    &:first-child {
+      padding-top: 40px;
+    }
+
+    &:first-child .bio__timestamp--disappearing,
+    &:hover .bio__timestamp--disappearing {
+      visibility: visible;
+    }
+
+    & + & {
+      margin-top: 1px;
+    }
+
+    &--type {
+      &_signup {
+        align-items: center;
+        padding: 20px;
+
+        @media (min-width: 768px) {
+          padding-left: 120px;
+        }
+        .river-item__body {
+          margin-left: 25px;
+          line-height: 20px;
+        }
+      }
+      &_image-change {
+        @media (min-width: 768px) {
+          padding-left: 60px;
+        }
+        .bio__text {
+          line-height: 20px;
+        }
+      }
+      &_form {
+        @media (min-width: 768px) {
+          padding-left: 60px;
+        }
+      }
+    }
+
+    @media (min-width: 768px) {
+      //padding-left: 60px;
+    }
+  }
+
+  &__post {
+    &--type {
+      &_text {
+        padding: 20px 16px;
+        border-radius: 2px;
+        background-color: #fff;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  &__timestamp {
+    white-space: nowrap;
+    font-size: 12px;
+
+    &--disappearing {
+      width: 50px;
+      margin: 0 5px;
+      visibility: hidden;
+      color: #aeaeae;
+    }
+  }
+
+  &__title {
+    margin-left: 60px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+
+    @media (min-width: 768px) {
+      margin-left: 120px;
+    }
+  }
+
+  &__create-post {
+    margin-top: 50px;
+  }
+
+  &__create-post-form {
+    margin-right: 60px;
+    flex: 1;
+
+    .create-river-item__input {
+      border: none;
+    }
+  }
+
+  &__button {
+    border-radius: 1px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &__card {
+    margin-top: 20px;
+    min-width: 100px;
+    max-width: 180px;
+    flex: 1;
+
+    & + & {
+      margin-left: 20px;
+    }
+
+    &--bg {
+      &_1 { background-color: #ece8e4; }
+      &_2 { background-color: #efe5e4; }
+      &_3 { background-color: #f0eee4; }
+      &_4 { background-color: #e4e9e6; }
+      &_5 { background-color: #efebec; }
+    }
+  }
+
+  &-card {
+    &__title {
+      padding: 20px 12px;
+      text-align: center;
+    }
+
+    &__icon {
+      padding: 30px;
+      width: 100%;
+      height: 100px;
+      color: #8e8e8e;
+      background-color: #fff;
+
+      svg {
+        width: 42px;
+        height: auto;
+      }
+    }
+
+    &__container {
+      cursor: pointer;
+      transition: opacity 0.5s ease-out;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+
+    &--bordered {
+      height: 60px;
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      border-bottom: 1px solid #f5f5f5;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &--type {
+      &_signup {
+        > * {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  &__informer {
+    margin: 20px 60px 0 60px;
+  }
+  
+  &__informer-text {
+    padding: 10px 20px;
+    border-radius: 2px;
+    background-color: #fff;
+    
+    &--note {
+      &_red {
+        border-left: 4px solid #e22350;
+      }
+      &_blue {
+        border-left: 4px solid #5bade9;
+      }
+    }
+  }
+
+  &__informer-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    color: #f7b8b8;
+    
+    svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  &__informer-link {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  &__link {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  &__post-image {
+    margin-right: 20px;
+    display: inline-block;
+    max-height: 60px;
+    max-width: 120px;
+  }
+
+  &__text {
+    line-height: 20px;
+  }
+}

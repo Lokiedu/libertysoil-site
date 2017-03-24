@@ -19,16 +19,20 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import * as MdIconPack from 'react-icons/lib/md';
-import { FaHashtag, FaAt } from 'react-icons/lib/fa';
+import * as FaIconPack from 'react-icons/lib/fa';
 
-const FaIconPack = { FaHashtag, FaAt };
-
-function findIcon(iconName) {
+function findIcon(iconName, packName) {
   const camelized = iconName.replace(/(?:^|[-_])(\w)/g, (match, c) =>
     c ? c.toUpperCase() : ''
   );
   const capitalized = camelized.charAt(0).toUpperCase() + camelized.slice(1);
 
+  if (packName === 'md') {
+    return MdIconPack[`Md${capitalized}`];
+  }
+  if (packName === 'fa') {
+    return FaIconPack[`Fa${capitalized}`];
+  }
   return MdIconPack[`Md${capitalized}`] || FaIconPack[`Fa${capitalized}`];
 }
 
@@ -40,11 +44,12 @@ const IconComponent = ({
   inactive,
   onClick,
   outline,
+  pack,
   spin,
   size,
   ...props
 }) => {
-  const Icon = findIcon(icon);
+  const Icon = findIcon(icon, pack);
 
   const classNameIcon = classNames('icon', {
     'icon-outline': outline,
@@ -91,6 +96,7 @@ IconComponent.propTypes = {
   icon: PropTypes.string,
   onClick: PropTypes.func,
   outline: PropTypes.bool,
+  pack: PropTypes.oneOf(['md', 'fa']),
   size: PropTypes.string,
   spin: PropTypes.bool
 };

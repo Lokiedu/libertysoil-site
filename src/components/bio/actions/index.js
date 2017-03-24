@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import classNames from 'classnames';
+*/
+export { default as UpdateProfilePictureAction } from './update-profile-picture';
+export { default as UpdateUserPicture } from './update-userpic';
+export { default as UpdateNameAction } from './update-name';
 
-const MenuItem = ({
-  children,
-  className,
-  ...props
-}) => (
-  <div className={classNames('menu__item action', className)} {...props}>
-    {children}
-  </div>
-);
-
-export default MenuItem;

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,31 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
+*/
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-const MenuItem = ({
-  children,
-  className,
-  ...props
-}) => (
-  <div className={classNames('menu__item action', className)} {...props}>
-    {children}
-  </div>
-);
+import Icon from '../icon';
 
-export default MenuItem;
+export default function BioCard({ className, icon, onClick, title, children }) {
+  return (
+    <div className={classNames('bio__card bio-card', className)}>
+      <div className="bio-card__container" onClick={onClick}>
+        <Icon {...icon} className={classNames('bio-card__icon', icon.className)} />
+        <div className="bio-card__title">{title}</div>
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+BioCard.propTypes = {
+  className: PropTypes.string,
+  icon: PropTypes.shape(),
+  onClick: PropTypes.func,
+  title: PropTypes.node
+};
+
+BioCard.defaultProps = {
+  icon: {}
+};

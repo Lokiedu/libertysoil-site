@@ -15,28 +15,51 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// common posts
-export const SHORT_TEXT = 'short_text';
-export const LONG_TEXT = 'long_text';
-export const HASHTAG_LIKE = 'hashtag_like';
-export const SCHOOL_LIKE = 'school_like';
-export const GEOTAG_LIKE = 'geotag_like';
+.river-item {
+  display: flex;
+  align-items: flex-start;
 
-export default {
-  SHORT_TEXT,
-  LONG_TEXT,
-  HASHTAG_LIKE,
-  SCHOOL_LIKE,
-  GEOTAG_LIKE
-};
+  &__body {
 
-// profile posts
-export const PROFILE_TEXT = 'text';
-export const PROFILE_PIC_CHANGE = 'head_pic';
-export const USER_PIC_CHANGE = 'avatar';
+  }
 
-export const PROFILE_POST_TYPES = {
-  PROFILE_TEXT,
-  PROFILE_PIC_CHANGE,
-  USER_PIC_CHANGE
-};
+  &__icon {
+  }
+
+  &__menu {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &--type {
+    &_text {
+      .river-item__icon {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        overflow: hidden;
+      }
+      .river-item__body {
+        flex: 1;
+      }
+
+      .river-item__menu {
+        > .dropdown-closed .icon {
+          padding: 7px;
+          color: #d9d9d9;
+        }
+      }
+    }
+  }
+
+  &--space_right {
+    padding-right: 20px;
+
+    @media (min-width: 768px) {
+      padding-right: 60px;
+    }
+  }
+}

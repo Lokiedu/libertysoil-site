@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,33 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React from 'react';
-import classNames from 'classnames';
 
-const MenuItem = ({
-  children,
-  className,
-  ...props
-}) => (
-  <div className={classNames('menu__item action', className)} {...props}>
-    {children}
-  </div>
-);
+ @flow
+*/
+import type { DateType, Uuid4 } from './common';
+import type { UserId } from './users';
 
-export default MenuItem;
+
+export type ProfilePostId = Uuid4;
+
+export type ProfilePostType = 'text';
+
+export type ProfilePostMore = {
+  // Nothing's here yet.
+};
+
+export type ProfilePostDraftData = {
+  text?: string,
+  type: ProfilePostType
+};
+
+export type ProfilePost = {
+  created_at: DateType,
+  html: string,
+  id: ProfilePostId,
+  more?: ProfilePostMore,
+  text: string,
+  type: ProfilePostType,
+  updated_at: DateType,
+  user_id: UserId
+};

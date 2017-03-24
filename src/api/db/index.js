@@ -29,12 +29,17 @@ import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
 import { break as breakGraphemes } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
+import Checkit from 'checkit';
+import MarkdownIt from 'markdown-it';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
+import { ProfilePost as ProfilePostValidations } from './validators';
 
 
 const bcryptHashAsync = promisify(bcryptHash);
 promisifyAll(OnigRegExp.prototype);
+
+const postMarkdown = new MarkdownIt();
 
 export function initBookshelfFromKnex(knex) {
   const bookshelf = Bookshelf(knex);
@@ -49,6 +54,9 @@ export function initBookshelfFromKnex(knex) {
     tableName: 'users',
     posts() {
       return this.hasMany(Post, 'user_id');
+    },
+    profile_posts() {
+      return this.hasMany(ProfilePost, 'user_id');
     },
     following() {
       return this.belongsToMany(User, 'followers', 'user_id', 'following_user_id');
@@ -616,6 +624,26 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  const ProfilePost = bookshelf.Model.extend({
+    tableName: 'profile_posts',
+    initialize() {
+      this.on('saving', this.validate.bind(this));
+      this.on('saving', this.renderMarkdown.bind(this));
+    },
+    renderMarkdown(model = this) {
+      if (_.isString(model.get('text'))) {
+        const html = postMarkdown.render(model.get('text'));
+        model.set('html', html);
+      }
+    },
+    validate() {
+      return new Checkit(ProfilePostValidations).run(this.toJSON());
+    },
+    user() {
+      return this.belongsTo(User, 'user_id');
+    }
+  });
+
   const Posts = bookshelf.Collection.extend({
     model: Post
   });
@@ -633,6 +661,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Comment', Comment);
   bookshelf.model('Quote', Quote);
   bookshelf.model('UserMessage', UserMessage);
+  bookshelf.model('ProfilePost', ProfilePost);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;

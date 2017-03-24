@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,23 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 import React from 'react';
 import classNames from 'classnames';
 
-const MenuItem = ({
-  children,
-  className,
-  ...props
-}) => (
-  <div className={classNames('menu__item action', className)} {...props}>
-    {children}
-  </div>
-);
+export default class RiverItem extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
+  }
 
-export default MenuItem;
+  render() {
+    const { children, className, icon, menu } = this.props;
+    return (
+      <div className={classNames('river-item', className)}>
+        {icon}
+        {children}
+        {menu}
+      </div>
+    );
+  }
+}

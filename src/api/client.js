@@ -31,6 +31,8 @@ import type { SchoolId, School } from '../definitions/schools';
 import type { Password, UserId, UserRecentTags, UserMore, User, Username } from '../definitions/users';
 import type { PostDraftData, Post, PostType, PostId } from '../definitions/posts';
 import type { Attachment } from '../definitions/attachments';
+import type { ProfilePost, ProfilePostId, ProfilePostDraftData } from '../definitions/profile-posts';
+
 
 export default class ApiClient
 {
@@ -705,6 +707,31 @@ export default class ApiClient
 
   async unsubscribeFromPost(postId: PostId): Promise<Success> {
     const response = await this.post(`/api/v1/post/${postId}/unsubscribe`);
+    return await response.json();
+  }
+
+  async profilePosts(username: string, offset: Integer = 0, limit: Integer = 10): Promise<Array<ProfilePost>> {
+    const response = await this.get(`/api/v1/user/${username}/profile-posts?offset=${offset}&limit=${limit}`);
+    return await response.json();
+  }
+
+  async profilePost(profilePostId: ProfilePostId): Promise<ProfilePost> {
+    const response = await this.get(`/api/v1/profile-post/${profilePostId}`);
+    return await response.json();
+  }
+
+  async createProfilePost(attrs: ProfilePostDraftData): Promise<ProfilePost> {
+    const response = await this.post(`/api/v1/profile-posts`, attrs);
+    return await response.json();
+  }
+
+  async updateProfilePost(profilePostId: ProfilePostId, attrs: ProfilePostDraftData): Promise<ProfilePost> {
+    const response = await this.post(`/api/v1/profile-post/${profilePostId}`, attrs);
+    return await response.json();
+  }
+
+  async deleteProfilePost(profilePostId: ProfilePostId): Promise<Success> {
+    const response = await this.del(`/api/v1/profile-post/${profilePostId}`);
     return await response.json();
   }
 }

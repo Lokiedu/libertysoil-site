@@ -39,6 +39,10 @@ export default class UpdatePictureModal extends React.Component {
     where: PropTypes.node.isRequired
   };
 
+  static defaultProps = {
+    submit: {}
+  };
+
   constructor(props) {
     super(props);
 
@@ -152,7 +156,7 @@ export default class UpdatePictureModal extends React.Component {
       return null;
     }
 
-    const { preview, flexible, what, where } = this.props;
+    const { preview, flexible, what, where, submit } = this.props;
 
     return (
       <ModalComponent ref={c => this.modal = c} size="big" onHide={this.closeHandler}>
@@ -175,7 +179,14 @@ export default class UpdatePictureModal extends React.Component {
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">
-            <div className="button button-wide button-red action" disabled={!!this.state.error} onClick={this.submitHandler}>Preview</div>
+            <div
+              className="button button-wide button-red action"
+              disabled={!!this.state.error}
+              onClick={this.submitHandler}
+              {...submit}
+            >
+              {submit.children || 'Preview'}
+            </div>
             <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.props.onClose}>Cancel</div>
           </footer>
         </ModalComponent.Actions>
