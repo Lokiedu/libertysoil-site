@@ -2712,9 +2712,9 @@ export default class ApiController {
           grouped_result_objects[result_type] = await q.fetchAll();
         }
 
-        ctx.body = _.mapKeys(grouped_result_objects, (value, key) => {
-          return `${key.toLowerCase()}s`;
-        });
+        ctx.body = _.transform(grouped_result_objects, (acc, value, key) => {
+          acc[key.toLowerCase().concat('s')] = { count: value.length, items: value };
+        }, {});
       } else {
         ctx.body = {};
         return;
