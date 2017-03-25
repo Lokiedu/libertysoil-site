@@ -19,7 +19,7 @@ import { Map, List, fromJS } from 'immutable';
 
 import { search } from '../actions';
 
-const initialState = Map({
+export const initialState = Map({
   results: Map({
     geotags: Map({
       items: List([]),
@@ -40,7 +40,7 @@ const initialState = Map({
   })
 });
 
-export default function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case search.SET_SEARCH_RESULTS:
       state = state.set('results', fromJS(action.payload.results));
