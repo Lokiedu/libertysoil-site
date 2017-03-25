@@ -15,27 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import WrappedIntercom from './wrapped';
 
-const FooterComponent = () => (
-  <footer className="page__footer footer">
-    {false &&
-      <nav className="footer_nav">
-        <a href="#">About</a>
-        <a href="#">FAQ</a>
-        <a href="#">Terms of service</a>
-        <a href="#">Privacy policy</a>
-      </nav>
-    }
-    <p>
-      <a href="mailto:info@libertysoil.org">info@libertysoil.org</a>
-    </p>
-    <p>
-      <a href="https://github.com/Lokiedu/libertysoil-site/milestones">Version 1.9.2</a>
-    </p>
-  </footer>
-);
-
-FooterComponent.displayName = 'FooterComponent';
-
-export default FooterComponent;
+export { IntercomAPI, default as Intercom } from './unwrapped';
+export default WrappedIntercom;
