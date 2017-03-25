@@ -20,7 +20,6 @@ import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 
 import { ActionsTrigger } from '../triggers';
-import MobileMenu from '../components/mobile-menu';
 
 const GAInitializer = ga.Initializer;
 
@@ -62,7 +61,6 @@ export default class App extends React.Component {
         <Helmet title="" titleTemplate="%sLibertySoil.org" />
         {children}
         {gaContent}
-        <MobileMenu />
       </div>
     );
   }

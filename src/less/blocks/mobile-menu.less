@@ -15,116 +15,26 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.hamburger {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 20px 12px;
-  width: 60px;
-  height: 60px;
-  background-color: #efefef;
-  cursor: pointer;
-
-  &::before, &::after, &__line {
-    display: block;
-    flex-grow: 1;
-    height: 4px;
-    background-color: #434343;
-    border-radius: 2px;
-  }
-
-  &::before, &::after {
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    content: '';
-  }
-
-  &::before {
-    top: 20px;
-  }
-
-  &::after {
-    bottom: 20px;
-  }
-
-  &__line {
-    margin: auto;
-  }
-}
-
 .mobile-menu {
-  &__hamburger {
+  &:extend(.modal);
+  display: flex;
+  align-items: flex-start;
+  overflow-y: auto;
+  background-color: rgba(67, 67, 67, 0.9);
+
+  .mobile-menu__section {
+    &:extend(.page__main);
+    padding-top: 0;
+    margin-top: 75px;
+    min-height: auto;
+    background: transparent;
+  }
+
+  @media (min-width: 768px) {
     display: none;
-    
-    @media @tablet-flexible {
-      display: flex;
-    }
   }
 
-  &__container {
-    display: none;
-    overflow-y: auto;
-    background-color: rgba(67, 67, 67, 0.9);
-
-    .modal__section {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 0;
-      width: 100%;
-      max-width: 100%;
-      background: transparent;
-    }
-
-    @media @tablet-flexible {
-      display: flex;
-    }
-  }
-
-  &__row {
-    height: 60px;
-    width: 100%;
-  }
-
-
-  &__close {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-start;
-
-    &-button {
-      position: relative;
-      width: 60px;
-      height: 60px;
-
-      cursor: pointer;
-
-      &::before, &::after {
-        position: absolute;
-        display: block;
-        top: calc(50% - 1px);
-        left: 10px;
-        width: 40px;
-        height: 3px;
-
-        background-color: #fff;
-        content: '';
-      }
-
-      &::before {
-        transform: rotate(45deg);
-      }
-
-      &::after {
-        transform: rotate(135deg);
-      }
-    }
-  }
-
-  &__item {
+  .navigation-item {
     margin-bottom: 1px;
     padding-left: 16px;
     border-bottom: 1px solid #a3a3a3;
@@ -134,6 +44,7 @@
 
     .navigation-item__icon {
       position: relative;
+      padding-left: 14px;
       flex-basis: 60px;
       height: 59px;
       border-left: 1px solid #a3a3a3;
@@ -168,21 +79,9 @@
     &.navigation-item--active::after {
       content: none;
     }
+  }
 
-    &--to_home::before {
-      content: 'Home';
-    }
-
-    &--to_schools::before {
-      content: 'All schools in the world';
-    }
-
-    &--to_locations::before {
-      content: 'Locations';
-    }
-
-    &--to_people::before {
-      content: 'People';
-    }
+  .navigation {
+    margin-bottom: 0;
   }
 }
