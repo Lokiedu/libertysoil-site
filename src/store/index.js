@@ -51,7 +51,7 @@ import edit_post_form from './edit_post_form';
 import related_posts from './related_posts';
 import comments from './comments';
 import quotes from './quotes';
-import search from './search';
+import * as search from './search';
 import * as tools from './tools';
 import * as user_messages from './user_messages';
 import * as profile_posts from './profile_posts';
@@ -88,7 +88,7 @@ export const theReducer = combineReducers(i.Map({
   related_posts,
   comments,
   quotes,
-  search,
+  search: search.reducer,
   tools: tools.reducer,
   user_messages: user_messages.reducer,
   profile_posts: profile_posts.reducer
@@ -139,13 +139,7 @@ const initialState = i.Map({
   users: i.Map({}),
   ui: ui.initialState,
   quotes: i.List([]),
-  search: i.Map({
-    results: i.Map({
-      geotags: i.List([]),
-      hashtags: i.List([]),
-      schools: i.List([])
-    })
-  }),
+  search: search.initialState,
   tools: tools.initialState,
   user_messages: user_messages.initialState,
   profile_posts: profile_posts.initialState
