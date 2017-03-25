@@ -26,6 +26,8 @@ export const REMOVE_LIKED_GEOTAG = 'REMOVE_LIKED_GEOTAG';
 export const ADD_USER_FOLLOWED_GEOTAG = 'ADD_USER_FOLLOWED_GEOTAG';
 export const REMOVE_USER_FOLLOWED_GEOTAG = 'REMOVE_USER_FOLLOWED_GEOTAG';
 
+export const CONTINENT_NAV__SET = 'CONTINENT_NAV__SET';
+
 export function addGeotag(geotag) {
   return {
     type: ADD_GEOTAG,
@@ -95,6 +97,16 @@ export function removeUserFollowedGeotag(geotag) {
     type: REMOVE_USER_FOLLOWED_GEOTAG,
     payload: {
       geotag
+    }
+  };
+}
+
+export function setContinentNav(continents, countries) {
+  return {
+    type: CONTINENT_NAV__SET,
+    payload: {
+      continents,
+      countries
     }
   };
 }

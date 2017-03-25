@@ -15,23 +15,29 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import uuid from 'uuid';
-import { Factory } from 'rosie';
-import faker from 'faker';
+import i from 'immutable';
+import { sortBy } from 'lodash';
 
-import { bookshelf } from '../db';
+import { geotags } from '../actions';
 
+export const initialState = i.fromJS({
+  continents: [],
+  countries: []
+});
 
-const Post = bookshelf.model('Post');
+export function reducer(state = initialState, action) {
+  switch (action.type) {
+    case geotags.CONTINENT_NAV__SET: {
+      const sortedCountries = sortBy(action.payload.countries, 'name');
 
-const PostFactory = new Factory()
-      .attr('id', () => uuid.v4())
-      .attr('text', () => faker.lorem.paragraph())
-      .attr('type', 'short_text');
+      state = i.fromJS({
+        continents: action.payload.continents.map(continent => continent.url_name),
+        countries: sortedCountries.sort().map(country => country.url_name)
+      });
 
-export default PostFactory;
+      break;
+    }
+  }
 
-export async function createPost(attrs = {}) {
-  return await new Post(PostFactory.build(attrs))
-    .save(null, { method: 'insert' });
+  return state;
 }

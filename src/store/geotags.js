@@ -46,6 +46,13 @@ export default function reducer(state = initialState, action) {
 
       break;
     }
+
+    case g.CONTINENT_NAV__SET: {
+      const geotags = _.keyBy(_.concat(action.payload.continents, action.payload.countries), 'url_name');
+      state = state.merge(i.fromJS(geotags));
+
+      break;
+    }
   }
 
   return state;

@@ -296,6 +296,17 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds)
         .increment('post_count', 1);
 
+      // Update post counters for all tags in the hierarchy
+      // (Continent -> Country -> Admin Division -> City)
+      // Get all parent ids
+      const geotags = await knex('geotags')
+        .select(['country_id', 'admin1_id', 'continent_id'])
+        .whereIn('id', geotagIds);
+      const geotagIdsToIncrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
+      await knex('geotags')
+        .whereIn('id', geotagIdsToIncrement)
+        .increment('hierarchy_post_count', 1);
+
       await Geotag.updateUpdatedAt(geotagIds);
     },
     async detachGeotags(geotagIds) {
@@ -304,6 +315,14 @@ export function initBookshelfFromKnex(knex) {
       await knex('geotags')
         .whereIn('id', geotagIds)
         .decrement('post_count', 1);
+
+      const geotags = await knex('geotags')
+        .select(['country_id', 'admin1_id', 'continent_id'])
+        .whereIn('id', geotagIds);
+      const geotagIdsToDecrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
+      await knex('geotags')
+        .whereIn('id', geotagIdsToDecrement)
+        .decrement('hierarchy_post_count', 1);
 
       await Geotag.updateUpdatedAt(geotagIds);
     },
@@ -510,16 +529,50 @@ export function initBookshelfFromKnex(knex) {
     },
     posts() {
       return this.belongsToMany(Post);
+    },
+    async updateHierarchyPostCount() {
+      const foreignKey = Geotag.TYPES[this.get('type')];
+
+      await knex('getoags as parents')
+        .where('id', this.id)
+        .update({
+          hierarchy_post_count: knex
+            .select(knex.raw('sum(children.post_count) + parents.post_count'))
+            .from(knex.raw('geotags as children'))
+            .whereRaw(`children.${foreignKey} = ?`, this.id)
+        });
     }
   });
 
   Geotag.updatePostCounters = async function () {
+    async function updateHierarchyPostCount(type, foreignKey) {
+      await knex(knex.raw('geotags as parents'))
+        .where('type', type)
+        .update({
+          hierarchy_post_count: knex.raw(`
+            coalesce(
+              (SELECT sum(children.post_count) + parents.post_count FROM geotags as children
+              WHERE children.${foreignKey} = parents.id),
+              0
+            )
+          `)
+        });
+    }
+
+    // Update post_count first because hierarchy_post_count depends on post_count.
     await knex('geotags')
       .update({
         post_count: knex('geotags_posts')
           .where('geotags_posts.geotag_id', knex.raw('geotags.id'))
           .count()
       });
+
+    await Promise.all([
+      updateHierarchyPostCount('Continent', 'continent_id'),
+      updateHierarchyPostCount('Country', 'country_id'),
+      updateHierarchyPostCount('AdminDivision1', 'admin1_id'),
+      knex('geotags').where('type', 'City').update('hierarchy_post_count', knex.raw('post_count'))
+    ]);
   };
 
   Geotag.updateUpdatedAt = async function (ids) {

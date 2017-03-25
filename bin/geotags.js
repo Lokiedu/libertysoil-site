@@ -54,6 +54,10 @@ async function countries() {
     .select('id', 'name', 'continent', 'iso_alpha2')
     .from('geonames_countries');
 
+  // Antarctica is represented both as a continent and a country.
+  const antarcticaCountry = geonamesCountries.find(country => country.name == 'Antarctica');
+  antarcticaCountry.name = 'Antarctica (Country)';
+
   const countryObjects = [];
 
   for (const country of geonamesCountries) {

@@ -18,6 +18,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 import i from 'immutable';
 
@@ -52,6 +53,53 @@ import NotFound from './not-found';
 import BaseTagPage from './base/tag';
 
 
+function ContinentNav({ countries, continent, continents }) {
+  const continentElements = continents.map(continent => (
+    <div className="aux-nav__item" key={continent.get('code')}>
+      <Link
+        activeClassName="aux-nav__link--active"
+        className="aux-nav__link"
+        to={`/geo/${continent.get('url_name')}`}
+      >
+        {continent.get('name')} ({continent.get('hierarchy_post_count')})
+      </Link>
+    </div>
+  ));
+
+  const countryElements = countries.map(country => (
+    <div className="aux-nav__item" key={country.get('id')}>
+      <Link
+        activeClassName="aux-nav__link--active"
+        className="aux-nav__link"
+        to={`/geo/${country.get('url_name')}`}
+      >
+        {country.get('name')} ({country.get('hierarchy_post_count')})
+      </Link>
+    </div>
+  ));
+
+  return (
+    <div>
+      <div className="aux-nav">
+        <div className="aux-nav__item">
+          <Link
+            activeClassName="aux-nav__link--active"
+            className="aux-nav__link"
+            to={`/geo/${continent.get('url_name')}`}
+          >
+            All {continent.get('name')} ({continent.get('hierarchy_post_count')})
+          </Link>
+        </div>
+        {countryElements}
+      </div>
+
+      <div className="aux-nav">
+        {continentElements}
+      </div>
+    </div>
+  );
+}
+
 export class UnwrappedGeotagPage extends Component {
   static displayName = 'UnwrappedGeotagPage';
 
@@ -85,7 +133,13 @@ export class UnwrappedGeotagPage extends Component {
     store.dispatch(setGeotagPosts(router.params.url_name, await geotagPosts));
 
     const trigger = new ActionsTrigger(client, store.dispatch);
-    await trigger.loadUserRecentTags();
+    const promises = [trigger.loadUserRecentTags()];
+
+    if (geotag.type == 'Continent') {
+      promises.push(trigger.loadContinentNav(geotag.id));
+    }
+
+    await Promise.all(promises);
 
     return 200;
   }
@@ -93,6 +147,7 @@ export class UnwrappedGeotagPage extends Component {
   render() {
     const {
       ui,
+      continent_nav,
       comments,
       create_post_form,
       is_logged_in,
@@ -123,6 +178,17 @@ export class UnwrappedGeotagPage extends Component {
 
     const geotagPosts = geotag_posts.get(this.props.params.url_name) || i.List();
 
+    let sidebarAlt = null;
+    if (geotag.get('type') == 'Continent') {
+      sidebarAlt = (
+        <ContinentNav
+          continent={geotag}
+          continents={continent_nav.get('continents').map(name => geotags.get(name))}
+          countries={continent_nav.get('countries').map(name => geotags.get(name))}
+        />
+      );
+    }
+
     return (
       <BaseTagPage
         current_user={current_user}
@@ -135,6 +201,7 @@ export class UnwrappedGeotagPage extends Component {
         schools={schools.toList()}
         postsAmount={geotagPosts.length}
         create_post_form={create_post_form}
+        sidebarAlt={sidebarAlt}
       >
         <Helmet title={`${title} posts on `} />
         <River
@@ -153,6 +220,7 @@ export class UnwrappedGeotagPage extends Component {
 
 const selector = createSelector(
   currentUserSelector,
+  state => state.get('continent_nav'),
   state => state.get('comments'),
   state => state.get('create_post_form'),
   state => state.get('geotags'),
@@ -161,7 +229,8 @@ const selector = createSelector(
   state => state.get('schools'),
   state => state.get('users'),
   state => state.get('ui'),
-  (current_user, comments, create_post_form, geotags, geotag_posts, posts, schools, users, ui) => ({
+  (current_user, continent_nav, comments, create_post_form, geotags, geotag_posts, posts, schools, users, ui) => ({
+    continent_nav,
     comments,
     create_post_form,
     geotags,

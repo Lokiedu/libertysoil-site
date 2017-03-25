@@ -55,6 +55,8 @@ import search from './search';
 import * as tools from './tools';
 import * as user_messages from './user_messages';
 import * as profile_posts from './profile_posts';
+import * as continent_nav from './continent_nav';
+
 
 export const theReducer = combineReducers(i.Map({
   routing: routerReducer,
@@ -89,6 +91,7 @@ export const theReducer = combineReducers(i.Map({
   comments,
   quotes,
   search,
+  continent_nav: continent_nav.reducer,
   tools: tools.reducer,
   user_messages: user_messages.reducer,
   profile_posts: profile_posts.reducer
@@ -148,7 +151,8 @@ const initialState = i.Map({
   }),
   tools: tools.initialState,
   user_messages: user_messages.initialState,
-  profile_posts: profile_posts.initialState
+  profile_posts: profile_posts.initialState,
+  continent_nav: continent_nav.initialState,
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';

@@ -2639,6 +2639,28 @@ export default class ApiController {
     }
   };
 
+  getGeotags = async (ctx) => {
+    const Geotag = this.bookshelf.model('Geotag');
+
+    const ALLOWED_ATTRIBUTE_QUERIES = [
+      'type',
+      'country_code', 'continent_code',
+      'continent_id', 'country_id', 'admin1_id',
+      'name', 'url_name'
+    ];
+
+    const geotags = await Geotag.collection()
+      .query(qb => {
+        this.applyLimitQuery(qb, ctx.query, 10);
+        this.applyOffsetQuery(qb, ctx.query, 0);
+        this.applySortQuery(qb, ctx.query, 'url_name');
+        qb.where(_.pick(ctx.query, ALLOWED_ATTRIBUTE_QUERIES));
+      })
+      .fetch();
+
+    ctx.body = geotags;
+  };
+
   getHashtag = async (ctx) => {
     const Hashtag = this.bookshelf.model('Hashtag');
 
@@ -3543,22 +3565,26 @@ export default class ApiController {
 
   /**
    * Sets 'order by' for the {@link qb} depending on the 'sort' query parameter.
-   * Syntax: `?sort=column` for ASC or `?sort=-column` for DESC.
-   * Doesn't support multiple columns at this point.
+   * Syntax: `?sort=column1,-column2,column3`
    * @param qb Knex query builder.
    * @param {Object} query An object containing query parameters.
    */
   applySortQuery(qb, query, defaultValue = null) {
     if ('sort' in query || defaultValue) {
-      let column = query.sort || defaultValue;
-      let order = 'ASC';
+      const columns = (query.sort || defaultValue).split(',');
 
-      if (column[0] == '-') {
-        column = column.substring(1);
-        order = 'DESC';
-      }
+      const queryString = columns.map(column => {
+        let order = 'ASC';
 
-      qb.orderBy(column, order);
+        if (column[0] == '-') {
+          column = column.substring(1);
+          order = 'DESC';
+        }
+
+        return `${column} ${order}`;
+      }).join(', ');
+
+      qb.orderByRaw(queryString);
     }
   }
 
