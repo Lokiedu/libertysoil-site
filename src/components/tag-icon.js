@@ -16,27 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET } from '../consts/tags';
 
-const TagIcon = ({ big, className, inactive, small, type, ...props }) => {
-  let cn = 'tag_icon';
-
-  if (className) {
-    cn += ` ${className}`;
-  }
-
-  if (small) {
-    cn += ' tag_icon-small';
-  }
-
-  if (big) {
-    cn += ' tag_icon-big';
-  }
-
-  if (inactive) {
-    cn += ' tag_icon-inactive';
-  }
+const TagIcon = ({ big, className, inactive, round, small, type, ...props }) => {
+  const cn = classNames('tag_icon', className, {
+    'tag_icon-small': small,
+    'tag_icon-big': big,
+    'tag_icon-inactive': inactive,
+    'tag_icon-round': round
+  });
 
   const spanProps = { ...props };
   delete spanProps.collapsed;
@@ -85,8 +75,13 @@ TagIcon.propTypes = {
   big: PropTypes.bool,
   className: PropTypes.string,
   inactive: PropTypes.bool,
+  round: PropTypes.bool,
   small: PropTypes.bool,
   type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET]).isRequired
+};
+
+TagIcon.defaultProps = {
+  round: true
 };
 
 export default TagIcon;

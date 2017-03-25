@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
+import classNames from 'classnames';
 
 import Dropdown from '../dropdown';
 import MenuItem from '../menu-item';
@@ -31,13 +32,13 @@ export default class PostBrief extends React.Component {
   }
 
   render() {
-    const { author, current_user, post, triggers } = this.props;
+    const { author, className, current_user, post, triggers } = this.props;
 
     const userId = current_user.get('id');
     const postId = post.get('id');
 
     return (
-      <div className="card__meta">
+      <div className={classNames('card__meta', className)}>
         <div className="card__owner">
           <User
             avatar={{ isRound: false, size: 32 }}
@@ -49,24 +50,26 @@ export default class PostBrief extends React.Component {
           {post.getIn(['more', 'pageTitle'])}
         </div>
 
-        <Dropdown className="card__toolbar_item" icon="more_vert">
-          <MenuItem>
-            <Subscribe
-              is_logged_in={!!userId}
-              postId={postId}
-              subscriptions={current_user.get('post_subscriptions')}
-              onSubscribeToPost={triggers.subscribeToPost}
-              onUnsubscribeFromPost={triggers.unsubscribeFromPost}
-            />
-          </MenuItem>
-          <MenuItem>
-            <EditPost
-              authorId={post.get('user_id')}
-              userId={userId}
-              postId={postId}
-            />
-          </MenuItem>
-        </Dropdown>
+        {current_user.get('id') &&
+          <Dropdown className="card__toolbar_item" icon="more_vert">
+            <MenuItem>
+              <Subscribe
+                is_logged_in={!!userId}
+                postId={postId}
+                subscriptions={current_user.get('post_subscriptions')}
+                onSubscribeToPost={triggers.subscribeToPost}
+                onUnsubscribeFromPost={triggers.unsubscribeFromPost}
+              />
+            </MenuItem>
+            <MenuItem>
+              <EditPost
+                authorId={post.get('user_id')}
+                userId={userId}
+                postId={postId}
+              />
+            </MenuItem>
+          </Dropdown>
+        }
       </div>
     );
   }

@@ -89,6 +89,7 @@
 
   @media (min-width: 414px) {
     flex: 0;
+    // flex-shrink: 0;
     max-width: none;
   }
 
@@ -211,7 +212,17 @@
       @media all and (min-width: 768px) {
         margin-right: 20px;
       }
+    }
 
+    &_right {
+      @media all and (min-width: 1024px) {
+        margin-left: 20px;
+      }
+    }
+  }
+
+  &--type {
+    &_main {
       @media @fluidTablet, @fluidDesktopNarrow, @fluidDesktopStandard {
         width: 180px;
       }
@@ -225,11 +236,7 @@
       }
     }
 
-    &_right {
-      @media all and (min-width: 1024px) {
-        margin-left: 20px;
-      }
-
+    &_alt {
       @media @fluidDesktopNarrow {
         width: 225px;
       }
@@ -264,7 +271,7 @@
     width: 570px;
   }
 
-  @media @fluidDesktopNarrow {
+  @media @fluidDesktopNarrow, @fluidDesktopStandard, @fluidDesktopWider {
     //flex: none;
     width: 580px;
   }

@@ -16,17 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
+import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
-import { take } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import intersection from 'lodash/intersection';
+import clone from 'lodash/clone';
 
+import ApiClient from '../api/client';
+import { API_HOST } from '../config';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
+import { SEARCH_SORTING_TYPES } from '../consts/search';
+import { offsetTop } from '../utils/browser';
 
 import {
   Page,
   PageMain,
-  PageCaption,
   PageBody,
   PageContent
 } from '../components/page';
@@ -35,12 +41,34 @@ import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
-import TagIcon from '../components/tag-icon';
+import SidebarAlt from '../components/sidebarAlt';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
-import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
-import ListItem from '../components/list-item';
+import SearchSection from '../components/search/section';
+import SearchResultFilter from '../components/filters/search-result-filter';
+import SearchPageBar from '../components/search/page-bar';
+import SortingFilter from '../components/filters/sorting-filter';
 
+function filterSections(query = {}) {
+  const visible = ['geotags', 'hashtags', 'schools', 'posts', 'people'];
+  if (!query.show || query.show === 'all') {
+    return visible;
+  }
+
+  let queried = clone(query.show);
+  if (!Array.isArray(queried)) {
+    queried = [queried];
+  }
+
+  const index = queried.indexOf('locations');
+  if (index >= 0) {
+    queried[index] = 'geotags';
+  }
+
+  return intersection(visible, queried);
+}
+
+const client = new ApiClient(API_HOST);
 
 class SearchPage extends Component {
   static displayName = 'SearchPage';
@@ -52,28 +80,60 @@ class SearchPage extends Component {
 
   static async fetchData(router, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.search(router.location.query.q);
+
+    const query = router.location.query;
+    if (router.type) {
+      query.show = router.type;
+    }
+    await triggers.search(query);
   }
+
+  constructor(...props) {
+    super(...props);
+    this.triggers = new ActionsTrigger(client, this.props.dispatch);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const nextQuery = clone(nextProps.location.query);
+    if (nextProps.params.type) {
+      nextQuery.show = nextProps.params.type;
+    }
+
+    if (!isEqual(this.props.location.query, nextQuery)) {
+      this.triggers.search(nextQuery);
+    }
+  }
+
+  handleSectionPageOpen = () => {
+    if (window && document) {
+      const top = offsetTop(findDOMNode(this.searchResults)) - 50;
+      const windowTop = document.documentElement.scrollTop || document.body.scrollTop;
+      if (windowTop > top) {
+        window.scrollTo(0, top);
+      }
+    }
+  };
 
   render() {
     const {
       is_logged_in,
       current_user,
+      location,
+      params,
       search
     } = this.props;
 
-    const search_response_object = search.toJSON();
-
-    let tags = [];
-    for (const section of Object.keys(search_response_object.results)) {
-      tags = tags.concat(
-        search_response_object.results[section].map(tag =>
-          ({ tagType: section, ...tag })
-        )
-      );
+    let visibleSections;
+    if (params.type) {
+      visibleSections = filterSections({ show: params.type });
+    } else {
+      visibleSections = filterSections(location.query);
     }
 
-    tags = take(tags, 100);
+    let offset;
+    if (location.query.offset) {
+      offset = parseInt(location.query.offset);
+    }
 
     return (
       <div>
@@ -87,54 +147,45 @@ class SearchPage extends Component {
 
         <Page>
           <PageMain>
-            <PageBody>
+            <PageBody className="search__page">
               <Sidebar />
-              <PageContent>
-                <PageCaption>Search</PageCaption>
-                <div>
-                  {tags.map((tag, i) => {
-                    let icon, name, url;
-
-                    switch (tag.tagType) {
-                      case 'geotags': {
-                        icon = <TagIcon big type={TAG_LOCATION} />;
-                        name = tag.name;
-                        url = `/geo/${tag.url_name}`;
-                        break;
-                      }
-                      case 'hashtags': {
-                        icon = <TagIcon big type={TAG_HASHTAG} />;
-                        name = tag.name;
-                        url = `/tag/${tag.name}`;
-                        break;
-                      }
-                      case 'schools': {
-                        icon = <TagIcon big type={TAG_SCHOOL} />;
-                        name = tag.name;
-                        url = `/s/${tag.url_name}`;
-                        break;
-                      }
-                      case 'posts': {
-                        icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
-                        name = tag.more.pageTitle;
-                        url = `/post/${tag.id}`;
-                        break;
-                      }
-                      default:
-                        console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
-                        return null;
-                    }
-
-                    return (
-                      <Link key={i} to={url}>
-                        <ListItem icon={icon}>
-                          {name}
-                        </ListItem>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </PageContent>
+              <div className="search__content">
+                <SearchPageBar location={location} />
+                <SidebarAlt side="left">
+                  <SortingFilter
+                    location={location}
+                    sortingTypes={SEARCH_SORTING_TYPES}
+                  />
+                  <SearchResultFilter
+                    fixedType={params.type}
+                    location={location}
+                  />
+                </SidebarAlt>
+                <PageContent ref={c => this.searchResults = c}>
+                  {search.get('results')
+                    .filter((_, key) =>
+                      !!visibleSections.find(t => key === t)
+                    )
+                    .map((payload, type) =>
+                      ImmutableMap({ type, payload })
+                    )
+                    .toList()
+                    .map(section =>
+                      <SearchSection
+                        count={section.getIn(['payload', 'count'])}
+                        current_user={current_user}
+                        items={section.getIn(['payload', 'items'])}
+                        key={section.get('type')}
+                        needPaging={!!params.type}
+                        offset={offset}
+                        triggers={this.triggers}
+                        type={section.get('type')}
+                        onSectionPageOpen={this.handleSectionPageOpen}
+                      />
+                    )
+                  }
+                </PageContent>
+              </div>
             </PageBody>
           </PageMain>
         </Page>

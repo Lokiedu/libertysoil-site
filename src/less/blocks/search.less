@@ -74,3 +74,160 @@
   right: 0;
   border-top: 1px solid @color__blue;
 }
+
+.search__section {
+  margin-top: 40px;
+}
+
+.search__title {
+  margin-bottom: 20px;
+  margin-left: 60px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.search__page-bar {
+  background-color: #fff;
+}
+
+.search__page-input {
+  font-size: 18px;
+  font-weight: bold;
+  color: #006cac;
+}
+
+.search__button {
+  width: 120px;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #4688cd;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.search__result {
+  &--type {
+    &_post .card__owner {
+      background-color: #ecf6fc;
+    }
+  }
+}
+
+.search__result-icon {
+  &--type {
+    &_geotag {
+      background-color: #c5d6e7;
+    }
+
+    &_hashtag {
+      // background-color: #ecf6fc;
+    }
+
+    &_school {
+      background-color: #d6becb;
+    }
+  }
+}
+
+.search__content {
+  flex: 1;
+  flex-shrink: 1;
+  display: flex;
+  width: 320px;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  align-content: space-between;
+  position: relative;
+
+  .search__page-bar {
+    margin-bottom: 20px;
+    flex: 1;
+    flex-shrink: 1;
+  }
+  .page__content {
+    margin-top: -30px;
+    flex-shrink: 1;
+  }
+
+  .list_item, .card__meta {
+    width: 320px;
+  }
+
+  @media (min-width: 414px) {
+    .list_item, .card__meta {
+      width: 294px;
+    }
+  }
+
+  @media (min-width: 480px) {
+    .list_item, .card__meta {
+      width: 360px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    width: auto;
+
+    .page__sidebar {
+      order: 2;
+    }
+    .search__page-bar {
+      margin-bottom: 0;
+      height: 60px;
+      order: 1;
+    }
+    .page__content {
+      position: relative;
+      top: -320px;
+      margin-top: 0;
+      flex-grow: 0;
+      order: 3;
+    }
+  }
+
+  @media @fluidTablet {
+    width: 568px;
+
+    .page__sidebar {
+      width: 180px;
+    }
+    .page__content, .list_item, .card__meta {
+      width: 368px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .page__content, .list_item, .card__meta {
+      width: 579px;
+    }
+  }
+
+  @media @fluidDesktopWide {
+    .list_item, .card__meta {
+      width: 740px;
+    }
+  }
+}
+
+.search__paging {
+  margin-top: 20px;
+  margin-left: 60px;
+
+  &-item {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    & + &::before {
+      content: '|';
+      padding: 0 10px;
+    }
+  }
+}
+
+

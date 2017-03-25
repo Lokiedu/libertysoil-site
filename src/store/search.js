@@ -21,9 +21,22 @@ import { search } from '../actions';
 
 const initialState = Map({
   results: Map({
-    geotags: List([]),
-    hashtags: List([]),
-    schools: List([])
+    geotags: Map({
+      items: List([]),
+      count: 0
+    }),
+    hashtags: Map({
+      items: List([]),
+      count: 0
+    }),
+    posts: Map({
+      items: List([]),
+      count: 0
+    }),
+    schools: Map({
+      items: List([]),
+      count: 0
+    })
   })
 });
 

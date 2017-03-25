@@ -117,7 +117,7 @@ export function getRoutes(authHandler, fetchHandler) {
           <Route component={GeotagEditPage} path="/geo/:url_name/edit" onEnter={withAuth} />
         </Route>
       </Route>
-      <Route component={SearchPage} path="/search" onEnter={withoutAuth} />
+      <Route component={SearchPage} path="/search(/:type)" onEnter={withoutAuth} />
       <Route component={PasswordReset} path="/resetpassword" onEnter={withoutAuth} />
       <Route component={NewPassword} path="/newpassword/:hash" onEnter={withoutAuth} />
       <Route path="/tools">

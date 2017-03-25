@@ -17,41 +17,91 @@
 */
 import React from 'react';
 import { Link } from 'react-router';
-import { intersection } from 'lodash';
+import { difference, intersection, mergeWith, isNil, uniq } from 'lodash';
 
+export function merge(combine, query, other) {
+  const { except = [] } = combine;
 
-function getNewUrl(query, location) {
+  return mergeWith(query, other, (a, b) => {
+    let filtered;
+    if (Array.isArray(b)) {
+      filtered = difference(b, except);
+    } else if (except.find(s => s === b)) {
+      filtered = [];
+    } else {
+      filtered = [b];
+    }
+
+    return uniq(filtered.concat(a));
+  });
+}
+
+// here and below:
+// early declarations, for-loops - performance reasons
+export function diff(_, exclude, inspect) {
+  const result = {};
+  let inspectProp, excludeProp, keys, l, i, k;
+  for (i = 0, keys = Object.keys(inspect), l = keys.length; i < l; ++i) {
+    k = keys[i];
+    inspectProp = inspect[k];
+    excludeProp = exclude[k];
+
+    if (isNil(excludeProp)) {
+      result[k] = inspectProp;
+    } else {
+      inspectProp = Array.isArray(inspectProp) ? inspectProp : [inspectProp];
+      excludeProp = Array.isArray(excludeProp) ? excludeProp : [excludeProp];
+      result[k] = difference(inspectProp, excludeProp);
+    }
+  }
+
+  return result;
+}
+
+function checkFor(checker, query, other) {
+  let queryProp, otherProp, keys, l, i, k;
+  for (i = 0, keys = Object.keys(query), l = keys.length; i < l; ++i) {
+    k = keys[i];
+    queryProp = query[k];
+    otherProp = other[k];
+
+    if (isNil(otherProp)) {
+      continue;
+    }
+
+    queryProp = Array.isArray(queryProp) ? queryProp : [queryProp];
+    otherProp = Array.isArray(otherProp) ? otherProp : [otherProp];
+    if (checker(otherProp, queryProp).length > 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function getNewUrl(m, query, combine, location) {
   return {
     ...location,
-    query: {
-      ...location.query,
-      ...query
-    }
+    query: combine
+      ? m(combine, query, location.query)
+      : { ...location.query, ...query }
   };
 }
 
-export default function FilterLink({ isDefault, title, query, location }) {
-  const urlFunction = getNewUrl.bind(null, query);
-  let activeClassName = 'aux-nav__link--active';
+export default function FilterLink({ isDefault, title, query, location, combine }) {
   let className = 'aux-nav__link';
-  const isFilterSet = intersection(
-    Object.keys(query),
-    Object.keys(location.query)
-  ).length > 0;
+  let urlFunction = getNewUrl.bind(null, merge, query, combine);
 
-  // force active state
-  if (isDefault && !isFilterSet) {
-    className = `${className} ${activeClassName}`;
-    activeClassName = null;
+  if (isDefault && !checkFor(difference, query, location.query)) {
+    className += ' aux-nav__link--active';
+  } else if (checkFor(intersection, query, location.query)) { // is the filter active?
+    urlFunction = getNewUrl.bind(null, diff, query, combine);
+    className += ' aux-nav__link--active';
   }
 
   return (
     <div className="aux-nav__item">
-      <Link
-        activeClassName={activeClassName}
-        className={className}
-        to={urlFunction}
-      >
+      <Link className={className} to={urlFunction}>
         {title}
       </Link>
     </div>

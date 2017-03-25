@@ -65,11 +65,20 @@ const PageBody = ({ children, className, ...props }) => (
   </div>
 );
 
-const PageContent = ({ children, className }) => (
-  <div className={classNames('page__content', className)}>
-    {children}
-  </div>
-);
+class PageContent extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
+  }
+
+  render() {
+    const { children, className } = this.props;
+    return (
+      <div className={classNames('page__content', className)}>
+        {children}
+      </div>
+    );
+  }
+}
 
 export {
   Page,

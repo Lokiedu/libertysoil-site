@@ -21,19 +21,24 @@
   align-items: center;
   background: #fff;
   padding: 13px 10px;
+  overflow: hidden;
 
   & + & {
     margin-top: 1px;
   }
-}
 
-.list_item__icon {
-  margin: 0 13px 0 0;
-}
+  &__icon {
+    margin: 0 13px 0 0;
+  }
 
-.list_item__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
+  &__text {
+    padding-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--no_space {
+    padding: 0;
+  }
 }

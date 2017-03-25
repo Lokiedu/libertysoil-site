@@ -143,7 +143,7 @@ export function initApi(bookshelf, sphinx) {
 
   api.get('/quotes', controller.getQuotes);
 
-  api.get('/search/:query', controller.search);
+  api.get('/search', controller.search);
   api.get('/search-quick/:query', controller.searchStats);
 
 

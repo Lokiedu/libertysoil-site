@@ -32,7 +32,7 @@ import type { Password, UserId, UserRecentTags, UserMore, User, Username } from 
 import type { PostDraftData, Post, PostType, PostId } from '../definitions/posts';
 import type { Attachment } from '../definitions/attachments';
 import type { ProfilePost, ProfilePostId, ProfilePostDraftData } from '../definitions/profile-posts';
-
+import type { SearchResponse, SearchQuery } from '../definitions/search';
 
 export default class ApiClient
 {
@@ -565,15 +565,8 @@ export default class ApiClient
     return await response.json();
   }
 
-  async search(query: string): Promise<{
-    comments?: Array<Object>,
-    geotags?: Array<Geotag>,
-    hashtags?: Array<Hashtag>,
-    schools?: Array<School>,
-    posts?: Array<Post>,
-    users?: Array<User>
-  }> {
-    const response = await this.get(`/api/v1/search/${query}`);
+  async search(query: SearchQuery): Promise<SearchResponse> {
+    const response = await this.get(`/api/v1/search`, query);
     return await response.json();
   }
 

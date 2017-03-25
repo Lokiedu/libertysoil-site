@@ -14,25 +14,9 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { PropTypes } from 'react';
-import classNames from 'classnames';
-
-const SidebarAlt = ({ children, side }) => (
-  <div className={classNames('page__sidebar page__sidebar--type_alt', `page__sidebar--side_${side}`)}>
-    {children}
-  </div>
-);
-
-SidebarAlt.displayName = 'SidebarAlt';
-
-SidebarAlt.propTypes = {
-  children: PropTypes.node,
-  side: PropTypes.oneOf(['left', 'right'])
-};
-
-SidebarAlt.defaultProps = {
-  side: 'right'
-};
-
-export default SidebarAlt;
+*/
+export function offsetTop(node) {
+  const r = node.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  return r.top + scrollTop;
+}
