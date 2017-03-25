@@ -15,22 +15,22 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
-import { Immutable as ImmutablePropType } from '../prop-types/common';
-import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
-
-import currentUserSelector from '../selectors/currentUser';
 import createSelector from '../selectors/createSelector';
 
-class HeaderLogo extends Component {
+class HeaderLogo extends React.Component {
   static displayName = 'HeaderLogo';
 
   static propTypes = {
-    current_user: ImmutablePropType(CurrentUserPropType)
+    isLink: PropTypes.bool,
+    is_logged_in: PropTypes.bool.isRequired
+  };
+
+  static defaultProps = {
+    isLink: true
   };
 
   shouldComponentUpdate(nextProps) {
@@ -38,38 +38,34 @@ class HeaderLogo extends Component {
   }
 
   render() {
-    const {
-      current_user,
-      small
-    } = this.props;
-
-    const logoBody = (
-      <div className={classNames('logo', { 'logo-size_small': small })}>
+    const iconBody = (
+      <div className="logo">
         <span className="logo__title">Liberty Soil</span>
       </div>
     );
 
-    if (current_user.get('id')) {
+    let className = 'header__corner action';
+    if (this.props.is_logged_in) {
+      className += ' header__corner--colored';
+    }
+
+    if (this.props.isLink) {
       return (
-        <div className="header__logo action">
-          {logoBody}
-        </div>
+        <Link to="/" className={className}>
+          {iconBody}
+        </Link>
       );
     }
 
     return (
-      <Link to="/" className="header__logo action">
-        {logoBody}
-      </Link>
+      <div className={className}>{iconBody}</div>
     );
   }
 }
 
 const selector = createSelector(
-  currentUserSelector,
-  current_user => ({
-    ...current_user
-  })
+  state => !!state.getIn(['current_user', 'id']),
+  is_logged_in => ({ is_logged_in })
 );
 
 export default connect(selector)(HeaderLogo);

@@ -78,7 +78,7 @@ const BaseUserPage = (props) => {
   return (
     <div>
       <Header current_user={current_user} is_logged_in={is_logged_in}>
-        <HeaderLogo small />
+        <HeaderLogo />
         <div className="header__breadcrumbs">
           <Breadcrumbs title={name}>
             <User

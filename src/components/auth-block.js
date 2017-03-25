@@ -23,25 +23,44 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { API_HOST } from '../config';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
-import Dropdown from './dropdown';
-import User from './user';
+import Avatar from './user/avatar';
+import { v2 as Dropdown } from './dropdown';
+import MenuItem from './menu-item';
+
+const menuItems = username => ([
+  { key: 'profile',
+    node: <Link to={getUrl(URL_NAMES.USER, { username })}>My profile</Link> },
+  { key: 'settings',
+    node: <Link to={getUrl(URL_NAMES.SETTINGS)}>Profile settings</Link> },
+  { key: 'logout',
+    node: (
+      <form action={`${API_HOST}/api/v1/logout`} method="post">
+        <button
+          className="button button-transparent button-wide button-caption_left"
+          type="submit"
+        >Log out</button>
+      </form>
+    ) }
+]);
 
 const AuthBlock = ({ current_user, is_logged_in }) => {
   if (is_logged_in) {
-    const logoutUrl = '/api/v1/logout';
-
     return (
-      <div className="header__toolbar">
-        <div className="auth header__toolbar_item">
-          <User avatar={{ isRound: true }} text={{ hide: true }} user={current_user.get('user')} />
-          <Dropdown>
-            <Link className="menu__item" to={getUrl(URL_NAMES.SETTINGS)}>Profile settings</Link>
-            <form action={`${API_HOST}${logoutUrl}`} className="menu__item" method="post">
-              <button className="button button-transparent button-wide button-caption_left" type="submit">Log out</button>
-            </form>
-          </Dropdown>
-        </div>
-      </div>
+      <Dropdown
+        className="header__auth header__toolbar"
+        icon={
+          <div className="header__corner header__corner--colored header__toolbar_item">
+            <Avatar user={current_user.get('user')} />
+          </div>
+        }
+        theme="new"
+      >
+        {menuItems(current_user.getIn(['user', 'username'])).map(menuItem =>
+          <MenuItem className="menu__item--theme_new" key={menuItem.key}>
+            {menuItem.node}
+          </MenuItem>
+        )}
+      </Dropdown>
     );
   }
 

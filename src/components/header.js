@@ -43,14 +43,12 @@ const HeaderComponent = ({
         <div className="header__body">
           <div className="header__content">
             {!React.Children.count(children) &&
-              <HeaderLogo small />
+              <HeaderLogo />
             }
             {children}
           </div>
           <div className="header__toolbar">
-            <div className="header__toolbar_item header__toolbar_item-right_space">
-              <Search />
-            </div>
+            <Search />
             <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
           </div>
         </div>

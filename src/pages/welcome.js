@@ -49,7 +49,7 @@ class Welcome extends React.Component {
         <div className="page__container-bg font-open_sans font-light">
           <section className="landing landing-big landing-bg">
             <Header is_logged_in={false} className="header-transparent" needMenu={false}>
-              <HeaderLogo big />
+              <HeaderLogo />
             </Header>
             <header className="landing__header">
               <h1 className="landing__title">Education change network</h1>

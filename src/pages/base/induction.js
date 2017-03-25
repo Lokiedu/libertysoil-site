@@ -28,6 +28,7 @@ import {
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Messages from '../../components/messages';
+import HeaderLogo from '../../components/header-logo';
 
 const BaseInductionPage = (props) => {
   const {
@@ -42,7 +43,9 @@ const BaseInductionPage = (props) => {
 
   return (
     <div>
-      <Header current_user={current_user} is_logged_in={is_logged_in} />
+      <Header current_user={current_user} is_logged_in={is_logged_in}>
+        <HeaderLogo isLink={false} />
+      </Header>
 
       <Page>
         <PageMain className="page__main--only-content">

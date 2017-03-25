@@ -79,7 +79,7 @@ class SearchPage extends Component {
       <div>
         <Helmet title="Search of " />
         <Header current_user={current_user} is_logged_in={is_logged_in}>
-          <HeaderLogo small />
+          <HeaderLogo />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="Search" />
           </div>

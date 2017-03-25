@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -19,8 +19,8 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 
-import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
-import Icon from './icon';
+import ClickOutsideComponentDecorator from '../../decorators/ClickOutsideComponentDecorator';
+import Icon from '../icon';
 
 class OpenedDropdownContent extends React.Component {
   static propTypes = {
@@ -88,10 +88,6 @@ export default class Dropdown extends React.Component {
 
   toggleVisibility = () => {
     this.setState({ isVisible: !this.state.isVisible });
-  };
-
-  hide = () => {
-    this.setState({ isVisible: false });
   };
 
   render() {

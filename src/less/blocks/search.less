@@ -19,21 +19,10 @@
 .search {
   display: flex;
   align-items: center;
-  height: 48px;
   position: relative;
-  padding: 0 @space;
 
   &-opened {
     background: #f3f2f1;
-  }
-  
-  @media (max-width: 413px) {
-    padding: 0;
-    transition: padding 0.3s ease-out;
-
-    &-opened {
-      padding: 0 @space;
-    }
   }
 }
 
@@ -41,7 +30,11 @@
   width: 340px;
   background: none;
   border: none;
-  margin: 0 @space 0;
+  padding-left: @space;
+  
+  &:focus {
+    padding-right: @space;
+  }
 
   @media (max-width: 768px) {
     width: 100%;
@@ -49,6 +42,12 @@
 }
 
 .search__icon {
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+
   flex: none;
   cursor: pointer;
   margin-left: 10px;

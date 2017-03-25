@@ -136,7 +136,7 @@ export class UnwrappedPostPage extends React.Component {
       <div>
         <Helmet title={`${current_post.getIn(['more', 'pageTitle'])} on `} />
         <Header current_user={current_user} is_logged_in={is_logged_in}>
-          <HeaderLogo small />
+          <HeaderLogo />
           <Breadcrumbs title={truncate(current_post.get('text'), { length: 16 })}>
             <Link
               className="user_box__avatar user_box__avatar-round"
