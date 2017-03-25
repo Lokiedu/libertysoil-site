@@ -159,7 +159,7 @@ class Search extends Component {
     let tags = [];
     for (const section of Object.keys(results)) {
       tags = tags.concat(
-        results[section].map(tag =>
+        results[section].items.map(tag =>
           ({ tagType: section, ...tag })
         )
       );
