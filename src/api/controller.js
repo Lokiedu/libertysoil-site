@@ -2764,6 +2764,30 @@ export default class ApiController {
               Model = this.bookshelf.model(type),
               ids   = group.matches.map(item => item.attrs.uuid);
 
+            if (type === 'Post') {
+              return Model.forge().query(qb => qb.whereIn('id', ids))
+                .fetchAll({ require: false, withRelated: POST_RELATIONS })
+                .then(posts => Promise.all([posts, this.countComments(posts)]))
+                .then(([posts, postCommentsCount]) => {
+                  const next = posts.map(post => {
+                    post.relations.schools = post.relations.schools.map(row => ({
+                      id: row.id,
+                      name: row.attributes.name,
+                      url_name: row.attributes.url_name
+                    }));
+                    post.attributes.comments = postCommentsCount[post.get('id')];
+                    return post;
+                  });
+                  return hidePostsData(next, ctx, this.bookshelf.knex);
+                })
+                .then(posts => ({
+                  [SEARCH_RESPONSE_TABLE[type]]: {
+                    count: group.total_found,
+                    items: posts
+                  }
+                }));
+            }
+
             return Model.forge()
               .query(qb => qb.whereIn('id', ids)).fetchAll()
               .then(items => ({
