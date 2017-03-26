@@ -50,7 +50,7 @@ import SearchPageBar from '../components/search/page-bar';
 import SortingFilter from '../components/filters/sorting-filter';
 
 function filterSections(query = {}) {
-  const visible = ['geotags', 'hashtags', 'schools', 'posts', 'people'];
+  const visible = ['locations', 'hashtags', 'schools', 'posts', 'people'];
   if (!query.show || query.show === 'all') {
     return visible;
   }
@@ -58,11 +58,6 @@ function filterSections(query = {}) {
   let queried = clone(query.show);
   if (!Array.isArray(queried)) {
     queried = [queried];
-  }
-
-  const index = queried.indexOf('locations');
-  if (index >= 0) {
-    queried[index] = 'geotags';
   }
 
   return intersection(visible, queried);
@@ -88,9 +83,9 @@ class SearchPage extends Component {
     await triggers.search(query);
   }
 
-  constructor(...props) {
-    super(...props);
-    this.triggers = new ActionsTrigger(client, this.props.dispatch);
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
   }
 
   componentWillReceiveProps(nextProps) {

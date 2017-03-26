@@ -52,7 +52,7 @@ export default class SearchSection extends React.Component {
           />
         );
       }
-      case 'geotags':
+      case 'locations':
       case 'hashtags':
       case 'schools': {
         const model = ImmutableMap({ [type]: items });
@@ -104,6 +104,8 @@ export default class SearchSection extends React.Component {
     if (!items.size) {
       return null;
     }
+
+    console.log(type);
 
     let itemsToRender;
     if (needPaging) {

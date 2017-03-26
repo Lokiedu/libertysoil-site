@@ -29,7 +29,7 @@ export type SearchResult<T> = {
 };
 
 export type SearchResponse = {
-  geotags?: SearchResult<Geotag>,
+  locations?: SearchResult<Geotag>,
   hashtags?: SearchResult<Hashtag>,
   posts?: SearchResult<Post>,
   schools?: SearchResult<School>,

@@ -64,20 +64,16 @@ class Search extends Component {
     this.toggle(false);
   };
 
-  callSearchAPI = debounce((query) => {
-    let searchQuery = query;
+  callSearchAPI = debounce((query = '') => {
+    const q = query.trim();
 
-    if (searchQuery) {
-      searchQuery = searchQuery.trim();
-    }
-
-    if (searchQuery) {
+    if (q) {
       this.setState({ loading: true });
 
       const client = new ApiClient(API_HOST);
       const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-      triggers.search({ q: searchQuery })
+      triggers.search({ q })
         .then(() => {
           this.setState({ loading: false });
         })
@@ -173,7 +169,7 @@ class Search extends Component {
           let icon, name, url;
 
           switch (tag.tagType) {
-            case 'geotags': {
+            case 'locations': {
               icon = <TagIcon big type={TAG_LOCATION} />;
               name = tag.name;
               url = `/geo/${tag.url_name}`;
