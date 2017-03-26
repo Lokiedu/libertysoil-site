@@ -57,7 +57,7 @@ export default class PictureChangePost extends React.Component {
         className={classNames(
           'river-item--type_text',
           'bio__river-item--type_image-change',
-          { 'river-item--space_right': !isCurrentUser }
+          { 'river-item--space-right': !isCurrentUser }
         )}
         icon={
           <div className="bio__icon bio__icon--bordered">

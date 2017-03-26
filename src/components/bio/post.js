@@ -66,7 +66,7 @@ export default class ProfilePost extends React.Component {
   };
 
   render() {
-    const { author, current_user, post } = this.props;
+    const { author, current_user, post, hideAvatar } = this.props;
 
     if (this.state.isEditing) {
       return (
@@ -106,18 +106,20 @@ export default class ProfilePost extends React.Component {
     return (
       <BasicRiverItem
         className={classNames('river-item--type_text', {
-          'river-item--space_right': !isCurrentUser
+          'river-item--space-right': !isCurrentUser
         })}
         icon={[
           <div className="bio__timestamp bio__timestamp--disappearing" key="timestamp">
             <Time format="%Y.%m.%d" timestamp={post.get('updated_at')} />
           </div>,
           <div className="bio__icon bio__icon--bordered" key="icon">
-            <User
-              avatar={{ isRound: false, size: 26 }}
-              text={{ hide: true }}
-              user={author}
-            />
+            {!hideAvatar &&
+              <User
+                avatar={{ isRound: false, size: 26 }}
+                text={{ hide: true }}
+                user={author}
+              />
+            }
           </div>
         ]}
         menuItems={isCurrentUser && [
@@ -139,7 +141,7 @@ export default class ProfilePost extends React.Component {
       >
         <div
           className="bio__post--type_text"
-          dangerouslySetInnerHTML={{ __html: post.get('html') }}
+          dangerouslySetInnerHTML={{ __html: post.get('html') || post.get('text') }}
         />
       </BasicRiverItem>
     );
