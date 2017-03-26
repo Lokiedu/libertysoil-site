@@ -132,4 +132,8 @@ expect.addAssertion('to fail validation with', function (expect, subject, value)
     });
 });
 
+expect.addAssertion('<date|string> to be later than <date|string>', function (expect, subject, value) {
+  return expect(new Date(subject) > new Date(value), 'to be true');
+});
+
 export default expect;
