@@ -3608,19 +3608,24 @@ export default class ApiController {
    * @param {Error} e
    */
   processError(ctx, e) {
-    ctx.status = 500;
-
     if (e instanceof Checkit.Error) {
+      ctx.status = 400;
       ctx.body = {
         errors: e.toJSON(),
         error: e.toString()
       };
-    } else if (e instanceof this.bookshelf.NotFoundError) {
+    } else if (
+      e instanceof this.bookshelf.NotFoundError ||
+      e instanceof this.bookshelf.NoRowsUpdatedError ||
+      e instanceof this.bookshelf.NoRowsDeletedError
+    ) {
       ctx.status = 404;
       ctx.body = {
         error: 'Not Found'
       };
     } else {
+      ctx.app.logger.error(e);
+      ctx.status = 500;
       ctx.body = {
         error: e.message
       };
