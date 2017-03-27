@@ -2747,6 +2747,8 @@ export default class ApiController {
 
     if (!ctx.query.sort || ctx.query.sort === '-q') {
       this.sphinx.api.SetSortMode(0); // SphinxClient.SPH_SORT_RELEVANCE
+    } else {
+      this.sphinx.api.SetSortMode(1, 'updated_at'); // SphinxClient.SPH_SORT_ATTR_DESC
     }
 
     try {
