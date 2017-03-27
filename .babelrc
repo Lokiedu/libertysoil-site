@@ -6,5 +6,7 @@
   ],
   "plugins": [
     ["lodash"]
-  ]
+  ],
+  "retainLines": true,
+  "sourceMaps": "both"
 }
