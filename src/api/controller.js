@@ -2709,7 +2709,7 @@ export default class ApiController {
   };
 
   search = async (ctx) => {
-    const { q } = ctx.params;
+    const { q } = ctx.query;
 
     this.sphinx.api.SetMatchMode(4); //SPH_MATCH_EXTENDED
     this.sphinx.api.SetLimits(0, 100, 100, 100);
