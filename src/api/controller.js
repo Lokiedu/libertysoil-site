@@ -32,14 +32,15 @@ import { hidePostsData } from '../utils/posts';
 import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
+import { SEARCH_INDEXES_TABLE, SEARCH_RESPONSE_TABLE } from '../consts/search';
 import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
   Geotag as GeotagValidators,
-  UserMessage as UserMessageValidators
+  UserMessage as UserMessageValidators,
+  SearchQuery as SearchQueryValidators
 } from './db/validators';
-
 
 const bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
@@ -2709,37 +2710,96 @@ export default class ApiController {
   };
 
   search = async (ctx) => {
-    const { q } = ctx.query;
+    try {
+      await new Checkit(SearchQueryValidators).run(ctx.query);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
 
-    this.sphinx.api.SetMatchMode(4); //SPH_MATCH_EXTENDED
-    this.sphinx.api.SetLimits(0, 100, 100, 100);
+    const { show } = ctx.query;
+    let indexes;
+    if (typeof show === 'string') {
+      if (show === 'all') {
+        indexes = _.values(SEARCH_INDEXES_TABLE);
+      } else {
+        indexes = [SEARCH_INDEXES_TABLE[show]];
+      }
+    } else if (Array.isArray(show)) {
+      indexes = _.values(_.pickBy(SEARCH_INDEXES_TABLE, (v, k) =>
+        show.includes(k)
+      ));
+    } else {
+      indexes = _.values(SEARCH_INDEXES_TABLE);
+    }
+
+    this.sphinx.api.SetMatchMode(4); // SphinxClient.SPH_MATCH_EXTENDED
+
+    const limit = parseInt(ctx.query.limit, 10) || 20;
+    const offset = parseInt(ctx.query.offset, 10) || 0;
+    this.sphinx.api.SetLimits(offset, limit, offset + limit + 1000);
+
+    if (!ctx.query.sort || ctx.query.sort === '-q') {
+      this.sphinx.api.SetSortMode(0); // SphinxClient.SPH_SORT_RELEVANCE
+    } else {
+      this.sphinx.api.SetSortMode(1, 'updated_at'); // SphinxClient.SPH_SORT_ATTR_DESC
+    }
 
     try {
-      const result = await this.sphinx.api.QueryAsync(`*${q}*`, 'PostsRT,UsersRT,HashtagsRT,GeotagsRT,SchoolsRT,CommentsRT');
+      for (let i = 0, l = indexes.length, q = `*${ctx.query.q}*`; i < l; ++i) {
+        this.sphinx.api.AddQuery(q, indexes[i]);
+      }
 
-      if ('matches' in result) {
-        const result_groups = _.groupBy(result.matches, 'attrs.type');
+      const results = await this.sphinx.api.RunQueriesAsync();
+      const nonEmptyResults = results.filter(group => group.total_found > 0);
 
-        const grouped_result_objects = {};
+      if (nonEmptyResults.length > 0) {
+        const processedGroups = await Promise.all(
+          nonEmptyResults.map(group => {
+            const type = group.matches[0].attrs.type,
+              Model = this.bookshelf.model(type),
+              ids   = group.matches.map(item => item.attrs.uuid);
 
-        for (const result_type in result_groups) {
-          const group_ids = _.map(result_groups[result_type], 'attrs.uuid');
+            if (type === 'Post') {
+              return Model.forge().query(qb => qb.whereIn('id', ids))
+                .fetchAll({ require: false, withRelated: POST_RELATIONS })
+                .then(posts => Promise.all([posts, this.countComments(posts)]))
+                .then(([posts, postCommentsCount]) => {
+                  const next = posts.map(post => {
+                    post.relations.schools = post.relations.schools.map(row => ({
+                      id: row.id,
+                      name: row.attributes.name,
+                      url_name: row.attributes.url_name
+                    }));
+                    post.attributes.comments = postCommentsCount[post.get('id')];
+                    return post;
+                  });
+                  return hidePostsData(next, ctx, this.bookshelf.knex);
+                })
+                .then(posts => ({
+                  [SEARCH_RESPONSE_TABLE[type]]: {
+                    count: group.total_found,
+                    items: posts
+                  }
+                }));
+            }
 
-          const ResultGroup = this.bookshelf.model(result_type);
-          const q = ResultGroup.forge()
-            .query(qb => {
-              qb.where('id', 'IN', group_ids);
-            });
+            return Model.forge()
+              .query(qb => qb.whereIn('id', ids)).fetchAll()
+              .then(items => ({
+                [SEARCH_RESPONSE_TABLE[type]]: {
+                  count: group.total_found, items
+                }
+              }));
+          }));
 
-          grouped_result_objects[result_type] = await q.fetchAll();
-        }
-
-        ctx.body = _.transform(grouped_result_objects, (acc, value, key) => {
-          acc[key.toLowerCase().concat('s')] = { count: value.length, items: value };
-        }, {});
+        ctx.body = processedGroups.reduce(
+          (res, groupData) => Object.assign(res, groupData),
+          {}
+        );
       } else {
-        ctx.body = {};
-        return;
+        ctx.status = 404;
       }
     } catch (err) {
       ctx.app.emit('error', err);

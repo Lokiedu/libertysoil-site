@@ -16,10 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Map, List, fromJS } from 'immutable';
+import omit from 'lodash/omit';
 
 import { search } from '../actions';
 
-export const initialState = Map({
+export const searchObject = Map({
   results: Map({
     geotags: Map({
       items: List([]),
@@ -37,18 +38,29 @@ export const initialState = Map({
       items: List([]),
       count: 0
     })
-  })
+  }),
+  query: Map({})
+});
+
+export const initialState = Map({
+  header: searchObject,
+  page: searchObject
 });
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
-    case search.SET_SEARCH_RESULTS:
-      state = state.set('results', fromJS(action.payload.results));
+    case search.SET_SEARCH_RESULTS: {
+      const searchId = action.payload.more.searchId;
+      state = state.update(searchId, searchObject, s =>
+        s.merge(fromJS(omit(action.payload, ['more'])))
+      );
       break;
-
-    case search.CLEAR_SEARCH_RESULTS:
-      state = state.set('results', initialState.get('results'));
+    }
+    case search.CLEAR_SEARCH_RESULTS: {
+      const searchId = action.payload.searchId;
+      state = state.set(searchId, searchObject);
       break;
+    }
   }
 
   return state;

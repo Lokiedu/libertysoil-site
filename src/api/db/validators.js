@@ -14,8 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-const User = {
+*/
+import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
+
+export const User = {
   registration: {
     username: [
       'required',
@@ -70,21 +73,21 @@ const User = {
   }
 };
 
-const School = {
+export const School = {
   more: {
     head_pic: ['plainObject'],
     last_editor: ['string']
   }
 };
 
-const Geotag = {
+export const Geotag = {
   more: {
     description: ['string'],
     last_editor: ['string']
   }
 };
 
-const Hashtag = {
+export const Hashtag = {
   more: {
     description: ['string'],
     head_pic: ['plainObject'],
@@ -92,11 +95,11 @@ const Hashtag = {
   }
 };
 
-const UserMessage = {
+export const UserMessage = {
   text: ['string', 'minLength:1', 'required']
 };
 
-const ProfilePost = {
+export const ProfilePost = {
   text: ['string', 'maxLength:200'],
   html: ['string'],
   type: [
@@ -117,4 +120,44 @@ ProfilePost.TYPES = [
   'avatar'
 ];
 
-export { User, School, Hashtag, Geotag, UserMessage, ProfilePost };
+const SEARCH_RESULT_TYPES = [
+  'hashtags',
+  'locations',
+  'posts',
+  'people',
+  'schools'
+];
+const SORTING_TYPES = [
+  '-q',
+  '-updated_at'
+];
+export const SearchQuery = {
+  limit: ['integer', 'natural'],
+  offset: ['integer', 'natural'],
+  show: {
+    rule: val => {
+      if (val) {
+        if (typeof val === 'string') {
+          if (val !== 'all' && !SEARCH_RESULT_TYPES.includes(val)) {
+            throw new Error('Unsupported type of search result');
+          }
+        } else if (Array.isArray(val)) {
+          const unique = uniq(val);
+          if (unique.length > 1 && unique.includes('all')) {
+            throw new Error('Ambiguity between "all" and explicit type of search results');
+          } else if (difference(unique, SEARCH_RESULT_TYPES).length > 0) {
+            throw new Error('At least one of presented search result types is unsupported');
+          }
+        } else {
+          throw new Error('Type of search results is expected to be a string or an array');
+        }
+      }
+    }
+  },
+  sort: ['string', val => {
+    if (val && !SORTING_TYPES.includes(val)) {
+      throw new Error('Invalid search sorting type');
+    }
+  }],
+  q: ['string']
+};

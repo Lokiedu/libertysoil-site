@@ -38,6 +38,18 @@ export function convertModelsToTags(params = ImmutableMap({})) {
     });
   }
 
+
+  if (List.isList(params.get('locations'))) {
+    params.get('locations').forEach(function (tag) {
+      allTags.push({
+        urlId: tag.get('url_name'),
+        name: tag.get('name'),
+        postCount: tag.get('post_count'),
+        type: TAG_LOCATION
+      });
+    });
+  }
+
   if (List.isList(params.get('schools'))) {
     params.get('schools').forEach(function (school) {
       allTags.push({

@@ -44,3 +44,21 @@ export const SEARCH_SECTIONS_COUNTABILITY = {
   posts: ['post', 'posts'],
   schools: ['school', 'schools']
 };
+
+export const SEARCH_INDEXES_TABLE = {
+  comments: 'CommentsRT',
+  hashtags: 'HashtagsRT',
+  locations: 'GeotagsRT',
+  people: 'UsersRT',
+  posts: 'PostsRT',
+  schools: 'SchoolsRT'
+};
+
+export const SEARCH_RESPONSE_TABLE = {
+  Comment: 'comments',
+  Hashtag: 'hashtags',
+  Geotag: 'locations',
+  User: 'people',
+  Post: 'posts',
+  School: 'schools'
+};

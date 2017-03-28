@@ -18,17 +18,21 @@
 export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
-export function setSearchResults(results) {
+export function setSearchResults(results, more) {
   return {
     type: SET_SEARCH_RESULTS,
     payload: {
-      results
+      results,
+      more
     }
   };
 }
 
-export function clearSearchResults() {
+export function clearSearchResults(searchId) {
   return {
-    type: CLEAR_SEARCH_RESULTS
+    type: CLEAR_SEARCH_RESULTS,
+    payload: {
+      searchId
+    }
   };
 }
