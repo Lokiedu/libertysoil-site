@@ -135,6 +135,7 @@ class Search extends Component {
 
   onKeyDown = (e) => {
     if (e.keyCode === 13) {
+      this.toggle(false);
       browserHistory.push({
         pathname: '/search',
         query: { q: this.state.query }
