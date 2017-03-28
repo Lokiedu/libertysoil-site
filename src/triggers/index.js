@@ -815,6 +815,7 @@ export class ActionsTrigger {
       const response = await this.client.search(query);
       this.dispatch(a.search.setSearchResults(response, more));
     } catch (e) {
+      this.dispatch(a.search.clearSearchResults(more.searchId));
       this.dispatch(a.messages.addError(e.message));
     }
   }
