@@ -29,6 +29,7 @@ import { API_HOST } from '../config';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { SEARCH_SORTING_TYPES } from '../consts/search';
 import { offsetTop } from '../utils/browser';
+import { searchObject } from '../store/search';
 
 import {
   Page,
@@ -80,7 +81,7 @@ class SearchPage extends Component {
     if (router.type) {
       query.show = router.type;
     }
-    await triggers.search(query);
+    await triggers.search(query, { searchId: 'page' });
   }
 
   constructor(props, ...args) {
@@ -95,7 +96,7 @@ class SearchPage extends Component {
     }
 
     if (!isEqual(this.props.location.query, nextQuery)) {
-      this.triggers.search(nextQuery);
+      this.triggers.search(nextQuery, { searchId: 'page' });
     }
   }
 
@@ -192,7 +193,7 @@ class SearchPage extends Component {
 }
 
 const selector = createSelector(
-  [currentUserSelector, state => state.get('search')],
+  [currentUserSelector, state => state.getIn(['search', 'page'], searchObject)],
   (current_user, search) => ({
     ...current_user,
     search

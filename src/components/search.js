@@ -28,6 +28,7 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import createSelector from '../selectors/createSelector';
+import { searchObject } from '../store/search';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 import { clearSearchResults } from '../actions/search';
@@ -58,6 +59,9 @@ class Search extends Component {
       loading: false,
       query: ''
     };
+
+    const client = new ApiClient(API_HOST);
+    this.triggers = new ActionsTrigger(client, props.dispatch);
   }
 
   onClickOutside = () => {
@@ -70,10 +74,7 @@ class Search extends Component {
     if (q) {
       this.setState({ loading: true });
 
-      const client = new ApiClient(API_HOST);
-      const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-      triggers.search({ q })
+      this.triggers.search({ q }, { searchId: 'header' })
         .then(() => {
           this.setState({ loading: false });
         })
@@ -271,10 +272,8 @@ class Search extends Component {
 }
 
 const selector = createSelector(
-  state => state.get('search'),
-  search => ({
-    results: search.get('results').toJS()
-  })
+  (state) => state.getIn(['search', 'header'], searchObject).get('results'),
+  results => ({ results: results.toJS() })
 );
 
 const DecoratedSearch = ClickOutsideComponentDecorator(Search);

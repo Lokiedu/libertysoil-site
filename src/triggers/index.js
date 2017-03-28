@@ -810,10 +810,10 @@ export class ActionsTrigger {
     }
   }
 
-  search = async (query) => {
+  search = async (query, more) => {
     try {
       const response = await this.client.search(query);
-      this.dispatch(a.search.setSearchResults(response));
+      this.dispatch(a.search.setSearchResults(response, more));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
