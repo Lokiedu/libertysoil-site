@@ -19,7 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
-import { debounce, take } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
@@ -30,6 +30,7 @@ import { ActionsTrigger } from '../triggers';
 import createSelector from '../selectors/createSelector';
 import { searchObject } from '../store/search';
 
+import { SEARCH_SECTIONS_COUNTABILITY } from '../consts/search';
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 import { clearSearchResults } from '../actions/search';
 import bem from '../utils/bemClassNames';
@@ -38,6 +39,16 @@ import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentD
 import Icon from './icon';
 import ListItem from './list-item';
 import TagIcon from './tag-icon';
+
+function getResultsSectionTitle(sectionName, count) {
+  let wordFormId;
+  if (count === 1) {
+    wordFormId = 0;
+  } else {
+    wordFormId = 1;
+  }
+  return `Show ${count} found ${SEARCH_SECTIONS_COUNTABILITY[sectionName][wordFormId]}`;
+}
 
 class Search extends Component {
   static displayName = 'Search';
@@ -143,6 +154,10 @@ class Search extends Component {
     }
   };
 
+  handleSectionLink = () => {
+    this.toggle(false);
+  }
+
   renderResults = () => {
     const { results } = this.props;
     const { isOpened, query } = this.state;
@@ -154,56 +169,72 @@ class Search extends Component {
     // if result isProcessing
     // ...
 
-    let tags = [];
+    const sections = [];
     for (const section of Object.keys(results)) {
-      tags = tags.concat(
-        results[section].items.map(tag =>
-          ({ tagType: section, ...tag })
-        )
-      );
+      const count = results[section].count;
+      if (count > 0) {
+        sections.push({ type: section, count });
+      }
     }
 
-    tags = take(tags, 10);
+    if (!sections.length) {
+      return false;
+    }
+
+    sections.push({ type: 'all' });
 
     return (
       <div className="search__result">
-        {tags.map((tag, i) => {
-          let icon, name, url;
+        {sections.map(section => {
+          let icon, title, url;
 
-          switch (tag.tagType) {
+          switch (section.type) {
             case 'locations': {
               icon = <TagIcon big type={TAG_LOCATION} />;
-              name = tag.name;
-              url = `/geo/${tag.url_name}`;
+              title = getResultsSectionTitle('locations', section.count);
+              url = '/search/locations';
               break;
             }
             case 'hashtags': {
               icon = <TagIcon big type={TAG_HASHTAG} />;
-              name = tag.name;
-              url = `/tag/${tag.name}`;
+              title = getResultsSectionTitle('hashtags', section.count);
+              url = '/search/hashtags';
               break;
             }
             case 'schools': {
               icon = <TagIcon big type={TAG_SCHOOL} />;
-              name = tag.name;
-              url = `/s/${tag.url_name}`;
+              title = getResultsSectionTitle('schools', section.count);
+              url = '/search/schools';
               break;
             }
             case 'posts': {
               icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
-              name = tag.more.pageTitle;
-              url = `/post/${tag.id}`;
+              title = getResultsSectionTitle('posts', section.count);
+              url = '/search/posts';
               break;
             }
-            default:
-              console.log(`Unhandled search result type: ${tag.tagType}`);  // eslint-disable-line no-console
+            case 'people': {
+              icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
+              title = getResultsSectionTitle('people', section.count);
+              url = '/search/people';
+              break;
+            }
+            case 'all': {
+              title = 'Show all results';
+              url = '/search';
+              break;
+            }
+            default: {
+              // eslint-disable-next-line no-console
+              console.log(`Unhandled search result type: ${section.tagType}`);
               return null;
+            }
           }
 
           return (
-            <Link key={i} to={url}>
+            <Link key={title} to={`${url}?q=${this.state.query}`} onClick={this.handleSectionLink}>
               <ListItem icon={icon}>
-                {name}
+                {title}
               </ListItem>
             </Link>
           );
