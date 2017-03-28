@@ -2738,12 +2738,7 @@ export default class ApiController {
 
     const limit = parseInt(ctx.query.limit, 10) || 20;
     const offset = parseInt(ctx.query.offset, 10) || 0;
-
-    let total = 100;
-    if (limit > total) {
-      total = limit;
-    }
-    this.sphinx.api.SetLimits(offset, limit, total, total);
+    this.sphinx.api.SetLimits(offset, limit, offset + limit + 1000);
 
     if (!ctx.query.sort || ctx.query.sort === '-q') {
       this.sphinx.api.SetSortMode(0); // SphinxClient.SPH_SORT_RELEVANCE
