@@ -19,9 +19,26 @@ import React from 'react';
 import { Link } from 'react-router';
 
 export default class SearchPageBar extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = { q: props.location.query.q || '' };
   }
+
+  componentWillReceiveProps(nextProps) {
+    const nextQ = nextProps.location.query.q;
+    if (nextQ !== this.props.location.query.q) {
+      this.setState({ q: nextQ });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props
+      || nextState.q !== this.state.q;
+  }
+
+  handleChange = (e) => {
+    this.setState({ q: e.target.value });
+  };
 
   handleFormSubmit = event => {
     event.preventDefault();
@@ -32,11 +49,11 @@ export default class SearchPageBar extends React.Component {
 
   // also fires just after location change
   submitQuery = location => {
-    if (!this.searchBar) {
+    const q = this.state.q;
+    if (!q) {
       return location;
     }
 
-    const q = this.searchBar.value;
     const query = { ...location.query, q };
     return { ...location, query };
   };
@@ -46,11 +63,11 @@ export default class SearchPageBar extends React.Component {
       <form className="layout list_item search__page-bar" onSubmit={this.handleFormSubmit}>
         <input
           className="input input-transparent search__page-input layout__grid_item layout__grid_item-fill layout__grid_item-wide"
-          defaultValue={this.props.location.query.q}
           name="q"
           placeholder="Search"
-          ref={c => this.searchBar = c}
           type="text"
+          value={this.state.q}
+          onChange={this.handleChange}
         />
         <Link
           className="button button-light_blue search__button"
