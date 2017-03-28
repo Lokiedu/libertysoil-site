@@ -77,7 +77,7 @@ class Search extends Component {
       const client = new ApiClient(API_HOST);
       const triggers = new ActionsTrigger(client, this.props.dispatch);
 
-      triggers.search(query)
+      triggers.search({ q: searchQuery })
         .then(() => {
           this.setState({ loading: false });
         })
