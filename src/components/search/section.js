@@ -105,15 +105,11 @@ export default class SearchSection extends React.Component {
       return null;
     }
 
-    console.log(type);
-
     let itemsToRender;
     if (needPaging) {
-      itemsToRender = items
-        .slice(offset, offset + SEARCH_RESULTS_PER_PAGE);
+      itemsToRender = items;
     } else {
-      itemsToRender = items
-        .slice(offset, offset + SEARCH_RESULTS_PER_PAGE / 2);
+      itemsToRender = items.take(SEARCH_RESULTS_PER_PAGE / 2);
     }
 
     const rendered = this.renderItems(type, itemsToRender, props);
