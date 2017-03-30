@@ -9,3 +9,4 @@ public/assets
 /deploy/production/secrets.env
 /deploy/staging/secrets.env
 dump.rdb
+/opendata
