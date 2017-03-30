@@ -37,13 +37,15 @@ export default class UpdateNameAction extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      isActive: false
+      isActive: false,
+      isSubmitting: false
     };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return nextProps !== this.props ||
-      nextState.isActive !== this.state.isActive;
+      nextState.isActive !== this.state.isActive ||
+      nextState.isSubmitting !== this.state.isSubmitting;
   }
 
   handleCardClick = () => {
@@ -58,6 +60,11 @@ export default class UpdateNameAction extends React.Component {
     e.persist();
     e.preventDefault();
 
+    if (this.state.isSubmitting) {
+      return;
+    }
+
+    this.setState({ isSubmitting: true });
     const form = e.target;
     const success = await this.props.triggers.updateUserInfo({ more: {
       firstName: form.firstName.value,
@@ -67,6 +74,7 @@ export default class UpdateNameAction extends React.Component {
     if (success) {
       this.setState({ isActive: false });
     }
+    this.setState({ isSubmitting: false });
   };
 
   render() {
@@ -121,9 +129,11 @@ export default class UpdateNameAction extends React.Component {
                 </div>
                 <div className="paper__page layout__raw_grid layout__raw_grid--reverse">
                   <Button
-                    className="button-wide button-green button--new"
+                    className="button-wide button--new"
+                    disabled={this.state.isSubmitting}
                     title="Save"
                     type="submit"
+                    waiting={this.state.isSubmitting}
                   />
                 </div>
               </form>

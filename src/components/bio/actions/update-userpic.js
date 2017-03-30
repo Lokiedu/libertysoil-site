@@ -36,7 +36,7 @@ function getAction(user) {
 
 const icon = { icon: 'image', pack: 'fa' };
 const limits = { min: AVATAR_SIZE };
-const submit = { children: 'Save' };
+const submit = { children: 'Save',  };
 
 export default class UpdateUserPictureAction extends React.Component {
   static displayName = 'UpdateUserPictureAction';
@@ -57,8 +57,15 @@ export default class UpdateUserPictureAction extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      isActive: false
+      isActive: false,
+      isSubmitting: false
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props ||
+      nextState.isActive !== this.state.isActive ||
+      nextState.isSubmitting !== this.state.isSubmitting;
   }
 
   handleCardClick = () => {
@@ -70,10 +77,11 @@ export default class UpdateUserPictureAction extends React.Component {
   };
 
   handleSubmit = async ({ production }) => {
-    if (!production) {
+    if (!production || this.state.isSubmitting) {
       return;
     }
 
+    this.setState({ isSubmitting: true });
     const pictureData = {
       picture: production.picture,
       crop: pick(production.crop, ['top', 'right', 'bottom', 'left'])
@@ -100,6 +108,8 @@ export default class UpdateUserPictureAction extends React.Component {
     } catch (e) {
       this.props.dispatch(addError(e.message));
     }
+
+    this.setState({ isSubmitting: false });
   };
 
   render() {
@@ -118,7 +128,11 @@ export default class UpdateUserPictureAction extends React.Component {
           <UpdatePictureModal
             limits={limits}
             preview={AVATAR_SIZE}
-            submit={submit}
+            submit={{
+              ...submit,
+              disabled: this.state.isSubmitting,
+              waiting: this.state.isSubmitting
+            }}
             visible={this.state.isActive}
             what="user picture"
             where={<span className="">{name}</span>}
