@@ -71,7 +71,7 @@ export type UserRegisterInfo = {
 export type UserMore = {
   avatar?: Attachment,
   bio?: string,
-  first_login: boolean,
+  first_login?: boolean,
   firstName?: string,
   head_pic?: Attachment,
   lastName?: string,
