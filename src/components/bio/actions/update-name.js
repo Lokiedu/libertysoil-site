@@ -127,15 +127,21 @@ export default class UpdateNameAction extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="paper__page layout__raw_grid layout__raw_grid--reverse">
+                <footer className="layout layout__grid add_tag_modal__footer">
                   <Button
-                    className="button-wide button--new"
+                    className="button-wide"
+                    color="red"
                     disabled={this.state.isSubmitting}
                     title="Save"
                     type="submit"
                     waiting={this.state.isSubmitting}
                   />
-                </div>
+                  <Button
+                    className="button-wide add_tag_modal__cancel_button"
+                    title="Cancel"
+                    onClick={this.handleModalClose}
+                  />
+                </footer>
               </form>
             </ModalComponent.Body>
           </ModalComponent>
