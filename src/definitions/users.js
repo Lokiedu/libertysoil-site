@@ -68,6 +68,15 @@ export type UserRegisterInfo = {
   username: Username
 };
 
+export type UserSocial = {
+  facebook: string,
+  googlePlus: string,
+  linkedin: string,
+  twitter: string,
+  website: string,
+  youtube: string
+};
+
 export type UserMore = {
   avatar?: Attachment,
   bio?: string,
@@ -77,6 +86,7 @@ export type UserMore = {
   lastName?: string,
   mute_all_posts?: boolean,
   roles?: Array<UserRole>,
+  social?: UserSocial,
   summary?: string
 };
 
