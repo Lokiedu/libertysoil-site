@@ -23,6 +23,8 @@ import {
   User as UserPropType
 } from '../prop-types/users';
 
+const defaultStyle = 'button button-wide suggested-user__button suggested-user__button-follow';
+
 export default class FollowButton extends React.Component {
   static displayName = 'FollowButton';
 
@@ -62,9 +64,17 @@ export default class FollowButton extends React.Component {
     }
 
     if (following.includes(user.get('id'))) {
-      return <button className="button button-wide button-yellow" onClick={this.unfollowUser}>Following</button>;
+      return (
+        <button className={defaultStyle.concat(' button-yellow')} onClick={this.unfollowUser}>
+          Following
+        </button>
+      );
     }
 
-    return <button className="button button-wide button-green" onClick={this.followUser}>Follow</button>;
+    return (
+      <button className={defaultStyle.concat(' button-green')} onClick={this.followUser}>
+        Follow
+      </button>
+    );
   }
 }
