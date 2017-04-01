@@ -17,7 +17,7 @@
 
  @flow
 */
-import type { DateType, Integer, UrlNode, Uuid4 } from './common';
+import type { DateString, Integer, UrlNode, Uuid4 } from './common';
 import type { Geotag, GeotagId } from './geotags';
 import type { Hashtag, HashtagId } from './hashtags';
 import type { LightSchool, SchoolId } from './schools';
@@ -56,9 +56,9 @@ export type UserUpdateablePostData = {
 
 export type Post = UserUpdateablePostData & {
   comments: Integer,
-  created_at: DateType,
+  created_at: DateString,
   favourers: Array<User>,
-  fully_published_at?: DateType,
+  fully_published_at?: DateString,
   id: PostId,
   liked_geotag_id?: GeotagId,
   liked_hashtag_id?: HashtagId,
@@ -66,7 +66,7 @@ export type Post = UserUpdateablePostData & {
   likers: Array<User>,
   more?: PostMore,
   type: PostType,
-  updated_at: DateType,
+  updated_at: DateString,
   url_name?: UrlNode, // likes don't have url_name
   user_id: Uuid4 // TODO: replace to UserId
 };

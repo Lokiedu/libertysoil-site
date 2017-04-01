@@ -21,5 +21,3 @@ esproposal.class_instance_fields=enable
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
-
-suppress_comment=\\(.\\|\n\\)*\\$FlowTcombIssue

@@ -17,7 +17,7 @@
 
  @flow
 */
-import type { DateType, Uuid4 } from './common';
+import type { DateString, Uuid4 } from './common';
 import type { UserId } from './users';
 
 
@@ -35,12 +35,12 @@ export type ProfilePostDraftData = {
 };
 
 export type ProfilePost = {
-  created_at: DateType,
+  created_at: DateString,
   html: string,
   id: ProfilePostId,
   more?: ProfilePostMore,
   text: string,
   type: ProfilePostType,
-  updated_at: DateType,
+  updated_at: DateString,
   user_id: UserId
 };

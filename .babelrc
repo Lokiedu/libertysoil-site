@@ -8,5 +8,16 @@
     ["lodash"]
   ],
   "retainLines": true,
-  "sourceMaps": "both"
+  "sourceMaps": "both",
+  "env": {
+    "development": {
+      "plugins": [
+        ["flow-runtime", {
+          "annotate": false,
+          "assert": true,
+          "warn": true
+        }]
+      ]
+    }
+  }
 }

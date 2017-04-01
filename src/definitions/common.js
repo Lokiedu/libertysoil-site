@@ -17,44 +17,71 @@
 
  @flow
 */
-import type { $Refinement } from 'tcomb';
+import t, { reify } from 'flow-runtime';
+import type { Type } from 'flow-runtime';
 
 export type Success = {
   success: true
 };
 
-export const isInteger = (x: number): boolean => x % 1 === 0;
+export const isInteger = (x: number) => {
+  if (x % 1 !== 0) {
+    return 'must be a valid integer';
+  }
+};
 
-export type Integer = number & $Refinement<typeof isInteger>;
+export type Integer = number;
+const IntegerType = (reify: Type<Integer>);
+IntegerType.addConstraint(isInteger);
 
-export const isValidEmail = (x: string): boolean => (
-  !!x.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i)
-);
+export const isEmail = (x: string) => {
+  if (!x.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i)) {
+    return 'must be a valid email address';
+  }
+};
 
-export type Email = string & $Refinement<typeof isValidEmail>;
+export type Email = string;
+const EmailType = (reify: Type<Email>);
+EmailType.addConstraint(isEmail);
 
-export const isValidDate = (x: string): boolean => (
-  new Date(x).toString() !== 'Invalid date'
-);
+export const isDate = (x: string): boolean => {
+  if (new Date(x).toString() === 'Invalid date') {
+    return 'must be a valid date string';
+  }
+};
 
-export type DateType = string & $Refinement<typeof isValidDate>;
+export type DateString = string;
+const DateStringType = (reify: Type<DateString>);
+DateStringType.addConstraint(isDate);
 
-export const isValidUrl = (x: string): boolean => (
-  !!x.match(RegExp(/^[a-z0-9_\.'/:-]+$/i))
-);
+export const isUrl = (x: string) => {
+  if (!x.match(RegExp(/^[a-z0-9_\.'/:-]+$/i))) {
+    return 'must be a valid URL';
+  }
+};
 
-export type Url = string & $Refinement<typeof isValidUrl>;
+export type Url = string;
+const UrlType = (reify: Type<Url>);
+UrlType.addConstraint(isUrl);
 
-export const isValidUrlNode = (x: Url): boolean => (
-  !x.match(RegExp(/(:|\/)/))
-);
+export const isUrlNode = (x: Url) => {
+  if (!x.match(RegExp(/(:|\/)/))) {
+    return 'must be a valid URL node';
+  }
+};
 
-export type UrlNode = Url & $Refinement<typeof isValidUrlNode>;
+export type UrlNode = Url;
+const UrlNodeType = (reify: Type<UrlNode>);
+UrlNodeType.addConstraint(isUrlNode);
 
-export const isValidUuid4 = (x: string): boolean => (
-  !!x.match(RegExp(/^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$/i))
-);
+export const isUuid4 = (x: string) => {
+  if (!x.match(RegExp(/^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$/i))) {
+    return 'must be a valid UUID v4 string';
+  }
+};
 
-export type Uuid4 = string & $Refinement<typeof isValidUuid4>;
+export type Uuid4 = string;
+const Uuid4Type = (reify: Type<Uuid4>);
+Uuid4Type.addConstraint(isUuid4);
 
 export type Map<K, T> = { [key: K]: T };
