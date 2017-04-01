@@ -129,9 +129,13 @@ class Comment extends Component {
       // TODO: use 'brightness1' as Dropdown.props.iconClosed
       // look at .comment__dropdown definition
       toolbar = (
-        <Dropdown className="comment__dropdown">
-          <MenuItem onClick={this.editComment}>Edit comment</MenuItem>
-          <MenuItem onClick={this.deleteComment}>Delete</MenuItem>
+        <Dropdown className="comment__dropdown" iconClosed="fiber-manual-record" theme="new">
+          <MenuItem className="menu__item--theme_new" onClick={this.editComment}>
+            Edit comment
+          </MenuItem>
+          <MenuItem className="menu__item--theme_new" onClick={this.deleteComment}>
+            Delete
+          </MenuItem>
         </Dropdown>
       );
     }
