@@ -45,7 +45,7 @@ const EmailType = (reify: Type<Email>);
 EmailType.addConstraint(isEmail);
 
 export const isDate = (x: string): boolean => {
-  if (new Date(x).toString() === 'Invalid date') {
+  if (!x.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:.\d{1,3})?Z$/)) {
     return 'must be a valid date string';
   }
 };
