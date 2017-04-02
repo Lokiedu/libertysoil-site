@@ -16,10 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 @font-face {
-  font-family: 'San Francisco';
+  font-family: 'San Francisco Display';
   font-style: normal;
   font-weight: 400;
-  src: url(../../../public/fonts/SanFranciscoDisplay-Regular.otf) format('opentype');
+  src: url('../../../public/fonts/SFDisplay-Regular.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'San Francisco Display';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../../../public/fonts/SFDisplay-Medium.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'San Francisco Display';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../../../public/fonts/SFDisplay-Semibold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'San Francisco Display';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../../../public/fonts/SFDisplay-Bold.otf') format('opentype');
 }
 
 .font {
@@ -30,9 +51,17 @@
   &-light {
     font-weight: 300;
   }
+
+  &-medium {
+    font-weight: 500;
+  }
+
+  &-semibold {
+    font-weight: 600;
+  }
   
   &-bold {
-    font-weight: 800;
+    font-weight: 700;
   }
 
   &--underlined {
@@ -44,6 +73,6 @@
   }
 
   &--family_san-francisco {
-    font-family: 'San Francisco', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
+    font-family: 'San Francisco Display', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
   }
 }
