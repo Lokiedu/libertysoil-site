@@ -54,7 +54,7 @@ class SettingsEmailPage extends React.Component {
     }
 
     return (
-      <div>
+      <div className="paper">
         <Helmet title="Email Settings on " />
         <div className="paper__page">
           <h2 className="content__sub_title layout__row layout__row-small">Email settings</h2>

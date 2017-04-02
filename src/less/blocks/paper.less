@@ -1,17 +1,35 @@
 .paper {
   background: #fff;
-  border-radius: @radius-button;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   &-wide {
     flex: 1;
   }
 
   &__page {
+    background: #fff;
     padding: @doubleSpace;
 
     & + & {
       border-top: 1px solid #edebe9;
+    }
+
+    &.layout > * + * {
+      margin-left: 20px;
+    }
+
+    &--medium {
+      padding: 20px;
+    }
+
+    &--no_padding {
+      padding: 0;
+    }
+
+    // to neutralize extra space (bottom) of .modal__section
+    &--modal:last-child {
+      margin-bottom: -30px;
     }
   }
 }

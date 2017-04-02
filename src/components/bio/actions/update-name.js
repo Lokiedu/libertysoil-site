@@ -102,7 +102,7 @@ export default class UpdateNameAction extends React.Component {
             </ModalComponent.Head>
             <ModalComponent.Body>
               <form action="" onSubmit={this.handleSubmit}>
-                <div className="form__row tools_page__item tools_page__item--close">
+                <div className="form__row paper__page paper__page--medium">
                   <label className="form__label form__label--no_space" htmlFor="firstName">First name</label>
                   <div className="input_wrap">
                     <input
@@ -115,7 +115,7 @@ export default class UpdateNameAction extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="form__row tools_page__item tools_page__item--close">
+                <div className="form__row paper__page paper__page--medium">
                   <label className="form__label form__label--no_space" htmlFor="firstName">Last name</label>
                   <div className="input_wrap">
                     <input
@@ -127,7 +127,7 @@ export default class UpdateNameAction extends React.Component {
                     />
                   </div>
                 </div>
-                <footer className="layout layout__grid add_tag_modal__footer">
+                <footer className="layout paper__page paper__page--medium paper__page--modal">
                   <Button
                     className="button-wide"
                     color="red"

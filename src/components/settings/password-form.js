@@ -46,8 +46,8 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
         });
 
         acc.push(
-          <div key={fieldName}>
-            <div className="form__row tools_page__item tools_page__item--close">
+          <div className="paper__page paper__page--no_padding" key={fieldName}>
+            <div className="form__row paper__page--medium">
               <label className="form__label" htmlFor={fieldName}>
                 {staticFields[fieldName].label}
               </label>
@@ -76,7 +76,7 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
       []
     )}
 
-    <div className="paper__page layout__raw_grid layout__raw_grid--reverse">
+    <div className="paper__page paper__page--medium layout__raw_grid layout__raw_grid--reverse">
       <DisabledFormSubmit
         className="button button-wide button-green button--new"
         type="submit"

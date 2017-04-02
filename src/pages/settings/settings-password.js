@@ -83,7 +83,7 @@ class SettingsPasswordPage extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="paper">
         <Helmet title="Change password on " />
         <SettingsPasswordForm
           ref={c => this.form = c}
