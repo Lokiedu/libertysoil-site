@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2016  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,32 +14,31 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
+import React from 'react';
 
-// A block representing a header on a page of a certain entity (user, tag, whatever).
-.page_head {
-  @size: 60px;
+import { getName } from '../../utils/user';
+import Avatar from '../user/avatar';
+import Icon from '../icon';
+import {
+  PageCaption
+} from '../page';
 
-  min-height: @size;
-  display: flex;
-  background-color: white;
-  align-items: center;
-  justify-content: space-between;
 
-  &__title {
-    display: block;
-    padding-left: @space;
-    color: @color__text;
-    font-size: 20px;
+export const UserCaption = ({ user }) => {
+  if (!user) {
+    return (
+      <PageCaption />
+    );
   }
 
-  &__icon {
-    display: flex;
-    flex: 0 0 @size;
-    height: @size;
-    align-items: center;
-    justify-content: space-around;
-    //background-color: #f3f3f3; // TODO: Choose background color depending on the type of an item.
-  }
-}
-
+  return (
+    <PageCaption
+      iconLeft={<Avatar user={user} isRound={false} size={60} />}
+      iconRight={<Icon className="icon-outline--khaki color-white" icon="at" outline size="big" />}
+    >
+      <h2 className="page-head__title">{user.get('username')}</h2>
+      <h1 className="page-head__subtitle">{getName(user)}</h1>
+    </PageCaption>
+  );
+};
