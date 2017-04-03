@@ -17,7 +17,7 @@
 
  @flow
 */
-import type { DateType, Integer, Map, UrlNode, Uuid4 } from './common';
+import type { DateString, Integer, Map, UrlNode, Uuid4 } from './common';
 import type { Attachment } from './attachments';
 import type { TagMore } from './tags';
 
@@ -28,7 +28,7 @@ export type School = {
   address2?: string,
   city?: string,
   country_id?: Uuid4,
-  created_at: DateType,
+  created_at: DateString,
   description?: string,
   facebook?: string,
   foundation_day?: Integer,
@@ -52,7 +52,7 @@ export type School = {
   required_languages?: Array<string>,
   teaching_languages?: Array<string>,
   twitter?: string,
-  updated_at: DateType,
+  updated_at: DateString,
   url_name: UrlNode,
   website?: string,
   wikipedia?: string

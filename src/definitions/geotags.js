@@ -17,7 +17,7 @@
 
  @flow
 */
-import type { DateType, Integer, Map, UrlNode, Uuid4 } from './common';
+import type { DateString, Integer, Map, UrlNode, Uuid4 } from './common';
 import type { TagMore } from './tags';
 
 export type GeotagId = Uuid4;
@@ -37,7 +37,7 @@ export type Geotag = {
   country?: Geotag,
   country_code?: string,
   country_id?: GeotagId,
-  created_at: DateType,
+  created_at: DateString,
   geonames_admin1_id?: ?Integer,
   geonames_city_id?: ?Integer,
   geonames_country_id?: ?Integer,
@@ -51,7 +51,7 @@ export type Geotag = {
   post_count: Integer,
   tsv?: ?string,
   type?: GeotagType,
-  updated_at: DateType,
+  updated_at: DateString,
   url_name: UrlNode
 };
 

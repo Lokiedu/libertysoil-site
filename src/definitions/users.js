@@ -17,8 +17,10 @@
 
  @flow
 */
-import type { $Refinement } from 'tcomb';
-import type { Email, DateType, Map, UrlNode, Uuid4 } from './common';
+import t, { reify } from 'flow-runtime';
+import type { Type } from 'flow-runtime';
+
+import type { Email, DateString, Map, UrlNode, Uuid4 } from './common';
 import type { Attachment } from './attachments';
 import type { Geotag } from './geotags';
 import type { Hashtag } from './hashtags';
@@ -26,17 +28,25 @@ import type { School } from './schools';
 
 export type UserId = Uuid4;
 
-export const isValidPassword = (x: string): boolean => (
-  !!x.match(/^[\x20-\x7E]{8,}$/)
-);
+export const isPassword = (x: string) => {
+  if (!x.match(/^[\x20-\x7E]{8,}$/)) {
+    return 'must be a valid password';
+  }
+};
 
-export type Password = string & $Refinement<typeof isValidPassword>;
+export type Password = string;
+const PasswordType = (reify: Type<Password>);
+PasswordType.addConstraint(isPassword);
 
-export const isValidUsername = (x: string): boolean => (
-  !!x.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)
-);
+export const isUsername = (x: string) => {
+  if (!x.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
+    return 'must be a valid username';
+  }
+};
 
-export type Username = string & $Refinement<typeof isValidUsername>;
+export type Username = string;
+const UsernameType = (reify: Type<Username>);
+UsernameType.addConstraint(isUsername);
 
 export type UserRoleTitle =
   | 'Teacher or School Staff Member'
@@ -77,7 +87,7 @@ export type UserRecentTags = {
 };
 
 export type User = {
-  created_at: DateType,
+  created_at: DateString,
   followed_geotags?: Array<Geotag>,
   followed_hashtags?: Array<Hashtag>,
   followed_schools?: Array<School>,
@@ -88,7 +98,7 @@ export type User = {
   liked_hashtags?: Array<Hashtag>,
   liked_schools?: Array<School>,
   more: UserMore,
-  updated_at: DateType,
+  updated_at: DateString,
   username: Username
 };
 
@@ -114,13 +124,13 @@ export type CurrentUser = {
 
 // recursive
 export type RawUser = {
-  created_at: DateType,
+  created_at: DateString,
   followers: Array<RawUser>,
   following: Array<RawUser>,
   fullName?: string,
   gravatarHash: string,
   id: UserId,
   more: UserMore,
-  updated_at: DateType,
+  updated_at: DateString,
   username: Username
 };

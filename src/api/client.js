@@ -519,12 +519,7 @@ export default class ApiClient {
   }
 
   async createPost(type: PostType, data: PostDraftData): Promise<Post> {
-    if (process.env.NODE_ENV === 'development') {
-      // $FlowTcombIssue
-      data = PostDraftData.update(data, { type: { '$set': type } });
-    } else {
-      data.type = type;
-    }
+    data.type = type;
     const response = await this.postJSON(`/api/v1/posts`, data);
     return await response.json();
   }

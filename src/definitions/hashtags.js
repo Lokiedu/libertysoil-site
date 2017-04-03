@@ -17,18 +17,18 @@
 
  @flow
 */
-import type { DateType, Integer, Map, UrlNode, Uuid4 } from './common';
+import type { DateString, Integer, Map, UrlNode, Uuid4 } from './common';
 import type { TagMore } from './tags';
 
 export type HashtagId = Uuid4;
 
 export type Hashtag = {
-  created_at: DateType,
+  created_at: DateString,
   id: HashtagId,
   more?: TagMore,
   name: UrlNode,
   post_count: Integer,
-  updated_at: DateType
+  updated_at: DateString
 };
 
 export type MapOfHashtags = Map<HashtagId, Hashtag>;

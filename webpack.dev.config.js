@@ -45,8 +45,7 @@ module.exports = {
           ],
           env: {
             development: {
-              presets: ['react-hmre'],
-              plugins: ['tcomb']
+              presets: ['react-hmre']
             }
           }
         }
