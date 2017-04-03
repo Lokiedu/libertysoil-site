@@ -23,6 +23,7 @@ import { MAPBOX_ACCESS_TOKEN } from '../config';
 let Leaflet;
 
 if (typeof (window) !== 'undefined') {
+  require('leaflet').Icon.Default.imagePath = '//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/images/';
   Leaflet = require('react-leaflet');
 }
 
