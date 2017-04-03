@@ -1,7 +1,7 @@
 language: node_js
 
 sudo: required  # requirement for postgres 9.5
-dist: trusty
+dist: yakkety
 
 node_js:
   - "6.10"
