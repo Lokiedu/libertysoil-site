@@ -18,6 +18,8 @@
 /* eslint-env node, mocha */
 /* global $dbConfig,$bookshelf */
 import fs from 'fs';
+import { connect } from 'net';
+
 import { serialize } from 'cookie';
 import AWS from 'mock-aws';
 import { v4 } from 'uuid';
@@ -30,6 +32,22 @@ import ApiClient from '../../../src/api/client';
 import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
 
+
+const connectAsync = (...args) => {
+  return new Promise(function (resolve, reject) {
+    const socket = connect(...args);
+
+    socket.once('connect', function () {
+      socket.removeListener('error', reject);
+      resolve(socket);
+    });
+
+    socket.once('error', function (err) {
+      socket.removeListener('connection', resolve);
+      reject(err);
+    });
+  });
+};
 
 let bookshelfHelper = initBookshelf($dbConfig);
 let User = bookshelfHelper.model('User');
@@ -83,8 +101,20 @@ describe('Client test', () => {
     return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'You are not authorized');
   });
 
-  it('#search works', async () => {
-    return expect(client.search({ q: 'test' }), 'to be rejected with', 'Not Found');
+  describe('#search', () => {
+    before(async function () {
+      try {
+        const port = process.env.SPHINX_PORT_9306_TCP_PORT || 9306;
+        const connection = await connectAsync({ port });
+        connection.close();
+      } catch (e) {
+        this.skip();
+      }
+    });
+
+    it('#search works', async () => {
+      return expect(client.search({ q: 'test' }), 'to be rejected with', 'Not Found');
+    });
   });
 
   it('#userInfo works', async () => {
