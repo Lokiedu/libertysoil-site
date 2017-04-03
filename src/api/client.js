@@ -34,8 +34,7 @@ import type { Attachment } from '../definitions/attachments';
 import type { ProfilePost, ProfilePostId, ProfilePostDraftData } from '../definitions/profile-posts';
 import type { SearchResponse, SearchQuery } from '../definitions/search';
 
-export default class ApiClient
-{
+export default class ApiClient {
   host: string;
   serverReq: any = null;
 
