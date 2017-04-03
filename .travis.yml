@@ -21,6 +21,7 @@ addons:
     packages:
     - g++-4.8
     - unicode-data
+    - graphicsmagick
   postgresql: "9.5"
 
 before_script:

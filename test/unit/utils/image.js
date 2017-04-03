@@ -1,33 +1,38 @@
 /*eslint-env node, mocha */
 import fs from 'fs';
+import { promisifyAll } from 'bluebird';
+import gm from 'gm';
 import { expect } from '../../../test-helpers/expect-unit';
 import { processImage } from '../../../src/utils/image';
 
-describe('processImage', () => {
 
-  it('Should work well with sample image', async () => {
+promisifyAll(gm.prototype);
+
+describe('processImage', () => {
+  it('works well with sample image', async () => {
     /**
      image sample https://commons.wikimedia.org/wiki/File:Simple_light_bulb_graphic.png
      with a free license.
     */
-    let buffer = fs.readFileSync('test-helpers/bulb.png');
-    let image;
-    // cropping
-    image = await processImage(buffer, [{crop: {left: 0, top: 0, right: 4, bottom:9}}]);
+    const buffer = fs.readFileSync('test-helpers/bulb.png');
+    let image, size;
 
-    expect(image.width(), 'to equal', 5);
-    expect(image.height(), 'to equal', 10);
+    // cropping
+    image = await processImage(buffer, [{ crop: { left: 0, top: 0, right: 4, bottom: 9 } }]);
+    size = await gm(image).sizeAsync();
+    expect(size, 'to satisfy', { width: 5, height: 10 });
+
+    image = await processImage(buffer, [{ crop: { x: 2, y: 3, width: 5, height: 10 } }]);
+    size = await gm(image).sizeAsync();
+    expect(size, 'to satisfy', { width: 5, height: 10 });
 
     // resizing
-    image = await processImage(buffer, [{resize: {height: 100, width: 50}}]);
+    image = await processImage(buffer, [{ resize: { width: 50, height: 100 } }]);
+    size = await gm(image).sizeAsync();
+    expect(size, 'to satisfy', { width: 50, height: 50 });
 
-    expect(image.width(), 'to equal', 50);
-    expect(image.height(), 'to equal', 100);
-
-    // scaling
-    image = await processImage(buffer, [{scale: {hRatio: 2, wRatio: 2}}]);
-
-    expect(image.width(), 'to equal', 200);
-    expect(image.height(), 'to equal', 200);
+    image = await processImage(buffer, [{ resize: { width: 50, height: 100, proportional: false } }]);
+    size = await gm(image).sizeAsync();
+    expect(size, 'to satisfy', { width: 50, height: 100 });
   });
 });

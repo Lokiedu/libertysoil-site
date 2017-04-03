@@ -2203,8 +2203,7 @@ export default class ApiController {
       const originalData = await original.download();
 
       // Process the data.
-      const newImage = await processImageUtil(originalData.Body, transforms);
-      const imageBuffer = await newImage.toBufferAsync(original.extension());
+      const imageBuffer = await processImageUtil(originalData.Body, transforms);
 
       // Update the attachment specified in derived_id or create a new one.
       if (ctx.request.body.derived_id) {
