@@ -53,7 +53,6 @@ const BaseUserPageWithoutHeader = (props) => {
     user.get('liked_geotags') && user.get('liked_geotags').size
   );
   const showFavouritesLink = user.get('favourited_posts') && !!user.get('favourited_posts').size;
-  const showBioLink = !!user.getIn(['more', 'bio']);
 
   let name = user.get('username');
 
@@ -115,16 +114,14 @@ const BaseUserPageWithoutHeader = (props) => {
                     Favorites
                   </PageContentLink>
                 }
-                {showBioLink &&
-                  <PageContentLink
-                    activeClassName="color-dark_blue"
-                    className="short_post short_post-spacing"
-                    to={`/user/${user.get('username')}/bio`}
-                    visible
-                  >
-                    Bio
-                  </PageContentLink>
-                }
+                <PageContentLink
+                  activeClassName="color-dark_blue"
+                  className="short_post short_post-spacing"
+                  to={`/user/${user.get('username')}/bio`}
+                  visible
+                >
+                  Bio
+                </PageContentLink>
               </div>
             </SidebarAlt>
           </PageBody>
