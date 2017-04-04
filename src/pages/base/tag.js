@@ -53,7 +53,7 @@ function formInitialTags(type, value) {
   }
 }
 
-function getPageCaption(type, name) {
+function getPageCaption(type, name, urlId) {
   let caption;
   switch (type) {
     case TAG_LOCATION: {
@@ -66,7 +66,7 @@ function getPageCaption(type, name) {
 
   return (
     <PageCaption
-      iconRight={<Tag size="BIG" type={type} />}
+      iconRight={<Tag size="BIG" type={type} urlId={urlId} />}
     >
       <h1 className="page-head__title">
         {caption}
@@ -245,8 +245,9 @@ export default class BaseTagPage extends React.Component {
       sidebarAlt
     } = this.props;
 
-    const name = tag.get('name') || tag.get('url_name');
-    const pageCaption = getPageCaption(type, name);
+    const name = tag.get('name');
+    const urlName = tag.get('url_name') || name;
+    const pageCaption = getPageCaption(type, name, urlName);
 
     let headerPictureUrl;
     if (this.state.head_pic) {
