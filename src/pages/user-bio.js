@@ -40,6 +40,7 @@ import VisibilitySensor from '../components/visibility-sensor';
 import NotFound from './not-found';
 import BaseUserPageWithoutHeader from './base/user-without_header';
 import RiverItemCreateForm from '../components/river/type/text/create-form';
+import { UserCaption } from '../components/page/captions';
 
 class UserBioPage extends React.Component {
   static displayName = 'UserBioPage';
@@ -147,15 +148,8 @@ class UserBioPage extends React.Component {
         user={user}
       >
         <Helmet title={`${name} on `} />
+        <UserCaption title="Your Bio" user={user} />
         <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-          <div className="page_head">
-            <h1 className="page_head__title">
-              {name}
-            </h1>
-            <div className="page_head__icon">
-              <Avatar user={user} size={37} />
-            </div>
-          </div>
           <ProfilePostsRiver
             author={user}
             current_user={current_user}

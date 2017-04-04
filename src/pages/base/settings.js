@@ -83,6 +83,8 @@ class BaseSettingsPage extends React.Component {
       name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
     }
 
+    const isBio = children && children.type.displayName === 'Connect(SettingsBioPage)';
+
     return (
       <div>
         <Header current_user={current_user} is_logged_in={is_logged_in}>
@@ -116,9 +118,8 @@ class BaseSettingsPage extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <UserCaption user={user} />
+                  <UserCaption title={isBio && "Your Bio"} user={user} />
                   <div className="layout">
-
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
                       {children}
                     </div>
@@ -203,7 +204,7 @@ class BaseSettingsPage extends React.Component {
                     </PageContentLink>
                   </div>
                 </div>
-                {children && children.type.displayName === 'Connect(SettingsBioPage)' &&
+                {isBio &&
                   <div className="layout layout-align_center layout-wrap bio__actions">
                     {values(BioActions).map(Action =>
                       <Action
