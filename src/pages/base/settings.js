@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link, IndexLink } from 'react-router';
+import values from 'lodash/values';
 
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
 import { createSelector, currentUserSelector } from '../../selectors';
@@ -37,13 +38,13 @@ import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import Header from '../../components/header';
 import HeaderLogo from '../../components/header-logo';
 import Footer from '../../components/footer';
-import User from '../../components/user';
 import Sidebar from '../../components/sidebar';
 import Messages from '../../components/messages';
 import SidebarAlt from '../../components/sidebarAlt';
 import PageContentLink from '../../components/page-content-link';
 import { UserCaption } from '../../components/page/captions';
-
+import Avatar from '../../components/user/avatar';
+import * as BioActions from '../../components/bio/actions';
 
 class BaseSettingsPage extends React.Component {
   static displayName = 'BaseSettingsPage';
@@ -60,8 +61,8 @@ class BaseSettingsPage extends React.Component {
     await triggers.loadUserInfo(currentUserUsername);
   }
 
-  constructor(props) {
-    super(props);
+  constructor(props, ...args) {
+    super(props, ...args);
 
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
@@ -89,10 +90,9 @@ class BaseSettingsPage extends React.Component {
           <div className="header__breadcrumbs">
             <Breadcrumbs title={name}>
               <div className="user_box__avatar user_box__avatar-round">
-                <User
-                  avatar={{ size: 36, isRound: true }}
+                <Avatar
+                  size={36}
                   isLink={false}
-                  text={{ hide: true }}
                   user={user}
                 />
               </div>
@@ -203,6 +203,18 @@ class BaseSettingsPage extends React.Component {
                     </PageContentLink>
                   </div>
                 </div>
+                {children && children.type.displayName === 'Connect(SettingsBioPage)' &&
+                  <div className="layout layout-align_center layout-wrap bio__actions">
+                    {values(BioActions).map(Action =>
+                      <Action
+                        dispatch={this.props.dispatch}
+                        key={Action.displayName}
+                        triggers={this.triggers}
+                        user={user}
+                      />
+                    )}
+                  </div>
+                }
               </SidebarAlt>
             </PageBody>
           </PageMain>

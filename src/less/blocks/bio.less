@@ -245,4 +245,18 @@
   &__text {
     line-height: 20px;
   }
+
+  &__actions {
+    @media (min-width: 1024px) and (max-width: 1599px),
+      (min-width: 414px) and (max-width: 479px) {
+      > .bio__card:last-child {
+        margin-left: 0;
+      }
+    }
+    @media (max-width: 413px) {
+      > .bio__card + .bio__card {
+        margin-left: 10px;
+      }
+    }
+  }
 }

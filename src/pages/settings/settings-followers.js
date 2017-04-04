@@ -97,7 +97,7 @@ function SettingsFollowersPage(props) {
   );
 }
 
-SettingsFollowersPage.displayName = 'SettingsPasswordPage';
+SettingsFollowersPage.displayName = 'SettingsFollowersPage';
 
 SettingsFollowersPage.propTypes = {
   current_user: CurrentUserPropType,

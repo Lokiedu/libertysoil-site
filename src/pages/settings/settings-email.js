@@ -26,7 +26,7 @@ import { createSelector, currentUserSelector } from '../../selectors';
 
 
 class SettingsEmailPage extends React.Component {
-  static displayName = 'SettingsPasswordPage';
+  static displayName = 'SettingsEmailPage';
 
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
