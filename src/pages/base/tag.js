@@ -75,8 +75,8 @@ function getPageCaption(type, name) {
   );
 }
 
-function GeotagPageHero({ geotag }) {
-  let type = geotag.type;
+export function GeotagPageHero({ geotag }) {
+  let type = geotag.get('type');
   const location = {
     lat: geotag.get('lat'),
     lon: geotag.get('lon')
