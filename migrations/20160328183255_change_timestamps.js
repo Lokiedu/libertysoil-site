@@ -1,6 +1,6 @@
 const tablesToChange = ['users', 'posts', 'schools', 'attachments', 'comments'];
 
-export async function up(knex, Promise) {
+export async function up(knex) {
   // Set the timestamp defaults to UTC
   await Promise.all(tablesToChange.map(table => {
     return knex.raw(`
@@ -11,7 +11,7 @@ export async function up(knex, Promise) {
   }));
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await Promise.all(tablesToChange.map(table => {
     return knex.raw(`
       ALTER TABLE ${table}

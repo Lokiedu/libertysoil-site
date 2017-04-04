@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   return knex.schema.table('posts', function (table) {
     table.uuid('liked_label_id')
       .references('id').inTable('labels').onDelete('cascade').onUpdate('cascade');
@@ -9,7 +9,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   return knex.schema.table('posts', function (table) {
     table.dropColumns(['liked_label_id', 'liked_school_id', 'liked_geotag_id']);
   });

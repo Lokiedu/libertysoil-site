@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.table('geotags', function (table) {
     table.dropColumns('place_type', 'place_id');
     table.integer('country_id')
@@ -10,7 +10,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('geotags', function (table) {
     table.string('place_types');
     table.integer('place_id');

@@ -1,16 +1,16 @@
 // Changes the primary key of countries, drops unneeded junction tables
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.dropTable('posts_countries');
   await knex.schema.dropTable('posts_cities');
   await knex.raw(`ALTER TABLE geonames_cities DROP CONSTRAINT IF EXISTS iso_alpha2`);
   await knex.raw(`ALTER TABLE geonames_countries DROP CONSTRAINT IF EXISTS geonames_countries_pkey`);
 
-  await knex.schema.table('geonames_countries', function(table) {
+  await knex.schema.table('geonames_countries', function (table) {
     table.increments('id').primary();
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.raw(`ALTER TABLE geonames_countries DROP CONSTRAINT geonames_countries_pkey`);
   await knex.raw(`ALTER TABLE geonames_countries DROP COLUMN id`);
   await knex.raw(`ALTER TABLE geonames_countries ADD CONSTRAINT geonames_countries_pkey PRIMARY KEY (iso_alpha2)`);

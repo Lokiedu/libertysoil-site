@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.table('hashtags', function (table) {
     table.integer('post_count').defaultTo(0);
   });
@@ -12,7 +12,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('hashtags', function (table) {
     table.dropColumn('post_count');
   });

@@ -1,8 +1,8 @@
 
-exports.up = async function(knex, Promise) {
+exports.up = async function (knex) {
   await knex.raw('CREATE EXTENSION IF NOT EXISTS pgcrypto');
 
-  await knex.schema.createTable('users', function(table) {
+  await knex.schema.createTable('users', function (table) {
     table.uuid('id').primary();
     table.text('username').unique();
     table.text('hashed_password');
@@ -12,7 +12,7 @@ exports.up = async function(knex, Promise) {
     table.jsonb('more');
   });
 
-  await knex.schema.createTable('posts', function(table) {
+  await knex.schema.createTable('posts', function (table) {
     table.uuid('id').primary();
     table.uuid('user_id').references('id').inTable('users').onDelete('cascade').onUpdate('cascade');
     table.text('text');
@@ -22,7 +22,7 @@ exports.up = async function(knex, Promise) {
     table.jsonb('more');
   });
 
-  return knex.schema.createTable('followers', function(table) {
+  return knex.schema.createTable('followers', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.uuid('user_id')
       .references('id').inTable('users').onDelete('cascade').onUpdate('cascade');
@@ -31,7 +31,7 @@ exports.up = async function(knex, Promise) {
   });
 };
 
-exports.down = async function(knex, Promise) {
+exports.down = async function (knex) {
   await knex.schema.dropTable('followers');
   await knex.schema.dropTable('posts');
   return knex.schema.dropTable('users');

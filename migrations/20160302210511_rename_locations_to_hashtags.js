@@ -10,7 +10,7 @@ function revertForeignKey(table, knex) {
   });
 }
 
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.renameTable('labels', 'hashtags');
   await knex.schema.renameTable('labels_posts', 'hashtags_posts');
   await knex.schema.renameTable('liked_labels', 'liked_hashtags');
@@ -25,7 +25,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.renameTable('hashtags', 'labels');
   await knex.schema.renameTable('hashtags_posts', 'labels_posts');
   await knex.schema.renameTable('liked_hashtags', 'liked_labels');

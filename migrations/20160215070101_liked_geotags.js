@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   return knex.schema.createTable('liked_geotags', function (table) {
     table.uuid('user_id')
       .references('id').inTable('users').onDelete('cascade').onUpdate('cascade');
@@ -8,6 +8,6 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   return knex.schema.dropTable('liked_geotags');
 }

@@ -1,6 +1,6 @@
 const tables = ['geotags', 'hashtags', 'posts', 'comments', 'schools', 'users'];
 
-export async function up(knex, Promise) {
+export async function up(knex) {
   for (const tableName of tables) {
     await knex.schema.table(tableName, function (table) {
       table.specificType('_sphinx_id', 'BIGSERIAL');
@@ -9,11 +9,11 @@ export async function up(knex, Promise) {
   }
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   for (const tableName of tables) {
     await knex.schema.table(tableName, function (table) {
       table.dropIndex('_sphinx_id');
-      table.dropColumns(['_sphinx_id'])
+      table.dropColumns(['_sphinx_id']);
     });
   }
 }

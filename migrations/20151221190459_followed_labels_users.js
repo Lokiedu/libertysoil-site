@@ -1,5 +1,5 @@
-export async function up(knex, Promise) {
-  await knex.schema.createTable('followed_labels_users', function(table) {
+export async function up(knex) {
+  await knex.schema.createTable('followed_labels_users', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.uuid('user_id')
       .references('id').inTable('users').onDelete('cascade').onUpdate('cascade');
@@ -9,6 +9,6 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   return await knex.schema.dropTable('followed_labels_users');
 }

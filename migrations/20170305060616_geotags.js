@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.table('geotags', function (table) {
     table.integer('hierarchy_post_count')
       .defaultTo(0)
@@ -22,7 +22,7 @@ export async function up(knex, Promise) {
     .update({ name: 'Antarctica (Country)', url_name: 'Antarctica-Country' });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('geotags', function (table) {
     table.dropColumn('hierarchy_post_count');
   });

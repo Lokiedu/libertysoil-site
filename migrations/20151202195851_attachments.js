@@ -1,5 +1,5 @@
-export async function up(knex, Promise) {
-  await knex.schema.createTable('attachments', function(table) {
+export async function up(knex) {
+  await knex.schema.createTable('attachments', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.text('s3_url');
     // Generated file name
@@ -18,6 +18,6 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.dropTable('attachments');
 }

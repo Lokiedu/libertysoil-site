@@ -1,5 +1,5 @@
-export async function up(knex, Promise) {
-  await knex.schema.createTable('images_schools', function(table) {
+export async function up(knex) {
+  await knex.schema.createTable('images_schools', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.uuid('school_id')
       .references('id').inTable('schools').onDelete('cascade').onUpdate('cascade');
@@ -9,6 +9,6 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   return await knex.schema.dropTable('images_schools');
 }

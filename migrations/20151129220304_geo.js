@@ -1,7 +1,7 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.dropTable('geonames_cities');  // dropping old version of table
 
-  await knex.schema.createTable('geonames_cities', function(table) {
+  await knex.schema.createTable('geonames_cities', function (table) {
     table.integer('id').primary();
     table.text('name');
     table.text('asciiname');
@@ -40,13 +40,13 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.dropTable('posts_countries');
   await knex.schema.dropTable('posts_cities');
   await knex.schema.dropTable('geonames_cities');
 
   // restorin old version of table
-  return knex.schema.createTable('geonames_cities', function(table) {
+  return knex.schema.createTable('geonames_cities', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.text('name');
     table.text('asciiname');
@@ -66,5 +66,5 @@ export async function down(knex, Promise) {
     table.integer('gtopo30');
     table.text('timezone');
     table.date('moddate');
-  })
+  });
 }

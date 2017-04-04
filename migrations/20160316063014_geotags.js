@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.createTable('geonames_admin1', function (table) {
     table.increments();
     table.string('name');
@@ -18,7 +18,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('geotags', function (table) {
     table.dropColumn('country_code');
     table.dropColumn('admin1_code');

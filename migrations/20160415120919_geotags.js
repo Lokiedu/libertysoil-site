@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.table('geotags', function (table) {
     table.float('lat');
     table.float('lon');
@@ -6,7 +6,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('geotags', function (table) {
     table.dropColumns(['lat', 'lon', 'land_mass']);
   });

@@ -1,6 +1,5 @@
-export async function up(knex, Promise) {
-
-  await knex.schema.createTable('geonames_countries', function(table) {
+export async function up(knex) {
+  await knex.schema.createTable('geonames_countries', function (table) {
     table.string('iso_alpha2', 2).primary();
     table.string('iso_alpha3', 3);
     table.integer('iso_numeric');
@@ -20,7 +19,7 @@ export async function up(knex, Promise) {
     table.jsonb('neighbors');
   });
 
-  await knex.schema.createTable('geonames_cities', function(table) {
+  await knex.schema.createTable('geonames_cities', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.text('name');
     table.text('asciiname');
@@ -41,10 +40,9 @@ export async function up(knex, Promise) {
     table.text('timezone');
     table.date('moddate');
   });
-
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.dropTable('geonames_cities');
   return knex.schema.dropTable('geonames_countries');
 }

@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.createTable('geotags', function (table) {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.string('name');
@@ -17,10 +17,10 @@ export async function up(knex, Promise) {
     table.uuid('post_id')
       .references('id').inTable('posts').onDelete('cascade').onUpdate('cascade');
     table.index(['geotag_id', 'post_id']);
-  })
+  });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.dropTable('geotags_posts');
   await knex.schema.dropTable('geotags');
 }

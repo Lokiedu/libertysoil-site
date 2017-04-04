@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.schema.table('geotags', function (table) {
     table.renameColumn('country_id', 'geonames_country_id');
     table.renameColumn('city_id', 'geonames_city_id');
@@ -29,7 +29,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.schema.table('geotags', function (table) {
     table.dropColumn('continent_id');
     table.dropColumn('country_id');

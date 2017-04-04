@@ -1,4 +1,4 @@
-export async function up(knex, Promise) {
+export async function up(knex) {
   await knex.raw('ALTER TABLE geotags DROP CONSTRAINT geotags_url_name_unique');
 
   await knex.schema.table('geotags', function (table) {
@@ -7,7 +7,7 @@ export async function up(knex, Promise) {
   });
 }
 
-export async function down(knex, Promise) {
+export async function down(knex) {
   await knex.raw('ALTER TABLE geotags ADD CONSTRAINT geotags_url_name_unique UNIQUE (url_name)');
 
   await knex.schema.table('geotags', function (table) {
