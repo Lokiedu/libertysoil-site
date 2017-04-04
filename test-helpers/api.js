@@ -18,7 +18,7 @@
 import fetch from 'node-fetch';
 import { parse as parseCookie } from 'cookie';
 
-import { API_URL_PREFIX } from '../src/config'
+import { API_URL_PREFIX } from '../src/config';
 
 
 export const POST_DEFAULT_TYPE = 'short_text';
@@ -30,7 +30,7 @@ export const POST_DEFAULT_TYPE = 'short_text';
  * @return {String} session-id
  */
 export async function login(username, password) {
-  let res = await fetch(
+  const res = await fetch(
     `${API_URL_PREFIX}/session`,
     {
       method: 'POST',
@@ -46,9 +46,9 @@ export async function login(username, password) {
     throw new Error(`Server response code: ${res.status}`);
   }
 
-  let cookieLines = res.headers.getAll('set-cookie');
-  for (let line of cookieLines) {
-    let cookies = parseCookie(line);
+  const cookieLines = res.headers.getAll('set-cookie');
+  for (const line of cookieLines) {
+    const cookies = parseCookie(line);
 
     if ('connect.sid' in cookies) {
       return cookies['connect.sid'];

@@ -1,20 +1,18 @@
 
 if (typeof document === 'undefined') {
-
-  let virtualConsole = require('jsdom').createVirtualConsole();
+  const virtualConsole = require('jsdom').createVirtualConsole();
   virtualConsole.on("log", function (message) {
-    console.log("console.log called ->", message);
+    console.log("console.log called ->", message);  // eslint-disable-line no-console
   });
 
   const jsdom = require('jsdom').jsdom;
 
-  global.document = jsdom(undefined, {virtualConsole: virtualConsole});
+  global.document = jsdom(undefined, { virtualConsole });
   global.window = global.document.defaultView;
 
-  for (let key in global.window) {
+  for (const key in global.window) {
     if (!global[key]) {
       global[key] = global.window[key];
     }
   }
-
 }
