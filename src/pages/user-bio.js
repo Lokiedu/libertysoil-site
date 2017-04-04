@@ -39,6 +39,7 @@ import Button from '../components/button';
 import VisibilitySensor from '../components/visibility-sensor';
 import NotFound from './not-found';
 import BaseUserPageWithoutHeader from './base/user-without_header';
+import RiverItemCreateForm from '../components/river/type/text/create-form';
 
 class UserBioPage extends React.Component {
   static displayName = 'UserBioPage';
@@ -166,6 +167,30 @@ class UserBioPage extends React.Component {
             onUpdate={this.handleUpdateProfilePost}
           />
           {loadMore}
+          <div className="margin--all_top">
+            <div className="bio__river-item bio__river-item--type_form">
+              <h5 className="bio__title">Add:</h5>
+              <RiverItemCreateForm
+                cancel={{ hide: true }}
+                className="bio__create-post-form"
+                icon={
+                  <div className="bio__icon">
+                    <Avatar isRound={false} size={26} user={user} />
+                  </div>
+                }
+                input={{
+                  className: 'bio__post--type_text',
+                  placeholder: ''
+                }}
+                submit={{
+                  className: 'button-wide bio__button',
+                  color: 'dark_blue',
+                  title: 'Post'
+                }}
+                onSubmit={this.handleCreateProfilePost}
+              />
+            </div>
+          </div>
         </div>
       </BaseUserPageWithoutHeader>
     );
