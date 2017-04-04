@@ -19,7 +19,6 @@
 import expect from '../../test-helpers/expect';
 
 describe('GET /scripts/app.js', () => {
-
   it('OK', async () => {
     await expect(
       { url: `/images/welcome/data.jpg` },

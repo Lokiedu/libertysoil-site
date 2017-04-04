@@ -3,21 +3,20 @@ import { API_HOST } from '../../../src/config';
 import { expect } from '../../../test-helpers/expect-unit';
 import { renderVerificationTemplate, renderWelcomeTemplate, renderNewCommentTemplate }  from '../../../src/email-templates/index';
 
-describe('Email templates:', function() {
-
-  it('Verification template exist', async function() {
+describe('Email templates:', function () {
+  it('Verification template exist', async function () {
     const template = await renderVerificationTemplate(new Date());
 
     expect(template, 'to be a string');
   });
 
-  it('Welcome template exist', async function() {
+  it('Welcome template exist', async function () {
     const template = await renderWelcomeTemplate(new Date());
 
     expect(template, 'to be a string');
   });
 
-  describe('#renderNewCommentTemplate', function() {
+  describe('#renderNewCommentTemplate', function () {
     const comment = {
       text: 'Test comment text',
       post_id: 1
@@ -39,7 +38,7 @@ describe('Email templates:', function() {
       more: {
         pageTitle: 'Hello world!'
       }
-    }
+    };
 
     const postAuthor = {
       more: {
@@ -47,20 +46,20 @@ describe('Email templates:', function() {
           url: 'http://avatars.test/avatar2.png'
         }
       }
-    }
+    };
 
     let template;
 
-    before(async function() {
+    before(async function () {
       template = await renderNewCommentTemplate(comment, commentAuthor, post, postAuthor);
     });
 
-    it('renders link to the author', function() {
+    it('renders link to the author', function () {
       expect(
         template,
         'when parsed as HTML',
         'queried for first', '#comment-author-link',
-        'to have attributes', {href: `${API_HOST}/user/${commentAuthor.username}`}
+        'to have attributes', { href: `${API_HOST}/user/${commentAuthor.username}` }
       );
 
       expect(
@@ -71,12 +70,12 @@ describe('Email templates:', function() {
       );
     });
 
-    it('renders link to the post', function() {
+    it('renders link to the post', function () {
       expect(
         template,
         'when parsed as HTML',
         'queried for first', '#post-link',
-        'to have attributes', {href: `${API_HOST}/post/${post.id}`}
+        'to have attributes', { href: `${API_HOST}/post/${post.id}` }
       );
 
       expect(
@@ -87,7 +86,7 @@ describe('Email templates:', function() {
       );
     });
 
-    it('renders the comment', function() {
+    it('renders the comment', function () {
       expect(
         template,
         'when parsed as HTML',
@@ -96,5 +95,4 @@ describe('Email templates:', function() {
       );
     });
   });
-
 });

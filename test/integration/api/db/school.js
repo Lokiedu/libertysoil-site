@@ -28,9 +28,9 @@ const Post = bookshelf.model('Post');
 const School = bookshelf.model('School');
 
 describe('School', () => {
-  let schools = [];
-  let posts = [];
-  let postIds = [];
+  const schools = [];
+  const posts = [];
+  const postIds = [];
 
   before(async () => {
     for (let i = 0; i < 2; ++i) {
@@ -39,24 +39,24 @@ describe('School', () => {
     }
 
     for (let i = 0; i < 3; ++i) {
-      let post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
+      const post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
       posts.push(post);
       postIds.push(post.id);
     }
   });
 
   after(async () => {
-    for (let post of posts) {
+    for (const post of posts) {
       await post.destroy();
     }
 
-    for (let school of schools) {
+    for (const school of schools) {
       await school.destroy();
     }
   });
 
   afterEach(async () => {
-    for (let school of schools) {
+    for (const school of schools) {
       await school.posts().detach(postIds);
       await school.save({ post_count: 0 });
     }
@@ -64,13 +64,13 @@ describe('School', () => {
 
   describe('.updatePostCounters', () => {
     it('sets post_count to a correct number of posts for each school', async () => {
-      for (let school of schools) {
+      for (const school of schools) {
         await school.posts().attach(postIds);
       }
 
       await School.updatePostCounters();
 
-      for (let school of schools) {
+      for (const school of schools) {
         await school.refresh();
         expect(school.get('post_count'), 'to equal', postIds.length);
       }

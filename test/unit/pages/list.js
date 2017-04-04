@@ -16,23 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import Helmet from 'react-helmet';
 import uuid from 'uuid';
-import sinon from 'sinon';
 import i from 'immutable';
 
+import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import { UnwrappedListPage } from '../../../src/pages/list';
-import Header from '../../../src/components/header';
-import Footer from '../../../src/components/footer';
-import HeaderLogo from '../../../src/components/header-logo';
-import River from '../../../src/components/river_of_posts';
-import Sidebar from '../../../src/components/sidebar';
-import SidebarAlt from '../../../src/components/sidebarAlt';
-import AddedTags from '../../../src/components/post/added-tags';
-import Breadcrumbs from '../../../src/components/breadcrumbs/breadcrumbs';
-import SideSuggestedUsers from '../../../src/components/side-suggested-users';
-import CreatePost from '../../../src/components/create-post';
 
 describe('UnwrappedListPage page with redux', () => {
   // before(() => {
@@ -88,6 +76,6 @@ describe('UnwrappedListPage page with redux', () => {
       />
     );
 
-    return expect(renderer, 'to have rendered', <div></div>);
+    return expect(renderer, 'to have rendered', <div />);
   });
 });

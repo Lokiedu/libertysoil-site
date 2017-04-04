@@ -1,14 +1,14 @@
 /*eslint-env node, mocha */
 /*global $dbConfig */
 import uuid from 'uuid';
-import sinon from 'sinon';
+//import sinon from 'sinon';
 
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+const bookshelf = initBookshelf($dbConfig);
+const User = bookshelf.model('User');
 
 describe('pages that are available for anonym', function () {
   // before(() => {
@@ -27,7 +27,7 @@ describe('pages that are available for anonym', function () {
         username: 'john',
         more: '{"lastName": "Smith", "firstName": "John", "first_login": false}',
         email: 'john@example.com'
-      }).save(null, {method: 'insert'});
+      }).save(null, { method: 'insert' });
     });
 
     afterEach(async function () {
@@ -38,5 +38,4 @@ describe('pages that are available for anonym', function () {
       return expect(`/user/john`, 'body to contain', 'John Smith');
     });
   });
-
 });

@@ -17,34 +17,31 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import _ from 'lodash';
-
-
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 import { initState } from '../../../src/store';
 import { ActionsTrigger } from '../../../src/triggers';
-import ApiClient from '../../../src/api/client'
+import ApiClient from '../../../src/api/client';
 import { API_HOST } from '../../../src/config';
 import UserFactory from '../../../test-helpers/factories/user';
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import SchoolFactory from '../../../test-helpers/factories/school';
 import GeotagFactory from '../../../test-helpers/factories/geotag';
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+const bookshelf = initBookshelf($dbConfig);
+const User = bookshelf.model('User');
 
 describe('"login" trigger', () => {
   it('adds all needed dependencies to current_user', async () => {
-    let store = initState();
-    let client = new ApiClient(API_HOST);
-    let triggers = new ActionsTrigger(client, store.dispatch);
+    const store = initState();
+    const client = new ApiClient(API_HOST);
+    const triggers = new ActionsTrigger(client, store.dispatch);
 
     const userAttrs = UserFactory.build();
     const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
 
     user.set('email_check_hash', null);
-    await user.save(null, {method: 'update'});
+    await user.save(null, { method: 'update' });
 
     user.followed_hashtags().create(HashtagFactory.build());
     user.followed_schools().create(SchoolFactory.build());

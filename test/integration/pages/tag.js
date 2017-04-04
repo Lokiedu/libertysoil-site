@@ -43,7 +43,7 @@ describe('Tag Cloud page', () => {
       user_id: user.get('id')
     });
 
-    await post.save(null, {method: 'insert'});
+    await post.save(null, { method: 'insert' });
     await post.attachHashtags(['foo-hashtag-name']);
   });
 
@@ -53,13 +53,13 @@ describe('Tag Cloud page', () => {
   });
 
   it('can open tag page and see cloud', async () => {
-    let context = await expect({ url: '/tag' }, 'to open successfully');
+    const context = await expect({ url: '/tag' }, 'to open successfully');
 
-    let document = jsdom(context.httpResponse.body);
-    let tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
+    const document = jsdom(context.httpResponse.body);
+    const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
     await expect(tagsContent, 'to have child', '.tag__name');  // posting form
 
-    let tag = await expect(tagsContent, 'queried for first', '.tag__name');
+    const tag = await expect(tagsContent, 'queried for first', '.tag__name');
     await expect(tag, 'to have text', 'foo-hashtag-name');
   });
 
@@ -76,7 +76,7 @@ describe('Tag Cloud page', () => {
     });
 
     it('renders NotFound page for non-existent hashtag', async () => {
-      const context = await expect({ url: '/tag/ghbvth'}, 'to open not found');
+      const context = await expect({ url: '/tag/ghbvth' }, 'to open not found');
 
       const document = jsdom(context.httpResponse.body);
       await expect(

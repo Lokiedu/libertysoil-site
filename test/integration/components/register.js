@@ -30,6 +30,7 @@ import { waitForChange, waitForTrue } from '../../../test-helpers/wait';
 
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
+const noop = () => {};
 
 describe('UnwpappedAuth page', () => {
   let user, userAttrs;
@@ -63,8 +64,8 @@ describe('UnwpappedAuth page', () => {
     it('availableUsername should work', async () => {
       const testComponent = (
         <Register
-          onRegisterUser={() => {}}
-          onShowRegisterForm={() => {}}
+          onRegisterUser={noop}
+          onShowRegisterForm={noop}
         />
       );
       const wrapper = mount(testComponent);
@@ -82,8 +83,8 @@ describe('UnwpappedAuth page', () => {
     it('should check on email currently taken', async () => {
       const testComponent = (
         <Register
-          onRegisterUser={() => {}}
-          onShowRegisterForm={() => {}}
+          onRegisterUser={noop}
+          onShowRegisterForm={noop}
         />
       );
       const wrapper = mount(testComponent);
@@ -102,7 +103,7 @@ describe('UnwpappedAuth page', () => {
       const testComponent = (
         <Register
           onRegisterUser={onRegisterUser}
-          onShowRegisterForm={() => {}}
+          onShowRegisterForm={noop}
         />
       );
       const wrapper = mount(testComponent);

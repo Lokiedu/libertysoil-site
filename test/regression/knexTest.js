@@ -34,7 +34,6 @@ describe('Knex.js library sanity', () => {
     await knex('geotags').insert({
       id: 'f5b5a69e-c223-46dc-a8c9-46fec9fb0166',
       name: 'United Kingdom',
-      geonames_country_id: 2635167,
       url_name: 'United-Kingdom',
       type: 'Country',
       continent_code: 'EU',

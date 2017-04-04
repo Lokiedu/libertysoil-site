@@ -16,14 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import sinon from 'sinon';
 import i from 'immutable';
+
+import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 
 import { PasswordResetPage, ResetForm, SuccessMessage } from '../../../src/pages/password-reset';
 
 
-describe('PasswordResetPage', function() {
+describe('PasswordResetPage', function () {
   // before(() => {
   //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   // });
@@ -33,18 +33,17 @@ describe('PasswordResetPage', function() {
   // });
 
 
-  it('MUST renders <ResetForm /> by default', function() {
-    let renderer = TestUtils.createRenderer();
+  it('MUST renders <ResetForm /> by default', function () {
+    const renderer = TestUtils.createRenderer();
     renderer.render(<PasswordResetPage is_logged_in={false} ui={i.Map()} />);
 
     return expect(renderer, 'to contain', <ResetForm />);
   });
 
-  it('MUST contain <SuccessMessage /> when ui.submitResetPassword is true', function() {
-    let renderer = TestUtils.createRenderer();
+  it('MUST contain <SuccessMessage /> when ui.submitResetPassword is true', function () {
+    const renderer = TestUtils.createRenderer();
     renderer.render(<PasswordResetPage ui={i.fromJS({ submitResetPassword: true })} is_logged_in={false} />);
 
     return expect(renderer, 'to contain', <SuccessMessage />);
   });
-
 });

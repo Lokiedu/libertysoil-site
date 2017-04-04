@@ -33,9 +33,6 @@ const bookshelf = initBookshelf($dbConfig);
 const knex = bookshelf.knex;
 const Post = bookshelf.model('Post');
 const User = bookshelf.model('User');
-const Hashtag = bookshelf.model('Hashtag');
-const School = bookshelf.model('School');
-const Geotag = bookshelf.model('Geotag');
 
 describe('Post', () => {
   describe('Not authenticated user', () => {
@@ -43,9 +40,9 @@ describe('Post', () => {
     let post;
 
     before(async () => {
-      let userAttrs = UserFactory.build();
+      const userAttrs = UserFactory.build();
       user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-      post = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+      post = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
     });
 
     after(async () => {
@@ -57,9 +54,9 @@ describe('Post', () => {
       describe('when post exists', () => {
         it('responds with post', async () => {
           await expect(
-            {url: `/api/v1/post/${post.id}`, method: 'GET'},
+            { url: `/api/v1/post/${post.id}`, method: 'GET' },
             'body to satisfy',
-            {id: post.id}
+            { id: post.id }
           );
         });
       });
@@ -67,7 +64,7 @@ describe('Post', () => {
       describe("when post doesn't exist", () => {
         it('responds with post', async () => {
           await expect(
-            {url: `/api/v1/post/123`, method: 'GET'},
+            { url: `/api/v1/post/123`, method: 'GET' },
             'to open not found'
           );
         });
@@ -89,7 +86,7 @@ describe('Post', () => {
         const name = encodeURIComponent(hashtag.attributes.name);
 
         await expect(
-          {url: `/api/v1/posts/tag/${name}`, method: 'GET'},
+          { url: `/api/v1/posts/tag/${name}`, method: 'GET' },
           'to have body array length',
           1
         );
@@ -111,7 +108,7 @@ describe('Post', () => {
         const name = encodeURIComponent(school.attributes.url_name);
 
         await expect(
-          {url: `/api/v1/posts/school/${name}`, method: 'GET'},
+          { url: `/api/v1/posts/school/${name}`, method: 'GET' },
           'to have body array length',
           1
         );
@@ -133,7 +130,7 @@ describe('Post', () => {
         const name = encodeURIComponent(geotag.attributes.url_name);
 
         await expect(
-          {url: `/api/v1/posts/geotag/${name}`, method: 'GET'},
+          { url: `/api/v1/posts/geotag/${name}`, method: 'GET' },
           'to have body array length',
           1
         );
@@ -144,7 +141,7 @@ describe('Post', () => {
       let postHashtagLike;
 
       before(async () => {
-        postHashtagLike = await new Post(PostFactory.build({type: 'hashtag_like'})).save(null, {method: 'insert'});
+        postHashtagLike = await new Post(PostFactory.build({ type: 'hashtag_like' })).save(null, { method: 'insert' });
       });
 
       after(async () => {
@@ -153,7 +150,7 @@ describe('Post', () => {
 
       it('should not return hashtag_like posts from other authors', async () => {
         await expect(
-          {url: `/api/v1/posts/liked/${user.get('username')}`},
+          { url: `/api/v1/posts/liked/${user.get('username')}` },
           'to have body array length',
           0
         );

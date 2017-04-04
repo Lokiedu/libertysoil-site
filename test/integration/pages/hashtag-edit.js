@@ -17,14 +17,16 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
 import qs from 'querystring';
+
+import { jsdom } from 'jsdom';
 
 import initBookshelf from '../../../src/api/db';
 import { login } from '../../../test-helpers/api';
 import expect from '../../../test-helpers/expect';
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import UserFactory from '../../../test-helpers/factories/user';
+
 
 const bookshelf = initBookshelf($dbConfig);
 const Hashtag = bookshelf.model('Hashtag');
@@ -71,7 +73,6 @@ describe('HashtagEditPage', () => {
 
     it('renders normal HashtagEditPage', async () => {
       const tagName = tag.get('name');
-      console.log(sessionId, tagName)
       const context = await expect(
         { url: `/tag/${qs.escape(tagName)}/edit`, session: sessionId },
         'to open successfully'

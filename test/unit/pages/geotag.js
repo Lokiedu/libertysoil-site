@@ -17,12 +17,12 @@
 */
 /* eslint-env node, mocha */
 import { shallow } from 'enzyme';
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import sinon from 'sinon';
 import i from 'immutable';
 
+import { expect, React } from '../../../test-helpers/expect-unit';
+
 import { UnwrappedGeotagPage } from '../../../src/pages/geotag';
-import NotFound from '../../../src/pages/not-found';
+
 
 describe('UnwrappedGeotagPage', () => {
   // before(() => {

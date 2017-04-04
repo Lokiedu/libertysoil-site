@@ -17,14 +17,15 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { v4 as uuid4 } from 'uuid';
-import bcrypt from 'bcrypt'
-import bb from 'bluebird'
-import FormData from 'form-data';
 import fs from 'fs';
+
+import { v4 as uuid4 } from 'uuid';
+import bcrypt from 'bcrypt';
+import bb from 'bluebird';
+import FormData from 'form-data';
 import AWS from 'mock-aws';
 
-import expect, { subjectToRequest } from '../../test-helpers/expect';
+import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 import QueueSingleton from '../../src/utils/queue';
@@ -32,33 +33,30 @@ import HashtagFactory from '../../test-helpers/factories/hashtag';
 import PostFactory from '../../test-helpers/factories/post';
 
 
-let bcryptAsync = bb.promisifyAll(bcrypt);
-let bookshelf = initBookshelf($dbConfig);
-let Post = bookshelf.model('Post');
-let User = bookshelf.model('User');
-let Hashtag = bookshelf.model('Hashtag');
-let Geotag = bookshelf.model('Geotag');
-let Attachment = bookshelf.model('Attachment');
+const bcryptAsync = bb.promisifyAll(bcrypt);
+const bookshelf = initBookshelf($dbConfig);
+const Post = bookshelf.model('Post');
+const User = bookshelf.model('User');
+const Hashtag = bookshelf.model('Hashtag');
+const Geotag = bookshelf.model('Geotag');
+const Attachment = bookshelf.model('Attachment');
 
 const range = (start, end) => [...Array(end - start + 1)].map((_, i) => start + i);
 
 describe('api v.1', () => {
-
   describe('Validation', () => {
-
     describe('Registration Rules', () => {
-
       it('FAILS for some base rules', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
           username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
           password: "test",
           email: 'test'
-        }}, 'to fail validation with', {
+        } }, 'to fail validation with', {
           username: ['The username must not exceed 31 characters long',
-                     'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
-                    ],
+            'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+          ],
           password: ['Password is min. 8 characters. Password can only have ascii characters.'],
-          email: [ 'The email must be a valid email address' ]
+          email: ['The email must be a valid email address']
         });
       });
 
@@ -67,22 +65,22 @@ describe('api v.1', () => {
           username: 'user',
           password: "testtest\x00",
           email: 'test@example.com'
-        }}, 'to fail validation with', {
+        } }, 'to fail validation with', {
           password: ['Password is min. 8 characters. Password can only have ascii characters.']
         });
       });
 
       it('FAILS when no required attributes passed', async () => {
         await expect({ url: `/api/v1/users`, method: 'POST', body: {
-        }}, 'to fail validation with', {
+        } }, 'to fail validation with', {
           username: ['The username is required'],
           password: ['The password is required'],
           email: ['The email is required']
         });
       });
 
-      describe ('Email validation', async () => {
-        let validEmails = [
+      describe('Email validation', async () => {
+        const validEmails = [
           'test@domain.com',
           'firstname.lastname@domain.com',
           'email@subdomain.domain.com',
@@ -97,7 +95,7 @@ describe('api v.1', () => {
           'firstname-lastname@domain.com'
         ];
 
-        let invalidEmails = [
+        const invalidEmails = [
           'plainaddress',
           '#@%^%@$@#$@#.com',
           '@domain.com',
@@ -117,11 +115,11 @@ describe('api v.1', () => {
         ];
 
         validEmails.map((email) => {
-          it(`PASS email validation with email: ${email}`, async function() {
+          it(`PASS email validation with email: ${email}`, async function () {
             // prove that there is no email validation errors
             await expect({ url: `/api/v1/users`, method: 'POST', body: {
-              email: email
-            }}, 'to fail validation with', {
+              email
+            } }, 'to fail validation with', {
               username: ['The username is required'],
               password: ['The password is required']
             });
@@ -129,11 +127,11 @@ describe('api v.1', () => {
         });
 
         invalidEmails.map((email) => {
-          it(`FAIL email validation with email: ${email}`, async function() {
+          it(`FAIL email validation with email: ${email}`, async function () {
             // prove that there is no email validation errors
             await expect({ url: `/api/v1/users`, method: 'POST', body: {
-              email: email
-            }}, 'to fail validation with', {
+              email
+            } }, 'to fail validation with', {
               username: ['The username is required'],
               password: ['The password is required'],
               email: ['The email must be a valid email address']
@@ -172,9 +170,9 @@ describe('api v.1', () => {
             username: 'test',
             password: 'testPass',
             email: 'test@example.com'
-          }}, 'to open successfully');
+          } }, 'to open successfully');
 
-          expect(queue.testMode.jobs.length,'to equal', 1);
+          expect(queue.testMode.jobs.length, 'to equal', 1);
           expect(queue.testMode.jobs[0].type, 'to equal', 'register-user-email');
           expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test', email: 'test@example.com' });
         });
@@ -187,7 +185,7 @@ describe('api v.1', () => {
           await bookshelf.knex('users').del();
 
           user = await User.create('test2', 'testPassword', 'test2@example.com');
-          await user.save({'email_check_hash': ''},{require:true});
+          await user.save({ 'email_check_hash': '' }, { require: true });
         });
 
         afterEach(async () => {
@@ -198,24 +196,24 @@ describe('api v.1', () => {
         it('Create new queue job after user request reset password', async () => {
           await expect({ url: `/api/v1/resetpassword`, method: 'POST', body: {
             email: 'test2@example.com'
-          }}, 'to open successfully');
+          } }, 'to open successfully');
 
-          expect(queue.testMode.jobs.length,'to equal', 1);
+          expect(queue.testMode.jobs.length, 'to equal', 1);
           expect(queue.testMode.jobs[0].type, 'to equal', 'reset-password-email');
           expect(queue.testMode.jobs[0].data, 'to satisfy', { username: 'test2', email: 'test2@example.com' });
         });
-      })
+      });
     });
 
     describe('Authenticated user', () => {
       let user,
-          sessionId;
+        sessionId;
 
       before(async () => {
         await bookshelf.knex('users').del();
         await bookshelf.knex('attachments').del();
         user = await User.create('mary', 'secret', 'mary@example.com');
-        await user.save({email_check_hash: ''}, {require: true});
+        await user.save({ email_check_hash: '' }, { require: true });
 
         sessionId = await login('mary', 'secret');
       });
@@ -227,17 +225,16 @@ describe('api v.1', () => {
       describe('User settings', () => {
         it('bio update works', async () => {
           await expect(
-            { url: `/api/v1/user`, session: sessionId, method: 'POST', body: {more: {bio: 'foo'}} }
+            { url: `/api/v1/user`, session: sessionId, method: 'POST', body: { more: { bio: 'foo' } } }
             , 'to open successfully');
 
-          let localUser = await User.where({id: user.id}).fetch({require: true});
+          const localUser = await User.where({ id: user.id }).fetch({ require: true });
 
           expect(localUser.get('more').bio, 'to equal', 'foo');
         });
       });
 
       describe('Upload files', () => {
-
         before(() => {
           // mocking S3
           AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
@@ -254,8 +251,8 @@ describe('api v.1', () => {
         });
 
         it('works', async () => {
-          let formData = new FormData;
-          formData.append('files', fs.createReadStream('./test-helpers/bulb.png') );
+          const formData = new FormData;
+          formData.append('files', fs.createReadStream('./test-helpers/bulb.png'));
 
           await expect(
             {
@@ -271,7 +268,6 @@ describe('api v.1', () => {
 
           expect(attachment, 'to equal', '1');
         });
-
       });
 
       describe('Change password', () => {
@@ -296,14 +292,14 @@ describe('api v.1', () => {
         let post;
 
         beforeEach(async () => {
-            await bookshelf.knex('posts').del();
+          await bookshelf.knex('posts').del();
 
-            post = new Post({
-              id: uuid4(),
-              type: POST_DEFAULT_TYPE,
-              text: `This is clean post`
-            });
-            await post.save({}, {method: 'insert'});
+          post = new Post({
+            id: uuid4(),
+            type: POST_DEFAULT_TYPE,
+            text: `This is clean post`
+          });
+          await post.save({}, { method: 'insert' });
         });
 
         afterEach(async () => {
@@ -324,12 +320,11 @@ describe('api v.1', () => {
                 text: `This is a Post #${i}`
               });
 
-              const dateJson = new Date(Date.now() - 50000 + i*1000).toJSON();
-              let defaultAttr = { updated_at: dateJson };
+              const dateJson = new Date(Date.now() - 50000 + i * 1000).toJSON();
+              const defaultAttr = { updated_at: dateJson };
 
-              return post.save(defaultAttr, {method: 'insert'});
+              return post.save(defaultAttr, { method: 'insert' });
             }));
-
           });
 
           afterEach(async () => {
@@ -339,14 +334,14 @@ describe('api v.1', () => {
           it('First page of subscriptions should return by-default', async () => {
             await expect(
               { url: `/api/v1/posts`, session: sessionId },
-              'body to satisfy', [{text: 'This is a Post #10'}, {text: 'This is a Post #9'}, {text: 'This is a Post #8'}, {text: 'This is a Post #7'}, {text: 'This is a Post #6'}]
+              'body to satisfy', [{ text: 'This is a Post #10' }, { text: 'This is a Post #9' }, { text: 'This is a Post #8' }, { text: 'This is a Post #7' }, { text: 'This is a Post #6' }]
             );
           });
 
           it('Other pages of subscriptions should work', async () => {
             await expect(
               { url: `/api/v1/posts?offset=4`, session: sessionId },
-              'body to satisfy', [{text: 'This is a Post #6'}, {text: 'This is a Post #5'}, {text: 'This is a Post #4'}, {text: 'This is a Post #3'}, {text: 'This is a Post #2'}]
+              'body to satisfy', [{ text: 'This is a Post #6' }, { text: 'This is a Post #5' }, { text: 'This is a Post #4' }, { text: 'This is a Post #3' }, { text: 'This is a Post #2' }]
             );
           });
         });
@@ -361,7 +356,7 @@ describe('api v.1', () => {
               text: `This is own post`,
               user_id: user.id
             });
-            await ownPost.save({}, {method: 'insert'});
+            await ownPost.save({}, { method: 'insert' });
           });
 
           afterEach(async () => {
@@ -373,7 +368,7 @@ describe('api v.1', () => {
               { url: `/api/v1/post/${post.id}/fav`, session: sessionId, method: 'POST' },
               'to open successfully'
             );
-            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['favourited_posts']});
+            const localUser = await User.where({ id: user.id }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
             expect(localUser.related('favourited_posts').length, 'to equal', 1);
             expect(localUser.related('favourited_posts').models[0].get('text'), 'to equal', 'This is clean post');
@@ -385,7 +380,7 @@ describe('api v.1', () => {
               { url: `/api/v1/post/${post.id}/unfav`, session: sessionId, method: 'POST' },
               'to open successfully'
             );
-            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['favourited_posts']});
+            const localUser = await User.where({ id: user.id }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
             expect(localUser.related('favourited_posts').models, 'to be empty');
           });
@@ -394,7 +389,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured`, session: sessionId },
-              'body to satisfy', [{text: 'This is clean post'}]
+              'body to satisfy', [{ text: 'This is clean post' }]
             );
           });
 
@@ -416,7 +411,7 @@ describe('api v.1', () => {
               text: `This is own post`,
               user_id: user.id
             });
-            await ownPost.save({}, {method: 'insert'});
+            await ownPost.save({}, { method: 'insert' });
           });
 
           afterEach(async () => {
@@ -429,7 +424,7 @@ describe('api v.1', () => {
               { url: `/api/v1/post/${post.id}/like`, session: sessionId, method: 'POST' },
               'to open successfully'
             );
-            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['liked_posts']});
+            const localUser = await User.where({ id: user.id }).fetch({ require: true, withRelated: ['liked_posts'] });
 
             expect(localUser.related('liked_posts').length, 'to equal', 1);
             expect(localUser.related('liked_posts').models[0].get('text'), 'to equal', 'This is clean post');
@@ -441,7 +436,7 @@ describe('api v.1', () => {
               { url: `/api/v1/post/${post.id}/unlike`, session: sessionId, method: 'POST' },
               'to open successfully'
             );
-            let localUser = await User.where({id: user.id}).fetch({require: true, withRelated: ['liked_posts']});
+            const localUser = await User.where({ id: user.id }).fetch({ require: true, withRelated: ['liked_posts'] });
 
             expect(localUser.related('liked_posts').models, 'to be empty');
           });
@@ -450,7 +445,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked`, session: sessionId },
-              'body to satisfy', [{text: 'This is clean post'}]
+              'body to satisfy', [{ text: 'This is clean post' }]
             );
           });
 
@@ -468,7 +463,7 @@ describe('api v.1', () => {
             beforeEach(async () => {
               for (let i = 0; i < 2; ++i) {
                 users[i] = await User.create(`likes_test${i}`, 'testPassword', `likes_test${i}@example.com`);
-                await users[i].save({ email_check_hash: '' },{ require: true });
+                await users[i].save({ email_check_hash: '' }, { require: true });
 
                 userSessions[i] = await login(`likes_test${i}`, 'testPassword');
 
@@ -534,13 +529,13 @@ describe('api v.1', () => {
 
         beforeEach(async () => {
           await bookshelf.knex('hashtags').del();
-          await user.refresh({require: true, withRelated: ['liked_hashtags', 'followed_hashtags']});
+          await user.refresh({ require: true, withRelated: ['liked_hashtags', 'followed_hashtags'] });
 
           tag = new Hashtag({
             id: uuid4(),
             name: 'footag'
           });
-          await tag.save({}, {method: 'insert'});
+          await tag.save({}, { method: 'insert' });
         });
 
         afterEach(async () => {
@@ -548,15 +543,15 @@ describe('api v.1', () => {
         });
 
         it("sends an array of tags, where each tag used in multiple posts appears only once", async () => {
-          let hashtag = await new Hashtag(HashtagFactory.build()).save(null, {method: 'insert'});
+          const hashtag = await new Hashtag(HashtagFactory.build()).save(null, { method: 'insert' });
 
-          let post1 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+          const post1 = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
           await post1.hashtags().attach(hashtag);
-          let post2 = await new Post(PostFactory.build({user_id: user.id})).save(null, {method: 'insert'});
+          const post2 = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
           await post2.hashtags().attach(hashtag);
 
           await expect(
-            {url: `/api/v1/user/tags`, session: sessionId},
+            { url: `/api/v1/user/tags`, session: sessionId },
             'body to satisfy',
             body => {
               expect(body.hashtags, 'to have length', 1);
@@ -571,7 +566,7 @@ describe('api v.1', () => {
             { url: `/api/v1/tag/${tag.get('name')}/like`, session: sessionId, method: 'POST' },
             'to open successfully'
           );
-          await user.refresh({require: true, withRelated: ['liked_hashtags']});
+          await user.refresh({ require: true, withRelated: ['liked_hashtags'] });
 
           expect(user.related('liked_hashtags').length, 'to equal', 1);
           expect(user.related('liked_hashtags').models[0].get('name'), 'to equal', 'footag');
@@ -585,7 +580,7 @@ describe('api v.1', () => {
             { url: `/api/v1/tag/${tag.get('name')}/unlike`, session: sessionId, method: 'POST' },
             'to open successfully'
           );
-          await user.refresh({require: true, withRelated: ['liked_hashtags']});
+          await user.refresh({ require: true, withRelated: ['liked_hashtags'] });
 
           expect(user.related('liked_hashtags').models, 'to be empty');
         });
@@ -598,7 +593,7 @@ describe('api v.1', () => {
             'to open successfully'
           );
 
-          await user.refresh({withRelated: ['followed_hashtags']});
+          await user.refresh({ withRelated: ['followed_hashtags'] });
           expect(user.related('followed_hashtags').length, 'to equal', 1);
           expect(user.related('followed_hashtags').models[0].get('name'), 'to equal', 'footag');
         });
@@ -612,24 +607,23 @@ describe('api v.1', () => {
             'to open successfully'
           );
 
-          await user.refresh({withRelated: ['followed_hashtags']});
+          await user.refresh({ withRelated: ['followed_hashtags'] });
           expect(user.related('followed_hashtags').length, 'to equal', 0);
         });
-
       });
 
       describe('Geotags', () => {
         let geotag;
 
         beforeEach(async () => {
-          await user.refresh({require: true, withRelated: ['liked_geotags', 'followed_geotags']});
+          await user.refresh({ require: true, withRelated: ['liked_geotags', 'followed_geotags'] });
           await bookshelf.knex('geotags').del();
 
           geotag = new Geotag({
             id: uuid4(),
             url_name: 'foo_geotag'
           });
-          await geotag.save({}, {method: 'insert'});
+          await geotag.save({}, { method: 'insert' });
         });
 
         afterEach(async () => {
@@ -643,7 +637,7 @@ describe('api v.1', () => {
             { url: `/api/v1/geotag/${geotag.get('url_name')}/like`, session: sessionId, method: 'POST' },
             'to open successfully'
           );
-          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          await user.refresh({ require: true, withRelated: ['liked_geotags'] });
 
           expect(user.related('liked_geotags').length, 'to equal', 1);
         });
@@ -657,7 +651,7 @@ describe('api v.1', () => {
             { url: `/api/v1/geotag/${geotag.get('url_name')}/unlike`, session: sessionId, method: 'POST' },
             'to open successfully'
           );
-          await user.refresh({require: true, withRelated: ['liked_geotags']});
+          await user.refresh({ require: true, withRelated: ['liked_geotags'] });
 
           expect(user.related('liked_geotags').models, 'to be empty');
         });
@@ -670,7 +664,7 @@ describe('api v.1', () => {
             'to open successfully'
           );
 
-          await user.refresh({withRelated: ['followed_geotags']});
+          await user.refresh({ withRelated: ['followed_geotags'] });
           expect(user.related('followed_geotags').length, 'to equal', 1);
         });
 
@@ -683,7 +677,7 @@ describe('api v.1', () => {
             'to open successfully'
           );
 
-          await user.refresh({withRelated: ['followed_geotags']});
+          await user.refresh({ withRelated: ['followed_geotags'] });
           expect(user.related('followed_geotags').length, 'to equal', 0);
         });
       });
@@ -698,7 +692,7 @@ describe('api v.1', () => {
           await bookshelf.knex('users').del();
 
           resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
-          await resetPasswordUser.save({email_check_hash: '', reset_password_hash: 'foo'}, {require: true});
+          await resetPasswordUser.save({ email_check_hash: '', reset_password_hash: 'foo' }, { require: true });
         });
 
         after(async () => {
@@ -709,9 +703,9 @@ describe('api v.1', () => {
           await expect({ url: `/api/v1/newpassword/foo`, method: 'POST', body: {
             password: 'foo',
             password_repeat: 'foo'
-          }}, 'to open successfully');
+          } }, 'to open successfully');
 
-          let localUser = await User.where({id: resetPasswordUser.id}).fetch({require: true});
+          const localUser = await User.where({ id: resetPasswordUser.id }).fetch({ require: true });
           const passwordValid = await bcryptAsync.compareAsync('foo', await localUser.get('hashed_password'));
 
           expect(passwordValid, 'to be true');
@@ -729,7 +723,7 @@ describe('api v.1', () => {
             type: POST_DEFAULT_TYPE,
             text: `This is a test Post`
           });
-          await post.save({}, {method: 'insert'});
+          await post.save({}, { method: 'insert' });
         });
 
         afterEach(async () => {
@@ -740,7 +734,7 @@ describe('api v.1', () => {
           await post.attachHashtags(['foo']);
           await expect(
             { url: `/api/v1/posts/tag/foo` },
-            'body to satisfy', [{text: post.get('text')}]
+            'body to satisfy', [{ text: post.get('text') }]
           );
           await post.detachHashtags(['foo']);
         });
@@ -761,7 +755,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured/${user.get('username')}` },
-              'body to satisfy', [{text: post.get('text')}]
+              'body to satisfy', [{ text: post.get('text') }]
             );
           });
 
@@ -790,7 +784,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked/${user.get('username')}` },
-              'body to satisfy', [{text: post.get('text')}]
+              'body to satisfy', [{ text: post.get('text') }]
             );
           });
 
@@ -803,7 +797,7 @@ describe('api v.1', () => {
           });
 
           it('Anonymous user MUST NOT see post\'s likers list', async () => {
-            await user.save({ email_check_hash: '' },{ require: true });
+            await user.save({ email_check_hash: '' }, { require: true });
             const session = await login('mary', 'secret');
 
             await expect(
@@ -832,17 +826,14 @@ describe('api v.1', () => {
         });
 
         describe('Geotags', () => {
-
           it('Non existing geotag page should answer "Not found"', async () => {
             await expect(
-              { url: `/api/v1/posts/geotag/non-existing-geotag` } ,
+              { url: `/api/v1/posts/geotag/non-existing-geotag` },
               'to open not found'
             );
           });
-
         });
       });
-
     });
   });
 });

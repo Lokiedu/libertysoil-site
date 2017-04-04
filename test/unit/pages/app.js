@@ -19,7 +19,7 @@
 import ga from 'react-google-analytics';
 import i from 'immutable';
 
-import { TestUtils, unexpected, expect, React } from '../../../test-helpers/expect-unit';
+import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 import App from '../../../src/pages/app';
 
 
@@ -27,14 +27,13 @@ const props = {
   ui: i.fromJS({
     sidebarIsVisible: false
   })
-}
+};
 
 const GAInitializer = ga.Initializer;
 
-describe('App page', function() {
-
-  it('SHOULD NOT render GA when process.env.GOOGLE_ANALYTICS_ID not set', function() {
-    let renderer = TestUtils.createRenderer();
+describe('App page', function () {
+  it('SHOULD NOT render GA when process.env.GOOGLE_ANALYTICS_ID not set', function () {
+    const renderer = TestUtils.createRenderer();
 
     delete process.env.GOOGLE_ANALYTICS_ID;
     renderer.render(<App {...props}><span>foo</span></App>);
@@ -42,13 +41,12 @@ describe('App page', function() {
     return expect(renderer, 'not to contain', <GAInitializer />);
   });
 
-  it('SHOULD render GA when process.env.GOOGLE_ANALYTICS_ID is set', function() {
-    let renderer = TestUtils.createRenderer();
+  it('SHOULD render GA when process.env.GOOGLE_ANALYTICS_ID is set', function () {
+    const renderer = TestUtils.createRenderer();
 
     process.env.GOOGLE_ANALYTICS_ID = 100;
     renderer.render(<App {...props}><span>foo</span></App>);
 
     return expect(renderer, 'to contain', <GAInitializer />);
   });
-
 });

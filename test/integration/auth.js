@@ -7,13 +7,13 @@ import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
 
 
-let bookshelf = initBookshelf($dbConfig);
+const bookshelf = initBookshelf($dbConfig);
 
 // TODO: Implement fixtures or factories.
 // TODO: Use https://github.com/marak/Faker.js to generate data.
-let Post = bookshelf.model('Post');
-let School = bookshelf.model('School');
-let User = bookshelf.model('User');
+const Post = bookshelf.model('Post');
+const School = bookshelf.model('School');
+const User = bookshelf.model('User');
 
 describe('routes that are unavailable for guests', function () {
   describe('when user is not logged in', function () {
@@ -25,7 +25,7 @@ describe('routes that are unavailable for guests', function () {
       await bookshelf.knex.raw('ROLLBACK;');
     });
 
-    let routes = [
+    const routes = [
       '/',
       '/settings',
       '/settings/email',
@@ -40,20 +40,20 @@ describe('routes that are unavailable for guests', function () {
     });
 
     it('/s/:school_name/edit redirects to /welcome', async function () {
-      let school = await new School({
+      const school = await new School({
         name: 'test',
         url_name: 'test.com'
-      }).save(null, {method: 'insert'});
+      }).save(null, { method: 'insert' });
 
       return expect(`/s/${school.attributes.url_name}/edit`, 'to redirect');
     });
 
     it('/post/edit/:uuid redirects to /welcome', async function () {
-      let post = await new Post({
+      const post = await new Post({
         id: uuid4(),
         text: 'Test',
         type: 'test'
-      }).save(null, {method: 'insert'});
+      }).save(null, { method: 'insert' });
 
       return expect(`/post/edit/${post.id}`, 'to redirect');
     });
@@ -62,8 +62,7 @@ describe('routes that are unavailable for guests', function () {
 
 
 describe('api v1', async () => {
-
-    describe('Authorization', () => {
+  describe('Authorization', () => {
     let post, user, school, unverifiedUser;
 
     before(async () => {
@@ -72,24 +71,23 @@ describe('api v1', async () => {
       await bookshelf.knex('schools').del();
 
       user = await User.create('test', 'test', 'test@example.com');
-      await user.save({'email_check_hash': ''},{require:true});
+      await user.save({ 'email_check_hash': '' }, { require: true });
 
       unverifiedUser = await User.create('unverif', 'unverif', 'test-unverif@example.com');
-      await unverifiedUser.save(null, {require: true});
+      await unverifiedUser.save(null, { require: true });
 
       post = new Post({
         id: uuid4(),
         type: POST_DEFAULT_TYPE,
         user_id: user.get('id')
       });
-      await post.save(null, {method: 'insert'});
+      await post.save(null, { method: 'insert' });
 
       school = new School({
         id: uuid4(),
         url_name: 'test_url_name'
       });
-      await school.save(null, {method: 'insert'});
-
+      await school.save(null, { method: 'insert' });
     });
 
     after(async () => {
@@ -100,7 +98,6 @@ describe('api v1', async () => {
     });
 
     describe('When user is not logged in', () => {
-
       it('AUTHORIZED TO login and logins successfully', async () => {
         await expect(
           {
@@ -108,12 +105,11 @@ describe('api v1', async () => {
             method: 'POST',
             body: { username: 'test', password: 'test' }
           },
-          'body to satisfy', { success: true}
+          'body to satisfy', { success: true }
         );
       });
 
       describe('Posts', async () => {
-
         it('AUTHORIZED TO read post', async () => {
           await expect(`/api/v1/post/${post.id}`, 'to open authorized');
         });
@@ -185,7 +181,6 @@ describe('api v1', async () => {
         it('NOT AUTHORIZED TO unfav post', async () => {
           await expect({ url: `/api/v1/post/${post.id}/unfav`, method: 'POST' }, 'not to open authorized');
         });
-
       });
 
       describe('Schools', async () => {
@@ -208,7 +203,6 @@ describe('api v1', async () => {
         it('NOT AUTHORIZED TO unfollow school', async () => {
           await expect({ url: `/api/v1/school/${school.get('url_name')}/unfollow`, method: 'POST' }, 'not to open authorized');
         });
-
       });
 
       describe('Countries', async () => {
@@ -263,11 +257,9 @@ describe('api v1', async () => {
         it('NOT AUTHORIZED TO get recent geotags', async () => {
           await expect({ url: `/api/v1/user/recent-geotags` }, 'not to open authorized');
         });
-
       });
 
       describe('Tags', async () => {
-
         it('NOT AUTHORIZED TO get recent geotags', async () => {
           await expect({ url: `/api/v1/user/recent-geotags` }, 'not to open authorized');
         });
@@ -295,11 +287,9 @@ describe('api v1', async () => {
         it('AUTHORIZED TO search tag', async () => {
           await expect({ url: `/api/v1/tags/search/foo-tag` }, 'to open authorized');
         });
-
       });
 
       describe('Geotags', async () => {
-
         it('NOT AUTHORIZED TO get recent geotags', async () => {
           await expect({ url: `/api/v1/user/recent-geotags` }, 'not to open authorized');
         });
@@ -323,7 +313,6 @@ describe('api v1', async () => {
         it('AUTHORIZED TO search geotag', async () => {
           await expect({ url: `/api/v1/geotags/search/foo-tag` }, 'to open authorized');
         });
-
       });
 
       describe('Suggestions', async () => {
@@ -334,7 +323,6 @@ describe('api v1', async () => {
         it('NOT AUTHORIZED TO initial suggestions', async () => {
           await expect({ url: `/api/v1/suggestions/initial` }, 'not to open authorized');
         });
-
       });
 
       it('AUTHORIZED TO verify email', async () => {
@@ -370,7 +358,6 @@ describe('api v1', async () => {
           { url: `/api/v1/upload`, method: 'POST' }
           , 'not to open authorized');
       });
-
     });
 
     describe('When user logged in it', () => {
@@ -381,7 +368,7 @@ describe('api v1', async () => {
           id: uuid4(),
           type: POST_DEFAULT_TYPE
         });
-        await otherPost.save(null, {method: 'insert'});
+        await otherPost.save(null, { method: 'insert' });
         sessionId = await login('test', 'test');
       });
 
@@ -429,7 +416,6 @@ describe('api v1', async () => {
         it('AUTHORIZED TO read own favoured posts', async () => {
           await expect({ url: `/api/v1/posts/favoured`, session: sessionId }, 'to open authorized');
         });
-
       });
 
       describe('Schools', async () => {
@@ -458,7 +444,6 @@ describe('api v1', async () => {
         it('AUTHORIZED TO unfollow tag', async () => {
           await expect({ url: `/api/v1/tag/foo/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
         });
-
       });
 
       describe('Geotags', async () => {
@@ -477,7 +462,6 @@ describe('api v1', async () => {
         it('AUTHORIZED TO unfollow geotag', async () => {
           await expect({ url: `/api/v1/geotag/foo/unfollow`, session: sessionId, method: 'POST' }, 'to open authorized');
         });
-
       });
 
       it('AUTHORIZED TO follow user', async () => {
@@ -532,9 +516,6 @@ describe('api v1', async () => {
       it('NOT AUTHORIZED TO use anonymous reset password feature', async () => {
         await expect({ url: `/api/v1/resetpassword`, session: sessionId, method: 'POST' }, 'not to open authorized');
       });
-
     });
-
   });
-
 });

@@ -49,8 +49,8 @@ const connectAsync = (...args) => {
   });
 };
 
-let bookshelfHelper = initBookshelf($dbConfig);
-let User = bookshelfHelper.model('User');
+const bookshelfHelper = initBookshelf($dbConfig);
+const User = bookshelfHelper.model('User');
 
 describe('Client test', () => {
   let client;
@@ -61,38 +61,38 @@ describe('Client test', () => {
 
   describe('Base methods', () => {
     it('#GET', async () => {
-      let response  = await client.get('/api/v1/test');
+      const response  = await client.get('/api/v1/test');
 
       expect(await response.text(), 'to be', 'test message in response');
     });
 
     it('#HEAD', async () => {
-      let response = await client.head('/api/v1/test');
+      const response = await client.head('/api/v1/test');
 
       expect(response.status, 'to be', 200);
     });
 
     it('#DELETE', async () => {
-      let response = await client.del('/api/v1/test');
+      const response = await client.del('/api/v1/test');
 
       expect(await response.text(), 'to be', 'test message in delete response');
     });
 
     it('#POST', async () => {
-      let response = await client.post('/api/v1/test');
+      const response = await client.post('/api/v1/test');
 
       expect(await response.text(), 'to be', 'test message in post response');
     });
 
     it('#POSTJSON', async () => {
-      let response = await client.postJSON('/api/v1/test', {foo: 'bar'});
+      const response = await client.postJSON('/api/v1/test', { foo: 'bar' });
 
       expect(await response.text(), 'to be', 'test message in post response');
     });
   });
 
   it('#checkGeotagExists return false for non existing geotag', async () => {
-    let result = await client.checkGeotagExists('nonexistingname');
+    const result = await client.checkGeotagExists('nonexistingname');
 
     expect(result, 'to be false');
   });

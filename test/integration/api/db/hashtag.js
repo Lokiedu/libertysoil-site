@@ -28,9 +28,9 @@ const Post = bookshelf.model('Post');
 const Hashtag = bookshelf.model('Hashtag');
 
 describe('Hashtag', () => {
-  let hashtags = [];
-  let posts = [];
-  let postIds = [];
+  const hashtags = [];
+  const posts = [];
+  const postIds = [];
 
   before(async () => {
     for (let i = 0; i < 2; ++i) {
@@ -39,24 +39,24 @@ describe('Hashtag', () => {
     }
 
     for (let i = 0; i < 3; ++i) {
-      let post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
+      const post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
       posts.push(post);
       postIds.push(post.id);
     }
   });
 
   after(async () => {
-    for (let post of posts) {
+    for (const post of posts) {
       await post.destroy();
     }
 
-    for (let hashtag of hashtags) {
+    for (const hashtag of hashtags) {
       await hashtag.destroy();
     }
   });
 
   afterEach(async () => {
-    for (let hashtag of hashtags) {
+    for (const hashtag of hashtags) {
       await hashtag.posts().detach(postIds);
       await hashtag.save({ post_count: 0 });
     }
@@ -64,13 +64,13 @@ describe('Hashtag', () => {
 
   describe('.updatePostCounters', () => {
     it('sets post_count to a correct number of posts for each hashtag', async () => {
-      for (let hashtag of hashtags) {
+      for (const hashtag of hashtags) {
         await hashtag.posts().attach(postIds);
       }
 
       await Hashtag.updatePostCounters();
 
-      for (let hashtag of hashtags) {
+      for (const hashtag of hashtags) {
         await hashtag.refresh();
         expect(hashtag.get('post_count'), 'to equal', postIds.length);
       }

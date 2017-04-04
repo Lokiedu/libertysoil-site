@@ -24,21 +24,20 @@ import { theReducer } from '../../../src/store';
 import { SET_CURRENT_USER } from '../../../src/actions/users';
 
 
-describe('combined reducer "theReducer"', function() {
-
-  it('is should not throw any error when action SET_CURRENT_USER and action.user equals null', function() {
+describe('combined reducer "theReducer"', function () {
+  it('is should not throw any error when action SET_CURRENT_USER and action.user equals null', function () {
     theReducer(i.Map({}), { type: SET_CURRENT_USER, payload: { user: null } });
   });
 
   it('should not rewrite user followers existing data', () => {
     const initialState = i.Map({
-        users: i.Map({
-          1: i.Map({
-            id: 1,
-            username: 'foo',
-            more: 'bar'
-          })
+      users: i.Map({
+        1: i.Map({
+          id: 1,
+          username: 'foo',
+          more: 'bar'
         })
+      })
     });
 
     const state = theReducer(
@@ -61,5 +60,4 @@ describe('combined reducer "theReducer"', function() {
     expect(state.getIn(['users', '1', 'more']), 'to equal', 'bar');
     expect(state.getIn(['users', '1', 'username']), 'to equal', 'new-foo');
   });
-
 });

@@ -3,7 +3,7 @@ import { expect } from '../../../test-helpers/expect-unit';
 import QueueSingleton from '../../../src/utils/queue';
 
 
-describe('Queue test', function() {
+describe('Queue test', function () {
   let queue;
 
   before(() => {
@@ -11,8 +11,8 @@ describe('Queue test', function() {
     queue.testMode.enter();
   });
 
-  it('Singleton should work', function() {
-    let c = new QueueSingleton;
+  it('Singleton should work', function () {
+    const c = new QueueSingleton;
 
     // prove global scope queue has no jobs
     expect(queue.testMode.jobs.length, 'to equal', 0);
@@ -33,5 +33,4 @@ describe('Queue test', function() {
   after(() => {
     queue.testMode.exit();
   });
-
 });

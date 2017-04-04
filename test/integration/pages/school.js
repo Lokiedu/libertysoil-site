@@ -19,13 +19,12 @@
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
-import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import { login } from '../../../test-helpers/api';
-import UserFactory from '../../../test-helpers/factories/user.js';
-import PostFactory from '../../../test-helpers/factories/post.js';
-import SchoolFactory from '../../../test-helpers/factories/school.js';
+import UserFactory from '../../../test-helpers/factories/user';
+import PostFactory from '../../../test-helpers/factories/post';
+import SchoolFactory from '../../../test-helpers/factories/school';
 import initBookshelf from '../../../src/api/db';
 
 const bookshelf = initBookshelf($dbConfig);
@@ -42,7 +41,7 @@ describe('School page', () => {
   //   console.error.restore();
   // });
   it('renders NotFound page for non-existent school', async () => {
-    const context = await expect({ url: '/s/non-existent-school'}, 'to open not found');
+    const context = await expect({ url: '/s/non-existent-school' }, 'to open not found');
 
     const document = jsdom(context.httpResponse.body);
     await expect(
@@ -59,7 +58,7 @@ describe('School page', () => {
     before(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com', { first_login: false });
-      await user.save({ 'email_check_hash': '' },{ require: true });
+      await user.save({ 'email_check_hash': '' }, { require: true });
 
       sessionId = await login('test', 'test');
     });

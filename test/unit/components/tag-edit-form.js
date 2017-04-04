@@ -18,7 +18,6 @@
 /* eslint-env node, mocha */
 import { mount } from 'enzyme';
 import { v4 as uuid4 } from 'uuid';
-import sinon from 'sinon';
 import i from 'immutable';
 
 import { expect, React } from '../../../test-helpers/expect-unit';

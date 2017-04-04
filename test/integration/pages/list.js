@@ -51,7 +51,7 @@ describe('ListPage', () => {
     before(async () => {
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com', { first_login: false });
-      await user.save({'email_check_hash': ''},{require:true});
+      await user.save({ 'email_check_hash': '' }, { require: true });
 
       sessionId = await login('test', 'test');
     });
@@ -70,19 +70,18 @@ describe('ListPage', () => {
     });
 
     it('user can open / and see posting form', async () => {
-      let context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
+      const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
-      let document = jsdom(context.httpResponse.body);
+      const document = jsdom(context.httpResponse.body);
 
-      let pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
+      const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
       await expect(pageContent, 'to have child', '.box-post');  // posting form
 
-      let postsContainer = pageContent.childNodes[1];
+      const postsContainer = pageContent.childNodes[1];
       await expect(postsContainer, 'to have no children');
     });
 
     describe('when user made a post', () => {
-
       it('user can open / and see 1 post there', async () => {
         const posts = [];
         posts.push(await createPost({ user_id: user.id }));

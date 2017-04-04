@@ -32,15 +32,15 @@ import UserFactory from '../../../test-helpers/factories/user';
 import PostFactory from '../../../test-helpers/factories/post';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+const bookshelf = initBookshelf($dbConfig);
+const User = bookshelf.model('User');
 const Post = bookshelf.model('Post');
 const Comment = bookshelf.model('Comment');
 
 
 describe('ActionsTrigger', () => {
   describe('Anonymous user', async () => {
-    describe('#newPassword', async() => {
+    describe('#newPassword', async () => {
       let user, userAttrs, client;
 
       beforeEach(async () => {

@@ -1,28 +1,27 @@
 /*eslint-env node, mocha */
-import { expect } from '../../../../test-helpers/expect-unit';
 import Checkit from 'checkit';
 
+import { expect } from '../../../../test-helpers/expect-unit';
 import { User as UserValidators } from '../../../../src/api/db/validators';
 
-describe('UserValidators', function() {
 
-  it('FAILS for specific attributes', async function() {
-    let attributes = {
+describe('UserValidators', function () {
+  it('FAILS for specific attributes', async function () {
+    const attributes = {
       username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
       password: 'test',
       email: 'test',
       firstName: 'test',
       lastName: 'test'
     };
-    let checkit = new Checkit(UserValidators.registration);
+    const checkit = new Checkit(UserValidators.registration);
     try {
       await checkit.run(attributes);
     } catch (err) {
-
       return expect(err.toJSON(), 'to equal', {
         username: ['The username must not exceed 31 characters long',
-                   'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
-                  ],
+          'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
+        ],
         password: ['Password is min. 8 characters. Password can only have ascii characters.'],
         email: ['The email must be a valid email address']
       });
@@ -31,10 +30,10 @@ describe('UserValidators', function() {
     return expect(false, 'to be ok');
   });
 
-  it('FAILS for required attributes', async function() {
-    let attributes = {
+  it('FAILS for required attributes', async function () {
+    const attributes = {
     };
-    let checkit = new Checkit(UserValidators.registration);
+    const checkit = new Checkit(UserValidators.registration);
     try {
       await checkit.run(attributes);
     } catch (err) {
@@ -49,15 +48,15 @@ describe('UserValidators', function() {
     return expect(false, 'to be ok');
   });
 
-  it('PASS when everything is ok', async function() {
-    let attributes = {
+  it('PASS when everything is ok', async function () {
+    const attributes = {
       username: 'test', // 49
       password: 'testtest',
       email: 'test@example.com',
       firstName: 'test',
       lastName: 'test'
     };
-    let checkit = new Checkit(UserValidators.registration);
+    const checkit = new Checkit(UserValidators.registration);
     try {
       await checkit.run(attributes);
     } catch (err) {
@@ -67,8 +66,8 @@ describe('UserValidators', function() {
     return expect(true, 'to be ok');
   });
 
-  describe('Email Validation', async function() {
-    let emails = [
+  describe('Email Validation', async function () {
+    const emails = [
       'test@domain.com',
       'firstname.lastname@domain.com',
       'email@subdomain.domain.com',
@@ -84,17 +83,15 @@ describe('UserValidators', function() {
       'firstname-lastname@domain.com'
     ];
     // use only email validators
-    let checkit = new Checkit({ email: UserValidators.registration.email });
+    const checkit = new Checkit({ email: UserValidators.registration.email });
 
     emails.map((email) => {
-      it (`PASS with email ${email}`, function() {
-        let [ err, validated ] = checkit.runSync({ email: email });
+      it(`PASS with email ${email}`, function () {
+        const [err, validated] = checkit.runSync({ email });
 
         expect(err, 'to be null');
         expect(validated, 'to be ok');
       });
     });
-
   });
-
 });

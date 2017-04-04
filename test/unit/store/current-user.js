@@ -29,8 +29,8 @@ describe('current_user reducer', () => {
     const dirtyState = i.Map({
       id: '00000000-dead-beef-0000-000000000000',
       hashtags: i.List(['hello', 'world']),
-      followed_hashtags: i.Map({'chicken': 'good'}),
-      followed_schools: i.Map({'we': 'teach'}),
+      followed_hashtags: i.Map({ 'chicken': 'good' }),
+      followed_schools: i.Map({ 'we': 'teach' }),
       suggested_users: i.List(['mike', 'bob'])
     });
 

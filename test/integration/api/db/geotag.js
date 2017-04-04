@@ -28,35 +28,35 @@ const Geotag = bookshelf.model('Geotag');
 const Post = bookshelf.model('Post');
 
 describe('Geotag', () => {
-  let geotags = [];
-  let posts = [];
-  let postIds = [];
+  const geotags = [];
+  const posts = [];
+  const postIds = [];
 
   before(async () => {
     for (let i = 0; i < 2; ++i) {
-      let geotag = await new Geotag(GeotagFactory.build()).save(null, { method: 'insert' });
+      const geotag = await new Geotag(GeotagFactory.build()).save(null, { method: 'insert' });
       geotags.push(geotag);
     }
 
     for (let i = 0; i < 3; ++i) {
-      let post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
+      const post = await new Post(PostFactory.build()).save(null, { method: 'insert' });
       posts.push(post);
       postIds.push(post.id);
     }
   });
 
   after(async () => {
-    for (let post of posts) {
+    for (const post of posts) {
       await post.destroy();
     }
 
-    for (let geotag of geotags) {
+    for (const geotag of geotags) {
       await geotag.destroy();
     }
   });
 
   afterEach(async () => {
-    for (let geotag of geotags) {
+    for (const geotag of geotags) {
       await geotag.posts().detach(postIds);
       await geotag.save({ post_count: 0 });
     }
@@ -64,13 +64,13 @@ describe('Geotag', () => {
 
   describe('.updatePostCounters', () => {
     it('sets post_count to a correct number of posts for each geotag', async () => {
-      for (let geotag of geotags) {
+      for (const geotag of geotags) {
         await geotag.posts().attach(postIds);
       }
 
       await Geotag.updatePostCounters();
 
-      for (let geotag of geotags) {
+      for (const geotag of geotags) {
         await geotag.refresh();
         expect(geotag.get('post_count'), 'to equal', postIds.length);
       }

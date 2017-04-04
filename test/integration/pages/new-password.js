@@ -18,19 +18,15 @@
 /* eslint-env node, mocha */
 /* global $dbConfig */
 import { jsdom } from 'jsdom';
-import { v4 as uuid4 } from 'uuid';
-import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
-import { login } from '../../../test-helpers/api';
 
 
-let bookshelf = initBookshelf($dbConfig);
-let User = bookshelf.model('User');
+const bookshelf = initBookshelf($dbConfig);
+const User = bookshelf.model('User');
 
 describe('NewPassword page', () => {
-
   describe('when user is logged in', () => {
     let user;
 
@@ -38,7 +34,7 @@ describe('NewPassword page', () => {
       // sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
       await bookshelf.knex('users').del();
       user = await User.create('test', 'test', 'test@example.com');
-      await user.save({email_check_hash: '', reset_password_hash: 'foo'},{require:true});
+      await user.save({ email_check_hash: '', reset_password_hash: 'foo' }, { require: true });
     });
 
     after(async () => {
@@ -47,11 +43,10 @@ describe('NewPassword page', () => {
     });
 
     it('user can open new password page and see form', async () => {
-      let context = await expect({ url: '/newpassword/foo' }, 'to open successfully');
+      const context = await expect({ url: '/newpassword/foo' }, 'to open successfully');
 
-      let document = jsdom(context.httpResponse.body);
-      let pageContent = await expect(document.body, 'queried for first', '#content>.page .page__body form.password-form');
+      const document = jsdom(context.httpResponse.body);
+      await expect(document.body, 'queried for first', '#content>.page .page__body form.password-form');
     });
-
   });
 });

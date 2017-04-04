@@ -19,7 +19,7 @@
     "reset-db:travis": "echo \"Preparing test database...\" && knex --env travis migrate:latest",
     "update-db:production": "knex --env staging migrate:latest",
     "mocha": "mocha test",
-    "lint": "eslint *.js bin migrations src test-helpers",
+    "lint": "eslint *.js bin migrations src test test-helpers",
     "flow": "flow check --show-all-errors --color always --profile",
     "coverage:run": "babel-node ./node_modules/istanbul/lib/cli cover _mocha -- -R spec",
     "coverage:coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
