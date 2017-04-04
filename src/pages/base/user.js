@@ -104,48 +104,7 @@ const BaseUserPage = (props) => {
                 triggers={triggers}
                 user={user}
               />
-              <div className="layout__space-double">
-                <div className="layout__grid tabs">
-                  <div className="layout__grid_item">
-                    <IndexLink activeClassName="tabs__link-active" className="tabs__link" to={`/user/${user.get('username')}`}>Posts</IndexLink>
-                  </div>
-                  {showLikesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/likes`}
-                        visible
-                      >
-                        Likes
-                      </PageContentLink>
-                    </div>
-                  }
-                  {showFavouritesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/favorites`}
-                        visible
-                      >
-                        Favorites
-                      </PageContentLink>
-                    </div>
-                  }
-                  <div className="layout__grid_item">
-                    <PageContentLink
-                      activeClassName="tabs__link-active"
-                      className="tabs__link"
-                      to={`/user/${user.get('username')}/bio`}
-                      visible
-                    >
-                      Bio
-                    </PageContentLink>
-                  </div>
-                </div>
-              </div>
-              <div className="layout__row layout__row-double">
+              <div className="layout__row">
                 {children}
               </div>
             </PageContent>
