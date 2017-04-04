@@ -39,4 +39,11 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
     expect(renderer.render(<GeotagPageHero geotag={adminDivision} />), 'to contain', <MapboxMap zoom={6} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={city} />), 'to contain', <MapboxMap zoom={12} frozen />);
   });
+
+  it('should render map for objects located at zero-coordinates', () => {
+    const Greenwich = Map({ type: 'City', lat: 51.48, lon: 0 });
+
+    const renderer = createRenderer();
+    expect(renderer.render(<GeotagPageHero geotag={Greenwich} />), 'to contain', <MapboxMap zoom={12} frozen />);
+  });
 });
