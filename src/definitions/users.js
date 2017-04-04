@@ -17,7 +17,7 @@
 
  @flow
 */
-import t, { reify } from 'flow-runtime';
+import { reify } from 'flow-runtime';
 import type { Type } from 'flow-runtime';
 
 import type { Email, DateString, Map, UrlNode, Uuid4 } from './common';
@@ -28,7 +28,7 @@ import type { School } from './schools';
 
 export type UserId = Uuid4;
 
-export const isPassword = (x: string) => {
+export const isPassword = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(/^[\x20-\x7E]{8,}$/)) {
     return 'must be a valid password';
   }
@@ -38,7 +38,7 @@ export type Password = string;
 const PasswordType = (reify: Type<Password>);
 PasswordType.addConstraint(isPassword);
 
-export const isUsername = (x: string) => {
+export const isUsername = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
     return 'must be a valid username';
   }

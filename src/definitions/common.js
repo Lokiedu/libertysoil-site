@@ -17,14 +17,14 @@
 
  @flow
 */
-import t, { reify } from 'flow-runtime';
+import { reify } from 'flow-runtime';
 import type { Type } from 'flow-runtime';
 
 export type Success = {
   success: true
 };
 
-export const isInteger = (x: number) => {
+export const isInteger = (x: number): ?string => {  // eslint-disable-line consistent-return
   if (x % 1 !== 0) {
     return 'must be a valid integer';
   }
@@ -34,7 +34,7 @@ export type Integer = number;
 const IntegerType = (reify: Type<Integer>);
 IntegerType.addConstraint(isInteger);
 
-export const isEmail = (x: string) => {
+export const isEmail = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i)) {
     return 'must be a valid email address';
   }
@@ -44,7 +44,7 @@ export type Email = string;
 const EmailType = (reify: Type<Email>);
 EmailType.addConstraint(isEmail);
 
-export const isDate = (x: string) => {
+export const isDate = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:.\d{1,3})?Z$/)) {
     return 'must be a valid date string';
   }
@@ -54,7 +54,7 @@ export type DateString = string;
 const DateStringType = (reify: Type<DateString>);
 DateStringType.addConstraint(isDate);
 
-export const isUrl = (x: string) => {
+export const isUrl = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(RegExp(/^[a-z0-9_\.'/:-]+$/i))) {
     return 'must be a valid URL';
   }
@@ -64,7 +64,7 @@ export type Url = string;
 const UrlType = (reify: Type<Url>);
 UrlType.addConstraint(isUrl);
 
-export const isUrlNode = (x: Url) => {
+export const isUrlNode = (x: Url): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(RegExp(/(:|\/)/))) {
     return 'must be a valid URL node';
   }
@@ -74,7 +74,7 @@ export type UrlNode = Url;
 const UrlNodeType = (reify: Type<UrlNode>);
 UrlNodeType.addConstraint(isUrlNode);
 
-export const isUuid4 = (x: string) => {
+export const isUuid4 = (x: string): ?string => {  // eslint-disable-line consistent-return
   if (!x.match(RegExp(/^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$/i))) {
     return 'must be a valid UUID v4 string';
   }
