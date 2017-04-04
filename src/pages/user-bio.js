@@ -37,10 +37,10 @@ import ProfilePostsRiver from '../components/bio/river';
 import Avatar from '../components/user/avatar';
 import Button from '../components/button';
 import VisibilitySensor from '../components/visibility-sensor';
-import NotFound from './not-found';
-import BaseUserPageWithoutHeader from './base/user-without_header';
 import RiverItemCreateForm from '../components/river/type/text/create-form';
 import { UserCaption } from '../components/page/captions';
+import BaseUserPageWithoutHeader from './base/user-without_header';
+import NotFound from './not-found';
 
 class UserBioPage extends React.Component {
   static displayName = 'UserBioPage';
