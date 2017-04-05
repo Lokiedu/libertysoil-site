@@ -89,17 +89,15 @@ class BaseSettingsPage extends React.Component {
       <div>
         <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo />
-          <div className="header__breadcrumbs">
-            <Breadcrumbs title={name}>
-              <div className="user_box__avatar user_box__avatar-round">
-                <Avatar
-                  size={36}
-                  isLink={false}
-                  user={user}
-                />
-              </div>
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs title={name}>
+            <div className="user_box__avatar user_box__avatar-round">
+              <Avatar
+                size={36}
+                isLink={false}
+                user={user}
+              />
+            </div>
+          </Breadcrumbs>
         </Header>
 
         <Page>
