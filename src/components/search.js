@@ -272,7 +272,6 @@ class Search extends Component {
             type="text"
             value={query}
             onChange={this.updateQuery}
-            onClick={this.actionClick}
             onKeyDown={this.onKeyDown}
           />
           {!loading &&
