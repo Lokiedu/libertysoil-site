@@ -108,7 +108,7 @@ export default class Breadcrumbs extends Component {
       shouldDisplay: true,
       visibleCrumbs: this.childrenCount
     }, this.updateVisibleCrumbs);
-  }, 100);
+  }, 250);
 
   updateVisibleCrumbs = () => {
     const breadcrumbsWidth = this._breadcrumbs.offsetWidth;
