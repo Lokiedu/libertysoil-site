@@ -75,6 +75,12 @@ class Search extends Component {
     this.triggers = new ActionsTrigger(client, props.dispatch);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isOpened !== this.state.isOpened) {
+      document.dispatchEvent(new Event('updateBreadcrumbs'));
+    }
+  }
+
   onClickOutside = () => {
     this.toggle(false);
   };

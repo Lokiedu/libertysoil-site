@@ -18,26 +18,40 @@
 import React, { cloneElement, Component, PropTypes } from 'react';
 import { throttle, isArray, compact, keys } from 'lodash';
 
+import Icon from '../icon';
+
+const defaultShortView = (
+  <Icon
+    icon="keyboard-control"
+    pack="md"
+    size="common"
+  />
+);
+
 export default class Breadcrumbs extends Component {
   static displayName = 'Breadcrumbs';
 
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
+    shortView: PropTypes.node,
     title: PropTypes.node
   };
 
-  constructor(props) {
-    super(props);
+  constructor(props, ...args) {
+    super(props, ...args);
 
     this.state = {
+      shouldDisplay: true,
       visibleCrumbs: null
     };
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.resetVisibleCrumbs);
-    document.addEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
+    document.addEventListener('updateBreadcrumbs', this.resetVisibleCrumbs);
+
+    setTimeout(this.resetVisibleCrumbs, 500);
   }
 
   componentWillReceiveProps() {
@@ -46,7 +60,7 @@ export default class Breadcrumbs extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resetVisibleCrumbs);
-    document.removeEventListener('DOMContentLoaded', this.resetVisibleCrumbs);
+    document.removeEventListener('updateBreadcrumbs', this.resetVisibleCrumbs);
   }
 
   resetVisibleCrumbs = throttle(() => {
@@ -58,6 +72,7 @@ export default class Breadcrumbs extends Component {
     }
 
     this.setState({
+      shouldDisplay: true,
       visibleCrumbs: childrenCount
     }, this.updateVisibleCrumbs);
   }, 100);
@@ -68,15 +83,40 @@ export default class Breadcrumbs extends Component {
 
     if (bodyWidth >= breadcrumbsWidth) {
       if (this.state.visibleCrumbs > 0) {
-        this.setState({
-          visibleCrumbs: this.state.visibleCrumbs - 1
-        }, this.updateVisibleCrumbs);
+        this.setState((state) => ({
+          visibleCrumbs: state.visibleCrumbs - 1
+        }), this.updateVisibleCrumbs);
+      } else {
+        this.setState({ shouldDisplay: false });
       }
     }
   };
 
+  renderShortView() {
+    const { shortView } = this.props;
+
+    if (shortView === null) {
+      return null;
+    }
+    if (!shortView) {
+      if (typeof this.props.title === 'string') {
+        return (
+          <div title={this.props.title}>
+            {defaultShortView}
+          </div>
+        );
+      }
+      return defaultShortView;
+    }
+    return shortView;
+  }
+
   renderCrumbs(crumbs = []) {
     let visibleCrumbs = this.state.visibleCrumbs;
+    if (!this.state.shouldDisplay) {
+      return this.renderShortView();
+    }
+
     let isCollapsed = [];
 
     if (!isArray(crumbs)) {
@@ -109,13 +149,15 @@ export default class Breadcrumbs extends Component {
   }
 
   renderTitle(title) {
-    let titleComponent = null;
-
-    if (title) {
-      titleComponent = <div className="breadcrumbs__item breadcrumbs__title">{title}</div>;
+    if (!title || !this.state.shouldDisplay) {
+      return null;
     }
 
-    return titleComponent;
+    return (
+      <div className="breadcrumbs__item breadcrumbs__title">
+        {title}
+      </div>
+    );
   }
 
   render() {
@@ -127,6 +169,9 @@ export default class Breadcrumbs extends Component {
     } = this.props;
 
     let cn = 'breadcrumbs header__breadcrumbs';
+    if (this.state.shouldDisplay) {
+      cn += ' breadcrumbs--opened';
+    }
     if (className) {
       cn += ` ${className}`;
     }
