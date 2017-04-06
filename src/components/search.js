@@ -20,6 +20,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
@@ -73,6 +74,10 @@ class Search extends Component {
 
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props || !isEqual(nextState, this.state);
   }
 
   componentDidUpdate(prevProps, prevState) {
