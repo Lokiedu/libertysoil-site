@@ -16,7 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { cloneElement, Component, PropTypes } from 'react';
-import { throttle, isArray, compact, keys } from 'lodash';
+import throttle from 'lodash/throttle';
+import isArray from 'lodash/isArray';
+import compact from 'lodash/compact';
+import keys from 'lodash/keys';
+import isEqual from 'lodash/isEqual';
 
 import Icon from '../icon';
 
@@ -43,37 +47,66 @@ export default class Breadcrumbs extends Component {
 
     this.state = {
       shouldDisplay: true,
+      displayShortView: true,
       visibleCrumbs: null
     };
+
+    this.childrenCount = props.children ? props.children.length : 0;
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.resetVisibleCrumbs);
-    document.addEventListener('updateBreadcrumbs', this.resetVisibleCrumbs);
+    document.addEventListener('updateBreadcrumbs', this.handleForceUpdate);
 
     setTimeout(this.resetVisibleCrumbs, 500);
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    this.childrenCount = nextProps.children ? nextProps.children.length : 0;
     this.resetVisibleCrumbs();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props || !isEqual(nextState, this.state);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resetVisibleCrumbs);
-    document.removeEventListener('updateBreadcrumbs', this.resetVisibleCrumbs);
+    document.removeEventListener('updateBreadcrumbs', this.handleForceUpdate);
   }
 
-  resetVisibleCrumbs = throttle(() => {
-    const { children } = this.props;
-    let childrenCount = 0;
+  handleForceUpdate = throttle(({ detail }) => {
+    if (detail) {
+      const { shouldDisplay, displayShortView } = detail;
+      const nextState = {};
+      let callback;
 
-    if (children) {
-      childrenCount = children.length;
+      if (shouldDisplay !== undefined) {
+        nextState.shouldDisplay = shouldDisplay;
+
+        if (shouldDisplay) {
+          nextState.visibleCrumbs = this.childrenCount;
+          callback = this.updateVisibleCrumbs;
+        }
+      }
+      if (displayShortView !== undefined) {
+        nextState.displayShortView = displayShortView;
+      }
+
+      this.setState(nextState, callback);
+    } else {
+      this.setState({
+        displayShortView: true,
+        shouldDisplay: true,
+        visibleCrumbs: this.childrenCount
+      }, this.updateVisibleCrumbs);
     }
+  }, 100);
 
+  resetVisibleCrumbs = throttle(() => {
     this.setState({
       shouldDisplay: true,
-      visibleCrumbs: childrenCount
+      visibleCrumbs: this.childrenCount
     }, this.updateVisibleCrumbs);
   }, 100);
 
@@ -93,8 +126,11 @@ export default class Breadcrumbs extends Component {
   };
 
   renderShortView() {
-    const { shortView } = this.props;
+    if (!this.state.displayShortView) {
+      return null;
+    }
 
+    const { shortView } = this.props;
     if (shortView === null) {
       return null;
     }

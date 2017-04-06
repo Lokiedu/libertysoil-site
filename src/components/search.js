@@ -51,6 +51,19 @@ function getResultsSectionTitle(sectionName, count) {
   return `Show ${count} found ${SEARCH_SECTIONS_COUNTABILITY[sectionName][wordFormId]}`;
 }
 
+function requestSpace() {
+  document.dispatchEvent(new CustomEvent('updateBreadcrumbs', {
+    detail: {
+      displayShortView: false,
+      shouldDisplay: false
+    }
+  }));
+}
+
+function freeSpace() {
+  document.dispatchEvent(new Event('updateBreadcrumbs'));
+}
+
 class Search extends Component {
   static displayName = 'Search';
 
@@ -74,6 +87,13 @@ class Search extends Component {
 
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
+    this.mobileMatched = true;
+  }
+
+  componentDidMount() {
+    const binding = window.matchMedia('(max-width: 413px)');
+    binding.addListener(this.handleMatchMobile);
+    this.mobileMatched = binding.matches;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -82,9 +102,30 @@ class Search extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.isOpened !== this.state.isOpened) {
-      document.dispatchEvent(new Event('updateBreadcrumbs'));
+      this.manageSpace();
     }
   }
+
+  componentWillUnmount() {
+    window.matchMedia('(max-width: 413px)')
+      .removeListener(this.handleMatchMobile);
+  }
+
+  manageSpace = () => {
+    if (this.state.isOpened && this.mobileMatched) {
+      requestSpace();
+    } else {
+      freeSpace();
+    }
+  };
+
+  handleMatchMobile = (mobileQuery) => {
+    this.mobileMatched = mobileQuery.matches;
+
+    if (this.state.isOpened) {
+      this.manageSpace();
+    }
+  };
 
   onClickOutside = () => {
     this.toggle(false);
