@@ -107,6 +107,7 @@
 
   @media @fluidDesktopNarrow {
     flex-basis: 1024px;
+    overflow-x: hidden; // alt sidebar overflow issue
   }
 
   @media @fluidDesktopStandard {
@@ -169,6 +170,11 @@
   flex: 1;
   flex-wrap: wrap;
   margin: auto;
+
+  // alt sidebar issue
+  @media (min-width: 1024px) {
+    flex-wrap: nowrap;
+  }
 
   &-up {
     position: relative;
@@ -263,22 +269,32 @@
 }
 
 .page__content {
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
   padding: 0 0 @doubleSpace 0;
+  max-width: 320px;
+  width: 320px;
+
+  @media @fluidMobileWide {
+    max-width: 294px;
+  }
+
+  @media @fluidMobileMaxWide {
+    max-width: 360px;
+  }
 
   @media @fluidTablet {
-    // flex: none;
-    width: 570px;
+    max-width: 550px;
   }
 
   @media @fluidDesktopNarrow, @fluidDesktopStandard, @fluidDesktopWider {
-    //flex: none;
-    width: 580px;
+    max-width: 580px;
   }
 
   @media @fluidDesktopWide {
     flex: none;
     width: 740px;
+    max-width: 740px;
   }
 }
 
