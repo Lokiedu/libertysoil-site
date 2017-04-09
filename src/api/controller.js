@@ -3431,7 +3431,7 @@ export default class ApiController {
 
     const currentUser = await new User({ id: ctx.session.user }).fetch({ require: true });
     const message = await currentUser.outbox().create({
-      reciever_id: ctx.params.id,
+      receiver_id: ctx.params.id,
       text: ctx.request.body.text
     });
 
@@ -3458,7 +3458,7 @@ export default class ApiController {
           // TODO: Replace with a single orWhere() when knex is upgraded from 0.10
           // .orWhere({ sender_id: ctx.params.id, receiver_id: ctx.session.user })
           .orWhere({ sender_id: ctx.params.id })
-          .andWhere({ reciever_id: ctx.session.user })
+          .andWhere({ receiver_id: ctx.session.user })
           .orderBy('created_at', 'ASC');
       })
       .fetch();

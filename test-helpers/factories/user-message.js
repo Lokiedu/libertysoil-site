@@ -11,7 +11,7 @@ const UserMessageFactory = new Factory()
 
 export default UserMessageFactory;
 
-/** Requires sender_id and reciever_id in attrs */
+/** Requires sender_id and receiver_id in attrs */
 export async function createUserMessage(attrs = {}) {
   return await new UserMessage(UserMessageFactory.build(attrs)).save();
 }

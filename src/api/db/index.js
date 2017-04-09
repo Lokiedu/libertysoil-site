@@ -95,7 +95,7 @@ export function initBookshelfFromKnex(knex) {
       return this.belongsToMany(Post, 'post_subscriptions');
     },
     inbox() {
-      return this.hasMany(UserMessage, 'reciever_id');
+      return this.hasMany(UserMessage, 'receiver_id');
     },
     outbox() {
       return this.hasMany(UserMessage, 'sender_id');
@@ -678,8 +678,8 @@ export function initBookshelfFromKnex(knex) {
     sender() {
       return this.belongsTo(User, 'sender_id');
     },
-    reciever() {
-      return this.belongsTo(User, 'reciever_id');
+    receiver() {
+      return this.belongsTo(User, 'receiver_id');
     }
   });
 

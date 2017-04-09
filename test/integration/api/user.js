@@ -104,7 +104,7 @@ describe('User', () => {
     it('returns a list of messages created by both users', async () => {
       const user2 = await createUser();
 
-      await user.outbox().create({ reciever_id: user2.id, text: 'From me' });
+      await user.outbox().create({ receiver_id: user2.id, text: 'From me' });
       await user.inbox().create({ sender_id: user2.id, text: 'To me' });
 
       await expect(
