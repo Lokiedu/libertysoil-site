@@ -84,6 +84,7 @@
 .page__main {
   flex: 1;
   max-width: 320px;
+  flex-basis: 320px;
   min-height: 512px;
   padding-top: 40px;
 
@@ -123,6 +124,7 @@
   }
 
   &-small_height {
+    min-height: initial; // Safari 9.1 and older don't support "min-height: auto"
     min-height: auto;
   }
 
@@ -269,32 +271,37 @@
 }
 
 .page__content {
-  flex-grow: 1;
-  flex-shrink: 1;
+  flex: 1;
   padding: 0 0 @doubleSpace 0;
   max-width: 320px;
   width: 320px;
+  flex-basis: 320px;
 
   @media @fluidMobileWide {
     max-width: 294px;
+    flex-basis: 294px;
   }
 
   @media @fluidMobileMaxWide {
     max-width: 360px;
+    flex-basis: 360px;
   }
 
   @media @fluidTablet {
     max-width: 550px;
+    flex-basis: 550px;
   }
 
   @media @fluidDesktopNarrow, @fluidDesktopStandard, @fluidDesktopWider {
     max-width: 580px;
+    flex-basis: 580px;
   }
 
   @media @fluidDesktopWide {
     flex: none;
     width: 740px;
     max-width: 740px;
+    flex-basis: 740px;
   }
 }
 
