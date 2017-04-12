@@ -17,7 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Link, IndexLink } from 'react-router';
+import { IndexLink } from 'react-router';
 import values from 'lodash/values';
 
 import { getUrl, URL_NAMES } from '../../utils/urlGenerator';
@@ -101,21 +101,11 @@ class BaseSettingsPage extends React.Component {
         </Header>
 
         <Page>
-          <PageMain className="page__main--without-right">
+          <PageMain className="page__main">
             <PageBody>
               <Sidebar />
               <PageContent>
                 <div className="page__content page__content-spacing">
-                  <div className="layout__row layout-small">
-                    <div className="layout__grid layout__space tabs">
-                      <div className="layout__grid_item">
-                        <IndexLink activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.SETTINGS)}>About</IndexLink>
-                      </div>
-                      <div className="layout__grid_item">
-                        <Link activeClassName="tabs__title-active" className="tabs__title tabs__title-gray tabs__link button button-midi" to={getUrl(URL_NAMES.CHANGE_PASSWORD)}>Change password</Link>
-                      </div>
-                    </div>
-                  </div>
                   <UserCaption title={isBio && "Your Bio"} user={user} />
                   <div className="layout">
                     <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
