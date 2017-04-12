@@ -58,6 +58,7 @@ const IconComponent = ({
     'micon-rotate': spin,
     [`micon-${size}`]: size,
     [`icon--size_${size}`]: size,
+    [`icon-outline--${outline}`]: outline,
     [className]: className,
   });
 
