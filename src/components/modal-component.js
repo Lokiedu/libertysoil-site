@@ -17,6 +17,7 @@
 */
 import React, { PropTypes, Component } from 'react';
 import { values } from 'lodash';
+import classNames from 'classnames';
 
 import bem from '../utils/bemClassNames';
 
@@ -79,6 +80,7 @@ class ModalComponent extends Component {
       size,
       children,
       className,
+      sectionClassName,
       ...props
     } = this.props;
     let cn = bem.makeClassName({
@@ -96,7 +98,11 @@ class ModalComponent extends Component {
 
     return (
       <div className={cn} {...props} onClick={this.hide}>
-        <div className="modal__section" ref={c => this.body = c} onClick={this.clickHandler}>
+        <div
+          className={classNames('modal__section', sectionClassName)}
+          ref={c => this.body = c}
+          onClick={this.clickHandler}
+        >
           {children}
         </div>
       </div>
@@ -104,26 +110,26 @@ class ModalComponent extends Component {
   }
 }
 
-const Head = ({ children }) => (
-  <div className="modal__section_head">
+const Head = ({ children, className }) => (
+  <div className={classNames('modal__section_head', className)}>
     {children}
   </div>
 );
 
-const Title = ({ children }) => (
-  <h4 className="modal__title">
+const Title = ({ children, className }) => (
+  <h4 className={classNames('modal__title', className)}>
     {children}
   </h4>
 );
 
-const Body = ({ children }) => (
-  <div className="modal__section_description">
+const Body = ({ children, className }) => (
+  <div className={classNames('modal__section_description', className)}>
     {children}
   </div>
 );
 
-const Actions = ({ children }) => (
-  <div className="modal__navigation">
+const Actions = ({ children, className }) => (
+  <div className={classNames('modal__navigation', className)}>
     {children}
   </div>
 );
