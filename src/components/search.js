@@ -20,6 +20,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
@@ -50,6 +51,19 @@ function getResultsSectionTitle(sectionName, count) {
   return `Show ${count} found ${SEARCH_SECTIONS_COUNTABILITY[sectionName][wordFormId]}`;
 }
 
+function requestSpace() {
+  document.dispatchEvent(new CustomEvent('updateBreadcrumbs', {
+    detail: {
+      displayShortView: false,
+      shouldDisplay: false
+    }
+  }));
+}
+
+function freeSpace() {
+  document.dispatchEvent(new Event('updateBreadcrumbs'));
+}
+
 class Search extends Component {
   static displayName = 'Search';
 
@@ -73,7 +87,45 @@ class Search extends Component {
 
     const client = new ApiClient(API_HOST);
     this.triggers = new ActionsTrigger(client, props.dispatch);
+    this.mobileMatched = true;
   }
+
+  componentDidMount() {
+    const binding = window.matchMedia('(max-width: 413px)');
+    binding.addListener(this.handleMatchMobile);
+    this.mobileMatched = binding.matches;
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props || !isEqual(nextState, this.state);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isOpened !== this.state.isOpened) {
+      this.manageSpace();
+    }
+  }
+
+  componentWillUnmount() {
+    window.matchMedia('(max-width: 413px)')
+      .removeListener(this.handleMatchMobile);
+  }
+
+  manageSpace = () => {
+    if (this.state.isOpened && this.mobileMatched) {
+      requestSpace();
+    } else {
+      freeSpace();
+    }
+  };
+
+  handleMatchMobile = (mobileQuery) => {
+    this.mobileMatched = mobileQuery.matches;
+
+    if (this.state.isOpened) {
+      this.manageSpace();
+    }
+  };
 
   onClickOutside = () => {
     this.toggle(false);
@@ -272,7 +324,6 @@ class Search extends Component {
             type="text"
             value={query}
             onChange={this.updateQuery}
-            onClick={this.actionClick}
             onKeyDown={this.onKeyDown}
           />
           {!loading &&

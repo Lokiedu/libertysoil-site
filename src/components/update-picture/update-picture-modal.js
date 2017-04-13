@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { throttle } from 'lodash';
 
+import Button from '../button';
 import ModalComponent from '../modal-component';
 import Message from '../message';
 import UpdatePictureForm from './update-picture-form';
@@ -179,15 +180,19 @@ export default class UpdatePictureModal extends React.Component {
         </ModalComponent.Body>
         <ModalComponent.Actions>
           <footer className="layout layout__grid add_tag_modal__footer">
-            <div
-              className="button button-wide button-red action"
+            <Button
+              className="button-wide"
+              color="red"
               disabled={!!this.state.error}
+              title={submit.children || 'Preview'}
               onClick={this.submitHandler}
               {...submit}
-            >
-              {submit.children || 'Preview'}
-            </div>
-            <div className="button button-wide action add_tag_modal__cancel_button" onClick={this.props.onClose}>Cancel</div>
+            />
+            <Button
+              className="button-wide add_tag_modal__cancel_button"
+              title="Cancel"
+              onClick={this.props.onClose}
+            />
           </footer>
         </ModalComponent.Actions>
       </ModalComponent>

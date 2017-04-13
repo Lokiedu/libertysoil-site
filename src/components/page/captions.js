@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import { getName } from '../../utils/user';
 import Avatar from '../user/avatar';
@@ -25,7 +25,7 @@ import {
 } from '../page';
 
 
-export const UserCaption = ({ user }) => {
+export const UserCaption = ({ user, title, subtitle }) => {
   if (!user) {
     return (
       <PageCaption />
@@ -37,8 +37,13 @@ export const UserCaption = ({ user }) => {
       iconLeft={<Avatar user={user} isRound={false} size={60} />}
       iconRight={<Icon className="icon-outline--khaki color-white" icon="at" outline size="big" />}
     >
-      <h2 className="page-head__title">{user.get('username')}</h2>
-      <h1 className="page-head__subtitle">{getName(user)}</h1>
+      <h2 className="page-head__title">{title || user.get('username')}</h2>
+      <h1 className="page-head__subtitle">{subtitle || getName(user)}</h1>
     </PageCaption>
   );
+};
+
+UserCaption.propTypes = {
+  subtitle: PropTypes.node,
+  title: PropTypes.node
 };

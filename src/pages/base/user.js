@@ -41,7 +41,7 @@ import PageContentLink from '../../components/page-content-link';
 import ProfileHeader from '../../components/profile';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
-import User from '../../components/user';
+import Avatar from '../../components/user/avatar';
 import { UserCaption } from '../../components/page/captions';
 
 // FIXME: These links won't hide/show properly if following/unfollowing is performed directly on the page.
@@ -78,16 +78,9 @@ const BaseUserPage = (props) => {
     <div>
       <Header current_user={current_user} is_logged_in={is_logged_in}>
         <HeaderLogo />
-        <div className="header__breadcrumbs">
-          <Breadcrumbs title={name}>
-            <User
-              avatar={{ size: 36, isRound: true }}
-              isLink={false}
-              text={{ hide: true }}
-              user={user}
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs title={name}>
+          <Avatar isRound size={36} user={user} />
+        </Breadcrumbs>
       </Header>
 
       <Page>
@@ -104,48 +97,7 @@ const BaseUserPage = (props) => {
                 triggers={triggers}
                 user={user}
               />
-              <div className="layout__space-double">
-                <div className="layout__grid tabs">
-                  <div className="layout__grid_item">
-                    <IndexLink activeClassName="tabs__link-active" className="tabs__link" to={`/user/${user.get('username')}`}>Posts</IndexLink>
-                  </div>
-                  {showLikesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/likes`}
-                        visible
-                      >
-                        Likes
-                      </PageContentLink>
-                    </div>
-                  }
-                  {showFavouritesLink &&
-                    <div className="layout__grid_item">
-                      <PageContentLink
-                        activeClassName="tabs__link-active"
-                        className="tabs__link"
-                        to={`/user/${user.get('username')}/favorites`}
-                        visible
-                      >
-                        Favorites
-                      </PageContentLink>
-                    </div>
-                  }
-                  <div className="layout__grid_item">
-                    <PageContentLink
-                      activeClassName="tabs__link-active"
-                      className="tabs__link"
-                      to={`/user/${user.get('username')}/bio`}
-                      visible
-                    >
-                      Bio
-                    </PageContentLink>
-                  </div>
-                </div>
-              </div>
-              <div className="layout__row layout__row-double">
+              <div className="layout__row">
                 {children}
               </div>
             </PageContent>

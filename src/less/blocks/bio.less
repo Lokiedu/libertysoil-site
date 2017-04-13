@@ -57,8 +57,16 @@
         }
       }
       &_form {
+        .bio__title {
+          margin-left: 60px;
+        }
+
         @media (min-width: 768px) {
           padding-left: 60px;
+        }
+
+        &.bio__river-item:first-child {
+          padding-top: 20px;
         }
       }
     }
@@ -75,6 +83,10 @@
         border-radius: 2px;
         background-color: #fff;
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+
+        strong {
+          font-weight: 600;
+        }
       }
     }
   }
@@ -87,7 +99,8 @@
       width: 50px;
       margin: 0 5px;
       visibility: hidden;
-      color: #aeaeae;
+      color: #ccc;
+      letter-spacing: -0.06em;
     }
   }
 
@@ -95,7 +108,7 @@
     margin-left: 60px;
     margin-bottom: 10px;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
 
     @media (min-width: 768px) {
       margin-left: 120px;
@@ -225,14 +238,16 @@
   }
 
   &__informer-link {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 400;
     text-decoration: underline;
+    color: #0056b9;
   }
 
   &__link {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
+    color: #0056b9;
   }
 
   &__post-image {
@@ -244,5 +259,19 @@
 
   &__text {
     line-height: 20px;
+  }
+
+  &__actions {
+    @media (min-width: 1024px) and (max-width: 1599px),
+      (min-width: 414px) and (max-width: 479px) {
+      > .bio__card:last-child {
+        margin-left: 0;
+      }
+    }
+    @media (max-width: 413px) {
+      > .bio__card + .bio__card {
+        margin-left: 10px;
+      }
+    }
   }
 }

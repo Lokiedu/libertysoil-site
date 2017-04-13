@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { List } from 'immutable';
-import values from 'lodash/values';
 
 import {
   CurrentUser as CurrentUserPropType
@@ -37,10 +36,9 @@ import VisibilitySensor from '../../components/visibility-sensor';
 import RiverItemCreateForm from '../../components/river/type/text/create-form';
 import ProfilePostsRiver from '../../components/bio/river';
 import BioInformer from '../../components/bio/informer';
-import * as BioActions from '../../components/bio/actions';
 
-class SettingsPage extends React.Component {
-  static displayName = 'SettingsPage';
+class SettingsBioPage extends React.Component {
+  static displayName = 'SettingsBioPage';
 
   static propTypes = {
     current_user: CurrentUserPropType,
@@ -171,17 +169,6 @@ class SettingsPage extends React.Component {
 
         <BioInformer username={user.get('username')} />
 
-        <div className="layout layout-align_center layout-wrap">
-          {values(BioActions).map(Action =>
-            <Action
-              dispatch={this.props.dispatch}
-              key={Action.displayName}
-              triggers={this.triggers}
-              user={user}
-            />
-          )}
-        </div>
-
         <div className="bio__create-post">
           <h5 className="bio__title">Add a new post to your Bio:</h5>
           <div className="bio__river-item bio__river-item--type_form">
@@ -233,4 +220,4 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector)(SettingsPage);
+export default connect(selector)(SettingsBioPage);

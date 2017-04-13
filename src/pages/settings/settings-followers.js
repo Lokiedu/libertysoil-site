@@ -62,7 +62,7 @@ function SettingsFollowersPage(props) {
     .map(userId => users.get(userId));
 
   return (
-    <div>
+    <div className="paper">
       <Helmet title="Manage Followers on " />
       <div className="paper__page">
         <h1 className="content__title">Manage Followers</h1>
@@ -97,7 +97,7 @@ function SettingsFollowersPage(props) {
   );
 }
 
-SettingsFollowersPage.displayName = 'SettingsPasswordPage';
+SettingsFollowersPage.displayName = 'SettingsFollowersPage';
 
 SettingsFollowersPage.propTypes = {
   current_user: CurrentUserPropType,

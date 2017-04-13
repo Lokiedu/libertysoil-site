@@ -37,8 +37,10 @@ import ProfilePostsRiver from '../components/bio/river';
 import Avatar from '../components/user/avatar';
 import Button from '../components/button';
 import VisibilitySensor from '../components/visibility-sensor';
-import NotFound from './not-found';
+import RiverItemCreateForm from '../components/river/type/text/create-form';
+import { UserCaption } from '../components/page/captions';
 import BaseUserPageWithoutHeader from './base/user-without_header';
+import NotFound from './not-found';
 
 class UserBioPage extends React.Component {
   static displayName = 'UserBioPage';
@@ -146,15 +148,8 @@ class UserBioPage extends React.Component {
         user={user}
       >
         <Helmet title={`${name} on `} />
+        <UserCaption title="Your Bio" user={user} />
         <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-          <div className="page_head">
-            <h1 className="page_head__title">
-              {name}
-            </h1>
-            <div className="page_head__icon">
-              <Avatar user={user} size={37} />
-            </div>
-          </div>
           <ProfilePostsRiver
             author={user}
             current_user={current_user}
@@ -166,6 +161,30 @@ class UserBioPage extends React.Component {
             onUpdate={this.handleUpdateProfilePost}
           />
           {loadMore}
+          <div className="margin--all_top">
+            <div className="bio__river-item bio__river-item--type_form">
+              <h5 className="bio__title">Add:</h5>
+              <RiverItemCreateForm
+                cancel={{ hide: true }}
+                className="bio__create-post-form"
+                icon={
+                  <div className="bio__icon">
+                    <Avatar isRound={false} size={26} user={user} />
+                  </div>
+                }
+                input={{
+                  className: 'bio__post--type_text',
+                  placeholder: ''
+                }}
+                submit={{
+                  className: 'button-wide bio__button',
+                  color: 'dark_blue',
+                  title: 'Post'
+                }}
+                onSubmit={this.handleCreateProfilePost}
+              />
+            </div>
+          </div>
         </div>
       </BaseUserPageWithoutHeader>
     );

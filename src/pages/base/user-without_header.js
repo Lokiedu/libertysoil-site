@@ -33,7 +33,7 @@ import Footer from '../../components/footer';
 import PageContentLink from '../../components/page-content-link';
 import Sidebar from '../../components/sidebar';
 import SidebarAlt from '../../components/sidebarAlt';
-import User from '../../components/user';
+import Avatar from '../../components/user/avatar';
 
 // FIXME: These links won't hide/show properly if following/unfollowing is performed directly on the page.
 // Something is wrong with the redux state.
@@ -53,7 +53,6 @@ const BaseUserPageWithoutHeader = (props) => {
     user.get('liked_geotags') && user.get('liked_geotags').size
   );
   const showFavouritesLink = user.get('favourited_posts') && !!user.get('favourited_posts').size;
-  const showBioLink = !!user.getIn(['more', 'bio']);
 
   let name = user.get('username');
 
@@ -67,16 +66,9 @@ const BaseUserPageWithoutHeader = (props) => {
     <div>
       <Header current_user={current_user} is_logged_in={is_logged_in}>
         <HeaderLogo />
-        <div className="header__breadcrumbs">
-          <Breadcrumbs title={name}>
-            <User
-              avatar={{ size: 36, isRound: true }}
-              isLink={false}
-              text={{ hide: true }}
-              user={user}
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs title={name}>
+          <Avatar isRound size={36} user={user} />
+        </Breadcrumbs>
       </Header>
 
       <Page>
@@ -115,16 +107,14 @@ const BaseUserPageWithoutHeader = (props) => {
                     Favorites
                   </PageContentLink>
                 }
-                {showBioLink &&
-                  <PageContentLink
-                    activeClassName="color-dark_blue"
-                    className="short_post short_post-spacing"
-                    to={`/user/${user.get('username')}/bio`}
-                    visible
-                  >
-                    Bio
-                  </PageContentLink>
-                }
+                <PageContentLink
+                  activeClassName="color-dark_blue"
+                  className="short_post short_post-spacing"
+                  to={`/user/${user.get('username')}/bio`}
+                  visible
+                >
+                  Bio
+                </PageContentLink>
               </div>
             </SidebarAlt>
           </PageBody>

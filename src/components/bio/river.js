@@ -113,8 +113,7 @@ const ProfilePostsRiver = (props) => {
               to={'/user/'.concat(author.get('username'))}
             >
               {getName(author)}
-            </Link>&nbsp;
-            joined LibertySoil.org!
+            </Link> joined LibertySoil.org!
             <div className="bio__timestamp">
               <Time className="font-bold" format="%A" timestamp={author.get('created_at')} />&nbsp;
               <Time format="%Y.%m.%d, %H:%M" timestamp={author.get('created_at')} />
