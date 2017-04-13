@@ -15,17 +15,18 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+// @flow
 import reduce from 'lodash/reduce';
 import isPlainObject from 'lodash/isPlainObject';
 
-export function toSpreadArray(obj) {
+export function toSpreadArray(obj: Object): Array<Object> {
   return reduce(obj, (arr, value, key) => {
     arr.push({ [key]: value });
     return arr;
   }, []);
 }
 
-export function castObject(value, fieldName) {
+export function castObject(value: any, fieldName: string) {
   if (isPlainObject(value)) {
     return value;
   }
@@ -33,7 +34,7 @@ export function castObject(value, fieldName) {
   return { [fieldName]: value };
 }
 
-export function removeWhitespace(str = '') {
+export function removeWhitespace(str: string = '') {
   return str
     .trim()               // whitespace from ends
     .split(' ')

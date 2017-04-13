@@ -15,8 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+// @flow
 import { isPlainObject, isNumber } from 'lodash';
 import { browserHistory } from 'react-router';
+
+import type { Store } from 'redux';  // eslint-disable-line import/named
+import type { handler } from '../definitions/fetch-data';
+import type ApiClient from '../api/client';
 
 /**
  * Combines onEnter handlers into one function.
@@ -25,7 +30,7 @@ import { browserHistory } from 'react-router';
  * @param handlers
  * @returns {Function}
  */
-export function combineHandlers(...handlers) {
+export function combineHandlers(...handlers: Array<handler>): handler {
   return async (nextState, replace) => {
     for (const handler of handlers) {
       if (handler) {
@@ -38,7 +43,7 @@ export function combineHandlers(...handlers) {
   };
 }
 
-export function combineHandlersAsync(...handlers) {
+export function combineHandlersAsync(...handlers: Array<handler>): handler {
   return async (nextState, replace, callback) => {
     let callbacksTodo = 0;
 
@@ -80,11 +85,13 @@ export function combineHandlersAsync(...handlers) {
 }
 
 export class AuthHandler {
-  constructor(store) {
+  store: Store<*, *>;
+
+  constructor(store: Store<*, *>) {
     this.store = store;
   }
 
-  handle = async (nextState, replace) => {
+  handle: handler = async (nextState, replace) => {
     const state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
@@ -99,15 +106,18 @@ export class AuthHandler {
 }
 
 export class FetchHandler {
+  store: Store<*, *>;
+  apiClient: ApiClient;
+
   status = null;
   redirectTo = null;
 
-  constructor(store, apiClient) {
+  constructor(store: Store<*, *>, apiClient: ApiClient) {
     this.store = store;
     this.apiClient = apiClient;
   }
 
-  handle = async (nextState) => {
+  handle: handler = async (nextState) => {
     const len = nextState.routes.length;
 
     for (let i = len; i--; i >= 0) {
@@ -134,7 +144,7 @@ export class FetchHandler {
     }
   };
 
-  handleSynchronously = (nextState, replace, callback) => {
+  handleSynchronously: handler = (nextState, replace, callback) => {
     this.handle(nextState)
       .then(() => { callback(); })
       .catch((e) => {

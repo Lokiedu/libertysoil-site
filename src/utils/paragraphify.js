@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+// @flow
 import React from 'react';
 
 /**
@@ -23,7 +23,7 @@ import React from 'react';
  * @param {string} text - Text with multiline symbols.
  * @return {Array} Array of React <p> components.
  */
-const paragraphify = (text) => {
+const paragraphify = (text: ?string) => {
   if (!text || typeof text != 'string') {
     return false;
   }

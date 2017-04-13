@@ -15,7 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+// @flow
 import { filter, find } from 'lodash';
+import type Knex from 'knex';
 
 function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
   let filtered = arrayToFilter;
@@ -31,7 +33,7 @@ function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
   return filtered;
 }
 
-export async function hidePostsData(target, ctx, qb, convertToJSON = true) {
+export async function hidePostsData(target: Object|Array<Object>, ctx: string|Object, qb: Knex, convertToJSON?: boolean = true) {
   let userId = '';
   let userPosts = [];
 

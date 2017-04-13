@@ -15,8 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export function offsetTop(node) {
+// @flow
+export function offsetTop(node: Element) {
   const r = node.getBoundingClientRect();
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollTop = window.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || 0;
   return r.top + scrollTop;
 }

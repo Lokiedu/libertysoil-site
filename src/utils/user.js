@@ -15,9 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+// @flow
 import { fromJS, List } from 'immutable';
+import type { Map } from 'immutable';
 
-export function getName(user) {
+export function getName(user: Map<string, string>) {
   const fullName = user.get('fullName');
   if (fullName === ' ') {
     return user.get('username');
@@ -35,22 +37,24 @@ const SERVICES_SEQ = [
   ['website', { icon: 'chain', className: 'suggested-user__social suggested-user__social--smaller' }]
 ];
 
-export function parseSocial(social) {
+export function parseSocial(social: Map<string, string>) {
   if (!social) {
     return List();
   }
 
-  const entries = [];
-  // eslint-disable-next-line no-var
-  for (var s, url, i = 0, l = SERVICES_SEQ.length; i < l; ++i) {
-    s = SERVICES_SEQ[i];
-    url = social.get(s[0]);
-    if (url) {
-      entries.push({
-        to: url,
-        ...s[1]
-      });
+  const entries = SERVICES_SEQ.map((s) => {
+    const [name, props] = s;
+    const url = social.get(name);
+
+    if (!url) {
+      return null;
     }
-  }
-  return fromJS(entries);
+
+    return {
+      to: url,
+      ...props
+    };
+  });
+
+  return fromJS(entries.filter(Boolean));
 }
