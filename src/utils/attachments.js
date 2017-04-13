@@ -1,11 +1,12 @@
 import crypto from 'crypto';
 
 import AWS from 'aws-sdk';
-import bluebird from 'bluebird';
 
 import config from '../../config';
 
-const s3 = bluebird.promisifyAll(new AWS.S3(config.attachments.s3));
+
+AWS.config.setPromisesDependency(Promise);
+const s3 = new AWS.S3(config.attachments.s3);
 
 /**
  * Uploads the file to the bucket specified in config.attachments.s3.Bucket.
@@ -21,19 +22,15 @@ export async function uploadAttachment(fileName, fileData, mimeType) {
     ContentType: mimeType
   };
 
-  return s3.uploadAsync(params);
+  return s3.upload(params).promise();
 }
 
 export async function getMetadata(fileName) {
-  return s3.headObjectAsync({
-    Key: fileName
-  });
+  return s3.headObject({ Key: fileName }).promise();
 }
 
 export async function downloadAttachment(fileName) {
-  return s3.getObjectAsync({
-    Key: fileName
-  });
+  return s3.getObject({ Key: fileName }).promise();
 }
 
 export function generateName(fileName) {

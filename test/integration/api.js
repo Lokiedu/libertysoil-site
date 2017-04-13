@@ -237,7 +237,13 @@ describe('api v.1', () => {
       describe('Upload files', () => {
         before(() => {
           // mocking S3
-          AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
+          AWS.mock('S3', 'upload', () => {
+            return {
+              promise() {
+                return { Location: 's3-mocked-location' };
+              }
+            };
+          });
         });
 
         after(() => {

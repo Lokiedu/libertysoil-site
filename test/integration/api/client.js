@@ -204,7 +204,13 @@ describe('Authenticated client test', () => {
   });
 
   it('#uploadImage works', async () => {
-    AWS.mock('S3', 'uploadAsync', () => { return { Location: 's3-mocked-location' }; });
+    AWS.mock('S3', 'upload', () => {
+      return {
+        promise() {
+          return { Location: 's3-mocked-location' };
+        }
+      };
+    });
 
     const file = fs.createReadStream('./test-helpers/bulb.png');
     // const result = await client.uploadImage([file]);
