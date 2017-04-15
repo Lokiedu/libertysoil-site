@@ -105,19 +105,17 @@ class BaseSettingsPage extends React.Component {
             <PageBody>
               <Sidebar />
               <PageContent>
-                <div className="page__content page__content-spacing">
-                  <UserCaption title={isBio && "Your Bio"} user={user} />
-                  <div className="layout">
-                    <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
-                      {children}
-                    </div>
+                <UserCaption title={isBio && "Your Bio"} user={user} />
+                <div className="layout">
+                  <div className="layout__grid_item layout__grid_item-fill layout__grid_item-wide">
+                    {children}
                   </div>
-                  <div className="layout__row">
-                    <Messages
-                      messages={messages}
-                      removeMessage={this.triggers.removeMessage}
-                    />
-                  </div>
+                </div>
+                <div className="layout__row">
+                  <Messages
+                    messages={messages}
+                    removeMessage={this.triggers.removeMessage}
+                  />
                 </div>
               </PageContent>
               <SidebarAlt>
