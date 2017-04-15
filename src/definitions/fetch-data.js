@@ -17,8 +17,8 @@
 
  @flow
 */
-type nodeCallback = (e?: Error) => void;
-type replaceCallback = (url: string) => void;
+export type nodeCallback = (e?: Error) => void;
+export type replaceCallback = (url: string) => void;
 
 export type SyncHandler = (
   nextState: Object,

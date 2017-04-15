@@ -20,7 +20,10 @@ import { isPlainObject, isNumber } from 'lodash';
 import { browserHistory } from 'react-router';
 
 import type { Store } from 'redux';  // eslint-disable-line import/named
-import type { AsyncHandler, SyncHandler, handler } from '../definitions/fetch-data';
+import type {
+  nodeCallback, replaceCallback,
+  AsyncHandler, handler
+} from '../definitions/fetch-data';
 import type ApiClient from '../api/client';
 
 /**
@@ -93,7 +96,7 @@ export class AuthHandler {
     this.store = store;
   }
 
-  handle: AsyncHandler = async (nextState, replace) => {
+  handle = async (nextState: Object, replace: replaceCallback): Promise<boolean> => {
     const state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
@@ -121,7 +124,7 @@ export class FetchHandler {
     this.apiClient = apiClient;
   }
 
-  handle: AsyncHandler = async (nextState) => {
+  handle = async (nextState: Object): Promise<void> => {
     const len = nextState.routes.length;
 
     for (let i = len; i--; i >= 0) {
@@ -148,7 +151,11 @@ export class FetchHandler {
     }
   };
 
-  handleSynchronously: SyncHandler = (nextState, replace, callback) => {
+  handleSynchronously = (
+    nextState: Object,
+    replace: replaceCallback,
+    callback: nodeCallback
+  ): void => {
     this.handle(nextState)
       .then(() => {
         if (callback) {
