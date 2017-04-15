@@ -17,6 +17,8 @@
 */
 import React from 'react';
 import classNames from 'classnames';
+import isEqual from 'lodash/isEqual';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import Icon from './icon';
@@ -24,6 +26,8 @@ import Icon from './icon';
 class SidebarModalMain extends React.Component {
   static displayName = 'SidebarModalMain';
   static defaultProps = {
+    animate: true,
+    isVisible: false,
     onHide: () => {}
   };
 
@@ -40,29 +44,80 @@ class SidebarModalMain extends React.Component {
   };
 
   render() {
-    return (
+    const content = (
       <div
         className={classNames('sidebar-modal sidebar-modal__main', this.props.className)}
+        key="main"
         onClick={this.handleClickInside}
       >
         {this.props.children}
       </div>
     );
+
+    if (this.props.animate) {
+      return (
+        <CSSTransitionGroup
+          transitionName="sidebar-modal__main--transition"
+          transitionAppear
+          transitionAppearTimeout={250}
+          transitionLeaveTimeout={250}
+        >
+          {this.props.isVisible ? content : null}
+        </CSSTransitionGroup>
+      );
+    }
+
+    return this.props.isVisible ? content : null;
   }
 }
 
 class SidebarModalOverlay extends React.Component {
   static displayName = 'SidebarModalOverlay';
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
+  static defaultProps = {
+    isVisible: false
+  };
+
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = {
+      isAppearing: false,
+      isVisible: props.isVisible
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.isVisible && this.props.isVisible) {
+      setTimeout(() => this.setState({ isVisible: false, isAppearing: false }), 250);
+    } else if (nextProps.isVisible && !this.props.isVisible) {
+      this.setState({ isVisible: true });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props
+      || !isEqual(nextState, this.state);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.isVisible && this.state.isVisible) {
+      setTimeout(() => this.setState({ isAppearing: true }), 60);
+    }
   }
 
   render() {
-    return (
-      <div className={classNames('sidebar-modal sidebar-modal__overlay', this.props.className)}>
-        {this.props.children}
-      </div>
-    );
+    const def = 'sidebar-modal__overlay';
+    const cn = classNames('sidebar-modal', def, this.props.className, {
+      [def.concat('--transition_appear')]: this.state.isAppearing,
+      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible
+    });
+
+    const content = <div className={cn}>{this.props.children}</div>;
+
+    if (!this.props.isVisible) {
+      return this.state.isVisible ? content : null;
+    }
+
+    return content;
   }
 }
 

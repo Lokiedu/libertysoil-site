@@ -24,8 +24,18 @@
     left: 0;
     z-index: 101;
     background-color: rgba(0, 0, 0, 0.5);
-    // transition?
-    // display: none?
+    
+    opacity: 0.01;
+    transition: opacity 0.25s ease-in-out;
+
+    &--transition {
+      &_appear {
+        opacity: 1;
+      }
+      &_disappear {
+        opacity: 0.01;
+      }
+    }
   }
 
   &__main {
@@ -43,6 +53,24 @@
 
     @media (min-width: 1024px) {
       width: 540px;
+    }
+
+    &--transition {
+      &-appear {
+        transform: translateX(100%);
+        &.sidebar-modal__main--transition-appear-active {
+          transform: translateX(0%);
+          transition: transform 0.25s ease-in-out;
+        }
+      }
+
+      &-leave {
+        transform: translateX(0%);
+        &.sidebar-modal__main--transition-leave-active {
+          transform: translateX(100%);
+          transition: transform 0.25s ease-in-out;
+        }
+      }
     }
   }
 
