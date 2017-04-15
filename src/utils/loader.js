@@ -20,7 +20,7 @@ import { isPlainObject, isNumber } from 'lodash';
 import { browserHistory } from 'react-router';
 
 import type { Store } from 'redux';  // eslint-disable-line import/named
-import type { handler } from '../definitions/fetch-data';
+import type { AsyncHandler, SyncHandler, handler } from '../definitions/fetch-data';
 import type ApiClient from '../api/client';
 
 /**
@@ -30,7 +30,7 @@ import type ApiClient from '../api/client';
  * @param handlers
  * @returns {Function}
  */
-export function combineHandlers(...handlers: Array<handler>): handler {
+export function combineHandlers(...handlers: Array<handler>): AsyncHandler {
   return async (nextState, replace) => {
     for (const handler of handlers) {
       if (handler) {
@@ -43,7 +43,7 @@ export function combineHandlers(...handlers: Array<handler>): handler {
   };
 }
 
-export function combineHandlersAsync(...handlers: Array<handler>): handler {
+export function combineHandlersAsync(...handlers: Array<handler>): AsyncHandler {
   return async (nextState, replace, callback) => {
     let callbacksTodo = 0;
 
@@ -51,7 +51,9 @@ export function combineHandlersAsync(...handlers: Array<handler>): handler {
       callbacksTodo -= 1;
 
       if (callbacksTodo === 0) {
-        callback();
+        if (callback) {
+          callback();
+        }
         return;
       }
 
@@ -78,7 +80,7 @@ export function combineHandlersAsync(...handlers: Array<handler>): handler {
       }
     }
 
-    if (callbacksTodo === 0) {
+    if (callbacksTodo === 0 && callback) {
       callback();
     }
   };
@@ -91,13 +93,15 @@ export class AuthHandler {
     this.store = store;
   }
 
-  handle: handler = async (nextState, replace) => {
+  handle: AsyncHandler = async (nextState, replace) => {
     const state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
       && nextState.location.pathname !== '/welcome'
     ) {
-      replace('/welcome');
+      if (replace) {
+        replace('/welcome');
+      }
       return true;  // interrupt
     }
 
@@ -117,7 +121,7 @@ export class FetchHandler {
     this.apiClient = apiClient;
   }
 
-  handle: handler = async (nextState) => {
+  handle: AsyncHandler = async (nextState) => {
     const len = nextState.routes.length;
 
     for (let i = len; i--; i >= 0) {
@@ -144,13 +148,19 @@ export class FetchHandler {
     }
   };
 
-  handleSynchronously: handler = (nextState, replace, callback) => {
+  handleSynchronously: SyncHandler = (nextState, replace, callback) => {
     this.handle(nextState)
-      .then(() => { callback(); })
+      .then(() => {
+        if (callback) {
+          callback();
+        }
+      })
       .catch((e) => {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.error(e);  // eslint-disable-line no-console
-        callback(e);
+        if (callback) {
+          callback(e);
+        }
       });
   };
 }
