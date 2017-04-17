@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
+import classNames from 'classnames';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
 import { ArrayOfHashtags as ArrayOfHashtagsPropType } from '../prop-types/hashtags';
@@ -34,7 +35,6 @@ import { searchObject } from '../store/search';
 import { SEARCH_SECTIONS_COUNTABILITY } from '../consts/search';
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tags';
 import { clearSearchResults } from '../actions/search';
-import bem from '../utils/bemClassNames';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
 import Icon from './icon';
@@ -302,11 +302,8 @@ class Search extends Component {
       loading
     } = this.state;
 
-    const classNameBlock = bem.makeClassName({
-      block: 'search',
-      modifiers: {
-        opened: isOpened
-      }
+    const classNameBlock = classNames('search', {
+      'search-opened': isOpened
     });
 
     let searchClearClass = 'search__clear';
