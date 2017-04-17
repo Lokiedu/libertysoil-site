@@ -16,10 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
-import bem from '../utils/bemClassNames';
 import messageType from '../consts/messageTypeConstants';
-
 
 export default class Message extends React.Component {
   static propTypes = {
@@ -50,12 +49,9 @@ export default class Message extends React.Component {
     let icon = null;
     let close = null;
 
-    const cn = bem.makeClassName({
-      block: 'message',
-      modifiers: {
-        error: () => (type == messageType.ERROR),
-        internal: () => internal
-      }
+    const cn = classNames('message', {
+      'message-error': type === messageType.ERROR,
+      'message-internal': internal
     });
 
     if (type == messageType.ERROR) {

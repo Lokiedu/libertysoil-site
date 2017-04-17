@@ -18,8 +18,6 @@
 import React, { PropTypes, Component } from 'react';
 import { values } from 'lodash';
 
-import bem from '../utils/bemClassNames';
-
 const isBrowser = typeof window !== 'undefined';
 
 const SIZES = {
@@ -81,18 +79,12 @@ class ModalComponent extends Component {
       className,
       ...props
     } = this.props;
-    let cn = bem.makeClassName({
-      block: 'modal',
-      modifiers: {
-        big: size == SIZES.BIG,
-        normal: size == SIZES.NORMAL,
-        small: size == SIZES.SMALL
-      }
-    });
 
-    if (className) {
-      cn += ` ${className}`;
-    }
+    const cn = classNames('modal', className, {
+      'modal-big': size === SIZES.BIG,
+      'modal-normal': size === SIZES.NORMAL,
+      'modal-small': size === SIZES.SMALL
+    });
 
     return (
       <div className={cn} {...props} onClick={this.hide}>
