@@ -48,12 +48,14 @@ const defaultClassName = [
 
 class Sidebar extends React.Component {
   static propTypes = {
+    isDesktopEnabled: PropTypes.bool,
     isEmpty: PropTypes.bool,
     isMobileMenuOn: PropTypes.bool
     // theme: PropTypes.string
   };
 
   static defaultProps = {
+    isDesktopEnabled: true,
     isMobileMenuOn: false
   };
 
@@ -115,6 +117,10 @@ class Sidebar extends React.Component {
           </div>
         </div>
       );
+    }
+
+    if (!this.props.isDesktopEnabled) {
+      return null;
     }
 
     return (
