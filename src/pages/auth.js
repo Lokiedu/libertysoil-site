@@ -104,6 +104,7 @@ export class UnwpappedAuth extends React.Component {
             is_logged_in={is_logged_in}
             current_user={current_user}
             className="header-transparent"
+            needIndent={false}
             needMenu={false}
           >
             <HeaderLogo />
