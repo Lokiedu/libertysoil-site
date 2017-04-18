@@ -84,7 +84,9 @@ const SuggestionsPage = ({ current_user, dispatch, is_logged_in, following, mess
     >
       <Helmet title="Suggested users at " />
       <div className="paper__page">
-        <p>You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.</p>
+        <div className="content">
+          <p>You are logged in. You can proceed to <Link className="link" to="/">your feed</Link>.</p>
+        </div>
       </div>
 
       <DiscoverGrid

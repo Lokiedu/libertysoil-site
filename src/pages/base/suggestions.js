@@ -36,9 +36,9 @@ const BaseSuggestionsPage = ({ children, current_user, is_logged_in, messages, t
     <Header current_user={current_user} is_logged_in={is_logged_in} />
 
     <Page>
-      <PageMain>
+      <PageMain className="page__main--only-content">
         <PageBody>
-          <Sidebar isEmpty />
+          <Sidebar isDesktopEnabled={false} />
           <PageContent>
             <Messages messages={messages} removeMessage={triggers.removeMessage} />
             <div className="paper">
