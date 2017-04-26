@@ -24,7 +24,7 @@ import fetch from 'isomorphic-fetch';
 import FormData from 'form-data';
 import { extend, merge as mergeObj } from 'lodash';
 
-import type { Email, Integer, Success, UrlNode } from '../definitions/common';
+import type { Email, Integer, Success, UrlNode, Url } from '../definitions/common';
 import type { GeotagId, Geotag, Continent } from '../definitions/geotags';
 import type { HashtagId, Hashtag } from '../definitions/hashtags';
 import type { SchoolId, School } from '../definitions/schools';
@@ -33,6 +33,7 @@ import type { PostDraftData, Post, PostType, PostId } from '../definitions/posts
 import type { Attachment } from '../definitions/attachments';
 import type { ProfilePost, ProfilePostId, ProfilePostDraftData } from '../definitions/profile-posts';
 import type { SearchResponse, SearchQuery } from '../definitions/search';
+import type { BookmarkId, Bookmark, MapOfBookmarks, BookmarkRequest, PageMetadata } from '../definitions/bookmarks';
 
 export default class ApiClient {
   host: string;
@@ -724,6 +725,31 @@ export default class ApiClient {
 
   async deleteProfilePost(profilePostId: ProfilePostId): Promise<Success> {
     const response = await this.del(`/api/v1/profile-post/${profilePostId}`);
+    return await response.json();
+  }
+
+  async validateUrl(url: Url, meta: boolean = false): Promise<Success | Success & PageMetadata> {
+    const response = await this.get('/api/v1/url', { url, meta });
+    return await response.json();
+  }
+
+  async createBookmark(data: BookmarkRequest): Promise<Success & { affected: MapOfBookmarks, target: Bookmark }> {
+    const response = await this.postJSON('/api/v1/bookmarks', data);
+    return await response.json();
+  }
+
+  async updateBookmark(data: BookmarkRequest & { id: BookmarkId }): Promise<Success & { affected: MapOfBookmarks, target: Bookmark }> {
+    const response = await this.postJSON(`/api/v1/bookmark/${data.id}`, data);
+    return await response.json();
+  }
+
+  async deleteBookmark(bookmarkId: BookmarkId): Promise<Success & { affected: { [id: BookmarkId]: ?Bookmark } }> {
+    const response = await this.del(`/api/v1/bookmark/${bookmarkId}`);
+    return await response.json();
+  }
+
+  async getBookmarks(): Promise<MapOfBookmarks> {
+    const response = await this.get('/api/v1/user/bookmarks');
     return await response.json();
   }
 }
