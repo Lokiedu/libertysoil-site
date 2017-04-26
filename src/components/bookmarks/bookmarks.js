@@ -16,7 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
-import { pick } from 'lodash';
+import pick from 'lodash/pick';
+import isEqual from 'lodash/isEqual';
 import { Map as ImmutableMap, List } from 'immutable';
 
 import { API_HOST } from '../../config';
@@ -26,7 +27,9 @@ import { addError } from '../../actions/messages';
 
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
+import Modal from '../modal-component';
 import Bookmark from './bookmark';
+import SettingsForm from './settings-form';
 
 const AddBookmarkIcon = ImmutableMap({ icon: 'add' });
 
@@ -35,9 +38,32 @@ export default class Bookmarks extends React.Component {
     bookmarks: List()
   };
 
-  handleSettingsClick = (bookmarkId) => {};
+  constructor(...args) {
+    super(...args);
 
-  handleModalClose = () => {};
+    this.state = {
+      activeBookmarkId: null,
+      isSettingsActive: false
+    };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props
+      || !isEqual(nextState, this.state);
+  }
+
+  handleSettingsClick = (bookmarkId) => {
+    const nextState = { isSettingsActive: true };
+    if (typeof bookmarkId === 'string') {
+      this.setState(Object.assign(nextState, { activeBookmarkId: bookmarkId }));
+    } else {
+      this.setState(Object.assign(nextState, { activeBookmarkId: null }));
+    }
+  };
+
+  handleModalClose = () => {
+    this.setState({ isSettingsActive: false, activeBookmarkId: null });
+  };
 
   handleDelete = async (bookmarkId) => {
     const client = new ApiClient(API_HOST);
@@ -73,6 +99,34 @@ export default class Bookmarks extends React.Component {
   };
 
   render() {
+    if (this.state.isSettingsActive) {
+      const { activeBookmarkId } = this.state;
+      let modalTitle;
+      if (activeBookmarkId) {
+        modalTitle = 'Edit bookmark';
+      } else {
+        modalTitle = 'Create bookmark';
+      }
+
+      return (
+        <Modal
+          sectionClassName="bg_color--lightgray"
+          onHide={this.handleModalClose}
+        >
+          <Modal.Head>
+            <Modal.Title>{modalTitle}</Modal.Title>
+          </Modal.Head>
+          <Modal.Body>
+            <SettingsForm
+              bookmark={this.props.bookmarks.get(activeBookmarkId)}
+              onDelete={this.handleDelete}
+              onSave={this.handleSave}
+            />
+          </Modal.Body>
+        </Modal>
+      );
+    }
+
     return (
       <div>
         <Navigation>
