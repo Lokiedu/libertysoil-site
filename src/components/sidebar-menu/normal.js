@@ -16,42 +16,60 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
-import { values, omit } from 'lodash';
+import values from 'lodash/values';
+import omit from 'lodash/omit';
+import { fromJS } from 'immutable';
 
 import { MENU_ITEMS } from '../../consts/sidebar-menu';
 
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
 
-const SidebarMenuNormal = ({ current_user }) => {
-  const user = current_user.get('user');
-  let username = '';
-  if (user) {
-    username = user.get('username');
+class SidebarMenuNormal extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
   }
 
-  const itemsToIgnore = ['likes', 'favourites']
-    .filter(item => !current_user.get(item).size);
+  render() {
+    const { current_user } = this.props;
+    const user = current_user.get('user');
+    let username = '';
+    if (user) {
+      username = user.get('username');
+    }
 
-  itemsToIgnore.push('collections'); // wait for 'collections' to be released
+    const itemsToIgnore = ['likes', 'favourites']
+      .filter(item => !current_user.get(item).size);
 
-  const menuItemsArray = values(omit(MENU_ITEMS, itemsToIgnore));
+    itemsToIgnore.push('collections'); // wait for 'collections' to be released
 
-  return (
-    <Navigation>
-      {menuItemsArray.map(item =>
-        <NavigationItem
-          {...(item.html || {})}
-          className={item.className}
-          disabled={item.disabled}
-          icon={item.icon}
-          key={item.title}
-          theme="2.0"
-          to={item.url(username)}
-        />
-      )}
-    </Navigation>
-  );
-};
+    const menuItemsArray = values(omit(MENU_ITEMS, itemsToIgnore));
+
+    return (
+      <Navigation>
+        {menuItemsArray.map(item => {
+          let html;
+          if (!item.html) {
+            html = {};
+          } else {
+            html = fromJS(item.html).toObject();
+          }
+
+          return (
+            <NavigationItem
+              {...html}
+              className={item.className}
+              disabled={item.disabled}
+              icon={fromJS(item.icon)}
+              key={item.title}
+              theme="2.0"
+              to={item.url(username)}
+            />
+          );
+        })}
+      </Navigation>
+    );
+  }
+}
 
 export default SidebarMenuNormal;

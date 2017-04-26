@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
+import { Map as ImmutableMap } from 'immutable';
 import omit from 'lodash/omit';
 
 import Icon from './icon';
@@ -36,6 +37,8 @@ NavigationItem.propTypes = {
   to: PropTypes.string
 };
 
+const m = ImmutableMap();
+
 /**
  * Looks like normal navigation item but it isn't a link
  */
@@ -46,20 +49,16 @@ const NavigationItemPlain = ({
   theme,
   ...props
 }) => {
-  const cn = classNames('navigation-item', {
-    'navigation-item--disabled': disabled,
-    [`${className}`]: className
+  const cn = classNames('navigation-item', className, {
+    'navigation-item--disabled': disabled
   });
 
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
-    const finalIcon = {
-      ...icon,
-      className: classNames('navigation-item__icon', {
-        [icon && icon.className]: icon && icon.className
-      })
-    };
+    const finalIcon = icon.update('className', iconClassName =>
+      classNames('navigation-item__icon', iconClassName)
+    );
 
     return (
       <div className={cn} {...htmlProps}>
@@ -74,7 +73,7 @@ const NavigationItemPlain = ({
           }
         </div>
         {icon &&
-          <Icon {...finalIcon} />
+          <Icon {...finalIcon.toObject()} />
         }
       </div>
     );
@@ -85,6 +84,10 @@ const NavigationItemPlain = ({
       {children}
     </div>
   );
+};
+
+NavigationItemPlain.defaultProps = {
+  icon: m
 };
 
 const NavigationItemAsLink = ({
@@ -101,24 +104,18 @@ const NavigationItemAsLink = ({
     onClick = e => e.preventDefault();
   }
 
-  const cn = classNames('navigation-item', {
+  const cn = classNames('navigation-item', className, {
     'navigation-item--disabled': disabled,
-    [`${className}`]: className
   });
 
-  const activeCn = classNames('navigation-item--active', {
-    [`${activeClassName}`]: activeClassName
-  });
+  const activeCn = classNames('navigation-item--active', activeClassName);
 
   if (theme === '2.0') {
     const { icon, badge, ...htmlProps } = props;
 
-    const finalIcon = {
-      ...icon,
-      className: classNames('navigation-item__icon', {
-        [icon && icon.className]: icon && icon.className
-      })
-    };
+    const finalIcon = icon.update('className', iconClassName =>
+      classNames('navigation-item__icon', iconClassName)
+    );
 
     return (
       <Link activeClassName={activeCn} className={cn} to={to} onClick={onClick} {...htmlProps}>
@@ -133,7 +130,7 @@ const NavigationItemAsLink = ({
           }
         </div>
         {icon &&
-          <Icon {...finalIcon} />
+          <Icon {...finalIcon.toObject()} />
         }
       </Link>
     );
@@ -150,6 +147,10 @@ const NavigationItemAsLink = ({
       {children}
     </Link>
   );
+};
+
+NavigationItemPlain.defaultProps = {
+  icon: m
 };
 
 export default NavigationItem;
