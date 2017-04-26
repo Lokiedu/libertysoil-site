@@ -117,7 +117,7 @@ class PostEditPage extends React.Component {
     }
 
     if (post.get('user_id') != current_user.get('id')) {
-      return null;
+      return null; // TODO: handle 403 properly (403 page)
     }
 
     const actions = _.pick(this.props, 'resetEditPostForm', 'updateEditPostForm');
