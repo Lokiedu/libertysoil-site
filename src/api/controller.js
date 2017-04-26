@@ -3851,6 +3851,31 @@ export default class ApiController {
     }
   };
 
+  getBookmarks = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    try {
+      let bookmarks = await Bookmark.collection()
+        .query(qb => { qb.where({ user_id: ctx.session.user }); })
+        .fetch();
+
+      bookmarks = await bookmarks.toJSON();
+      bookmarks = _.keyBy(bookmarks, 'id');
+
+      ctx.status = 200;
+      ctx.body = { bookmarks };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
   validateUrl = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
