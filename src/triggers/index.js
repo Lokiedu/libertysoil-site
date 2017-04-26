@@ -17,6 +17,7 @@
  */
 import { browserHistory } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
+import isNil from 'lodash/isNil';
 
 import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
@@ -944,6 +945,65 @@ export class ActionsTrigger {
       ]);
 
       this.dispatch(a.geotags.setContinentNav(continents, countries));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
+
+  manageBookmark = async (data) => {
+    if (isNil(data.id)) {
+      await this.createBookmark(data);
+    } else {
+      await this.updateBookmark(data);
+    }
+  };
+
+  createBookmark = async (data) => {
+    try {
+      const response = await this.client.createBookmark(data);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.bookmarks.addBookmark(response.target));
+        this.dispatch(a.messages.addMessage('Bookmark has been created'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
+
+  updateBookmark = async (data) => {
+    try {
+      const response = await this.client.updateBookmark(data);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.bookmarks.addBookmark(response.target));
+        this.dispatch(a.messages.addMessage('Bookmark has been updated'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
+
+  deleteBookmark = async (bookmarkId) => {
+    try {
+      const response = await this.client.deleteBookmark(bookmarkId);
+
+      if (response.success) {
+        this.dispatch(a.bookmarks.updateBookmarks(response.affected));
+        this.dispatch(a.messages.addMessage('Bookmark has been deleted'));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
+
+  loadBookmarks = async () => {
+    try {
+      const response = await this.client.getBookmarks();
+
+      this.dispatch(a.bookmarks.setBookmarks(response.bookmarks));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
