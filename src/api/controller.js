@@ -3585,8 +3585,16 @@ export default class ApiController {
         return;
       }
 
-      ctx.status = 200;
-      ctx.body = { success: true };
+      if (!ctx.query.meta) {
+        ctx.status = 200;
+        ctx.body = { success: true };
+        return;
+      }
+
+      ctx.body = {
+        success: true,
+        meta: await urlUtils.getPageMetadata(resourceUrl, ctx.request.header.cookie)
+      };
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };

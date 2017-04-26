@@ -21,10 +21,14 @@ import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 
 import UserFactory from '../../../test-helpers/factories/user';
+import HashtagFactory from '../../../test-helpers/factories/hashtag';
+import PostFactory from '../../../test-helpers/factories/post';
 import { login } from '../../../test-helpers/api';
 
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
+const Post = bookshelf.model('Post');
+const Hashtag = bookshelf.model('Hashtag');
 
 describe('Bookmarks', () => {
   describe('GET /api/v1/url', () => {
@@ -152,6 +156,111 @@ describe('Bookmarks', () => {
         }
 
         return Promise.all(promises);
+      });
+
+      describe('Fetches page metadata', () => {
+        describe('common routes', () => {
+          it('succeeds', async () => {
+            const listOfUrls = [
+              'localhost:8000/geo', '/geo', 'http://localhost:8000/geo',
+              'localhost:8000/geo/', '/geo/', 'http://localhost:8000/geo/'
+            ];
+
+            const needMeta = true;
+            const promises = [];
+            for (const url of listOfUrls) {
+              promises.push(expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: 'Geotags of LibertySoil.org' }
+              }));
+            }
+
+            return Promise.all(promises);
+          });
+        });
+
+        describe('routes with params', () => {
+          let tag, user;
+          before(done => {
+            const userAttrs = UserFactory.build();
+            tag = new Hashtag(HashtagFactory.build());
+
+            Promise.all([
+              tag.save(null, { method: 'insert' }),
+              User.create(userAttrs.username, userAttrs.password, userAttrs.email)
+            ]).then(([, u]) => { user = u; done(); }, e => done(e));
+          });
+
+          after(() =>
+            Promise.all([tag.destroy(), user.destroy()])
+          );
+
+          it('succeed on hashtag\'s page', () => {
+            const tagName = tag.get('name');
+            const listOfUrls = [
+              `localhost:8000/tag/${tagName}`, `localhost:8000/tag/${tagName}/`
+            ];
+
+            const needMeta = true;
+            const promises = [];
+            for (const url of listOfUrls) {
+              promises.push(expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: `"${tagName}" posts on LibertySoil.org` }
+              }));
+            }
+
+            return Promise.all(promises);
+          });
+
+          it('succeed on user\'s page', () => {
+            const username = user.get('username');
+            const listOfUrls = [
+              `localhost:8000/user/${username}`, `localhost:8000/user/${username}/`
+            ];
+
+            const needMeta = true;
+            const promises = [];
+            for (const url of listOfUrls) {
+              promises.push(expect(reqWith(url, needMeta), 'body to satisfy', {
+                success: true,
+                meta: { title: `Posts of ${username} on LibertySoil.org` }
+              }));
+            }
+
+            return Promise.all(promises);
+          });
+        });
+      });
+
+      describe('Pages unavailable to user', () => {
+        let post, author;
+
+        before(async () => {
+          const userAttrs = UserFactory.build();
+          author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+          await author.save({ email_check_hash: null }, { method: 'update' });
+
+          post = new Post(PostFactory.build({ user_id: author.get('id') }));
+          await post.save(null, { method: 'insert' });
+        });
+
+        after(async () => {
+          await post.destroy();
+          await author.destroy();
+        });
+
+        it('doesn\'t fetch metadata', () => {
+          const needMeta = true;
+          return expect(
+            reqWith(`/post/edit/${post.get('id')}`, needMeta),
+            'body to satisfy',
+            {
+              success: true,
+              meta: { title: '' }
+            }
+          );
+        });
       });
     });
   });

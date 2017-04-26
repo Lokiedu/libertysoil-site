@@ -20,6 +20,11 @@ import { createMemoryHistory } from 'history';
 import { createRoutes } from 'react-router';
 import matchRoutes from 'react-router/lib/matchRoutes';
 import isNil from 'lodash/isNil';
+import pick from 'lodash/pick';
+import fetch from 'node-fetch';
+import he from 'he';
+
+import { API_HOST } from '../config';
 
 export default async function validateUrl(rawUrl = '', allowedHosts = [], routeTree = {}) {
   const url = rawUrl.trim().toLowerCase();
@@ -80,4 +85,53 @@ export async function checkMatchRoutes(resourceUrl = '', routeTree = {}) {
   });
 
   return matches;
+}
+
+export async function getPageMetadata(resourceUrl = '', cookie = '') {
+  const session = cookie.split('; ').find(_ => _.startsWith('connect.sid'));
+
+  const host = parse(API_HOST);
+  const pageUrl = format({
+    ...pick(host, ['protocol', 'host', 'port']),
+    pathname: resourceUrl
+  });
+
+  const req = {
+    method: 'GET',
+    host: host.hostname,
+    port: host.port,
+    headers: { 'Cookie': session, 'Accept': 'text/html' }
+  };
+
+  const res = await fetch(pageUrl, req);
+  if (res.status !== 200) {
+    return null;
+  }
+
+  let buf = '', recent = '';
+  for (const c of (await res.text())) {
+    buf += c;
+    recent += c;
+    if (recent.length > 7) {
+      recent = recent.slice(1);
+    }
+
+    if (recent === '</head>') {
+      break;
+    }
+  }
+
+  const meta = {};
+  const keys = ['title'];
+  keys.forEach(key => {
+    const val = buf
+      // matches whole tag with content
+      .match(new RegExp(`<${key}( .{0,})?>`, 'i'))[0]
+      // only content (in group)
+      .match(new RegExp(`.{2,}>(.{0,})<\/${key}>$`, 'i'))[1];
+
+    meta[key] = he.decode(val);
+  });
+
+  return meta;
 }
