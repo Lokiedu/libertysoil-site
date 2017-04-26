@@ -254,7 +254,8 @@ app.use(async function reactMiddleware(ctx) {
       Helmet.canUseDOM = false;
       const metadata = Helmet.rewind();
 
-      ctx.staus = 200;
+      // Actual status code is returned with fetchData()
+      // ctx.status = 200;
       ctx.body = template({ state, html, metadata });
     } catch (e) {
       logger.error(e);
