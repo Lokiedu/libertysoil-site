@@ -1,3 +1,4 @@
+import querystring from 'querystring';
 import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
@@ -8,7 +9,6 @@ import initBookshelf from '../src/api/db';
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
 require('../index');
-
 
 expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));
@@ -24,24 +24,31 @@ const subjectToRequest = (subject) => {
     };
   }
 
-  if (isPlainObject(subject) && "url" in subject) {
+  if (isPlainObject(subject) && 'url' in subject) {
     let result = {
       url: subject.url,
       host: 'localhost',
       port: 8000
     };
 
-    if ("session" in subject) {
+    if ('query' in subject) {
+      result = merge(result, {
+        url: `${result.url}?${querystring.stringify(subject.query)}`
+      });
+    }
+
+    if ('session' in subject) {
       result = merge(result, {
         headers: {
-          "Cookie": serialize('connect.sid', subject.session)
+          'Cookie': serialize('connect.sid', subject.session)
         }
       });
     }
 
-    delete subject["url"];
-    delete subject["session"];
-    result = merge(result, subject);
+    delete subject['url'];
+    delete subject['session'];
+    delete subject['query'];
+
     return merge(result, subject);
   }
 
