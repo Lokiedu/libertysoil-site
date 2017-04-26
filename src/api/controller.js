@@ -41,7 +41,8 @@ import {
   Hashtag as HashtagValidators,
   Geotag as GeotagValidators,
   UserMessage as UserMessageValidators,
-  SearchQuery as SearchQueryValidators
+  SearchQuery as SearchQueryValidators,
+  Bookmark as BookmarkValidators
 } from './db/validators';
 
 const bcryptAsync = bb.promisifyAll(bcrypt);
@@ -1274,7 +1275,7 @@ export default class ApiController {
       .where({ id: ctx.session.user })
       .fetch({
         require: true,
-        withRelated: USER_RELATIONS
+        withRelated: USER_RELATIONS.concat('bookmarks')
       });
 
     ctx.body = { success: true, user };
@@ -3547,6 +3548,122 @@ export default class ApiController {
       this.processError(ctx, e);
     }
   }
+
+  createBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const checkit = new Checkit(BookmarkValidators);
+    try {
+      await checkit.run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+      await this.validateUrl(ctx2);
+
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    const req = ctx.request.body;
+    const Bookmark = this.bookshelf.model('Bookmark');
+    const url = urlUtils.getResourceUrl(req.url);
+
+    let ord, affected;
+    if ('ord' in req) {
+      const knex = this.bookshelf.knex;
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .update({ ord: knex.raw('ord + 1') })
+              .where('ord', '>=', req.ord)
+              .andWhere('user_id', ctx.session.user)
+              .returning('*');
+          });
+
+        affected = await q.fetchAll();
+        affected = await affected.toJSON();
+        ord = req.ord;
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    } else {
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .where('user_id', ctx.session.user)
+              .max('ord');
+          });
+
+        affected = [];
+        ord = await q.fetchAll();
+        ord = await ord.toJSON();
+        if (_.isNil(ord[0].max)) {
+          ord = 1;
+        } else {
+          ord = ord[0].max + 1;
+        }
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    }
+
+    const bk = new Bookmark({
+      user_id: ctx.session.user,
+      title: req.title,
+      url,
+      ord
+    });
+
+    if (!_.isNil(req.more)) {
+      const attrs = {};
+      const allowedAttributes = ['description', 'icon'];
+      for (const attr of allowedAttributes) {
+        attrs[attr] = req.more[attr];
+      }
+
+      bk.set('more', attrs);
+    }
+
+    try {
+      await bk.save(null, { method: 'insert' });
+      const target = await Bookmark
+        .where({ id: bk.get('id') })
+        .fetch({ require: true });
+
+      affected = _.keyBy(affected, 'id');
+      ctx.body = { success: true, affected, target };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
 
   validateUrl = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {

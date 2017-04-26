@@ -173,6 +173,7 @@ app.use(async function reactMiddleware(ctx) {
         .fetch({
           require: true,
           withRelated: [
+            'bookmarks',
             'following',
             'followed_hashtags',
             'followed_schools',

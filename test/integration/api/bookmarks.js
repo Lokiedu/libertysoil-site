@@ -27,6 +27,7 @@ import { login } from '../../../test-helpers/api';
 
 const bookshelf = initBookshelf($dbConfig);
 const User = bookshelf.model('User');
+const Bookmark = bookshelf.model('Bookmark');
 const Post = bookshelf.model('Post');
 const Hashtag = bookshelf.model('Hashtag');
 
@@ -261,6 +262,110 @@ describe('Bookmarks', () => {
             }
           );
         });
+      });
+    });
+  });
+
+  describe('POST /api/v1/bookmarks', () => {
+    describe('Authenticated users', () => {
+      let user, sessionId;
+      const reqWith = (bookmark) => ({
+        url: '/api/v1/bookmarks',
+        method: 'POST',
+        body: bookmark,
+        session: sessionId,
+      });
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        user.set('email_check_hash', null);
+        await user.save(null, { method: 'update' });
+
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(async () => {
+        await user.destroy();
+      });
+
+      describe('handle different url versions successfully', () => {
+        before(async () => {
+          await Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch();
+        });
+
+        afterEach(async () => {
+          await Bookmark.collection().query(qb => qb
+            .delete()
+            .where({ user_id: user.get('id') })
+          ).fetch();
+        });
+
+        it('addresses with 1 level depth', async () => {
+          const urls = [
+            '/s', '/s/',
+            'localhost:8000/s', 'localhost:8000/s/',
+            'http://localhost:8000/s', 'http://localhost:8000/s/'
+          ];
+          const bookmark = {
+            title: 'Schools',
+            more: { description: 'All schools page' }
+          };
+
+          for (let i = 0; i < urls.length; ++i) {
+            await expect(reqWith({ ...bookmark, url: urls[i] }), 'body to satisfy', {
+              success: true,
+              affected: {},
+              target: { ...bookmark, ord: i + 1, url: '/s' }
+            });
+          }
+        });
+
+        it('addresses with 2 level depth', async () => {
+          const username = user.get('username');
+          const urls = [
+            `/user/${username}`, `/user/${username}/`,
+            `localhost:8000/user/${username}/`, `localhost:8000/user/${username}/`,
+            `http://localhost:8000/user/${username}/`, `http://localhost:8000/user/${username}/`
+          ];
+          const bookmark = {
+            title: `Posts of ${username} on LibertySoil.org`,
+            more: { description: 'Profile' }
+          };
+
+          for (let i = 0; i < urls.length; ++i) {
+            await expect(reqWith({ ...bookmark, url: urls[i] }), 'body to satisfy', {
+              success: true,
+              affected: {},
+              target: { ...bookmark, ord: i + 1, url: `/user/${username}` }
+            });
+          }
+        });
+      });
+
+      it('create bookmark successfully', async () => {
+        const bookmark = {
+          more: { description: 'All schools page' },
+          title: 'All schools',
+          url: '/s'
+        };
+
+        await expect(reqWith(bookmark), 'body to satisfy', {
+          success: true,
+          affected: {},
+          target: bookmark
+        });
+      });
+
+      xit('fetches successfully', async () => {
+        await expect(
+          { url: '/s/' }, 'when parsed as HTML',
+          'queried for', 'title', 'to have text',
+          'All schools'
+        );
       });
     });
   });

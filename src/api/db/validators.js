@@ -161,3 +161,12 @@ export const SearchQuery = {
   }],
   q: ['string']
 };
+
+export const Bookmark = {
+  more: ['required', 'plainObject'],
+  'more.description': ['string'],
+  'more.icon': ['string'],
+  ord: ['integer'],
+  title: ['required', 'string'],
+  url: ['required', 'string']
+};
