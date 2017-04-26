@@ -3876,6 +3876,99 @@ export default class ApiController {
     }
   };
 
+  getPageMetadata = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('url' in ctx.query)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter is not given' };
+      return;
+    }
+
+    const url = ctx.query.url.trim();
+    const withProtocol = urlUtils.hasProtocol(url);
+
+    const API_HOST = process.env.API_HOST || 'http://localhost:8000';
+    const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
+
+    if (!urlUtils.checkMatchHosts(url.toLowerCase(), allowedHosts, withProtocol)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
+      return;
+    }
+
+    const resourceUrl = urlUtils.getResourceUrl(url, allowedHosts, withProtocol);
+    if (resourceUrl.startsWith('/api')) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" must point to the page' };
+      return;
+    }
+
+    try {
+      const session = ctx.request.header.cookie
+        .split('; ')
+        .find(s => s.startsWith('connect.sid'));
+
+      const formatted = format_url({
+        protocol: 'http:',
+        host: parse_url(API_HOST).host,
+        port: parse_url(API_HOST).port,
+        pathname: resourceUrl
+      });
+
+      const request = {
+        method: 'GET',
+        host: parse_url(API_HOST).hostname,
+        port: parse_url(API_HOST).port,
+        headers: { 'Cookie': session, 'Accept': 'test/html' }
+      };
+
+      // fetch page with such url
+      const res = await fetch(formatted, request);
+      if (res.status !== 200) {
+        ctx.status = res.status;
+        return;
+      }
+
+      let buf = '';
+      let recent = '';
+      for (const c of (await res.text())) {
+        buf += c;
+        recent += c;
+        if (recent.length > 7) {
+          recent = recent.slice(1);
+        }
+        if (recent === '</head>') {
+          break;
+        }
+      }
+
+      const meta = {};
+      const keys = ['title'];
+
+      // TODO: support different variants of opening and closing tags
+      keys.forEach(key => {
+        const val = buf
+          // matches whole tag with content
+          .match(new RegExp(`<${key}( .{0,})?>`, 'i'))[0]
+          // only content (in group)
+          .match(new RegExp(`.{2,}>(.{0,})<\/${key}>$`, 'i'))[1];
+
+        meta[key] = he.decode(val);
+      });
+
+      ctx.status = 200;
+      ctx.body = meta;
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
   validateUrl = async (ctx) => {
     if (!ctx.session || !ctx.session.user) {
       ctx.status = 403;
