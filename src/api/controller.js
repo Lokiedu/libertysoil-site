@@ -26,6 +26,7 @@ import uuid from 'uuid';
 import slug from 'slug';
 import fetch from 'node-fetch';
 import Checkit from 'checkit';
+import he from 'he';
 
 import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
@@ -3662,6 +3663,65 @@ export default class ApiController {
     } catch (e) {
       ctx.status = 500;
       ctx.body = { error: e.message };
+    }
+  };
+
+  deleteBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.params.id) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let bookmark;
+    try {
+      bookmark = await Bookmark.where({ id: ctx.params.id }).fetch({ require: true });
+      if (bookmark.get('user_id') !== ctx.session.user) {
+        ctx.status = 403;
+        ctx.body = { error: 'You are not authorized' };
+        return;
+      }
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+
+    let affected;
+    try {
+      const ord = bookmark.get('ord');
+      await bookmark.destroy();
+      affected = { [ctx.params.id]: null };
+
+      const knex = this.bookshelf.knex;
+      const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .update({ ord: knex.raw('ord - 1') })
+              .where('ord', '>=', ord)
+              .andWhere('user_id', ctx.session.user)
+              .returning('*');
+          });
+
+      let rows = await q.fetchAll();
+      rows = await rows.toJSON();
+      rows = _.keyBy(rows, 'id');
+      Object.assign(affected, rows);
+
+      ctx.status = 200;
+      ctx.body = { success: true, affected };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message, affected };
+      return;
     }
   };
 

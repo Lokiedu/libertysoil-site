@@ -17,11 +17,15 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
+import uuid from 'uuid';
+import { keyBy } from 'lodash';
+
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
 
 import UserFactory from '../../../test-helpers/factories/user';
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
+import BookmarkFactory from '../../../test-helpers/factories/bookmark';
 import PostFactory from '../../../test-helpers/factories/post';
 import { login } from '../../../test-helpers/api';
 
@@ -366,6 +370,260 @@ describe('Bookmarks', () => {
           'queried for', 'title', 'to have text',
           'All schools'
         );
+      });
+    });
+  });
+
+  describe('DELETE /api/v1/bookmark/:id', () => {
+    const requestFor = (bookmarkId, sessionId) => ({
+      method: 'DELETE',
+      url: `/api/v1/bookmark/${bookmarkId}`,
+      session: sessionId
+    });
+
+    describe('User doesn\'t have permissions', () => {
+      let bookmark, sessionId, userAttrs, users = [];
+
+      before(async () => {
+        for (let i = 0; i < 2; ++i) {
+          userAttrs = UserFactory.build();
+          users.push(await User.create(userAttrs.username, userAttrs.password, userAttrs.email));
+          await users[i].save({ email_check_hash: null }, { method: 'update' });
+        }
+
+        bookmark = new Bookmark(BookmarkFactory.build({ user_id: users[0].get('id') }));
+        bookmark.set('ord', 1);
+        await bookmark.save(null, { method: 'insert' });
+
+        sessionId = await login(users[1].get('username'), userAttrs.password);
+      });
+
+      after(async () => {
+        await bookmark.destroy();
+        for (let i = 0; i < users.length; ++i) {
+          await users[i].destroy();
+        }
+        users = [];
+      });
+
+      describe('Anonymous user', () => {
+        it('fails with 403', async () => {
+          await expect(
+            requestFor(bookmark.get('id'), undefined),
+            'body to satisfy',
+            { error: 'You are not authorized' }
+          );
+        });
+      });
+
+      describe('Non-author', () => {
+        it('fails with 403', async () => {
+          await expect(
+            requestFor(bookmark.get('id'), sessionId),
+            'body to satisfy',
+            { error: 'You are not authorized' }
+          );
+        });
+      });
+    });
+
+    describe('When the bookmark doesn\'t exist', () => {
+      let user, sessionId;
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        await user.save({ email_check_hash: null }, { method: 'update' });
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      after(async () => {
+        await user.destroy();
+      });
+
+      it('fails with 404', async () => {
+        await expect(requestFor(uuid.v4(), sessionId), 'to open not found');
+      });
+    });
+
+    describe('When the bookmark exists', () => {
+      let bookmark, bookmarkId,
+        user, sessionId;
+
+      before(async () => {
+        const userAttrs = UserFactory.build();
+        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        await user.save({ email_check_hash: null }, { method: 'update' });
+        sessionId = await login(userAttrs.username, userAttrs.password);
+      });
+
+      beforeEach(async () => {
+        bookmark = new Bookmark(BookmarkFactory.build({ user_id: user.get('id') }));
+        bookmark.set('ord', 1);
+        await bookmark.save(null, { method: 'insert' });
+        bookmarkId = bookmark.get('id');
+      });
+
+      afterEach(async () => {
+        await bookmark.destroy();
+      });
+
+      after(async () => {
+        await user.destroy();
+      });
+
+      describe('When user has only one', () => {
+        it('succeeds', async () => {
+          await expect(
+            requestFor(bookmarkId, sessionId),
+            'body to satisfy',
+            {
+              success: true,
+              affected: { [bookmarkId]: null }
+            }
+          );
+        });
+      });
+
+      describe('When deleted bookmark is last by order', () => {
+        const EXTRA_BOOKMARKS_NUMBER = 5;
+        let bookmarks = [];
+
+        beforeEach(async () => {
+          const b = await Bookmark.where({ id: bookmarkId }).fetch({ require: true });
+          b.attributes.ord = EXTRA_BOOKMARKS_NUMBER;
+          await b.save(null, { method: 'update' });
+
+          for (let i = 0; i < EXTRA_BOOKMARKS_NUMBER; ++i) {
+            bookmarks.push(new Bookmark(BookmarkFactory.build({ user_id: user.get('id') })));
+            bookmarks[i].set('ord', i);
+            await bookmarks[i].save(null, { method: 'insert' });
+          }
+        });
+
+        afterEach(async () => {
+          for (let i = 0; i < EXTRA_BOOKMARKS_NUMBER; ++i) {
+            await bookmarks[i].destroy();
+          }
+          bookmarks = [];
+        });
+
+        it('succeeds with no effect to another bookmarks', async () => {
+          await expect(
+            requestFor(bookmarkId, sessionId),
+            'body to satisfy',
+            {
+              success: true,
+              affected: { [bookmarkId]: null }
+            }
+          );
+
+          let restBookmarks = await Bookmark.collection()
+            .query(qb =>
+              qb
+                .where({ user_id: user.get('id') })
+                .andWhere('ord', '>=', 0)
+                .andWhere('ord', '<', EXTRA_BOOKMARKS_NUMBER)
+                .orderBy('ord', 'asc')
+            )
+            .fetch();
+          restBookmarks = await restBookmarks.toJSON();
+          restBookmarks = keyBy(restBookmarks, 'id');
+
+          const bookmarksJson = [];
+          for (let i = 0; i < EXTRA_BOOKMARKS_NUMBER; ++i) {
+            bookmarksJson.push(await bookmarks[i].toJSON());
+          }
+
+          expect(restBookmarks, 'to satisfy', keyBy(bookmarksJson, 'id'));
+        });
+      });
+
+      describe('When deleted bookmark is first by order', () => {
+        const EXTRA_BOOKMARKS_NUMBER = 5;
+        let bookmarks = {};
+
+        beforeEach(async () => {
+          for (let i = 2; i < EXTRA_BOOKMARKS_NUMBER + 2; ++i) {
+            const bAttrs = BookmarkFactory.build({ user_id: user.get('id') });
+            bookmarks[bAttrs.id] = new Bookmark(bAttrs);
+            bookmarks[bAttrs.id].set('ord', i);
+            await bookmarks[bAttrs.id].save(null, { method: 'insert' });
+          }
+        });
+
+        afterEach(async () => {
+          for (const id in bookmarks) {
+            await bookmarks[id].destroy();
+          }
+          bookmarks = {};
+        });
+
+        it('succeeds and decreases the order value of other bookmarks', async () => {
+          const bookmarksJson = {};
+          for (const id in bookmarks) {
+            bookmarksJson[id] = await bookmarks[id].toJSON();
+            --bookmarksJson[id].ord;
+          }
+
+          await expect(
+            requestFor(bookmarkId, sessionId),
+            'body to satisfy',
+            {
+              success: true,
+              affected: { ...bookmarksJson, [bookmarkId]: null }
+            }
+          );
+        });
+      });
+
+      describe('When deleted bookmark is in the middle', () => {
+        const EXTRA_BOOKMARKS_NUMBER = 5, DELETE_ORD = 2;
+        let bookmarks = {};
+
+        beforeEach(async () => {
+          bookmark.set('ord', DELETE_ORD);
+          await bookmark.save(null, { method: 'update' });
+
+          for (let i = 0; i < EXTRA_BOOKMARKS_NUMBER; ++i) {
+            if (i === DELETE_ORD) {
+              continue;
+            }
+
+            const bAttrs = BookmarkFactory.build({ user_id: user.get('id') });
+            bookmarks[bAttrs.id] = new Bookmark(bAttrs);
+            bookmarks[bAttrs.id].set('ord', i);
+            await bookmarks[bAttrs.id].save(null, { method: 'insert' });
+          }
+        });
+
+        afterEach(async () => {
+          for (const id in bookmarks) {
+            await bookmarks[id].destroy();
+          }
+
+          bookmarks = {};
+        });
+
+        it('succeeds and decreases the order of bookmarks after it', async () => {
+          const bookmarksJson = {};
+          for (const id in bookmarks) {
+            const b = await bookmarks[id].toJSON();
+            if (b.ord > DELETE_ORD) {
+              --b.ord;
+              bookmarksJson[id] = b;
+            }
+          }
+
+          await expect(
+            requestFor(bookmarkId, sessionId),
+            'body to satisfy',
+            {
+              success: true,
+              affected: { ...bookmarksJson, [bookmarkId]: null }
+            }
+          );
+        });
       });
     });
   });
