@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=development run-p run:app run:tasks",
+    "start": "NODE_ENV=development API_HOST=http://localhost:8000 run-p run:app run:tasks",
     "docker-start": "NODE_ENV=production DB_ENV=staging run-s webpack:build:prod update-db:production run:app",
     "test": "NODE_ENV=development DB_ENV=test run-s reset-db:test mocha",
     "coverage": "NODE_ENV=development DB_ENV=test npm run coverage:run",
