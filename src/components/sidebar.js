@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 
 import createSelector from '../selectors/createSelector';
@@ -24,6 +25,7 @@ import { toggleMenu } from '../actions/ui';
 
 import SidebarMenu from './sidebar-menu';
 import TagsInform from './tags-inform';
+import Bookmarks from './bookmarks';
 
 /*
   function getClassName(theme) {
@@ -104,7 +106,15 @@ class Sidebar extends React.Component {
 
     const sidebarBody = [
       <SidebarMenu current_user={this.props.current_user} key="menu" />,
-      <TagsInform current_user={this.props.current_user} key="tags" />
+      <TagsInform current_user={this.props.current_user} key="tags" />,
+      <Bookmarks
+        bookmarks={
+          this.props.current_user.get('bookmarks') ||
+          fromJS([{ url: '/tag/test', title: 'test', icon: { icon: 'star' } }])
+        }
+        dispatch={this.props.dispatch}
+        key="bookmarks"
+      />
     ];
 
     const displayMobileMenu =
@@ -131,7 +141,7 @@ class Sidebar extends React.Component {
   }
 }
 
-const selector = createSelector(
+const inputSelector = createSelector(
   currentUserSelector,
   state => state.getIn(['ui', 'mobileMenuIsVisible']),
   (current_user, isMobileMenuOn) => ({
@@ -140,4 +150,4 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector)(Sidebar);
+export default connect(inputSelector)(Sidebar);
