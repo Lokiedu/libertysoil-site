@@ -240,6 +240,9 @@ app.use(async function reactMiddleware(ctx) {
     }
 
     try {
+      // we always render Helmet's metadata as tags like <title></title>
+      Helmet.canUseDOM = false;
+
       const html = renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps} />
@@ -251,9 +254,7 @@ app.use(async function reactMiddleware(ctx) {
         ctx.status = fetchHandler.status;
       }
 
-      // we always render Helmet's metadata as tags like <title></title>
-      Helmet.canUseDOM = false;
-      const metadata = Helmet.rewind();
+      const metadata = Helmet.renderStatic();
 
       // Actual status code is returned with fetchData()
       // ctx.status = 200;
