@@ -45,6 +45,8 @@ import RiverItemCreateForm from '../components/river/type/text/create-form';
 import User from '../components/user';
 
 
+const USER_LIMIT = 5;
+
 class ConversationsPage extends React.Component {
   static async fetchData(router, store, client) {
     const state = store.getState();
@@ -55,7 +57,7 @@ class ConversationsPage extends React.Component {
     }
 
     const triggers = new ActionsTrigger(client, store.dispatch);
-    const users = await triggers.loadMessageableUsers(currentUserId);
+    const users = await triggers.loadMessageableUsers(currentUserId, { offset: 0, limit: USER_LIMIT });
 
     if (users.length > 0) {
       const firstUserId = users[0].id;
@@ -117,6 +119,11 @@ class ConversationsPage extends React.Component {
   handleDeleteMessage = async (message) => {
     this.triggers.deleteUserMessage(message.get('receiver_id'), message.get('id'));
   };
+
+  handleLoadMoreUsers = async () => {
+    const offset = this.props.user_messages.get('messageableUserIds').size;
+    await this.triggers.loadMessageableUsers(this.props.current_user.get('id'), { offset, limit: USER_LIMIT });
+  }
 
   setMessagesInterval = (selectedUserId) => {
     clearInterval(this.messageIntervalId);
@@ -185,10 +192,12 @@ class ConversationsPage extends React.Component {
               </PageContent>
               <SidebarAlt>
                 <UserList
+                  canLoadMore={user_messages.get('canLoadMore')}
                   selectedUserId={this.state.selectedUserId}
                   user_messages={user_messages}
                   users={users}
                   onClick={this.handleSelectUser}
+                  onLoadMore={this.handleLoadMoreUsers}
                 />
               </SidebarAlt>
             </PageBody>

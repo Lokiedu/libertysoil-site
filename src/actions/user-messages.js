@@ -74,11 +74,12 @@ export function updateUserMessagesStatus(status) {
   };
 }
 
-export function loadMessageableUsers(users) {
+export function loadMessageableUsers(users, meta = { offset: 0 }) {
   return {
     type: LOAD_MESSAGEABLE_USERS,
     payload: {
       users
-    }
+    },
+    meta
   };
 }

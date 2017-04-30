@@ -279,8 +279,8 @@ export default class ApiClient {
     return await response.json();
   }
 
-  async mutualFollows(userId: UserId): Promise<Array<User>> {
-    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`);
+  async mutualFollows(userId: UserId, query: Object = {}): Promise<Array<User>> {
+    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`, query);
     return await response.json();
   }
 

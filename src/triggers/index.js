@@ -903,13 +903,12 @@ export class ActionsTrigger {
     }
   }
 
-  // TODO: Load more
-  loadMessageableUsers = async (currentUserId) => {
+  loadMessageableUsers = async (currentUserId, params = {}) => {
     let users;
 
     try {
-      users = await this.client.mutualFollows(currentUserId);
-      this.dispatch(a.userMessages.loadMessageableUsers(users));
+      users = await this.client.mutualFollows(currentUserId, params);
+      this.dispatch(a.userMessages.loadMessageableUsers(users, params));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }

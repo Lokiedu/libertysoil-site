@@ -1927,6 +1927,8 @@ export default class ApiController {
           });
 
         this.applySortQuery(qb, ctx.query, 'username');
+        this.applyLimitQuery(qb, ctx.query);
+        this.applyOffsetQuery(qb, ctx.query);
       })
       .fetch({
         withRelated: USER_RELATIONS

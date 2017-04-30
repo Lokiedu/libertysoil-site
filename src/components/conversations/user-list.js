@@ -18,9 +18,10 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Avatar from '../user/avatar';
+import { getName } from '../../utils/user';
 
 
-export default function UserList({ onClick, selectedUserId, users, user_messages }) {
+export default function UserList({ canLoadMore, selectedUserId, users, user_messages, onClick, onLoadMore }) {
   const followedUsers = user_messages.get('messageableUserIds').map(id => users.get(id));
 
   const userItems = followedUsers.map((user, index) => {
@@ -40,7 +41,7 @@ export default function UserList({ onClick, selectedUserId, users, user_messages
       >
         <Link className={className} href="javascript:;" onClick={handleClick}>
           <Avatar className="aux-nav__icon--left" isRound={false} size={23} user={user} />
-          {user.get('username')}
+          {getName(user)}
           {numUnread > 0 &&
             <div className="aux-nav__count">{numUnread}</div>
           }
@@ -52,6 +53,9 @@ export default function UserList({ onClick, selectedUserId, users, user_messages
   return (
     <div className="aux-nav">
       {userItems}
+      {canLoadMore &&
+        <button className="aux-nav__button" onClick={onLoadMore}>Load more</button>
+      }
     </div>
   );
 }

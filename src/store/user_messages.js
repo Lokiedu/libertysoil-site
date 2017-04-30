@@ -24,7 +24,8 @@ import { userMessages } from '../actions';
 export const initialState = i.fromJS({
   numUnread: 0,
   byUser: {}, // userId => { numUnread: 0, messages: [] },
-  messageableUserIds: [] // for optimization
+  messageableUserIds: [], // for optimization
+  canLoadMore: true,
 });
 
 export function reducer(state = initialState, action) {
@@ -85,7 +86,18 @@ export function reducer(state = initialState, action) {
 
       state = state.withMutations(state => {
         state.update('byUser', byUser => byUser.mergeDeep(i.fromJS(usersById)));
-        state.set('messageableUserIds', i.List(userIds));
+
+        if (action.meta.offset > 0) {
+          state.update('messageableUserIds', ids => {
+            return ids.slice(0, action.meta.offset).push(...userIds);
+          });
+        } else {
+          state.set('messageableUserIds', i.List(userIds));
+        }
+
+        if (userIds.length < action.meta.limit) {
+          state.set('canLoadMore', false);
+        }
       });
 
       break;
