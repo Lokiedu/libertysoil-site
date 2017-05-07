@@ -57,7 +57,7 @@ export function getUpsertQuery(table, condition, attributes) {
     )
     .toString();
 
-  return cleanUpExtraEscapes(`${updateQuery}; ${insertQuery};`);
+  return `${updateQuery}; ${insertQuery};`;
 }
 
 
@@ -76,7 +76,7 @@ export async function bulkUpsert(table, attributes, conditionExtractor) {
   if (tableEmpty) {
     // No need to update, only insert.
     queries = attributes.map(recordAttributes => {
-      return cleanUpExtraEscapes(`${knex(table).insert(recordAttributes).toString()};`);
+      return `${knex(table).insert(recordAttributes).toString()};`;
     });
   } else {
     queries = attributes.map(recordAttributes => {
@@ -86,15 +86,4 @@ export async function bulkUpsert(table, attributes, conditionExtractor) {
   }
 
   return executeQueries(queries);
-}
-
-/**
- * Cleans up extra `\` from the string.
- * Fixes cases where knex escapes double quotes that don't need to be escaped (e.g. when using JSON.stringify).
- * Example: \\"test\\" => \"test\"
- * @param {string} str
- * @returns {string}
- */
-export function cleanUpExtraEscapes(str) {
-  return str.replace(/\\\\"/g, '\\"');
 }

@@ -521,9 +521,6 @@ export function initBookshelfFromKnex(knex) {
     admin1() {
       return this.belongsTo(Geotag, 'admin1_id');
     },
-    city() {
-      return this.belongsTo(Geotag, 'city_id');
-    },
     continent() {
       return this.belongsTo(Geotag, 'continent_id');
     },
