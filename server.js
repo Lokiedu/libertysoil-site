@@ -108,21 +108,21 @@ app.on('error', (e) => {
 if (exec_env === 'development') {
   logger.level('debug');
 
-  const webpackDevMiddleware = require('koa-webpack-dev-middleware');
-  const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
+  const webpackMiddleware = require('koa-webpack');
   const webpack = require('webpack');
   const webpackConfig = require('./webpack.dev.config');
   const compiler = webpack(webpackConfig);
 
-  app.use(convert(webpackDevMiddleware(compiler, {
-    log: logger.debug.bind(logger),
-    path: '/__webpack_hmr',
-    publicPath: webpackConfig.output.publicPath,
-    stats: {
-      colors: true
+  app.use(webpackMiddleware({
+    compiler,
+    dev: {
+      log: logger.debug.bind(logger),
+      publicPath: webpackConfig.output.publicPath,
+      stats: {
+        colors: true
+      }
     }
-  })));
-  app.use(convert(webpackHotMiddleware(compiler)));
+  }));
 }
 
 app.use(async (ctx, next) => {
