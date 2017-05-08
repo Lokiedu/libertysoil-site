@@ -2630,7 +2630,7 @@ export default class ApiController {
       const geotag = await Geotag
         .forge()
         .where('url_name', ctx.params.url_name)
-        .fetch({ require: true, withRelated: ['country', 'admin1', 'city', 'continent', 'geonames_city'] });
+        .fetch({ require: true, withRelated: ['country', 'admin1', 'continent', 'geonames_city'] });
 
       ctx.body = geotag;
     } catch (e) {

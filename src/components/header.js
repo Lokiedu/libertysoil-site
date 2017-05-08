@@ -29,12 +29,22 @@ const HeaderComponent = ({
   className,
   current_user,
   is_logged_in,
+  needIndent,
   needMenu,
   ...props
 }) => {
   let cn = 'header page__header';
   if (className) {
     cn += ` ${className}`;
+  }
+
+  let pageTop;
+  if (needMenu) {
+    pageTop = <TopMenu is_logged_in={is_logged_in} />;
+  } else if (needIndent) {
+    pageTop = (
+      <div className="header__indent" />
+    );
   }
 
   return (
@@ -53,9 +63,7 @@ const HeaderComponent = ({
           </div>
         </div>
       </div>
-      {needMenu &&
-        <TopMenu is_logged_in={is_logged_in} />
-      }
+      {pageTop}
     </div>
   );
 };
@@ -70,6 +78,7 @@ HeaderComponent.propTypes = {
 };
 
 HeaderComponent.defaultProps = {
+  needIndent: true,
   needMenu: true
 };
 

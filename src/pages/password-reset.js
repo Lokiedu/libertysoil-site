@@ -95,6 +95,7 @@ export class PasswordResetPage extends React.Component {
           <Header
             className="header-transparent"
             is_logged_in={is_logged_in}
+            needIndent={false}
             needMenu={false}
           />
           <header className="landing__body">

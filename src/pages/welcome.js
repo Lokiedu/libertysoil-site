@@ -48,7 +48,12 @@ class Welcome extends React.Component {
         <Helmet title="Welcome to " />
         <div className="page__container-bg font-open_sans font-light">
           <section className="landing landing-big landing-bg">
-            <Header is_logged_in={false} className="header-transparent" needMenu={false}>
+            <Header
+              is_logged_in={false}
+              className="header-transparent"
+              needIndent={false}
+              needMenu={false}
+            >
               <HeaderLogo />
             </Header>
             <header className="landing__header">

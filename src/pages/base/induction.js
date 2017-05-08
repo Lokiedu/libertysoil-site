@@ -43,7 +43,7 @@ const BaseInductionPage = (props) => {
 
   return (
     <div>
-      <Header current_user={current_user} is_logged_in={is_logged_in}>
+      <Header current_user={current_user} is_logged_in={is_logged_in} needMenu={false}>
         <HeaderLogo isLink={false} />
       </Header>
 
