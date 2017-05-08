@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,38 +15,30 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-@import (reference) "../color";
+@after-small: ~"(min-width: 480px)";
+@after-normal: ~"(min-width: 768px)";
+@before-small: ~"(max-width: 480px)";
+@before-normal: ~"(max-width: 768px)";
+@before-base: ~"(max-width: 1024px)";
+@after-base: ~"(min-width: 1024px)";
+@after-wide: ~"(min-width: 1200px)";
 
-// Visual block used in item lists on tool pages.
-.tools_item {
-  @space: 20px;
+@font__size: 15px;
+@font__size-middle: 13px;
+@font__size-small: 11px;
 
-  display: flex;
-  margin-bottom: 15px;
-  padding: @space;
-  background-color: white;
-  border-bottom: 2px solid #EDEDED;
+@radius: 6px;
+@radius-input: 3px;
+@radius-button: 4px;
 
-  &-selected {
-    background: #FD9315;
-    color: white;
+@space: 15px;
+@halfSpace: @space/2;
+@doubleSpace: @space*2;
 
-    > .tools_item__icon {
-      color: white;
-    }
-  }
+@headerHeight: 60px;
+@siteWidth: 1200px;
+@sidebarWidth: 320px;
+@navigationWidth: 190px;
 
-  &-clickable {
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &__child-padded {
-    margin-left: @space;
-  }
-
-  &__icon {
-    color: @color__gray;
-  }
-}
+@transition__time: 0.3s;
+@transition__function: ease;
