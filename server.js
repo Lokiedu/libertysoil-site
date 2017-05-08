@@ -22,8 +22,9 @@ import fs, { accessSync, readFileSync } from 'fs';
 
 import Koa from 'koa';
 import { isString } from 'lodash';
-import session from 'koa-session';
+import session from 'koa-generic-session';
 import redisStore from 'koa-redis';
+import convert from 'koa-convert';
 import cors from 'kcors';
 import serve from 'koa-static';
 import bodyParser from 'koa-bodyparser';
@@ -144,7 +145,7 @@ app.use(cors({
 
 app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
 
-app.use(session({
+app.use(convert(session({
   store: redisStore(
     {
       host: '127.0.0.1',
@@ -152,8 +153,8 @@ app.use(session({
     }
   ),
   key: 'connect.sid',
-  signed: false
-}, app));
+  cookie: { signed: false }
+})));
 
 app.use(createRequestLogger({ level: 'info', logger }));
 
