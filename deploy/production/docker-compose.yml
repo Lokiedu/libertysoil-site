@@ -58,7 +58,7 @@ queue:
     - "DB_ENV=staging"
   env_file:
     - "./secrets.env"
-  command: npm run tasks
+  command: npm run run:tasks
   restart: always
 web:
   image: "quay.io/indeyets/nginx-proxy-custom"
