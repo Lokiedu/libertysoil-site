@@ -136,7 +136,7 @@
     "react/no-string-refs": 2,
     "react/no-unescaped-entities": 2,
     "react/no-unknown-property": 2,
-    "react/no-unused-prop-types": [ 2, { "skipShapeProps": true } ],
+    "react/no-unused-prop-types": [0],
     "react/prefer-es6-class": 1,
     "react/prefer-stateless-function": [2, { "ignorePureComponents": true }],
     "react/prop-types": 1,
