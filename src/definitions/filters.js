@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,33 +14,20 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
-import React from 'react';
+export type Combine = false | { except: string[] };
 
-import type { RouterLocation } from '../../definitions/common';
-import type { SortingType } from '../../definitions/filters';
-import FilterLink from './filter-link';
-
-
-type Props = {
-  location: RouterLocation,
-  sortingTypes: SortingType[],
+export type SearchType = {
+  name: string,
+  value: string,
+  isDefault?: boolean,
+  combine: Combine,
 };
 
-export default function SortingFilter({ location, sortingTypes }: Props) {
-  const continents = sortingTypes.map((item, i) => (
-    <FilterLink
-      isDefault={item.isDefault}
-      key={i}
-      location={location}
-      query={{ sort: item.value }}
-      title={item.name}
-    />
-  ));
-
-  return (
-    <div className="aux-nav">
-      {continents}
-    </div>
-  );
-}
+export type SortingType = {
+  name: string,
+  value: string,
+  isDefault?: boolean,
+};

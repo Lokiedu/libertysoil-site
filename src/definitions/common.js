@@ -85,3 +85,13 @@ const Uuid4Type = (reify: Type<Uuid4>);
 Uuid4Type.addConstraint(isUuid4);
 
 export type Map<K, T> = { [key: K]: T };
+
+export type RouterLocation = {
+  action: string,
+  hash: string,
+  key: string,
+  pathname: string,
+  query: Object,
+  search: string,
+  state: ?Object,
+};

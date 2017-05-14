@@ -14,13 +14,24 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ @flow
 */
-import React from 'react';
+import React, { type Element } from 'react';
 import { Link } from 'react-router';
 import { difference, intersection, mergeWith, isNil, uniq } from 'lodash';
 
-export function merge(combine, query, other) {
-  const { except = [] } = combine;
+import type { RouterLocation } from '../../definitions/common';
+import type { Combine } from '../../definitions/filters';
+
+
+export type CombineFunc = (Combine, Object, Object) => Object;
+
+export function merge(combine: Combine, query: Object, other: Object): Object {
+  let except = [];
+
+  if (combine) {
+    except = combine.except;
+  }
 
   return mergeWith(query, other, (a, b) => {
     let filtered;
@@ -38,7 +49,7 @@ export function merge(combine, query, other) {
 
 // here and below:
 // early declarations, for-loops - performance reasons
-export function diff(_, exclude, inspect) {
+export function diff(_: Combine, exclude: Object, inspect: Object): Object {
   const result = {};
   let inspectProp, excludeProp, keys, l, i, k;
   for (i = 0, keys = Object.keys(inspect), l = keys.length; i < l; ++i) {
@@ -58,7 +69,7 @@ export function diff(_, exclude, inspect) {
   return result;
 }
 
-function checkFor(checker, query, other) {
+function checkFor(checker: Function, query: Object, other: Object) {
   let queryProp, otherProp, keys, l, i, k;
   for (i = 0, keys = Object.keys(query), l = keys.length; i < l; ++i) {
     k = keys[i];
@@ -79,7 +90,7 @@ function checkFor(checker, query, other) {
   return false;
 }
 
-function getNewUrl(m, query, combine, location) {
+function getNewUrl(m: CombineFunc, query: Object, combine: ?Combine, location: RouterLocation) {
   return {
     ...location,
     query: combine
@@ -88,7 +99,15 @@ function getNewUrl(m, query, combine, location) {
   };
 }
 
-export default function FilterLink({ isDefault, title, query, location, combine }) {
+type Props = {
+  isDefault?: boolean,
+  title: Element<any> | string,
+  query: Object,
+  location: RouterLocation,
+  combine?: Combine,
+};
+
+export default function FilterLink({ isDefault, title, query, location, combine }: Props) {
   let className = 'aux-nav__link';
   let urlFunction = getNewUrl.bind(null, merge, query, combine);
 

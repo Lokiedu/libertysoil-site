@@ -14,13 +14,18 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ @flow
 */
-import React from 'react';
+import React, { type Element } from 'react';
 import { Link } from 'react-router';
 
+import type { RouterLocation } from '../../definitions/common';
+import type { Combine } from '../../definitions/filters';
 import { diff, merge } from './filter-link';
+import type { CombineFunc } from './filter-link';
 
-function getNewUrl(m, query, combine, redirectTo, mixed, location) {
+
+function getNewUrl(m: CombineFunc, query: Object, combine: ?Combine, redirectTo: string, mixed: Object, location: RouterLocation) {
   let nextQuery;
   if (combine) {
     nextQuery = m(combine, query, { ...location.query, ...mixed });
@@ -36,13 +41,23 @@ function getNewUrl(m, query, combine, redirectTo, mixed, location) {
   };
 }
 
-export default function RedirectFilter({ isDefault, mixedQuery, title, query, combine, redirectTo }) {
+type Props = {
+  isDefault?: boolean,
+  mixedQuery: Object,
+  title: Element<any> | string,
+  query: Object,
+  combine?: Combine,
+  redirectTo: string,
+  location: RouterLocation,
+};
+
+export default function RedirectFilter({ isDefault, mixedQuery, title, query, combine, redirectTo, location }: Props) {
   let className = 'aux-nav__link';
-  let urlFunction = getNewUrl.bind(null, merge, query, combine, redirectTo, mixedQuery);
+  let urlFunction = getNewUrl.bind(null, merge, query, combine, redirectTo, mixedQuery, location);
 
   if (isDefault) { // ad hoc default = active
     className += ' aux-nav__link--active';
-    urlFunction = getNewUrl.bind(null, diff, query, combine, redirectTo, null);
+    urlFunction = getNewUrl.bind(null, diff, query, combine, redirectTo, {}, location);
   }
 
   return (

@@ -14,15 +14,23 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ @flow
 */
-import React from 'react';
-import { SEARCH_RESULTS } from '../../consts/search';
+import React, { type Element } from 'react';
 
+import { SEARCH_RESULTS } from '../../consts/search';
+import type { RouterLocation } from '../../definitions/common';
 import FilterLink from './filter-link';
 import RedirectFilter from './redirect-filter';
 
-export default function SearchResultFilter({ location, fixedType }) {
-  let types;
+
+type Props = {
+  location: RouterLocation,
+  fixedType?: string,
+}
+
+export default function SearchResultFilter({ location, fixedType }: Props) {
+  let types: Element<any>[];
   if (fixedType) {
     const mixedQuery = { show: fixedType };
     types = SEARCH_RESULTS.map(type => {
