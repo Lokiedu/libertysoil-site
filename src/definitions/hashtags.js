@@ -25,7 +25,7 @@ export type HashtagId = Uuid4;
 export type Hashtag = {
   created_at: DateString,
   id: HashtagId,
-  more?: TagMore,
+  more: ?TagMore,
   name: UrlNode,
   post_count: Integer,
   updated_at: DateString
