@@ -38,14 +38,15 @@ const SERVICES_SEQ = [
   ['website', { icon: 'chain', className: 'suggested-user__social suggested-user__social--smaller' }]
 ];
 
-export function parseSocial(social: Map<string, string>) {
+export function parseSocial(social: ?Map<string, string>) {
   if (!social) {
     return List();
   }
 
+  const presentSocial = social; // hack for flow to make it recognize the early return.
   const entries = SERVICES_SEQ.map((s) => {
     const [name, props] = s;
-    const url = social.get(name);
+    const url = presentSocial.get(name);
 
     if (!url) {
       return null;
