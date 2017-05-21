@@ -193,7 +193,7 @@
     "faker": "~4.1.0",
     "file-loader": "~0.11.1",
     "flow-bin": "~0.43.1",
-    "flow-runtime": "~0.10.0",
+    "flow-runtime": "~0.12.0",
     "flow-typed": "^2.0.0",
     "gulp": "^3.9.1",
     "gulp-jsonminify": "^1.0.0",
