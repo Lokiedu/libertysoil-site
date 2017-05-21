@@ -47,8 +47,8 @@ export default class ApiClient {
     return `${this.host}${relativeUrl}`;
   }
 
-  apiUrlForFetch(relativeUrl: string, query: Object = {}): string {
-    const urlObj = parse_url(this.apiUrl(relativeUrl));
+  apiUrlForFetch(relativeUrl: string, query: ?Object = {}): string {
+    const urlObj: { query: ?Object } = parse_url(this.apiUrl(relativeUrl), true);
     urlObj.query = mergeObj(urlObj.query, query);
 
     return format_url(urlObj);
