@@ -64,13 +64,13 @@ export type Url = string;
 const UrlType = (reify: Type<Url>);
 UrlType.addConstraint(isUrl);
 
-export const isUrlNode = (x: Url): ?string => {  // eslint-disable-line consistent-return
-  if (!x.match(RegExp(/(:|\/)/))) {
+export const isUrlNode = (x: string): ?string => {  // eslint-disable-line consistent-return
+  if (!x.match(/^[\w- ]+$/)) {
     return 'must be a valid URL node';
   }
 };
 
-export type UrlNode = Url;
+export type UrlNode = string;
 const UrlNodeType = (reify: Type<UrlNode>);
 UrlNodeType.addConstraint(isUrlNode);
 
