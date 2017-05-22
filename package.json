@@ -92,6 +92,7 @@
     "moment": "^2.10.6",
     "mysql2": "^1.0.0-rc.2",
     "oniguruma": "^6.0.1",
+    "path-browserify": "0.0.0",
     "pg": "^6.0.3",
     "promise-streams": "^1.0.1",
     "proxy-middleware": "^0.15.0",
