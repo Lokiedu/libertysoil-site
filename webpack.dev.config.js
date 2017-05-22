@@ -15,6 +15,7 @@ module.exports = {
 
   resolveLoader: {
     alias: {
+      'examples-loader': path.resolve(__dirname, './src/utils/webpack-loaders/examples-loader.js'),
       'highlight-import-loader': path.resolve(__dirname, './src/utils/webpack-loaders/highlight-import-loader.js')
     }
   },
@@ -56,6 +57,12 @@ module.exports = {
           }
         }
       },
+      {
+        test: /\.md$/,
+        exclude: /node_modules/,
+        use: ['json-loader', 'examples-loader']
+      },
+      { test: /\.json$/, loader: 'json-loader' },
       { test: /\.css$/,
         use: [
           { loader: 'style-loader?sourceMap' },
