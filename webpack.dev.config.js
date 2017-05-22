@@ -97,11 +97,26 @@ module.exports = {
     ]
   },
 
+  node: {
+    fs: 'empty',
+    module: 'empty',
+    net: 'empty',
+  },
+
   plugins: [
     // An appropriate alternative to envify.
     new webpack.EnvironmentPlugin([
       'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN', 'GOOGLE_ANALYTICS_ID', 'INTERCOM_APP_ID'
     ]),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: module => (
+        module.context && module.context.indexOf('node_modules') !== -1
+      )
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest'
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
@@ -118,6 +133,8 @@ module.exports = {
       }
     })
   ],
+
+  context: __dirname,
 
   devtool: 'cheap-module-inline-source-map'
 };
