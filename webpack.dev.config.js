@@ -8,19 +8,25 @@ module.exports = {
   entry: [
     'webpack-hot-middleware/client?path=/__webpack_hmr',
     'babel-polyfill',
+    './src/less/styles.less',
+    './src/less/ui-kit.less',
     './src/scripts/app.js',
-    './src/less/styles.less'
   ],
 
+  resolveLoader: {
+    alias: {
+      'highlight-import-loader': path.resolve(__dirname, './src/utils/webpack-loaders/highlight-import-loader.js')
+    }
+  },
+
   resolve: {
-    extensions: ['.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less', '.json', '.md']
   },
 
   output: {
     path: path.join(__dirname, '/public/assets'),
-    filename: 'app.js',
-    publicPath: `http://localhost:8000/assets/`,
-    pathinfo: true
+    filename: '[name].js',
+    publicPath: `http://localhost:8000/assets/`
   },
 
   module: {
@@ -50,9 +56,42 @@ module.exports = {
           }
         }
       },
-      { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.css$/, loader: 'style-loader?sourceMap!css-loader?sourceMap!postcss-loader' },
-      { test: /\.less$/, loader: 'style-loader?sourceMap!css-loader?sourceMap!postcss-loader!less-loader?sourceMap' },
+      { test: /\.css$/,
+        use: [
+          { loader: 'style-loader?sourceMap' },
+          { loader: 'css-loader?sourceMap' },
+          { loader: 'postcss-loader' }
+        ]
+      },
+      { test: /\.less$/,
+        exclude: /ui\-kit\.less$/,
+        use: [
+          { loader: 'style-loader?sourceMap' },
+          { loader: 'css-loader?sourceMap' },
+          { loader: 'postcss-loader' },
+          { loader: 'less-loader?sourceMap' }
+        ]
+      },
+      {
+        test: /\.less$/,
+        include: /ui\-kit\.less$/,
+        use: [
+          { loader: 'style-loader',
+            options: { attrs: { id: 'ui-kit' } } },
+          { loader: 'css-loader',
+            options: {
+              minimize: {
+                discardComments: {
+                  remove: comment => !comment.startsWith('KIT') && comment[0] !== '!'
+                }
+              }
+            }
+          },
+          { loader: 'postcss-loader' },
+          { loader: 'less-loader' },
+          { loader: 'highlight-import-loader' }
+        ]
+      },
       { test: /\.(otf|ttf|eot|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=15000' },
       { test: /\.(png|jpg|svg)$/, loader: 'url-loader?limit=15000' }
     ]
@@ -74,7 +113,7 @@ module.exports = {
       options: {
         context: __dirname,
         postcss: [
-          autoprefixer
+          autoprefixer,
         ]
       }
     })
