@@ -29,6 +29,8 @@ import cors from 'kcors';
 import serve from 'koa-static';
 import bodyParser from 'koa-bodyparser';
 import mount from 'koa-mount';
+import koaConditional from 'koa-conditional-get';
+import koaEtag from 'koa-etag';
 import ejs from 'ejs';
 import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
@@ -158,6 +160,9 @@ app.use(convert(session({
 })));
 
 app.use(createRequestLogger({ level: 'info', logger }));
+
+app.use(koaConditional());
+app.use(koaEtag());
 
 app.use(mount('/api/v1', api));
 
