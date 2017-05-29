@@ -58,6 +58,7 @@ import db_config from './knexfile';  // eslint-disable-line import/default
 
 
 const exec_env = process.env.NODE_ENV || 'development';
+const dbEnv = process.env.DB_ENV || 'development';
 
 const streams = [];
 
@@ -93,7 +94,7 @@ export const logger = createLogger({
 const app = new Koa();
 app.logger = logger;
 
-const knexConfig = db_config[exec_env];
+const knexConfig = db_config[dbEnv];
 const bookshelf = global.$bookshelf || initBookshelf(knexConfig);
 const sphinx = initSphinx();
 const api = initApi(bookshelf, sphinx);
