@@ -27,6 +27,11 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import Message from './message';
 
+const canUseDOM = !!(
+  (typeof window !== 'undefined' &&
+  window.document && window.document.createElement)
+);
+
 const client = new ApiClient(API_HOST);
 
 function debounceCached(f, timeout = 250) {
@@ -235,6 +240,126 @@ export class UnwrappedRegister extends React.Component {
       {}
     );
 
+    const formBlock = (
+      <form action="" className="layout__row" id="registerForm" onChange={this.handleFormChange} onSubmit={this.handleSubmit}>
+        <div className="layout__row">
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerFirstName"
+              name="firstName"
+              placeholder="Firstname"
+              type="text"
+              value={this.state.firstName}
+              onChange={this.handleNameChange}
+            />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerLastName"
+              name="lastName"
+              placeholder="Lastname"
+              type="text"
+              value={this.state.lastName}
+              onChange={this.handleNameChange}
+            />
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerUsername">Username</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerUsername"
+              name="username"
+              placeholder="Username"
+              ref={c => this.username = c}
+              required="required"
+              type="text"
+              {...htmlFields.username}
+            />
+            {fields.username.error &&
+            <Message message={fields.username.error} type={MESSAGE_TYPES.ERROR} />
+            }
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerPassword">Password</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerPassword"
+              name="password"
+              required="required"
+              type="password"
+              {...htmlFields.password}
+            />
+            {fields.password.error &&
+            <Message message={fields.password.error} type={MESSAGE_TYPES.ERROR} />
+            }
+            {this.state.passwordWarning &&
+            <Message message={this.state.passwordWarning} />
+            }
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerPasswordRepeat"
+              name="password_repeat"
+              required="required"
+              type="password"
+              {...htmlFields.passwordRepeat}
+            />
+            {fields.passwordRepeat.error &&
+            <Message message={fields.passwordRepeat.error} type={MESSAGE_TYPES.ERROR} />
+            }
+          </div>
+          <div className="layout__row layout__row-double">
+            <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
+            <input
+              className="input input-gray input-big input-block"
+              id="registerEmail"
+              name="email"
+              placeholder="email.address@example.com"
+              required="required"
+              type="email"
+              {...htmlFields.email}
+            />
+            {fields.email.error &&
+            <Message message={fields.email.error} type={MESSAGE_TYPES.ERROR} />
+            }
+          </div>
+        </div>
+        <div className="layout__row layout__row-double">
+          {fields.agree.error &&
+          <Message message={fields.agree.error} type={MESSAGE_TYPES.ERROR} />
+          }
+          {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
+          <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
+            <label className="action checkbox">
+              <input
+                id="registerAgree"
+                name="agree"
+                required="required"
+                type="checkbox"
+                {...htmlFields.agree}
+              />
+              <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
+            </label>
+            <button className="button button-big button-green">Sign up</button>
+          </div>
+        </div>
+      </form>
+    );
+
+    let formOrDummy;
+
+    if (canUseDOM) {
+      formOrDummy = formBlock;
+    } else {
+      formOrDummy = <div className="layout__row">Form is loading…</div>;
+    }
+
     return (
       <div className="div" id="register">
         <header className="layout__row layout__row-double">
@@ -244,115 +369,8 @@ export class UnwrappedRegister extends React.Component {
             <p>Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.</p>
           </div>
         </header>
-        <form action="" className="layout__row" id="registerForm" onChange={this.handleFormChange} onSubmit={this.handleSubmit}>
-          <div className="layout__row">
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerFirstName"
-                name="firstName"
-                placeholder="Firstname"
-                type="text"
-                value={this.state.firstName}
-                onChange={this.handleNameChange}
-              />
-            </div>
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerLastName"
-                name="lastName"
-                placeholder="Lastname"
-                type="text"
-                value={this.state.lastName}
-                onChange={this.handleNameChange}
-              />
-            </div>
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="registerUsername">Username</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerUsername"
-                name="username"
-                placeholder="Username"
-                ref={c => this.username = c}
-                required="required"
-                type="text"
-                {...htmlFields.username}
-              />
-              {fields.username.error &&
-                <Message message={fields.username.error} type={MESSAGE_TYPES.ERROR} />
-              }
-            </div>
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerPassword"
-                name="password"
-                required="required"
-                type="password"
-                {...htmlFields.password}
-              />
-              {fields.password.error &&
-                <Message message={fields.password.error} type={MESSAGE_TYPES.ERROR} />
-              }
-              {this.state.passwordWarning &&
-                <Message message={this.state.passwordWarning} />
-              }
-            </div>
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerPasswordRepeat"
-                name="password_repeat"
-                required="required"
-                type="password"
-                {...htmlFields.passwordRepeat}
-              />
-              {fields.passwordRepeat.error &&
-                <Message message={fields.passwordRepeat.error} type={MESSAGE_TYPES.ERROR} />
-              }
-            </div>
-            <div className="layout__row layout__row-double">
-              <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-              <input
-                className="input input-gray input-big input-block"
-                id="registerEmail"
-                name="email"
-                placeholder="email.address@example.com"
-                required="required"
-                type="email"
-                {...htmlFields.email}
-              />
-              {fields.email.error &&
-                <Message message={fields.email.error} type={MESSAGE_TYPES.ERROR} />
-              }
-            </div>
-          </div>
-          <div className="layout__row layout__row-double">
-            {fields.agree.error &&
-              <Message message={fields.agree.error} type={MESSAGE_TYPES.ERROR} />
-            }
-            {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
-            <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
-              <label className="action checkbox">
-                <input
-                  id="registerAgree"
-                  name="agree"
-                  required="required"
-                  type="checkbox"
-                  {...htmlFields.agree}
-                />
-                <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
-              </label>
-              <button className="button button-big button-green">Sign up</button>
-            </div>
-          </div>
-        </form>
+
+        {formOrDummy}
       </div>
     );
   }
