@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { Link } from 'react-router';
 
 import { Tab, Tabs } from './tabs';
 
@@ -128,7 +129,7 @@ const WhatIsLibertySoil = () => (
                       {tab.text.map((paragraph, i) => (
                         <p key={i}>{paragraph}</p>
                       ))}
-                      <p><a href="/auth#register">{tab.linktext}</a></p>
+                      <p><Link to="/auth#register">{tab.linktext}</Link></p>
                     </div>
                   </div>
                   <div className="layout__grid_item layout__grid_item-identical">
