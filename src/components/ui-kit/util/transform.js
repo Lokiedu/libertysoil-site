@@ -64,7 +64,7 @@ export function processMarkdown(source) {
   const examples = [];
   const snippetToRender = /```(?:(render|(?:(javascript|js) \(render\))))\n([\s\S]+)\n```/gm;
   const next = source.replace(snippetToRender, code => (
-    examples.push({ code: code.replace(/^.*\n/, '').replace(/\n```$/, '') }),
+    examples.push(code.replace(/^.*\n/, '').replace(/\n```$/, '')),
     '```KIT_EXAMPLE\n```'
   ));
 

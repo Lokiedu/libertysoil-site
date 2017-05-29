@@ -21,3 +21,7 @@ export function offsetTop(node: Element) {
   const scrollTop = window.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || 0;
   return r.top + scrollTop;
 }
+
+export function _require(moduleName) {
+  return require(`../components/${moduleName}`);
+}

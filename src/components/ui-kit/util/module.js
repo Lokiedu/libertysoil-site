@@ -1,37 +1,96 @@
 import cloneDeep from 'lodash/cloneDeep';
 import difference from 'lodash/difference';
-import { dirname } from 'path-browserify';
+import { dirname, join } from 'path-browserify';
+import { tryRequire } from './require';
 
 import transform from './transform';
 
+function isFromSrc(path) {
+  return !!path.match(/^\./);
+}
+
+async function loadSource(path) {
+  if (process.env.NODE_ENV === 'production') {
+    return await fetch(CONFIG.js.rootpath.concat(join('/src', path)));
+  }
+
+  return require(tryRequire('!!raw-loader!'.concat(path))); // ??? need context
+}
+
 export default function Module(_options) {
   let raw, out, compile;
-  let path, fs, deps = [];
+  let path, fs, deps, listeners;
+  let frozen, outdated;
   let exports, evaluate;
-  const listeners = [];
 
   const rebuild = () => {
+    if (frozen) {
+      outdated = 'rebuild';
+      return;
+    }
+
     if (compile) {
+      if (typeof __raw !== 'string') { // isPromise
+        return __raw.then(rebuild).catch((e) => { ??? });
+      }
+
       // dont't `Object.assign(this, compile(this));`
       // order may make sense
-      const { __deps, __out } = compile(this);
-      this.__deps = __deps;
+      const { __deps, __out } = compile(raw, { context: this.__ctx });
+      this.__deps = __deps.filter(isFromSrc);
       this.__out = __out;
     }
   };
 
   const reload = () => {
-    this.exports = evaluate(out);
+    if (frozen) {
+      outdated = 'reload';
+      return;
+    }
+
+    let code;
+    if (typeof out === 'undefined') {
+      code = raw;
+    } else {
+      code = out;
+    }
+
+    this.exports = evaluate(code);
+
+    if (outdated) {
+      outdated = null;
+    }
+  };
+
+  const update = () => {
+    if (frozen) {
+      return;
+    }
+
+    switch (outdated) {
+      case 'rebuild': {
+        rebuild();
+        break;
+      }
+      case 'reload': {
+        reload();
+        break;
+      }
+    }
+
+    outdated = null;
   };
 
   {
     let opts = {};
     if (typeof _options === 'object') {
       // eslint-disable-next-line prefer-object-spread/prefer-object-spread
-      opts = Object.assign({}, _options, cloneDeep(Module.defaultOptions));
+      opts = Object.assign({}, Module.defaultOptions, _options);
     } else {
       opts = Module.defaultOptions;
     }
+
+    opts = cloneDeep(opts);
 
     raw = opts.__raw;
     out = opts.__out;
@@ -40,6 +99,7 @@ export default function Module(_options) {
     fs = opts.__fs;
     evaluate = opts.__evaluate;
     compile = opts.__compile;
+    listeners = opts.__listeners;
     exports = opts.exports;
   }
 
@@ -52,7 +112,7 @@ export default function Module(_options) {
         }
 
         raw = nextRaw;
-        rebuild(); // TODO: implement quiet updates
+        rebuild();
       }
     },
     __out: {
@@ -73,26 +133,40 @@ export default function Module(_options) {
           return;
         }
 
+        const ctx = this.__ctx;
         const removed = difference(deps, nextDeps);
         for (let i = 0, l = removed.length; i < l; ++i) {
-          fs.getModule(removed[i]).removeListener(reload);
+          fs.getModule(join(ctx, removed[i])).removeListener('change', reload);
         }
 
-        const added = difference(nextDeps, deps);
+        const added = difference(nextDeps, deps).filter(isFromSrc);
         for (let i = 0, l = added.length; i < l; ++i) {
-          fs.getModule(added[i]).addListener(reload);
+          const modulePath = join(ctx, added[i]);
+          let module = fs.getModule(modulePath);
+          if (!module) {
+            module = new Module({
+              __raw: loadSource(modulePath),
+              __path: modulePath,
+              __compile: transform,
+              __evaluate: eval
+            });
+            fs.set(modulePath, module);
+          }
+
+          module.addListener('change', reload);
         }
 
         deps = nextDeps;
       }
     },
+    __outdated: {
+      get: () => !!outdated
+    },
     __path: {
-      writable: false,
       get: () => path,
       // set: () => {}
     },
     __ctx: {
-      writable: false,
       get: () => dirname(path),
       // set: (nextCtx) => {
       //   path = dirname(nextCtx);
@@ -115,26 +189,48 @@ export default function Module(_options) {
         }
 
         exports = nextExports;
-        Module.broadcast('', listeners);
+        Module.broadcast({ type: 'change', target: this }, listeners);
+      }
+    },
+    frozen: {
+      get: () => frozen,
+      set: (nextFrozen) => {
+        if (nextFrozen === frozen) {
+          return;
+        }
+
+        frozen = nextFrozen;
+        update();
       }
     },
     addListener: {
       writable: false,
       configurable: false,
-      value: (f) => {
-        listeners.push(f);
+      value: (eventType, f) => {
+        if (!listeners[eventType]) {
+          listeners[eventType] = [];
+        }
+
+        listeners[eventType].push(f);
       }
     },
     removeListener: {
       writable: false,
       configurable: false,
-      value: (f) => {
-        const index = listeners.findIndex(l => l === f);
+      value: (eventType, f) => {
+        const index = listeners[eventType].findIndex(l => l === f);
         if (index >= 0) {
-          return listeners.splice(index, 1)[0];
+          return listeners[eventType].splice(index, 1)[0];
         }
 
         return undefined;
+      }
+    },
+    abort: {
+      writable: false,
+      configurable: false,
+      value: () => {
+        this.__deps = [];
       }
     }
   });
@@ -155,10 +251,15 @@ Module.defaultOptions = {
   __raw: null,
   __out: undefined,
   __deps: [],
+  __outdated: false,
+  __listeners: { '*': [], change: [] },
   __fs: null,
-  __ctx: undefined,
+  /* __ctx: undefined, */
+  __path: undefined,
   __compile: Module.compile,
   __evaluate: eval,
+  params: {},
+  frozen: false,
   exports: undefined
 };
 
@@ -167,6 +268,19 @@ Module.from = (options) => {
 };
 
 Module.broadcast = (event, listeners) => {
+  if (Array.isArray(listeners)) {
+    Module.broadcastAll(event, listeners);
+  } else {
+    Module.broadcastAll(event, listeners[event.type]);
+    Module.broadcastAll(event, listeners['*']);
+  }
+};
+
+Module.broadcastAll = (event, listeners) => {
+  if (!listeners || !listeners.length) {
+    return;
+  }
+
   for (let i = 0, l = listeners.length; i < l; ++i) {
     listeners[i](event);
   }

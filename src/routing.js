@@ -58,6 +58,7 @@ import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 import SearchPage from './pages/search';
 import AllPostsPage from './pages/all-posts';
+import UiKitPage from './pages/ui-kit';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
@@ -134,6 +135,7 @@ export function getRoutes(authHandler, fetchHandler) {
         </Route>
         <Route component={ConversationsToolPage} path="conversations" onEnter={withAuth} />
       </Route>
+      <Route component={UiKitPage} path="/kit(/:url_name)" onEnter={withoutAuth} />
     </Route>
   );
 }

@@ -16,7 +16,8 @@ module.exports = {
   resolveLoader: {
     alias: {
       'examples-loader': path.resolve(__dirname, './src/utils/webpack-loaders/examples-loader.js'),
-      'highlight-import-loader': path.resolve(__dirname, './src/utils/webpack-loaders/highlight-import-loader.js')
+      'highlight-import-loader': path.resolve(__dirname, './src/utils/webpack-loaders/highlight-import-loader.js'),
+      'units-loader': path.resolve(__dirname, './src/utils/webpack-loaders/units-loader.js')
     }
   },
 
