@@ -57,7 +57,7 @@ import {
 import db_config from './knexfile';  // eslint-disable-line import/default
 
 
-const exec_env = process.env.DB_ENV || 'development';
+const exec_env = process.env.NODE_ENV || 'development';
 
 const streams = [];
 
