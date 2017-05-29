@@ -19,7 +19,10 @@
 import expect from '../../../test-helpers/expect';
 import { createUser } from '../../../test-helpers/factories/user';
 import { login } from '../../../test-helpers/api';
+import { bookshelf, knex } from '../../../test-helpers/db';
 
+
+const PasswordChange = bookshelf.model('PasswordChange');
 
 describe('User', () => {
   let user, sessionId;
@@ -45,7 +48,7 @@ describe('User', () => {
     );
   });
 
-  describe('/api/v1/user/:id/following', () => {
+  describe('GET /api/v1/user/:id/following', () => {
     it('returns followed users', async () => {
       const user2 = await createUser();
       await user.following().attach(user2);
@@ -64,7 +67,7 @@ describe('User', () => {
     });
   });
 
-  describe('/api/v1/user/:id/mutual-follows', () => {
+  describe('GET /api/v1/user/:id/mutual-follows', () => {
     it('returns mutual follows', async () => {
       const user2 = await createUser();
       const unmutualUser = await createUser();
@@ -158,6 +161,81 @@ describe('User', () => {
         'body to satisfy',
         { error: expect.it('to be ok') }
       );
+    });
+  });
+
+  describe('POST /api/v1/user/password', () => {
+    let oldPasswordHash;
+
+    before(() => {
+      oldPasswordHash = user.get('hashed_password');
+    });
+
+    after(async () => {
+      await knex('password_changes').truncate();
+      await user.save({ hashed_password: oldPasswordHash }, { patch: true });
+    });
+
+    it('records password change', async () => {
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/user/password`,
+          method: 'POST',
+          body: { old_password: user.get('password'), new_password: 'new password' }
+        },
+        'body to satisfy',
+        { success: true }
+      );
+
+      const passwordChange = new PasswordChange()
+        .where({ user_id: user.id, event_type: 'change' })
+        .fetch({ require: true });
+
+      await expect(passwordChange, 'to be fulfilled');
+    });
+  });
+
+  describe('POST /api/v1/newpassword/:hash', () => {
+    let oldPasswordHash;
+
+    before(() => {
+      oldPasswordHash = user.get('hashed_password');
+    });
+
+    after(async () => {
+      await knex('password_changes').truncate();
+      await user.save({ hashed_password: oldPasswordHash }, { patch: true });
+    });
+
+    it('records password change', async () => {
+      await expect(
+        {
+          url: `/api/v1/resetpassword`,
+          method: 'POST',
+          body: { email: user.get('email') }
+        },
+        'body to satisfy',
+        { success: true }
+      );
+
+      await user.refresh();
+
+      await expect(
+        {
+          url: `/api/v1/newpassword/${user.get('reset_password_hash')}`,
+          method: 'POST',
+          body: { password: 'new password', password_repeat: 'new password' }
+        },
+        'body to satisfy',
+        { success: true }
+      );
+
+      const passwordChange = new PasswordChange()
+        .where({ user_id: user.id, event_type: 'reset' })
+        .fetch({ require: true });
+
+      await expect(passwordChange, 'to be fulfilled');
     });
   });
 });

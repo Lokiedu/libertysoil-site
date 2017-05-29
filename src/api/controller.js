@@ -1371,6 +1371,7 @@ export default class ApiController {
     }
 
     const User = this.bookshelf.model('User');
+    const PasswordChange = this.bookshelf.model('PasswordChange');
 
     let user;
 
@@ -1396,11 +1397,20 @@ export default class ApiController {
     }
 
     const hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.password, 10);
+    const prevHashedPassword = user.get('hashed_password');
 
     user.set('hashed_password', hashedPassword);
     user.set('reset_password_hash', '');
 
     await user.save(null, { method: 'update' });
+
+    await new PasswordChange({
+      user_id: user.id,
+      prev_hashed_password: prevHashedPassword,
+      ip: ctx.ip,
+      event_type: 'reset'
+    }).save();
+
     ctx.body = { success: true };
   };
 
@@ -2050,6 +2060,7 @@ export default class ApiController {
     }
 
     const User = this.bookshelf.model('User');
+    const PasswordChange = this.bookshelf.model('PasswordChange');
 
     try {
       const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
@@ -2063,10 +2074,18 @@ export default class ApiController {
       }
 
       const hashedPassword = await bcryptAsync.hashAsync(ctx.request.body.new_password, 10);
+      const prevHashedPassword = user.get('hashed_password');
 
       user.set('hashed_password', hashedPassword);
 
       await user.save(null, { method: 'update' });
+
+      await new PasswordChange({
+        user_id: user.id,
+        prev_hashed_password: prevHashedPassword,
+        ip: ctx.ip,
+        event_type: 'change'
+      }).save();
 
       ctx.body = { success: true };
     } catch (e) {
