@@ -147,6 +147,10 @@ export function initApi(bookshelf, sphinx) {
   api.get('/search', controller.search);
   api.get('/search-quick/:query', controller.searchStats);
 
-
+  api.get('/url', controller.validateUrl);
+  api.post('/bookmarks', controller.createBookmark);
+  api.delete('/bookmark/:id', controller.deleteBookmark);
+  api.post('/bookmark/:id', controller.updateBookmark);
+  api.get('/user/bookmarks', controller.getBookmarks);
   return api.routes();
 }

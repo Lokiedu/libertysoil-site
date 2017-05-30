@@ -25,6 +25,7 @@ import type { Attachment } from './attachments';
 import type { Geotag } from './geotags';
 import type { Hashtag } from './hashtags';
 import type { School } from './schools';
+import type { MapOfBookmarks } from './bookmarks';
 
 export type UserId = Uuid4;
 
@@ -97,6 +98,7 @@ export type UserRecentTags = {
 };
 
 export type User = {
+  bookmarks?: MapOfBookmarks,
   created_at: DateString,
   followed_geotags?: Array<Geotag>,
   followed_hashtags?: Array<Hashtag>,
@@ -115,6 +117,7 @@ export type User = {
 export type MapOfUsers = Map<UserId, User>;
 
 export type CurrentUser = {
+  bookmarks?: MapOfBookmarks,
   favourites?: Array<Uuid4>, // TODO: use PostId
   followed_geotags: Map<UrlNode, Geotag>,
   followed_hashtags: Map<UrlNode, Hashtag>,

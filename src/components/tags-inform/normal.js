@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React from 'react';
-import { transform } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 
 import Navigation from '../navigation';
@@ -25,30 +24,34 @@ import TagCloud from '../tag-cloud';
 
 const TagsInformNormal = ({ tags, ...props }) => (
   <Navigation {...props}>
-    {transform(tags, (acc, tagType, tagTypeTitle) => {
-      if (tagType.list.size) {
-        let unread = tagType.unreadPosts;
-        if (tagType.unreadPosts > 99) {
+    {tags.reduce((acc, tagType, tagTypeTitle) => {
+      if (tagType.get('list').size) {
+        let unread = tagType.get('unreadPosts');
+        if (unread > 99) {
           unread = '99+';
         }
 
         acc.push(
           <NavigationItem
             badge={unread}
-            icon={tagType.icon}
+            icon={tagType.get('icon')}
             key={tagTypeTitle}
             theme="2.0"
           >
             <TagCloud
               className="tags--row tags--queue"
-              tags={ImmutableMap({ [tagTypeTitle]: tagType.list })}
+              tags={ImmutableMap({ [tagTypeTitle]: tagType.get('list') })}
               theme="min"
               truncated
               smartCollapsing
             />
           </NavigationItem>
         );
+
+        return acc;
       }
+
+      return acc;
     }, [])}
   </Navigation>
 );

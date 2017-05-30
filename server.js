@@ -179,6 +179,7 @@ app.use(async function reactMiddleware(ctx) {
         .fetch({
           require: true,
           withRelated: [
+            'bookmarks',
             'following',
             'followed_hashtags',
             'followed_schools',
@@ -245,6 +246,9 @@ app.use(async function reactMiddleware(ctx) {
     }
 
     try {
+      // we always render Helmet's metadata as tags like <title></title>
+      Helmet.canUseDOM = false;
+
       const html = renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps} />
@@ -256,11 +260,10 @@ app.use(async function reactMiddleware(ctx) {
         ctx.status = fetchHandler.status;
       }
 
-      // we always render Helmet's metadata as tags like <title></title>
-      Helmet.canUseDOM = false;
-      const metadata = Helmet.rewind();
+      const metadata = Helmet.renderStatic();
 
-      ctx.staus = 200;
+      // Actual status code is returned with fetchData()
+      // ctx.status = 200;
       ctx.body = template({ state, html, metadata });
     } catch (e) {
       logger.error(e);

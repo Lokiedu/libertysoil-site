@@ -19,3 +19,4 @@ const exec_env = process.env.DB_ENV || 'test';
 global.$dbConfig = db_config[exec_env];
 
 process.env.NODE_ENV = 'test';
+process.env.API_HOST = 'http://localhost:8000';

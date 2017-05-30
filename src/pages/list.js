@@ -89,7 +89,8 @@ export class UnwrappedListPage extends React.Component {
     await Promise.all([
       trigger.loadPostRiver(),
       trigger.loadPersonalizedSuggestions(),
-      trigger.loadUserRecentTags()
+      trigger.loadUserRecentTags(),
+      trigger.loadBookmarks()
     ]);
   }
 

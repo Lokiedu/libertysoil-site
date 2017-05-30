@@ -26,20 +26,24 @@ import uuid from 'uuid';
 import slug from 'slug';
 import fetch from 'node-fetch';
 import Checkit from 'checkit';
+import he from 'he';
 
 import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
 import { removeWhitespace } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
+import * as urlUtils from '../utils/url';
 import config from '../../config';
 import { SEARCH_INDEXES_TABLE, SEARCH_RESPONSE_TABLE } from '../consts/search';
+import { getRoutes } from '../routing';
 import {
   User as UserValidators,
   School as SchoolValidators,
   Hashtag as HashtagValidators,
   Geotag as GeotagValidators,
   UserMessage as UserMessageValidators,
-  SearchQuery as SearchQueryValidators
+  SearchQuery as SearchQueryValidators,
+  Bookmark as BookmarkValidators
 } from './db/validators';
 
 const bcryptAsync = bb.promisifyAll(bcrypt);
@@ -1272,7 +1276,7 @@ export default class ApiController {
       .where({ id: ctx.session.user })
       .fetch({
         require: true,
-        withRelated: USER_RELATIONS
+        withRelated: USER_RELATIONS.concat('bookmarks')
       });
 
     ctx.body = { success: true, user };
@@ -3545,6 +3549,478 @@ export default class ApiController {
       this.processError(ctx, e);
     }
   }
+
+  createBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const checkit = new Checkit(BookmarkValidators);
+    try {
+      await checkit.run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+      await this.validateUrl(ctx2);
+
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    const req = ctx.request.body;
+    const Bookmark = this.bookshelf.model('Bookmark');
+    const url = urlUtils.getResourceUrl(req.url);
+
+    let ord, affected;
+    if ('ord' in req) {
+      const knex = this.bookshelf.knex;
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .update({ ord: knex.raw('ord + 1') })
+              .where('ord', '>=', req.ord)
+              .andWhere('user_id', ctx.session.user)
+              .returning('*');
+          });
+
+        affected = await q.fetchAll();
+        affected = await affected.toJSON();
+        ord = req.ord;
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    } else {
+      try {
+        const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .where('user_id', ctx.session.user)
+              .max('ord');
+          });
+
+        affected = [];
+        ord = await q.fetchAll();
+        ord = await ord.toJSON();
+        if (_.isNil(ord[0].max)) {
+          ord = 1;
+        } else {
+          ord = ord[0].max + 1;
+        }
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = { error: e.message };
+        return;
+      }
+    }
+
+    const bk = new Bookmark({
+      user_id: ctx.session.user,
+      title: req.title,
+      url,
+      ord
+    });
+
+    if (!_.isNil(req.more)) {
+      const attrs = {};
+      const allowedAttributes = ['description', 'icon'];
+      for (const attr of allowedAttributes) {
+        attrs[attr] = req.more[attr];
+      }
+
+      bk.set('more', attrs);
+    }
+
+    try {
+      await bk.save(null, { method: 'insert' });
+      const target = await Bookmark
+        .where({ id: bk.get('id') })
+        .fetch({ require: true });
+
+      affected = _.keyBy(affected, 'id');
+      ctx.body = { success: true, affected, target };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  deleteBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.params.id) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let bookmark;
+    try {
+      bookmark = await Bookmark.where({ id: ctx.params.id }).fetch({ require: true });
+      if (bookmark.get('user_id') !== ctx.session.user) {
+        ctx.status = 403;
+        ctx.body = { error: 'You are not authorized' };
+        return;
+      }
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+
+    let affected;
+    try {
+      const ord = bookmark.get('ord');
+      await bookmark.destroy();
+      affected = { [ctx.params.id]: null };
+
+      const knex = this.bookshelf.knex;
+      const q = Bookmark.forge()
+          .query(qb => {
+            qb
+              .table('bookmarks')
+              .update({ ord: knex.raw('ord - 1') })
+              .where('ord', '>=', ord)
+              .andWhere('user_id', ctx.session.user)
+              .returning('*');
+          });
+
+      let rows = await q.fetchAll();
+      rows = await rows.toJSON();
+      rows = _.keyBy(rows, 'id');
+      Object.assign(affected, rows);
+
+      ctx.status = 200;
+      ctx.body = { success: true, affected };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message, affected };
+      return;
+    }
+  };
+
+  updateBookmark = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!ctx.params.id) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
+      return;
+    }
+
+    const checkit = Checkit(BookmarkValidators);
+    try {
+      await checkit.run(ctx.request.body);
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { error: e.toJSON() };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    let bookmark;
+    try {
+      bookmark = await Bookmark.where({ id: ctx.params.id }).fetch({ require: true });
+    } catch (e) {
+      ctx.status = 404;
+      return;
+    }
+
+    if (bookmark.get('user_id') !== ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not allowed to update this bookmark' };
+      return;
+    }
+
+    try {
+      const ctx2 = {
+        session: ctx.session,
+        query: { url: ctx.request.body.url }
+      };
+
+      await this.validateUrl(ctx2);
+      if (ctx2.status !== 200) {
+        ctx.status = ctx2.status;
+        ctx.body = ctx2.body;
+        return;
+      }
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+      return;
+    }
+
+    let newOrd = ctx.request.body.ord;
+    const oldOrd = bookmark.get('ord');
+    let affected = {};
+
+    if (newOrd !== oldOrd) {
+      let q = Bookmark.forge().query(qb => {
+        qb
+          .table('bookmarks')
+          .where('user_id', ctx.session.user)
+          .max('ord');
+      });
+      const max = (await (await q.fetchAll()).toJSON())[0].max;
+      if (max < newOrd) {
+        newOrd = max;
+      }
+
+      await bookmark.save({ ord: max + 1 }, { method: 'update' });
+
+      let op;
+      const knex = this.bookshelf.knex;
+      q = Bookmark.forge().query(qb => {
+        if (newOrd < oldOrd) {
+          op = '+';
+          qb.where('ord', '>=', newOrd).andWhere('ord', '<', oldOrd);
+        } else {
+          op = '-';
+          qb.where('ord', '>', oldOrd).andWhere('ord', '<=', newOrd);
+        }
+
+        qb
+          .andWhere({ user_id: ctx.session.user })
+          .update({ ord: knex.raw(`ord ${op} 1`) })
+          .returning('*');
+      });
+
+      affected = _.keyBy(await (await q.fetchAll()).toJSON(), 'id');
+    }
+
+    bookmark.set('url', urlUtils.getResourceUrl(ctx.request.body.url));
+    bookmark.set('title', ctx.request.body.title);
+    bookmark.set('ord', newOrd);
+
+    if (!_.isNil(ctx.request.body.more)) {
+      const attrs = {};
+      const allowedAttributes = ['description', 'icon'];
+      for (const attr of allowedAttributes) {
+        attrs[attr] = ctx.request.body.more[attr];
+      }
+
+      bookmark.set('more', attrs);
+    }
+
+    bookmark.attributes.updated_at = new Date().toJSON();
+
+    try {
+      await bookmark.save(null, { method: 'update' });
+      await bookmark.fetch({ require: true });
+
+      ctx.status = 200;
+      ctx.body = {
+        target: await bookmark.toJSON(),
+        success: true,
+        affected
+      };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  getBookmarks = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Bookmark = this.bookshelf.model('Bookmark');
+
+    try {
+      let bookmarks = await Bookmark.collection()
+        .query(qb => { qb.where({ user_id: ctx.session.user }); })
+        .fetch();
+
+      bookmarks = await bookmarks.toJSON();
+      bookmarks = _.keyBy(bookmarks, 'id');
+
+      ctx.status = 200;
+      ctx.body = { bookmarks };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  getPageMetadata = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('url' in ctx.query)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter is not given' };
+      return;
+    }
+
+    const url = ctx.query.url.trim();
+    const withProtocol = urlUtils.hasProtocol(url);
+
+    const API_HOST = process.env.API_HOST || 'http://localhost:8000';
+    const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
+
+    if (!urlUtils.checkMatchHosts(url.toLowerCase(), allowedHosts, withProtocol)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
+      return;
+    }
+
+    const resourceUrl = urlUtils.getResourceUrl(url, allowedHosts, withProtocol);
+    if (resourceUrl.startsWith('/api')) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" must point to the page' };
+      return;
+    }
+
+    try {
+      const session = ctx.request.header.cookie
+        .split('; ')
+        .find(s => s.startsWith('connect.sid'));
+
+      const formatted = format_url({
+        protocol: 'http:',
+        host: parse_url(API_HOST).host,
+        port: parse_url(API_HOST).port,
+        pathname: resourceUrl
+      });
+
+      const request = {
+        method: 'GET',
+        host: parse_url(API_HOST).hostname,
+        port: parse_url(API_HOST).port,
+        headers: { 'Cookie': session, 'Accept': 'test/html' }
+      };
+
+      // fetch page with such url
+      const res = await fetch(formatted, request);
+      if (res.status !== 200) {
+        ctx.status = res.status;
+        return;
+      }
+
+      let buf = '';
+      let recent = '';
+      for (const c of (await res.text())) {
+        buf += c;
+        recent += c;
+        if (recent.length > 7) {
+          recent = recent.slice(1);
+        }
+        if (recent === '</head>') {
+          break;
+        }
+      }
+
+      const meta = {};
+      const keys = ['title'];
+
+      // TODO: support different variants of opening and closing tags
+      keys.forEach(key => {
+        const val = buf
+          // matches whole tag with content
+          .match(new RegExp(`<${key}( .{0,})?>`, 'i'))[0]
+          // only content (in group)
+          .match(new RegExp(`.{2,}>(.{0,})<\/${key}>$`, 'i'))[1];
+
+        meta[key] = he.decode(val);
+      });
+
+      ctx.status = 200;
+      ctx.body = meta;
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
+
+  validateUrl = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    if (!('url' in ctx.query)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter is not given' };
+      return;
+    }
+
+    const url = ctx.query.url.trim();
+    const withProtocol = urlUtils.hasProtocol(url);
+
+    const API_HOST = process.env.API_HOST || 'http://localhost:8000';
+    const allowedHosts = _.compact(_.flatten([API_HOST, process.env.VIRTUAL_HOST]));
+
+    if (!urlUtils.checkMatchHosts(url, allowedHosts, withProtocol)) {
+      ctx.status = 400;
+      ctx.body = { error: '"url" parameter isn\'t internal to LibertySoil website' };
+      return;
+    }
+
+    const resourceUrl = urlUtils.getResourceUrl(url, allowedHosts, withProtocol);
+    const handle = () => {};
+    const routeTree = getRoutes(handle, handle);
+
+    try {
+      const matches = await urlUtils.checkMatchRoutes(resourceUrl, routeTree);
+
+      if (!matches) {
+        ctx.status = 404;
+        return;
+      }
+
+      if (!ctx.query.meta) {
+        ctx.status = 200;
+        ctx.body = { success: true };
+        return;
+      }
+
+      ctx.body = {
+        success: true,
+        meta: await urlUtils.getPageMetadata(resourceUrl, ctx.request.header.cookie)
+      };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
 
   // ========== Helpers ==========
 
