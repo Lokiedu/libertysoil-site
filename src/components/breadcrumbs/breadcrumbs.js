@@ -172,12 +172,17 @@ export default class Breadcrumbs extends Component {
       const props = {};
       const { type: typeDef } = crumb;
 
+      let className = 'breadcrumbs__item';
       if ((typeDef instanceof Function) && checkType(typeDef)) {
         props.collapsed = isCollapsed[i];
+
+        if (!isCollapsed[i] && crumb.props && crumb.props.name) {
+          className += ' breadcrumbs__item--narrow';
+        }
       }
 
       return (
-        <div className="breadcrumbs__item" key={i}>
+        <div className={className} key={i}>
           {cloneElement(crumb, props)}
         </div>
       );
