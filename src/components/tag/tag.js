@@ -58,6 +58,7 @@ export default class Tag extends React.Component {
 
   renderIcon = () => ({
     ...castObject(this.props.icon, 'icon'),
+    collapsed: this.props.collapsed,
     size: this.props.size.toLowerCase(),
     inactive: this.props.inactive
   });

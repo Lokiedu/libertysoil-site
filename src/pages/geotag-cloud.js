@@ -73,7 +73,7 @@ class GeotagCloudPage extends Component {
           <HeaderLogo />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Geotags">
-              <TagIcon big type={TAG_PLANET} />
+              <TagIcon type={TAG_PLANET} />
             </Breadcrumbs>
           </div>
         </Header>

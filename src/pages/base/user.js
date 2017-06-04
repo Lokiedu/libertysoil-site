@@ -79,7 +79,7 @@ const BaseUserPage = (props) => {
       <Header current_user={current_user} is_logged_in={is_logged_in}>
         <HeaderLogo />
         <Breadcrumbs title={name}>
-          <Avatar isRound size={36} user={user} />
+          <Avatar isRound size={26} user={user} />
         </Breadcrumbs>
       </Header>
 

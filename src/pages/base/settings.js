@@ -92,7 +92,7 @@ class BaseSettingsPage extends React.Component {
           <Breadcrumbs title={name}>
             <div className="user_box__avatar user_box__avatar-round">
               <Avatar
-                size={36}
+                size={26}
                 isLink={false}
                 user={user}
               />
