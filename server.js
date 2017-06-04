@@ -245,6 +245,10 @@ app.use(async function reactMiddleware(ctx) {
     }
 
     try {
+      // Helmet.canUseDOM must be assigned before renderToString.
+      // Otherwise Helmet.rewind returns original object on the first run which may break some tests.
+      Helmet.canUseDOM = false;
+
       const html = renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps} />
@@ -257,7 +261,6 @@ app.use(async function reactMiddleware(ctx) {
       }
 
       // we always render Helmet's metadata as tags like <title></title>
-      Helmet.canUseDOM = false;
       const metadata = Helmet.rewind();
 
       ctx.staus = 200;
