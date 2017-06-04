@@ -104,7 +104,7 @@ const BaseUserPageWithoutHeader = (props) => {
                     to={`/user/${user.get('username')}/favorites`}
                     visible
                   >
-                    Favorites
+                    Favourites
                   </PageContentLink>
                 }
                 <PageContentLink
