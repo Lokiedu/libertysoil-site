@@ -33,15 +33,30 @@ class HeaderLogo extends React.Component {
     isLink: true
   };
 
+  constructor(...args) {
+    super(...args);
+    this.state = { src: '/images/logo.svg' };
+  }
+
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
   }
 
+  handleError = () => {
+    this.setState({ src: '/images/mail/ls.png' });
+  };
+
   render() {
     const iconBody = (
-      <div className="logo">
-        <span className="logo__title">Liberty Soil</span>
-      </div>
+      <figure className="logo">
+        <img
+          alt="Liberty Soil"
+          className="logo__image"
+          src={this.state.src}
+          onError={this.handleError}
+        />
+        <figcaption className="logo__title">Liberty Soil</figcaption>
+      </figure>
     );
 
     let className = 'header__corner action';
