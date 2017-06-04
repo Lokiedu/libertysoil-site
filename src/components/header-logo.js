@@ -52,7 +52,9 @@ class HeaderLogo extends React.Component {
         <img
           alt="Liberty Soil"
           className="logo__image"
+          height="28"
           src={this.state.src}
+          width="28"
           onError={this.handleError}
         />
         <figcaption className="logo__title">Liberty Soil</figcaption>
