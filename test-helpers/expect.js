@@ -66,15 +66,11 @@ expect.addAssertion('to have body array length', function (expect, subject, valu
 
 // TODO: Expect to yield a redirect to a specific path.
 expect.addAssertion('to redirect', function (expect, subject/*, value*/) {
-  return expect(subjectToRequest(subject), 'to yield response', {
-    statusCode: 307
-  });
+  return expect(subjectToRequest(subject), 'to yield response', 307);
 });
 
 expect.addAssertion('to open successfully', function (expect, subject/*, value*/) {
-  return expect(subjectToRequest(subject), 'to yield response', {
-    statusCode: 200
-  });
+  return expect(subjectToRequest(subject), 'to yield response', 200);
 });
 
 expect.addAssertion('body to contain', function (expect, subject, value) {
@@ -121,21 +117,11 @@ expect.addAssertion('to open authorized', function (expect, subject/*, value*/) 
 });
 
 expect.addAssertion('not to open authorized', function (expect, subject/*, value*/) {
-  expect.errorMode = 'bubble';
-  return expect(subjectToRequest(subject), 'to yield response', {})
-    .then(function (context) {
-      const status = context.httpResponse.statusLine.statusCode;
-      expect(status, 'to equal', 403);
-    });
+  return expect(subjectToRequest(subject), 'to yield response', 403);
 });
 
 expect.addAssertion('to open not found', function (expect, subject/*, value*/) {
-  return expect(subjectToRequest(subject), 'to yield response', {})
-    .then(function (context) {
-      const status = context.httpResponse.statusLine.statusCode;
-      expect(status, 'to equal', 404);
-      return context;
-    });
+  return expect(subjectToRequest(subject), 'to yield response', 404);
 });
 
 expect.addAssertion('to fail validation with', function (expect, subject, value) {
