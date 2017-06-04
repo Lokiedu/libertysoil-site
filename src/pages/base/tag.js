@@ -66,7 +66,7 @@ function getPageCaption(type, name, urlId) {
 
   return (
     <PageCaption
-      iconRight={<Tag size="BIG" type={type} urlId={urlId} />}
+      iconRight={<Tag collapsed size="BIG" type={type} urlId={urlId} />}
     >
       <h1 className="page-head__title">
         {caption}
