@@ -18,12 +18,18 @@
 import React from 'react';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
+import clone from 'lodash/clone';
+import isEqual from 'lodash/isEqual';
 import { List } from 'immutable';
 
 import LoadMore from './load-more';
 import River from './river_of_posts';
 
 export default class LoadableRiver extends React.Component {
+  static contextTypes = {
+    router: React.PropTypes.func.isRequired
+  };
+
   static defaultProps = {
     loadMoreLimit: 4,
     onAutoLoad: noop,
@@ -32,12 +38,22 @@ export default class LoadableRiver extends React.Component {
     waiting: false
   };
 
-  constructor(props, ...args) {
-    super(props, ...args);
+  constructor(props, context, ...args) {
+    super(props, context, ...args);
 
     this.state = {
       displayLoadMore: props.river.size > props.loadMoreLimit
     };
+
+    this.query = clone(context.router.location.query);
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    const { query: nextQuery } = nextContext.router.location;
+    if (!isEqual(this.query, nextQuery)) {
+      this.setState({ displayLoadMore: true });
+      this.query = clone(nextQuery);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
