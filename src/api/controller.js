@@ -98,7 +98,7 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const posts = Post.collection().query(qb => {
       this.applySortQuery(qb, ctx.query, '-created_at');
-      this.applyLimitQuery(qb, ctx.query, 10);
+      this.applyLimitQuery(qb, ctx.query, 5);
       this.applyOffsetQuery(qb, ctx.query);
 
       if ('continent' in ctx.query) {
