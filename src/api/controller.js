@@ -107,6 +107,10 @@ export default class ApiController {
           .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
           .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
           .where('geotags.continent_code', ctx.query.continent);
+      } else if ('geotags' in ctx.query) {
+        qb
+          .distinct('posts.*')
+          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
       }
     });
     let response = await posts.fetch({ require: false, withRelated: POST_RELATIONS });

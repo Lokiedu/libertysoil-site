@@ -48,7 +48,7 @@ import TagPage from './pages/tag';
 import HashtagEditPage from './pages/hashtag-edit';
 import TagCloudPage from './pages/tag-cloud';
 import SchoolCloudPage from './pages/school-cloud';
-import GeotagCloudPage from './pages/geotag-cloud';
+import AllGeotagsPage from './pages/all-geotags';
 import GeotagPage from './pages/geotag';
 import GeotagEditPage from './pages/geotag-edit';
 import SchoolsToolPage from './pages/tools/schools-tool';
@@ -111,7 +111,7 @@ export function getRoutes(authHandler, fetchHandler) {
         </Route>
       </Route>
       <Route path="/geo">
-        <IndexRoute component={GeotagCloudPage} onEnter={withoutAuth} />
+        <IndexRoute component={AllGeotagsPage} onEnter={withoutAuth} />
         <Route path="/geo/:url_name">
           <IndexRoute component={GeotagPage} onEnter={withoutAuth} />
           <Route component={GeotagEditPage} path="/geo/:url_name/edit" onEnter={withAuth} />
