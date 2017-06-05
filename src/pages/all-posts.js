@@ -115,16 +115,18 @@ class AllPostsPage extends React.Component {
   }
 
   loadPostRiverManually = async () => {
-    const { all_posts } = this.props;
+    const { all_posts, location } = this.props;
 
-    await this.triggers.loadAllPosts(all_posts.size);
+    const query = { ...location.query, offset: all_posts.size };
+    await this.triggers.loadAllPosts(query);
   }
 
   loadMore = async (isVisible) => {
-    const { all_posts, ui } = this.props;
+    const { all_posts, location, ui } = this.props;
 
     if (isVisible && !ui.getIn(['progress', 'loadAllPostsInProgress'])) {
-      const res = await this.triggers.loadAllPosts({ offset: all_posts.size });
+      const query = { ...location.query, offset: all_posts.size };
+      const res = await this.triggers.loadAllPosts(query);
 
       this.setState({
         displayLoadMore: res === false || res.length > 0
