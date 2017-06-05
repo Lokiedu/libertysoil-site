@@ -28,8 +28,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
-import VisibilitySensor from '../components/visibility-sensor';
-
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 
@@ -43,11 +41,10 @@ import CreatePost from '../components/create-post';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
-import River from '../components/river_of_posts';
+import LoadableRiver from '../components/loadable-river';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
 import AddedTags from '../components/post/added-tags';
-import Button from '../components/button';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import ContinentFilter from '../components/filters/continent-filter';
 import SortingFilter from '../components/filters/sorting-filter';
@@ -59,8 +56,6 @@ import {
 } from '../actions/posts';
 import { POST_SORTING_TYPES } from '../consts/sorting';
 
-
-const client = new ApiClient(API_HOST);
 export const LOAD_MORE_LIMIT = 4;
 
 class AllPostsPage extends React.Component {
@@ -88,83 +83,54 @@ class AllPostsPage extends React.Component {
     await triggers.loadAllPosts(router.location.query);
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      displayLoadMore: false
-    };
-
-    this.triggers = new ActionsTrigger(client, this.props.dispatch);
-  }
-
-  componentWillMount() {
-    if (this.props.all_posts.size > LOAD_MORE_LIMIT) {
-      this.setState({ displayLoadMore: true });
-    }
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.triggers = new ActionsTrigger(
+      new ApiClient(API_HOST),
+      props.dispatch
+    );
   }
 
   componentWillReceiveProps(nextProps) {
     if (!isEqual(this.props.location.query, nextProps.location.query)) {
       this.triggers.loadAllPosts(nextProps.location.query);
     }
-
-    this.setState({
-      displayLoadMore: nextProps.all_posts.size > LOAD_MORE_LIMIT
-    });
   }
 
-  loadPostRiverManually = async () => {
-    const { all_posts, location } = this.props;
-
-    const query = { ...location.query, offset: all_posts.size };
-    await this.triggers.loadAllPosts(query);
+  handleForceLoadPosts = async () => {
+    const { river, location } = this.props;
+    const query = { ...location.query, offset: river.size };
+    const res = await this.triggers.loadAllPosts(query);
+    return Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
   }
 
-  loadMore = async (isVisible) => {
-    const { all_posts, location, ui } = this.props;
-
-    if (isVisible && !ui.getIn(['progress', 'loadAllPostsInProgress'])) {
-      const query = { ...location.query, offset: all_posts.size };
-      const res = await this.triggers.loadAllPosts(query);
-
-      this.setState({
-        displayLoadMore: res === false || res.length > 0
-      });
+  handleAutoLoadPosts = async (isVisible) => {
+    if (!isVisible) {
+      return undefined;
     }
+
+    const { river, location, ui } = this.props;
+    let displayLoadMore = true;
+    if (!ui.getIn(['progress', 'loadAllPostsInProgress'])) {
+      const query = { ...location.query, offset: river.size };
+      const res = await this.triggers.loadAllPosts(query);
+      displayLoadMore = Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
+    }
+
+    return displayLoadMore;
   };
 
   render() {
     const {
-      comments,
       current_user,
       create_post_form,
       is_logged_in,
-      posts,
       resetCreatePostForm,
-      all_posts,
       ui,
       updateCreatePostForm,
-      users
     } = this.props;
 
     const actions = { resetCreatePostForm, updateCreatePostForm };
-
-    let loadMore;
-    if (this.state.displayLoadMore) {
-      loadMore = (
-        <div className="layout layout-align_center layout__space layout__space-double">
-          <VisibilitySensor onChange={this.loadMore}>
-            <Button
-              title="Load more..." waiting={ui.getIn(['progress', 'loadAllPostsInProgress'])}
-              onClick={this.loadPostRiverManually}
-            />
-          </VisibilitySensor>
-        </div>
-      );
-    } else {
-      loadMore = null;
-    }
 
     return (
       <div>
@@ -190,16 +156,19 @@ class AllPostsPage extends React.Component {
                     userRecentTags={current_user.get('recent_tags')}
                   />
                 }
-                <River
-                  comments={comments}
+                <LoadableRiver
+                  comments={this.props.comments}
                   current_user={current_user}
-                  posts={posts}
-                  river={all_posts}
+                  loadMoreLimit={LOAD_MORE_LIMIT}
+                  posts={this.props.posts}
+                  river={this.props.river}
                   triggers={this.triggers}
                   ui={ui}
-                  users={users}
+                  users={this.props.users}
+                  waiting={ui.getIn(['progress', 'loadAllPostsInProgress'])}
+                  onAutoLoad={this.handleAutoLoadPosts}
+                  onForceLoad={this.handleForceLoadPosts}
                 />
-                {loadMore}
               </PageContent>
               <SidebarAlt>
                 {is_logged_in &&
@@ -231,12 +200,12 @@ const selector = createSelector(
   state => state.get('all_posts'),
   state => state.get('users'),
   state => state.get('ui'),
-  (current_user, comments, create_post_form, posts, all_posts, users, ui) => ({
+  (current_user, comments, create_post_form, posts, river, users, ui) => ({
     ...current_user,
     comments,
     create_post_form,
     posts,
-    all_posts,
+    river,
     users,
     ui
   })
