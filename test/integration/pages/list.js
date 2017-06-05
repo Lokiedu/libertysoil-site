@@ -77,7 +77,7 @@ describe('ListPage', () => {
       const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
       await expect(pageContent, 'to have child', '.box-post');  // posting form
 
-      const postsContainer = pageContent.childNodes[1];
+      const postsContainer = pageContent.childNodes[1].childNodes[0];
       await expect(postsContainer, 'to have no children');
     });
 
