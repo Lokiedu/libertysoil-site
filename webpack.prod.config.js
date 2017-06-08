@@ -10,8 +10,15 @@ module.exports = {
     './src/less/styles.less'
   ],
 
+  resolveLoader: {
+    alias: {
+      'example-loader': path.resolve(__dirname, './src/utils/webpack-loaders/example-loader.js'),
+      'highlight-import-loader': path.resolve(__dirname, './src/utils/webpack-loaders/highlight-import-loader.js'),
+    }
+  },
+
   resolve: {
-    extensions: ['.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less', '.json']
   },
 
   output: {
@@ -50,13 +57,19 @@ module.exports = {
     ]
   },
 
+  node: {
+    fs: 'empty',
+    module: 'empty',
+    net: 'empty',
+  },
+
   plugins: [
     // An appropriate alternative to envify.
     new webpack.EnvironmentPlugin([
       'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN', 'GOOGLE_ANALYTICS_ID', 'GOOGLE_TAG_MANAGER_ID', 'INTERCOM_APP_ID'
     ]),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
+    // new UglifyJSPlugin(),
     new ExtractTextPlugin({
       filename: 'styles.css',
       allChunks: true

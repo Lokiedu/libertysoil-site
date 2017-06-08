@@ -45,3 +45,9 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('content')
 );
+
+// if (window) {
+//   window['require'] = moduleName => (
+//     require(`../components/${moduleName}`)
+//   );
+// }
