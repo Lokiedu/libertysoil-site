@@ -54,20 +54,19 @@ const BaseUserPageWithoutHeader = (props) => {
   );
   const showFavouritesLink = user.get('favourited_posts') && !!user.get('favourited_posts').size;
 
-  let name = user.get('username');
-
-  if (user.get('more')) {
-    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
-      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
-    }
-  }
+  const name = '@'.concat(user.get('username'));
 
   return (
     <div>
       <Header current_user={current_user} is_logged_in={is_logged_in}>
         <HeaderLogo />
-        <Breadcrumbs title={name}>
-          <Avatar isRound size={36} user={user} />
+        <Breadcrumbs className="breadcrumbs--user" title={name}>
+          <Avatar
+            className="breadcrumbs__avatar"
+            isRound
+            size={26}
+            user={user}
+          />
         </Breadcrumbs>
       </Header>
 

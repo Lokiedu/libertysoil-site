@@ -78,10 +78,7 @@ class BaseSettingsPage extends React.Component {
 
     const user = current_user.get('user');
 
-    let name = user.get('username');
-    if (user.getIn(['more', 'firstName']) || user.getIn(['more', 'lastName'])) {
-      name = `${user.getIn(['more', 'firstName'])} ${user.getIn(['more', 'lastName'])}`;
-    }
+    const name = '@'.concat(user.get('username'));
 
     const isBio = children && children.type.displayName === 'Connect(SettingsBioPage)';
 
@@ -89,14 +86,13 @@ class BaseSettingsPage extends React.Component {
       <div>
         <Header current_user={current_user} is_logged_in={is_logged_in}>
           <HeaderLogo />
-          <Breadcrumbs title={name}>
-            <div className="user_box__avatar user_box__avatar-round">
-              <Avatar
-                size={26}
-                isLink={false}
-                user={user}
-              />
-            </div>
+          <Breadcrumbs className="breadcrumbs--user" title={name}>
+            <Avatar
+              className="breadcrumbs__avatar"
+              size={26}
+              isLink={false}
+              user={user}
+            />
           </Breadcrumbs>
         </Header>
 
