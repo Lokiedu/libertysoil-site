@@ -18,7 +18,7 @@
 
 .tag {
   max-width: 135px;
-  height: 24px;
+  height: 26px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -40,13 +40,23 @@
   &__icon {
     position: relative;
     padding: 6px;
-    width: 24px;
-    height: 24px;
+    width: 25px;
+    height: 26px;
     flex-shrink: 0;
     border-width: 1px;
     border-style: solid;
     border-left: none;
     color: white;
+
+    &--collapsed {
+      width: 24px;
+      border-right: none;
+
+      &.icon--size_big {
+        width: 35px;
+        height: 37px;
+      }
+    }
 
     &[class*="tag__icon--action"] {
       cursor: pointer;

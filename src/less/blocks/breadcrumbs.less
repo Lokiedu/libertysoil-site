@@ -8,6 +8,11 @@
   &-shift {
     margin-left: -3px;
   }
+
+  &--user {
+    color: #000;
+    font-weight: 500;
+  }
 }
 
 .breadcrumbs__body {
@@ -18,13 +23,26 @@
 }
 
 .breadcrumbs__item {
-  //flex-shrink: 0;
-  margin-right: 12px;
+  padding: 0 17px;
+
+  &--narrow {
+    padding-left: 8px;
+    padding-right: 0;
+  }
 }
 
 .breadcrumbs__title {
   &:extend(.font-open_sans);
   &:extend(.font-light);
+  padding: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:only-child {
+    padding-left: 17px;
+  }
+}
+
+.breadcrumbs__avatar {
+  box-shadow: 1px 3px 2px rgba(0, 0, 0, 0.08);
 }

@@ -27,8 +27,6 @@ import {
   CurrentUser as CurrentUserPropType
 } from '../prop-types/users';
 
-import VisibilitySensor from '../components/visibility-sensor';
-
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 
@@ -42,11 +40,10 @@ import CreatePost from '../components/create-post';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Footer from '../components/footer';
-import River from '../components/river_of_posts';
 import Sidebar from '../components/sidebar';
 import SidebarAlt from '../components/sidebarAlt';
+import LoadableRiver from '../components/loadable-river';
 import AddedTags from '../components/post/added-tags';
-import Button from '../components/button';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
 import SideSuggestedUsers from '../components/side-suggested-users';
 import { ActionsTrigger } from '../triggers';
@@ -56,8 +53,6 @@ import {
   updateCreatePostForm
 } from '../actions/posts';
 import { clearRiver } from '../actions/river';
-
-const client = new ApiClient(API_HOST);
 
 export const LOAD_MORE_LIMIT = 4;
 
@@ -93,104 +88,56 @@ export class UnwrappedListPage extends React.Component {
     ]);
   }
 
-  constructor(props) {
-    super(props);
+  constructor(props, ...args) {
+    super(props, ...args);
 
-    this.state = {
-      downloadAttemptsCount: 0,
-      displayLoadMore: false
-    };
+    this.triggers = new ActionsTrigger(
+      new ApiClient(API_HOST),
+      props.dispatch
+    );
   }
 
-  componentWillMount() {
-    if (this.props.river.size > LOAD_MORE_LIMIT) {
-      this.setState({ displayLoadMore: true });
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    let displayLoadMore = false;
-    if (nextProps.river.size > LOAD_MORE_LIMIT) {
-      displayLoadMore = true;
-    }
-
-    this.setState({ displayLoadMore });
-  }
-
-  loadPostRiverManually = async () => {
+  handleForceLoadPosts = async () => {
     const { river } = this.props;
-
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-    await triggers.loadPostRiver(river.size);
+    const res = this.triggers.loadPostRiver(river.size);
+    return Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
   }
 
-  loadMore = async (isVisible) => {
-    const { dispatch, river, ui } = this.props;
-
-    const triggers = new ActionsTrigger(client, dispatch);
-
-    if (isVisible && !ui.getIn(['progress', 'loadRiverInProgress']) && this.state.downloadAttemptsCount < 1) {
-      this.setState({
-        downloadAttemptsCount: this.state.downloadAttemptsCount + 1
-      });
-      const res = await triggers.loadPostRiver(river.size);
-
-      let displayLoadMore = false;
-      if (res === false) { // bad response
-        displayLoadMore = true;
-      } else if (res.length > 0) { // got some posts
-        displayLoadMore = true;
-      }
-      this.setState({ displayLoadMore });
-    }
-
+  handleAutoLoadPosts = async (isVisible) => {
     if (!isVisible) {
-      this.setState({
-        downloadAttemptsCount: 0
-      });
+      return undefined;
     }
+
+    const { river, ui } = this.props;
+    let displayLoadMore = true;
+    if (isVisible && !ui.getIn(['progress', 'loadRiverInProgress'])) {
+      const res = await this.triggers.loadPostRiver(river.size);
+      displayLoadMore = Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
+    }
+
+    return displayLoadMore;
   };
 
   render() {
     const {
-      comments,
       current_user,
       create_post_form,
-      following,
-      is_logged_in,
-      posts,
       resetCreatePostForm,
-      river,
       ui,
       updateCreatePostForm,
-      users
     } = this.props;
 
-    const i_am_following = following.get(current_user.get('id'));
+    const i_am_following = this.props.following.get(current_user.get('id'));
 
     const actions = { resetCreatePostForm, updateCreatePostForm };
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
-    let loadMore;
-    if (this.state.displayLoadMore) {
-      loadMore = (
-        <div className="layout layout-align_center layout__space layout__space-double">
-          <VisibilitySensor onChange={this.loadMore}>
-            <Button
-              title="Load more..." waiting={ui.getIn(['progress', 'loadRiverInProgress'])}
-              onClick={this.loadPostRiverManually}
-            />
-          </VisibilitySensor>
-        </div>
-      );
-    } else {
-      loadMore = null;
-    }
 
     return (
       <div>
         <Helmet title="News Feed of " />
-        <Header current_user={current_user} is_logged_in={is_logged_in}>
+        <Header
+          current_user={current_user}
+          is_logged_in={this.props.is_logged_in}
+        >
           <HeaderLogo />
           <Breadcrumbs title="News Feed" />
         </Header>
@@ -206,19 +153,22 @@ export class UnwrappedListPage extends React.Component {
                   addedHashtags={create_post_form.get('hashtags')}
                   addedSchools={create_post_form.get('schools')}
                   defaultText={create_post_form.get('text')}
-                  triggers={triggers}
+                  triggers={this.triggers}
                   userRecentTags={current_user.get('recent_tags')}
                 />
-                <River
-                  comments={comments}
+                <LoadableRiver
+                  comments={this.props.comments}
                   current_user={current_user}
-                  posts={posts}
-                  river={river}
-                  triggers={triggers}
+                  loadMoreLimit={LOAD_MORE_LIMIT}
+                  posts={this.props.posts}
+                  river={this.props.river}
+                  triggers={this.triggers}
                   ui={ui}
-                  users={users}
+                  users={this.props.users}
+                  waiting={ui.getIn(['progress', 'loadRiverInProgress'])}
+                  onAutoLoad={this.handleAutoLoadPosts}
+                  onForceLoad={this.handleForceLoadPosts}
                 />
-                {loadMore}
               </PageContent>
               <SidebarAlt>
                 <AddedTags
@@ -230,7 +180,7 @@ export class UnwrappedListPage extends React.Component {
                 <SideSuggestedUsers
                   current_user={current_user}
                   i_am_following={i_am_following}
-                  triggers={triggers}
+                  triggers={this.triggers}
                   users={current_user.get('suggested_users')}
                 />
               </SidebarAlt>

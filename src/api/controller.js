@@ -98,7 +98,7 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
     const posts = Post.collection().query(qb => {
       this.applySortQuery(qb, ctx.query, '-created_at');
-      this.applyLimitQuery(qb, ctx.query, 10);
+      this.applyLimitQuery(qb, ctx.query, 5);
       this.applyOffsetQuery(qb, ctx.query);
 
       if ('continent' in ctx.query) {
@@ -107,6 +107,10 @@ export default class ApiController {
           .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
           .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
           .where('geotags.continent_code', ctx.query.continent);
+      } else if ('geotags' in ctx.query) {
+        qb
+          .distinct('posts.*')
+          .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
       }
     });
     let response = await posts.fetch({ require: false, withRelated: POST_RELATIONS });

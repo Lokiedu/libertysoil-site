@@ -23,6 +23,7 @@ import { getName } from '../../utils/user';
 import { PROFILE_POST_TYPES as t } from '../../consts/postTypeConstants';
 import BasicRiverItem from '../river/theme/basic';
 import Icon from '../icon';
+import Logo from '../logo';
 import Time from '../time';
 import User from '../user';
 import ProfilePost from './post';
@@ -40,9 +41,7 @@ const SignUpIcon = ({ user }) => (
       icon="arrow-right"
       pack="fa"
     />
-    <div className="logo logo-size_small">
-      <span className="logo__title">Liberty Soil</span>
-    </div>
+    <Logo isLink={false} />
   </div>
 );
 SignUpIcon.avatarConfig = {

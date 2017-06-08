@@ -67,7 +67,7 @@ class SchoolCloudPage extends Component {
           <HeaderLogo />
           <div className="header__breadcrumbs">
             <Breadcrumbs title="All Schools">
-              <TagIcon big type={TAG_SCHOOL} />
+              <TagIcon type={TAG_SCHOOL} />
             </Breadcrumbs>
           </div>
         </Header>

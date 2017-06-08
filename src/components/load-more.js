@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,23 +14,18 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+*/
+import React from 'react';
+import noop from 'lodash/noop';
 
-import createSelector from '../selectors/createSelector';
-import Logo from './logo';
+import Button from './button';
+import VisibilitySensor from './visibility-sensor';
 
-class HeaderLogo extends React.Component {
-  static displayName = 'HeaderLogo';
-
-  static propTypes = {
-    isLink: PropTypes.bool,
-    is_logged_in: PropTypes.bool.isRequired
-  };
-
+export default class LoadMore extends React.Component {
   static defaultProps = {
-    isLink: true
+    waiting: false,
+    onClick: noop,
+    onVisibilityChange: noop
   };
 
   shouldComponentUpdate(nextProps) {
@@ -38,23 +33,15 @@ class HeaderLogo extends React.Component {
   }
 
   render() {
-    let className = 'header__corner action';
-    if (this.props.is_logged_in) {
-      className += ' header__corner--colored';
-    }
-
     return (
-      <Logo
-        className={className}
-        isLink={this.props.isLink}
-      />
+      <div className="layout layout-align_center layout__space layout__space-double">
+        <VisibilitySensor onChange={this.props.onVisibilityChange}>
+          <Button
+            title="Load more..." waiting={this.props.waiting}
+            onClick={this.props.onClick}
+          />
+        </VisibilitySensor>
+      </div>
     );
   }
 }
-
-const selector = createSelector(
-  state => !!state.getIn(['current_user', 'id']),
-  is_logged_in => ({ is_logged_in })
-);
-
-export default connect(selector)(HeaderLogo);

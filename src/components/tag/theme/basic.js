@@ -83,10 +83,15 @@ export default class BasicTag extends React.Component {
     const typeIcon = TAG_TYPES[type].icon || {};
 
     const iconConf = {
-      ...icon,
+      ...omit(icon, ['collapsed']),
       className: classNames(
-        icon.className, typeIcon.className,
-        'tag__icon', { 'icon--round': round }
+        icon.className,
+        typeIcon.className,
+        'tag__icon',
+        {
+          'icon--round': round,
+          'tag__icon--collapsed': icon.collapsed
+        }
       )
     };
 
