@@ -100,6 +100,9 @@ export function initBookshelfFromKnex(knex) {
     outbox() {
       return this.hasMany(UserMessage, 'sender_id');
     },
+    password_changes() {
+      return this.hasMany(PasswordChange, 'user_id');
+    },
     virtuals: {
       gravatarHash() {
         const email = this.get('email');
@@ -694,6 +697,13 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  const PasswordChange = bookshelf.Model.extend({
+    tableName: 'password_changes',
+    user() {
+      return this.belongsTo(User, 'user_id');
+    },
+  });
+
   const Posts = bookshelf.Collection.extend({
     model: Post
   });
@@ -712,6 +722,7 @@ export function initBookshelfFromKnex(knex) {
   bookshelf.model('Quote', Quote);
   bookshelf.model('UserMessage', UserMessage);
   bookshelf.model('ProfilePost', ProfilePost);
+  bookshelf.model('PasswordChange', PasswordChange);
   bookshelf.collection('Posts', Posts);
 
   return bookshelf;
