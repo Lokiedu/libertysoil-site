@@ -42,6 +42,7 @@ import BaseSettingsPage from './pages/base/settings';
 import SettingsPage from './pages/settings/settings';
 import SettingsEmailPage from './pages/settings/settings-email';
 import SettingsFollowersPage from './pages/settings/settings-followers';
+import SettingsLocalePage from './pages/settings/settings-locale';
 import SettingsPasswordPage from './pages/settings/settings-password';
 import SuggestionsPage from './pages/suggestions';
 import TagPage from './pages/tag';
@@ -95,6 +96,7 @@ export function getRoutes(authHandler, fetchHandler) {
         <IndexRoute component={SettingsPage} onEnter={withAuth} />
         <Route component={SettingsEmailPage} path="email" onEnter={withAuth} />
         <Route component={SettingsFollowersPage} path="followers" onEnter={withAuth} />
+        <Route component={SettingsLocalePage} path="language" onEnter={withAuth} />
         <Route component={SettingsPasswordPage} path="password" onEnter={withAuth} />
       </Route>
       <Route path="/user/:username">

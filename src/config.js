@@ -26,6 +26,7 @@ export const URL_NAMES = {
   EMAIL_SETTINGS: `EMAIL_SETTINGS`,
   MANAGE_FOLLOWERS: `MANAGE_FOLLOWERS`,
   CHANGE_PASSWORD: `CHANGE_PASSWORD`,
+  LANGUAGE_SETTINGS: 'LANGUAGE_SETTINGS',
   EDIT_POST: `EDIT_POST`,
   SCHOOL: 'SCHOOL',
   HASHTAG: 'HASHTAG',
@@ -42,6 +43,7 @@ export const URL = {
   [URL_NAMES.EMAIL_SETTINGS]: '/settings/email',
   [URL_NAMES.MANAGE_FOLLOWERS]: '/settings/followers',
   [URL_NAMES.CHANGE_PASSWORD]: '/settings/password',
+  [URL_NAMES.LANGUAGE_SETTINGS]: '/settings/language',
   [URL_NAMES.SCHOOL]: '/s/:url_name',
   [URL_NAMES.HASHTAG]: '/tag/:name',
   [URL_NAMES.GEOTAG]: '/geo/:url_name'
