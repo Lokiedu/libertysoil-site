@@ -726,4 +726,9 @@ export default class ApiClient {
     const response = await this.del(`/api/v1/profile-post/${profilePostId}`);
     return await response.json();
   }
+
+  async getLocale(code: string): Promise<Object> {
+    const response = await this.get(`/api/v1/locale/${code}`);
+    return await response.json();
+  }
 }

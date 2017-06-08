@@ -17,7 +17,9 @@
  */
 import { browserHistory } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
+import t from 't8on';
 
+import { DEFAULT_LOCALE } from '../consts/localization';
 import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
@@ -948,4 +950,25 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   };
+
+  setLocale = async (code = DEFAULT_LOCALE) => {
+    try {
+      let locale;
+      if (process.env.NODE_ENV === 'production') {
+        locale = await this.client.getLocale(code);
+      } else {
+        locale = require(`../../res/locale/${code}.json`); // eslint-disable-line prefer-template
+      }
+
+      if (typeof window !== 'undefined') {
+        t
+          .setLocale(code, locale)
+          .currentLocale = code;
+      }
+
+      this.dispatch(a.ui.setLocale(code));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
 }
