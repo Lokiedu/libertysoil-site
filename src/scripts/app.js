@@ -27,6 +27,7 @@ import { getRoutes } from '../routing';
 import { AuthHandler, FetchHandler } from '../utils/loader';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
+import { ActionsTrigger } from '../triggers';
 import { initState } from '../store';
 
 bluebird.longStackTraces();
@@ -35,13 +36,18 @@ window.Promise = bluebird;
 const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
 
+const client = new ApiClient(API_HOST);
+
 if (typeof window.localization === 'object') {
   t.loadRoot(window.localization);
   t.currentLocale = store.getState().getIn(['ui', 'locale']);
+} else {
+  (new ActionsTrigger(client, store.dispatch))
+    .setLocale(store.getState().getIn(['ui', 'locale']));
 }
 
 const authHandler = new AuthHandler(store);
-const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
+const fetchHandler = new FetchHandler(store, client);
 
 ReactDOM.render(
   <Provider store={store}>
