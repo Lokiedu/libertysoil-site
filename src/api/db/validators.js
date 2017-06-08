@@ -18,6 +18,10 @@
 import difference from 'lodash/difference';
 import uniq from 'lodash/uniq';
 
+const SUPPORTED_LOCALES = Object.keys(
+  require('../../consts/localization').SUPPORTED_LOCALES
+);
+
 export const User = {
   registration: {
     username: [
@@ -68,7 +72,16 @@ export const User = {
       head_pic: ['plainObject'],
       mute_all_posts: ['boolean'],
       firstName: ['string'],
-      lastName: ['string']
+      lastName: ['string'],
+      lang: {
+        rule: val => {
+          if (val) {
+            if (!SUPPORTED_LOCALES.includes(val)) {
+              throw new Error('Locale isn\'t supported');
+            }
+          }
+        }
+      }
     }
   }
 };
