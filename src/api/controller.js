@@ -42,6 +42,10 @@ import {
   SearchQuery as SearchQueryValidators
 } from './db/validators';
 
+const SUPPORTED_LOCALES = Object.keys(
+  require('../consts/localization').SUPPORTED_LOCALES
+);
+
 const bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
@@ -3568,6 +3572,27 @@ export default class ApiController {
       this.processError(ctx, e);
     }
   }
+
+  getLocale = async (ctx) => {
+    const { lang_code } = ctx.params;
+
+    if (!SUPPORTED_LOCALES.find(c => lang_code === c)) {
+      ctx.status = 404;
+      ctx.body = { error: 'Locale isn\'t supported' };
+      return;
+    }
+
+    try {
+      // eslint-disable-next-line prefer-template
+      const locale = require('../../res/locale/' + lang_code + '.json');
+
+      ctx.status = 200;
+      ctx.body = locale;
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
 
   // ========== Helpers ==========
 

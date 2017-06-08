@@ -25,6 +25,8 @@ import bb from 'bluebird';
 import FormData from 'form-data';
 import AWS from 'mock-aws';
 
+import enLocalization from '../../res/locale/en';
+
 import expect from '../../test-helpers/expect';
 import initBookshelf from '../../src/api/db';
 import { login, POST_DEFAULT_TYPE } from '../../test-helpers/api';
@@ -838,6 +840,41 @@ describe('api v.1', () => {
               'to open not found'
             );
           });
+        });
+      });
+
+      describe('Localization', () => {
+        describe('When locale\'s code is not present', () => {
+          it('returns "Not found" error', () => (
+            expect(
+              { url: '/api/v1/locale' },
+              'to open not found'
+            )
+          ));
+        });
+
+        describe('When locale isn\'t supported', () => {
+          it('returns "Not found" error with ...', async () => {
+            const ctx = await expect(
+              { url: '/api/v1/locale/xyz' },
+              'to open not found'
+            );
+            expect(
+              ctx.httpResponse.body,
+              'to equal',
+              { error: 'Locale isn\'t supported' }
+            );
+          });
+        });
+
+        describe('When locale is supported', () => {
+          it('returns a valid dictionary with phrases', () => (
+            expect(
+              { url: '/api/v1/locale/en' },
+              'body to satisfy',
+              enLocalization
+            )
+          ));
         });
       });
     });

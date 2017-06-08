@@ -147,6 +147,7 @@ export function initApi(bookshelf, sphinx) {
   api.get('/search', controller.search);
   api.get('/search-quick/:query', controller.searchStats);
 
+  api.get('/locale/:lang_code', controller.getLocale);
 
   return api.routes();
 }
