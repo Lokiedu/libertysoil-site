@@ -16,13 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
-import createSelector from '../selectors/createSelector';
-import Logo from './logo';
-
-class HeaderLogo extends React.Component {
-  static displayName = 'HeaderLogo';
+export default class Logo extends React.Component {
+  static displayName = 'Logo';
 
   static propTypes = {
     isLink: PropTypes.bool,
@@ -30,31 +27,51 @@ class HeaderLogo extends React.Component {
   };
 
   static defaultProps = {
-    isLink: true
+    isLink: true,
+    height: '28',
+    width: '28'
   };
+
+  constructor(...args) {
+    super(...args);
+    this.state = { src: '/images/logo.svg' };
+  }
 
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
   }
 
+  handleError = () => {
+    this.setState({ src: '/images/mail/ls.png' });
+  };
+
   render() {
-    let className = 'header__corner action';
-    if (this.props.is_logged_in) {
-      className += ' header__corner--colored';
+    const iconBody = (
+      <figure className="logo">
+        <img
+          alt="Liberty Soil"
+          className="logo__image"
+          height={this.props.height}
+          src={this.state.src}
+          width={this.props.width}
+          onError={this.handleError}
+        />
+        <figcaption className="logo__title">Liberty Soil</figcaption>
+      </figure>
+    );
+
+    if (this.props.isLink) {
+      return (
+        <Link to="/" className={this.props.className}>
+          {iconBody}
+        </Link>
+      );
     }
 
     return (
-      <Logo
-        className={className}
-        isLink={this.props.isLink}
-      />
+      <div className={this.props.className}>
+        {iconBody}
+      </div>
     );
   }
 }
-
-const selector = createSelector(
-  state => !!state.getIn(['current_user', 'id']),
-  is_logged_in => ({ is_logged_in })
-);
-
-export default connect(selector)(HeaderLogo);
