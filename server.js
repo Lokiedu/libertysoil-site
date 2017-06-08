@@ -262,9 +262,10 @@ app.use(async function reactMiddleware(ctx) {
 
       // we always render Helmet's metadata as tags like <title></title>
       const metadata = Helmet.rewind();
+      const gtm = process.env.GOOGLE_TAG_MANAGER_ID || null;
 
       ctx.staus = 200;
-      ctx.body = template({ state, html, metadata });
+      ctx.body = template({ state, html, metadata, gtm });
     } catch (e) {
       logger.error(e);
       ctx.status = 500;
