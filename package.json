@@ -118,6 +118,7 @@
     "smoothscroll-polyfill": "^0.3.4",
     "sphinxapi": "~1.2.1",
     "strftime": "~0.10.0",
+    "t8on": "^0.1.4",
     "twitter-text": "^1.13.2",
     "url-assembler": "~1.2.6",
     "uuid": "^3.0.1",
