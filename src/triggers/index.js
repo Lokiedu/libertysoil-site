@@ -952,6 +952,7 @@ export class ActionsTrigger {
   };
 
   setLocale = async (code = DEFAULT_LOCALE) => {
+    let success = false;
     try {
       let locale;
       if (process.env.NODE_ENV === 'production') {
@@ -967,8 +968,11 @@ export class ActionsTrigger {
       }
 
       this.dispatch(a.ui.setLocale(code));
+      success = true;
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
+
+    return success;
   }
 }
