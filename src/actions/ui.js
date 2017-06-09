@@ -20,6 +20,8 @@ export const UI__TOGGLE_MENU = 'UI__TOGGLE_MENU';
 
 export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
+export const SET_LOCALE = 'SET_LOCALE';
+
 export function setProgress(progress, value) {
   return {
     type: UI__SET_PROGRESS,
@@ -42,5 +44,14 @@ export function toggleMenu(isVisible) {
 export function showRegisterForm() {
   return {
     type: SHOW_REGISTER_FORM
+  };
+}
+
+export function setLocale(code) {
+  return {
+    type: SET_LOCALE,
+    payload: {
+      code
+    }
   };
 }

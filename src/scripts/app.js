@@ -21,6 +21,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import t from 't8on';
 
 import { getRoutes } from '../routing';
 import { AuthHandler, FetchHandler } from '../utils/loader';
@@ -33,6 +34,11 @@ window.Promise = bluebird;
 
 const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
+
+if (typeof window.localization === 'object') {
+  t.loadRoot(window.localization);
+  t.currentLocale = store.getState().getIn(['ui', 'locale']);
+}
 
 const authHandler = new AuthHandler(store);
 const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));

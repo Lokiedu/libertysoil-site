@@ -18,6 +18,7 @@
 import i from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
+import { DEFAULT_LOCALE } from '../consts/localization';
 import * as a from '../actions';
 
 const initialState = i.fromJS({
@@ -25,7 +26,8 @@ const initialState = i.fromJS({
   progress: {},
   comments: {
     new: {}
-  }
+  },
+  locale: DEFAULT_LOCALE
 });
 
 function reducer(state = initialState, action) {
@@ -124,6 +126,25 @@ function reducer(state = initialState, action) {
       {
         state = state.setIn(['comments', action.payload.commentId, 'error'], action.payload.message);
         state = state.setIn(['comments', action.payload.commentId, 'isDeleteInProgress'], false);
+        break;
+      }
+    case a.ui.SET_LOCALE:
+      {
+        state = state.set('locale', action.payload.code);
+        break;
+      }
+    case a.users.SET_CURRENT_USER:
+      {
+        let localeCode;
+
+        const { user } = action.payload;
+        if (user && user.more && user.more.lang) {
+          localeCode = user.more.lang;
+        } else {
+          localeCode = DEFAULT_LOCALE;
+        }
+
+        state = state.set('locale', localeCode);
         break;
       }
   }

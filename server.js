@@ -41,6 +41,7 @@ import { Provider } from 'react-redux';
 import { Router, RouterContext, match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import Helmet from 'react-helmet';
+import t from 't8on';
 
 import createRequestLogger from './src/utils/bunyan-koa-request';
 import { getRoutes } from './src/routing';
@@ -51,10 +52,10 @@ import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
 import ApiClient from './src/api/client';
 
+import { DEFAULT_LOCALE } from './src/consts/localization';
 import { initState } from './src/store';
-import {
-  setCurrentUser, setLikes, setFavourites
-} from './src/actions/users';
+import { setLocale } from './src/actions/ui';
+import { setCurrentUser, setLikes, setFavourites } from './src/actions/users';
 
 import db_config from './knexfile';  // eslint-disable-line import/default
 
@@ -63,6 +64,14 @@ const exec_env = process.env.NODE_ENV || 'development';
 const dbEnv = process.env.DB_ENV || 'development';
 
 const streams = [];
+
+const SUPPORTED_LOCALES = Object.keys(
+  require('./src/consts/localization').SUPPORTED_LOCALES
+);
+
+for (const locale_code of SUPPORTED_LOCALES) {
+  t.setLocale(locale_code, require(`./res/locale/${locale_code}.json`));
+}
 
 if (exec_env !== 'test') {
   streams.push({
@@ -171,6 +180,7 @@ app.use(serve(`${__dirname}/public/`, { index: false, defer: false }));
 app.use(async function reactMiddleware(ctx) {
   const store = initState();
 
+  let locale_code;
   if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
     try {
       const user = await bookshelf
@@ -205,9 +215,23 @@ app.use(async function reactMiddleware(ctx) {
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
       store.dispatch(setFavourites(data.id, favourites.map(fav => fav.post_id)));
+
+      if (!data.more) {
+        locale_code = DEFAULT_LOCALE;
+      } else {
+        const code = data.more.lang;
+        if (!SUPPORTED_LOCALES.find(c => c === code)) {
+          locale_code = DEFAULT_LOCALE;
+        } else {
+          locale_code = code;
+        }
+      }
     } catch (e) {
       logger.error(`dispatch failed: ${e.stack}`);
     }
+  } else {
+    locale_code = DEFAULT_LOCALE;
+    store.dispatch(setLocale(DEFAULT_LOCALE));
   }
 
   const authHandler = new AuthHandler(store);
@@ -263,9 +287,10 @@ app.use(async function reactMiddleware(ctx) {
       // we always render Helmet's metadata as tags like <title></title>
       const metadata = Helmet.rewind();
       const gtm = process.env.GOOGLE_TAG_MANAGER_ID || null;
+      const localization = JSON.stringify({ [locale_code]: t.dictionary()[locale_code] });
 
       ctx.staus = 200;
-      ctx.body = template({ state, html, metadata, gtm });
+      ctx.body = template({ state, html, metadata, gtm, localization });
     } catch (e) {
       logger.error(e);
       ctx.status = 500;

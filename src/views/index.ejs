@@ -34,7 +34,10 @@
   <% } %>
 </head>
 <body>
-<script>var state = <%- state %></script>
+<script>
+  var localization = <%- localization %>;
+  var state = <%- state %>;
+</script>
 <div id="content"><%- html %></div>
 <script src="/assets/app.js"></script>
 <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
