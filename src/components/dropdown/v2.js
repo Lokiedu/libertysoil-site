@@ -54,7 +54,7 @@ class OpenedDropdownV2Content extends React.Component {
 }
 
 const Body = ClickOutsideComponentDecorator(OpenedDropdownV2Content);
-const defaultIcon = <Icon className="micon micon-small" icon="arrow_drop_down" />;
+export const defaultIcon = <Icon className="micon micon-small" icon="arrow_drop_down" />;
 
 export default class DropdownV2 extends React.Component {
   static displayName = 'DropdownV2';
@@ -62,6 +62,7 @@ export default class DropdownV2 extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
+    disabled: PropTypes.bool,
     icon: PropTypes.node,
     iconClosed: PropTypes.node,
     iconOpen: PropTypes.node,
@@ -70,6 +71,7 @@ export default class DropdownV2 extends React.Component {
   };
 
   static defaultProps = {
+    disabled: false,
     isVisible: false,
     theme: 'old'
   };
@@ -81,13 +83,21 @@ export default class DropdownV2 extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.disabled && !this.props.disabled) {
+      this.setState({ isVisible: false });
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return nextProps !== this.props
         || nextState.isVisible !== this.state.isVisible;
   }
 
   toggleVisibility = () => {
-    this.setState({ isVisible: !this.state.isVisible });
+    if (!this.props.disabled) {
+      this.setState({ isVisible: !this.state.isVisible });
+    }
   };
 
   render() {
