@@ -20,8 +20,12 @@ import { Map as ImmutableMap } from 'immutable';
 import t from 't8on';
 
 import { DEFAULT_LOCALE } from '../consts/localization';
+import { isStorageAvailable } from '../utils/browser';
 import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
+
+const isBrowser = typeof window !== 'undefined';
+const canUseStorage = isBrowser && isStorageAvailable('localStorage');
 
 export class ActionsTrigger {
   client;
@@ -951,7 +955,17 @@ export class ActionsTrigger {
     }
   };
 
-  setLocale = async (code = DEFAULT_LOCALE) => {
+  setLocale = async (_code) => {
+    let code = _code;
+
+    if (!code) {
+      if (canUseStorage) {
+        code = window.localStorage.getItem('locale') || DEFAULT_LOCALE;
+      } else {
+        code = DEFAULT_LOCALE;
+      }
+    }
+
     let success = false;
     try {
       let locale;
@@ -961,10 +975,13 @@ export class ActionsTrigger {
         locale = require(`../../res/locale/${code}.json`); // eslint-disable-line prefer-template
       }
 
-      if (typeof window !== 'undefined') {
+      if (isBrowser) {
         t
           .setLocale(code, locale)
           .currentLocale = code;
+        if (canUseStorage) {
+          window.localStorage.setItem('locale', code);
+        }
       }
 
       this.dispatch(a.ui.setLocale(code));
