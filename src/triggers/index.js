@@ -25,7 +25,11 @@ import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
 
 const isBrowser = typeof window !== 'undefined';
-const canUseStorage = isBrowser && isStorageAvailable('localStorage');
+
+const canUseStorage = isBrowser
+  && process.env.DB_ENV !== 'test'
+  && process.env.DB_ENV !== 'travis'
+  && isStorageAvailable('localStorage');
 
 export class ActionsTrigger {
   client;
