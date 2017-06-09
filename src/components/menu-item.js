@@ -18,14 +18,14 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const MenuItem = ({
-  children,
-  className,
-  ...props
-}) => (
-  <div className={classNames('menu__item action', className)} {...props}>
-    {children}
-  </div>
-);
+const MenuItem = ({ className, isOption, ...props }) => {
+  const cn = classNames('menu__item action', className);
+
+  if (isOption) {
+    return <option className={cn} {...props} />;
+  }
+
+  return <div className={cn} {...props} />;
+};
 
 export default MenuItem;
