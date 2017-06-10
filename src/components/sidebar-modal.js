@@ -149,11 +149,10 @@ class SidebarModalHeader extends React.Component {
   }
 
   render() {
-    const { className: mainIconClassName, ...mainIcon } = this.props.mainIcon;
-    const { className: closeIconClassName, ...closeIcon } = this.props.closeIcon;
-
-    return (
-      <div className={classNames('sidebar-modal__header', this.props.className)}>
+    let mainIcon;
+    if (this.props.mainIcon !== false) {
+      const { className: mainIconClassName, ...props } = this.props.mainIcon;
+      mainIcon = (
         <Icon
           className={classNames('sidebar-modal__icon icon-outline--square', mainIconClassName)}
           color="white"
@@ -161,17 +160,31 @@ class SidebarModalHeader extends React.Component {
           icon="cogs"
           pack="fa"
           size="common"
-          {...mainIcon}
+          {...props}
         />
-        <div className="sidebar-modal__title">{this.props.children}</div>
+      );
+    }
+
+    let closeIcon;
+    if (this.props.closeIcon !== false) {
+      const { className: closeIconClassName, ...props } = this.props.closeIcon;
+      closeIcon = (
         <Icon
           className={classNames('action sidebar-modal__close', closeIconClassName)}
           icon="close"
           pack="fa"
           size="common"
-          {...closeIcon}
+          {...props}
           onClick={this.props.onClose}
         />
+      );
+    }
+
+    return (
+      <div className={classNames('sidebar-modal__header', this.props.className)}>
+        {mainIcon}
+        <div className="sidebar-modal__title">{this.props.children}</div>
+        {closeIcon}
       </div>
     );
   }
