@@ -38,7 +38,7 @@ class HeaderLogo extends React.Component {
   }
 
   render() {
-    let className = 'header__corner action';
+    let className = 'header__logo header__corner action';
     if (this.props.is_logged_in) {
       className += ' header__corner--colored';
     }
