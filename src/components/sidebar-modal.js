@@ -128,8 +128,13 @@ class SidebarModalBody extends React.Component {
   }
 
   render() {
+    const className = classNames(
+      this.props.className,
+      { 'sidebar-modal__body': !this.props.raw }
+    );
+
     return (
-      <div className={classNames('sidebar-modal__body', this.props.className)}>
+      <div className={className}>
         {this.props.children}
       </div>
     );
