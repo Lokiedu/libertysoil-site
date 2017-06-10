@@ -45,9 +45,11 @@ export default function reducer(state = initialState, action) {
     case messages.ADD_ERROR: {
       state = removeDuplicate(state, action);
 
+      const message = action.payload;
       state = state.push(i.fromJS({
         type: messageType.ERROR,
-        message: action.payload.message
+        message: message.message,
+        payload: message.payload
       }));
       break;
     }
@@ -55,9 +57,11 @@ export default function reducer(state = initialState, action) {
     case messages.ADD_MESSAGE: {
       state = removeDuplicate(state, action);
 
+      const message = action.payload;
       state = state.push(i.fromJS({
         type: messageType.MESSAGE,
-        message: action.payload.message
+        message: message.message,
+        payload: message.payload
       }));
       break;
     }
@@ -77,14 +81,16 @@ export default function reducer(state = initialState, action) {
     default: {
       if (action.error) {
         if (action.meta && action.meta.display) {
-          let message = action.payload;
+          let message = action.payload, payload;
           if (isError(message) || isPlainObject(message)) {
+            payload = message.payload;
             message = message.message;
           }
 
           state = state.push(i.fromJS({
             type: messageType.ERROR,
-            message
+            message,
+            payload
           }));
         } else {
           state = state.push(i.fromJS({
