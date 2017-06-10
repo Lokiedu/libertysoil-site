@@ -20,7 +20,7 @@ import ga from 'react-google-analytics';
 import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import App from '../../../src/pages/app';
+import { App } from '../../../src/pages/app';
 
 
 const props = {
