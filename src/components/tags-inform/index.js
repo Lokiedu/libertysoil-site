@@ -20,6 +20,17 @@ import { omit } from 'lodash';
 
 import TagsInformNormal from './normal';
 
+
+function compareTagsByDate(lhs, rhs) {
+  const lhsDate = new Date(lhs.get('updated_at'));
+  const rhsDate = new Date(rhs.get('updated_at'));
+
+  if (lhsDate > rhsDate) { return -1; }
+  if (lhsDate < rhsDate) { return 1; }
+
+  return 0;
+}
+
 /**
  * Navigation-like block displaying number of unread posts
  * per each group of tags (geotags, schools, hashtags)
@@ -49,19 +60,19 @@ export default class TagsInform extends React.Component {
     return {
       geotags: {
         className: 'navigation-item--color_green',
-        list: current_user.get('followed_geotags').toList().take(4),
+        list: current_user.get('followed_geotags').toList().sort(compareTagsByDate).take(4),
         icon: { icon: 'place' },
         url: '/geo/'
       },
       hashtags: {
         className: 'navigation-item--color_blue',
-        list: current_user.get('followed_hashtags').toList().take(6),
+        list: current_user.get('followed_hashtags').toList().sort(compareTagsByDate).take(6),
         icon: { icon: 'hashtag' },
         url: '/tag/'
       },
       schools: {
         className: 'navigation-item--color_red',
-        list: current_user.get('followed_schools').toList().take(4),
+        list: current_user.get('followed_schools').toList().sort(compareTagsByDate).take(4),
         icon: { icon: 'school' },
         url: '/s/'
       }
