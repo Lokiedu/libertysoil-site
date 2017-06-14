@@ -56,6 +56,7 @@ import * as tools from './tools';
 import * as user_messages from './user_messages';
 import * as profile_posts from './profile_posts';
 import * as continent_nav from './continent_nav';
+import * as tag_subscriptions from './tag_subscriptions';
 
 
 export const theReducer = combineReducers(i.Map({
@@ -94,7 +95,8 @@ export const theReducer = combineReducers(i.Map({
   continent_nav: continent_nav.reducer,
   tools: tools.reducer,
   user_messages: user_messages.reducer,
-  profile_posts: profile_posts.reducer
+  profile_posts: profile_posts.reducer,
+  tag_subscriptions: tag_subscriptions.reducer,
 }));
 
 const initialState = i.Map({
@@ -147,6 +149,7 @@ const initialState = i.Map({
   user_messages: user_messages.initialState,
   profile_posts: profile_posts.initialState,
   continent_nav: continent_nav.initialState,
+  tag_subscriptions: tag_subscriptions.initialState,
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
