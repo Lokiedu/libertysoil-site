@@ -58,6 +58,7 @@ import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 import SearchPage from './pages/search';
 import AllPostsPage from './pages/all-posts';
+import StoryPage from './pages/story';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
@@ -83,6 +84,7 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />
       <Route component={Auth} path="/auth" onEnter={withoutAuth} />
       <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />
+      <Route component={StoryPage} path="/stories/:uuid" onEnter={withoutAuth} />
       <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />
       <Route path="/tag">
         <IndexRoute component={TagCloudPage} onEnter={withoutAuth} />
