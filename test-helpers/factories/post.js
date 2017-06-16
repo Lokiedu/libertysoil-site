@@ -33,5 +33,5 @@ export default PostFactory;
 
 export async function createPost(attrs = {}) {
   return await new Post(PostFactory.build(attrs))
-    .save(null, { method: 'insert' });
+    .save(null, { method: 'insert', require: true });
 }
