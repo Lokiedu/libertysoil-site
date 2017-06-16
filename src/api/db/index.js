@@ -216,86 +216,91 @@ export function initBookshelfFromKnex(knex) {
     },
 
     // Hashtag methods
-    async attachHashtags(names) {
+    async attachHashtags(names, options = {}) {
       const hashtags = await Promise.all(names.map(name => Hashtag.createOrSelect(name)));
       const hashtagIds = hashtags.map(hashtag => hashtag.id);
 
-      await this.hashtags().attach(hashtagIds);
+      await this.hashtags().attach(hashtagIds, options);
 
       await knex('hashtags')
+        .transacting(options.transacting)
         .whereIn('id', hashtagIds)
         .increment('post_count', 1);
 
-      await Hashtag.updateUpdatedAt(hashtagIds);
+      await Hashtag.updateUpdatedAt(hashtagIds, options);
     },
-    async detachHashtags(names) {
+    async detachHashtags(names, options = {}) {
       const hashtagIds = (await Hashtag.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch()).pluck('id');
 
-      await this.hashtags().detach(hashtagIds);
+      await this.hashtags().detach(hashtagIds, options);
 
       await knex('hashtags')
+        .transacting(options.transacting)
         .whereIn('id', hashtagIds)
         .decrement('post_count', 1);
 
-      await Hashtag.updateUpdatedAt(hashtagIds);
+      await Hashtag.updateUpdatedAt(hashtagIds, options);
     },
-    async updateHashtags(names) {
+    async updateHashtags(names, options = {}) {
       const relatedHashtagNames = (await this.related('hashtags').fetch()).pluck('name');
       const hashtagsToAttach = _.difference(names, relatedHashtagNames);
       const hashtagsToDetach = _.difference(relatedHashtagNames, names);
 
       await Promise.all([
-        this.attachHashtags(hashtagsToAttach),
-        this.detachHashtags(hashtagsToDetach)
+        this.attachHashtags(hashtagsToAttach, options),
+        this.detachHashtags(hashtagsToDetach, options)
       ]);
     },
 
     // School methods
-    async attachSchools(names) {
+    async attachSchools(names, options = {}) {
       const schools = await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch();
       const schoolIds = schools.pluck('id');
 
-      await this.schools().attach(schoolIds);
+      await this.schools().attach(schoolIds, options);
 
       await knex('schools')
+        .transacting(options.transacting)
         .whereIn('id', schoolIds)
         .increment('post_count', 1);
 
-      await School.updateUpdatedAt(schoolIds);
+      await School.updateUpdatedAt(schoolIds, options);
     },
-    async detachSchools(names) {
+    async detachSchools(names, options = {}) {
       const schoolIds = (await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch()).pluck('id');
 
-      await this.schools().detach(schoolIds);
+      await this.schools().detach(schoolIds, options);
 
       await knex('schools')
+        .transacting(options.transacting)
         .whereIn('id', schoolIds)
         .decrement('post_count', 1);
 
-      await School.updateUpdatedAt(schoolIds);
+      await School.updateUpdatedAt(schoolIds, options);
     },
-    async updateSchools(names) {
+    async updateSchools(names, options = {}) {
       const relatedSchoolNames = (await this.related('schools').fetch()).pluck('name');
       const schoolsToAttach = _.difference(names, relatedSchoolNames);
       const schoolsToDetach = _.difference(relatedSchoolNames, names);
 
       await Promise.all([
-        this.attachSchools(schoolsToAttach),
-        this.detachSchools(schoolsToDetach)
+        this.attachSchools(schoolsToAttach, options),
+        this.detachSchools(schoolsToDetach, options)
       ]);
     },
 
     // Geotag methods
-    async attachGeotags(geotagIds) {
-      await this.geotags().attach(geotagIds);
+    async attachGeotags(geotagIds, options = {}) {
+      await this.geotags().attach(geotagIds, options);
 
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIds)
         .increment('post_count', 1);
 
@@ -307,15 +312,17 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds);
       const geotagIdsToIncrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIdsToIncrement)
         .increment('hierarchy_post_count', 1);
 
-      await Geotag.updateUpdatedAt(geotagIds);
+      await Geotag.updateUpdatedAt(geotagIds, options);
     },
-    async detachGeotags(geotagIds) {
-      await this.geotags().detach(geotagIds);
+    async detachGeotags(geotagIds, options = {}) {
+      await this.geotags().detach(geotagIds, options);
 
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIds)
         .decrement('post_count', 1);
 
@@ -324,19 +331,20 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds);
       const geotagIdsToDecrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIdsToDecrement)
         .decrement('hierarchy_post_count', 1);
 
-      await Geotag.updateUpdatedAt(geotagIds);
+      await Geotag.updateUpdatedAt(geotagIds, options);
     },
-    async updateGeotags(geotagIds) {
+    async updateGeotags(geotagIds, options = {}) {
       const relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
       const geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
       const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
 
       await Promise.all([
-        this.attachGeotags(geotagsToAttach),
-        this.detachGeotags(geotagsToDetach)
+        this.attachGeotags(geotagsToAttach, options),
+        this.detachGeotags(geotagsToDetach, options)
       ]);
     },
 
@@ -415,8 +423,9 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  Hashtag.updateUpdatedAt = async function (ids) {
+  Hashtag.updateUpdatedAt = async function (ids, options = {}) {
     await knex('hashtags')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('hashtags_posts')
@@ -468,8 +477,9 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  School.updateUpdatedAt = async function (ids) {
+  School.updateUpdatedAt = async function (ids, options = {}) {
     await knex('schools')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('posts_schools')
@@ -575,8 +585,9 @@ export function initBookshelfFromKnex(knex) {
     ]);
   };
 
-  Geotag.updateUpdatedAt = async function (ids) {
+  Geotag.updateUpdatedAt = async function (ids, options = {}) {
     await knex('geotags')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('geotags_posts')
