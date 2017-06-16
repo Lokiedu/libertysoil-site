@@ -17,9 +17,9 @@
  */
 /* eslint-env node, mocha */
 import expect from '../../../test-helpers/expect';
-import HashtagFactory from '../../../test-helpers/factories/hashtag';
-import SchoolFactory from '../../../test-helpers/factories/school';
-import GeotagFactory from '../../../test-helpers/factories/geotag';
+import HashtagFactory, { createHashtag } from '../../../test-helpers/factories/hashtag';
+import SchoolFactory, { createSchool } from '../../../test-helpers/factories/school';
+import GeotagFactory, { createGeotag } from '../../../test-helpers/factories/geotag';
 import { createPost } from '../../../test-helpers/factories/post';
 import { createUser } from '../../../test-helpers/factories/user';
 import { login } from '../../../test-helpers/api';
@@ -219,6 +219,117 @@ describe('Post', () => {
           );
 
           expect(await countPostSubscriptions(user.id, post.id), 'to be', 0);
+        });
+      });
+
+      describe('tag subscriptions', () => {
+        const posts = [];
+
+        before(async () => {
+          for (let i = 0; i < 2; ++i) {
+            posts.push(await createPost({ user_id: otherUser.id }));
+          }
+
+          posts.push(await createPost({ user_id: user.id }));
+        });
+
+        after(async () => {
+          await Promise.all(posts.map(p => p.destroy()));
+        });
+
+        describe('GET /api/v1/posts/subscriptions/hashtag', () => {
+          const hashtags = [];
+
+          before(async () => {
+            hashtags.push(await user.followed_hashtags().create({ name: 'Subscription Test 1' }));
+            hashtags.push(await createHashtag({ name: 'Subscription Test 2' }));
+
+            await posts[0].hashtags().attach(hashtags[0].id);
+            await posts[1].hashtags().attach(hashtags[1].id);
+            // current user's own post
+            await posts[2].hashtags().attach(hashtags[0].id);
+          });
+
+          after(async () => {
+            await Promise.all(hashtags.map(t => t.destroy()));
+          });
+
+          it('responds with relevant posts', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: `/api/v1/posts/subscriptions/hashtag`,
+                method: 'GET'
+              },
+              'body to satisfy',
+              [{ id: posts[0].id }]
+            );
+          });
+        });
+
+        describe('GET /api/v1/posts/subscriptions/school', () => {
+          const schools = [];
+
+          before(async () => {
+            schools.push(await user.followed_schools().create({ name: 'Subscription Test 1' }));
+            schools.push(await createSchool({ name: 'Subscription Test 2' }));
+
+            await posts[0].schools().attach(schools[0].id);
+            await posts[1].schools().attach(schools[1].id);
+            // current user's own post
+            await posts[2].schools().attach(schools[0].id);
+          });
+
+          after(async () => {
+            await Promise.all(schools.map(t => t.destroy()));
+          });
+
+          it('responds with relevant posts', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: `/api/v1/posts/subscriptions/school`,
+                method: 'GET'
+              },
+              'body to satisfy',
+              [{ id: posts[0].id }]
+            );
+          });
+        });
+
+        describe('GET /api/v1/posts/subscriptions/geotag', () => {
+          let followedGeotag, childGeotag, irrelevantGeotag;
+
+          before(async () => {
+            followedGeotag = await createGeotag({ type: 'Country' });
+            childGeotag = await createGeotag({ type: 'City', country_id: followedGeotag.id });
+            irrelevantGeotag = await createGeotag();
+
+            await posts[0].geotags().attach(childGeotag.id);
+            await posts[1].geotags().attach(irrelevantGeotag.id);
+            // current user's own post
+            await posts[2].geotags().attach(childGeotag.id);
+
+            await user.followed_geotags().attach(followedGeotag.id);
+          });
+
+          after(async () => {
+            await Promise.all(
+              [childGeotag, followedGeotag, irrelevantGeotag].map(m => m.destroy())
+            );
+          });
+
+          it('responds with relevant posts', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: `/api/v1/posts/subscriptions/geotag`,
+                method: 'GET'
+              },
+              'body to satisfy',
+              [{ id: posts[0].id }]
+            );
+          });
         });
       });
     });
