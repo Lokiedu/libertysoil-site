@@ -21,7 +21,6 @@ import { format as format_url, parse as parse_url } from 'url';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import bb from 'bluebird';
-import { countBreaks } from 'grapheme-breaker';
 import uuid from 'uuid';
 import slug from 'slug';
 import fetch from 'node-fetch';
@@ -1615,133 +1614,19 @@ export default class ApiController {
       return;
     }
 
-    if (!('type' in ctx.request.body)) {
-      ctx.status = 400;
-      ctx.body = { error: '"type" parameter is not given' };
-      return;
-    }
-
-    const typeRequirements = {
-      short_text: ['text'],
-      long_text: ['title', 'text']
-    };
-
-    if (!(ctx.request.body.type in typeRequirements)) {
-      ctx.status = 400;
-      ctx.body = { error: `"${ctx.request.body.type}" type is not supported` };
-      return;
-    }
-
-    const thisTypeRequirements = typeRequirements[ctx.request.body.type];
-
-    for (const varName of thisTypeRequirements) {
-      if (!(varName in ctx.request.body)) {
-        ctx.status = 400;
-        ctx.body = { error: `"${varName}" parameter is not given` };
-        return;
-      }
-    }
-
-    let hashtags;
-
-    if ('hashtags' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.hashtags)) {
-        ctx.status = 400;
-        ctx.body = { error: `"hashtags" parameter is expected to be an array` };
-        return;
-      }
-
-      if (ctx.request.body.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
-        ctx.status = 400;
-        ctx.body = { error: `each of tags should be at least 3 characters wide` };
-        return;
-      }
-
-      hashtags = _.uniq(ctx.request.body.hashtags);
-    }
-
-    let schools;
-
-    if ('schools' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.schools)) {
-        ctx.status = 400;
-        ctx.body = { error: `"schools" parameter is expected to be an array` };
-        return;
-      }
-
-      schools = _.uniq(ctx.request.body.schools);
-    }
-
-    let geotags;
-
-    if ('geotags' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.geotags)) {
-        ctx.status = 400;
-        ctx.body = { error: `"geotags" parameter is expected to be an array` };
-        return;
-      }
-
-      geotags = _.uniq(ctx.request.body.geotags);
-    }
-
     const Post = this.bookshelf.model('Post');
 
-    const obj = new Post({
-      id: uuid.v4(),
-      type: ctx.request.body.type,
-      user_id: ctx.session.user
-    });
-
-    const more = {};
-
-    if (ctx.request.body.type === 'short_text') {
-      obj.set('text', ctx.request.body.text);
-    } else if (ctx.request.body.type === 'long_text') {
-      obj.set('text', ctx.request.body.text);
-      more.title = ctx.request.body.title;
-    }
-
-    if (!ctx.request.body.minor_update) {
-      // Show post in the news feed.
-      obj.set('fully_published_at', new Date().toJSON());
-    }
-
-    if (!Post.typesWithoutPages.includes(obj.get('type'))) {
-      const author = await obj.related('user').fetch();
-      more.pageTitle = await Post.titleFromText(ctx.request.body.text, author.get('fullName'));
-
-      const urlName = `${slug(more.pageTitle)}-${obj.id}`;
-      obj.set('url_name', urlName);
-    }
-
-    obj.set('more', more);
-
     try {
-      await obj.save(null, { method: 'insert' });
+      const post = await Post.create({
+        ...ctx.request.body,
+        user_id: ctx.session.user
+      });
+      await post.refresh({ require: true, withRelated: POST_RELATIONS });
+      post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
 
-      if (_.isArray(hashtags)) {
-        await obj.attachHashtags(hashtags);
-      }
-
-      if (_.isArray(schools)) {
-        await obj.attachSchools(schools);
-      }
-
-      if (_.isArray(geotags)) {
-        await obj.attachGeotags(geotags);
-      }
-
-      // Add the author to the list of subscribers by default.
-      obj.subscribers().attach(ctx.session.user);
-
-      await obj.fetch({ require: true, withRelated: POST_RELATIONS });
-      obj.relations.schools = obj.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
-
-      ctx.body = obj.toJSON();
+      ctx.body = post;
     } catch (e) {
-      ctx.status = 500;
-      ctx.body = { error: e.message };
-      return;
+      this.processError(ctx, e);
     }
   };
 
@@ -1752,115 +1637,18 @@ export default class ApiController {
       return;
     }
 
-    if (!('id' in ctx.params)) {
-      ctx.status = 400;
-      ctx.body = { error: '"id" parameter is not given' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
 
-    let post_object;
-
     try {
-      post_object = await Post.where({ id: ctx.params.id, user_id: ctx.session.user }).fetch({ require: true, withRelated: ['hashtags'] });
+      const post = await Post.where({ id: ctx.params.id, user_id: ctx.session.user }).fetch({ require: true, withRelated: ['hashtags'] });
+      await post.update(ctx.request.body);
+
+      await post.refresh({ require: true, withRelated: POST_RELATIONS });
+      post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
+
+      ctx.body = post;
     } catch (e) {
-      ctx.status = 500;
-      ctx.body = { error: e.message };
-      return;
-    }
-
-    const type = post_object.get('type');
-
-    let hashtags;
-
-    if ('hashtags' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.hashtags)) {
-        ctx.status = 400;
-        ctx.body = { error: `"hashtags" parameter is expected to be an array` };
-        return;
-      }
-
-      if (ctx.request.body.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
-        ctx.status = 400;
-        ctx.body = { error: `each of tags should be at least 3 characters wide` };
-        return;
-      }
-
-      hashtags = _.uniq(ctx.request.body.hashtags);
-    }
-
-    let schools;
-
-    if ('schools' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.schools)) {
-        ctx.status = 400;
-        ctx.body = { error: `"schools" parameter is expected to be an array` };
-        return;
-      }
-
-      schools = _.uniq(ctx.request.body.schools);
-    }
-
-    let geotags;
-
-    if ('geotags' in ctx.request.body) {
-      if (!_.isArray(ctx.request.body.geotags)) {
-        ctx.status = 400;
-        ctx.body = { error: `"geotags" parameter is expected to be an array` };
-        return;
-      }
-
-      geotags = _.uniq(ctx.request.body.geotags);
-    }
-
-    if (type === 'short_text') {
-      if ('text' in ctx.request.body) {
-        post_object.set('text', ctx.request.body.text);
-      }
-    } else if (type === 'long_text') {
-      if ('text' in ctx.request.body) {
-        post_object.set('text', ctx.request.body.text);
-      }
-
-      if ('title' in ctx.request.body) {
-        const more = post_object.get('more');
-        more.title = ctx.request.body.title;
-        post_object.set('more', more);
-      }
-    }
-
-    // toJSON is important. It translates the date to UTC.
-    post_object.attributes.updated_at = new Date().toJSON();
-
-    if (!ctx.request.body.minor_update && !post_object.attributes.fully_published_at) {
-      // Show post in the news feed.
-      post_object.attributes.fully_published_at = new Date().toJSON();
-    }
-
-    try {
-      await post_object.save(null, { method: 'update' });
-
-      if (_.isArray(hashtags)) {
-        await post_object.updateHashtags(hashtags);
-      }
-
-      if (_.isArray(schools)) {
-        await post_object.updateSchools(schools);
-      }
-
-      if (_.isArray(geotags)) {
-        await post_object.updateGeotags(geotags);
-      }
-
-      await post_object.fetch({ require: true, withRelated: POST_RELATIONS });
-      post_object.relations.schools = post_object.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
-
-      ctx.body = post_object.toJSON();
-    } catch (e) {
-      ctx.status = 500;
-      ctx.body = { error: e.message };
-      return;
+      this.processError(ctx, e);
     }
   };
 

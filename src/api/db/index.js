@@ -27,10 +27,12 @@ import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import { break as breakGraphemes } from 'grapheme-breaker';
+import { break as breakGraphemes, countBreaks } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
+import sanitizeHtml from 'sanitize-html';
+import slug from 'slug';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 import { ProfilePost as ProfilePostValidations } from './validators';
@@ -181,6 +183,125 @@ export function initBookshelfFromKnex(knex) {
 
   const Post = bookshelf.Model.extend({
     tableName: 'posts',
+    initialize() {
+      this.on('saving', this.renderText.bind(this));
+    },
+    renderText() {
+      const source = this.get('text_source');
+      if (!_.isString(source) || _.isEmpty(source)) {
+        return;
+      }
+
+      let text, stripped;
+      if (this.get('type') === 'story') {
+        switch (this.get('text_type')) {
+          case 'markdown': {
+            text = postMarkdown.render(source);
+            break;
+          }
+          case 'html': {
+            text = sanitizeHtml(source, {
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+            });
+            break;
+          }
+          default: return;
+        }
+
+        stripped = sanitizeHtml(text, { allowedTags: [], allowedAttributes: [] });
+      } else {
+        text = source;
+        stripped = source;
+      }
+
+      const firstParagraphs = stripped.split(/\n{2,}/)[0];
+      this.set('text', text);
+      this.set('more', {
+        ...this.get('more'),
+        shortText: firstParagraphs
+      });
+    },
+    /**
+     * Common logic for creating and updating. Must only be used for posts with text.
+     */
+    setPublicAttributes(data) {
+      const type = this.get('type');
+
+      // text_source
+      if (_.isString(data.text_source)) {
+        this.set('text_source', data.text_source);
+      } else {
+        throw new Error('"text_source" must be present');
+      }
+
+      // text_type
+      if (type === 'story') {
+        if (_.isString(data.text_type) && _.includes(['markdown', 'html'], data.text_type)) {
+          this.set('text_type', data.text_type);
+        } else {
+          throw new Error('"text_type" must be equeal to either "markdown" or "html"');
+        }
+      }
+
+      // title
+      if (type === 'long_text') {
+        if (_.isString(data.title)) {
+          const more = this.get('more') || {};
+          more.title = data.title;
+          this.set('more', more);
+        } else {
+          throw new Error('"title" must be present');
+        }
+      } else if (type === 'story' && _.isString(data.title)) { // title is optional for story posts
+        const more = this.get('more') || {};
+        more.title = data.title;
+        this.set('more', more);
+      }
+
+      // fully_published_at. Show post in the news feed if set.
+      if (!data.minor_update && !this.get('fully_published_at')) {
+        // toJSON is important because it translates the date to UTC and we don't use timestamtz yet.
+        this.set('fully_published_at', new Date().toJSON());
+      }
+    },
+    async update(data) {
+      return await bookshelf.transaction(async (t) => {
+        this.setPublicAttributes(data);
+        this.set('updated_at', new Date().toJSON());
+        await this.save(null, { require: true, transacting: t });
+
+        // Relations
+        if (data.hashtags) {
+          if (_.isArray(data.hashtags)) {
+            if (data.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+              throw new Error('each of tags should be at least 3 characters wide');
+            }
+
+            await this.updateHashtags(_.uniq(data.hashtags), { transacting: t });
+          } else {
+            throw new Error('"hashtags" parameter is expected to be an array');
+          }
+        }
+
+        if (data.schools) {
+          if (_.isArray(data.schools)) {
+            await this.updateSchools(_.uniq(data.schools), { transacting: t });
+          } else {
+            throw new Error('"schools" parameter is expected to be an array');
+          }
+        }
+
+        if (data.geotags) {
+          if (_.isArray(data.geotags)) {
+            await this.updateGeotags(_.uniq(data.geotags), { transacting: t });
+          } else {
+            throw new Error('"geotags" parameter is expected to be an array');
+          }
+        }
+
+        return this;
+      });
+    },
     user() {
       return this.belongsTo(User, 'user_id');
     },
@@ -361,6 +482,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  Post.typesWithPages = ['short_text', 'long_text', 'story'];
   Post.typesWithoutPages = ['geotag_like', 'school_like', 'hashtag_like'];
   Post.titleFromText = async (text, authorName) => {
     const get50 = async (text) => {
@@ -391,6 +513,77 @@ export function initBookshelfFromKnex(knex) {
     const first50GraphemesOfText = await get50(text);
 
     return `${authorName}: ${first50GraphemesOfText}`;
+  };
+
+  /**
+   * Creates a user.
+   * Can only be used to create posts with text (Post.typesWithPages).
+   */
+  Post.create = async (data) => {
+    return bookshelf.transaction(async (t) => {
+      if (!_.includes(Post.typesWithPages, data.type)) {
+        throw new Error(`${data.type}" type is not supported`);
+      }
+
+      const post = new Post({
+        id: uuid.v4(),
+        user_id: data.user_id,
+        type: data.type,
+        more: {}
+      });
+
+      post.setPublicAttributes(data);
+
+      const author = await post.related('user').fetch();
+      if (data.type === 'story') {
+        const stripped = sanitizeHtml(data.text_source, {
+          allowedTags: [],
+          allowedAttributes: []
+        });
+        post.attributes.more.pageTitle = await Post.titleFromText(stripped, author.get('fullName'));
+      } else {
+        post.attributes.more.pageTitle = await Post.titleFromText(data.text_source, author.get('fullName'));
+      }
+
+      const urlName = `${slug(post.attributes.more.pageTitle)}-${post.id}`;
+      post.set('url_name', urlName);
+
+      await post.save(null, { method: 'insert', require: true, transacting: t });
+
+      // Add the author to the list of subscribers by default.
+      await post.subscribers().attach(post.get('user_id'), { transacting: t });
+
+      // Relations
+      if (data.hashtags) {
+        if (_.isArray(data.hashtags)) {
+          if (data.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+            throw new Error('each of tags should be at least 3 characters wide');
+          }
+
+          await post.attachHashtags(_.uniq(data.hashtags), { transacting: t });
+        } else {
+          throw new Error('"hashtags" parameter is expected to be an array');
+        }
+      }
+
+      if (data.schools) {
+        if (_.isArray(data.schools)) {
+          await post.attachSchools(_.uniq(data.schools), { transacting: t });
+        } else {
+          throw new Error('"schools" parameter is expected to be an array');
+        }
+      }
+
+      if (data.geotags) {
+        if (_.isArray(data.geotags)) {
+          await post.attachGeotags(_.uniq(data.geotags), { transacting: t });
+        } else {
+          throw new Error('"geotags" parameter is expected to be an array');
+        }
+      }
+
+      return post;
+    });
   };
 
   const Hashtag = bookshelf.Model.extend({
