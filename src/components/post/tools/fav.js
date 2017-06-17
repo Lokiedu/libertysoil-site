@@ -60,11 +60,11 @@ export default class PostFav extends React.Component {
   render() {
     const { authorId, current_user, postId } = this.props;
 
-    let className = 'color-dark_green';
+    let className = 'color-dark_green card__action';
     let action = this.favPost;
     if (current_user.get('id')) {
       if (current_user.get('favourites').includes(postId)) {
-        className = 'icon-outline--dark_green color-white';
+        className = 'card__action icon-outline--dark_green color-white';
         action = this.unfavPost;
       }
 

@@ -60,11 +60,11 @@ export default class PostLike extends React.Component {
   render() {
     const { authorId, current_user, postId } = this.props;
 
-    let className = 'color-red';
+    let className = 'color-red card__action';
     let action = this.likePost;
     if (current_user.get('id')) {
       if (current_user.get('likes').includes(postId)) {
-        className = 'icon-outline--red color-white';
+        className = 'card__action icon-outline--red color-white';
         action = this.unlikePost;
       }
 

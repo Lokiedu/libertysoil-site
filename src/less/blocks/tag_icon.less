@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 .tag_icon {
   display: inline-block;
   width: 26px;
@@ -25,58 +25,56 @@
   line-height: 26px;
   text-align: center;
 
-  .micon {
-    font-size: inherit!important;
-    line-height: inherit!important;
-  }
+  &.icon--size {
+    &_small {
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
 
-  &-small {
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-  }
+      svg {
+        padding: 5px;
+      }
+    }
 
-  &-big {
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 22px;
-  }
-
-  &-round {
-    border-radius: 50%;
+    &_big {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      font-size: 22px;
+    }
   }
 
   &-wide {
     width: 60px;
   }
 
-  &-hashtag {
-    background-color: #689ACA;
+  &--type {
+    &_hashtag {
+      background-color: #689ACA;
+    }
+
+    &_school {
+      background-color: #DC3457;
+    }
+
+    &_event {
+      background-color: #98C646;
+    }
+
+    &_mention {
+      background-color: #F8A232;
+    }
+
+    &_location {
+      background-color: #47B8E7;
+    }
+
+    &_planet {
+      background-color: #47B8E7;
+    }
   }
 
-  &-school {
-    background-color: #DC3457;
-  }
-
-  &-event {
-    background-color: #98C646;
-  }
-
-  &-mention {
-    background-color: #F8A232;
-  }
-
-  &-location {
-    background-color: #47B8E7;
-  }
-
-  &-planet {
-    background-color: #47B8E7;
-  }
-
-  &-inactive {
+  &--inactive {
     background-color: #d0d0d0;
   }
-
 }

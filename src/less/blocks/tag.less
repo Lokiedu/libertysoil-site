@@ -39,7 +39,6 @@
 
   &__icon {
     position: relative;
-    padding: 6px;
     width: 25px;
     height: 26px;
     flex-shrink: 0;
@@ -47,6 +46,10 @@
     border-style: solid;
     border-left: none;
     color: white;
+
+    svg {
+      padding: 6px;
+    }
 
     &--collapsed {
       width: 24px;
@@ -64,19 +67,16 @@
         &:extend(.micon);
         &:extend(.micon-small);
 
-        padding-top: 2px;
+        box-sizing: border-box;
+        padding-top: 4px;
         padding-right: 2px;
         position: absolute;
-        top: 0;
+        top: -1px;
         left: 0;
         right: 0;
         bottom: 0;
-        width: inherit;
-        height: inherit;
 
         display: none;
-        border-radius: 50%;
-
         text-align: center;
       }
     }
@@ -103,8 +103,6 @@
 
       &::before {
         display: block;
-        position: relative;
-        top: -1px;
       }
     }
   }
