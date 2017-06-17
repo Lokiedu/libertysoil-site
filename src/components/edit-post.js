@@ -27,7 +27,7 @@ import {
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 
 import Button from './button';
-import TagIcon from './tag-icon';
+import Tag from './tag';
 import AddTagModal from './add-tag-modal';
 
 export default class EditPost extends React.Component {
@@ -116,13 +116,6 @@ export default class EditPost extends React.Component {
     return false;
   };
 
-  _stopPropagation = (e) => {
-    if (e) {
-      e.stopPropagation();
-      e.nativeEvent.stopImmediatePropagation();
-    }
-  };
-
   _handleTextChange = (event) => {
     let hasText = false;
     if (event.target.value.trim()) {
@@ -180,41 +173,33 @@ export default class EditPost extends React.Component {
     }
   };
 
-  _showAddHashtagModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddHashtagModal = () => {
     this.setState({
       addTagModalType: TAG_HASHTAG
     });
   };
 
-  _showAddSchoolModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddSchoolModal = () => {
     this.setState({
       addTagModalType: TAG_SCHOOL
     });
   };
 
-  _showAddGeotagModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddGeotagModal = () => {
     this.setState({
       addTagModalType: TAG_LOCATION
     });
   };
 
-  _closeAddTagModal = (e) => {
-    this._stopPropagation(e);
-
+  _closeAddTagModal = () => {
     this.setState({
       addTagModalType: null
     });
   };
 
-  _changeAddTagModal = (newType) => {
+  _changeAddTagModal = (tag) => {
     this.setState({
-      addTagModalType: newType
+      addTagModalType: tag.type
     });
   };
 
@@ -273,11 +258,31 @@ export default class EditPost extends React.Component {
               </div>
               <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
                 <div className="layout layout-rows layout-align_vertical">
-                  <TagIcon className="create_post__tag_button" type={TAG_SCHOOL} onClick={this._showAddSchoolModal} />
-                  <TagIcon className="create_post__tag_button" type={TAG_LOCATION} onClick={this._showAddGeotagModal}  />
-                  {/*<TagIcon className="create_post__tag_button" type={TAG_EVENT} />*/}
-                  {/*<TagIcon className="create_post__tag_button" type={TAG_MENTION} />*/}
-                  <TagIcon className="create_post__tag_button" type={TAG_HASHTAG} onClick={this._showAddHashtagModal} />
+                  <div className="layout layout-rows layout-align_vertical">
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_SCHOOL}
+                      onClick={this._showAddSchoolModal}
+                    />
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_LOCATION}
+                      onClick={this._showAddGeotagModal}
+                    />
+                    {/* TAG_EVENT */}
+                    {/* TAG_MENTION */}
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_HASHTAG}
+                      onClick={this._showAddHashtagModal}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
