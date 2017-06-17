@@ -18,20 +18,34 @@
 import React, { PropTypes } from 'react';
 import { filter } from 'lodash';
 
-import { IMPLEMENTED_TAGS, TagIcon } from '../deps';
+import { IMPLEMENTED_TAGS, Tag, TagIcon } from './deps';
 
-import ModalSwitcherItem from './item';
+const inactiveIconProps = {
+  className: 'modal_switcher__tag-inactive'
+};
 
 const ModalSwitcher = ({ activeType, onClose, onTypeChange }) => {
   const inactiveTags = filter(IMPLEMENTED_TAGS, t => t !== activeType);
 
   return (
     <div className="modal_switcher">
-      {inactiveTags.map((tag, i) => (
-        <ModalSwitcherItem key={i} tag={tag} onClick={onTypeChange} />
+      {inactiveTags.map(type => (
+        <Tag
+          collapsed
+          className="modal_switcher__item"
+          key={type}
+          icon={inactiveIconProps}
+          isLink={false}
+          type={type}
+          onClick={onTypeChange}
+        />
       ))}
       <div className="modal_switcher__item" onClick={onClose}>
-        <TagIcon big type={activeType} />
+        <TagIcon
+          size="big"
+          type={activeType}
+          onClick={onClose}
+        />
       </div>
     </div>
   );
