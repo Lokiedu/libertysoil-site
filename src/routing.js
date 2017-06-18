@@ -59,6 +59,9 @@ import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 import SearchPage from './pages/search';
 import AllPostsPage from './pages/all-posts';
+import HashtagSubscriptionsPage from './pages/hashtag-subscriptions';
+import SchoolSubscriptionsPage from './pages/school-subscriptions';
+import GeotagSubscriptionsPage from './pages/geotag-subscriptions';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
@@ -79,6 +82,9 @@ export function getRoutes(authHandler, fetchHandler) {
       <Route path="/" component={IndexPage} onEnter={withoutAuth} />
       <Route component={AllPostsPage} path="/all" onEnter={withoutAuth} />
       <Route component={ListPage} path="/feed" onEnter={withAuth} />
+      <Route component={HashtagSubscriptionsPage} path="/feed/tag" onEnter={withAuth} />
+      <Route component={SchoolSubscriptionsPage} path="/feed/s" onEnter={withAuth} />
+      <Route component={GeotagSubscriptionsPage} path="/feed/geo" onEnter={withAuth} />
       <Route component={Induction} path="/induction" onEnter={withAuth} />
       <Route component={SuggestionsPage} path="/suggestions" onEnter={withAuth} />
       <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />

@@ -40,6 +40,7 @@ const TagsInformNormal = ({ animated, tags, truncated, ...props }) => (
             key={tagTypeTitle}
             theme="2.0"
             truncated={truncated}
+            to={tagType.url}
           >
             <TagCloud
               className="tags--row tags--queue"

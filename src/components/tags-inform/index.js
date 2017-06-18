@@ -62,19 +62,19 @@ export default class TagsInform extends React.Component {
         className: 'navigation-item--color_green',
         list: current_user.get('followed_geotags').toList().sort(compareTagsByDate).take(4),
         icon: { icon: 'place' },
-        url: '/geo/'
+        url: '/feed/geo'
       },
       hashtags: {
         className: 'navigation-item--color_blue',
         list: current_user.get('followed_hashtags').toList().sort(compareTagsByDate).take(6),
         icon: { icon: 'hashtag' },
-        url: '/tag/'
+        url: '/feed/tag'
       },
       schools: {
         className: 'navigation-item--color_red',
         list: current_user.get('followed_schools').toList().sort(compareTagsByDate).take(4),
         icon: { icon: 'school' },
-        url: '/s/'
+        url: '/feed/s'
       }
     };
   }
