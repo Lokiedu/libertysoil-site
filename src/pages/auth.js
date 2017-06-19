@@ -142,7 +142,7 @@ export class UnwpappedAuth extends React.Component {
 
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('messages'),
+  state => state.get('messages').filter(m => m.get('message') !== 'welcome-guest'),
   state => state.get('ui'),
   (current_user, messages, ui) => ({
     messages,

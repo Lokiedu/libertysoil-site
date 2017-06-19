@@ -17,6 +17,8 @@
 */
 import React from 'react';
 
+import WelcomeGuestTopMessage from './welcome-guest';
+
 export default class TopMessageSwitch extends React.Component {
   static displayName = 'TopMessageSwitch';
 
@@ -25,9 +27,13 @@ export default class TopMessageSwitch extends React.Component {
   }
 
   render() {
-    const { message } = this.props;
+    const { message, ...props } = this.props;
 
     switch (message[1].get('message')) {
+      case 'welcome-guest':
+        return (
+          <WelcomeGuestTopMessage {...props} />
+        );
       default:
         return false;
     }
