@@ -341,7 +341,9 @@ export class ActionsTrigger {
       if (!user.more || user.more.first_login) {
         browserHistory.push('/induction');
       } else {
-        browserHistory.push('/suggestions');
+        browserHistory.push('/');
+        await this.loadPersonalizedSuggestions();
+        this.dispatch(a.messages.addMessage('welcome-user'));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));

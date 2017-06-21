@@ -18,6 +18,7 @@
 import React from 'react';
 
 import WelcomeGuestTopMessage from './welcome-guest';
+import WelcomeUserTopMessage from './welcome-user';
 
 export default class TopMessageSwitch extends React.Component {
   static displayName = 'TopMessageSwitch';
@@ -33,6 +34,10 @@ export default class TopMessageSwitch extends React.Component {
       case 'welcome-guest':
         return (
           <WelcomeGuestTopMessage {...props} />
+        );
+      case 'welcome-user':
+        return (
+          <WelcomeUserTopMessage {...props} />
         );
       default:
         return false;
