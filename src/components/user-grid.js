@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import {
   ArrayOfUsers as ArrayOfUsersPropType,
@@ -26,7 +27,15 @@ import {
 import FollowButton from './follow-button';
 import User from './user';
 
-const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, users }) => {
+const UserGrid = (props) => {
+  const {
+    current_user,
+    i_am_following,
+    notFoundMessage,
+    triggers,
+    users
+  } = props;
+
   if (!users || !users.size) {
     if (notFoundMessage) {
       return <div>{notFoundMessage}</div>;
@@ -56,7 +65,15 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
   )).toJS();
 
   return (
-    <div className="layout__grids layout__grids-space layout__grid-responsive">
+    <div
+      className={
+        classNames(
+          props.className,
+          'layout__grids layout__grids-space',
+          { 'layout__grid-responsive': props.isResponsive }
+        )
+      }
+    >
       {usersToShow}
     </div>
   );
@@ -65,11 +82,17 @@ const UserGrid = ({ current_user, i_am_following, notFoundMessage, triggers, use
 UserGrid.displayName = 'UserGrid';
 
 UserGrid.propTypes = {
+  className: PropTypes.string,
   current_user: CurrentUserPropType,
   i_am_following: ArrayOfUsersIdPropType,
+  isResponsive: PropTypes.bool,
   notFoundMessage: PropTypes.node,
   triggers: PropTypes.shape({}),
   users: ArrayOfUsersPropType
+};
+
+UserGrid.defaultProps = {
+  isResponsive: true
 };
 
 export default UserGrid;
