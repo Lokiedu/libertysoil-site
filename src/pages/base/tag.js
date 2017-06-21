@@ -77,6 +77,16 @@ function getPageCaption(type, name, urlId) {
 
 export function GeotagPageHero({ geotag }) {
   let type = geotag.get('type');
+
+  if (type === 'Continent') {
+    return (
+      <PageHero
+        contentClassName="continent"
+        url={`/images/geo/continents/${geotag.get('continent_code')}.svg`}
+      />
+    );
+  }
+
   const location = {
     lat: geotag.get('lat'),
     lon: geotag.get('lon')

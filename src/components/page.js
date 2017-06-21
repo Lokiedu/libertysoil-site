@@ -51,11 +51,11 @@ const PageCaption = ({ children, iconLeft, iconRight }) => {
   );
 };
 
-const PageHero = ({ children, url }) => (
+const PageHero = ({ children, contentClassName, url }) => (
   <div className="page__hero">
     <div className="page__hero_body">
       <div
-        className="page__hero_content"
+        className={classNames('page__hero_content', contentClassName)}
         style={{
           backgroundImage: `url(${url})`
         }}
