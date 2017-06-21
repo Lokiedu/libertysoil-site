@@ -338,10 +338,12 @@ export class ActionsTrigger {
       this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
       this.dispatch(a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
 
+      browserHistory.push('/');
+
       if (!user.more || user.more.first_login) {
-        browserHistory.push('/induction');
+        await this.loadInitialSuggestions();
+        this.dispatch(a.messages.addMessage('welcome-first-login'));
       } else {
-        browserHistory.push('/');
         await this.loadPersonalizedSuggestions();
         this.dispatch(a.messages.addMessage('welcome-user'));
       }

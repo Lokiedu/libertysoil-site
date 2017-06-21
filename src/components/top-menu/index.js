@@ -65,7 +65,8 @@ class TopMenu extends React.Component {
 
 const ACCEPTED_MESSAGES = [
   'welcome-guest',
-  'welcome-user'
+  'welcome-user',
+  'welcome-first-login'
 ];
 
 const mapStateToProps = createSelector(
