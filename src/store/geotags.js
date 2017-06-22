@@ -31,6 +31,13 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case g.ADD_GEOTAGS: {
+      const geotags = keyBy(action.payload.geotags, 'url_name');
+      state = state.mergeDeep(i.fromJS(geotags));
+
+      break;
+    }
+
     case g.SET_GEOTAG_CLOUD: {
       const geotags = action.payload.continents.reduce((acc, next) => {
         return acc.concat(next.geotags);

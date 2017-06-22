@@ -46,15 +46,17 @@ export default function ContinentNav({ countries, continent, continents }) {
   return (
     <div>
       <div className="aux-nav">
-        <div className="aux-nav__item">
-          <Link
-            activeClassName="aux-nav__link--active"
-            className="aux-nav__link"
-            to={`/geo/${continent.get('url_name')}`}
-          >
-            All {continent.get('name')} ({continent.get('hierarchy_post_count')})
-          </Link>
-        </div>
+        {continent &&
+          <div className="aux-nav__item">
+            <Link
+              activeClassName="aux-nav__link--active"
+              className="aux-nav__link"
+              to={`/geo/${continent.get('url_name')}`}
+            >
+              All {continent.get('name')} ({continent.get('hierarchy_post_count')})
+            </Link>
+          </div>
+        }
         {countryElements}
       </div>
 

@@ -999,5 +999,14 @@ export class ActionsTrigger {
     }
 
     return success;
-  }
+  };
+
+  loadGeotags = async (query = {}) => {
+    try {
+      const response = await this.client.getGeotags(query);
+      this.dispatch(a.geotags.addGeotags(response));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
 }
