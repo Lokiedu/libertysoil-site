@@ -39,6 +39,47 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
     expect(renderer.render(<GeotagPageHero geotag={city} />), 'to contain', <MapboxMap zoom={12} frozen />);
   });
 
+  it('should try to display country\'s map only if the coordinates are missing', () => {
+    const berlin = Map({
+      type: 'City', lat: null, lon: null,
+      country: Map({ type: 'Country', lat: null, lon: null })
+    });
+    const berlinCoordinates = Map({ lat: 52.5244, lon: 13.4105 });
+    const germanyCoordinates = Map({ lat: 51, lon: 9 });
+
+    const renderer = createRenderer();
+    expect(
+      renderer.render(<GeotagPageHero geotag={berlin} />),
+      'to contain',
+      <PageHero url="/images/hero/welcome.jpg" />
+    );
+    expect(
+      renderer.render(
+        <GeotagPageHero geotag={berlin.mergeIn(['country'], germanyCoordinates)} />
+      ),
+      'to contain',
+      <MapboxMap zoom={5} frozen viewLocation={germanyCoordinates.toJS()} />
+    );
+    expect(
+      renderer.render(<GeotagPageHero geotag={berlin.merge(berlinCoordinates)} />),
+      'to contain',
+      <MapboxMap frozen viewLocation={berlinCoordinates.toJS()} zoom={12} />
+    );
+    expect(
+      renderer.render(
+        <GeotagPageHero
+          geotag={
+            berlin
+              .merge(berlinCoordinates)
+              .mergeIn(['country'], germanyCoordinates)
+          }
+        />
+      ),
+      'to contain',
+      <MapboxMap frozen viewLocation={berlinCoordinates.toJS()} zoom={12} />
+    );
+  });
+
   it('should render map for objects located at zero-coordinates', () => {
     const Greenwich = Map({ type: 'City', lat: 51.48, lon: 0 });
 

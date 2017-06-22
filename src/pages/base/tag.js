@@ -93,7 +93,7 @@ export function GeotagPageHero({ geotag }) {
   };
 
   // A lot of admin divisions don't have lat/lon. Attempt to take coords from the country.
-  if (location.lat !== null && location.lon !== null && geotag.get('country')) {
+  if (location.lat === null && location.lon === null && geotag.get('country')) {
     type = 'Country';
     location.lat = geotag.getIn(['country', 'lat']);
     location.lon = geotag.getIn(['country', 'lon']);
