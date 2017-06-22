@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import _ from 'lodash';
+import { concat, keyBy } from 'lodash';
 
 import { geotags as g } from '../actions';
 
@@ -35,20 +35,20 @@ export default function reducer(state = initialState, action) {
       const geotags = action.payload.continents.reduce((acc, next) => {
         return acc.concat(next.geotags);
       }, []);
-      state = i.fromJS(_.keyBy(geotags, 'url_name'));
+      state = state.mergeDeep(i.fromJS(keyBy(geotags, 'url_name')));
 
       break;
     }
 
     case g.SET_GEOTAGS: {
-      const geotags = _.keyBy(action.payload.geotags, 'url_name');
+      const geotags = keyBy(action.payload.geotags, 'url_name');
       state = i.fromJS(geotags);
 
       break;
     }
 
     case g.CONTINENT_NAV__SET: {
-      const geotags = _.keyBy(_.concat(action.payload.continents, action.payload.countries), 'url_name');
+      const geotags = keyBy(concat(action.payload.continents, action.payload.countries), 'url_name');
       state = state.merge(i.fromJS(geotags));
 
       break;
