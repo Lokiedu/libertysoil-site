@@ -22,6 +22,7 @@ import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
 
+import { SUPPORTED_LOCALES } from '../../consts/localization';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
@@ -135,6 +136,7 @@ class LoginComponentV2 extends React.Component {
 
     const translate = t.translateTo(locale);
     const format = t.formatTo(locale);
+    const rtl = SUPPORTED_LOCALES[locale].rtl;
 
     let headerContent, subheader;
     if (messages.size) {
@@ -165,7 +167,12 @@ class LoginComponentV2 extends React.Component {
 
     return (
       <Modal.Overlay isVisible={this.props.isVisible}>
-        <Modal className="sidebar-form__container" isVisible={this.props.isVisible} onHide={onClose}>
+        <Modal
+          className="sidebar-form__container"
+          isVisible={this.props.isVisible}
+          rtl={rtl}
+          onHide={onClose}
+        >
           <Modal.Header
             className="sidebar-form__background--bright sidebar-form__title sidebar-modal__title--big"
             mainIcon={MAIN_ICON}
@@ -197,6 +204,7 @@ class LoginComponentV2 extends React.Component {
             {subheader}
             <LoginForm
               format={format}
+              rtl={rtl}
               translate={translate}
               onErrors={this.handleErrors}
               onSubmit={this.handleSubmit}

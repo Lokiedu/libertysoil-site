@@ -180,4 +180,55 @@
     background: #0066cb;
     background: linear-gradient(to bottom, #0066cb 0%,#005bb8 100%);
   }
+
+  &--rtl {
+    direction: rtl;
+
+    .sidebar-form__actions {
+      @media (min-width: 480px) {
+        margin-left: 0;
+        margin-right: 120px;
+      }
+    }
+
+    .sidebar-form__label {
+      margin-left: 0;
+      margin-right: 60px;
+    }
+
+    .sidebar-form__row {
+      @media (min-width: 480px) {
+        padding-left: 0;
+        padding-right: 60px;
+      }
+    }
+
+    .sidebar-form__social {
+      padding-left: 0;
+      padding-right: 60px;
+
+      @media (min-width: 480px) {
+        padding-right: 120px;
+      }
+    }
+  }
+}
+
+.sidebar-modal--rtl {
+  .sidebar-form__message {
+    @media (min-width: 480px) {
+      margin-right: calc(60px + 25px);
+      margin-left: 25px;
+      width: 245px;
+    }
+  }
+
+  .sidebar-form__subheader {
+    padding-left: 0;
+    padding-right: 60px;
+
+    @media (min-width: 480px) {
+      padding-right: 120px;
+    }
+  }
 }

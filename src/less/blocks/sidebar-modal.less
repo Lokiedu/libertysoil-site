@@ -158,4 +158,27 @@
       margin-left: 20px;
     }
   }
+
+  &--rtl {
+    direction: rtl;
+
+    &.sidebar-modal__main {
+      right: auto;
+      left: 0;
+
+      &--transition {
+        &-appear {
+          transform: translateX(-100%);
+          &.sidebar-modal__main--transition-appear-active {
+            transform: translateX(0%);
+          }
+        }
+        &-leave {
+          &.sidebar-modal__main--transition-leave-active {
+            transform: translateX(-100%);
+          }
+        }
+      }
+    }
+  }
 }

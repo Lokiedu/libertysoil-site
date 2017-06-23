@@ -98,7 +98,8 @@ export class LoginFormV2 extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    rtl: PropTypes.bool
   };
 
   static defaultProps = {
@@ -132,7 +133,12 @@ export class LoginFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className="sidebar-form"
+        className={
+          classNames(
+            'sidebar-form',
+            { 'sidebar-form--rtl': this.props.rtl }
+          )
+        }
         method="post"
         onSubmit={this.handleSubmit}
       >

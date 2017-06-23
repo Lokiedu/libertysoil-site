@@ -28,7 +28,7 @@ import WrappedIntercom from '../components/intercom';
 
 const GAInitializer = ga.Initializer;
 
-export class App extends React.Component {
+export class UnwrappedApp extends React.Component {
   static displayName = 'UnwrappedApp';
 
   static propTypes = {
@@ -90,4 +90,4 @@ const mapStateToProps = createSelector(
   locale => ({ locale })
 );
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(UnwrappedApp);
