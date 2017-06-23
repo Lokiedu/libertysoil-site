@@ -3,6 +3,7 @@
   "login.labels.password": "הסיסמה שלך",
   "login.action": "התחברות",
   "login.with": "התחבר עם %0",
+  "login.create_new": "ליצור חשבון חדש",
   "login.errors.invalid.short": "שם משתמש או סיסמה לא חוקיים",
   "login.errors.invalid.long": "שם המשתמש והסיסמה שהזנת אינם תואמים את הרשומות שלנו. בדוק ונסה שוב",
   "login.errors.username_req": "עליך להזין את שם המשתמש שלך כדי להמשיך",

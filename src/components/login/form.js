@@ -22,6 +22,7 @@ import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
+import { Link } from 'react-router';
 
 import Button from '../button';
 import Icon from '../icon';
@@ -211,6 +212,12 @@ export class LoginFormV2 extends React.Component {
           >
             {f('login.with', 'Facebook')}
           </SocialButton>
+          <Link
+            className={SocialButton.defaultClassName.concat(" margin--all_top")}
+            to="/auth#register"
+          >
+            {t('login.create_new')}
+          </Link>
         </div>
       </form>
     );

@@ -5,6 +5,7 @@
   "login.placeholders.password": "Password",
   "login.action": "Log in",
   "login.with": "Sign in with %0",
+  "login.create_new": "Create new account",
   "login.errors.invalid.short": "Invalid username or password",
   "login.errors.invalid.long": "The username and password that you entered did not match our records. Please double-check and try again",
   "login.errors.username_req": "You must enter your username to continue",
