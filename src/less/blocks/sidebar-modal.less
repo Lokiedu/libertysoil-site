@@ -25,10 +25,19 @@
     bottom: 0;
     left: 0;
     z-index: 101;
-    background-color: rgba(0, 0, 0, 0.5);
     
     opacity: 0.01;
     transition: opacity 0.25s ease-in-out;
+
+    &--color {
+      &_black {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      &_white {
+        background-color: rgba(255, 255, 255, 0.85);
+      }
+    }
 
     &--transition {
       &_appear {

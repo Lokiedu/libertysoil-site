@@ -84,7 +84,14 @@ class SidebarModalMain extends React.Component {
 
 class SidebarModalOverlay extends React.Component {
   static displayName = 'SidebarModalOverlay';
+
+  static propTypes = {
+    color: PropTypes.string,
+    isVisible: PropTypes.bool
+  };
+
   static defaultProps = {
+    color: "white",
     isVisible: false
   };
 
@@ -119,7 +126,8 @@ class SidebarModalOverlay extends React.Component {
     const def = 'sidebar-modal__overlay';
     const cn = classNames('sidebar-modal', def, this.props.className, {
       [def.concat('--transition_appear')]: this.state.isAppearing,
-      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible
+      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
+      [def.concat('--color_').concat(this.props.color)]: this.props.color
     });
 
     const content = <div className={cn}>{this.props.children}</div>;
