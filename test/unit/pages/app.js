@@ -20,7 +20,7 @@ import ga from 'react-google-analytics';
 import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
-import App from '../../../src/pages/app';
+import { UnwrappedApp } from '../../../src/pages/app';
 
 
 const props = {
@@ -36,7 +36,7 @@ describe('App page', function () {
     const renderer = TestUtils.createRenderer();
 
     delete process.env.GOOGLE_ANALYTICS_ID;
-    renderer.render(<App {...props}><span>foo</span></App>);
+    renderer.render(<UnwrappedApp {...props}><span>foo</span></UnwrappedApp>);
 
     return expect(renderer, 'not to contain', <GAInitializer />);
   });
@@ -45,7 +45,7 @@ describe('App page', function () {
     const renderer = TestUtils.createRenderer();
 
     process.env.GOOGLE_ANALYTICS_ID = 100;
-    renderer.render(<App {...props}><span>foo</span></App>);
+    renderer.render(<UnwrappedApp {...props}><span>foo</span></UnwrappedApp>);
 
     return expect(renderer, 'to contain', <GAInitializer />);
   });

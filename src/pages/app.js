@@ -18,14 +18,17 @@
 import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
+import { connect } from 'react-redux';
 
 import { ActionsTrigger } from '../triggers';
 import { INTERCOM_APP_ID } from '../config';
+import createSelector from '../selectors/createSelector';
+
 import WrappedIntercom from '../components/intercom';
 
 const GAInitializer = ga.Initializer;
 
-export default class App extends React.Component {
+export class UnwrappedApp extends React.Component {
   static displayName = 'UnwrappedApp';
 
   static propTypes = {
@@ -51,7 +54,8 @@ export default class App extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.children !== this.props.children;
+    return nextProps.children !== this.props.children
+      || nextProps.locale !== this.props.locale;
   }
 
   render() {
@@ -70,7 +74,9 @@ export default class App extends React.Component {
 
     return (
       <div className="page">
-        <Helmet title="" titleTemplate="%sLibertySoil.org" />
+        <Helmet title="" titleTemplate="%sLibertySoil.org">
+          <html lang={this.props.locale} />
+        </Helmet>
         {children}
         {gaContent}
         <WrappedIntercom app_id={INTERCOM_APP_ID} url={url} />
@@ -78,3 +84,10 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = createSelector(
+  state => state.getIn(['ui', 'locale']),
+  locale => ({ locale })
+);
+
+export default connect(mapStateToProps)(UnwrappedApp);

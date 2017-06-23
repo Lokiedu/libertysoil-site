@@ -64,6 +64,8 @@ export function waitForTrue(callback, timeout = DEFAULT_TIMEOUT) {
     if (result !== true) {
       throw new Error();
     }
+
+    return true;
   };
 
   return waitForCallback(handler, timeout);

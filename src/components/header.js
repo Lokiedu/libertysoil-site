@@ -22,6 +22,7 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
 import Search from './search';
+import SelectLocale from './select-locale';
 import TopMenu from './top-menu';
 
 const HeaderComponent = ({
@@ -60,6 +61,7 @@ const HeaderComponent = ({
           <div className="header__toolbar">
             <Search />
             <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+            {!is_logged_in && <SelectLocale />}
           </div>
         </div>
       </div>

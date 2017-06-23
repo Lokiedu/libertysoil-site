@@ -21,20 +21,22 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
 export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
-export function addError(message) {
+export function addError(message, payload) {
   return {
     type: ADD_ERROR,
     payload: {
-      message
+      message,
+      payload
     }
   };
 }
 
-export function addMessage(message) {
+export function addMessage(message, payload) {
   return {
     type: ADD_MESSAGE,
     payload: {
-      message
+      message,
+      payload
     }
   };
 }

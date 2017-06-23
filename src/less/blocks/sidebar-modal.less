@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 .sidebar-modal {
+  color: @color__text;
+
   &__overlay {
     position: fixed;
     top: 0;
@@ -23,10 +25,19 @@
     bottom: 0;
     left: 0;
     z-index: 101;
-    background-color: rgba(0, 0, 0, 0.5);
     
     opacity: 0.01;
     transition: opacity 0.25s ease-in-out;
+
+    &--color {
+      &_black {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      &_white {
+        background-color: rgba(255, 255, 255, 0.85);
+      }
+    }
 
     &--transition {
       &_appear {
@@ -80,12 +91,31 @@
     height: 60px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+
+    &--transparent {
+      box-shadow: none;
+      background: transparent;
+    }
   }
 
+  // &__icon {
+  //   opacity: 0.01;
+  //   transition: opacity 0.25s ease-out;
+
+  //   @media (min-width: 480px) {
+  //     opacity: 1;
+  //   }
+  // }
+
   &__title {
+    display: flex;
     flex: 1;
     font-weight: 500;
     padding: 20px;
+
+    &--big {
+      font-size: 18px;
+    }
   }
 
   &__close {
@@ -123,24 +153,41 @@
       &_submit {
         color: #fff;
         background: #3b963f;
-        //background: -moz-linear-gradient(top, #3b963f 0%, #318334 100%);
-        //background: -webkit-linear-gradient(top, #3b963f 0%,#318334 100%);
         background: linear-gradient(to bottom, #3b963f 0%,#318334 100%);
-        //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3b963f', endColorstr='#318334',GradientType=0 );
       }
 
       &_cancel {
         color: #000;
         background: #f9f9f9;
-        //background: -moz-linear-gradient(top, #f9f9f9 0%, #efedf0 100%);
-        //background: -webkit-linear-gradient(top, #f9f9f9 0%,#efedf0 100%);
         background: linear-gradient(to bottom, #f9f9f9 0%,#efedf0 100%);
-        //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#efedf0',GradientType=0 );
       }
     }
 
     & + & {
       margin-left: 20px;
+    }
+  }
+
+  &--rtl {
+    direction: rtl;
+
+    &.sidebar-modal__main {
+      right: auto;
+      left: 0;
+
+      &--transition {
+        &-appear {
+          transform: translateX(-100%);
+          &.sidebar-modal__main--transition-appear-active {
+            transform: translateX(0%);
+          }
+        }
+        &-leave {
+          &.sidebar-modal__main--transition-leave-active {
+            transform: translateX(-100%);
+          }
+        }
+      }
     }
   }
 }

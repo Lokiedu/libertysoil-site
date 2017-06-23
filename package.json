@@ -9,8 +9,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=development run-p run:app run:tasks",
-    "docker-start": "NODE_ENV=production DB_ENV=staging run-s webpack:build:prod update-db:production run:app",
+    "start": "NODE_ENV=development run-p run:app run:tasks gulp:watch",
+    "docker-start": "NODE_ENV=production DB_ENV=staging run-s webpack:build:prod update-db:production gulp:build run:app",
     "test": "NODE_ENV=development DB_ENV=test run-s reset-db:test mocha",
     "coverage": "NODE_ENV=development DB_ENV=test npm run coverage:run",
     "travis": "NODE_ENV=development DB_ENV=travis run-s reset-db:travis travis:test lint travis:flow",
@@ -37,7 +37,9 @@
     "webpack:build:prod": "NODE_ENV=production webpack --config webpack.prod.config.js",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
-    "update-post-counters": "babel-node bin/postCounters.js"
+    "update-post-counters": "babel-node bin/postCounters.js",
+    "gulp:build": "gulp build",
+    "gulp:watch": "gulp watch"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
@@ -116,6 +118,7 @@
     "smoothscroll-polyfill": "^0.3.4",
     "sphinxapi": "~1.2.1",
     "strftime": "~0.10.0",
+    "t8on": "^0.1.4",
     "twitter-text": "^1.13.2",
     "url-assembler": "~1.2.6",
     "uuid": "^3.0.1",
@@ -154,6 +157,10 @@
     "flow-bin": "~0.43.1",
     "flow-runtime": "~0.10.0",
     "flow-typed": "^2.0.0",
+    "gulp": "^3.9.1",
+    "gulp-jsonminify": "^1.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-watch": "^4.3.11",
     "istanbul": "~1.1.0-alpha.1",
     "jsdom": "~9.12.0",
     "json-loader": "^0.5.4",

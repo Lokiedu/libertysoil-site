@@ -22,8 +22,7 @@ export default class Logo extends React.Component {
   static displayName = 'Logo';
 
   static propTypes = {
-    isLink: PropTypes.bool,
-    is_logged_in: PropTypes.bool.isRequired
+    isLink: PropTypes.bool
   };
 
   static defaultProps = {

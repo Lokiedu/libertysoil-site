@@ -185,6 +185,16 @@ class BaseSettingsPage extends React.Component {
                       Followers
                     </PageContentLink>
                   </div>
+                  <div className="aux-nav__item">
+                    <PageContentLink
+                      activeClassName="aux-nav__link--active"
+                      className="aux-nav__link"
+                      to={getUrl(URL_NAMES.LANGUAGE_SETTINGS)}
+                      visible
+                    >
+                      Language
+                    </PageContentLink>
+                  </div>
                 </div>
                 {isBio &&
                   <div className="layout layout-align_center layout-wrap bio__actions">

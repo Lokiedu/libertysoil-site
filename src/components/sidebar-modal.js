@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -25,6 +25,11 @@ import Icon from './icon';
 
 class SidebarModalMain extends React.Component {
   static displayName = 'SidebarModalMain';
+
+  static propTypes = {
+    rtl: PropTypes.bool
+  };
+
   static defaultProps = {
     animate: true,
     isVisible: false,
@@ -46,7 +51,13 @@ class SidebarModalMain extends React.Component {
   render() {
     const content = (
       <div
-        className={classNames('sidebar-modal sidebar-modal__main', this.props.className)}
+        className={
+          classNames(
+            this.props.className,
+            'sidebar-modal sidebar-modal__main',
+            { 'sidebar-modal--rtl': this.props.rtl }
+          )
+        }
         key="main"
         onClick={this.handleClickInside}
       >
@@ -73,7 +84,14 @@ class SidebarModalMain extends React.Component {
 
 class SidebarModalOverlay extends React.Component {
   static displayName = 'SidebarModalOverlay';
+
+  static propTypes = {
+    color: PropTypes.string,
+    isVisible: PropTypes.bool
+  };
+
   static defaultProps = {
+    color: "white",
     isVisible: false
   };
 
@@ -108,7 +126,8 @@ class SidebarModalOverlay extends React.Component {
     const def = 'sidebar-modal__overlay';
     const cn = classNames('sidebar-modal', def, this.props.className, {
       [def.concat('--transition_appear')]: this.state.isAppearing,
-      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible
+      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
+      [def.concat('--color_').concat(this.props.color)]: this.props.color
     });
 
     const content = <div className={cn}>{this.props.children}</div>;
@@ -128,8 +147,13 @@ class SidebarModalBody extends React.Component {
   }
 
   render() {
+    const className = classNames(
+      this.props.className,
+      { 'sidebar-modal__body': !this.props.raw }
+    );
+
     return (
-      <div className={classNames('sidebar-modal__body', this.props.className)}>
+      <div className={className}>
         {this.props.children}
       </div>
     );
@@ -139,29 +163,52 @@ class SidebarModalBody extends React.Component {
 class SidebarModalHeader extends React.Component {
   static displayName = 'SidebarModalHeader';
 
+  static defaultProps = {
+    closeIcon: {},
+    mainIcon: {}
+  };
+
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
   }
 
   render() {
-    return (
-      <div className={classNames('sidebar-modal__header', this.props.className)}>
+    let mainIcon;
+    if (this.props.mainIcon !== false) {
+      const { className: mainIconClassName, ...props } = this.props.mainIcon;
+      mainIcon = (
         <Icon
-          className="icon-outline--square"
+          className={classNames('sidebar-modal__icon icon-outline--square', mainIconClassName)}
           color="white"
           outline="blue"
           icon="cogs"
           pack="fa"
           size="common"
+          {...props}
         />
-        <div className="sidebar-modal__title">{this.props.children}</div>
+      );
+    }
+
+    let closeIcon;
+    if (this.props.closeIcon !== false) {
+      const { className: closeIconClassName, ...props } = this.props.closeIcon;
+      closeIcon = (
         <Icon
-          className="action sidebar-modal__close"
+          className={classNames('action sidebar-modal__close', closeIconClassName)}
           icon="close"
           pack="fa"
           size="common"
+          {...props}
           onClick={this.props.onClose}
         />
+      );
+    }
+
+    return (
+      <div className={classNames('sidebar-modal__header', this.props.className)}>
+        {mainIcon}
+        <div className="sidebar-modal__title">{this.props.children}</div>
+        {closeIcon}
       </div>
     );
   }

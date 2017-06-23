@@ -16,11 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
+import t from 't8on';
 
 import messageType from '../consts/messageTypeConstants';
+import createSelector from '../selectors/createSelector';
 
-export default class Message extends React.Component {
+function translateWith(getter, phrase, mode) {
+  const res = getter(phrase);
+  if (!res && !res.match(/\.+(long|short)$/)) {
+    if (mode === 'long') {
+      return getter(phrase.concat('.long')) || getter(phrase.concat('.short')) || phrase;
+    }
+
+    return getter(phrase.concat('.short')) || getter(phrase.concat('.long')) || phrase;
+  }
+
+  return res || phrase;
+}
+
+export class UnwrappedMessage extends React.Component {
+  static displayName = 'UnwrappedMessage';
+
   static propTypes = {
     i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     internal: PropTypes.bool,
@@ -62,14 +80,23 @@ export default class Message extends React.Component {
       close = <span className="message__close action micon" onClick={this.closeHandler}>close</span>;
     }
 
+    const translate = t.translateTo(this.props.locale);
+
     return (
       <div className={cn} key={i}>
         {close}
         {icon}
         <div className="message__body">
-          {message || children}
+          {translateWith(translate, message || children)}
         </div>
       </div>
     );
   }
 }
+
+const mapStateToProps = createSelector(
+  state => state.getIn(['ui', 'locale']),
+  locale => ({ locale })
+);
+
+export default connect(mapStateToProps)(UnwrappedMessage);

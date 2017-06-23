@@ -42,6 +42,10 @@ import {
   SearchQuery as SearchQueryValidators
 } from './db/validators';
 
+const SUPPORTED_LOCALES = Object.keys(
+  require('../consts/localization').SUPPORTED_LOCALES
+);
+
 const bcryptAsync = bb.promisifyAll(bcrypt);
 const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
@@ -1227,7 +1231,7 @@ export default class ApiController {
       ctx.app.emit('error', 'Session engine is not available, have you started redis service?');
 
       ctx.status = 500;
-      ctx.body = { error: 'Internal Server Error' };
+      ctx.body = { error: 'api.errors.internal' };
       return;
     }
 
@@ -1236,7 +1240,7 @@ export default class ApiController {
     for (const fieldName of requiredFields) {
       if (!(fieldName in ctx.request.body)) {
         ctx.status = 400;
-        ctx.body = { error: 'Bad Request' };
+        ctx.body = { error: 'api.errors.bad_request' };
         return;
       }
     }
@@ -1267,7 +1271,7 @@ export default class ApiController {
     if (user.get('email_check_hash')) {
       ctx.app.logger.warn(`user '${username}' has not validated email`);
       ctx.status = 401;
-      ctx.body = { success: false, error: 'Please follow the instructions mailed to you during registration.' };
+      ctx.body = { success: false, error: 'login.errors.email_unchecked' };
       return;
     }
 
@@ -3568,6 +3572,27 @@ export default class ApiController {
       this.processError(ctx, e);
     }
   }
+
+  getLocale = async (ctx) => {
+    const { lang_code } = ctx.params;
+
+    if (!SUPPORTED_LOCALES.find(c => lang_code === c)) {
+      ctx.status = 404;
+      ctx.body = { error: 'Locale isn\'t supported' };
+      return;
+    }
+
+    try {
+      // eslint-disable-next-line prefer-template
+      const locale = require('../../res/locale/' + lang_code + '.json');
+
+      ctx.status = 200;
+      ctx.body = locale;
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { error: e.message };
+    }
+  };
 
   // ========== Helpers ==========
 

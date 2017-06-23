@@ -110,7 +110,7 @@ describe('ActionsTrigger', () => {
         const triggers = new ActionsTrigger(client, store.dispatch);
         await triggers.login('nonexisting', 'password');
 
-        expect(store.getState().get('messages').first().get('message'), 'to equal', 'Invalid username or password');
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'login.errors.invalid');
       });
 
       it('should dispatch correct error for user with not validated email', async () => {
@@ -121,7 +121,7 @@ describe('ActionsTrigger', () => {
         const triggers = new ActionsTrigger(client, store.dispatch);
         await triggers.login(userAttrs.username, userAttrs.password);
 
-        expect(store.getState().get('messages').first().get('message'), 'to equal', 'Please follow the instructions mailed to you during registration.');
+        expect(store.getState().get('messages').first().get('message'), 'to equal', 'login.errors.email_unchecked');
         await user.destroy();
       });
     });

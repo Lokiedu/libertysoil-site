@@ -21,11 +21,14 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import t from 't8on';
 
 import { getRoutes } from '../routing';
+import { isStorageAvailable } from '../utils/browser';
 import { AuthHandler, FetchHandler } from '../utils/loader';
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
+import { ActionsTrigger } from '../triggers';
 import { initState } from '../store';
 
 bluebird.longStackTraces();
@@ -34,8 +37,28 @@ window.Promise = bluebird;
 const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
 
+const client = new ApiClient(API_HOST);
+
+const canUseStorage = isStorageAvailable('localStorage');
+const cachedLocale = canUseStorage && window.localStorage.getItem('locale');
+
+if (typeof window.localization === 'object') {
+  const is_logged_in = store.getState().getIn(['current_user', 'id']);
+
+  if (!is_logged_in && cachedLocale && !Object.keys(window.localization).includes(cachedLocale)) {
+    (new ActionsTrigger(client, store.dispatch)).setLocale(cachedLocale);
+  } else {
+    t.loadRoot(window.localization);
+    t.currentLocale = store.getState().getIn(['ui', 'locale']);
+
+    if (canUseStorage) {
+      window.localStorage.setItem('locale', t.currentLocale);
+    }
+  }
+}
+
 const authHandler = new AuthHandler(store);
-const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST));
+const fetchHandler = new FetchHandler(store, client);
 
 ReactDOM.render(
   <Provider store={store}>

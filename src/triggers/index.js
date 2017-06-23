@@ -17,9 +17,19 @@
  */
 import { browserHistory } from 'react-router';
 import { Map as ImmutableMap } from 'immutable';
+import t from 't8on';
 
+import { DEFAULT_LOCALE } from '../consts/localization';
+import { isStorageAvailable } from '../utils/browser';
 import { toSpreadArray } from '../utils/lang';
 import * as a from '../actions';
+
+const isBrowser = typeof window !== 'undefined';
+
+const canUseStorage = isBrowser
+  && process.env.DB_ENV !== 'test'
+  && process.env.DB_ENV !== 'travis'
+  && isStorageAvailable('localStorage');
 
 export class ActionsTrigger {
   client;
@@ -308,16 +318,16 @@ export class ActionsTrigger {
       const result = await this.client.login({ username, password });
       user = result.user;
     } catch (e) {
-      this.dispatch(a.users.setCurrentUser(null));
+      // this.dispatch(a.users.setCurrentUser(null));
 
       if (e.response && ('error' in e.response)) {
         this.dispatch(a.messages.addError(e.response.error));
       } else if (e.status === 401) {
-        this.dispatch(a.messages.addError('Invalid username or password'));
+        this.dispatch(a.messages.addError('login.errors.invalid'));
       } else {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.warn(e);  // eslint-disable-line no-console
-        this.dispatch(a.messages.addError('Server error: please retry later'));
+        this.dispatch(a.messages.addError('api.errors.internal'));
       }
 
       return;
@@ -948,4 +958,42 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   };
+
+  setLocale = async (_code) => {
+    let code = _code;
+
+    if (!code) {
+      if (canUseStorage) {
+        code = window.localStorage.getItem('locale') || DEFAULT_LOCALE;
+      } else {
+        code = DEFAULT_LOCALE;
+      }
+    }
+
+    let success = false;
+    try {
+      let locale;
+      if (process.env.NODE_ENV === 'production') {
+        locale = await this.client.getLocale(code);
+      } else {
+        locale = require(`../../res/locale/${code}.json`); // eslint-disable-line prefer-template
+      }
+
+      if (isBrowser) {
+        t
+          .setLocale(code, locale)
+          .currentLocale = code;
+        if (canUseStorage) {
+          window.localStorage.setItem('locale', code);
+        }
+      }
+
+      this.dispatch(a.ui.setLocale(code));
+      success = true;
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    return success;
+  }
 }
