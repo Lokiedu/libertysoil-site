@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 .sidebar-modal {
+  color: @color__text;
+
   &__overlay {
     position: fixed;
     top: 0;
@@ -80,12 +82,31 @@
     height: 60px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+
+    &--transparent {
+      box-shadow: none;
+      background: transparent;
+    }
   }
 
+  // &__icon {
+  //   opacity: 0.01;
+  //   transition: opacity 0.25s ease-out;
+
+  //   @media (min-width: 480px) {
+  //     opacity: 1;
+  //   }
+  // }
+
   &__title {
+    display: flex;
     flex: 1;
     font-weight: 500;
     padding: 20px;
+
+    &--big {
+      font-size: 18px;
+    }
   }
 
   &__close {

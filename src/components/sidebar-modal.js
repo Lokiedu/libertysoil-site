@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -25,6 +25,11 @@ import Icon from './icon';
 
 class SidebarModalMain extends React.Component {
   static displayName = 'SidebarModalMain';
+
+  static propTypes = {
+    rtl: PropTypes.bool
+  };
+
   static defaultProps = {
     animate: true,
     isVisible: false,
@@ -46,7 +51,13 @@ class SidebarModalMain extends React.Component {
   render() {
     const content = (
       <div
-        className={classNames('sidebar-modal sidebar-modal__main', this.props.className)}
+        className={
+          classNames(
+            this.props.className,
+            'sidebar-modal sidebar-modal__main',
+            { 'sidebar-modal--rtl': this.props.rtl }
+          )
+        }
         key="main"
         onClick={this.handleClickInside}
       >

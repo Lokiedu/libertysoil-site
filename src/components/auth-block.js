@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import isEqual from 'lodash/isEqual';
+import throttle from 'lodash/throttle';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { API_HOST } from '../config';
@@ -26,6 +28,7 @@ import { IntercomAPI } from './intercom';
 import Avatar from './user/avatar';
 import { v2 as Dropdown } from './dropdown';
 import MenuItem from './menu-item';
+import { v2 as Login } from './login';
 
 function handleLogout() {
   IntercomAPI('shutdown');
@@ -47,41 +50,74 @@ const menuItems = username => ([
     ) }
 ]);
 
-const AuthBlock = ({ current_user, is_logged_in }) => {
-  if (is_logged_in) {
-    return (
-      <Dropdown
-        className="header__auth header__toolbar"
-        icon={
-          <div className="header__corner header__corner--colored header__toolbar_item">
-            <Avatar user={current_user.get('user')} />
-          </div>
-        }
-        theme="new"
-      >
-        {menuItems(current_user.getIn(['user', 'username'])).map(menuItem =>
-          <MenuItem className="menu__item--theme_new" key={menuItem.key}>
-            {menuItem.node}
-          </MenuItem>
-        )}
-      </Dropdown>
-    );
+export default class AuthBlock extends React.Component {
+  static displayName = 'AuthBlock';
+
+  static propTypes = {
+    current_user: CurrentUserPropType,
+    is_logged_in: PropTypes.bool.isRequired
+  };
+
+  constructor(...args) {
+    super(...args);
+    this.state = { isLoginVisible: false };
   }
 
-  return (
-    <div className="header__toolbar">
-      <div className="header__toolbar_item header__toolbar_item-right_space">
-        <Link className="header__toolbar_item" to="/auth">Login</Link>
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps !== this.props
+      || !isEqual(nextState, this.state);
+  }
+
+  handleLoginClick = (e) => {
+    e.preventDefault();
+    this.handleToggleLogin();
+  };
+
+  handleToggleLogin = throttle(() => {
+    this.setState(state => ({
+      isLoginVisible: !state.isLoginVisible
+    }));
+  }, 200);
+
+  render() {
+    const { current_user, is_logged_in } = this.props;
+
+    if (is_logged_in) {
+      return (
+        <Dropdown
+          className="header__auth header__toolbar"
+          icon={
+            <div className="header__corner header__corner--colored header__toolbar_item">
+              <Avatar user={current_user.get('user')} />
+            </div>
+          }
+          theme="new"
+        >
+          {menuItems(current_user.getIn(['user', 'username'])).map(menuItem =>
+            <MenuItem className="menu__item--theme_new" key={menuItem.key}>
+              {menuItem.node}
+            </MenuItem>
+          )}
+        </Dropdown>
+      );
+    }
+
+    return (
+      <div className="header__toolbar">
+        <div className="header__toolbar_item header__toolbar_item-right_space">
+          <Link
+            className="header__toolbar_item"
+            onClick={this.handleLoginClick}
+            to="/auth"
+          >
+            Login
+          </Link>
+        </div>
+        <Login
+          isVisible={this.state.isLoginVisible}
+          onClose={this.handleToggleLogin}
+        />
       </div>
-    </div>
-  );
-};
-
-AuthBlock.displayName = 'AuthBlock';
-
-AuthBlock.propTypes = {
-  current_user: CurrentUserPropType,
-  is_logged_in: PropTypes.bool.isRequired
-};
-
-export default AuthBlock;
+    );
+  }
+}
