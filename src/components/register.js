@@ -71,7 +71,7 @@ class SuccessContent extends Component {
 }
 
 export class UnwrappedRegister extends React.Component {
-  static displayName = 'Register';
+  static displayName = 'UnwrappedRegister';
 
   static propTypes = {
     fields: PropTypes.shape({

@@ -18,10 +18,12 @@
 /* eslint-env node, mocha */
 /* global $dbConfig,setTimeout */
 import React from 'react';
+import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import Register from '../../../src/components/register';
+import Register, { UnwrappedRegister } from '../../../src/components/register';
+import { initState } from '../../../src/store';
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';
 import UserFactory from '../../../test-helpers/factories/user';
@@ -49,12 +51,16 @@ describe('UnwpappedAuth page', () => {
   });
 
   describe('Wrapped Register component', () => {
-    let userAttrs, user;
+    let userAttrs, user, store;
     const email = 'test@example.com';
 
     before(async () => {
       userAttrs = UserFactory.build();
       user = await User.create(userAttrs.username, userAttrs.password, email);
+    });
+
+    beforeEach(() => {
+      store = initState();
     });
 
     after(async () => {
@@ -82,38 +88,44 @@ describe('UnwpappedAuth page', () => {
 
     it('should check on email currently taken', async () => {
       const testComponent = (
-        <Register
-          onRegisterUser={noop}
-          onShowRegisterForm={noop}
-        />
+        <Provider store={store}>
+          <Register
+            onRegisterUser={noop}
+            onShowRegisterForm={noop}
+          />
+        </Provider>
       );
       const wrapper = mount(testComponent);
 
-      const newEmailError = waitForChange(() => wrapper.state().errors.email);
+      const newEmailError = waitForTrue(() =>
+        wrapper.find(UnwrappedRegister).props().fields.email.error === 'Email is taken'
+      );
 
       wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
       wrapper.find('#registerForm').simulate('submit');
 
-      expect(await newEmailError, 'to equal', 'Email is taken');
+      expect(await newEmailError, 'to be truthy');
     });
 
     it('Register form validation', async () => {
       const userAttrs = UserFactory.build();
       const onRegisterUser = sinon.spy();
       const testComponent = (
-        <Register
-          onRegisterUser={onRegisterUser}
-          onShowRegisterForm={noop}
-        />
+        <Provider store={store}>
+          <Register
+            onRegisterUser={onRegisterUser}
+            onShowRegisterForm={noop}
+          />
+        </Provider>
       );
+
       const wrapper = mount(testComponent);
+      const register = wrapper.find(UnwrappedRegister);
 
       const changeTextInput = async (id, value, name) => {
         wrapper.find(id).node.value = value;
         wrapper.find(id).simulate('change');
-        await waitForTrue(() => {
-          return !wrapper.state().errors[name];
-        });
+        await waitForTrue(() => !register.props().fields[name].error);
       };
 
       await changeTextInput('#registerUsername', userAttrs.username, 'username');
@@ -123,13 +135,11 @@ describe('UnwpappedAuth page', () => {
 
       wrapper.find('#registerAgree').node.checked = true;
       wrapper.find('#registerAgree').simulate('change');
-      await waitForTrue(() => {
-        return !wrapper.state().errors.agree;
-      });
+      await waitForTrue(() => !register.props().fields.agree.error);
+      await waitForTrue(() => register.props().form.isValid());
 
-      await waitForTrue(() => wrapper.state().valid);
       wrapper.find('#registerForm').simulate('submit');
-      await waitForTrue(() => wrapper.state().valid);
+      await waitForTrue(() => register.props().form.isValid());
 
       return expect(onRegisterUser.calledWith(userAttrs.username, userAttrs.password, userAttrs.email, '', ''), 'to be true');
     });
