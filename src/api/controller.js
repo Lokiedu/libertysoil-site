@@ -1231,7 +1231,7 @@ export default class ApiController {
       ctx.app.emit('error', 'Session engine is not available, have you started redis service?');
 
       ctx.status = 500;
-      ctx.body = { error: 'Internal Server Error' };
+      ctx.body = { error: 'api.errors.internal' };
       return;
     }
 
@@ -1240,7 +1240,7 @@ export default class ApiController {
     for (const fieldName of requiredFields) {
       if (!(fieldName in ctx.request.body)) {
         ctx.status = 400;
-        ctx.body = { error: 'Bad Request' };
+        ctx.body = { error: 'api.errors.bad_request' };
         return;
       }
     }
@@ -1271,7 +1271,7 @@ export default class ApiController {
     if (user.get('email_check_hash')) {
       ctx.app.logger.warn(`user '${username}' has not validated email`);
       ctx.status = 401;
-      ctx.body = { success: false, error: 'Please follow the instructions mailed to you during registration.' };
+      ctx.body = { success: false, error: 'login.errors.email_unchecked' };
       return;
     }
 

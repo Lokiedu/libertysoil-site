@@ -318,16 +318,16 @@ export class ActionsTrigger {
       const result = await this.client.login({ username, password });
       user = result.user;
     } catch (e) {
-      this.dispatch(a.users.setCurrentUser(null));
+      // this.dispatch(a.users.setCurrentUser(null));
 
       if (e.response && ('error' in e.response)) {
         this.dispatch(a.messages.addError(e.response.error));
       } else if (e.status === 401) {
-        this.dispatch(a.messages.addError('Invalid username or password'));
+        this.dispatch(a.messages.addError('login.errors.invalid'));
       } else {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.warn(e);  // eslint-disable-line no-console
-        this.dispatch(a.messages.addError('Server error: please retry later'));
+        this.dispatch(a.messages.addError('api.errors.internal'));
       }
 
       return;
