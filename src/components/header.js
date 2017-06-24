@@ -32,6 +32,7 @@ const HeaderComponent = ({
   is_logged_in,
   needIndent,
   needMenu,
+  needAuthBlock,
   ...props
 }) => {
   let cn = 'header page__header';
@@ -60,8 +61,12 @@ const HeaderComponent = ({
           </div>
           <div className="header__toolbar">
             <Search />
-            <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
-            {!is_logged_in && <SelectLocale />}
+            {needAuthBlock &&
+              <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+            }
+            {!is_logged_in &&
+              <SelectLocale />
+            }
           </div>
         </div>
       </div>
@@ -76,10 +81,14 @@ HeaderComponent.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   current_user: CurrentUserPropType,
-  is_logged_in: PropTypes.bool.isRequired
+  is_logged_in: PropTypes.bool.isRequired,
+  needAuthBlock: PropTypes.bool,
+  needIndent: PropTypes.bool,
+  needMenu: PropTypes.bool,
 };
 
 HeaderComponent.defaultProps = {
+  needAuthBlock: true,
   needIndent: true,
   needMenu: true
 };
