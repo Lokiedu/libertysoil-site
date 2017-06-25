@@ -27,7 +27,14 @@
 
       > * {
         position: relative;
+      }
+
+      > :not(.header) {
         z-index: 10;
+      }
+
+      > .header {
+        z-index: 100;
       }
 
       &:before {
