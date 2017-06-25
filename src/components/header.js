@@ -40,39 +40,49 @@ const HeaderComponent = ({
     cn += ` ${className}`;
   }
 
-  let pageTop;
+  const header = (
+    <div {...props} className={cn}>
+      <div className="header__body">
+        <div className="header__content">
+          {!React.Children.count(children) &&
+            <HeaderLogo />
+          }
+          {children}
+        </div>
+        <div className="header__toolbar">
+          <Search />
+          {needAuthBlock &&
+            <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+          }
+          {!is_logged_in &&
+            <SelectLocale />
+          }
+        </div>
+      </div>
+    </div>
+  );
+
+  let subheader;
   if (needMenu) {
-    pageTop = <TopMenu is_logged_in={is_logged_in} />;
+    subheader = <TopMenu is_logged_in={is_logged_in} />;
   } else if (needIndent) {
-    pageTop = (
-      <div className="header__indent" />
+    subheader = <div className="header__indent" />;
+  }
+
+  /**
+   * while react components can return one-root tree only
+   * (they say it'll be changed in future releases)
+   **/
+  if (subheader) {
+    return (
+      <div>
+        {header}
+        {subheader}
+      </div>
     );
   }
 
-  return (
-    <div>
-      <div {...props} className={cn}>
-        <div className="header__body">
-          <div className="header__content">
-            {!React.Children.count(children) &&
-              <HeaderLogo />
-            }
-            {children}
-          </div>
-          <div className="header__toolbar">
-            <Search />
-            {needAuthBlock &&
-              <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
-            }
-            {!is_logged_in &&
-              <SelectLocale />
-            }
-          </div>
-        </div>
-      </div>
-      {pageTop}
-    </div>
-  );
+  return header;
 };
 
 HeaderComponent.displayName = 'HeaderComponent';
