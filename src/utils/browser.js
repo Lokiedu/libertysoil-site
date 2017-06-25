@@ -14,8 +14,11 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
-// @flow
+declare var DOMException: any;
+
 export function offsetTop(node: Element) {
   const r = node.getBoundingClientRect();
   const scrollTop = window.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || 0;
@@ -23,7 +26,7 @@ export function offsetTop(node: Element) {
 }
 
 // from https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-export function isStorageAvailable(type) {
+export function isStorageAvailable(type: string) {
   try {
     // eslint-disable-next-line no-var
     var storage = window[type], x = '__storage_test__';
@@ -42,6 +45,7 @@ export function isStorageAvailable(type) {
       // Firefox
       e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
       // acknowledge QuotaExceededError only if there's something already stored
+      // $FlowFixMe
       storage.length !== 0;
   }
 }
