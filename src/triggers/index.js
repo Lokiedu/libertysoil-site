@@ -333,6 +333,10 @@ export class ActionsTrigger {
       return;
     }
 
+    this.loginUser(needRedirect, user);
+  };
+
+  loginUser = async (needRedirect, user) => {
     try {
       this.dispatch(a.users.setCurrentUser(user));
       this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));

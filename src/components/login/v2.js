@@ -138,6 +138,15 @@ class LoginComponentV2 extends React.PureComponent {
     }
   };
 
+  handleSignInWith = async ({ user, profile, error }) => { // eslint-disable-line no-unused-vars
+    if (user) {
+      await this.triggers.loginUser(true, user);
+    } else {
+      console.error(error); // eslint-disable-line no-console
+      // TODO: If `user` is not present, redirect to the sign up form and autofill fields using `profile`.
+    }
+  }
+
   render() {
     if (this.props.is_logged_in) {
       return false;
@@ -214,6 +223,7 @@ class LoginComponentV2 extends React.PureComponent {
               <LoginForm
                 translate={translate}
                 onSubmit={this.handleSubmit}
+                onSignInWith={this.handleSignInWith}
               />
             </Modal.Body>
           </Modal.Main>

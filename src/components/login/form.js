@@ -28,6 +28,7 @@ import { memoize1 } from '../register/utils';
 import AltButton from '../alt-button';
 import Button from '../button';
 import FormField from '../form/field';
+import { openOauthPopup } from '../../utils/auth';
 
 const hiddenStyle = { display: 'none' };
 
@@ -80,8 +81,19 @@ export class LoginFormV2 extends React.Component {
 
   static defaultProps = {
     onErrors: noop,
-    onSubmit: noop
+    onSubmit: noop,
+    onSignInWith: noop
   };
+
+  signInWith = async (provider) => {
+    const response = await openOauthPopup(provider);
+    this.props.onSignInWith(response);
+  }
+
+  handleFacebook = this.signInWith.bind(this, 'facebook');
+  handleGoogle = this.signInWith.bind(this, 'google');
+  handleTwitter = this.signInWith.bind(this, 'twitter');
+  handleGithub = this.signInWith.bind(this, 'github');
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -150,20 +162,40 @@ export class LoginFormV2 extends React.Component {
         </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon={getIconProps('github')}
-            theme="list"
-            onClick={undefined}
-          >
-            GitHub
-          </AltButton>
-          <AltButton
-            className="margin--all_top"
             icon={getIconProps('facebook-official')}
             theme="list"
-            onClick={undefined}
+            onClick={this.handleFacebook}
           >
             Facebook
           </AltButton>
+
+          <AltButton
+            className="margin--all_top"
+            icon={getIconProps('google')}
+            theme="list"
+            onClick={this.handleGoogle}
+          >
+            Google
+          </AltButton>
+
+          <AltButton
+            className="margin--all_top"
+            icon={getIconProps('twitter')}
+            theme="list"
+            onClick={this.handleTwitter}
+          >
+            Twitter
+          </AltButton>
+
+          <AltButton
+            className="margin--all_top"
+            icon={getIconProps('github')}
+            theme="list"
+            onClick={this.handleGithub}
+          >
+            Github
+          </AltButton>
+
           <Link
             className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}
             to={pushSignup}
