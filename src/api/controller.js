@@ -43,6 +43,8 @@ import {
   ProfilePostValidator,
   PostValidator
 } from './validators';
+import { POST_RELATIONS, USER_RELATIONS } from './consts';
+import { setUpPassport, WrongPasswordError } from './auth';
 
 const SUPPORTED_LOCALES = Object.keys(
   require('../consts/localization').SUPPORTED_LOCALES
@@ -62,11 +64,13 @@ export default class ApiController {
   bookshelf;
   sphinx;
   queue;
+  passport;
 
   constructor(bookshelf, sphinx) {
     this.bookshelf = bookshelf;
     this.sphinx = { api: bb.promisifyAll(sphinx.api), ql: sphinx.ql };
     this.queue = new QueueSingleton;
+    this.passport = setUpPassport(bookshelf);
   }
 
   test = async (ctx) => {
@@ -298,11 +302,6 @@ export default class ApiController {
   };
 
   userTags = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
     const Hashtag = this.bookshelf.model('Hashtag');
     const hashtags = await Hashtag
       .collection()
@@ -310,7 +309,7 @@ export default class ApiController {
         qb
           .join('hashtags_posts', 'hashtags_posts.hashtag_id', 'hashtags.id')
           .join('posts', 'hashtags_posts.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .distinct();
       })
       .fetch();
@@ -322,7 +321,7 @@ export default class ApiController {
         qb
           .join('posts_schools', 'posts_schools.school_id', 'schools.id')
           .join('posts', 'posts_schools.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .distinct();
       })
       .fetch();
@@ -334,7 +333,7 @@ export default class ApiController {
         qb
           .join('geotags_posts', 'geotags_posts.geotag_id', 'geotags.id')
           .join('posts', 'geotags_posts.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .distinct();
       })
       .fetch();
@@ -364,14 +363,8 @@ export default class ApiController {
   };
 
   currentUserLikedPosts = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     try {
-      const posts = await this.getLikedPosts(ctx.session.user, ctx);
+      const posts = await this.getLikedPosts(ctx.state.user, ctx);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -444,14 +437,8 @@ export default class ApiController {
   };
 
   currentUserFavouredPosts = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     try {
-      const posts = await this.getFavouredPosts(ctx.session.user, ctx);
+      const posts = await this.getFavouredPosts(ctx.state.user, ctx);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -619,12 +606,6 @@ export default class ApiController {
   };
 
   updateGeotag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -648,7 +629,7 @@ export default class ApiController {
         }
       }
 
-      properties.last_editor = ctx.session.user;
+      properties.last_editor = ctx.state.user;
       properties = _.extend(geotag.get('more'), properties);
 
       geotag.set('more', properties);
@@ -663,12 +644,6 @@ export default class ApiController {
   };
 
   updateHashtag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -692,7 +667,7 @@ export default class ApiController {
         }
       }
 
-      properties.last_editor = ctx.session.user;
+      properties.last_editor = ctx.state.user;
       properties = _.extend(hashtag.get('more'), properties);
 
       hashtag.set('more', properties);
@@ -707,12 +682,6 @@ export default class ApiController {
   };
 
   createSchool = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('name' in ctx.request.body)) {
       ctx.status = 400;
       ctx.body = { error: '"name" property is not given' };
@@ -807,7 +776,7 @@ export default class ApiController {
         }
       }
 
-      properties.last_editor = ctx.session.user;
+      properties.last_editor = ctx.state.user;
       attributesWithValues.more = properties;
 
       const school = new School({
@@ -830,12 +799,6 @@ export default class ApiController {
   }
 
   updateSchool = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -908,7 +871,7 @@ export default class ApiController {
         }
       }
 
-      properties.last_editor = ctx.session.user;
+      properties.last_editor = ctx.state.user;
       attributesWithValues.more = _.extend(school.get('more'), properties);
 
       school.set(attributesWithValues);
@@ -946,12 +909,6 @@ export default class ApiController {
   };
 
   likePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const result = { success: false };
 
     const User = this.bookshelf.model('User');
@@ -959,7 +916,7 @@ export default class ApiController {
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_posts'] });
 
       if (post.get('user_id') === user.id) {
         ctx.status = 403;
@@ -981,7 +938,7 @@ export default class ApiController {
       const likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
@@ -995,12 +952,6 @@ export default class ApiController {
   };
 
   unlikePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const result = { success: false };
 
     const User = this.bookshelf.model('User');
@@ -1008,7 +959,7 @@ export default class ApiController {
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_posts'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_posts'] });
 
       await user.liked_posts().detach(post);
 
@@ -1024,7 +975,7 @@ export default class ApiController {
       const likes = await this.bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       result.success = true;
       result.likes = likes.map(row => row.post_id);
@@ -1038,12 +989,6 @@ export default class ApiController {
   };
 
   favPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const result = { success: false };
 
     const User = this.bookshelf.model('User');
@@ -1051,7 +996,7 @@ export default class ApiController {
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
       if (post.get('user_id') === user.id) {
         ctx.status = 403;
@@ -1070,7 +1015,7 @@ export default class ApiController {
       const favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
@@ -1084,12 +1029,6 @@ export default class ApiController {
   };
 
   unfavPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const result = { success: false };
 
     const User = this.bookshelf.model('User');
@@ -1097,7 +1036,7 @@ export default class ApiController {
 
     try {
       let post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['favourited_posts'] });
 
       await user.favourited_posts().detach(post);
 
@@ -1110,7 +1049,7 @@ export default class ApiController {
       const favs = await this.bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       result.success = true;
       result.favourites = favs.map(row => row.post_id);
@@ -1124,13 +1063,7 @@ export default class ApiController {
   };
 
   subscriptions = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
-    const uid = ctx.session.user;
+    const uid = ctx.state.user;
     const Post = this.bookshelf.model('Post');
 
     const offset = ('offset' in ctx.query) ? parseInt(ctx.query.offset, 10) : 0;
@@ -1161,25 +1094,17 @@ export default class ApiController {
   };
 
   hashtagSubscriptions = async (ctx) => {
-    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
 
-    // TODO: replace ctx.session.user with ctx.state.user after #686
     const hashtags = await this.bookshelf.knex('followed_hashtags_users')
-      .where('user_id', ctx.session.user);
+      .where('user_id', ctx.state.user);
     const hashtagIds = hashtags.map(t => t.hashtag_id);
 
     const q = Post.collection()
       .query(qb => {
         qb
           .join('hashtags_posts', 'hashtags_posts.post_id', 'posts.id')
-          .whereNot('user_id', ctx.session.user)
+          .whereNot('user_id', ctx.state.user)
           .whereIn('hashtags_posts.hashtag_id', hashtagIds)
           .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id');
@@ -1196,25 +1121,17 @@ export default class ApiController {
   };
 
   schoolSubscriptions = async (ctx) => {
-    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
 
-    // TODO: replace ctx.session.user with ctx.state.user after #686
     const schools = await this.bookshelf.knex('followed_schools_users')
-      .where('user_id', ctx.session.user);
+      .where('user_id', ctx.state.user);
     const schoolIds = schools.map(t => t.school_id);
 
     const q = Post.collection()
       .query(qb => {
         qb
           .join('posts_schools', 'posts_schools.post_id', 'posts.id')
-          .whereNot('user_id', ctx.session.user)
+          .whereNot('user_id', ctx.state.user)
           .whereIn('posts_schools.school_id', schoolIds)
           .orderBy('posts.updated_at', 'desc')
           .groupBy('posts.id');
@@ -1231,18 +1148,10 @@ export default class ApiController {
   };
 
   geotagSubscriptions = async (ctx) => {
-    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
 
-    // TODO: replace ctx.session.user with ctx.state.user after #686
     const geotags = await this.bookshelf.knex('followed_geotags_users')
-      .where('user_id', ctx.session.user);
+      .where('user_id', ctx.state.user);
     const geotagIds = geotags.map(t => t.geotag_id);
 
     // When it gets to slow we might try to add parent ids to geotags_posts instead of joining geotags.
@@ -1251,7 +1160,7 @@ export default class ApiController {
         qb
           .join('geotags_posts', 'geotags_posts.post_id', 'posts.id')
           .join('geotags', 'geotags.id', 'geotags_posts.geotag_id')
-          .whereNot('user_id', ctx.session.user)
+          .whereNot('user_id', ctx.state.user)
           .where((qb) => {
             qb
               .whereIn('geotags.id', geotagIds)
@@ -1400,7 +1309,7 @@ export default class ApiController {
     ctx.body = { success: true, user };
   };
 
-  login = async (ctx) => {
+  login = async (ctx, next) => {
     if (!ctx.session) {
       ctx.app.emit('error', 'Session engine is not available, have you started redis service?');
 
@@ -1409,55 +1318,37 @@ export default class ApiController {
       return;
     }
 
-    const requiredFields = ['username', 'password'];
+    if (ctx.isAuthenticated()) {
+      ctx.status = 400;
+      ctx.body = { error: 'login.errors.already_logged_in' };
+    }
 
-    for (const fieldName of requiredFields) {
-      if (!(fieldName in ctx.request.body)) {
-        ctx.status = 400;
-        ctx.body = { error: 'api.errors.bad_request' };
+    const authenticator = this.passport.authenticate('local', async (err, user) => {
+      if (err) {
+        if (err instanceof this.bookshelf.NotFoundError) {
+          ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but there's no such user`);
+        } else if (err instanceof WrongPasswordError) {
+          ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but used wrong pasword`);
+        }
+
+        ctx.body = { success: false, error: 'login.errors.invalid' };
+        ctx.status = 401;
         return;
       }
-    }
 
-    const User = this.bookshelf.model('User');
-    const username = ctx.request.body.username.toLowerCase();
+      if (user.get('email_check_hash')) {
+        ctx.app.logger.warn(`user '${user.get('username')}' has not validated email`);
+        ctx.status = 401;
+        ctx.body = { success: false, error: 'login.errors.email_unchecked' };
+        return;
+      }
 
-    let user;
+      await ctx.login(user);
+      await user.refresh({ withRelated: USER_RELATIONS });
+      ctx.body = { success: true, user };
+    });
 
-    try {
-      user = await new User({ username }).fetch({ require: true });
-    } catch (e) {
-      ctx.app.logger.warn(`Someone tried to log in as '${username}', but there's no such user`);
-      ctx.status = 401;
-      ctx.body = { success: false };
-      return;
-    }
-
-    const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.password, user.get('hashed_password'));
-
-    if (!passwordIsValid) {
-      ctx.app.logger.warn(`Someone tried to log in as '${username}', but used wrong pasword`);
-      ctx.status = 401;
-      ctx.body = { success: false };
-      return;
-    }
-
-    if (user.get('email_check_hash')) {
-      ctx.app.logger.warn(`user '${username}' has not validated email`);
-      ctx.status = 401;
-      ctx.body = { success: false, error: 'login.errors.email_unchecked' };
-      return;
-    }
-
-    ctx.session.user = user.id;
-    user = await User
-      .where({ id: ctx.session.user })
-      .fetch({
-        require: true,
-        withRelated: USER_RELATIONS
-      });
-
-    ctx.body = { success: true, user };
+    await authenticator(ctx, next);
   };
 
   verifyEmail = async (ctx) => {
@@ -1495,7 +1386,7 @@ export default class ApiController {
    * Reset password end-point url like: http://libertysoil/resetpasswordfrom?code={generatedcode}
    */
   resetPassword = async (ctx) => {
-    if (ctx.session && ctx.session.user) {
+    if (ctx.isAuthenticated()) {
       ctx.status = 403;
       ctx.body = { error: 'Please use profile change password feature.' };
       return;
@@ -1547,7 +1438,7 @@ export default class ApiController {
    * Saves new password to User model.
    */
   newPassword = async (ctx) => {
-    if (ctx.session && ctx.session.user) {
+    if (ctx.isAuthenticated()) {
       ctx.redirect('/');
       return;
     }
@@ -1597,22 +1488,14 @@ export default class ApiController {
   };
 
   logout = async (ctx) => {
-    if (ctx.session && ctx.session.user) {
-      ctx.session = null;
-    }
+    ctx.logout();
     ctx.redirect('/');
   };
 
   userSuggestions = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
 
-    const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['ignored_users', 'following'] });
+    const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['ignored_users', 'following'] });
 
     const ignoredIds = user.related('ignored_users').pluck('id');
     const followingIds = user.related('following').pluck('id');
@@ -1628,7 +1511,7 @@ export default class ApiController {
             this.select('users.*')
               .count('posts.id as post_count')
               .from('users')
-              .where('users.id', '!=', ctx.session.user)
+              .where('users.id', '!=', ctx.state.user)
               .leftJoin('posts', 'users.id', 'posts.user_id')
               .groupBy('users.id')
               .as('active_users');
@@ -1643,12 +1526,6 @@ export default class ApiController {
   };
 
   initialSuggestions = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
 
     const q = User.forge()
@@ -1657,7 +1534,7 @@ export default class ApiController {
           .select('users.*')
           .count('posts.id as post_count')
           .from('users')
-          .where('users.id', '!=', ctx.session.user)
+          .where('users.id', '!=', ctx.state.user)
           .leftJoin('posts', 'users.id', 'posts.user_id')
           .groupBy('users.id')
           .orderBy('post_count', 'desc')
@@ -1670,12 +1547,6 @@ export default class ApiController {
   };
 
   createPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
 
     try {
@@ -1688,7 +1559,7 @@ export default class ApiController {
       const attributes = validationResult.value;
       const post = await Post.create({
         ...attributes,
-        user_id: ctx.session.user
+        user_id: ctx.state.user
       });
       await post.refresh({ require: true, withRelated: POST_RELATIONS });
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
@@ -1700,16 +1571,16 @@ export default class ApiController {
   };
 
   updatePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
+    if (!('id' in ctx.params)) {
+      ctx.status = 400;
+      ctx.body = { error: '"id" parameter is not given' };
       return;
     }
 
     const Post = this.bookshelf.model('Post');
 
     try {
-      const post = await Post.where({ id: ctx.params.id, user_id: ctx.session.user }).fetch({ require: true, withRelated: ['hashtags'] });
+      const post = await Post.where({ id: ctx.params.id, user_id: ctx.state.user }).fetch({ require: true, withRelated: ['hashtags'] });
       await post.update(ctx.request.body);
 
       await post.refresh({ require: true, withRelated: POST_RELATIONS });
@@ -1722,12 +1593,6 @@ export default class ApiController {
   };
 
   removePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -1739,7 +1604,7 @@ export default class ApiController {
     try {
       const post_object = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
-      if (post_object.get('user_id') != ctx.session.user) {
+      if (post_object.get('user_id') != ctx.state.user) {
         ctx.status = 403;
         ctx.body = { error: 'You are not authorized' };
         return;
@@ -1762,12 +1627,6 @@ export default class ApiController {
    * If subscribed, the current user recieves notifications about new comments on the post.
    */
   subscribeToPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -1779,7 +1638,7 @@ export default class ApiController {
     try {
       const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
-      await post.subscribers().attach(ctx.session.user);
+      await post.subscribers().attach(ctx.state.user);
 
       ctx.status = 200;
       ctx.body = { success: true };
@@ -1791,12 +1650,6 @@ export default class ApiController {
   };
 
   unsubscribeFromPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -1808,7 +1661,7 @@ export default class ApiController {
     try {
       const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
-      await post.subscribers().detach(ctx.session.user);
+      await post.subscribers().detach(ctx.state.user);
 
       ctx.status = 200;
       ctx.body = { success: true };
@@ -1820,7 +1673,7 @@ export default class ApiController {
   };
 
   getUnsubscribeFromPost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
+    if (ctx.isUnauthenticated()) {
       ctx.redirect('/');
       return;
     }
@@ -1830,7 +1683,7 @@ export default class ApiController {
     try {
       const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
-      await post.subscribers().detach(ctx.session.user);
+      await post.subscribers().detach(ctx.state.user);
 
       ctx.redirect(`/post/${post.id}`);
     } catch (e) {
@@ -1906,24 +1759,18 @@ export default class ApiController {
   }
 
   followUser = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const follow_status = { success: false };
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
+      let user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
       let follow = await User.where({ username: ctx.params.username }).fetch({ require: true, withRelated: ['following', 'followers'] });
 
       if (user.id != follow.id && _.isUndefined(user.related('following').find({ id: follow.id }))) {
         await user.following().attach(follow);
 
         follow_status.success = true;
-        user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
+        user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
         follow = await User.where({ username: ctx.params.username }).fetch({ require: true, withRelated: ['following', 'followers'] });
       }
 
@@ -1938,15 +1785,9 @@ export default class ApiController {
   };
 
   ignoreUser = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
 
-    const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['ignored_users'] });
+    const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['ignored_users'] });
     const userToIgnore = await User.where({ username: ctx.params.username }).fetch({ require: true });
 
     await user.ignoreUser(userToIgnore.id);
@@ -1955,12 +1796,6 @@ export default class ApiController {
   };
 
   updateUser = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.request.body.more) {
       ctx.status = 400;
       ctx.body = { error: 'Bad Request' };
@@ -1977,7 +1812,7 @@ export default class ApiController {
     }
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true });
       const more = validationResult.value.more;
 
       const newPictures = {};
@@ -2000,7 +1835,7 @@ export default class ApiController {
       await Promise.all(Object.keys(newPictures).map(type =>
         new ProfilePost({
           more: newPictures[type],
-          user_id: ctx.session.user,
+          user_id: ctx.state.user,
           type
         }).save(null, { method: 'insert' })
       ));
@@ -2013,12 +1848,6 @@ export default class ApiController {
   };
 
   changePassword = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('old_password' in ctx.request.body) || !('new_password' in ctx.request.body)) {
       ctx.status = 400;
       ctx.body = { error: '"old_password" or "new_password" parameter is not provided' };
@@ -2029,7 +1858,7 @@ export default class ApiController {
     const PasswordChange = this.bookshelf.model('PasswordChange');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true });
 
       const passwordIsValid = await bcryptAsync.compareAsync(ctx.request.body.old_password, user.get('hashed_password'));
 
@@ -2062,24 +1891,18 @@ export default class ApiController {
   };
 
   unfollowUser = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const follow_status = { success: false };
 
     try {
-      let user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
+      let user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
       let follow = await User.where({ username: ctx.params.username }).fetch({ require: true, withRelated: ['following', 'followers'] });
 
       if (user.id != follow.id && !_.isUndefined(user.related('following').find({ id: follow.id }))) {
         await user.following().detach(follow);
 
         follow_status.success = true;
-        user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
+        user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['following', 'followers'] });
         follow = await User.where({ username: ctx.params.username }).fetch({ require: true, withRelated: ['following', 'followers'] });
       }
 
@@ -2098,12 +1921,6 @@ export default class ApiController {
    * Important: set the 'name' property of each file input to 'files', not 'files[]' or 'files[0]'
    */
   uploadFiles = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.req.files || !ctx.req.files.length) {
       ctx.status = 400;
       ctx.body = { error: '"files" parameter is not provided' };
@@ -2117,7 +1934,7 @@ export default class ApiController {
         return Attachment.create(
           file.originalname,
           file.buffer,
-          { user_id: ctx.session.user }
+          { user_id: ctx.state.user }
         );
       });
 
@@ -2142,12 +1959,6 @@ export default class ApiController {
    *   derived_id - Id of the attachment to reuse
    */
   processImage = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.request.body.original_id) {
       ctx.status = 400;
       ctx.body = { error: '"original_id" parameter is not provided' };
@@ -2172,7 +1983,7 @@ export default class ApiController {
         .query(qb => {
           qb
             .where('id', ctx.request.body.original_id)
-            .andWhere('user_id', ctx.session.user);
+            .andWhere('user_id', ctx.state.user);
         })
         .fetch({ require: true });
 
@@ -2197,7 +2008,7 @@ export default class ApiController {
           .query(qb => {
             qb
               .where('id', ctx.request.body.derived_id)
-              .andWhere('user_id', ctx.session.user);
+              .andWhere('user_id', ctx.state.user);
           })
           .fetch({ require: true });
 
@@ -2226,12 +2037,6 @@ export default class ApiController {
   };
 
   pickpoint = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     try {
       const urlObj = parse_url(`https://pickpoint.io/api/v1/forward`);
       urlObj.query = { ...ctx.query, key: config.pickpoint.key };
@@ -2336,12 +2141,6 @@ export default class ApiController {
   };
 
   getUserRecentHashtags = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Hashtag = this.bookshelf.model('Hashtag');
 
     const hashtags = await Hashtag
@@ -2350,7 +2149,7 @@ export default class ApiController {
         qb
           .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
           .join('posts', 'hashtags_posts.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .groupBy('hashtags.id')
           .orderByRaw('MAX(posts.created_at) DESC')
           .limit(5);
@@ -2361,12 +2160,6 @@ export default class ApiController {
   };
 
   getUserRecentSchools = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const School = this.bookshelf.model('School');
 
     const schools = await School
@@ -2375,7 +2168,7 @@ export default class ApiController {
         qb
           .join('posts_schools', 'schools.id', 'posts_schools.school_id')
           .join('posts', 'posts_schools.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .groupBy('schools.id')
           .orderByRaw('MAX(posts.created_at) DESC')
           .limit(5);
@@ -2386,12 +2179,6 @@ export default class ApiController {
   };
 
   getUserRecentGeotags = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Geotag = this.bookshelf.model('Geotag');
 
     const geotags = await Geotag
@@ -2400,7 +2187,7 @@ export default class ApiController {
         qb
           .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
           .join('posts', 'geotags_posts.post_id', 'posts.id')
-          .where('posts.user_id', ctx.session.user)
+          .where('posts.user_id', ctx.state.user)
           .groupBy('geotags.id')
           .orderByRaw('MAX(posts.created_at) DESC')
           .limit(5);
@@ -2414,12 +2201,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const Hashtag = this.bookshelf.model('Hashtag');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.params.name) {
       ctx.status = 400;
       ctx.body = { error: '"name" parameter is not given' };
@@ -2427,7 +2208,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
 
       await currentUser.followHashtag(hashtag.id);
@@ -2444,11 +2225,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const Hashtag = this.bookshelf.model('Hashtag');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
 
     if (!ctx.params.name) {
       ctx.status = 400;
@@ -2457,7 +2233,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const hashtag = await Hashtag.forge().where('name', ctx.params.name).fetch();
 
       await currentUser.unfollowHashtag(hashtag.id);
@@ -2474,12 +2250,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const School = this.bookshelf.model('School');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.params.name) {
       ctx.status = 400;
       ctx.body = { error: '"name" parameter is not given' };
@@ -2487,7 +2257,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
 
       await currentUser.followSchool(school.id);
@@ -2504,12 +2274,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const School = this.bookshelf.model('School');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.params.name) {
       ctx.status = 400;
       ctx.body = { error: '"name" parameter is not given' };
@@ -2517,7 +2281,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const school = await School.forge().where('url_name', ctx.params.name).fetch({ require: true });
 
       await currentUser.unfollowSchool(school.id);
@@ -2534,11 +2298,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const Geotag = this.bookshelf.model('Geotag');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
 
     if (!ctx.params.url_name) {
       ctx.status = 400;
@@ -2547,7 +2306,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
 
       await currentUser.followGeotag(geotag.id);
@@ -2564,12 +2323,6 @@ export default class ApiController {
     const User = this.bookshelf.model('User');
     const Geotag = this.bookshelf.model('Geotag');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!ctx.params.url_name) {
       ctx.status = 400;
       ctx.body = { error: '"url_name" parameter is not given' };
@@ -2577,7 +2330,7 @@ export default class ApiController {
     }
 
     try {
-      const currentUser = await User.forge().where('id', ctx.session.user).fetch();
+      const currentUser = await User.forge().where('id', ctx.state.user).fetch();
       const geotag = await Geotag.forge().where('url_name', ctx.params.url_name).fetch();
 
       await currentUser.unfollowGeotag(geotag.id);
@@ -2987,8 +2740,8 @@ export default class ApiController {
           `)
           .limit(3);
 
-        if (ctx.session.user) {
-          qb.whereNot('posts.user_id', ctx.session.user);
+        if (ctx.isAuthenticated()) {
+          qb.whereNot('posts.user_id', ctx.state.user);
         }
       }).fetch({ withRelated: POST_RELATIONS });
       const post_comments_count = await this.countComments(posts);
@@ -3005,18 +2758,12 @@ export default class ApiController {
   };
 
   likeHashtag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const Hashtag = this.bookshelf.model('Hashtag');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
 
       await user.liked_hashtags().detach(hashtag);
@@ -3038,18 +2785,12 @@ export default class ApiController {
   };
 
   unlikeHashtag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const Hashtag = this.bookshelf.model('Hashtag');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const hashtag = await Hashtag.where({ name: ctx.params.name }).fetch({ require: true });
 
       await user.liked_hashtags().detach(hashtag);
@@ -3069,18 +2810,12 @@ export default class ApiController {
   };
 
   likeSchool = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const School = this.bookshelf.model('School');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_schools().detach(school);
@@ -3102,18 +2837,12 @@ export default class ApiController {
   };
 
   unlikeSchool = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const School = this.bookshelf.model('School');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const school = await School.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_schools().detach(school);
@@ -3133,18 +2862,12 @@ export default class ApiController {
   };
 
   likeGeotag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const Geotag = this.bookshelf.model('Geotag');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_geotags().detach(geotag);
@@ -3166,18 +2889,12 @@ export default class ApiController {
   };
 
   unlikeGeotag = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const Geotag = this.bookshelf.model('Geotag');
     const Post = this.bookshelf.model('Post');
 
     try {
-      const user = await User.where({ id: ctx.session.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
+      const user = await User.where({ id: ctx.state.user }).fetch({ require: true, withRelated: ['liked_hashtags'] });
       const geotag = await Geotag.where({ url_name: ctx.params.url_name }).fetch({ require: true });
 
       await user.liked_geotags().detach(geotag);
@@ -3227,12 +2944,6 @@ export default class ApiController {
     const Comment = this.bookshelf.model('Comment');
     const Post = this.bookshelf.model('Post');
 
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     let post_object;
 
     try {
@@ -3253,7 +2964,7 @@ export default class ApiController {
     const comment_object = new Comment({
       id: uuid.v4(),
       post_id: ctx.params.id,
-      user_id: ctx.session.user,
+      user_id: ctx.state.user,
       text: comment_text
     });
 
@@ -3280,12 +2991,6 @@ export default class ApiController {
   };
 
   editComment = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const Post = this.bookshelf.model('Post');
     const Comment = this.bookshelf.model('Comment');
 
@@ -3303,7 +3008,7 @@ export default class ApiController {
       return;
     }
 
-    if (comment_object.get('user_id') != ctx.session.user)  {
+    if (comment_object.get('user_id') != ctx.state.user)  {
       ctx.status = 403;
     }
 
@@ -3325,12 +3030,6 @@ export default class ApiController {
   };
 
   removeComment = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     if (!('id' in ctx.params) || !('comment_id' in ctx.params)) {
       ctx.status = 400;
       ctx.body = { error: '"id" parameter is not given' };
@@ -3350,7 +3049,7 @@ export default class ApiController {
     }
 
     try {
-      if (comment_object.get('user_id') != ctx.session.user) {
+      if (comment_object.get('user_id') != ctx.state.user) {
         ctx.status = 403;
         ctx.body = { error: 'You are not authorized' };
         return;
@@ -3370,13 +3069,7 @@ export default class ApiController {
   };
 
   sendMessage = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
-    const areMutuallyFollowed = await this.areMutuallyFollowed(ctx.session.user, ctx.params.id);
+    const areMutuallyFollowed = await this.areMutuallyFollowed(ctx.state.user, ctx.params.id);
     if (!areMutuallyFollowed) {
       ctx.status = 403;
       ctx.body = { error: 'You must be mutually followed with this user to be able to message them' };
@@ -3391,7 +3084,7 @@ export default class ApiController {
 
     const User = this.bookshelf.model('User');
 
-    const currentUser = await new User({ id: ctx.session.user }).fetch({ require: true });
+    const currentUser = await new User({ id: ctx.state.user }).fetch({ require: true });
     const message = await currentUser.outbox().create({
       reciever_id: ctx.params.id,
       text: ctx.request.body.text
@@ -3404,29 +3097,23 @@ export default class ApiController {
    * Gets a chain of messages between the current user and the specified in params.
    */
   getUserMessages = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const UserMessage = this.bookshelf.model('UserMessage');
 
     const messages = await UserMessage.collection()
       .query(qb => {
         qb
-          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
-          .orWhere({ sender_id: ctx.params.id, reciever_id: ctx.session.user })
+          .where({ sender_id: ctx.state.user, reciever_id: ctx.params.id })
+          .orWhere({ sender_id: ctx.params.id, reciever_id: ctx.state.user })
           .orderBy('created_at', 'ASC');
       })
       .fetch();
     await UserMessage.collection()
       .query(qb => {
         qb
-          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          .where({ sender_id: ctx.state.user, reciever_id: ctx.params.id })
           // TODO: Replace with a single orWhere() when knex is upgraded from 0.10
           .orWhere({ sender_id: ctx.params.id })
-          .andWhere({ reciever_id: ctx.session.user })
+          .andWhere({ reciever_id: ctx.state.user })
           .orderBy('created_at', 'ASC');
       })
       .fetch();
@@ -3469,12 +3156,6 @@ export default class ApiController {
   }
 
   createProfilePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
     const validationResult = ProfilePostValidator.validate(ctx.request.body);
@@ -3484,7 +3165,7 @@ export default class ApiController {
     }
 
     const attributes = validationResult.value;
-    attributes.user_id = ctx.session.user;
+    attributes.user_id = ctx.state.user;
 
     const post = new ProfilePost(attributes);
     if (attributes.type === 'text' && !attributes.text.trim()) {
@@ -3502,12 +3183,6 @@ export default class ApiController {
   }
 
   updateProfilePost = async (ctx) => {
-    if (!ctx.session || !ctx.session.user) {
-      ctx.status = 403;
-      ctx.body = { error: 'You are not authorized' };
-      return;
-    }
-
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
     const validationResult = ProfilePostValidator.validate(ctx.request.body);
@@ -3520,7 +3195,7 @@ export default class ApiController {
 
     try {
       const post = await new ProfilePost()
-        .where({ id: ctx.params.id, user_id: ctx.session.user })
+        .where({ id: ctx.params.id, user_id: ctx.state.user })
         .fetch({ require: true });
 
       post.set(attributes);
@@ -3538,7 +3213,7 @@ export default class ApiController {
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
     try {
-      await new ProfilePost({ id: ctx.params.id, user_id: ctx.session.user })
+      await new ProfilePost({ id: ctx.params.id, user_id: ctx.state.user })
         .destroy({ require: true });
 
       ctx.body = {

@@ -114,11 +114,11 @@ const initReduxForMainApp = async (ctx) => {
   const store = initState();
 
   let locale_code;
-  if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
+  if (ctx.isAuthenticated()) {
     try {
       const user = await bookshelf
         .model('User')
-        .where({ id: ctx.session.user })
+        .where({ id: ctx.state.user })
         .fetch({
           require: true,
           withRelated: [
@@ -138,12 +138,12 @@ const initReduxForMainApp = async (ctx) => {
       const likes = await bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       const favourites = await bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
