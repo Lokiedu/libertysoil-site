@@ -11,7 +11,7 @@
   "login.errors.username_req": "You must enter your username to continue",
   "login.errors.password_req": "You must enter your password to continue",
   "login.errors.email_unchecked.long": "Please follow the instructions mailed to you during registration",
-  "login.qs.forget_pass": "Forget password?",
+  "login.qs.forget_pass": "Forgot password?",
   "api.errors.internal.short": "Internal server error",
   "api.errors.internal.long": "Server error: please retry later",
   "api.errors.bad_request": "Bad request"

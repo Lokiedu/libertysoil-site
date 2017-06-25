@@ -9,7 +9,7 @@
   "login.errors.username_req": "עליך להזין את שם המשתמש שלך כדי להמשיך",
   "login.errors.password_req": "עליך להזין את הסיסמה כדי להמשיך",
   "login.errors.email_unchecked.long": "פעל לפי ההנחיות שנשלחו אליך במהלך ההרשמה",
-  "login.qs.forget_pass": "שכחת את הסיסמא?",
+  "login.qs.forget_pass": "שכחת את הסיסמה?",
   "api.errors.internal.short": "שגיאת שרת פנימית",
   "api.errors.internal.long": "שגיאת שרת: נסה מאוחר יותר",
   "api.errors.bad_request": "בקשה לא תקינה"
