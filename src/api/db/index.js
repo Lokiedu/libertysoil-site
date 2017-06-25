@@ -122,7 +122,7 @@ export function initBookshelfFromKnex(knex) {
         return this.get('username');
       }
     },
-    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName'],  // exclude from json-exports
+    hidden: ['hashed_password', 'email', 'email_check_hash', 'reset_password_hash', 'fullName', 'providers'],  // exclude from json-exports
     async ignoreUser(userId) {
       // `this` must have ignored_users fetched. Use `fetch({withRelated: ['ignored_users']})`.
 
@@ -174,6 +174,11 @@ export function initBookshelfFromKnex(knex) {
     if (!_.isEmpty(more)) {
       obj.set('more', more);
     }
+
+    if (!_.isEmpty(providers)) {
+      obj.set('providers', providers);
+    }
+
 
     await obj.save(null, { method: 'insert' });
 
@@ -794,7 +799,7 @@ export function initBookshelfFromKnex(knex) {
 
       return mime.getExtension(this.attributes.mime_type);
     },
-    async reupload(fileName, fileData) {
+    async reupload(fileName, fileData, options = {}) {
       const generatedName = generateName(fileName);
       const typeInfo = fileType(fileData);
 
@@ -810,7 +815,7 @@ export function initBookshelfFromKnex(knex) {
         filename: fileName,
         size: fileData.length,
         mime_type: typeInfo.mime
-      });
+      }, options);
     }
   });
 
@@ -821,7 +826,7 @@ export function initBookshelfFromKnex(knex) {
    * @param {Object} attributes - Additional attributes
    * @returns {Promise}
    */
-  Attachment.create = async function create(fileName, fileData, attributes = {}) {
+  Attachment.create = async function create(fileName, fileData, attributes = {}, options = {}) {
     const attachment = Attachment.forge();
     const generatedName = generateName(fileName);
     const typeInfo = fileType(fileData);
@@ -839,7 +844,7 @@ export function initBookshelfFromKnex(knex) {
       filename: fileName,
       size: fileData.length,
       mime_type: typeInfo.mime
-    });
+    }, options);
   };
 
   const Comment = bookshelf.Model.extend({

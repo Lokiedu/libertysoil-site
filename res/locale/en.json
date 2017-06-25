@@ -7,6 +7,7 @@
   "login.with": "Sign in with %0",
   "login.quick": "Quick log in with:",
   "login.create_new": "Create new account",
+  "login.errors.already_logged_in": "You are already logged in",
   "login.errors.invalid.short": "Invalid username or password",
   "login.errors.invalid.long": "The username and password that you entered did not match our records. Please double-check and try again",
   "login.errors.username_req": "enter your username",
@@ -58,5 +59,6 @@
   "signup.page.loading": "Form is loading…",
   "api.errors.internal.short": "Internal server error",
   "api.errors.internal.long": "Server error: please retry later",
-  "api.errors.bad_request": "Bad request"
+  "api.errors.bad_request": "Bad request",
+  "api.errors.forbidden": "You are not authorized"
 }

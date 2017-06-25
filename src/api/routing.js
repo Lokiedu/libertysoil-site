@@ -19,6 +19,7 @@ import Router from 'koa-router';
 import multer from 'koa-multer';
 
 import ApiController from './controller';
+import { getAuthController, getAuthProfileController } from './auth';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -35,6 +36,22 @@ export function initApi(bookshelf, sphinx) {
 
   api.post('/users', controller.registerUser);
   api.post('/session', controller.login);
+
+  // Universal login/register/add provider controllers. Open in a popup.
+  api.get('/auth/facebook', getAuthController('facebook', controller.passport, { resetOnlyProfile: true }));
+  api.get('/auth/facebook/callback', getAuthController('facebook', controller.passport));
+  api.get('/auth/google', getAuthController('google', controller.passport, { resetOnlyProfile: true }));
+  api.get('/auth/google/callback', getAuthController('google', controller.passport));
+  api.get('/auth/twitter', getAuthController('twitter', controller.passport, { resetOnlyProfile: true }));
+  api.get('/auth/twitter/callback', getAuthController('twitter', controller.passport));
+  api.get('/auth/github', getAuthController('github', controller.passport, { resetOnlyProfile: true }));
+  api.get('/auth/github/callback', getAuthController('github', controller.passport));
+
+  // These do not login/create user, only respond with a oauth profile. Open in a popup.
+  api.get('/auth/profile/facebook', getAuthProfileController('facebook', controller.passport));
+  api.get('/auth/profile/google', getAuthProfileController('google', controller.passport));
+  api.get('/auth/profile/twitter', getAuthProfileController('twitter', controller.passport));
+  api.get('/auth/profile/github', getAuthProfileController('github', controller.passport));
 
   api.get('/posts', controller.subscriptions);
   api.get('/posts/subscriptions/hashtag', controller.hashtagSubscriptions);

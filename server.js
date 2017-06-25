@@ -32,6 +32,7 @@ import mount from 'koa-mount';
 import koaConditional from 'koa-conditional-get';
 import koaEtag from 'koa-etag';
 import Logger, { createLogger } from 'bunyan';
+import passport from 'koa-passport';
 
 import t from 't8on';
 
@@ -225,6 +226,12 @@ function startServer(/*params*/) {
     key: 'connect.sid',
     cookie: { signed: false }
   })));
+
+  // Workaround for passport strategy callbacks: they only have an access to ctx.req
+  app.use((ctx, next) => { ctx.req.ctx = ctx; return next(); });
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.use(koaConditional());
   app.use(koaEtag());

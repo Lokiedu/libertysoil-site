@@ -49,24 +49,6 @@ const SUPPORTED_LOCALES = Object.keys(
 );
 
 const bcryptAsync = bb.promisifyAll(bcrypt);
-const POST_RELATIONS = Object.freeze([
-  'user', 'likers', 'favourers', 'hashtags', 'schools',
-  'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
-  { post_comments: qb => qb.orderBy('created_at') }, 'post_comments.user'
-]);
-
-const USER_RELATIONS = Object.freeze([
-  'following',
-  'followers',
-  'liked_posts',
-  'favourited_posts',
-  'followed_hashtags',
-  'followed_geotags',
-  'followed_schools',
-  'liked_hashtags',
-  'liked_geotags',
-  'liked_schools'
-]);
 
 const POST_PUBLIC_COLUMNS = [
   'id', 'user_id', 'text', 'type', 'created_at', 'updated_at',
@@ -1393,7 +1375,11 @@ export default class ApiController {
         username,
         password: ctx.request.body.password,
         email: ctx.request.body.email,
-        more: moreData
+        more: moreData,
+        providers: _.pick(
+          ctx.request.body.providers,
+          ['facebook', 'google', 'twitter', 'github']
+        )
       });
     } catch (e) {
       if (e.code == 23505) {
