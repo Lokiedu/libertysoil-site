@@ -28,6 +28,7 @@
   margin: 1px 0;
   min-height: 42px;
 
+  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -37,9 +38,16 @@
   font-size: 14px;
   color: #a3a3a3;
 
-  // elements
-  // content wrapper
+  &__content-wrapper {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    align-self: stretch;
+    margin-right: auto;
+  }
+
   &__content-box {
+    position: relative;
     display: flex;
     flex-grow: 1;
     flex-direction: row;
@@ -47,6 +55,12 @@
     align-items: center;
     align-self: stretch;
     overflow: hidden;
+    transform: translateX(0px);
+
+    > * {
+      position: relative;
+      left: 0px;
+    }
   }
 
   &__content {
@@ -58,6 +72,8 @@
   }
 
   &__badge {
+    position: relative;
+    z-index: 2;
     display: inline-block;
     width: 20px;
 
@@ -71,6 +87,9 @@
   }
 
   &__icon {
+    position: relative;
+    margin-left: auto;
+    z-index: 3;
     flex-basis: 42px;
     flex-shrink: 0;
     width: 42px;
@@ -132,6 +151,35 @@
   &--truncated {
     .navigation-item__content-box {
       display: none;
+    }
+  }
+
+  &--transition {
+    &-appear {
+      transform: translateX(240px);
+
+      &.navigation-item--transition-appear-active {
+      transform: translateX(0px);
+        transition: transform 0.25s ease-in-out;  
+      }
+    }
+
+    &-leave {
+      transform: translateX(0px);
+
+      &.navigation-item--transition-leave-active {
+        transform: translateX(240px);
+        transition: transform 0.25s ease-in-out;
+      }
+    }
+
+    &-enter {
+      transform: translateX(240px);
+
+      &.navigation-item--transition-enter-active {
+        transform: translateX(0px);
+        transition: transform 0.25s ease-in-out;
+      }
     }
   }
 
