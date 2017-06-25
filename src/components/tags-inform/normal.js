@@ -23,7 +23,7 @@ import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
 import TagCloud from '../tag-cloud';
 
-const TagsInformNormal = ({ tags, ...props }) => (
+const TagsInformNormal = ({ animated, tags, truncated, ...props }) => (
   <Navigation {...props}>
     {transform(tags, (acc, tagType, tagTypeTitle) => {
       if (tagType.list.size) {
@@ -34,10 +34,12 @@ const TagsInformNormal = ({ tags, ...props }) => (
 
         acc.push(
           <NavigationItem
+            animated={animated}
             badge={unread}
             icon={tagType.icon}
             key={tagTypeTitle}
             theme="2.0"
+            truncated={truncated}
           >
             <TagCloud
               className="tags--row tags--queue"

@@ -23,7 +23,7 @@ import { MENU_ITEMS } from '../../consts/sidebar-menu';
 import Navigation from '../navigation';
 import NavigationItem from '../navigation-item';
 
-const SidebarMenuNormal = ({ current_user }) => {
+const SidebarMenuNormal = ({ current_user, ...props }) => {
   const user = current_user.get('user');
   let username = '';
   if (user) {
@@ -41,6 +41,7 @@ const SidebarMenuNormal = ({ current_user }) => {
     <Navigation>
       {menuItemsArray.map(item =>
         <NavigationItem
+          {...props}
           {...(item.html || {})}
           className={item.className}
           disabled={item.disabled}
