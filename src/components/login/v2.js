@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
@@ -50,7 +51,8 @@ const FORM_ERROR_MESSAGE_MAPPING = {
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
     icon: { color: 'orange', icon: 'question-circle' },
-    name: { name: (translate) => translate('login.qs.forget_pass') }
+    name: { name: (translate) => translate('login.qs.forget_pass') },
+    url: '/resetpassword'
   }
 };
 
@@ -73,6 +75,29 @@ function Message({ className, children, long, translate, ...props }) {
       {message}
     </div>
   );
+}
+
+function ActionTag({ url, translate, ...props }) {
+  const content = (
+    <MinifiedTag
+      className="sidebar-form__tag"
+      {...props}
+      name={{
+        ...props.name,
+        name: props.name.name(translate)
+      }}
+    />
+  );
+
+  if (url) {
+    return (
+      <Link to={url}>
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
 
 class LoginComponentV2 extends React.Component {
@@ -144,13 +169,9 @@ class LoginComponentV2 extends React.Component {
       const props = ERROR_TAG_MAPPING[firstMessage];
       if (props) {
         headerContent = (
-          <MinifiedTag
-            className="sidebar-form__tag"
+          <ActionTag
+            translate={translate}
             {...props}
-            name={{
-              ...props.name,
-              name: props.name.name(translate)
-            }}
           />
         );
         subheader = (
