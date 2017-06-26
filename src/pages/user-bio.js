@@ -161,30 +161,32 @@ class UserBioPage extends React.Component {
             onUpdate={this.handleUpdateProfilePost}
           />
           {loadMore}
-          <div className="margin--all_top">
-            <div className="bio__river-item bio__river-item--type_form">
-              <h5 className="bio__title">Add:</h5>
-              <RiverItemCreateForm
-                cancel={{ hide: true }}
-                className="bio__create-post-form"
-                icon={
-                  <div className="bio__icon">
-                    <Avatar isRound={false} size={26} user={user} />
-                  </div>
-                }
-                input={{
-                  className: 'bio__post--type_text',
-                  placeholder: ''
-                }}
-                submit={{
-                  className: 'button-wide bio__button',
-                  color: 'dark_blue',
-                  title: 'Post'
-                }}
-                onSubmit={this.handleCreateProfilePost}
-              />
+          {current_user.get('id') === user.get('id') &&
+            <div className="margin--all_top">
+              <div className="bio__river-item bio__river-item--type_form">
+                <h5 className="bio__title">Add:</h5>
+                <RiverItemCreateForm
+                  cancel={{ hide: true }}
+                  className="bio__create-post-form"
+                  icon={
+                    <div className="bio__icon">
+                      <Avatar isRound={false} size={26} user={user} />
+                    </div>
+                  }
+                  input={{
+                    className: 'bio__post--type_text',
+                    placeholder: ''
+                  }}
+                  submit={{
+                    className: 'button-wide bio__button',
+                    color: 'dark_blue',
+                    title: 'Post'
+                  }}
+                  onSubmit={this.handleCreateProfilePost}
+                />
+              </div>
             </div>
-          </div>
+          }
         </div>
       </BaseUserPageWithoutHeader>
     );
