@@ -76,6 +76,9 @@ class Sidebar extends React.Component {
       const nonMobileQuery = window.matchMedia('(min-width: 768px)');
       nonMobileQuery.addListener(this.handleViewChange);
 
+      // eslint-disable-next-line react/no-direct-mutation-state
+      this.state.isMobile = !nonMobileQuery.matches;
+
       if (props.isCollapsing && nonMobileQuery.matches) {
         this.toggleScrollListener(true);
 
