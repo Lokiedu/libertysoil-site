@@ -33,7 +33,11 @@ class Welcome extends React.Component {
   static async fetchData(router, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
 
-    await trigger.setQuotes();
+    if (store.getState().getIn(['current_user', 'id'])) {
+      return { status: 307, redirectTo: '/' };
+    }
+
+    return await trigger.setQuotes();
   }
 
   render() {
