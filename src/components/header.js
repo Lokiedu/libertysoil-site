@@ -50,7 +50,7 @@ const HeaderComponent = ({
           {children}
         </div>
         <div className="header__toolbar">
-          <Search />
+          <Search className="header__search" />
           {needAuthBlock &&
             <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
           }
