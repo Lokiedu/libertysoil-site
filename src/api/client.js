@@ -33,6 +33,7 @@ import type { PostDraftData, Post, PostType, PostId } from '../definitions/posts
 import type { Attachment } from '../definitions/attachments';
 import type { ProfilePost, ProfilePostId, ProfilePostDraftData } from '../definitions/profile-posts';
 import type { SearchResponse, SearchQuery } from '../definitions/search';
+import type { UserMessage, UserMessageId } from '../definitions/user-messages';
 
 export default class ApiClient {
   host: string;
@@ -278,8 +279,8 @@ export default class ApiClient {
     return await response.json();
   }
 
-  async mutualFollows(userId: UserId): Promise<Array<User>> {
-    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`);
+  async mutualFollows(userId: UserId, query: Object = {}): Promise<Array<User>> {
+    const response = await this.get(`/api/v1/user/${userId}/mutual-follows`, query);
     return await response.json();
   }
 
@@ -468,13 +469,31 @@ export default class ApiClient {
     return await response.json();
   }
 
-  async sendMessage(userId: UserId, text: string) {
+  async sendUserMessage(userId: UserId, text: string) {
     const response = await this.postJSON(`/api/v1/user/${userId}/messages`, { text });
     return await response.json();
   }
 
-  async userMessages(userId: UserId) {
-    const response = await this.get(`/api/v1/user/${userId}/messages`);
+  async userMessagesStatus() {
+    const response = await this.get(`/api/v1/user-messages/status`);
+    return await response.json();
+  }
+
+  /**
+   * @param {Object} query `visit` query param determines if visitedAt for userId should be updated or not.
+   */
+  async userMessages(userId: UserId, query: Object = {}) {
+    const response = await this.get(`/api/v1/user/${userId}/messages`, query);
+    return await response.json();
+  }
+
+  async updateUserMessage(messageId: UserMessageId, text: string): Promise<UserMessage> {
+    const response = await this.postJSON(`/api/v1/user-message/${messageId}`, { text });
+    return await response.json();
+  }
+
+  async deleteUserMessage(messageId: UserMessageId): Promise<Success> {
+    const response = await this.del(`/api/v1/user-message/${messageId}`);
     return await response.json();
   }
 

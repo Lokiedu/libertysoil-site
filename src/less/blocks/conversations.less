@@ -15,63 +15,20 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.conversations_tool {
+.conversations {
+  padding: 20px 0;
+  background-color: #f9f9f9;
+
   &__messages {
     display: flex;
     flex-direction: column;
   }
 
   &__message {
-    position: relative;
-    display: flex;
     margin-bottom: 20px;
-    padding: 20px 20px 30px 20px;
-    align-items: center;
-    background-color: white;
-    border: 1px solid @color__gray;
-    max-width: 60%;
-    min-width: 170px; // to fit the time
-
-    &-my {
-      align-self: flex-end;
-      flex-flow: row-reverse;
-
-      > .conversations_tool__avatar {
-        margin-left: 10px;
-      }
-
-      > .conversations_tool__time {
-        right: 20px;
-      }
-    }
-
-    &-their {
-      align-self: flex-start;
-
-      > .conversations_tool__avatar {
-        margin-right: 10px;
-      }
-
-      > .conversations_tool__time {
-        left: 20px;
-      }
-    }
   }
 
-  &__avatar {
-    align-self: flex-start;
-  }
-
-  &__input {
-    display: block;
+  &__message-text-wrapper {
     width: 100%;
-    margin-bottom: 10px;
-  }
-
-  &__time {
-    position: absolute;
-    bottom: 2px;
-    color: @color__gray;
-    font-size: 13px;
   }
 }

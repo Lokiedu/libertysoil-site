@@ -100,6 +100,10 @@ export function initApi(bookshelf, sphinx) {
   api.post('/user/:username/ignore', controller.ignoreUser);
   api.get('/user/:username/profile-posts', controller.getProfilePosts);
 
+  api.get('/user-messages/status', controller.getUserMessagesStatus);
+  api.post('/user-message/:id', controller.updateUserMessage);
+  api.delete('/user-message/:id', controller.deleteUserMessage);
+
   api.get('/profile-post/:id', controller.getProfilePost);
   api.post('/profile-posts', controller.createProfilePost);
   api.post('/profile-post/:id', controller.updateProfilePost);

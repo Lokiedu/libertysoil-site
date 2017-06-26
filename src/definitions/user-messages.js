@@ -14,29 +14,19 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
-.tools_menu_2 {
-  padding: 20px 20px 20px 50px;
-  list-style-type: none;
-  background-color: white;
+import type { Uuid4, DateString } from './common';
+import type { UserId } from './users';
 
-  &__item {
-    font-weight: bold;
-  }
+export type UserMessageId = Uuid4;
 
-  &__subitem {
-    font-weight: normal;
-  }
-
-
-  &__item,
-  &__subitem {
-    display: block;
-    margin-bottom: 20px;
-  }
-
-  &__submenu {
-    list-style-type: none;
-    margin-left: 20px;
-  }
-}
+export type UserMessage = {
+  id: Uuid4,
+  text: string,
+  sender_id: UserId,
+  receiver_id: UserId,
+  created_at: DateString,
+  updated_at: DateString
+};

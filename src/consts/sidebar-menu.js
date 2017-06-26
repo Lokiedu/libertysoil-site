@@ -59,5 +59,13 @@ export const MENU_ITEMS = {
     },
     title: 'collect',
     url: () => '/collections'
+  },
+  talk: {
+    className: 'navigation-item--color_green menu__talk',
+    icon: {
+      icon: 'forum'
+    },
+    title: 'talk',
+    url: () => '/+talk'
   }
 };

@@ -15,44 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.tools_menu_1 {
-  display: flex;
-  position: relative;
-  background-color: #E4E4E4;
+/* eslint react/no-danger: 0 */
+import ProfilePost from '../bio/post';
 
-  &__dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: white;
-    border-bottom: 1px solid #E4E4E4;
-  }
-
-  &__item {
-    display: block;
-    padding: 20px;
-
-    &:hover {
-      background-color: #E4E4E4;
-    }
-  }
-
-  &__caption {
-    flex: auto 1;
-  }
-
-  &__toggle_dropdown {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    color: white;
-
-    &:hover {
-      cursor: pointer;
-      background-color: #E8E8E8;
-    }
-  }
-}
+export default ProfilePost;

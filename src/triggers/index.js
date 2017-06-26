@@ -848,22 +848,72 @@ export class ActionsTrigger {
     }
   }
 
-  sendMessage = async (userId, text) => {
+  loadUserMessagesStatus = async () => {
     try {
-      const message = await this.client.sendMessage(userId, text);
-      this.dispatch(a.userMessages.addUserMessage(userId, message));
+      const status = await this.client.userMessagesStatus();
+      this.dispatch(a.userMessages.updateUserMessagesStatus(status));
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
   }
 
-  updateUserMessages = async (userId) => {
+  sendUserMessage = async (receiverId, text) => {
+    let success = false;
+
     try {
-      const messages = await this.client.userMessages(userId);
-      this.dispatch(a.userMessages.setUserMessages(userId, messages));
+      const message = await this.client.sendUserMessage(receiverId, text);
+      this.dispatch(a.userMessages.sendUserMessage(receiverId, message));
+      success = true;
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
     }
+
+    return success;
+  }
+
+  updateUserMessage = async (receiverId, messageId, text) => {
+    let success = false;
+
+    try {
+      const message = await this.client.updateUserMessage(messageId, text);
+      this.dispatch(a.userMessages.updateUserMessage(receiverId, message));
+      success = true;
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    return success;
+  }
+
+  deleteUserMessage = async (receiverId, messageId) => {
+    try {
+      await this.client.deleteUserMessage(messageId);
+      this.dispatch(a.userMessages.removeUserMessage(receiverId, messageId));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  loadUserMessages = async (userId, query = { visit: false }) => {
+    try {
+      const messages = await this.client.userMessages(userId, query);
+      this.dispatch(a.userMessages.loadUserMessages(userId, messages));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  }
+
+  loadMessageableUsers = async (currentUserId, params = {}) => {
+    let users;
+
+    try {
+      users = await this.client.mutualFollows(currentUserId, params);
+      this.dispatch(a.userMessages.loadMessageableUsers(users, params));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    return users;
   }
 
   loadUserProfilePosts = async (username, offset = 0, limit = 10) => {

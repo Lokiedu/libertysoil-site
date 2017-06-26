@@ -95,7 +95,7 @@ export function initBookshelfFromKnex(knex) {
       return this.belongsToMany(Post, 'post_subscriptions');
     },
     inbox() {
-      return this.hasMany(UserMessage, 'reciever_id');
+      return this.hasMany(UserMessage, 'receiver_id');
     },
     outbox() {
       return this.hasMany(UserMessage, 'sender_id');
@@ -152,7 +152,13 @@ export function initBookshelfFromKnex(knex) {
     },
     async unfollowGeotag(geotagId) {
       return this.followed_geotags().detach(geotagId);
-    }
+    },
+    setUserMessagesVisitDate(userId, date) {
+      const path = ['userMessagesMeta', 'byUser', userId, 'visitedAt'];
+      this.set('more', _.set(this.get('more') || {}, path, date.toJSON()));
+
+      return this;
+    },
   });
 
   User.create = async function (username, password, email, moreData) {
@@ -672,8 +678,8 @@ export function initBookshelfFromKnex(knex) {
     sender() {
       return this.belongsTo(User, 'sender_id');
     },
-    reciever() {
-      return this.belongsTo(User, 'reciever_id');
+    receiver() {
+      return this.belongsTo(User, 'receiver_id');
     }
   });
 

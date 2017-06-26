@@ -19,6 +19,8 @@
   @active-icon: #6AB7EA;
   @active-text: #1078B4;
 
+  display: flex;
+  flex-direction: column;
   margin-bottom: @doubleSpace;
 
   &__item {
@@ -26,11 +28,12 @@
   }
 
   &__link {
-    display: block;
+    display: flex;
     min-height: 42px;
     margin-bottom: 2px;
     padding: 10px 24px 10px 20px;
     background-color: #FAFAFA;
+    align-items: center;
   }
 
   &__link--active {
@@ -52,5 +55,26 @@
       background-color: @active-icon;
       border-radius: 2px;
     }
+  }
+
+  &__icon--left {
+    margin-right: 20px;
+  }
+
+  &__count {
+    color: #888;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  // TODO: I'm not sure if this should be here.
+  &__button {
+    margin: @space auto;
+    padding: 8px 50px;
+    border: none;
+    outline: none;
+    background-color: white;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+    color: #1078B4;
   }
 }

@@ -16,23 +16,89 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
+import { sortBy } from 'lodash';
 
 import { userMessages } from '../actions';
 
 
-// user_id => list of messages
-export const initialState = i.Map();
+export const initialState = i.fromJS({
+  numUnread: 0,
+  byUser: {}, // userId => { numUnread: 0, messages: [] },
+  messageableUserIds: [], // for optimization
+  canLoadMore: true,
+});
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
-    case userMessages.SET_USER_MESSAGES: {
-      state = state.set(action.payload.userId, i.fromJS(action.payload.messages));
+    case userMessages.LOAD_USER_MESSAGES: {
+      state = state.withMutations(state => {
+        state.setIn(
+          ['byUser', action.payload.userId, 'messages'],
+          i.fromJS(action.payload.messages)
+        );
+      });
 
       break;
     }
 
-    case userMessages.ADD_USER_MESSAGE: {
-      state = state.update(action.payload.userId, messages => (messages || i.List()).push(i.fromJS(action.payload.message)));
+    case userMessages.SEND_USER_MESSAGE: {
+      state = state.updateIn(['byUser', action.payload.receiverId, 'messages'], messages => (
+        (messages || i.List()).push(i.fromJS(action.payload.message))
+      ));
+
+      break;
+    }
+
+    case userMessages.UPDATE_USER_MESSAGE: {
+      const index = state.getIn(['byUser', action.payload.receiverId, 'messages'])
+        .findIndex(m => m.get('id') === action.payload.message.id);
+
+      if (index > -1) {
+        state = state.updateIn(
+          ['byUser', action.payload.receiverId, 'messages', index],
+          message => message.mergeDeep(action.payload.message)
+        );
+      }
+
+      break;
+    }
+
+    case userMessages.REMOVE_USER_MESSAGE: {
+      state = state.updateIn(['byUser', action.payload.receiverId, 'messages'], messages => (
+        messages.filterNot(m => m.get('id') === action.payload.messageId)
+      ));
+
+      break;
+    }
+
+    case userMessages.UPDATE_USER_MESSAGES_STATUS: {
+      state = state.mergeDeep(i.fromJS(action.payload));
+
+      break;
+    }
+
+    case userMessages.LOAD_MESSAGEABLE_USERS: {
+      const userIds = sortBy(action.payload.users, 'name').map(u => u.id);
+      const usersById = userIds.reduce((acc, id) => {
+        acc[id] = { messages: null };
+        return acc;
+      }, {});
+
+      state = state.withMutations(state => {
+        state.update('byUser', byUser => byUser.mergeDeep(i.fromJS(usersById)));
+
+        if (action.meta.offset > 0) {
+          state.update('messageableUserIds', ids => {
+            return ids.slice(0, action.meta.offset).push(...userIds);
+          });
+        } else {
+          state.set('messageableUserIds', i.List(userIds));
+        }
+
+        if (userIds.length < action.meta.limit) {
+          state.set('canLoadMore', false);
+        }
+      });
 
       break;
     }

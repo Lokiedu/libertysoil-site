@@ -1927,6 +1927,8 @@ export default class ApiController {
           });
 
         this.applySortQuery(qb, ctx.query, 'username');
+        this.applyLimitQuery(qb, ctx.query);
+        this.applyOffsetQuery(qb, ctx.query);
       })
       .fetch({
         withRelated: USER_RELATIONS
@@ -3431,7 +3433,7 @@ export default class ApiController {
 
     const currentUser = await new User({ id: ctx.session.user }).fetch({ require: true });
     const message = await currentUser.outbox().create({
-      reciever_id: ctx.params.id,
+      receiver_id: ctx.params.id,
       text: ctx.request.body.text
     });
 
@@ -3449,27 +3451,119 @@ export default class ApiController {
     }
 
     const UserMessage = this.bookshelf.model('UserMessage');
+    const User = this.bookshelf.model('User');
 
     const messages = await UserMessage.collection()
       .query(qb => {
         qb
-          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
-          .orWhere({ sender_id: ctx.params.id, reciever_id: ctx.session.user })
-          .orderBy('created_at', 'ASC');
-      })
-      .fetch();
-    await UserMessage.collection()
-      .query(qb => {
-        qb
-          .where({ sender_id: ctx.session.user, reciever_id: ctx.params.id })
+          .where({ sender_id: ctx.session.user, receiver_id: ctx.params.id })
           // TODO: Replace with a single orWhere() when knex is upgraded from 0.10
+          // .orWhere({ sender_id: ctx.params.id, receiver_id: ctx.session.user })
           .orWhere({ sender_id: ctx.params.id })
-          .andWhere({ reciever_id: ctx.session.user })
+          .andWhere({ receiver_id: ctx.session.user })
           .orderBy('created_at', 'ASC');
       })
       .fetch();
 
+    // Update visitedAt
+    if (ctx.query.visit === 'true') {
+      const user = await new User({ id: ctx.session.user }).fetch({ require: true });
+      await user.setUserMessagesVisitDate(ctx.params.id, new Date()).save(null, { require: true });
+    }
+
     ctx.body = messages;
+  }
+
+  // Returns the number of unread messages (total and by user) and dates of visit for each user.
+  getUserMessagesStatus = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const User = this.bookshelf.model('User');
+    const knex = this.bookshelf.knex;
+
+    const user = await new User({ id: ctx.session.user }).fetch({ require: true });
+    const byUser = _.get(user.attributes, 'more.userMessagesMeta.byUser') || {};
+
+    for (const userId of Object.keys(byUser)) {
+      byUser[userId].numUnread = 0;
+    }
+
+    // if a user is visited by current user, count only new messages
+    const cases = _.compact(
+      _.map(byUser, (value, id) => value.visitedAt && `WHEN '${id}' THEN '${value.visitedAt}'::timestamp`)
+    );
+
+    const query = knex('user_messages')
+      .select(knex.raw('sender_id, count(sender_id)'))
+      .where('receiver_id', ctx.session.user)
+      .groupBy('sender_id');
+
+    if (!_.isEmpty(cases)) {
+      query.whereRaw(`created_at > CASE sender_id ${cases.join(' ')} END`);
+    }
+
+    const counts = await query;
+
+    for (const row of counts) {
+      // more.userMessagesMeta.byUser may be empty sometimes
+      _.set(byUser, [row.sender_id, 'numUnread'], parseInt(row.count));
+    }
+
+    const totalNumUnread = counts.reduce((acc, cur) => acc + parseInt(cur.count), 0);
+
+    ctx.body = {
+      numUnread: totalNumUnread,
+      byUser
+    };
+  }
+
+  updateUserMessage = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const UserMessage = this.bookshelf.model('UserMessage');
+
+    try {
+      const message = await new UserMessage()
+        .where({ id: ctx.params.id, sender_id: ctx.session.user })
+        .save(
+          { text: ctx.request.body.text },
+          { require: true, patch: true }
+        );
+
+      ctx.body = await message.refresh();
+    } catch (e) {
+      this.processError(ctx, e);
+    }
+  }
+
+  deleteUserMessage = async (ctx) => {
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const UserMessage = this.bookshelf.model('UserMessage');
+
+    try {
+      await new UserMessage()
+        .where({ id: ctx.params.id, sender_id: ctx.session.user })
+        .destroy({ require: true });
+
+      ctx.body = {
+        success: true
+      };
+    } catch (e) {
+      this.processError(ctx, e);
+    }
   }
 
   getProfilePosts = async (ctx) => {
