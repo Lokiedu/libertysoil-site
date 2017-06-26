@@ -28,7 +28,7 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
-import { addError, removeAllMessages } from '../../actions/messages';
+import { removeAllMessages } from '../../actions/messages';
 
 import Modal from '../sidebar-modal';
 import MinifiedTag from '../tag/theme/minified';
@@ -42,11 +42,6 @@ const ERROR_MESSAGES = [
   'api.errors.internal',
   'login.errors'
 ];
-
-const FORM_ERROR_MESSAGE_MAPPING = {
-  'username_req': 'login.errors.username_req',
-  'password_req': 'login.errors.password_req'
-};
 
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
@@ -145,17 +140,6 @@ class LoginComponentV2 extends React.Component {
     }
   };
 
-  handleErrors = (formErrors) => {
-    const { dispatch } = this.props;
-    dispatch(removeAllMessages());
-
-    for (const errorMessage of formErrors) {
-      dispatch(addError(
-        FORM_ERROR_MESSAGE_MAPPING[errorMessage]
-      ));
-    }
-  };
-
   render() {
     const { locale, messages, onClose } = this.props;
 
@@ -227,7 +211,6 @@ class LoginComponentV2 extends React.Component {
               format={format}
               rtl={rtl}
               translate={translate}
-              onErrors={this.handleErrors}
               onSubmit={this.handleSubmit}
             />
           </Modal.Body>
