@@ -204,6 +204,11 @@ class CreatePost extends React.Component {
     const minorUpdateProps = { ...fields.minor_update };
     delete minorUpdateProps.error;
 
+    let textareaClassName = 'input input-block create_post__text_input';
+    if (!expanded) {
+      textareaClassName += ' create_post__caret';
+    }
+
     return (
       <div className="box box-post box-space_bottom create_post">
         <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
@@ -211,14 +216,11 @@ class CreatePost extends React.Component {
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="create_post__text_input_wrapper">
-                  {!expanded &&
-                    <div className="create_post__caret" />
-                  }
                   <textarea
-                    className="input input-block create_post__text_input"
+                    className={textareaClassName}
                     name="text"
                     placeholder="Make a contribution to education change"
-                    rows={expanded ? 10 : 1}
+                    rows={expanded ? 10 : 2}
                     onFocus={this._handleFocus}
                     {...textProps}
                   />
