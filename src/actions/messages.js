@@ -21,6 +21,21 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
 export const REMOVE_ALL_MESSAGES = 'REMOVE_ALL_MESSAGES';
 
+/**
+ * Creates a FSA compliant error action.
+ * @param {string} type Type of action relevant to an error.
+ * @param {object|string|Error} error
+ * @param {object} meta { display?: true }
+ */
+export function reportError(type, error, meta = {}) {
+  return {
+    type,
+    error: true,
+    payload: error,
+    meta
+  };
+}
+
 export function addError(message, payload) {
   return {
     type: ADD_ERROR,

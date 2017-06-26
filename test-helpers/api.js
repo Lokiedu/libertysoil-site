@@ -43,7 +43,7 @@ export async function login(username, password) {
   );
 
   if (res.status !== 200) {
-    throw new Error(`Server response code: ${res.status}`);
+    throw new Error(`Login failed with ${res.status} ${res.statusText}`);
   }
 
   const cookieLines = res.headers.getAll('set-cookie');

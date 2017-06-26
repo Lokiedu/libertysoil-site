@@ -16,23 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
-/* global $dbConfig */
-import _ from 'lodash';
-
 import expect from '../../../test-helpers/expect';
-import initBookshelf from '../../../src/api/db';
 import HashtagFactory from '../../../test-helpers/factories/hashtag';
 import SchoolFactory from '../../../test-helpers/factories/school';
 import GeotagFactory from '../../../test-helpers/factories/geotag';
-import PostFactory from '../../../test-helpers/factories/post';
-import UserFactory from '../../../test-helpers/factories/user';
+import { createPost } from '../../../test-helpers/factories/post';
+import { createUser } from '../../../test-helpers/factories/user';
 import { login } from '../../../test-helpers/api';
+import { knex } from '../../../test-helpers/db';
 
-
-const bookshelf = initBookshelf($dbConfig);
-const knex = bookshelf.knex;
-const Post = bookshelf.model('Post');
-const User = bookshelf.model('User');
 
 describe('Post', () => {
   describe('Not authenticated user', () => {
@@ -40,9 +32,8 @@ describe('Post', () => {
     let post;
 
     before(async () => {
-      const userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
-      post = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
+      user = await createUser();
+      post = await createPost({ user_id: user.id });
     });
 
     after(async () => {
@@ -141,7 +132,7 @@ describe('Post', () => {
       let postHashtagLike;
 
       before(async () => {
-        postHashtagLike = await new Post(PostFactory.build({ type: 'hashtag_like' })).save(null, { method: 'insert' });
+        postHashtagLike = await createPost({ type: 'hashtag_like' });
       });
 
       after(async () => {
@@ -156,11 +147,24 @@ describe('Post', () => {
         );
       });
     });
+  });
+
+  describe('Authenticated user', () => {
+    let user, otherUser, sessionId;
+
+    before(async () => {
+      user = await createUser();
+      sessionId = await login(user.get('username'), user.get('password'));
+      otherUser = await createUser();
+    });
+
+    after(async () => {
+      await user.destroy();
+      await otherUser.destroy();
+    });
 
     describe('subscriptions', () => {
       let post;
-      let user;
-      let sessionId;
 
       async function countPostSubscriptions(user_id, post_id) {
         const result = await knex('post_subscriptions').where({ user_id, post_id }).count();
@@ -169,15 +173,10 @@ describe('Post', () => {
       }
 
       before(async () => {
-        const userAttrs = UserFactory.build();
-        user = await new User().save(_.omit(userAttrs, 'password'), { method: 'insert', require: true });
-        sessionId = await login(userAttrs.username, userAttrs.password);
-
-        post = await new Post(PostFactory.build({ user_id: user.id })).save(null, { method: 'insert' });
+        post = await createPost({ user_id: user.id });
       });
 
       after(async () => {
-        await user.destroy();
         await post.destroy();
       });
 
