@@ -309,7 +309,7 @@ export class ActionsTrigger {
     }
   };
 
-  login = async (username, password) => {
+  login = async (needRedirect, username, password) => {
     this.dispatch(a.messages.removeAllMessages());
 
     let user = null;
@@ -338,7 +338,18 @@ export class ActionsTrigger {
       this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
       this.dispatch(a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
 
-      browserHistory.push('/');
+      if (needRedirect) {
+        browserHistory.push('/');
+      }
+
+      if (user.more) {
+        const { lang } = user.more;
+        if (!(lang in t.dictionary())) {
+          await this.setLocale(lang);
+        } else {
+          this.dispatch(a.ui.setLocale(lang));
+        }
+      }
 
       if (!user.more || user.more.first_login) {
         await this.loadInitialSuggestions();

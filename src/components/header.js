@@ -33,6 +33,7 @@ const HeaderComponent = ({
   needIndent,
   needMenu,
   needAuthBlock,
+  onLogin,
   ...props
 }) => {
   let cn = 'header page__header';
@@ -52,7 +53,11 @@ const HeaderComponent = ({
         <div className="header__toolbar">
           <Search className="header__search" />
           {needAuthBlock &&
-            <AuthBlock current_user={current_user} is_logged_in={is_logged_in} />
+            <AuthBlock
+              current_user={current_user}
+              is_logged_in={is_logged_in}
+              onLogin={onLogin}
+            />
           }
           {!is_logged_in &&
             <SelectLocale />

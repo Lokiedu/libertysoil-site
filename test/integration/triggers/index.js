@@ -119,7 +119,7 @@ describe('ActionsTrigger', () => {
         const store = initState();
         const client = new ApiClient(API_HOST);
         const triggers = new ActionsTrigger(client, store.dispatch);
-        await triggers.login(userAttrs.username, userAttrs.password);
+        await triggers.login(false, userAttrs.username, userAttrs.password);
 
         expect(store.getState().get('messages').first().get('message'), 'to equal', 'login.errors.email_unchecked');
         await user.destroy();

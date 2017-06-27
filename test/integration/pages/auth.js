@@ -54,7 +54,8 @@ describe('Auth page', () => {
   });
 
   it('Login component should work', async () => {
-    const testComponent = <Login onLoginUser={triggers.login} />;
+    const handleLogin = triggers.login.bind(null, true);
+    const testComponent = <Login onLoginUser={handleLogin} />;
     const wrapper = mount(testComponent);
 
     const newUserId = waitForChange(() => store.getState().getIn(['current_user', 'id']));

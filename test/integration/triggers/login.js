@@ -47,10 +47,11 @@ describe('"login" trigger', () => {
     user.followed_schools().create(SchoolFactory.build());
     user.followed_geotags().create(GeotagFactory.build());
 
-    await triggers.login(userAttrs.username, userAttrs.password);
+    await triggers.login(true, userAttrs.username, userAttrs.password);
 
-    expect(store.getState().getIn(['current_user', 'followed_hashtags']).toJS(), 'not to be empty');
-    expect(store.getState().getIn(['current_user', 'followed_schools']).toJS(), 'not to be empty');
-    expect(store.getState().getIn(['current_user', 'followed_geotags']).toJS(), 'not to be empty');
+    const current_user = store.getState().get('current_user');
+    expect(current_user.get('followed_hashtags').toJS(), 'not to be empty');
+    expect(current_user.get('followed_schools').toJS(), 'not to be empty');
+    expect(current_user.get('followed_geotags').toJS(), 'not to be empty');
   });
 });

@@ -100,6 +100,7 @@ class LoginComponentV2 extends React.Component {
 
   static propTypes = {
     dispatch: PropTypes.func,
+    onSubmit: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     triggers: PropTypes.shape({
       uploadPicture: PropTypes.func,
@@ -134,7 +135,13 @@ class LoginComponentV2 extends React.Component {
       return;
     }
 
-    const result = await this.triggers.login(username, password);
+    let result;
+    if (this.props.onSubmit) {
+      result = await this.props.onSubmit(username, password);
+    } else {
+      result = await this.triggers.login(false, username, password);
+    }
+
     if (result) {
       this.props.onClose();
     }
