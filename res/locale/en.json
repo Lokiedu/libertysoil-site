@@ -8,10 +8,10 @@
   "login.create_new": "Create new account",
   "login.errors.invalid.short": "Invalid username or password",
   "login.errors.invalid.long": "The username and password that you entered did not match our records. Please double-check and try again",
-  "login.errors.username_req": "You must enter your username to continue",
-  "login.errors.password_req": "You must enter your password to continue",
+  "login.errors.username_req": "enter your username",
+  "login.errors.password_req": "enter your password",
   "login.errors.email_unchecked.long": "Please follow the instructions mailed to you during registration",
-  "login.qs.forget_pass": "Forget password?",
+  "login.qs.forget_pass": "Forgot password?",
   "api.errors.internal.short": "Internal server error",
   "api.errors.internal.long": "Server error: please retry later",
   "api.errors.bad_request": "Bad request"

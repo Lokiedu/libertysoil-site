@@ -25,8 +25,8 @@ import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools'
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-import TagIcon from './tag-icon';
-import MoreButton from './more-button';
+import Icon from './icon';
+import Tag from './tag';
 import AddTagModal from './add-tag-modal';
 
 class CreatePost extends React.Component {
@@ -129,10 +129,11 @@ class CreatePost extends React.Component {
     });
   };
 
-  _handleClickOnMore = () => {
-    this.setState({
-      expanded: !this.state.expanded
-    });
+  _handleClickOnMore = (e) => {
+    this._stopPropagation(e);
+    this.setState(state => ({
+      expanded: !state.expanded
+    }));
   };
 
   _handleKeydown = (e) => {
@@ -146,25 +147,19 @@ class CreatePost extends React.Component {
     }
   };
 
-  _showAddHashtagModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddHashtagModal = () => {
     this.setState({
       addTagModalType: TAG_HASHTAG
     });
   };
 
-  _showAddSchoolModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddSchoolModal = () => {
     this.setState({
       addTagModalType: TAG_SCHOOL
     });
   };
 
-  _showAddGeotagModal = (e) => {
-    this._stopPropagation(e);
-
+  _showAddGeotagModal = () => {
     this.setState({
       addTagModalType: TAG_LOCATION
     });
@@ -178,9 +173,9 @@ class CreatePost extends React.Component {
     });
   };
 
-  _changeAddTagModal = (newType) => {
+  _changeAddTagModal = (tag) => {
     this.setState({
-      addTagModalType: newType
+      addTagModalType: tag.type
     });
   };
 
@@ -209,6 +204,11 @@ class CreatePost extends React.Component {
     const minorUpdateProps = { ...fields.minor_update };
     delete minorUpdateProps.error;
 
+    let textareaClassName = 'input input-block create_post__text_input';
+    if (!expanded) {
+      textareaClassName += ' create_post__caret';
+    }
+
     return (
       <div className="box box-post box-space_bottom create_post">
         <form ref={c => this.form = c} onKeyDown={this._handleKeydown} onSubmit={this._handleSubmit}>
@@ -216,28 +216,47 @@ class CreatePost extends React.Component {
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="create_post__text_input_wrapper">
-                  {!expanded &&
-                    <div className="create_post__caret" />
-                  }
                   <textarea
-                    className="input input-block create_post__text_input"
+                    className={textareaClassName}
                     name="text"
                     placeholder="Make a contribution to education change"
-                    rows={expanded ? 10 : 1}
+                    rows={expanded ? 10 : 2}
                     onFocus={this._handleFocus}
                     {...textProps}
                   />
                 </div>
               </div>
               <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
-                <MoreButton expanded={expanded} onClick={this._handleClickOnMore} />
+                <Icon
+                  className="more_button"
+                  icon={expanded ? 'more_vert' : 'more_horiz'}
+                  onClick={this._handleClickOnMore}
+                />
                 {expanded &&
                   <div className="layout layout-rows layout-align_vertical">
-                    <TagIcon className="create_post__tag_button" type={TAG_SCHOOL} onClick={this._showAddSchoolModal} />
-                    <TagIcon className="create_post__tag_button" type={TAG_LOCATION} onClick={this._showAddGeotagModal}  />
-                    {/*<TagIcon className="create_post__tag_button" type={TAG_EVENT} />*/}
-                    {/*<TagIcon className="create_post__tag_button" type={TAG_MENTION} />*/}
-                    <TagIcon className="create_post__tag_button" type={TAG_HASHTAG} onClick={this._showAddHashtagModal} />
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_SCHOOL}
+                      onClick={this._showAddSchoolModal}
+                    />
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_LOCATION}
+                      onClick={this._showAddGeotagModal}
+                    />
+                    {/* TAG_EVENT */}
+                    {/* TAG_MENTION */}
+                    <Tag
+                      className="create_post__tag_button"
+                      collapsed
+                      isLink={false}
+                      type={TAG_HASHTAG}
+                      onClick={this._showAddHashtagModal}
+                    />
                   </div>
                 }
               </div>

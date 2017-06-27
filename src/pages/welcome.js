@@ -15,11 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
+import { API_HOST } from '../config';
+import ApiClient from '../api/client';
 import createSelector from '../selectors/createSelector';
 import { ActionsTrigger } from '../triggers';
 import Header from '../components/header';
@@ -29,11 +31,26 @@ import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
 class Welcome extends React.Component {
+  static propTypes = {
+    dispatch: PropTypes.func
+  };
 
   static async fetchData(router, store, client) {
     const trigger = new ActionsTrigger(client, store.dispatch);
 
-    await trigger.setQuotes();
+    if (store.getState().getIn(['current_user', 'id'])) {
+      return { status: 307, redirectTo: '/' };
+    }
+
+    return await trigger.setQuotes();
+  }
+
+  constructor(props, ...args) {
+    super(props, ...args);
+
+    this.handleLogin = new ActionsTrigger(
+      new ApiClient(API_HOST), props.dispatch
+    ).login.bind(null, true);
   }
 
   render() {
@@ -54,6 +71,7 @@ class Welcome extends React.Component {
               className="header-transparent"
               needIndent={false}
               needMenu={false}
+              onLogin={this.handleLogin}
             >
               <HeaderLogo />
             </Header>

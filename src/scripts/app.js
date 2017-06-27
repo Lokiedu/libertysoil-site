@@ -30,6 +30,7 @@ import { API_HOST } from '../config';
 import ApiClient from '../api/client';
 import { ActionsTrigger } from '../triggers';
 import { initState } from '../store';
+import { addMessage } from '../actions/messages';
 
 bluebird.longStackTraces();
 window.Promise = bluebird;
@@ -41,10 +42,9 @@ const client = new ApiClient(API_HOST);
 
 const canUseStorage = isStorageAvailable('localStorage');
 const cachedLocale = canUseStorage && window.localStorage.getItem('locale');
+const is_logged_in = store.getState().getIn(['current_user', 'id']);
 
 if (typeof window.localization === 'object') {
-  const is_logged_in = store.getState().getIn(['current_user', 'id']);
-
   if (!is_logged_in && cachedLocale && !Object.keys(window.localization).includes(cachedLocale)) {
     (new ActionsTrigger(client, store.dispatch)).setLocale(cachedLocale);
   } else {
@@ -55,6 +55,10 @@ if (typeof window.localization === 'object') {
       window.localStorage.setItem('locale', t.currentLocale);
     }
   }
+}
+
+if (!is_logged_in) {
+  store.dispatch(addMessage('welcome-guest'));
 }
 
 const authHandler = new AuthHandler(store);

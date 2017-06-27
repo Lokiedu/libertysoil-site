@@ -6,10 +6,10 @@
   "login.create_new": "ליצור חשבון חדש",
   "login.errors.invalid.short": "שם משתמש או סיסמה לא חוקיים",
   "login.errors.invalid.long": "שם המשתמש והסיסמה שהזנת אינם תואמים את הרשומות שלנו. בדוק ונסה שוב",
-  "login.errors.username_req": "עליך להזין את שם המשתמש שלך כדי להמשיך",
-  "login.errors.password_req": "עליך להזין את הסיסמה כדי להמשיך",
+  "login.errors.username_req": "הכנס שם משתמש",
+  "login.errors.password_req": "הכנס את הסיסמה שלך",
   "login.errors.email_unchecked.long": "פעל לפי ההנחיות שנשלחו אליך במהלך ההרשמה",
-  "login.qs.forget_pass": "שכחת את הסיסמא?",
+  "login.qs.forget_pass": "שכחת את הסיסמה?",
   "api.errors.internal.short": "שגיאת שרת פנימית",
   "api.errors.internal.long": "שגיאת שרת: נסה מאוחר יותר",
   "api.errors.bad_request": "בקשה לא תקינה"

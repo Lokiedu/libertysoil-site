@@ -21,23 +21,63 @@ import { createRenderer } from 'react-addons-test-utils';
 
 import { expect, React } from '../../../../../../test-helpers/expect-unit';
 import { GeotagPageHero } from '../../../../../../src/pages/base/tag';
+import { PageHero } from '../../../../../../src/components/page';
 import MapboxMap from '../../../../../../src/components/mapbox-map';
 
 
 describe('Tag Cloud Page: GeotagPageHero', () => {
   it('should choose zoom-level depending on geotag-type', () => {
     const planet = Map({ type: 'Planet', lat: 1, lon: 1 });
-    const continent = Map({ type: 'Continent', lat: 1, lon: 1 });
     const country = Map({ type: 'Country', lat: 1, lon: 1 });
     const adminDivision = Map({ type: 'AdminDivision1', lat: 1, lon: 1 });
     const city = Map({ type: 'City', lat: 1, lon: 1 });
 
     const renderer = createRenderer();
     expect(renderer.render(<GeotagPageHero geotag={planet} />), 'to contain', <MapboxMap zoom={3} frozen />);
-    expect(renderer.render(<GeotagPageHero geotag={continent} />), 'to contain', <MapboxMap zoom={4} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={country} />), 'to contain', <MapboxMap zoom={5} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={adminDivision} />), 'to contain', <MapboxMap zoom={6} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={city} />), 'to contain', <MapboxMap zoom={12} frozen />);
+  });
+
+  it('should try to display country\'s map only if the coordinates are missing', () => {
+    const berlin = Map({
+      type: 'City', lat: null, lon: null,
+      country: Map({ type: 'Country', lat: null, lon: null })
+    });
+    const berlinCoordinates = Map({ lat: 52.5244, lon: 13.4105 });
+    const germanyCoordinates = Map({ lat: 51, lon: 9 });
+
+    const renderer = createRenderer();
+    expect(
+      renderer.render(<GeotagPageHero geotag={berlin} />),
+      'to contain',
+      <PageHero url="/images/hero/welcome.jpg" />
+    );
+    expect(
+      renderer.render(
+        <GeotagPageHero geotag={berlin.mergeIn(['country'], germanyCoordinates)} />
+      ),
+      'to contain',
+      <MapboxMap zoom={5} frozen viewLocation={germanyCoordinates.toJS()} />
+    );
+    expect(
+      renderer.render(<GeotagPageHero geotag={berlin.merge(berlinCoordinates)} />),
+      'to contain',
+      <MapboxMap frozen viewLocation={berlinCoordinates.toJS()} zoom={12} />
+    );
+    expect(
+      renderer.render(
+        <GeotagPageHero
+          geotag={
+            berlin
+              .merge(berlinCoordinates)
+              .mergeIn(['country'], germanyCoordinates)
+          }
+        />
+      ),
+      'to contain',
+      <MapboxMap frozen viewLocation={berlinCoordinates.toJS()} zoom={12} />
+    );
   });
 
   it('should render map for objects located at zero-coordinates', () => {
@@ -45,5 +85,29 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
 
     const renderer = createRenderer();
     expect(renderer.render(<GeotagPageHero geotag={Greenwich} />), 'to contain', <MapboxMap zoom={12} frozen />);
+  });
+
+  it('should render image with shape for geotags representing continents', () => {
+    const continent = Map({ type: 'Continent', lat: 1, lon: 1 });
+
+    const renderer = createRenderer();
+    expect(
+      renderer.render(<GeotagPageHero geotag={continent} />),
+      'to contain',
+      <PageHero
+        contentClassName="continent"
+        url={'/images/geo/continents/undefined.svg'}
+      />
+    );
+    expect(
+      renderer.render(
+        <GeotagPageHero geotag={continent.set('continent_code', 'EU')} />
+      ),
+      'to contain',
+      <PageHero
+        contentClassName="continent"
+        url={'/images/geo/continents/EU.svg'}
+      />
+    );
   });
 });

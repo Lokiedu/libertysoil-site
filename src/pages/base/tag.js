@@ -77,13 +77,23 @@ function getPageCaption(type, name, urlId) {
 
 export function GeotagPageHero({ geotag }) {
   let type = geotag.get('type');
+
+  if (type === 'Continent') {
+    return (
+      <PageHero
+        contentClassName="continent"
+        url={`/images/geo/continents/${geotag.get('continent_code')}.svg`}
+      />
+    );
+  }
+
   const location = {
     lat: geotag.get('lat'),
     lon: geotag.get('lon')
   };
 
   // A lot of admin divisions don't have lat/lon. Attempt to take coords from the country.
-  if (location.lat !== null && location.lon !== null && geotag.get('country')) {
+  if (location.lat === null && location.lon === null && geotag.get('country')) {
     type = 'Country';
     location.lat = geotag.getIn(['country', 'lat']);
     location.lon = geotag.getIn(['country', 'lon']);

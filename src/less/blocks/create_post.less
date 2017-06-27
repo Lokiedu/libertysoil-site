@@ -27,21 +27,22 @@
   }
 
   &__caret {
-    position: absolute;
-    width: 2px;
-    height: 32px;
-    background-color: #CCC;
-    top: 0;
-    left: 0;
+    border-left: 2px solid #ccc;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     animation: 3s create_post__caret_blink linear infinite;
+
+    @media (min-width: 768px) {
+      height: 35px;
+    }
   }
 
   @keyframes create_post__caret_blink {
     from {
-      opacity: 1;
+      border-left-color: rgba(204, 204, 204, 1);
     }
     to {
-      opacity: 0;
+      border-left-color: rgba(204, 204, 204, 0);
     }
   }
 

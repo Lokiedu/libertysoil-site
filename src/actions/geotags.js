@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 export const ADD_GEOTAG = 'ADD_GEOTAG';
+export const ADD_GEOTAGS = 'ADD_GEOTAGS';
 export const SET_GEOTAGS = 'SET_GEOTAGS';
 export const SET_GEOTAG_POSTS = 'SET_GEOTAG_POSTS';
 export const SET_GEOTAG_CLOUD = 'SET_GEOTAG_CLOUD';
@@ -33,6 +34,15 @@ export function addGeotag(geotag) {
     type: ADD_GEOTAG,
     payload: {
       geotag
+    }
+  };
+}
+
+export function addGeotags(geotags) {
+  return {
+    type: ADD_GEOTAGS,
+    payload: {
+      geotags
     }
   };
 }

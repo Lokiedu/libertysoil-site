@@ -55,7 +55,8 @@ export default class AuthBlock extends React.Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    is_logged_in: PropTypes.bool.isRequired
+    is_logged_in: PropTypes.bool.isRequired,
+    onLogin: PropTypes.func
   };
 
   constructor(...args) {
@@ -116,6 +117,7 @@ export default class AuthBlock extends React.Component {
         <Login
           isVisible={this.state.isLoginVisible}
           onClose={this.handleToggleLogin}
+          onSubmit={this.props.onLogin}
         />
       </div>
     );

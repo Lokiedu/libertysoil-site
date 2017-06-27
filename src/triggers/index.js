@@ -309,7 +309,7 @@ export class ActionsTrigger {
     }
   };
 
-  login = async (username, password) => {
+  login = async (needRedirect, username, password) => {
     this.dispatch(a.messages.removeAllMessages());
 
     let user = null;
@@ -338,10 +338,25 @@ export class ActionsTrigger {
       this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
       this.dispatch(a.users.setFavourites(user.id, user.favourited_posts.map(fav => fav.id)));
 
+      if (needRedirect) {
+        browserHistory.push('/');
+      }
+
+      if (user.more) {
+        const { lang } = user.more;
+        if (!(lang in t.dictionary())) {
+          await this.setLocale(lang);
+        } else {
+          this.dispatch(a.ui.setLocale(lang));
+        }
+      }
+
       if (!user.more || user.more.first_login) {
-        browserHistory.push('/induction');
+        await this.loadInitialSuggestions();
+        this.dispatch(a.messages.addMessage('welcome-first-login'));
       } else {
-        browserHistory.push('/suggestions');
+        await this.loadPersonalizedSuggestions();
+        this.dispatch(a.messages.addMessage('welcome-user'));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -995,5 +1010,14 @@ export class ActionsTrigger {
     }
 
     return success;
-  }
+  };
+
+  loadGeotags = async (query = {}) => {
+    try {
+      const response = await this.client.getGeotags(query);
+      this.dispatch(a.geotags.addGeotags(response));
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
 }

@@ -71,6 +71,15 @@ export class UnwpappedAuth extends React.Component {
     return { status: 307, redirectTo: '/' };
   }
 
+  constructor(...args) {
+    super(...args);
+
+    this.triggers = new ActionsTrigger(
+      new ApiClient(API_HOST), this.props.dispatch
+    );
+    this.handleLogin = this.triggers.login.bind(null, true);
+  }
+
   render() {
     const {
       current_user,
@@ -79,16 +88,13 @@ export class UnwpappedAuth extends React.Component {
       ui
     } = this.props;
 
-    const client = new ApiClient(API_HOST);
-    const triggers = new ActionsTrigger(client, this.props.dispatch);
-
     let renderedMessages;
 
     if (!messages.isEmpty()) {
       renderedMessages = (
         <div className="page__messages">
           <div className="page__body page__body-small">
-            <Messages messages={messages} removeMessage={triggers.removeMessage} />
+            <Messages messages={messages} removeMessage={this.triggers.removeMessage} />
           </div>
         </div>
       );
@@ -104,6 +110,7 @@ export class UnwpappedAuth extends React.Component {
             is_logged_in={is_logged_in}
             current_user={current_user}
             className="header-transparent"
+            needAuthBlock={false}
             needIndent={false}
             needMenu={false}
           >
@@ -113,7 +120,7 @@ export class UnwpappedAuth extends React.Component {
           <header className="landing__body">
             <p className="layout__row layout__row-small landing__small_title" style={{ position: 'relative', left: 4 }}>Welcome to LibertySoil.org</p>
             <h1 className="landing__subtitle landing__subtitle-narrow">Education change network</h1>
-            <Login onLoginUser={triggers.login} />
+            <Login onLoginUser={this.handleLogin} />
           </header>
         </section>
 
@@ -125,8 +132,8 @@ export class UnwpappedAuth extends React.Component {
                 <div className="layout__row">
                   <Register
                     registration_success={registration_success}
-                    onShowRegisterForm={triggers.showRegisterForm}
-                    onRegisterUser={triggers.registerUser}
+                    onShowRegisterForm={this.triggers.showRegisterForm}
+                    onRegisterUser={this.triggers.registerUser}
                   />
                 </div>
               </PageContent>
@@ -142,7 +149,7 @@ export class UnwpappedAuth extends React.Component {
 
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('messages'),
+  state => state.get('messages').filter(m => m.get('message') !== 'welcome-guest'),
   state => state.get('ui'),
   (current_user, messages, ui) => ({
     messages,

@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
@@ -27,7 +28,7 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
-import { addError, removeAllMessages } from '../../actions/messages';
+import { removeAllMessages } from '../../actions/messages';
 
 import Modal from '../sidebar-modal';
 import MinifiedTag from '../tag/theme/minified';
@@ -42,15 +43,11 @@ const ERROR_MESSAGES = [
   'login.errors'
 ];
 
-const FORM_ERROR_MESSAGE_MAPPING = {
-  'username_req': 'login.errors.username_req',
-  'password_req': 'login.errors.password_req'
-};
-
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
     icon: { color: 'orange', icon: 'question-circle' },
-    name: { name: (translate) => translate('login.qs.forget_pass') }
+    name: { name: (translate) => translate('login.qs.forget_pass') },
+    url: '/resetpassword'
   }
 };
 
@@ -75,11 +72,35 @@ function Message({ className, children, long, translate, ...props }) {
   );
 }
 
+function ActionTag({ url, translate, ...props }) {
+  const content = (
+    <MinifiedTag
+      className="sidebar-form__tag"
+      {...props}
+      name={{
+        ...props.name,
+        name: props.name.name(translate)
+      }}
+    />
+  );
+
+  if (url) {
+    return (
+      <Link to={url}>
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
+}
+
 class LoginComponentV2 extends React.Component {
   static displayName = 'LoginComponentV2';
 
   static propTypes = {
     dispatch: PropTypes.func,
+    onSubmit: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     triggers: PropTypes.shape({
       uploadPicture: PropTypes.func,
@@ -114,20 +135,15 @@ class LoginComponentV2 extends React.Component {
       return;
     }
 
-    const result = await this.triggers.login(username, password);
+    let result;
+    if (this.props.onSubmit) {
+      result = await this.props.onSubmit(username, password);
+    } else {
+      result = await this.triggers.login(false, username, password);
+    }
+
     if (result) {
       this.props.onClose();
-    }
-  };
-
-  handleErrors = (formErrors) => {
-    const { dispatch } = this.props;
-    dispatch(removeAllMessages());
-
-    for (const errorMessage of formErrors) {
-      dispatch(addError(
-        FORM_ERROR_MESSAGE_MAPPING[errorMessage]
-      ));
     }
   };
 
@@ -144,13 +160,9 @@ class LoginComponentV2 extends React.Component {
       const props = ERROR_TAG_MAPPING[firstMessage];
       if (props) {
         headerContent = (
-          <MinifiedTag
-            className="sidebar-form__tag"
+          <ActionTag
+            translate={translate}
             {...props}
-            name={{
-              ...props.name,
-              name: props.name.name(translate)
-            }}
           />
         );
         subheader = (
@@ -206,7 +218,6 @@ class LoginComponentV2 extends React.Component {
               format={format}
               rtl={rtl}
               translate={translate}
-              onErrors={this.handleErrors}
               onSubmit={this.handleSubmit}
             />
           </Modal.Body>

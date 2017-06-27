@@ -27,6 +27,7 @@ export {
 } from '../../prop-types/schools';
 
 export { Tab, Tabs } from '../tabs';
+export { default as Tag } from '../tag';
 export { default as TagIcon } from '../tag-icon';
 export { default as TagCloud } from '../tag-cloud';
 export { default as Autosuggest } from '../autosuggest';

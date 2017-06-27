@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -20,49 +20,67 @@ import classNames from 'classnames';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET } from '../consts/tags';
 
-const TagIcon = ({ big, className, inactive, round, small, type, ...props }) => {
-  const cn = classNames('tag_icon', className, {
-    'tag_icon-small': small,
-    'tag_icon-big': big,
-    'tag_icon-inactive': inactive,
-    'tag_icon-round': round
-  });
+import Icon from './icon';
 
-  const spanProps = { ...props };
-  delete spanProps.collapsed;
+const TagIcon = ({ className, inactive, type, ...props }) => {
+  const cn = classNames('tag_icon', className, {
+    'tag_icon--inactive': inactive
+  });
 
   switch (type) {
     case TAG_HASHTAG:
       return (
-        <span className={`${cn} tag_icon-hashtag`} {...spanProps}>#</span>
+        <Icon
+          className={`${cn} tag_icon--type_hashtag`}
+          icon="hashtag"
+          pack="fa"
+          {...props}
+        />
       );
     case TAG_SCHOOL:
       return (
-        <span className={`${cn} tag_icon-school`} {...spanProps}>
-          <span className="micon">school</span>
-        </span>
+        <Icon
+          className={`${cn} tag_icon--type_school`}
+          pack="fa"
+          icon="graduation-cap"
+          {...props}
+        />
       );
     case TAG_MENTION:
       return (
-        <span className={`${cn} tag_icon-mention`} {...spanProps}>@</span>
+        <Icon
+          className={`${cn} tag_icon--type_mention`}
+          icon="at"
+          pack="fa"
+          {...props}
+        />
       );
     case TAG_LOCATION:
       return (
-        <span className={`${cn} tag_icon-location`} {...spanProps}>
-          <span className="micon">location_on</span>
-        </span>
+        <Icon
+          className={`${cn} tag_icon--type_location`}
+          pack="md"
+          icon="location-on"
+          {...props}
+        />
       );
     case TAG_EVENT:
       return (
-        <span className={`${cn} tag_icon-event`} {...spanProps}>
-          <span className="micon">event</span>
-        </span>
+        <Icon
+          className={`${cn} tag_icon--type_event`}
+          icon="event"
+          pack="md"
+          {...props}
+        />
       );
     case TAG_PLANET:
       return (
-        <span className={`${cn} tag_icon-planet`} {...spanProps}>
-          <span className="micon">public</span>
-        </span>
+        <Icon
+          className={`${cn} tag_icon--type_planet`}
+          icon="public"
+          pack="md"
+          {...props}
+        />
       );
     default:
       return false;
@@ -72,16 +90,21 @@ const TagIcon = ({ big, className, inactive, round, small, type, ...props }) => 
 TagIcon.displayName = 'TagIcon';
 
 TagIcon.propTypes = {
-  big: PropTypes.bool,
   className: PropTypes.string,
   inactive: PropTypes.bool,
-  round: PropTypes.bool,
-  small: PropTypes.bool,
-  type: PropTypes.oneOf([TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET]).isRequired
+  type: PropTypes.oneOf([
+    TAG_HASHTAG,
+    TAG_SCHOOL,
+    TAG_MENTION,
+    TAG_LOCATION,
+    TAG_EVENT,
+    TAG_PLANET
+  ]).isRequired
 };
 
 TagIcon.defaultProps = {
-  round: true
+  round: true,
+  size: 'small'
 };
 
 export default TagIcon;

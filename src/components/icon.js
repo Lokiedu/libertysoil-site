@@ -45,6 +45,7 @@ const IconComponent = ({
   onClick,
   outline,
   pack,
+  round,
   spin,
   size,
   ...props
@@ -55,6 +56,7 @@ const IconComponent = ({
     'icon-outline': outline,
     'icon-disabled': disabled,
     'icon--inactive': inactive,
+    'icon--round': round,
     'micon-rotate': spin,
     [`micon-${size}`]: size,
     [`icon--size_${size}`]: size,
@@ -98,6 +100,7 @@ IconComponent.propTypes = {
   onClick: PropTypes.func,
   outline: PropTypes.bool,
   pack: PropTypes.oneOf(['md', 'fa']),
+  round: PropTypes.bool,
   size: PropTypes.string,
   spin: PropTypes.bool
 };

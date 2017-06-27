@@ -73,6 +73,22 @@
     .menu__item(~"favs", ~"My Favourites");
     .menu__item(~"collect", ~"Collections");
   }
+
+  &--truncated {
+    display: none;
+
+    @media (min-width: 768px) {
+      width: 240px;
+      position: relative;
+      display: flex;
+
+      .sidebar__inner {
+        position: fixed;
+        width: inherit;
+        overflow: hidden;
+      }
+    }
+  }
 }
 
 .menu__item(@key, @value) {

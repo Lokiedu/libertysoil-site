@@ -19,6 +19,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import isEqual from 'lodash/isEqual';
+import { List } from 'immutable';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
@@ -26,6 +27,7 @@ import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { POST_SORTING_TYPES } from '../consts/sorting';
 import { TAG_PLANET } from '../consts/tags';
+import CONTINENTS from '../consts/continents';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
@@ -33,6 +35,7 @@ import { Page, PageMain, PageBody, PageContent } from '../components/page';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Breadcrumbs from '../components/breadcrumbs/breadcrumbs';
+import ContinentNav from '../components/continent-nav';
 import Footer from '../components/footer';
 import LoadableRiver from '../components/loadable-river';
 import Sidebar from '../components/sidebar';
@@ -52,7 +55,12 @@ class GeotagCloudPage extends Component {
 
   static async fetchData(router, store, client) {
     const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.loadAllPosts({ ...router.location.query, geotags: true });
+
+    await Promise.all([
+      triggers.loadGeotags({ type: 'Continent', sort: 'url_name' }),
+      triggers.loadAllPosts({ ...router.location.query, geotags: true }),
+      triggers.loadGeotagCloud()
+    ]);
   }
 
   constructor(props, ...args) {
@@ -98,7 +106,16 @@ class GeotagCloudPage extends Component {
   };
 
   render() {
-    const { is_logged_in, current_user } = this.props;
+    const { geotags, is_logged_in, current_user } = this.props;
+
+    const popularCountries = this.props.geotag_cloud
+      .reduce((countries, continent) => countries.concat(continent.get('geotags').toJS()), [])
+      .map(urlName => geotags.get(urlName))
+      .sort((a, b) => a.get('hierarchy_post_count') - b.get('hierarchy_post_count'))
+      .slice(0, 4);
+
+    const continents = this.props.geotag_cloud
+      .map(continent => geotags.get(CONTINENTS[continent.get('continent_code')].url_name));
 
     return (
       <div>
@@ -138,6 +155,10 @@ class GeotagCloudPage extends Component {
                   location={this.props.location}
                   sortingTypes={POST_SORTING_TYPES}
                 />
+                <ContinentNav
+                  countries={List(popularCountries)}
+                  continents={continents}
+                />
               </SidebarAlt>
             </PageBody>
           </PageMain>
@@ -156,13 +177,17 @@ const mapStateToProps = createSelector(
   state => state.get('all_posts'),
   state => state.get('users'),
   state => state.get('ui'),
-  (current_user, comments, posts, river, users, ui) => ({
+  state => state.get('geotags'),
+  state => state.get('geotag_cloud'),
+  (current_user, comments, posts, river, users, ui, geotags, geotag_cloud) => ({
     ...current_user,
     comments,
     posts,
     river,
     users,
-    ui
+    ui,
+    geotags,
+    geotag_cloud
   })
 );
 

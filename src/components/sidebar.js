@@ -17,6 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import throttle from 'lodash/throttle';
+import isEqual from 'lodash/isEqual';
 
 import createSelector from '../selectors/createSelector';
 import currentUserSelector from '../selectors/currentUser';
@@ -48,46 +50,97 @@ const defaultClassName = [
 
 class Sidebar extends React.Component {
   static propTypes = {
+    isCollapsing: PropTypes.bool,
     isDesktopEnabled: PropTypes.bool,
     isEmpty: PropTypes.bool,
-    isMobileMenuOn: PropTypes.bool
+    isMobileMenuOn: PropTypes.bool,
+    isTruncated: PropTypes.bool,
     // theme: PropTypes.string
   };
 
   static defaultProps = {
+    isCollapsing: true,
     isDesktopEnabled: true,
-    isMobileMenuOn: false
+    isMobileMenuOn: false,
+    isTruncated: false
   };
 
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      isMobile: true
+      isMobile: true,
+      isOnTop: undefined
     };
+
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const nonMobileQuery = window.matchMedia('(min-width: 768px)');
+      nonMobileQuery.addListener(this.handleViewChange);
+
+      // eslint-disable-next-line react/no-direct-mutation-state
+      this.state.isMobile = !nonMobileQuery.matches;
+
+      if (props.isCollapsing && nonMobileQuery.matches) {
+        this.toggleScrollListener(true);
+
+        const offset = window.pageYOffset || document.documentElement.scrollTop;
+        // eslint-disable-next-line react/no-direct-mutation-state
+        this.state.isOnTop = offset === 0;
+      }
+    }
   }
 
-  componentDidMount() {
-    window.matchMedia('(min-width: 768px)')
-      .addListener(this.handleViewChange);
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isCollapsing !== this.props.isCollapsing) {
+      this.toggleScrollListener(nextProps.isCollapsing);
+
+      if (nextProps.isCollapsing) {
+        this.handleScroll();
+        this.handleScroll.flush();
+      }
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props ||
-      nextState.isMobile !== this.state.isMobile;
+    return nextProps !== this.props || !isEqual(nextState, this.state);
   }
 
   componentWillUnmount() {
     window.matchMedia('(min-width: 768px)')
       .removeListener(this.handleViewChange);
+    this.toggleScrollListener(false);
   }
 
   handleViewChange = (nonMobileQuery) => {
     if (nonMobileQuery.matches) {
+      this.toggleScrollListener(true);
       this.setState({ isMobile: false });
     } else {
+      this.toggleScrollListener(false);
       this.setState({ isMobile: true });
     }
   };
+
+  isScrollListened = false;
+
+  toggleScrollListener = (nextState = !this.isScrollListened) => {
+    if (nextState) {
+      if (!this.isScrollListened) {
+        window.addEventListener('scroll', this.handleScroll);
+      }
+    } else if (this.isScrollListened) {
+      window.removeEventListener('scroll', this.handleScroll);
+    }
+
+    this.isScrollListened = nextState;
+  };
+
+  handleScroll = throttle(() => {
+    const offset = window.pageYOffset || document.documentElement.scrollTop;
+    const isOnTop = offset === 0;
+    if (isOnTop !== this.state.isOnTop) {
+      this.setState({ isOnTop });
+    }
+  }, 250);
 
   handleClose = () => {
     this.props.dispatch(toggleMenu(false));
@@ -102,18 +155,15 @@ class Sidebar extends React.Component {
       return <div className="sidebar page__sidebar" />;
     }
 
-    const sidebarBody = [
-      <SidebarMenu current_user={this.props.current_user} key="menu" />,
-      <TagsInform current_user={this.props.current_user} key="tags" />
-    ];
-
+    const { isMobile } = this.state;
     const displayMobileMenu =
-      this.props.isMobileMenuOn && this.state.isMobile;
+      this.props.isMobileMenuOn && isMobile;
     if (displayMobileMenu) {
       return (
         <div className={defaultClassName.concat(' mobile-menu')} onClick={this.handleClose}>
           <div className="mobile-menu__section" onClick={this.handleClickInside}>
-            {sidebarBody}
+            <SidebarMenu current_user={this.props.current_user} />
+            <TagsInform current_user={this.props.current_user} />
           </div>
         </div>
       );
@@ -123,9 +173,29 @@ class Sidebar extends React.Component {
       return null;
     }
 
+    const { isCollapsing } = this.props;
+    const isTruncated = this.props.isTruncated
+      || (isCollapsing && !this.state.isOnTop);
+
+    let className = defaultClassName;
+    if (isTruncated) {
+      className += ' sidebar--truncated';
+    }
+
     return (
-      <div className={defaultClassName}>
-        {sidebarBody}
+      <div className={className}>
+        <div className="sidebar__inner">
+          <SidebarMenu
+            animated={isCollapsing && !isMobile}
+            current_user={this.props.current_user}
+            truncated={isTruncated}
+          />
+          <TagsInform
+            animated={isCollapsing && !isMobile}
+            current_user={this.props.current_user}
+            truncated={isTruncated}
+          />
+        </div>
       </div>
     );
   }

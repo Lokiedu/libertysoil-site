@@ -50,6 +50,11 @@ const invalidIcon = {
   icon: 'minus'
 };
 
+const FORM_ERROR_MESSAGE_MAPPING = {
+  'username_req': 'login.errors.username_req',
+  'password_req': 'login.errors.password_req'
+};
+
 function SocialButton({ children, className, icon, ...props }) {
   const cn = classNames(className, SocialButton.defaultClassName);
 
@@ -148,7 +153,8 @@ export class LoginFormV2 extends React.Component {
           fields,
           (acc, fieldValue, fieldName) => {
             let statusIcon, dotColor = 'gray';
-            if (fieldValue.error) {
+            const errorMessage = fieldValue.error;
+            if (errorMessage) {
               statusIcon = invalidIcon;
               dotColor = 'red';
             } else if (fieldValue.value) {
@@ -157,29 +163,36 @@ export class LoginFormV2 extends React.Component {
 
             acc.push(
               <div className="sidebar-form__row sidebar-form__background--bright" key={fieldName}>
-                <label className="sidebar-form__label" htmlFor={fieldName}>
-                  {t(staticFields[fieldName].label)}
-                </label>
-                <div className="layout layout-align_vertical">
-                  <Icon
-                    className="sidebar-form__dot"
-                    color={dotColor}
-                    icon="fiber-manual-record"
-                    size="common"
-                  />
-                  <input
-                    className="sidebar-form__input river-item bio__post--type_text input-transparent"
-                    id={fieldName}
-                    name={fieldName}
-                    type={staticFields[fieldName].type}
-                    {...omit(fieldValue, ['error'])}
-                  />
-                  <Icon
-                    className="sidebar-form__check"
-                    size="common"
-                    {...statusIcon}
-                  />
+                <div>
+                  <label className="sidebar-form__label" htmlFor={fieldName}>
+                    {t(staticFields[fieldName].label)}
+                  </label>
+                  <div className="layout layout-align_vertical">
+                    <Icon
+                      className="sidebar-form__dot"
+                      color={dotColor}
+                      icon="fiber-manual-record"
+                      size="common"
+                    />
+                    <input
+                      className="sidebar-form__input river-item bio__post--type_text input-transparent"
+                      id={fieldName}
+                      name={fieldName}
+                      type={staticFields[fieldName].type}
+                      {...omit(fieldValue, ['error'])}
+                    />
+                    <Icon
+                      className="sidebar-form__check"
+                      size="common"
+                      {...statusIcon}
+                    />
+                  </div>
                 </div>
+                {errorMessage &&
+                  <div className="sidebar-form__field-message">
+                    {t(FORM_ERROR_MESSAGE_MAPPING[errorMessage])}
+                  </div>
+                }
               </div>
             );
 

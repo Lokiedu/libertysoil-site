@@ -18,7 +18,6 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 import i from 'immutable';
 
@@ -42,63 +41,15 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { resetCreatePostForm, updateCreatePostForm } from '../actions/posts';
 import { addGeotag, setGeotagPosts } from '../actions/geotags';
-
-import River from '../components/river_of_posts';
-
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
 import { TAG_LOCATION } from '../consts/tags';
 
+import ContinentNav from '../components/continent-nav';
+import River from '../components/river_of_posts';
+
 import NotFound from './not-found';
 import BaseTagPage from './base/tag';
-
-
-function ContinentNav({ countries, continent, continents }) {
-  const continentElements = continents.map(continent => (
-    <div className="aux-nav__item" key={continent.get('code')}>
-      <Link
-        activeClassName="aux-nav__link--active"
-        className="aux-nav__link"
-        to={`/geo/${continent.get('url_name')}`}
-      >
-        {continent.get('name')} ({continent.get('hierarchy_post_count')})
-      </Link>
-    </div>
-  ));
-
-  const countryElements = countries.map(country => (
-    <div className="aux-nav__item" key={country.get('id')}>
-      <Link
-        activeClassName="aux-nav__link--active"
-        className="aux-nav__link"
-        to={`/geo/${country.get('url_name')}`}
-      >
-        {country.get('name')} ({country.get('hierarchy_post_count')})
-      </Link>
-    </div>
-  ));
-
-  return (
-    <div>
-      <div className="aux-nav">
-        <div className="aux-nav__item">
-          <Link
-            activeClassName="aux-nav__link--active"
-            className="aux-nav__link"
-            to={`/geo/${continent.get('url_name')}`}
-          >
-            All {continent.get('name')} ({continent.get('hierarchy_post_count')})
-          </Link>
-        </div>
-        {countryElements}
-      </div>
-
-      <div className="aux-nav">
-        {continentElements}
-      </div>
-    </div>
-  );
-}
 
 export class UnwrappedGeotagPage extends Component {
   static displayName = 'UnwrappedGeotagPage';

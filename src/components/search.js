@@ -302,9 +302,11 @@ class Search extends Component {
       loading
     } = this.state;
 
-    const classNameBlock = classNames('search', {
-      'search-opened': isOpened
-    });
+    const classNameBlock = classNames(
+      'search',
+      this.props.className,
+      { 'search-opened': isOpened }
+    );
 
     let searchClearClass = 'search__clear';
     if (!query) {
