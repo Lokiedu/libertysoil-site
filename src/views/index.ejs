@@ -34,15 +34,15 @@
   <% } %>
 </head>
 <body>
-<script>var state = <%- state %></script>
-<div id="content"><%- html %></div>
-<script src="/assets/app.js"></script>
-<script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
 <% if (gtm) { %>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%- gtm %>"
                   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <% } %>
+<script>var state = <%- state %></script>
+<div id="content"><%- html %></div>
+<script src="/assets/app.js"></script>
+<script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
 </body>
 </html>
