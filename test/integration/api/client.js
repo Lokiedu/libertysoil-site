@@ -98,7 +98,7 @@ describe('Client test', () => {
   });
 
   it('#deleteComment works', async () => {
-    return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'You are not authorized');
+    return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'api.errors.forbidden');
   });
 
   describe('#search', () => {
@@ -130,15 +130,15 @@ describe('Client test', () => {
   });
 
   it('#userTags correctly handle non authenticated request', async () => {
-    return expect(client.userTags(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userTags(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#userLikedPosts correctly handle errors', async () => {
-    return expect(client.userLikedPosts(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userLikedPosts(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#userFavouredPosts correctly handle errors', async () => {
-    return expect(client.userFavouredPosts(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userFavouredPosts(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#geotagPosts correctly handle non existing geotag', async () => {
@@ -154,11 +154,11 @@ describe('Client test', () => {
   });
 
   it('#like correctly handle non authenticated request', async () => {
-    return expect(client.like(), 'to be rejected with', 'You are not authorized');
+    return expect(client.like(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#unlike correctly handle non authenticated request', async () => {
-    return expect(client.unlike('dummyid'), 'to be rejected with', 'You are not authorized');
+    return expect(client.unlike('dummyid'), 'to be rejected with', 'api.errors.forbidden');
   });
 
   describe('Exception tests', () => {
