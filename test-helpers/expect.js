@@ -83,7 +83,7 @@ expect.addAssertion('body to contain', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('body to satisfy', function (expect, subject, value) {
+expect.addAssertion('body to [exhaustively] satisfy', function (expect, subject, value) {
   expect.errorMode = 'bubble';
   return expect(subjectToRequest(subject), 'to yield response', {})
     .then(function (context) {

@@ -29,14 +29,12 @@ import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
 import { break as breakGraphemes, countBreaks } from '@ov/grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
-import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
 import sanitizeHtml from 'sanitize-html';
 import slug from 'slug';
 import htmlparser2 from 'htmlparser2';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
-import { ProfilePost as ProfilePostValidations } from './validators';
 
 
 const bcryptHashAsync = promisify(bcryptHash);
@@ -903,7 +901,6 @@ export function initBookshelfFromKnex(knex) {
   const ProfilePost = bookshelf.Model.extend({
     tableName: 'profile_posts',
     initialize() {
-      this.on('saving', this.validate.bind(this));
       this.on('saving', this.renderMarkdown.bind(this));
     },
     renderMarkdown(model = this) {
@@ -911,9 +908,6 @@ export function initBookshelfFromKnex(knex) {
         const html = postMarkdown.render(model.get('text'));
         model.set('html', html);
       }
-    },
-    validate() {
-      return new Checkit(ProfilePostValidations).run(this.toJSON());
     },
     user() {
       return this.belongsTo(User, 'user_id');

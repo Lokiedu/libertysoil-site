@@ -101,8 +101,8 @@ describe('ActionsTrigger', () => {
         await triggers.registerUser(undefined, undefined, undefined, userAttrs.firstName, userAttrs.lastName);
         expect(
           store.getState().getIn(['messages', 0, 'message']),
-          'to equal',
-          'The username is required\nThe password is required\nThe email is required\n'
+          'to contain',
+          'ValidationError'
         );
       });
     });
