@@ -232,12 +232,13 @@ export class SignupFormV2 extends React.Component {
     this.usernameFocused = false;
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
 
     const { form } = this.props;
 
     form.forceValidate();
+    form.touch(Object.keys(FORM_RULES_MAP));
 
     if (!form.isValid()) {
       return this.props.onErrors(
@@ -251,7 +252,7 @@ export class SignupFormV2 extends React.Component {
 
     const values = form.values();
 
-    return this.props.onSubmit(
+    await this.props.onSubmit(
       true,
       values.username,
       values.password,
@@ -259,6 +260,8 @@ export class SignupFormV2 extends React.Component {
       normalizeWhitespace(values.firstName),
       normalizeWhitespace(values.lastName)
     );
+
+    return resetValidatorsCache();
   };
 
   render() {
@@ -350,14 +353,17 @@ const client = new ApiClient(API_HOST);
 
 function debounceCached(f, timeout = 100) {
   // eslint-disable-next-line no-var
-  const cache = {};
+  let cache = {};
 
-  return debounce(function (s) {
-    if (cache[s] === undefined) {
-      cache[s] = f(s);
-    }
-    return cache[s];
-  }, timeout);
+  return Object.assign(
+    debounce(function (s) {
+      if (cache[s] === undefined) {
+        cache[s] = f(s);
+      }
+      return cache[s];
+    }, timeout),
+    { resetCache: () => cache = {} }
+  );
 }
 
 function checkTrimmed(val = '') {
@@ -407,6 +413,14 @@ const validatePasswordRepeat = (passwordRepeat, form) => {
     return false;
   }
   return true;
+};
+
+const resetValidatorsCache = () => {
+  [
+    getAvailableUsername,
+    checkEmailNotTaken,
+    checkUsernameNotTaken
+  ].forEach(v => v.resetCache());
 };
 
 const FORM_RULES_MAP = {
