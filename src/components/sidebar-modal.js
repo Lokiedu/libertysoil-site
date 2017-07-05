@@ -71,6 +71,7 @@ class SidebarModalMain extends React.Component {
           transitionName="sidebar-modal__main--transition"
           transitionAppear
           transitionAppearTimeout={250}
+          transitionEnterTimeout={250}
           transitionLeaveTimeout={250}
         >
           {this.props.isVisible ? content : null}
@@ -99,8 +100,15 @@ class SidebarModalOverlay extends React.Component {
     super(props, ...args);
     this.state = {
       isAppearing: false,
-      isVisible: props.isVisible
+      isVisible: false
     };
+  }
+
+  componentDidMount() {
+    if (this.props.isVisible) {
+      // eslint-disable-next-line react/no-did-mount-set-state
+      this.setState({ isVisible: true });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
