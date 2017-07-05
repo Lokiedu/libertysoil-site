@@ -45,6 +45,9 @@ const FORM_ERROR_MESSAGE_MAPPING = {
   'password_req': 'login.errors.password_req'
 };
 
+const pushSignup = location =>
+  ({ ...location, hash: '#signup' });
+
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';
 
@@ -148,7 +151,7 @@ export class LoginFormV2 extends React.Component {
           </AltButton>
           <Link
             className={AltButton.defaultClassName.concat(" margin--all_top")}
-            to="/auth#register"
+            to={pushSignup}
           >
             {t('login.create_new')}
           </Link>

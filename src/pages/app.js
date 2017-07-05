@@ -53,7 +53,7 @@ export class UnwrappedApp extends React.Component {
     this.props.dispatch(attachContextualRoutes(
       UnwrappedApp.displayName,
       getRoutesNames(this.props.routes),
-      ['#login']
+      ['#login', '#signup']
     ));
   }
 
