@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
+import noop from 'lodash/noop';
 
 import { ActionsTrigger } from '../triggers';
 import { INTERCOM_APP_ID } from '../config';
@@ -35,7 +36,14 @@ export class UnwrappedApp extends React.Component {
   static displayName = 'UnwrappedApp';
 
   static propTypes = {
-    children: PropTypes.element.isRequired
+    children: PropTypes.element.isRequired,
+    dispatch: PropTypes.func,
+    location: PropTypes.shape()
+  };
+
+  static defaultProps = {
+    dispatch: noop,
+    location: { hash: '', pathname: '', search: '' }
   };
 
   static async fetchData(router, store, client) {

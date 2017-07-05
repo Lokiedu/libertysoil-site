@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import noop from 'lodash/noop';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -48,11 +49,18 @@ export class UnwrappedAuth extends React.Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
+    dispatch: PropTypes.func,
     is_logged_in: PropTypes.bool,
+    location: PropTypes.shape(),
     messages: ArrayOfMessagesPropType.isRequired,
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
+  };
+
+  static defaultProps = {
+    dispatch: noop,
+    location: { hash: '', pathname: '', search: '' }
   };
 
   static async fetchData(router, store) {

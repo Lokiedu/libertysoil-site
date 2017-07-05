@@ -9,7 +9,7 @@ export function getRouteName(route) {
   return component.displayName || component.name;
 }
 
-export function getRoutesNames(routes) {
+export function getRoutesNames(routes = []) {
   return routes.reduce(
     (acc, route) => (route.component && acc.push(getRouteName(route)), acc),
     []

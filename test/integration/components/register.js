@@ -22,7 +22,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import Register, { UnwrappedRegister } from '../../../src/components/register';
+import Register, { UnwrappedRegister } from '../../../src/components/register/v1';
 import { initState } from '../../../src/store';
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';

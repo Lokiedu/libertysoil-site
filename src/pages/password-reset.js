@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import noop from 'lodash/noop';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
@@ -64,9 +65,16 @@ export class PasswordResetPage extends React.Component {
   static displayName = 'PasswordResetPage';
 
   static propTypes = {
+    dispatch: PropTypes.func,
+    location: PropTypes.shape(),
     ui: PropTypes.shape({
       submitResetPassword: PropTypes.bool
     }).isRequired
+  };
+
+  static defaultProps = {
+    dispatch: noop,
+    location: { hash: '', pathname: '', search: '' }
   };
 
   static fetchData(router, store) {

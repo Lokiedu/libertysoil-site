@@ -20,12 +20,12 @@ import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
 
-import { UnwpappedAuth } from '../../../src/pages/auth';
+import { UnwrappedAuth } from '../../../src/pages/auth';
 import Messages from '../../../src/components/messages';
 import Register from '../../../src/components/register';
 
 
-describe('UnwpappedAuth page with redux', function () {
+describe('UnwrappedAuth page with redux', function () {
   // before(() => {
   //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
   // });
@@ -37,7 +37,7 @@ describe('UnwpappedAuth page with redux', function () {
 
   it('MUST render important components', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwpappedAuth is_logged_in messages={i.List()} ui={i.Map()} />);
+    renderer.render(<UnwrappedAuth is_logged_in messages={i.List()} ui={i.Map()} />);
 
     return expect(
       renderer,
@@ -48,7 +48,7 @@ describe('UnwpappedAuth page with redux', function () {
 
   it('MUST render passed messages', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwpappedAuth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
+    renderer.render(<UnwrappedAuth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
 
     return expect(
       renderer,
@@ -61,7 +61,7 @@ describe('UnwpappedAuth page with redux', function () {
 
   it('MUST pass ui.registrationSuccess to Register component', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwpappedAuth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
+    renderer.render(<UnwrappedAuth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
 
     return expect(
       renderer,
