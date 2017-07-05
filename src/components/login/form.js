@@ -19,14 +19,13 @@ import React, { PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
 import { Link } from 'react-router';
 
 import AltButton from '../alt-button';
 import Button from '../button';
-import Icon from '../icon';
+import FormField from '../form/field';
 
 const hiddenStyle = { display: 'none' };
 
@@ -39,16 +38,6 @@ const staticFields = {
     label: 'login.labels.password',
     type: 'password'
   }
-};
-
-const validIcon = {
-  className: 'color-green form__check',
-  icon: 'check'
-};
-
-const invalidIcon = {
-  className: 'color-red form__check',
-  icon: 'minus'
 };
 
 const FORM_ERROR_MESSAGE_MAPPING = {
@@ -115,48 +104,17 @@ export class LoginFormV2 extends React.Component {
         {reduce(
           fields,
           (acc, fieldValue, fieldName) => {
-            let statusIcon, dotColor = 'gray';
-            const errorMessage = fieldValue.error;
-            if (errorMessage) {
-              statusIcon = invalidIcon;
-              dotColor = 'red';
-            } else if (fieldValue.value) {
-              statusIcon = validIcon;
-            }
+            const error = FORM_ERROR_MESSAGE_MAPPING[fieldValue.error];
+            const { label, ...predefProps } = staticFields[fieldName];
 
             acc.push(
-              <div className="form__row form__background--bright" key={fieldName}>
-                <div>
-                  <label className="form__label" htmlFor={fieldName}>
-                    {t(staticFields[fieldName].label)}
-                  </label>
-                  <div className="layout layout-align_vertical">
-                    <Icon
-                      className="form__dot"
-                      color={dotColor}
-                      icon="fiber-manual-record"
-                      size="common"
-                    />
-                    <input
-                      className="form__input river-item bio__post--type_text input-transparent"
-                      id={fieldName}
-                      name={fieldName}
-                      type={staticFields[fieldName].type}
-                      {...omit(fieldValue, ['error'])}
-                    />
-                    <Icon
-                      className="form__check"
-                      size="common"
-                      {...statusIcon}
-                    />
-                  </div>
-                </div>
-                {errorMessage &&
-                  <div className="form__field-message">
-                    {t(FORM_ERROR_MESSAGE_MAPPING[errorMessage])}
-                  </div>
-                }
-              </div>
+              <FormField
+                name={fieldName}
+                title={t(label)}
+                {...fieldValue}
+                {...predefProps}
+                error={error && t(error)}
+              />
             );
 
             return acc;
