@@ -22,6 +22,9 @@ export const SHOW_REGISTER_FORM = 'SHOW_REGISTER_FORM';
 
 export const SET_LOCALE = 'SET_LOCALE';
 
+export const ATTACH_CONTEXTUAL_ROUTES = 'ATTACH_CONTEXTUAL_ROUTES';
+export const DETACH_CONTEXTUAL_ROUTES = 'DETACH_CONTEXTUAL_ROUTES';
+
 export function setProgress(progress, value) {
   return {
     type: UI__SET_PROGRESS,
@@ -52,6 +55,28 @@ export function setLocale(code) {
     type: SET_LOCALE,
     payload: {
       code
+    }
+  };
+}
+
+export function attachContextualRoutes(requestor, scope, entries = []) {
+  return {
+    type: ATTACH_CONTEXTUAL_ROUTES,
+    payload: {
+      requestor,
+      scope,
+      entries
+    }
+  };
+}
+
+export function detachContextualRoutes(requestor, scope, entries = []) {
+  return {
+    type: DETACH_CONTEXTUAL_ROUTES,
+    payload: {
+      requestor,
+      scope,
+      entries
     }
   };
 }

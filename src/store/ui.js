@@ -17,6 +17,7 @@
 */
 import i from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
+import intersection from 'lodash/intersection';
 
 import { DEFAULT_LOCALE } from '../consts/localization';
 import * as a from '../actions';
@@ -27,7 +28,11 @@ const initialState = i.fromJS({
   comments: {
     new: {}
   },
-  locale: DEFAULT_LOCALE
+  locale: DEFAULT_LOCALE,
+  contextual: {
+    routes: {},
+    scope: []
+  }
 });
 
 function reducer(state = initialState, action) {
@@ -145,6 +150,59 @@ function reducer(state = initialState, action) {
         }
 
         state = state.set('locale', localeCode);
+        break;
+      }
+    case a.ui.ATTACH_CONTEXTUAL_ROUTES:
+      {
+        const { entries, scope: pageScope, requestor: req } = action.payload;
+
+        state = state.update('contextual', contextual =>
+          contextual.withMutations(_ => _
+            .set('scope', i.fromJS(pageScope))
+            .update('routes', routes => routes
+              .mergeDeep(entries.reduce(
+                (acc, routeName) => acc.set(routeName, i.List()),
+                i.Map()
+              ))
+              .reduce((acc, scope, name) => {
+                let nextScope;
+                if (entries.includes(name)) {
+                  nextScope = scope.concat(req);
+                } else {
+                  nextScope = scope;
+                }
+
+                return acc.set(
+                  name, i.List(intersection(pageScope, nextScope.toJS()))
+                );
+              }, i.Map())
+            )
+        ));
+
+        break;
+      }
+    case a.ui.DETACH_CONTEXTUAL_ROUTES:
+      {
+        const { skip = [], scope: pageScope, requestor: req } = action.payload;
+        state = state.update('contextual', contextual =>
+          contextual.withMutations(_ => _
+            .set('scope', i.fromJS(pageScope))
+            .update('routes', _ => _
+              .reduce((acc, scope, name) => {
+                const nextScope = scope.toJS();
+                if (!skip.includes(name)) {
+                  const i = nextScope.findIndex(n => n === req);
+                  if (i >= 0) {
+                    nextScope.splice(i, 1);
+                  }
+                }
+                return acc.set(
+                  name, i.List(intersection(pageScope, nextScope))
+                );
+              }, i.Map())
+            )
+        ));
+
         break;
       }
   }
