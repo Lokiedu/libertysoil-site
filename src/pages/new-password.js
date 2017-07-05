@@ -95,7 +95,7 @@ class PasswordForm extends React.Component {
     return (
       <form action="" className="password-form" method="post" ref={c => this.form = c} onSubmit={this.props.onSubmit}>
         <div className="layout__row">
-          <div className="form__row">
+          <div className="old-form__row">
             <label className="label label-block label-space" htmlFor="newPassword">New Password</label>
             <input
               className="input input-block"

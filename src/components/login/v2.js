@@ -66,7 +66,7 @@ function Message({ className, children, long, translate, ...props }) {
   }
 
   return (
-    <div className={classNames('sidebar-form__message', className)} {...props}>
+    <div className={classNames('form__message', className)} {...props}>
       {message}
     </div>
   );
@@ -75,7 +75,7 @@ function Message({ className, children, long, translate, ...props }) {
 function ActionTag({ url, translate, ...props }) {
   const content = (
     <MinifiedTag
-      className="sidebar-form__tag"
+      className="form__tag"
       {...props}
       name={{
         ...props.name,
@@ -166,7 +166,7 @@ class LoginComponentV2 extends React.Component {
           />
         );
         subheader = (
-          <div className="sidebar-form__background--bright sidebar-form__subheader">
+          <div className="form__background--bright form__subheader">
             {translate('login.action')}
           </div>
         );
@@ -180,30 +180,30 @@ class LoginComponentV2 extends React.Component {
     return (
       <Modal.Overlay isVisible={this.props.isVisible}>
         <Modal
-          className="sidebar-form__container"
+          className="form form__container sidebar-form__container"
           isVisible={this.props.isVisible}
           rtl={rtl}
           onHide={onClose}
         >
           <Modal.Header
-            className="sidebar-form__background--bright sidebar-form__title sidebar-modal__title--big"
+            className="form__background--bright form__title sidebar-modal__title--big"
             mainIcon={MAIN_ICON}
             closeIcon={false}
             onClose={onClose}
           >
-            <div className="sidebar-form__title">
+            <div className="form__title">
               {headerContent}
             </div>
           </Modal.Header>
-          <Modal.Body raw className="sidebar-form__background--dark">
+          <Modal.Body raw className="form__background--dark">
             <CSSTransitionGroup
-              className="sidebar-form__background--bright"
+              className="form__background--bright"
               component="div"
               transitionEnter
               transitionEnterTimeout={250}
               transitionLeave
               transitionLeaveTimeout={250}
-              transitionName="sidebar-form__message--transition"
+              transitionName="form__message--transition"
             >
               {messages.size &&
                 this.props.messages.map(msg =>

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -41,12 +41,12 @@ const staticFields = {
 };
 
 const validIcon = {
-  className: 'color-green sidebar-form__check',
+  className: 'color-green form__check',
   icon: 'check'
 };
 
 const invalidIcon = {
-  className: 'color-red sidebar-form__check',
+  className: 'color-red form__check',
   icon: 'minus'
 };
 
@@ -83,9 +83,9 @@ SocialButton.defaultClassName = [
   'layout',
   'layout-align_vertical',
   'layout-align_center',
-  'sidebar-form__input',
+  'form__input',
   'bio__post--type_text',
-  'sidebar-form__social-item'
+  'form__alt-item'
 ].join(' ');
 
 export class LoginFormV2 extends React.Component {
@@ -139,12 +139,7 @@ export class LoginFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className={
-          classNames(
-            'sidebar-form',
-            { 'sidebar-form--rtl': this.props.rtl }
-          )
-        }
+        className={classNames('form', { 'form--rtl': this.props.rtl })}
         method="post"
         onSubmit={this.handleSubmit}
       >
@@ -162,34 +157,34 @@ export class LoginFormV2 extends React.Component {
             }
 
             acc.push(
-              <div className="sidebar-form__row sidebar-form__background--bright" key={fieldName}>
+              <div className="form__row form__background--bright" key={fieldName}>
                 <div>
-                  <label className="sidebar-form__label" htmlFor={fieldName}>
+                  <label className="form__label" htmlFor={fieldName}>
                     {t(staticFields[fieldName].label)}
                   </label>
                   <div className="layout layout-align_vertical">
                     <Icon
-                      className="sidebar-form__dot"
+                      className="form__dot"
                       color={dotColor}
                       icon="fiber-manual-record"
                       size="common"
                     />
                     <input
-                      className="sidebar-form__input river-item bio__post--type_text input-transparent"
+                      className="form__input river-item bio__post--type_text input-transparent"
                       id={fieldName}
                       name={fieldName}
                       type={staticFields[fieldName].type}
                       {...omit(fieldValue, ['error'])}
                     />
                     <Icon
-                      className="sidebar-form__check"
+                      className="form__check"
                       size="common"
                       {...statusIcon}
                     />
                   </div>
                 </div>
                 {errorMessage &&
-                  <div className="sidebar-form__field-message">
+                  <div className="form__field-message">
                     {t(FORM_ERROR_MESSAGE_MAPPING[errorMessage])}
                   </div>
                 }
@@ -201,17 +196,17 @@ export class LoginFormV2 extends React.Component {
           []
         )}
 
-        <div className="sidebar-form__actions-container sidebar-form__background--bright">
-          <div className="sidebar-form__actions">
+        <div className="form__actions-container form__background--bright">
+          <div className="form__actions">
             <Button
-              className="sidebar-modal__button sidebar-form__submit"
+              className="sidebar-modal__button form__submit"
               title={t('login.action')}
               type="submit"
               onClick={this.handleSubmit}
             />
           </div>
         </div>
-        <div className="sidebar-form__background--bright sidebar-form__social">
+        <div className="form__background--bright form__alt">
           <SocialButton
             icon="github"
             onClick={undefined}
