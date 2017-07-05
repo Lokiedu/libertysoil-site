@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import isEqual from 'lodash/isEqual';
 import throttle from 'lodash/throttle';
 
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -28,7 +27,6 @@ import { IntercomAPI } from './intercom';
 import Avatar from './user/avatar';
 import { v2 as Dropdown } from './dropdown';
 import MenuItem from './menu-item';
-import { v2 as Login } from './login';
 
 function handleLogout() {
   IntercomAPI('shutdown');
@@ -55,30 +53,16 @@ export default class AuthBlock extends React.Component {
 
   static propTypes = {
     current_user: CurrentUserPropType,
-    is_logged_in: PropTypes.bool.isRequired,
-    onLogin: PropTypes.func
+    is_logged_in: PropTypes.bool.isRequired
   };
 
-  constructor(...args) {
-    super(...args);
-    this.state = { isLoginVisible: false };
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props
-      || !isEqual(nextState, this.state);
-  }
-
-  handleLoginClick = (e) => {
-    e.preventDefault();
-    this.handleToggleLogin();
-  };
-
-  handleToggleLogin = throttle(() => {
-    this.setState(state => ({
-      isLoginVisible: !state.isLoginVisible
-    }));
-  }, 200);
+  pushLogin = throttle(
+    location => ({ ...location, hash: '#login' }), 200
+  );
 
   render() {
     const { current_user, is_logged_in } = this.props;
@@ -108,17 +92,11 @@ export default class AuthBlock extends React.Component {
         <div className="header__toolbar_item header__toolbar_item-right_space">
           <Link
             className="header__toolbar_item"
-            onClick={this.handleLoginClick}
-            to="/auth"
+            to={this.pushLogin}
           >
             Login
           </Link>
         </div>
-        <Login
-          isVisible={this.state.isLoginVisible}
-          onClose={this.handleToggleLogin}
-          onSubmit={this.props.onLogin}
-        />
       </div>
     );
   }

@@ -22,6 +22,7 @@ import { browserHistory, createMemoryHistory } from 'react-router';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import createSelector from '../../selectors/createSelector';
+import Login from './wrappers/login';
 
 const onClose = (() => {
   if (browserHistory) {
@@ -77,7 +78,20 @@ class ContextualRoutes extends React.Component {
 
     let component;
 
-    switch (hash) {}
+    switch (hash) {
+      case '#login': {
+        component = (
+          <Login
+            key="login"
+            onClose={onClose}
+            {...omit(this.props, KNOWN_PROPS)}
+            {...restProps}
+          />
+        );
+
+        break;
+      }
+    }
 
     return (
       <CSSTransitionGroup
