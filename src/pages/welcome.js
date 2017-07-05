@@ -21,9 +21,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { API_HOST } from '../config';
+import { getRoutesNames } from '../utils/router';
 import ApiClient from '../api/client';
 import createSelector from '../selectors/createSelector';
+import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
 import { ActionsTrigger } from '../triggers';
+
+import ContextualRoutes from '../components/contextual';
 import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
@@ -31,6 +35,8 @@ import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
 class Welcome extends React.Component {
+  static displayName = 'Welcome';
+
   static propTypes = {
     dispatch: PropTypes.func
   };
@@ -42,6 +48,12 @@ class Welcome extends React.Component {
       return { status: 307, redirectTo: '/' };
     }
 
+    store.dispatch(attachContextualRoutes(
+      Welcome.displayName,
+      getRoutesNames(router.routes),
+      ['#login']
+    ));
+
     return await trigger.setQuotes();
   }
 
@@ -51,6 +63,17 @@ class Welcome extends React.Component {
     this.handleLogin = new ActionsTrigger(
       new ApiClient(API_HOST), props.dispatch
     ).login.bind(null, true);
+
+    this.routesProps = {
+      '#login': { onSubmit: this.handleLogin }
+    };
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(detachContextualRoutes(
+      Welcome.displayName,
+      getRoutesNames(this.props.routes)
+    ));
   }
 
   render() {
@@ -182,6 +205,11 @@ class Welcome extends React.Component {
           </div>
           {reviews}
           <Footer />
+          <ContextualRoutes
+            hash={this.props.location.hash}
+            predefProps={this.routesProps}
+            scope={Welcome.displayName}
+          />
         </div>
       </div>
     );

@@ -26,6 +26,8 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
+import { getRoutesNames } from '../utils/router';
 
 import {
   Page,
@@ -33,6 +35,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
+import ContextualRoutes from '../components/contextual';
 import Footer from '../components/footer';
 import Login from '../components/login';
 import Register from '../components/register';
@@ -40,7 +43,8 @@ import Header from '../components/header';
 import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
-export class UnwpappedAuth extends React.Component {
+export class UnwrappedAuth extends React.Component {
+  static displayName = 'UnwrappedAuth';
 
   static propTypes = {
     current_user: CurrentUserPropType,
@@ -57,6 +61,12 @@ export class UnwpappedAuth extends React.Component {
     const isLoggedIn = (currentUserId !== null);
 
     if (!isLoggedIn) {
+      store.dispatch(attachContextualRoutes(
+        UnwrappedAuth.displayName,
+        getRoutesNames(router.routes),
+        ['#login']
+      ));
+
       return null;
     }
 
@@ -71,13 +81,23 @@ export class UnwpappedAuth extends React.Component {
     return { status: 307, redirectTo: '/' };
   }
 
-  constructor(...args) {
-    super(...args);
+  constructor(props, ...args) {
+    super(props, ...args);
 
     this.triggers = new ActionsTrigger(
-      new ApiClient(API_HOST), this.props.dispatch
+      new ApiClient(API_HOST), props.dispatch
     );
-    this.handleLogin = this.triggers.login.bind(null, true);
+
+    this.routesProps = {
+      '#login': { onSubmit: this.triggers.login.bind(null, true) }
+    };
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(detachContextualRoutes(
+      UnwrappedAuth.displayName,
+      getRoutesNames(this.props.routes)
+    ));
   }
 
   render() {
@@ -142,6 +162,11 @@ export class UnwpappedAuth extends React.Component {
         </Page>
 
         <Footer />
+        <ContextualRoutes
+          hash={this.props.location.hash}
+          predefProps={this.routesProps}
+          scope={UnwrappedAuth.displayName}
+        />
       </div>
     );
   }
@@ -158,5 +183,5 @@ const selector = createSelector(
   })
 );
 
-const Auth = connect(selector)(UnwpappedAuth);
+const Auth = connect(selector)(UnwrappedAuth);
 export default Auth;
