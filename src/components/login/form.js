@@ -24,6 +24,7 @@ import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
 import { Link } from 'react-router';
 
+import AltButton from '../alt-button';
 import Button from '../button';
 import Icon from '../icon';
 
@@ -54,39 +55,6 @@ const FORM_ERROR_MESSAGE_MAPPING = {
   'username_req': 'login.errors.username_req',
   'password_req': 'login.errors.password_req'
 };
-
-function SocialButton({ children, className, icon, ...props }) {
-  const cn = classNames(className, SocialButton.defaultClassName);
-
-  let finalIcon;
-  if (typeof icon === 'object') {
-    finalIcon = {
-      ...icon
-    };
-  } else {
-    finalIcon = {
-      size: 'small',
-      color: 'gray',
-      icon
-    };
-  }
-
-  return (
-    <button className={cn} type="button" {...props}>
-      <Icon {...finalIcon} />
-      {children}
-    </button>
-  );
-}
-
-SocialButton.defaultClassName = [
-  'layout',
-  'layout-align_vertical',
-  'layout-align_center',
-  'form__input',
-  'bio__post--type_text',
-  'form__alt-item'
-].join(' ');
 
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';
@@ -207,21 +175,21 @@ export class LoginFormV2 extends React.Component {
           </div>
         </div>
         <div className="form__background--bright form__alt">
-          <SocialButton
+          <AltButton
             icon="github"
             onClick={undefined}
           >
             {f('login.with', 'Github')}
-          </SocialButton>
-          <SocialButton
+          </AltButton>
+          <AltButton
             className="margin--all_top"
             icon="facebook-official"
             onClick={undefined}
           >
             {f('login.with', 'Facebook')}
-          </SocialButton>
+          </AltButton>
           <Link
-            className={SocialButton.defaultClassName.concat(" margin--all_top")}
+            className={AltButton.defaultClassName.concat(" margin--all_top")}
             to="/auth#register"
           >
             {t('login.create_new')}
