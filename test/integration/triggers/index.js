@@ -99,7 +99,11 @@ describe('ActionsTrigger', () => {
         const triggers = new ActionsTrigger(client, store.dispatch);
 
         await triggers.registerUser(undefined, undefined, undefined, userAttrs.firstName, userAttrs.lastName);
-        expect(store.getState().get('messages').first().get('message'), 'to equal', 'The username is required\nThe password is required\nThe email is required\n');
+        expect(
+          store.getState().getIn(['messages', 0, 'message']),
+          'to equal',
+          'The username is required\nThe password is required\nThe email is required\n'
+        );
       });
     });
 

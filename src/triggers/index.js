@@ -402,10 +402,14 @@ export class ActionsTrigger {
         // FIXME: enable form again
         const errors = e.response.error;
         let message = '';
-        for (const i in errors) {
-          errors[i].map((el) => {
-            message += `${el}\n`;
-          });
+
+        for (const fieldName in errors) {
+          const es = errors[fieldName];
+          if (Array.isArray(es)) {
+            es.forEach(msg => message += msg.concat('\n'));
+          } else {
+            message += es;
+          }
         }
 
         this.dispatch(a.messages.addError(message));

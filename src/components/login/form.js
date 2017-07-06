@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -19,13 +19,13 @@ import React, { PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
 import { Link } from 'react-router';
 
+import AltButton from '../alt-button';
 import Button from '../button';
-import Icon from '../icon';
+import FormField from '../form/field';
 
 const hiddenStyle = { display: 'none' };
 
@@ -40,53 +40,13 @@ const staticFields = {
   }
 };
 
-const validIcon = {
-  className: 'color-green sidebar-form__check',
-  icon: 'check'
-};
-
-const invalidIcon = {
-  className: 'color-red sidebar-form__check',
-  icon: 'minus'
-};
-
 const FORM_ERROR_MESSAGE_MAPPING = {
   'username_req': 'login.errors.username_req',
   'password_req': 'login.errors.password_req'
 };
 
-function SocialButton({ children, className, icon, ...props }) {
-  const cn = classNames(className, SocialButton.defaultClassName);
-
-  let finalIcon;
-  if (typeof icon === 'object') {
-    finalIcon = {
-      ...icon
-    };
-  } else {
-    finalIcon = {
-      size: 'small',
-      color: 'gray',
-      icon
-    };
-  }
-
-  return (
-    <button className={cn} type="button" {...props}>
-      <Icon {...finalIcon} />
-      {children}
-    </button>
-  );
-}
-
-SocialButton.defaultClassName = [
-  'layout',
-  'layout-align_vertical',
-  'layout-align_center',
-  'sidebar-form__input',
-  'bio__post--type_text',
-  'sidebar-form__social-item'
-].join(' ');
+const pushSignup = location =>
+  ({ ...location, hash: '#signup' });
 
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';
@@ -139,12 +99,7 @@ export class LoginFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className={
-          classNames(
-            'sidebar-form',
-            { 'sidebar-form--rtl': this.props.rtl }
-          )
-        }
+        className={classNames('form', { 'form--rtl': this.props.rtl })}
         method="post"
         onSubmit={this.handleSubmit}
       >
@@ -152,48 +107,17 @@ export class LoginFormV2 extends React.Component {
         {reduce(
           fields,
           (acc, fieldValue, fieldName) => {
-            let statusIcon, dotColor = 'gray';
-            const errorMessage = fieldValue.error;
-            if (errorMessage) {
-              statusIcon = invalidIcon;
-              dotColor = 'red';
-            } else if (fieldValue.value) {
-              statusIcon = validIcon;
-            }
+            const error = FORM_ERROR_MESSAGE_MAPPING[fieldValue.error];
+            const { label, ...predefProps } = staticFields[fieldName];
 
             acc.push(
-              <div className="sidebar-form__row sidebar-form__background--bright" key={fieldName}>
-                <div>
-                  <label className="sidebar-form__label" htmlFor={fieldName}>
-                    {t(staticFields[fieldName].label)}
-                  </label>
-                  <div className="layout layout-align_vertical">
-                    <Icon
-                      className="sidebar-form__dot"
-                      color={dotColor}
-                      icon="fiber-manual-record"
-                      size="common"
-                    />
-                    <input
-                      className="sidebar-form__input river-item bio__post--type_text input-transparent"
-                      id={fieldName}
-                      name={fieldName}
-                      type={staticFields[fieldName].type}
-                      {...omit(fieldValue, ['error'])}
-                    />
-                    <Icon
-                      className="sidebar-form__check"
-                      size="common"
-                      {...statusIcon}
-                    />
-                  </div>
-                </div>
-                {errorMessage &&
-                  <div className="sidebar-form__field-message">
-                    {t(FORM_ERROR_MESSAGE_MAPPING[errorMessage])}
-                  </div>
-                }
-              </div>
+              <FormField
+                name={fieldName}
+                title={t(label)}
+                {...fieldValue}
+                {...predefProps}
+                error={error && t(error)}
+              />
             );
 
             return acc;
@@ -201,33 +125,33 @@ export class LoginFormV2 extends React.Component {
           []
         )}
 
-        <div className="sidebar-form__actions-container sidebar-form__background--bright">
-          <div className="sidebar-form__actions">
+        <div className="form__actions-container form__background--bright">
+          <div className="form__actions">
             <Button
-              className="sidebar-modal__button sidebar-form__submit"
+              className="sidebar-modal__button form__submit"
               title={t('login.action')}
               type="submit"
               onClick={this.handleSubmit}
             />
           </div>
         </div>
-        <div className="sidebar-form__background--bright sidebar-form__social">
-          <SocialButton
+        <div className="form__background--bright form__alt">
+          <AltButton
             icon="github"
             onClick={undefined}
           >
             {f('login.with', 'Github')}
-          </SocialButton>
-          <SocialButton
+          </AltButton>
+          <AltButton
             className="margin--all_top"
             icon="facebook-official"
             onClick={undefined}
           >
             {f('login.with', 'Facebook')}
-          </SocialButton>
+          </AltButton>
           <Link
-            className={SocialButton.defaultClassName.concat(" margin--all_top")}
-            to="/auth#register"
+            className={AltButton.defaultClassName.concat(" margin--all_top")}
+            to={pushSignup}
           >
             {t('login.create_new')}
           </Link>

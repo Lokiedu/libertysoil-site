@@ -18,11 +18,14 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import noop from 'lodash/noop';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { createSelector } from '../selectors';
+import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
+import { getRoutesNames } from '../utils/router';
 
 import {
   Page,
@@ -30,6 +33,7 @@ import {
   PageBody,
   PageContent
 } from '../components/page';
+import ContextualRoutes from '../components/contextual';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Message from '../components/message';
@@ -58,12 +62,47 @@ export const SuccessMessage = () => {
 };
 
 export class PasswordResetPage extends React.Component {
+  static displayName = 'PasswordResetPage';
 
   static propTypes = {
+    dispatch: PropTypes.func,
+    location: PropTypes.shape(),
     ui: PropTypes.shape({
       submitResetPassword: PropTypes.bool
     }).isRequired
   };
+
+  static defaultProps = {
+    dispatch: noop,
+    location: { hash: '', pathname: '', search: '' }
+  };
+
+  static fetchData(router, store) {
+    store.dispatch(attachContextualRoutes(
+      PasswordResetPage.displayName,
+      getRoutesNames(router.routes),
+      ['#login']
+    ));
+  }
+
+  constructor(props, ...args) {
+    super(props, ...args);
+
+    this.handleLogin = new ActionsTrigger(
+      new ApiClient(API_HOST), props.dispatch
+    ).login.bind(null, true);
+
+    this.routesProps = {
+      '#login': { onSubmit: this.handleLogin }
+    };
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(detachContextualRoutes(
+      PasswordResetPage.displayName,
+      getRoutesNames(this.props.routes)
+    ));
+  }
 
   submitHandler = (event) => {
     event.preventDefault();
@@ -118,6 +157,11 @@ export class PasswordResetPage extends React.Component {
         </Page>
 
         <Footer />
+        <ContextualRoutes
+          hash={this.props.location.hash}
+          predefProps={this.routesProps}
+          scope={PasswordResetPage.displayName}
+        />
       </div>
     );
   }

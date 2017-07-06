@@ -102,8 +102,8 @@ export default class UpdateNameAction extends React.Component {
             </ModalComponent.Head>
             <ModalComponent.Body>
               <form action="" onSubmit={this.handleSubmit}>
-                <div className="form__row paper__page paper__page--medium">
-                  <label className="form__label form__label--no_space" htmlFor="firstName">First name</label>
+                <div className="old-form__row paper__page paper__page--medium">
+                  <label className="old-form__label old-form__label--no_space" htmlFor="firstName">First name</label>
                   <div className="input_wrap">
                     <input
                       autoFocus
@@ -115,8 +115,8 @@ export default class UpdateNameAction extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="form__row paper__page paper__page--medium">
-                  <label className="form__label form__label--no_space" htmlFor="firstName">Last name</label>
+                <div className="old-form__row paper__page paper__page--medium">
+                  <label className="old-form__label old-form__label--no_space" htmlFor="firstName">Last name</label>
                   <div className="input_wrap">
                     <input
                       className="input input-block input-narrow input-transparent"

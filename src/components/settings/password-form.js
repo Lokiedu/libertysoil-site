@@ -47,8 +47,8 @@ const PasswordForm = ({ fields, form, onSubmit }) => (
 
         acc.push(
           <div className="paper__page paper__page--no_padding" key={fieldName}>
-            <div className="form__row paper__page--medium">
-              <label className="form__label" htmlFor={fieldName}>
+            <div className="old-form__row paper__page--medium">
+              <label className="old-form__label" htmlFor={fieldName}>
                 {staticFields[fieldName].label}
               </label>
               <div className={wrapClassName}>

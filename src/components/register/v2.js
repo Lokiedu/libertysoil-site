@@ -18,7 +18,6 @@
 import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
@@ -28,11 +27,11 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
-import { removeAllMessages } from '../../actions/messages';
+import { addError, removeAllMessages } from '../../actions/messages';
 
 import Modal from '../sidebar-modal';
 import MinifiedTag from '../tag/theme/minified';
-import LoginForm from './form';
+import RegisterForm from './form';
 
 const MAIN_ICON = {
   icon: 'sign-in'
@@ -40,15 +39,19 @@ const MAIN_ICON = {
 
 const ERROR_MESSAGES = [
   'api.errors.internal',
-  'login.errors'
+  'signup.errors'
 ];
 
+const FORM_ERROR_MESSAGE_MAPPING = {
+  'username_req': 'login.errors.username_req',
+  'password_req': 'login.errors.password_req'
+};
+
 const ERROR_TAG_MAPPING = {
-  'login.errors.invalid': {
-    icon: { color: 'orange', icon: 'question-circle' },
-    name: { name: (translate) => translate('login.qs.forget_pass') },
-    url: '/resetpassword'
-  }
+  // 'login.errors.invalid': {
+  //   icon: { color: 'orange', icon: 'question-circle' },
+  //   name: { name: (translate) => translate('login.qs.forget_pass') }
+  // }
 };
 
 function Message({ className, children, long, translate, ...props }) {
@@ -72,35 +75,11 @@ function Message({ className, children, long, translate, ...props }) {
   );
 }
 
-function ActionTag({ url, translate, ...props }) {
-  const content = (
-    <MinifiedTag
-      className="form__tag"
-      {...props}
-      name={{
-        ...props.name,
-        name: props.name.name(translate)
-      }}
-    />
-  );
-
-  if (url) {
-    return (
-      <Link to={url}>
-        {content}
-      </Link>
-    );
-  }
-
-  return content;
-}
-
-class LoginComponentV2 extends React.Component {
-  static displayName = 'LoginComponentV2';
+class RegisterComponentV2 extends React.Component {
+  static displayName = 'RegisterComponentV2';
 
   static propTypes = {
     dispatch: PropTypes.func,
-    onSubmit: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     triggers: PropTypes.shape({
       uploadPicture: PropTypes.func,
@@ -129,21 +108,23 @@ class LoginComponentV2 extends React.Component {
       || !isEqual(nextState, this.state);
   }
 
-  handleSubmit = async (isValid, username, password) => {
+  handleSubmit = async (isValid, ...args) => {
     this.props.dispatch(removeAllMessages());
     if (!isValid) {
       return;
     }
 
-    let result;
-    if (this.props.onSubmit) {
-      result = await this.props.onSubmit(username, password);
-    } else {
-      result = await this.triggers.login(false, username, password);
-    }
+    await this.triggers.registerUser(...args);
+  };
 
-    if (result) {
-      this.props.onClose();
+  handleErrors = (formErrors) => {
+    const { dispatch } = this.props;
+    dispatch(removeAllMessages());
+
+    for (const errorMessage of formErrors) {
+      dispatch(addError(
+        FORM_ERROR_MESSAGE_MAPPING[errorMessage]
+      ));
     }
   };
 
@@ -160,21 +141,25 @@ class LoginComponentV2 extends React.Component {
       const props = ERROR_TAG_MAPPING[firstMessage];
       if (props) {
         headerContent = (
-          <ActionTag
-            translate={translate}
+          <MinifiedTag
+            className="form__tag"
             {...props}
+            name={{
+              ...props.name,
+              name: props.name.name(translate)
+            }}
           />
         );
         subheader = (
           <div className="form__background--bright form__subheader">
-            {translate('login.action')}
+            {translate('signup.action')}
           </div>
         );
       } else {
-        headerContent = translate('login.action');
+        headerContent = translate('signup.action');
       }
     } else {
-      headerContent = translate('login.action');
+      headerContent = translate('signup.action');
     }
 
     return (
@@ -214,10 +199,13 @@ class LoginComponentV2 extends React.Component {
               }
             </CSSTransitionGroup>
             {subheader}
-            <LoginForm
+            <RegisterForm
+              dispatch={this.props.dispatch}
               format={format}
               rtl={rtl}
+              succeed={this.props.signupSucceed}
               translate={translate}
+              onErrors={this.handleErrors}
               onSubmit={this.handleSubmit}
             />
           </Modal.Body>
@@ -229,10 +217,12 @@ class LoginComponentV2 extends React.Component {
 
 const mapStateToProps = createSelector(
   state => state.getIn(['ui', 'locale']),
+  state => state.getIn(['ui', 'registrationSuccess']),
   state => state.get('messages').filter(msg =>
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
-  (locale, messages) => ({ locale, messages })
+  (locale, signupSucceed, messages) =>
+    ({ locale, signupSucceed, messages })
 );
 
-export default connect(mapStateToProps)(LoginComponentV2);
+export default connect(mapStateToProps)(RegisterComponentV2);
