@@ -78,8 +78,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/tag/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -100,8 +100,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/school/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -122,8 +122,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/geotag/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -142,8 +142,8 @@ describe('Post', () => {
       it('should not return hashtag_like posts from other authors', async () => {
         await expect(
           { url: `/api/v1/posts/liked/${user.get('username')}` },
-          'to have body array length',
-          0
+          'body to satisfy',
+          []
         );
       });
     });

@@ -157,7 +157,7 @@ describe('ActionsTrigger', () => {
     it('createPost should work', async () => {
       const store = initState();
       triggers = new ActionsTrigger(client, store.dispatch);
-      await triggers.createPost('short_text', { text: 'lorem ipsum' });
+      await triggers.createPost('short_text', { text_source: 'lorem ipsum' });
 
       expect(store.getState().get('river').size, 'to equal', 1);
     });

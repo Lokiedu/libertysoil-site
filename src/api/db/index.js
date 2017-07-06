@@ -184,9 +184,9 @@ export function initBookshelfFromKnex(knex) {
   const Post = bookshelf.Model.extend({
     tableName: 'posts',
     initialize() {
-      this.on('saving', this.renderText.bind(this));
+      this.on('saving', this.updateAttributes.bind(this));
     },
-    renderText() {
+    updateAttributes() {
       const source = this.get('text_source');
       if (!_.isString(source) || _.isEmpty(source)) {
         return;

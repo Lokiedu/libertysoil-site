@@ -65,6 +65,14 @@ const USER_RELATIONS = Object.freeze([
   'liked_schools'
 ]);
 
+const POST_PUBLIC_COLUMNS = [
+  'id', 'user_id', 'text', 'type', 'created_at', 'updated_at',
+  'more', 'fully_published_at', 'liked_hashtag_id', 'liked_school_id', 'liked_geotag_id',
+  'url_name', '_sphinx_id', 'text_source', 'text_type',
+];
+
+const POST_DEFAULT_COLUMNS = _.without(POST_PUBLIC_COLUMNS, 'text', 'text_source');
+
 export default class ApiController {
   bookshelf;
   sphinx;
@@ -103,6 +111,7 @@ export default class ApiController {
       this.applySortQuery(qb, ctx.query, '-created_at');
       this.applyLimitQuery(qb, ctx.query, 5);
       this.applyOffsetQuery(qb, ctx.query);
+      this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
 
       if ('continent' in ctx.query) {
         qb
@@ -142,6 +151,7 @@ export default class ApiController {
         }
 
         this.applySortQuery(qb, ctx.query, '-updated_at');
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
       });
 
 
@@ -169,6 +179,8 @@ export default class ApiController {
           .join('hashtags', 'hashtags_posts.hashtag_id', 'hashtags.id')
           .where('hashtags.name', '=', ctx.params.tag)
           .orderBy('posts.created_at', 'desc');
+
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -196,6 +208,8 @@ export default class ApiController {
           .where('schools.url_name', ctx.params.school)
           .andWhere('posts_schools.visible', true)
           .orderBy('posts.created_at', 'desc');
+
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
       });
 
     let posts = await q.fetch({ withRelated: POST_RELATIONS });
@@ -229,6 +243,8 @@ export default class ApiController {
             .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
             .orderBy('posts.created_at', 'desc')
             .distinct();
+
+          this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
 
           switch (geotag.attributes.type) {
             case 'Planet':
@@ -336,7 +352,7 @@ export default class ApiController {
     }
 
     try {
-      const posts = await this.getLikedPosts(ctx.session.user);
+      const posts = await this.getLikedPosts(ctx.session.user, ctx);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -352,7 +368,7 @@ export default class ApiController {
         .where('users.username', '=', ctx.params.user);
 
       if (user) {
-        const posts = await this.getLikedPosts(user.id);
+        const posts = await this.getLikedPosts(user.id, ctx);
         ctx.body = posts;
       } else {
         ctx.app.logger.warn(`Someone tried read liked posts for '${ctx.params.user}', but there's no such user`);
@@ -364,7 +380,7 @@ export default class ApiController {
     }
   };
 
-  getLikedPosts = async (userId) => {
+  getLikedPosts = async (userId, ctx) => {
     const Post = this.bookshelf.model('Post');
 
     const likes = await this.bookshelf.knex
@@ -381,12 +397,14 @@ export default class ApiController {
           .whereIn('id', likes)
           .union(function () {
             this
-              .select()
+              .select(POST_DEFAULT_COLUMNS)
               .from('posts')
               .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
               .andWhere('user_id', userId);
           })
           .orderBy('updated_at', 'desc');
+
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -409,7 +427,7 @@ export default class ApiController {
     }
 
     try {
-      const posts = await this.getFavouredPosts(ctx.session.user);
+      const posts = await this.getFavouredPosts(ctx.session.user, ctx);
       ctx.body = posts;
     } catch (e) {
       ctx.status = 500;
@@ -425,7 +443,7 @@ export default class ApiController {
         .where('users.username', '=', ctx.params.user);
 
       if (user) {
-        const posts = await this.getFavouredPosts(user.id);
+        const posts = await this.getFavouredPosts(user.id, ctx);
         ctx.body = posts;
       } else {
         ctx.app.logger.warn(`Someone tried read favoured posts for '${ctx.params.user}', but there's no such user`);
@@ -437,7 +455,7 @@ export default class ApiController {
     }
   };
 
-  getFavouredPosts = async (userId) => {
+  getFavouredPosts = async (userId, ctx) => {
     const Post = this.bookshelf.model('Post');
 
     const favourites = await this.bookshelf.knex
@@ -451,6 +469,8 @@ export default class ApiController {
         qb
           .whereIn('id', favourites)
           .orderBy('posts.updated_at', 'desc');
+
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -1091,6 +1111,8 @@ export default class ApiController {
           .groupBy('posts.id')
           .limit(5)
           .offset(offset);
+
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
       });
 
     let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -2878,6 +2900,8 @@ export default class ApiController {
       let posts = await Post.collection().query(qb => {
         const countQueries = [];
 
+        this.applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
+
         if (!_.isEmpty(hashtagIds)) {
           qb
             .leftJoin('hashtags_posts', 'posts.id', 'hashtags_posts.post_id')
@@ -3616,6 +3640,32 @@ export default class ApiController {
   applyOffsetQuery(qb, query, defaultValue = null) {
     if ('offset' in query || defaultValue) {
       qb.offset(query.offset || defaultValue);
+    }
+  }
+
+  /**
+   * Syntax:
+   *   ?fields=id,name
+   *   ?fields=+id,name - to extend default
+   */
+  applyFieldsQuery(qb, query, allowedFields, defaultFields = null, table = null) {
+    let fields = defaultFields;
+    if (!_.isEmpty(query.fields)) {
+      fields = query.fields.split(',');
+
+      if (query.fields[0] == '+' && defaultFields) {
+        fields = _.uniq(fields.concat(defaultFields));
+      }
+
+      fields = _.intersection(fields, allowedFields);
+    }
+
+    if (table) {
+      fields = fields.map(col => `${table}.${col}`);
+    }
+
+    if (fields) {
+      qb.select(fields);
     }
   }
 

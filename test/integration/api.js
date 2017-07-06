@@ -24,6 +24,7 @@ import bcrypt from 'bcrypt';
 import bb from 'bluebird';
 import FormData from 'form-data';
 import AWS from 'mock-aws';
+import { reverse } from 'lodash';
 
 import enLocalization from '../../res/locale/en';
 
@@ -342,14 +343,14 @@ describe('api v.1', () => {
           it('First page of subscriptions should return by-default', async () => {
             await expect(
               { url: `/api/v1/posts`, session: sessionId },
-              'body to satisfy', [{ text: 'This is a Post #10' }, { text: 'This is a Post #9' }, { text: 'This is a Post #8' }, { text: 'This is a Post #7' }, { text: 'This is a Post #6' }]
+              'body to satisfy', reverse(posts.slice(5).map(post => ({ id: post.id })))
             );
           });
 
           it('Other pages of subscriptions should work', async () => {
             await expect(
               { url: `/api/v1/posts?offset=4`, session: sessionId },
-              'body to satisfy', [{ text: 'This is a Post #6' }, { text: 'This is a Post #5' }, { text: 'This is a Post #4' }, { text: 'This is a Post #3' }, { text: 'This is a Post #2' }]
+              'body to satisfy', reverse(posts.slice(1, 6).map(post => ({ id: post.id })))
             );
           });
         });
@@ -397,7 +398,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured`, session: sessionId },
-              'body to satisfy', [{ text: 'This is clean post' }]
+              'body to satisfy', [{ id: post.id }]
             );
           });
 
@@ -453,7 +454,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked`, session: sessionId },
-              'body to satisfy', [{ text: 'This is clean post' }]
+              'body to satisfy', [{ id: post.id }]
             );
           });
 
@@ -742,7 +743,7 @@ describe('api v.1', () => {
           await post.attachHashtags(['foo']);
           await expect(
             { url: `/api/v1/posts/tag/foo` },
-            'body to satisfy', [{ text: post.get('text') }]
+            'body to satisfy', [{ id: post.id }]
           );
           await post.detachHashtags(['foo']);
         });
@@ -763,7 +764,7 @@ describe('api v.1', () => {
             await user.favourited_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/favoured/${user.get('username')}` },
-              'body to satisfy', [{ text: post.get('text') }]
+              'body to satisfy', [{ id: post.id }]
             );
           });
 
@@ -792,7 +793,7 @@ describe('api v.1', () => {
             await user.liked_posts().attach(post);
             await expect(
               { url: `/api/v1/posts/liked/${user.get('username')}` },
-              'body to satisfy', [{ text: post.get('text') }]
+              'body to satisfy', [{ id: post.id }]
             );
           });
 
