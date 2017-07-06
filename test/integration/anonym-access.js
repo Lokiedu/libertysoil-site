@@ -1,14 +1,8 @@
 /*eslint-env node, mocha */
-/*global $dbConfig */
-import uuid from 'uuid';
 //import sinon from 'sinon';
 
 import expect from '../../test-helpers/expect';
-import initBookshelf from '../../src/api/db';
-
-
-const bookshelf = initBookshelf($dbConfig);
-const User = bookshelf.model('User');
+import { createUser } from '../../test-helpers/factories/user';
 
 describe('pages that are available for anonym', function () {
   // before(() => {
@@ -21,21 +15,17 @@ describe('pages that are available for anonym', function () {
 
 
   describe('when user is not logged in', function () {
+    let user;
     beforeEach(async function () {
-      await new User({
-        id: uuid.v4(),
-        username: 'john',
-        more: '{"lastName": "Smith", "firstName": "John", "first_login": false}',
-        email: 'john@example.com'
-      }).save(null, { method: 'insert' });
+      user = await createUser();
     });
 
     afterEach(async function () {
-      await bookshelf.knex.raw('DELETE FROM users WHERE username=\'john\';');
+      await user.destroy();
     });
 
     it('User profile page works', async function () {
-      return expect(`/user/john`, 'body to contain', 'John Smith');
+      await expect(`/user/${user.get('username')}`, 'body to contain', user.fullName);
     });
   });
 });
