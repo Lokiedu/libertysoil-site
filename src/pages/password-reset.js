@@ -77,14 +77,6 @@ export class PasswordResetPage extends React.Component {
     location: { hash: '', pathname: '', search: '' }
   };
 
-  static fetchData(router, store) {
-    store.dispatch(attachContextualRoutes(
-      PasswordResetPage.displayName,
-      getRoutesNames(router.routes),
-      ['#login']
-    ));
-  }
-
   constructor(props, ...args) {
     super(props, ...args);
 
@@ -95,6 +87,14 @@ export class PasswordResetPage extends React.Component {
     this.routesProps = {
       '#login': { onSubmit: this.handleLogin }
     };
+  }
+
+  componentWillMount() {
+    this.props.dispatch(attachContextualRoutes(
+      PasswordResetPage.displayName,
+      getRoutesNames(this.props.routes),
+      ['#login']
+    ));
   }
 
   componentWillUnmount() {
