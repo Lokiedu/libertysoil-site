@@ -105,7 +105,7 @@ class CreatePost extends React.Component {
     this.isSubmitting = true;
 
     const data = {
-      text: fields.text.value,
+      text_source: fields.text.value,
       hashtags: this.props.addedHashtags.map(hashtag => hashtag.get('name')).toJS(),
       schools: this.props.addedSchools.map(school => school.get('name')).toJS(),
       geotags: this.props.addedGeotags.map(geotag => geotag.get('id')).toJS(),
