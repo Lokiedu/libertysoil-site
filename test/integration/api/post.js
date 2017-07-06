@@ -163,7 +163,6 @@ describe('Post', () => {
       await otherUser.destroy();
     });
 
-
     describe('POST /api/v1/posts', () => {
       it('creates a post and copies text_source into text without processing', async () => {
         await expect(
@@ -208,6 +207,27 @@ describe('Post', () => {
             {
               text_source: '# header',
               text: expect.it('to contain', '<h1>header</h1>')
+            }
+          );
+        });
+
+        it('extracts first image url into more.image.url', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts`,
+              method: 'POST',
+              body: {
+                type: 'story',
+                text_source: '<div>Test</div><img src="http://test.com/test.png" />',
+                text_type: 'html',
+                title: 'Title'
+              }
+            },
+            'body to satisfy',
+            {
+              text: expect.it('to contain', '<div>Test</div><img src="http://test.com/test.png" />'),
+              more: { image: { url: 'http://test.com/test.png' } }
             }
           );
         });
@@ -272,8 +292,7 @@ describe('Post', () => {
           );
         });
 
-
-        it('updates post and re-renders text', async () => {
+        it('extracts first image url into more.image.url', async () => {
           await expect(
             {
               session: sessionId,
@@ -281,15 +300,15 @@ describe('Post', () => {
               method: 'POST',
               body: {
                 type: 'story',
-                text_source: '# new header 2',
-                text_type: 'markdown',
+                text_source: '<div>Test</div><img src="http://test.com/test.png" />',
+                text_type: 'html',
                 title: 'Title'
               }
             },
             'body to satisfy',
             {
-              text_source: '# new header 2',
-              text: expect.it('to contain', '<h1>new header 2</h1>')
+              text: expect.it('to contain', '<div>Test</div><img src="http://test.com/test.png" />'),
+              more: { image: { url: 'http://test.com/test.png' } }
             }
           );
         });

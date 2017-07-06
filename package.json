@@ -66,6 +66,7 @@
     "gm": "^1.23.0",
     "grapheme-breaker": "^0.3.2",
     "grapheme-utils": "^0.1.0",
+    "htmlparser2": "^3.9.2",
     "immutable": "^3.7.5",
     "isomorphic-fetch": "^2.2.1",
     "kcors": "~2.2.0",

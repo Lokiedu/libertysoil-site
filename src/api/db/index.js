@@ -33,6 +33,7 @@ import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
 import sanitizeHtml from 'sanitize-html';
 import slug from 'slug';
+import htmlparser2 from 'htmlparser2';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 import { ProfilePost as ProfilePostValidations } from './validators';
@@ -214,12 +215,30 @@ export function initBookshelfFromKnex(knex) {
         stripped = source;
       }
 
+      const more = this.get('more') || {};
+      // shortText
       const firstParagraphs = stripped.split(/\n{2,}/)[0];
-      this.set('text', text);
-      this.set('more', {
-        ...this.get('more'),
-        shortText: firstParagraphs
+      more.shortText = firstParagraphs;
+
+      // Try to take the first image
+      let firstImgUrl;
+      // htmlparser2 is already used in sanitizeHtml
+      const parser = new htmlparser2.Parser({
+        onopentag: function (name, attribs) {
+          if (name === 'img' && attribs.src) {
+            firstImgUrl = attribs.src;
+          }
+        }
       });
+      parser.write(text);
+      parser.end();
+
+      if (firstImgUrl) {
+        more.image = { url: firstImgUrl };
+      }
+
+      this.set('text', text);
+      this.set('more', more);
     },
     /**
      * Common logic for creating and updating. Must only be used for posts with text.
