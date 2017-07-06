@@ -69,12 +69,6 @@ export class UnwrappedAuth extends React.Component {
     const isLoggedIn = (currentUserId !== null);
 
     if (!isLoggedIn) {
-      store.dispatch(attachContextualRoutes(
-        UnwrappedAuth.displayName,
-        getRoutesNames(router.routes),
-        ['#login']
-      ));
-
       return null;
     }
 
@@ -99,6 +93,14 @@ export class UnwrappedAuth extends React.Component {
     this.routesProps = {
       '#login': { onSubmit: this.triggers.login.bind(null, true) }
     };
+  }
+
+  componentWillMount() {
+    this.props.dispatch(attachContextualRoutes(
+      UnwrappedAuth.displayName,
+      getRoutesNames(this.props.routes),
+      ['#login']
+    ));
   }
 
   componentWillUnmount() {

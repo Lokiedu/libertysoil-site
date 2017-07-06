@@ -48,12 +48,6 @@ class Welcome extends React.Component {
       return { status: 307, redirectTo: '/' };
     }
 
-    store.dispatch(attachContextualRoutes(
-      Welcome.displayName,
-      getRoutesNames(router.routes),
-      ['#login']
-    ));
-
     return await trigger.setQuotes();
   }
 
@@ -67,6 +61,14 @@ class Welcome extends React.Component {
     this.routesProps = {
       '#login': { onSubmit: this.handleLogin }
     };
+  }
+
+  componentWillMount() {
+    this.props.dispatch(attachContextualRoutes(
+      Welcome.displayName,
+      getRoutesNames(this.props.routes),
+      ['#login']
+    ));
   }
 
   componentWillUnmount() {

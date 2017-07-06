@@ -1,7 +1,7 @@
 export function getRouteName(route) {
   const component = route.component;
 
-  if (component.name === 'Connect') {
+  if (component.displayName.startsWith('Connect')) {
     const wrapped = component.WrappedComponent;
     return wrapped.displayName || wrapped.name;
   }
