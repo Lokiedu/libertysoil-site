@@ -156,7 +156,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
-  User.create = async function (username, password, email, moreData) {
+  User.create = async function ({ username, password, email, more, providers }) {
     username = username.toLowerCase();
     const hashed_password = await bcryptHashAsync(password, 10);
 
@@ -171,8 +171,8 @@ export function initBookshelfFromKnex(knex) {
       email_check_hash
     });
 
-    if (!_.isEmpty(moreData)) {
-      obj.set('more', moreData);
+    if (!_.isEmpty(more)) {
+      obj.set('more', more);
     }
 
     await obj.save(null, { method: 'insert' });

@@ -44,7 +44,7 @@ describe('User page', () => {
     let user;
     before(async () => {
       const userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+      user = await User.create(userAttrs);
     });
 
     after(() => user.destroy());

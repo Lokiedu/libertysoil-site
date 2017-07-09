@@ -35,7 +35,12 @@ describe('Tag Cloud page', () => {
     await bookshelf.knex('users').del();
     await bookshelf.knex('posts').del();
 
-    user = await User.create('test', 'test', 'test@example.com', { first_login: false });
+    user = await User.create({
+      username: 'test',
+      password: 'test',
+      email: 'test@example.com',
+      more: { first_login: false }
+    });
     post = new Post({
       id: uuid4(),
       type: 'short_text',

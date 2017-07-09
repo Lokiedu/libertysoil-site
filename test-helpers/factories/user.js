@@ -27,7 +27,7 @@ export default UserFactory;
 
 export async function createUser(attrs = {}) {
   const userAttrs = UserFactory.build(attrs);
-  const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+  const user = await User.create(userAttrs);
   await user.save({ email_check_hash: null }, { method: 'update' });
   user.attributes.password = userAttrs.password;
 

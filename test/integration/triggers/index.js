@@ -45,7 +45,7 @@ describe('ActionsTrigger', () => {
 
       beforeEach(async () => {
         userAttrs = UserFactory.build();
-        user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        user = await User.create(userAttrs);
         client = new ApiClient(API_HOST);
       });
 
@@ -119,7 +119,7 @@ describe('ActionsTrigger', () => {
 
       it('should dispatch correct error for user with not validated email', async () => {
         const userAttrs = UserFactory.build();
-        const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+        const user = await User.create(userAttrs);
         const store = initState();
         const client = new ApiClient(API_HOST);
         const triggers = new ActionsTrigger(client, store.dispatch);
@@ -136,7 +136,7 @@ describe('ActionsTrigger', () => {
 
     beforeEach(async () => {
       const userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+      user = await User.create(userAttrs);
 
       user.set('email_check_hash', null);
       await user.save(null, { method: 'update' });

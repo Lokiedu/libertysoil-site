@@ -50,7 +50,12 @@ describe('ListPage', () => {
 
     before(async () => {
       await bookshelf.knex('users').del();
-      user = await User.create('test', 'test', 'test@example.com', { first_login: false });
+      user = await User.create({
+        username: 'test',
+        password: 'test',
+        email: 'test@example.com',
+        more: { first_login: false }
+      });
       await user.save({ 'email_check_hash': '' }, { require: true });
 
       sessionId = await login('test', 'test');

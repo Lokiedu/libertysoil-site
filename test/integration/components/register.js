@@ -39,7 +39,7 @@ describe('UnwpappedAuth page', () => {
 
   before(async () => {
     userAttrs = UserFactory.build();
-    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+    user = await User.create(userAttrs);
 
     user.set('email_check_hash', null);
     await user.save(null, { method: 'update' });
@@ -56,7 +56,7 @@ describe('UnwpappedAuth page', () => {
 
     before(async () => {
       userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, email);
+      user = await User.create({ ...userAttrs, email });
     });
 
     beforeEach(() => {

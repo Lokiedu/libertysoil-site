@@ -1389,7 +1389,12 @@ export default class ApiController {
     let user;
 
     try {
-      user = await User.create(username, ctx.request.body.password, ctx.request.body.email, moreData);
+      user = await User.create({
+        username,
+        password: ctx.request.body.password,
+        email: ctx.request.body.email,
+        more: moreData
+      });
     } catch (e) {
       if (e.code == 23505) {
         ctx.status = 401;
