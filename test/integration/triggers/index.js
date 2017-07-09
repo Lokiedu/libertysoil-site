@@ -98,7 +98,7 @@ describe('ActionsTrigger', () => {
         const store = initState();
         const triggers = new ActionsTrigger(client, store.dispatch);
 
-        await triggers.registerUser(undefined, undefined, undefined, userAttrs.firstName, userAttrs.lastName);
+        await triggers.registerUser({ firstName: userAttrs.firstName, lastName: userAttrs.lastName });
         expect(
           store.getState().get('messages').first().get('message'),
           'to contain',

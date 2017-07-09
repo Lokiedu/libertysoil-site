@@ -157,15 +157,13 @@ describe('UnwpappedAuth page', () => {
       wrapper.find('#registerForm').simulate('submit');
       await waitForTrue(() => register.props().form.isValid());
 
-      return expect(
-        onRegisterUser.calledWith(
-          userAttrs.username,
-          userAttrs.password,
-          userAttrs.email,
-          '', ''
-        ),
-        'to be true'
-      );
+      return expect(onRegisterUser.calledWith({
+        username: userAttrs.username,
+        password: userAttrs.password,
+        email: userAttrs.email,
+        firstName: '',
+        lastName: ''
+      }), 'to be true');
     });
   });
 });

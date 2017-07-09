@@ -389,12 +389,12 @@ export class ActionsTrigger {
     }
   };
 
-  registerUser = async (username, password, email, firstName, lastName) => {
+  registerUser = async (attrs) => {
     this.dispatch(a.messages.removeAllMessages());
 
     // FIXME: disable form
     try {
-      const result = await this.client.registerUser({ username, password, email, firstName, lastName });
+      const result = await this.client.registerUser(attrs);
 
       if (result.success) {
         this.dispatch(a.users.registrationSuccess());

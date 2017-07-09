@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import memoize from 'memoizee';
 import t from 't8on';
 
@@ -143,7 +143,14 @@ class LoginComponentV2 extends React.PureComponent {
       await this.triggers.loginUser(true, user);
     } else {
       console.error(error); // eslint-disable-line no-console
-      // TODO: If `user` is not present, redirect to the sign up form and autofill fields using `profile`.
+      if (profile) {
+        // Is there a better way? Is it worth using redux here?
+        window.localStorage.setItem('selectedOauthProfile', JSON.stringify(profile));
+        browserHistory.push({
+          ...browserHistory.getCurrentLocation(),
+          hash: '#signup'
+        });
+      }
     }
   }
 
