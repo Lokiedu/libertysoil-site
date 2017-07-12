@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 
-import Icon from '../../icon';
+import { OldIcon as Icon } from '../../icon';
 
 const STATUS_ICONS = {
   invalid: {
@@ -32,6 +32,8 @@ const STATUS_ICONS = {
   },
   unfilled: {}
 };
+
+const DOT_ICON_SIZE = { outer: 'l', inner: 's' };
 
 export default class FormField extends React.Component {
   static propTypes = {
@@ -94,7 +96,7 @@ export default class FormField extends React.Component {
         className="form__dot"
         color={dotColor}
         icon="fiber-manual-record"
-        size="common"
+        size={DOT_ICON_SIZE}
       />
     );
 

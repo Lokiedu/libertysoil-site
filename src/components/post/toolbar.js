@@ -20,10 +20,11 @@ import { Link } from 'react-router';
 
 import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import Time from '../time';
 import PostFav from './tools/fav';
 import PostLike from './tools/like';
+import { ICON_SIZE } from './tools/config';
 
 export default class Toolbar extends React.Component {
   static displayName = 'post-toolbar';
@@ -55,7 +56,7 @@ export default class Toolbar extends React.Component {
         </Link>
         <div className="card__toolbar--group card__toolbar_item--right">
           <Link className="layout layout-align_vertical card__toolbar_item" to={postUrl}>
-            <Icon icon="link" size="small" />
+            <Icon icon="link" size={ICON_SIZE} />
           </Link>
           <PostFav
             authorId={authorId}

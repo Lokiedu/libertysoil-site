@@ -38,7 +38,7 @@ import { getUrl } from '../../utils/urlGenerator';
 import { API_HOST, URL_NAMES } from '../../config';
 
 import Avatar from '../../components/user/avatar';
-import Icon from '../../components/icon';
+import { OldIcon as Icon } from '../../components/icon';
 import Conversation from '../../components/tools/conversation';
 
 import {

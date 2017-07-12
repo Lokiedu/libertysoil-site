@@ -49,7 +49,7 @@ export default class Tag extends React.Component {
   };
 
   static defaultProps = {
-    size: ''
+    size: 'small'
   };
 
   shouldComponentUpdate(nextProps) {

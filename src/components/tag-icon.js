@@ -20,7 +20,7 @@ import classNames from 'classnames';
 
 import { TAG_HASHTAG, TAG_SCHOOL, TAG_MENTION, TAG_LOCATION, TAG_EVENT, TAG_PLANET } from '../consts/tags';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 
 const TagIcon = ({ className, inactive, type, ...props }) => {
   const cn = classNames('tag_icon', className, {

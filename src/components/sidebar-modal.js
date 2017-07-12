@@ -21,7 +21,7 @@ import isEqual from 'lodash/isEqual';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 
 class SidebarModalMain extends React.Component {
   static displayName = 'SidebarModalMain';
@@ -186,12 +186,13 @@ class SidebarModalHeader extends React.Component {
       const { className: mainIconClassName, ...props } = this.props.mainIcon;
       mainIcon = (
         <Icon
-          className={classNames('sidebar-modal__icon icon-outline--square', mainIconClassName)}
+          className={classNames('sidebar-modal__icon', mainIconClassName)}
           color="white"
           outline="blue"
           icon="cogs"
           pack="fa"
-          size="common"
+          size="block"
+          round={false}
           {...props}
         />
       );

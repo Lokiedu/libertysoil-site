@@ -17,3 +17,4 @@
 */
 export { default } from './icon';
 export { default as CommonIcon } from './templates/common';
+export { default as OldIcon } from './templates/old';

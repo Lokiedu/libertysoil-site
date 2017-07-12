@@ -22,8 +22,10 @@ import { removeMessage } from '../../actions/messages';
 import { toggleMenu } from '../../actions/ui';
 import createSelector from '../../selectors/createSelector';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import TopMessageSwitch from './switch';
+
+export const ICON_SIZE = { inner: 'm', outer: 'l' };
 
 class TopMenu extends React.Component {
   static displayName = 'TopMenu';
@@ -51,6 +53,7 @@ class TopMenu extends React.Component {
             className="action top-menu__icon"
             icon="home"
             pack="fa"
+            size={ICON_SIZE}
             onClick={this.props.onHomeClick}
           />
         </div>

@@ -19,7 +19,9 @@ import React, { PropTypes } from 'react';
 import ga from 'react-google-analytics';
 import { omit } from 'lodash';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
+
+const ICON_SIZE = { inner: 'lm', outer: 'm' };
 
 /**
  * Universal component to use in the TagPage, SchoolPage, GeotagPage components.
@@ -80,9 +82,10 @@ export default class LikeTagButton extends React.Component {
       <Icon
         {...iconProps}
         className={`action ${className}`}
-        onClick={this._toggleLike}
         icon={icon}
         color={color}
+        size={ICON_SIZE}
+        onClick={this._toggleLike}
       />
     );
   }

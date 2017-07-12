@@ -37,9 +37,12 @@ import { TAG_HASHTAG, TAG_SCHOOL, TAG_LOCATION, TAG_PLANET } from '../consts/tag
 import { clearSearchResults } from '../actions/search';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 import ListItem from './list-item';
 import TagIcon from './tag-icon';
+
+const CLOSE_ICON_SIZE = { inner: 'lm', outer: undefined };
+const RESULT_ICON_SIZE = { inner: 'ms', outer: 's' };
 
 function getResultsSectionTitle(sectionName, count) {
   let wordFormId;
@@ -242,31 +245,31 @@ class Search extends Component {
 
           switch (section.type) {
             case 'locations': {
-              icon = <TagIcon big type={TAG_LOCATION} />;
+              icon = <TagIcon size={RESULT_ICON_SIZE} type={TAG_LOCATION} />;
               title = getResultsSectionTitle('locations', section.count);
               url = '/search/locations';
               break;
             }
             case 'hashtags': {
-              icon = <TagIcon big type={TAG_HASHTAG} />;
+              icon = <TagIcon size={RESULT_ICON_SIZE} type={TAG_HASHTAG} />;
               title = getResultsSectionTitle('hashtags', section.count);
               url = '/search/hashtags';
               break;
             }
             case 'schools': {
-              icon = <TagIcon big type={TAG_SCHOOL} />;
+              icon = <TagIcon size={RESULT_ICON_SIZE} type={TAG_SCHOOL} />;
               title = getResultsSectionTitle('schools', section.count);
               url = '/search/schools';
               break;
             }
             case 'posts': {
-              icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
+              icon = <TagIcon size={RESULT_ICON_SIZE} type={TAG_PLANET} />;  // FIXME: need a proper icon
               title = getResultsSectionTitle('posts', section.count);
               url = '/search/posts';
               break;
             }
             case 'people': {
-              icon = <TagIcon big type={TAG_PLANET} />;  // FIXME: need a proper icon
+              icon = <TagIcon size={RESULT_ICON_SIZE} type={TAG_PLANET} />;  // FIXME: need a proper icon
               title = getResultsSectionTitle('people', section.count);
               url = '/search/people';
               break;
@@ -329,6 +332,7 @@ class Search extends Component {
             <Icon
               className={searchClearClass}
               icon="close"
+              size={CLOSE_ICON_SIZE}
               onClick={this.clearQuery}
             />
           }
@@ -337,6 +341,7 @@ class Search extends Component {
           <Icon
             className="search__icon"
             icon="refresh"
+            size="block"
             spin
           />
         }
@@ -344,6 +349,7 @@ class Search extends Component {
           <Icon
             className="search__icon"
             icon="search"
+            size="block"
             onClick={this.actionClick}
           />
         }

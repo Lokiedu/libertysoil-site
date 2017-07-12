@@ -45,7 +45,7 @@ const ERROR_MESSAGES = [
 
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
-    icon: { color: 'orange', icon: 'question-circle' },
+    icon: { color: 'orange', icon: 'question-circle', size: { outer: undefined, inner: 'l' } },
     name: { name: (translate) => translate('login.qs.forget_pass') },
     url: '/resetpassword'
   }

@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
+
+const ICON_SIZE = { inner: 'lm', outer: 'm' };
 
 export default class IgnoreButton extends React.Component {
   static displayName = 'IgnoreButton';
@@ -39,6 +41,7 @@ export default class IgnoreButton extends React.Component {
         className="suggested-user__button suggested-user__button-ignore button-light_gray action"
         icon="angle-right"
         pack="fa"
+        size={ICON_SIZE}
         title="Ignore"
         onClick={this.clickHandler}
       />

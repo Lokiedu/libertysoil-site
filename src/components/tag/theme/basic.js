@@ -55,8 +55,11 @@ export default class BasicTag extends React.Component {
     const { className, round, type } = this.props;
 
     return classNames(
-      className, TAG_TYPES[type].className,
-      'tag', { 'tag--round': round }
+      className, TAG_TYPES[type].className, 'tag',
+      {
+        'tag--round': round,
+        'tag--collapsed': this.props.name.collapsed && !this.props.showPostCount
+      }
     );
   };
 

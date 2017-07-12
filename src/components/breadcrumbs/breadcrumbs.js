@@ -22,7 +22,7 @@ import compact from 'lodash/compact';
 import keys from 'lodash/keys';
 import isEqual from 'lodash/isEqual';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 
 const defaultShortView = (
   <Icon
