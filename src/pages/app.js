@@ -23,8 +23,6 @@ import noop from 'lodash/noop';
 
 import { ActionsTrigger } from '../triggers';
 import { INTERCOM_APP_ID } from '../config';
-import { getRoutesNames } from '../utils/router';
-import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
 import createSelector from '../selectors/createSelector';
 
 import ContextualRoutes from '../components/contextual';
@@ -33,12 +31,14 @@ import WrappedIntercom from '../components/intercom';
 const GAInitializer = ga.Initializer;
 
 export class UnwrappedApp extends React.Component {
+  static contextualRoutes = ['login', 'signup'];
+
   static displayName = 'UnwrappedApp';
 
   static propTypes = {
     children: PropTypes.element.isRequired,
-    dispatch: PropTypes.func,
-    location: PropTypes.shape()
+    location: PropTypes.shape(),
+    routes: PropTypes.arrayOf(PropTypes.shape())
   };
 
   static defaultProps = {
@@ -57,14 +57,6 @@ export class UnwrappedApp extends React.Component {
     await triggers.loadUserTags();
   }
 
-  componentWillMount() {
-    this.props.dispatch(attachContextualRoutes(
-      UnwrappedApp.displayName,
-      getRoutesNames(this.props.routes),
-      ['#login', '#signup']
-    ));
-  }
-
   componentDidMount() {
     if (process.env.GOOGLE_ANALYTICS_ID) {
       ga('create', process.env.GOOGLE_ANALYTICS_ID, 'auto');
@@ -75,13 +67,6 @@ export class UnwrappedApp extends React.Component {
   shouldComponentUpdate(nextProps) {
     return nextProps.children !== this.props.children
       || nextProps.locale !== this.props.locale;
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(detachContextualRoutes(
-      UnwrappedApp.displayName,
-      getRoutesNames(this.props.routes)
-    ));
   }
 
   render() {
@@ -107,7 +92,8 @@ export class UnwrappedApp extends React.Component {
         {gaContent}
         <WrappedIntercom app_id={INTERCOM_APP_ID} url={url} />
         <ContextualRoutes
-          hash={this.props.location.hash}
+          location={this.props.location}
+          routes={this.props.routes}
           scope={UnwrappedApp.displayName}
         />
       </div>

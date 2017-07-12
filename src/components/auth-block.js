@@ -61,7 +61,11 @@ export default class AuthBlock extends React.Component {
   }
 
   pushLogin = throttle(
-    location => ({ ...location, hash: '#login' }), 200
+    location => ({
+      ...location,
+      query: { ...location.query, route: 'login' }
+    }),
+    200
   );
 
   render() {

@@ -83,8 +83,10 @@ const FORM_ERROR_MESSAGE_MAPPING = {
   'agree_req': 'signup.errors.agree_req'
 };
 
-const pushLogin = location =>
-  ({ ...location, hash: '#login' });
+const pushLogin = location => ({
+  ...location,
+  query: { ...location.query, route: 'login' }
+});
 
 export class SignupFormV2 extends React.Component {
   static displayName = 'SignupFormV2';

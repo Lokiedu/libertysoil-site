@@ -24,8 +24,6 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { createSelector } from '../selectors';
-import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
-import { getRoutesNames } from '../utils/router';
 
 import {
   Page,
@@ -62,11 +60,14 @@ export const SuccessMessage = () => {
 };
 
 export class PasswordResetPage extends React.Component {
+  static contextualRoutes = ['login', 'signup'];
+
   static displayName = 'PasswordResetPage';
 
   static propTypes = {
     dispatch: PropTypes.func,
     location: PropTypes.shape(),
+    routes: PropTypes.arrayOf(PropTypes.shape()),
     ui: PropTypes.shape({
       submitResetPassword: PropTypes.bool
     }).isRequired
@@ -85,23 +86,8 @@ export class PasswordResetPage extends React.Component {
     ).login.bind(null, true);
 
     this.routesProps = {
-      '#login': { onSubmit: this.handleLogin }
+      'login': { onSubmit: this.handleLogin }
     };
-  }
-
-  componentWillMount() {
-    this.props.dispatch(attachContextualRoutes(
-      PasswordResetPage.displayName,
-      getRoutesNames(this.props.routes),
-      ['#login']
-    ));
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(detachContextualRoutes(
-      PasswordResetPage.displayName,
-      getRoutesNames(this.props.routes)
-    ));
   }
 
   submitHandler = (event) => {
@@ -158,8 +144,9 @@ export class PasswordResetPage extends React.Component {
 
         <Footer />
         <ContextualRoutes
-          hash={this.props.location.hash}
+          location={this.props.location}
           predefProps={this.routesProps}
+          routes={this.props.routes}
           scope={PasswordResetPage.displayName}
         />
       </div>

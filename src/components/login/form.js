@@ -45,8 +45,10 @@ const FORM_ERROR_MESSAGE_MAPPING = {
   'password_req': 'login.errors.password_req'
 };
 
-const pushSignup = location =>
-  ({ ...location, hash: '#signup' });
+const pushSignup = location => ({
+  ...location,
+  query: { ...location.query, route: 'signup' }
+});
 
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';

@@ -21,10 +21,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { API_HOST } from '../config';
-import { getRoutesNames } from '../utils/router';
 import ApiClient from '../api/client';
 import createSelector from '../selectors/createSelector';
-import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
 import { ActionsTrigger } from '../triggers';
 
 import ContextualRoutes from '../components/contextual';
@@ -35,10 +33,14 @@ import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
 class Welcome extends React.Component {
+  static contextualRoutes = ['login', 'signup'];
+
   static displayName = 'Welcome';
 
   static propTypes = {
-    dispatch: PropTypes.func
+    dispatch: PropTypes.func,
+    location: PropTypes.shape(),
+    routes: PropTypes.arrayOf(PropTypes.shape())
   };
 
   static async fetchData(router, store, client) {
@@ -59,23 +61,8 @@ class Welcome extends React.Component {
     ).login.bind(null, true);
 
     this.routesProps = {
-      '#login': { onSubmit: this.handleLogin }
+      'login': { onSubmit: this.handleLogin }
     };
-  }
-
-  componentWillMount() {
-    this.props.dispatch(attachContextualRoutes(
-      Welcome.displayName,
-      getRoutesNames(this.props.routes),
-      ['#login']
-    ));
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(detachContextualRoutes(
-      Welcome.displayName,
-      getRoutesNames(this.props.routes)
-    ));
   }
 
   render() {
@@ -208,8 +195,9 @@ class Welcome extends React.Component {
           {reviews}
           <Footer />
           <ContextualRoutes
-            hash={this.props.location.hash}
+            location={this.props.location}
             predefProps={this.routesProps}
+            routes={this.props.routes}
             scope={Welcome.displayName}
           />
         </div>

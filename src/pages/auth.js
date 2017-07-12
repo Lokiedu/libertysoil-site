@@ -27,8 +27,6 @@ import ApiClient from '../api/client';
 import { API_HOST } from '../config';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
-import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
-import { getRoutesNames } from '../utils/router';
 
 import {
   Page,
@@ -45,6 +43,8 @@ import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
 export class UnwrappedAuth extends React.Component {
+  static contextualRoutes = ['login', 'signup'];
+
   static displayName = 'UnwrappedAuth';
 
   static propTypes = {
@@ -53,6 +53,7 @@ export class UnwrappedAuth extends React.Component {
     is_logged_in: PropTypes.bool,
     location: PropTypes.shape(),
     messages: ArrayOfMessagesPropType.isRequired,
+    routes: PropTypes.arrayOf(PropTypes.shape()),
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
@@ -92,23 +93,8 @@ export class UnwrappedAuth extends React.Component {
 
     this.handleLogin = this.triggers.login.bind(null, true);
     this.routesProps = {
-      '#login': { onSubmit: this.handleLogin }
+      'login': { onSubmit: this.handleLogin }
     };
-  }
-
-  componentWillMount() {
-    this.props.dispatch(attachContextualRoutes(
-      UnwrappedAuth.displayName,
-      getRoutesNames(this.props.routes),
-      ['#login']
-    ));
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(detachContextualRoutes(
-      UnwrappedAuth.displayName,
-      getRoutesNames(this.props.routes)
-    ));
   }
 
   render() {
@@ -174,8 +160,9 @@ export class UnwrappedAuth extends React.Component {
 
         <Footer />
         <ContextualRoutes
-          hash={this.props.location.hash}
+          location={this.props.location}
           predefProps={this.routesProps}
+          routes={this.props.routes}
           scope={UnwrappedAuth.displayName}
         />
       </div>
