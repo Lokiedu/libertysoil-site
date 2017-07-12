@@ -90,8 +90,9 @@ export class UnwrappedAuth extends React.Component {
       new ApiClient(API_HOST), props.dispatch
     );
 
+    this.handleLogin = this.triggers.login.bind(null, true);
     this.routesProps = {
-      '#login': { onSubmit: this.triggers.login.bind(null, true) }
+      '#login': { onSubmit: this.handleLogin }
     };
   }
 
