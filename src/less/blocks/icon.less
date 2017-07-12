@@ -1,39 +1,87 @@
 .icon {
-  display: inline-flex;
   overflow: hidden;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  fill: currentColor;
 
-  &-outline {
-    border-radius: 50%;
-    background: #fff;
-    padding: 5px;
+  > svg { fill: currentColor; }
 
-    &--red {
+  &:empty {
+    display: none;
+  }
+
+  &--bg {
+    &_white {
+      background-color: #fff;
+    }
+    &_red {
       background: @color__red;
     }
-
-    &--dark_green {
+    &_dark_green {
       background: @color__dark_green;
     }
-
-    &--khaki {
+    &_khaki {
       background: #D4D366;
     }
-
-    &--blue {
+    &_blue {
       background: #2c8fff;
-    }
-
-    &--square {
-      border-radius: 0;
     }
   }
 
-  &-midi.icon-outline {
-    height: 29px;
-    width: 29px;
-    padding: 0;
+  &--color {
+    &_grey, &_gray {
+      color: #D3D2D1;
+    }
+    &_red {
+      color: #DC3457;
+    }
+    &_white {
+      color: #FFFFFF;
+    }
+  }
+
+  &--fsize {
+    &_s {
+      width: 26px;
+      height: 26px;
+    }
+    &_m {
+      width: 36px;
+      height: 36px;
+    }
+    &_l {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  &--inactive {
+    border-color: #d0d0d0;
+    background-color: #d0d0d0;
+  }
+
+  &__outline {
+    border-width: 1px;
+    border-style: solid;
+    
+    &--color {
+      &_red {
+        border-color: #DC3457;
+      }
+    }
+  }
+
+  &--padding {
+    &_s {
+      padding: 6px;
+    }
+    &_m {
+      padding: 8px;
+    }
+    &_l {
+      padding: 15px;
+    }
   }
 
   &--round {
@@ -41,48 +89,44 @@
   }
 
   &--size {
-    &_small {
-      width: 32px;
-      height: 32px;
-
-      svg {
-        padding: 5px;
-      }
-    }
-    &_common {
-      width: 60px;
-      height: 60px; 
-
-      svg {
-        width: 16px;
-      }
-    }
-    &_big {
-      width: 37px;
-      height: 37px;
-      border-radius: 50%;
-
-      svg {
-        padding: 8px;
-      }
-    }
-  }
-
-  .tag-type(@name, @color) {
-    &--type {
+    .add(@name, @val) {
       &_@{name} {
-        border-color: @color;
-        background-color: @color;
+        width: @val;
+        height: @val;
+        font-size: @val;
       }
     }
+
+    .add(@name: ~"s",   @val: 12px);
+    .add(@name: ~"ms",  @val: 16px);
+    .add(@name: ~"m",   @val: 18px);
+    .add(@name: ~"ml",  @val: 22px);
+    .add(@name: ~"lm",  @val: 26px);
+    .add(@name: ~"l",   @val: 28px);
+    .add(@name: ~"xl",  @val: 36px);
+    .add(@name: ~"xxl", @val: 42px);
   }
 
-  .tag-type(@name: ~"hashtag", @color: #689ACA);
-  .tag-type(@name: ~"school", @color: #DC3457);
-  .tag-type(@name: ~"geotag", @color: #47B8E7);
-
-  &--inactive {
-    border-color: #d0d0d0;
-    background-color: #d0d0d0;
+  &--type {
+    &_inner {
+      // for icon fonts
+      font-size: 100%;
+      line-height: 100%;
+      
+      // for svg
+      > * {
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+    &_outer {}
   }
+
+  &--spin {
+    animation: spin 4s linear infinite;
+  }
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
