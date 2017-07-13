@@ -22,10 +22,10 @@ import { keys, omit, reduce } from 'lodash';
 import debounce from 'debounce-promise';
 import zxcvbn from 'zxcvbn';
 
-import MESSAGE_TYPES from '../../consts/messageTypeConstants';
-import { API_HOST } from '../../config';
-import ApiClient from '../../api/client';
-import Message from '../message';
+import MESSAGE_TYPES from '../../../consts/messageTypeConstants';
+import { API_HOST } from '../../../config';
+import ApiClient from '../../../api/client';
+import Message from '../../message';
 
 const canUseDOM = !!(
   (typeof window !== 'undefined' &&

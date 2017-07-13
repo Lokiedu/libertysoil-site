@@ -24,13 +24,13 @@ import { noop, omit, reduce, transform } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import zxcvbn from 'zxcvbn';
 
-import { API_HOST } from '../../config';
-import ApiClient from '../../api/client';
-import { removeWhitespace as normalizeWhitespace } from '../../utils/lang';
+import { API_HOST } from '../../../config';
+import ApiClient from '../../../api/client';
+import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
 
-import AltButton from '../alt-button';
-import Button from '../button';
-import FormField from '../form/field';
+import AltButton from '../../alt-button';
+import Button from '../../button';
+import FormField from '../../form/field';
 import SignupSuccessMessage from './success';
 
 const hiddenStyle = { display: 'none' };

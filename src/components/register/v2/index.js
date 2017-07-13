@@ -22,15 +22,15 @@ import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
 
-import { SUPPORTED_LOCALES } from '../../consts/localization';
-import ApiClient from '../../api/client';
-import { API_HOST } from '../../config';
-import { ActionsTrigger } from '../../triggers';
-import createSelector from '../../selectors/createSelector';
-import { addError, removeAllMessages } from '../../actions/messages';
+import { SUPPORTED_LOCALES } from '../../../consts/localization';
+import ApiClient from '../../../api/client';
+import { API_HOST } from '../../../config';
+import { ActionsTrigger } from '../../../triggers';
+import createSelector from '../../../selectors/createSelector';
+import { addError, removeAllMessages } from '../../../actions/messages';
 
-import Modal from '../sidebar-modal';
-import MinifiedTag from '../tag/theme/minified';
+import Modal from '../../sidebar-modal';
+import MinifiedTag from '../../tag/theme/minified';
 import RegisterForm from './form';
 
 const MAIN_ICON = {
