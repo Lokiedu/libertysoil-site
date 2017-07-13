@@ -120,6 +120,7 @@ export class SignupFormV2 extends React.Component {
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
     this.listenersRemoved = false;
+    this.touched = {};
     this.state = {
       passwordWarning: ''
     };
@@ -174,11 +175,17 @@ export class SignupFormV2 extends React.Component {
     }
   };
 
-  handleFormChange = event => {
-    const t = event.target;
-    if (t.name === 'password') {
-      if (t.value) {
-        if (zxcvbn(t.value).score <= 1) {
+  handleChange = (event) => {
+    const { name, value } = event.target;
+
+    if (!this.touched[name]) {
+      this.props.form.touch([name]);
+      this.touched[name] = true;
+    }
+
+    if (name === 'password') {
+      if (value) {
+        if (zxcvbn(value).score <= 1) {
           this.setState({
             passwordWarning: 'Password is weak. Consider adding more words or symbols'
           });
@@ -285,6 +292,7 @@ export class SignupFormV2 extends React.Component {
         autoComplete="off"
         className={classNames('form sidebar-form', { 'form--rtl': rtl })}
         method="post"
+        onChange={this.handleChange}
         onSubmit={this.handleSubmit}
       >
         <input name="autofillWorkaround" style={hiddenStyle} type="password" />
