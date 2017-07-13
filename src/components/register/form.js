@@ -21,6 +21,7 @@ import debounce from 'debounce-promise';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
 import { noop, omit, reduce, transform } from 'lodash';
+import { Map as ImmutableMap } from 'immutable';
 import zxcvbn from 'zxcvbn';
 
 import { API_HOST } from '../../config';
@@ -122,7 +123,7 @@ export class SignupFormV2 extends React.Component {
     this.listenersRemoved = false;
     this.touched = {};
     this.state = {
-      passwordWarning: ''
+      warn: ImmutableMap()
     };
   }
 
@@ -186,14 +187,16 @@ export class SignupFormV2 extends React.Component {
     if (name === 'password') {
       if (value) {
         if (zxcvbn(value).score <= 1) {
-          this.setState({
-            passwordWarning: 'Password is weak. Consider adding more words or symbols'
-          });
+          this.setState(state => ({
+            warn: state.warn.set('password', 'signup.warn.password_weak')
+          }));
           return;
         }
       }
 
-      this.setState({ passwordWarning: '' });
+      this.setState(state => ({
+        warn: state.warn.set('password', undefined)
+      }));
     }
   }
 
@@ -312,6 +315,7 @@ export class SignupFormV2 extends React.Component {
                 name={fieldName}
                 refFn={refFn}
                 title={t(predefProps.label)}
+                warn={t(this.state.warn.get(fieldName))}
                 {...fieldValue}
                 {...omit(predefProps, KNOWN_PREDEF_PROPS)}
                 error={error && t(error)}

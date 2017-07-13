@@ -21,6 +21,7 @@
   "signup.errors.password_repeat_req": "הזן שוב את הסיסמה",
   "signup.errors.password_match": "הסיסמאות לא תואמות",
   "signup.errors.agree_req": "עליך להסכים לתנאים",
+  "signup.warn.password_weak": "הסיסמה חלשה - שקול להוסיף עוד סמלים",
   "signup.labels.username": "שם משתמש",
   "signup.labels.email": "אֶלֶקטרוֹנִי",
   "signup.labels.password_repeat": "חזור על הסיסמה",

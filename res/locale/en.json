@@ -23,7 +23,7 @@
   "signup.errors.password_repeat_req": "enter the password again",
   "signup.errors.password_match": "passwords don't match",
   "signup.errors.agree_req": "you have to agree to the Terms",
-  "signup.warn.password": "password is weak - consider adding more symbols",
+  "signup.warn.password_weak": "password is weak - consider adding more symbols",
   "signup.labels.username": "Username:",
   "signup.labels.email": "Email:",
   "signup.labels.password_repeat": "Repeat password:",

@@ -48,7 +48,8 @@ export default class FormField extends React.Component {
     value: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.string
-    ])
+    ]),
+    warn: PropTypes.string
   };
 
   static defaultProps = {
@@ -61,7 +62,7 @@ export default class FormField extends React.Component {
   }
 
   render() {
-    const { error, name, type, value } = this.props;
+    const { error, name, type, value, warn } = this.props;
 
     let dotColor = 'gray', icon;
     if (error) {
@@ -152,6 +153,11 @@ export default class FormField extends React.Component {
         {error &&
           <div className="form__field-message">
             {error}
+          </div>
+        }
+        {warn &&
+          <div className="form__field-message form__field-message--type_info">
+            {warn}
           </div>
         }
       </div>
