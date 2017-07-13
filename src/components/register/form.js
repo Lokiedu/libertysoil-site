@@ -128,7 +128,7 @@ export class SignupFormV2 extends React.Component {
   }
 
   componentWillMount() {
-    this.props.form.onValues({ agree: false });
+    this.props.form.onValues({ agree: false, password: '' });
   }
 
   componentDidMount() {
@@ -312,6 +312,7 @@ export class SignupFormV2 extends React.Component {
 
             acc.push(
               <FormField
+                autoComplete={'new-'.concat(fieldName)}
                 name={fieldName}
                 refFn={refFn}
                 title={t(predefProps.label)}
