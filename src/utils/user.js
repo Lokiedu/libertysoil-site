@@ -18,14 +18,15 @@
 // @flow
 import { fromJS, List } from 'immutable';
 import type { Map } from 'immutable';
+import { isEmpty, isString } from 'lodash';
 
 export function getName(user: Map<string, string>) {
   const fullName = user.get('fullName');
-  if (fullName === ' ') {
-    return user.get('username');
+  if (isString(fullName) && !isEmpty(fullName.trim())) {
+    return fullName;
   }
 
-  return fullName;
+  return user.get('username');
 }
 
 const SERVICES_SEQ = [
