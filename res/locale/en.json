@@ -50,6 +50,10 @@
   "signup.success.check_email": "Please check your email for further instructions.",
   "signup.success.alt": "Alternatively,",
   "signup.success.display_form": "display register form.",
+  "signup.page.title": "Create new account",
+  "signup.page.slogan": "Be the change",
+  "signup.page.motivation": "Connect with parents and education professionals from around the world to make education better for all children in all schools and families worldwide.",
+  "signup.page.loading": "Form is loading…",
   "api.errors.internal.short": "Internal server error",
   "api.errors.internal.long": "Server error: please retry later",
   "api.errors.bad_request": "Bad request"

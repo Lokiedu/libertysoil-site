@@ -48,6 +48,10 @@
   "signup.success.check_email": "בדוק את האימייל שלך לקבלת הוראות נוספות.",
   "signup.success.alt": "לחלופין,",
   "signup.success.display_form": "טופס הרשמה להירשם.",
+  "signup.page.title": "ליצור חשבון חדש",
+  "signup.page.slogan": "היה השינוי",
+  "signup.page.motivation": "צור קשר עם הורים ואנשי חינוך מכל רחבי העולם כדי להפוך את החינוך טוב יותר עבור כל הילדים בכל בתי הספר והמשפחות ברחבי העולם.",
+  "signup.page.loading": "הטופס טוען …",
   "api.errors.internal.short": "שגיאת שרת פנימית",
   "api.errors.internal.long": "שגיאת שרת: נסה מאוחר יותר",
   "api.errors.bad_request": "בקשה לא תקינה"

@@ -65,7 +65,7 @@ export default class RegisterComponentV1 extends React.PureComponent {
     } else {
       formOrDummy = (
         <div className="layout__row">
-          Form is loading…
+          {t.translate('signup.page.loading')}
         </div>
       );
     }
@@ -75,20 +75,21 @@ export default class RegisterComponentV1 extends React.PureComponent {
       ga('send', 'event', 'Reg', 'Done');
       header = (
         <SuccessContent
+          translation={t}
           onShowRegisterForm={this.props.onShowRegisterForm}
         />
       );
     } else {
       header = (
         <header className="layout__row layout__row-double">
-          <p className="layout__row content content-small">Create new account</p>
-          <div className="layout__row content__head">Be the change</div>
+          <p className="layout__row content content-small">
+            {t.translate('signup.page.title')}
+          </p>
+          <div className="layout__row content__head">
+            {t.translate('signup.page.slogan')}
+          </div>
           <div className="layout__row content content-small">
-            <p>
-              Connect with parents and education professionals from around
-              the world to make education better for all children in all
-              schools and families worldwide.
-            </p>
+            <p>{t.translate('signup.page.motivation')}</p>
           </div>
         </header>
       );

@@ -18,18 +18,33 @@
 import React from 'react';
 
 export default class RegisterFormV1Success extends React.Component {
+  static propTypes = {
+    translation: React.PropTypes.shape({
+      translate: React.PropTypes.func.isRequired
+    }).isRequired
+  };
+
   clickHandler = (event) => {
     event.preventDefault();
     this.props.onShowRegisterForm();
   };
 
   render() {
+    const { translation: { translate } } = this.props;
+
     return (
       <div className="box box-middle">
-        <header className="box__title">Registration success</header>
+        <header className="box__title">
+          {translate('signup.success.title')}
+        </header>
         <div className="box__body">
           <div className="layout__row">
-            <div>Please check your email for further instructions. Or <a className="link" href="#" onClick={this.clickHandler}>display register form.</a>
+            <div>
+              {translate('signup.success.check_email')}&nbsp;
+              {translate('signup.success.alt')}&nbsp;
+              <a className="link" href="#" onClick={this.clickHandler}>
+                {translate('signup.success.display_form')}
+              </a>
             </div>
           </div>
         </div>
