@@ -30,7 +30,7 @@ export default class RegisterFormV1Success extends React.Component {
   };
 
   render() {
-    const { translation: { translate } } = this.props;
+    const translate = this.props.translation.get('translate');
 
     return (
       <div className="box box-middle">

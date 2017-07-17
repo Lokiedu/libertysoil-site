@@ -18,9 +18,10 @@
 import React, { PropTypes } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import ga from 'react-google-analytics';
+import classNames from 'classnames';
 import t from 't8on';
 
-import { DEFAULT_LOCALE } from '../../../consts/localization';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../../consts/localization';
 
 import RegisterForm from './form';
 import SuccessContent from './success';
@@ -50,6 +51,7 @@ export default class RegisterComponentV1 extends React.PureComponent {
 
   render() {
     const { translation: t, registration_success } = this.props;
+    const translate = t.get('translate');
 
     let formOrDummy;
 
@@ -65,7 +67,7 @@ export default class RegisterComponentV1 extends React.PureComponent {
     } else {
       formOrDummy = (
         <div className="layout__row">
-          {t.translate('signup.page.loading')}
+          {translate('signup.page.loading')}
         </div>
       );
     }
@@ -83,20 +85,25 @@ export default class RegisterComponentV1 extends React.PureComponent {
       header = (
         <header className="layout__row layout__row-double">
           <p className="layout__row content content-small">
-            {t.translate('signup.page.title')}
+            {translate('signup.page.title')}
           </p>
           <div className="layout__row content__head">
-            {t.translate('signup.page.slogan')}
+            {translate('signup.page.slogan')}
           </div>
           <div className="layout__row content content-small">
-            <p>{t.translate('signup.page.motivation')}</p>
+            <p>{translate('signup.page.motivation')}</p>
           </div>
         </header>
       );
     }
 
+    const className = classNames(
+      'div',
+      { 'font--rtl': SUPPORTED_LOCALES[t.get('locale')].rtl }
+    );
+
     return (
-      <div className="div" id="register">
+      <div className={className} id="register">
         {header}
         {formOrDummy}
       </div>

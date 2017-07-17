@@ -278,10 +278,8 @@ class WrappedRegisterFormV1 extends React.Component {
       return false;
     }
 
-    const {
-      fields, form,
-      translation: { translate: t }
-    } = this.props;
+    const { fields, form } = this.props;
+    const t = this.props.translation.get('translate');
 
     return (
       <form
