@@ -16,53 +16,66 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import { form as inform, from } from 'react-inform';
-import { omit } from 'lodash';
-import debounce from 'debounce-promise';
-import zxcvbn from 'zxcvbn';
+import { omit, transform } from 'lodash';
 
 import MESSAGE_TYPES from '../../../consts/messageTypeConstants';
-import { API_HOST } from '../../../config';
-import ApiClient from '../../../api/client';
+import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
 
 import Message from '../../message';
+import * as Utils from '../utils';
 import FormField from './form-field';
 
-const client = new ApiClient(API_HOST);
+const hiddenStyle = { display: 'none' };
 
-function debounceCached(f, timeout = 250) {
-  // eslint-disable-next-line no-var
-  var cache = {};
-  return debounce(async function (s) {
-    if (cache[s] === undefined) {
-      cache[s] = await f(s);
-    }
-    return cache[s];
-  }, timeout);
-}
+const staticFields = {
+  registerFirstName: {
+    label: 'First name',
+    placeholder: 'Firstname'
+  },
+  registerLastName: {
+    label: 'Last name',
+    placeholder: 'Lastname'
+  },
+  registerUsername: {
+    label: 'Username',
+    placeholder: 'username',
+    refName: 'username'
+  },
+  registerPassword: {
+    label: 'Password',
+    placeholder: '********',
+    type: 'password'
+  },
+  registerPasswordRepeat: {
+    label: 'Repeat password',
+    placeholder: '********',
+    type: 'password'
+  },
+  registerEmail: {
+    label: 'Email',
+    placeholder: 'email.address@example.com',
+    type: 'email'
+  }
+};
 
-const getAvailableUsername = debounceCached(async (username) =>
-  await client.getAvailableUsername(username)
-);
+const KNOWN_PREDEF_PROPS = ['label', 'refName'];
+
+const FormFieldType = PropTypes.shape({
+  error: PropTypes.string
+});
 
 class WrappedRegisterFormV1 extends React.Component {
   static propTypes = {
     fields: PropTypes.shape({
-      username: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      password: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      passwordRepeat: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      email: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired,
-      agree: PropTypes.shape({
-        error: PropTypes.string
-      }).isRequired
+      registerFirstName: FormFieldType.isRequired,
+      registerLastName: FormFieldType.isRequired,
+      registerUsername: FormFieldType.isRequired,
+      registerPassword: FormFieldType.isRequired,
+      registerPasswordRepeat: FormFieldType.isRequired,
+      registerEmail: FormFieldType.isRequired,
+      registerAgree: FormFieldType.isRequired
     }).isRequired,
     form: PropTypes.shape({
       forceValidate: PropTypes.func.isRequired,
@@ -76,15 +89,18 @@ class WrappedRegisterFormV1 extends React.Component {
   constructor(...args) {
     super(...args);
 
-    this.usernameRefFn = c => this.username = c;
+    this.fullName = '';
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
     this.listenersRemoved = false;
+    this.touched = {};
     this.state = {
-      registerFirstName: '',
-      registerLastName: '',
-      passwordWarning: ''
+      warn: ImmutableMap()
     };
+  }
+
+  componentWillMount() {
+    this.props.form.onValues({ agree: false, password: '' });
   }
 
   componentDidMount() {
@@ -94,9 +110,29 @@ class WrappedRegisterFormV1 extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.registration_success && !this.props.registration_success) {
-      this.removeListeners();
+    if (nextProps.isVisible && !this.props.isVisible) {
+      return this.removeListeners();
     }
+
+    if (this.usernameManuallyChanged) {
+      return undefined;
+    }
+
+    const { fields: {
+      registerFirstName: { value: firstName },
+      registerLastName: { value: lastName }
+    } } = this.props;
+
+    const { fields: {
+      registerFirstName: { value: nextFirstName },
+      registerLastName: { value: nextLastName }
+    } } = nextProps;
+
+    if (nextFirstName !== firstName || nextLastName !== lastName) {
+      this.handleNameChange(nextFirstName, nextLastName);
+    }
+
+    return undefined;
   }
 
   componentWillUnmount() {
@@ -112,64 +148,47 @@ class WrappedRegisterFormV1 extends React.Component {
     }
   };
 
-  handleFormChange = (event) => {
-    const t = event.target;
-    if (t.name === 'password') {
-      if (t.value) {
-        if (zxcvbn(t.value).score <= 1) {
-          this.setState({
-            passwordWarning: 'Password is weak. Consider adding more words or symbols'
-          });
+  handleChange = (event) => {
+    const { name, value } = event.target;
+
+    if (!this.touched[name]) {
+      this.props.form.touch([name]);
+      this.touched[name] = true;
+    }
+
+    if (name === 'password') {
+      if (value) {
+        if (Utils.isPasswordWeak(value)) {
+          this.setState(state => ({
+            warn: state.warn.set('registerPassword', 'Password is weak. Consider adding more words or symbols')
+          }));
           return;
         }
       }
 
-      this.setState({ passwordWarning: '' });
+      this.setState(state => ({
+        warn: state.warn.set('registerPassword', undefined)
+      }));
     }
-  };
+  }
 
-  handleNameChange = async (event) => {
-    const field = event.target;
-    const attr = field.getAttribute('name');
-    if (!Object.keys(this.state).includes(attr)) {
-      return;
-    }
-    const input = field.value.replace(/[\f\n\r\t\v0-9]/g, '');
-    this.setState({ [attr]: input });
-
-    if (this.usernameManuallyChanged) {
+  handleNameChange = async (firstName, lastName) => {
+    const fullName =
+      firstName.replace(/[^0-9a-zA-Z-_'\.]/g, '')
+      .concat(lastName.replace(/[^0-9a-zA-Z-_'\.]/g, ''));
+    if (fullName === this.fullName) {
       return;
     }
 
-    let result = input + this.state.registerLastName;
-    if (attr === 'registerLastName') {
-      result = this.state.registerFirstName + input;
+    this.fullName = fullName;
+
+    try {
+      const username = await Utils.getAvailableUsername(fullName);
+      this.changeUsername(username);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e.message);
     }
-
-    result = result.trim();
-    if (result) {
-      result = await getAvailableUsername(result);
-    }
-    this.changeUsername(result);
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const { form, fields } = this.props;
-
-    form.forceValidate();
-    if (!form.isValid()) {
-      return;
-    }
-
-    const htmlForm = event.target;
-    this.props.onSubmit(
-      fields.username.value,
-      fields.password.value,
-      fields.email.value,
-      htmlForm.querySelector('input[name=registerFirstName]').value,
-      htmlForm.querySelector('input[name=registerLastName]').value
-    );
   };
 
   handleUsernameInput = (event) => {
@@ -182,12 +201,10 @@ class WrappedRegisterFormV1 extends React.Component {
     this.changeUsername(raw);
   };
 
-  changeUsername = (input) => {
-    const username = input.replace(/[^-_\.'A-Za-z0-9]/g, '').substr(0, 30);
-
+  changeUsername = (registerUsername) => {
     const { form } = this.props;
     const prevValues = form.values();
-    const nextValues = { ...prevValues, username };
+    const nextValues = { ...prevValues, registerUsername };
     form.onValues(nextValues);
   };
 
@@ -199,6 +216,31 @@ class WrappedRegisterFormV1 extends React.Component {
     this.usernameFocused = false;
   };
 
+  handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { form } = this.props;
+
+    form.forceValidate();
+    form.touch(Object.keys(FORM_RULES_MAP));
+
+    if (!form.isValid()) {
+      return;
+    }
+
+    const values = form.values();
+
+    await this.props.onSubmit(
+      values.registerUsername,
+      values.registerPassword,
+      values.registerEmail,
+      normalizeWhitespace(values.registerFirstName),
+      normalizeWhitespace(values.registerLastName)
+    );
+
+    Utils.resetValidatorsCache();
+  };
+
   render() {
     if (!this.props.isVisible) {
       return false;
@@ -207,65 +249,59 @@ class WrappedRegisterFormV1 extends React.Component {
     const { fields, form } = this.props;
 
     return (
-      <form action="" className="layout__row" id="registerForm" onChange={this.handleFormChange} onSubmit={this.handleSubmit}>
+      <form
+        action=""
+        autoComplete="off"
+        className="layout__row"
+        id="registerForm"
+        onChange={this.handleChange}
+        onSubmit={this.handleSubmit}
+      >
+        <input name="autofillWorkaround" style={hiddenStyle} type="password" />
         <div className="layout__row">
-          <FormField
-            name="registerFirstName"
-            placeholder="Firstname"
-            title="First name"
-            value={this.state.firstName}
-            onChange={this.handleNameChange}
-          />
-          <FormField
-            name="registerLastName"
-            placeholder="Lastname"
-            title="Last name"
-            value={this.state.lastName}
-            onChange={this.handleNameChange}
-          />
-          <FormField
-            name="registerUsername"
-            placeholder="Username"
-            title="Username"
-            refFn={this.usernameRefFn}
-            {...fields.username}
-          />
-          <FormField
-            name="registerPassword"
-            placeholder="********"
-            title="Password"
-            type="password"
-            warn={this.state.passwordWarning}
-            {...fields.password}
-          />
-          <FormField
-            name="registerPasswordRepeat"
-            placeholder="********"
-            title="Repeat password"
-            type="password"
-            {...fields.passwordRepeat}
-          />
-          <FormField
-            name="registerEmail"
-            placeholder="email.address@example.com"
-            title="Email"
-            type="email"
-            {...fields.email}
-          />
+          {transform(
+            fields,
+            (acc, fieldValue, fieldName) => {
+              const predefProps = staticFields[fieldName];
+              if (!predefProps) {
+                return acc;
+              }
+
+              let refFn;
+              if (predefProps.refName) {
+                refFn = c => { this[predefProps.refName] = c; };
+              }
+
+              acc.push(
+                <FormField
+                  autoComplete={'new-'.concat(fieldName)}
+                  key={fieldName}
+                  name={fieldName}
+                  refFn={refFn}
+                  title={predefProps.label}
+                  warn={this.state.warn.get(fieldName)}
+                  {...fieldValue}
+                  {...omit(predefProps, KNOWN_PREDEF_PROPS)}
+                />
+              );
+
+              return acc;
+            },
+            []
+          )}
         </div>
         <div className="layout__row layout__row-double">
-          {fields.agree.error &&
-            <Message message={fields.agree.error} type={MESSAGE_TYPES.ERROR} />
+          {fields.registerAgree.error &&
+            <Message message={fields.registerAgree.error} type={MESSAGE_TYPES.ERROR} />
           }
           {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
           <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
             <label className="action checkbox">
               <input
                 id="registerAgree"
-                name="agree"
-                required="required"
+                name="registerAgree"
                 type="checkbox"
-                {...omit(fields.agree, ['error'])}
+                {...omit(fields.registerAgree, ['error'])}
               />
               <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
             </label>
@@ -277,48 +313,36 @@ class WrappedRegisterFormV1 extends React.Component {
   }
 }
 
-const checkEmailNotTaken = debounceCached(email =>
-  client.checkEmailTaken(email).then(taken => !taken)
-);
-
-const checkUsernameNotTaken = debounceCached(username =>
-  client.checkUserExists(username).then(exists => !exists)
-);
-
-const validatePassword = (password) => {
-  if (password && password.length < 8) {
-    return false;
-  }
-  return true;
-};
-
-const validatePasswordRepeat = (passwordRepeat, form) => {
-  if (form.password !== passwordRepeat) {
-    return false;
-  }
-  return true;
-};
-
-const RegisterFormV1 = inform(from({
-  username: {
-    'You must enter username to continue': u => u,
-    'Username is taken': checkUsernameNotTaken
+const FORM_RULES_MAP = {
+  registerFirstName: {
+    'First name must not contain digits': Utils.checkNoDigits
   },
-  email: {
-    'You must enter email to continue': e => e,
-    'Email is taken': checkEmailNotTaken
+  registerLastName: {
+    'Last name must not contain digits': Utils.checkNoDigits
   },
-  password: {
-    'You must enter password to continue': p => p,
-    'Password must contain at least 8 symbols': validatePassword
+  registerUsername: {
+    'You must enter username to continue': Utils.checkTrimmed,
+    "Username must contain only letters a-z, digits 0-9, dashes (-), underscores (_), apostrophes (') and periods (.)": Utils.checkUsernameValid,
+    'Username is taken': Utils.checkUsernameNotTaken
   },
-  passwordRepeat: {
-    'You must enter your password again to continue': p => p,
-    'Passwords don\'t match': validatePasswordRepeat
+  registerEmail: {
+    'You must enter email to continue': Utils.checkTrimmed,
+    'Email is invalid': Utils.checkEmailValid,
+    'Email is taken': Utils.checkEmailNotTaken
   },
-  agree: {
+  registerPassword: {
+    'You must enter password to continue': Utils.checkTrimmed,
+    'Password must contain at least 8 symbols': Utils.validatePasswordLength
+  },
+  registerPasswordRepeat: {
+    'You must enter your password again to continue': Utils.checkTrimmed,
+    "Passwords don't match": Utils.validatePasswordRepeat
+  },
+  registerAgree: {
     'You have to agree to Terms before registering': a => a
   }
-}))(WrappedRegisterFormV1);
+};
+
+const RegisterFormV1 = inform(from(FORM_RULES_MAP))(WrappedRegisterFormV1);
 
 export default RegisterFormV1;

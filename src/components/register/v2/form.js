@@ -17,20 +17,17 @@
 */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import debounce from 'debounce-promise';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
 import { noop, omit, reduce, transform } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-import zxcvbn from 'zxcvbn';
 
-import { API_HOST } from '../../../config';
-import ApiClient from '../../../api/client';
 import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
 
 import AltButton from '../../alt-button';
 import Button from '../../button';
 import FormField from '../../form/field';
+import * as Utils from '../utils';
 import SignupSuccessMessage from './success';
 
 const hiddenStyle = { display: 'none' };
@@ -186,7 +183,7 @@ export class SignupFormV2 extends React.Component {
 
     if (name === 'password') {
       if (value) {
-        if (zxcvbn(value).score <= 1) {
+        if (Utils.isPasswordWeak(value)) {
           this.setState(state => ({
             warn: state.warn.set('password', 'signup.warn.password_weak')
           }));
@@ -211,7 +208,7 @@ export class SignupFormV2 extends React.Component {
     this.fullName = fullName;
 
     try {
-      const username = await getAvailableUsername(fullName);
+      const username = await Utils.getAvailableUsername(fullName);
       this.changeUsername(username);
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -273,7 +270,7 @@ export class SignupFormV2 extends React.Component {
       normalizeWhitespace(values.lastName)
     );
 
-    return resetValidatorsCache();
+    return Utils.resetValidatorsCache();
   };
 
   render() {
@@ -313,6 +310,7 @@ export class SignupFormV2 extends React.Component {
             acc.push(
               <FormField
                 autoComplete={'new-'.concat(fieldName)}
+                key={fieldName}
                 name={fieldName}
                 refFn={refFn}
                 title={t(predefProps.label)}
@@ -364,104 +362,30 @@ export class SignupFormV2 extends React.Component {
   }
 }
 
-const client = new ApiClient(API_HOST);
-
-function debounceCached(f, timeout = 100) {
-  // eslint-disable-next-line no-var
-  let cache = {};
-
-  return Object.assign(
-    debounce(function (s) {
-      if (cache[s] === undefined) {
-        cache[s] = f(s);
-      }
-      return cache[s];
-    }, timeout),
-    { resetCache: () => cache = {} }
-  );
-}
-
-function checkTrimmed(val = '') {
-  return val.trim();
-}
-
-function checkNoDigits(val = '') {
-  return !/\d/.test(val);
-}
-
-const checkUsernameValid = (val) => (
-  !/[^0-9a-zA-Z-_'\.]/.test(val)
-);
-
-const getAvailableUsername = debounceCached(
-  (username) => {
-    if (!username) {
-      return Promise.resolve('');
-    }
-
-    return client.getAvailableUsername(username);
-  },
-  100
-);
-
-const checkEmailValid = (val) => {
-  return val.match(/^[a-z0-9!#$%&"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i);
-};
-
-const checkEmailNotTaken = debounceCached(email =>
-  client.checkEmailTaken(email).then(taken => !taken)
-);
-
-const checkUsernameNotTaken = debounceCached(username =>
-  client.checkUserExists(username).then(exists => !exists)
-);
-
-const validatePasswordLength = (password) => {
-  if (password && password.length < 8) {
-    return false;
-  }
-  return true;
-};
-
-const validatePasswordRepeat = (passwordRepeat, form) => {
-  if (form.password !== passwordRepeat) {
-    return false;
-  }
-  return true;
-};
-
-const resetValidatorsCache = () => {
-  [
-    getAvailableUsername,
-    checkEmailNotTaken,
-    checkUsernameNotTaken
-  ].forEach(v => v.resetCache());
-};
-
 const FORM_RULES_MAP = {
   firstName: {
-    'name_invalid': v => checkNoDigits(v)
+    'name_invalid': Utils.checkNoDigits
   },
   lastName: {
-    'name_invalid': v => checkNoDigits(v)
+    'name_invalid': Utils.checkNoDigits
   },
   username: {
-    'req': u => checkTrimmed(u),
-    'username_invalid': checkUsernameValid,
-    'username_taken': checkUsernameNotTaken
+    'req': Utils.checkTrimmed,
+    'username_invalid': Utils.checkUsernameValid,
+    'username_taken': Utils.checkUsernameNotTaken
   },
   email: {
-    'req': e => checkTrimmed(e),
-    'email_invalid': checkEmailValid,
-    'email_taken': checkEmailNotTaken
+    'req': Utils.checkTrimmed,
+    'email_invalid': Utils.checkEmailValid,
+    'email_taken': Utils.checkEmailNotTaken
   },
   password: {
-    'req': p => checkTrimmed(p),
-    'password_min': validatePasswordLength
+    'req': Utils.checkTrimmed,
+    'password_min': Utils.validatePasswordLength
   },
   passwordRepeat: {
-    'password_repeat_req': p => checkTrimmed(p),
-    'password_match': validatePasswordRepeat
+    'password_repeat_req': Utils.checkTrimmed,
+    'password_match': Utils.validatePasswordRepeat
   },
   agree: {
     'agree_req': a => a
