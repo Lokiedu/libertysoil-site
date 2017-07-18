@@ -21,6 +21,8 @@ import Switch from 'react-toggle-switch';
 import Link from 'react-router/lib/Link';
 
 import { addError } from '../../../actions/messages';
+import gmailImg from '../../../images/services/gmail.png';
+import yahooImg from '../../../images/services/yahoo.png';
 import Button from '../../button';
 import Modal from '../../sidebar-modal';
 import Card from '../card';
@@ -28,8 +30,8 @@ import Card from '../card';
 const icon = { icon: 'image', pack: 'fa' };
 
 const SERVICES = [
-  { name: 'gmail', title: 'Gmail', img: '/images/services/gmail.png' },
-  { name: 'yahoo', title: 'Yahoo!', img: '/images/services/yahoo.png' }
+  { name: 'gmail', title: 'Gmail', img: gmailImg },
+  { name: 'yahoo', title: 'Yahoo!', img: yahooImg },
 ];
 
 export default class ImportContactsAction extends React.Component {

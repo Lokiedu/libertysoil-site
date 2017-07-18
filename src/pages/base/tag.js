@@ -18,6 +18,8 @@
 import React, { PropTypes } from 'react';
 import { pick } from 'lodash';
 
+import welcomeImg from '../../images/hero/welcome.jpg';
+
 import {
   Page,
   PageMain,
@@ -38,7 +40,10 @@ import SidebarAlt       from '../../components/sidebarAlt';
 import AddedTags        from '../../components/post/added-tags';
 import UpdatePicture    from '../../components/update-picture/update-picture';
 import Tag              from '../../components/tag';
+
 import { TAG_SCHOOL, TAG_LOCATION, TAG_HASHTAG, TAG_HEADER_SIZE, DEFAULT_HEADER_PICTURE } from '../../consts/tags';
+import CONTINENTS from '../../consts/continents';
+
 
 function formInitialTags(type, value) {
   switch (type) {
@@ -82,7 +87,7 @@ export function GeotagPageHero({ geotag }) {
     return (
       <PageHero
         contentClassName="continent"
-        url={`/images/geo/continents/${geotag.get('continent_code')}.svg`}
+        url={CONTINENTS[geotag.get('continent_code')].img_url}
       />
     );
   }
@@ -122,7 +127,7 @@ export function GeotagPageHero({ geotag }) {
     );
   }
 
-  return <PageHero url="/images/hero/welcome.jpg" />;
+  return <PageHero url={welcomeImg} />;
 }
 
 function TagPageHero({ type, tag, url, editable, onSubmit, limits, preview, flexible }) {

@@ -21,7 +21,7 @@ import { format as format_url, parse as parse_url } from 'url';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import bb from 'bluebird';
-import { countBreaks } from 'grapheme-breaker';
+import { countBreaks } from '@ov/grapheme-breaker';
 import uuid from 'uuid';
 import slug from 'slug';
 import fetch from 'node-fetch';

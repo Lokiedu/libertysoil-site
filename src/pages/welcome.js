@@ -34,7 +34,7 @@ import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
 import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
-class Welcome extends React.Component {
+export class DisconnectedWelcome extends React.Component {
   static displayName = 'Welcome';
 
   static propTypes = {
@@ -65,7 +65,7 @@ class Welcome extends React.Component {
 
   componentWillMount() {
     this.props.dispatch(attachContextualRoutes(
-      Welcome.displayName,
+      DisconnectedWelcome.displayName,
       getRoutesNames(this.props.routes),
       ['#login']
     ));
@@ -73,7 +73,7 @@ class Welcome extends React.Component {
 
   componentWillUnmount() {
     this.props.dispatch(detachContextualRoutes(
-      Welcome.displayName,
+      DisconnectedWelcome.displayName,
       getRoutesNames(this.props.routes)
     ));
   }
@@ -210,7 +210,7 @@ class Welcome extends React.Component {
           <ContextualRoutes
             hash={this.props.location.hash}
             predefProps={this.routesProps}
-            scope={Welcome.displayName}
+            scope={DisconnectedWelcome.displayName}
           />
         </div>
       </div>
@@ -225,4 +225,4 @@ const selector = createSelector(
   })
 );
 
-export default connect(selector)(Welcome);
+export default connect(selector)(DisconnectedWelcome);

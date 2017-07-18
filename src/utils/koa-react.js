@@ -1,5 +1,4 @@
-import path from 'path';
-import { readFileSync } from 'fs';
+import fs from 'fs';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -12,18 +11,32 @@ import ejs from 'ejs';
 
 import { API_HOST } from '../config';
 import ApiClient from '../api/client';
+import templateData from '../views/index.ejs';
 
 import { AuthHandler, FetchHandler } from './loader';
 
 const matchPromisified = promisify(match, { multiArgs: true });
+const readFile = promisify(fs.readFile);
 
+const template = ejs.compile(templateData, { filename: 'index.ejs' });
+let webpackChunks = null;
 
-const templatePath = path.join(__dirname, '/../views/index.ejs');
-const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
-
-
-export function getReactMiddleware(getRoutes, reduxInitializer, logger) {
+export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer, logger) {
   const reactMiddleware = async (ctx) => {
+    if (!webpackChunks) {
+      const chunksFilename = `${__dirname}/../webpack-chunks.json`;
+
+      try {
+        const data = await readFile(chunksFilename);
+        webpackChunks = JSON.parse(data);
+      } catch (e) {
+
+        ctx.status = 500;
+        ctx.body = 'Internal Server Error';
+        return;
+      }
+    }
+
     const { store, locale_data } = await reduxInitializer(ctx);
 
     const authHandler = new AuthHandler(store);
@@ -36,7 +49,7 @@ export function getReactMiddleware(getRoutes, reduxInitializer, logger) {
       </Router>
     );
 
-    const history = syncHistoryWithStore(createMemoryHistory(), store, { selectLocationState: state => state.get('routing') });
+    const history = syncHistoryWithStore(createMemoryHistory({ basename: prefix }), store, { selectLocationState: state => state.get('routing') });
     const routes = makeRoutes(history);
 
     try {
@@ -81,8 +94,12 @@ export function getReactMiddleware(getRoutes, reduxInitializer, logger) {
         const gtm = process.env.GOOGLE_TAG_MANAGER_ID || null;
         const localization = JSON.stringify(locale_data);
 
+        const paths = {
+          webpackChunks,
+        };
+
         ctx.staus = 200;
-        ctx.body = template({ state, html, metadata, gtm, localization });
+        ctx.body = template({ appName, state, html, metadata, gtm, localization, paths });
       } catch (e) {
         logger.error(e);
         ctx.status = 500;

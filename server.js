@@ -18,6 +18,7 @@
 /*eslint-env node */
 import { parse as parseUrl } from 'url';
 import fs, { accessSync } from 'fs';
+import path from 'path';
 
 import Koa from 'koa';
 import { isString } from 'lodash';
@@ -25,7 +26,7 @@ import session from 'koa-generic-session';
 import redisStore from 'koa-redis';
 import convert from 'koa-convert';
 import cors from 'kcors';
-import serve from 'koa-static';
+import staticCache from 'koa-static-cache';
 import bodyParser from 'koa-bodyparser';
 import mount from 'koa-mount';
 import koaConditional from 'koa-conditional-get';
@@ -85,12 +86,15 @@ try {
   // do nothing
 }
 
-export const logger = createLogger({
+const logger = createLogger({
   name: "libertysoil",
   serializers: Logger.stdSerializers,
   src: true,
   streams
 });
+
+const knexConfig = db_config[dbEnv];
+const bookshelf = global.$bookshelf || initBookshelf(knexConfig);
 
 const enforceProperHostMiddleware = async (ctx, next) => {
   const { hostname } = parseUrl(API_HOST);
@@ -166,64 +170,78 @@ const initReduxForMainApp = async (ctx) => {
   return { locale_data, store };
 };
 
-const knexConfig = db_config[dbEnv];
-const bookshelf = global.$bookshelf || initBookshelf(knexConfig);
-const sphinx = initSphinx();
-const api = initApi(bookshelf, sphinx);
+const serve = (...params) => staticCache(...params);
 
-const app = new Koa();
-app.logger = logger;
-app.keys = ['libertysoil'];
 
-app.on('error', (e) => {
-  logger.warn(e);
-});
+function startServer(/*params*/) {
+  const sphinx = initSphinx();
+  const api = initApi(bookshelf, sphinx);
 
-if (exec_env === 'development') {
-  logger.level('debug');
+  const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
 
-  const webpackMiddleware = require('koa-webpack');
-  const webpack = require('webpack');
-  const webpackConfig = require('./webpack.dev.config');
-  const compiler = webpack(webpackConfig);
+  const staticsAppConfig = {
+    buffer: true,
+    dynamic: process.env.NODE_ENV !== 'production',
+    gzip: true,
+    preload: process.env.NODE_ENV === 'production',
+    usePrecompiledGzip: true
+  };
 
-  app.use(webpackMiddleware({
-    compiler,
-    dev: {
-      log: logger.debug.bind(logger),
-      publicPath: webpackConfig.output.publicPath,
-      stats: {
-        colors: true
-      }
-    }
+  if (process.env.NODE_ENV === 'production') {
+    staticsAppConfig.maxAge = 60 * 60 * 24 * 7;  // consider files fresh for a week
+  }
+
+  const staticsApp = serve(staticsRoot, staticsAppConfig);
+
+  const app = new Koa();
+  app.logger = logger;
+  app.keys = ['libertysoil'];
+
+  app.on('error', (e) => {
+    logger.warn(e);
+  });
+
+  if (exec_env === 'development') {
+    logger.level('debug');
+  }
+
+  app.use(createRequestLogger({ level: 'info', logger }));
+  app.use(enforceProperHostMiddleware);
+
+  app.use(cors({
+    allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
   }));
+
+  app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
+
+  app.use(convert(session({
+    store: redisStore(
+      {
+        host: '127.0.0.1',
+        port: 6379
+      }
+    ),
+    key: 'connect.sid',
+    cookie: { signed: false }
+  })));
+
+  app.use(koaConditional());
+  app.use(koaEtag());
+
+  app.use(mount('/api/v1', api));
+  app.use(staticsApp);
+  app.use(getReactMiddleware('app', '/', getRoutes, initReduxForMainApp, logger));
+
+  const PORT = 8000;
+
+  app.listen(PORT, function (err) {
+    if (err) {
+      logger.error(err);  // eslint-disable-line no-console
+      process.exit(1);
+    }
+
+    logger.info(`Listening at http://0.0.0.0:${PORT}\n`);
+  });
 }
 
-app.use(createRequestLogger({ level: 'info', logger }));
-app.use(enforceProperHostMiddleware);
-
-app.use(cors({
-  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-}));
-
-app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
-
-app.use(convert(session({
-  store: redisStore(
-    {
-      host: '127.0.0.1',
-      port: 6379
-    }
-  ),
-  key: 'connect.sid',
-  cookie: { signed: false }
-})));
-
-app.use(koaConditional());
-app.use(koaEtag());
-
-app.use(mount('/api/v1', api));
-app.use(serve(`${__dirname}/public/`, { index: false, defer: false }));
-app.use(getReactMiddleware(getRoutes, initReduxForMainApp, logger));
-
-export default app;
+export default startServer;

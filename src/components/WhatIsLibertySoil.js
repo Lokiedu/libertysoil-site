@@ -18,14 +18,15 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import backpackImg from '../images/welcome/backpack.jpg';
+import baloonImg from '../images/welcome/balloon.jpg';
+import curiosityImg from '../images/welcome/curiosity.png';
+import dataImg from '../images/welcome/data.jpg';
+import suppliesImg from '../images/welcome/supplies.jpg';
+import telescopeImg from '../images/welcome/telescope.png';
+
 import { Tab, Tabs } from './tabs';
 
-const backpackImg = '/images/welcome/backpack.jpg';
-const baloonImg = '/images/welcome/balloon.jpg';
-const curiosityImg = '/images/welcome/curiosity.png';
-const dataImg = '/images/welcome/data.jpg';
-const suppliesImg = '/images/welcome/supplies.jpg';
-const telescopeImg = '/images/welcome/telescope.png';
 
 const titles = [
   { text: 'Why join LibertySoil:', delim: ' ' },

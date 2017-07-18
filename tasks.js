@@ -29,91 +29,95 @@ const dbEnv = process.env.DB_ENV || 'development';
 const knexConfig = dbConfig[dbEnv];
 const bookshelf = initBookshelf(knexConfig);
 
-const queue = kueLib.createQueue(config.kue);
+export default function startServer(/*params*/) {
+  const queue = kueLib.createQueue(config.kue);
 
-queue.on('error', (err) => {
-  process.stderr.write(`${err.message}\n`);
-});
+  queue.on('error', (err) => {
+    process.stderr.write(`${err.message}\n`);
+  });
 
-queue.process('register-user-email', async function (job, done) {
-  const { username,
-          email,
-          hash } = job.data;
-
-  try {
-    const html = await renderVerificationTemplate(new Date(), username, email, `${API_URL_PREFIX}/user/verify/${hash}`);
-    await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
-    done();
-  } catch (e) {
-    done(e);
-  }
-});
-
-queue.process('reset-password-email', async function (job, done) {
-  try {
-    const html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
-    await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
-    done();
-  } catch (e) {
-    done(e);
-  }
-});
-
-queue.process('verify-email', async function (job, done) {
-  try {
-    const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
-    await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
-    done();
-  } catch (e) {
-    done(e);
-  }
-});
-
-queue.process('on-comment', async function (job, done) {
-  try {
-    const Comment = bookshelf.model('Comment');
-
-    const comment = await Comment
-      .where({ id: job.data.commentId })
-      .fetch({ require: true, withRelated: ['user', 'post', 'post.user'] });
-    const commentAuthor = comment.related('user');
-    const post = comment.related('post');
-    const subscribers = (await post.related('subscribers').fetch())
-      .map(subscriber => subscriber.attributes);
-
-    for (const subscriber of subscribers) {
-      if (!subscriber.more.mute_all_posts && commentAuthor.id !== subscriber.id) {
-        queue.create('new-comment-email', {
-          comment: comment.attributes,
-          commentAuthor: commentAuthor.attributes,
-          post: post.attributes,
-          subscriber
-        }).priority('medium').save();
-      }
-    }
-
-    done();
-  } catch (e) {
-    done(e);
-  }
-});
-
-queue.process('new-comment-email', async function (job, done) {
-  try {
+  queue.process('register-user-email', async function (job, done) {
     const {
-      comment,
-      commentAuthor,
-      post,
-      subscriber
+      username,
+      email,
+      hash
     } = job.data;
 
-    const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
-    await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
+    try {
+      const html = await renderVerificationTemplate(new Date(), username, email, `${API_URL_PREFIX}/user/verify/${hash}`);
+      await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
 
-    done();
-  } catch (e) {
-    done(e);
-  }
-});
+  queue.process('reset-password-email', async function (job, done) {
+    try {
+      const html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
+      await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
 
-process.stdout.write(`Job service started\n`);
+  queue.process('verify-email', async function (job, done) {
+    try {
+      const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
+      await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  queue.process('on-comment', async function (job, done) {
+    try {
+      const Comment = bookshelf.model('Comment');
+
+      const comment = await Comment
+        .where({ id: job.data.commentId })
+        .fetch({ require: true, withRelated: ['user', 'post', 'post.user'] });
+      const commentAuthor = comment.related('user');
+      const post = comment.related('post');
+      const subscribers = (await post.related('subscribers').fetch())
+        .map(subscriber => subscriber.attributes);
+
+      for (const subscriber of subscribers) {
+        if (!subscriber.more.mute_all_posts && commentAuthor.id !== subscriber.id) {
+          queue.create('new-comment-email', {
+            comment: comment.attributes,
+            commentAuthor: commentAuthor.attributes,
+            post: post.attributes,
+            subscriber
+          }).priority('medium').save();
+        }
+      }
+
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  queue.process('new-comment-email', async function (job, done) {
+    try {
+      const {
+        comment,
+        commentAuthor,
+        post,
+        subscriber
+      } = job.data;
+
+      const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
+      await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
+
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  process.stdout.write(`Job service started\n`);
+}

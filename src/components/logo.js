@@ -18,6 +18,10 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
+import logo from '../images/logo.svg';
+import lsImg from '../images/mail/ls.png';
+
+
 export default class Logo extends React.Component {
   static displayName = 'Logo';
 
@@ -33,7 +37,7 @@ export default class Logo extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { src: '/images/logo.svg' };
+    this.state = { src: logo };
   }
 
   shouldComponentUpdate(nextProps) {
@@ -41,7 +45,7 @@ export default class Logo extends React.Component {
   }
 
   handleError = () => {
-    this.setState({ src: '/images/mail/ls.png' });
+    this.setState({ src: lsImg });
   };
 
   render() {
