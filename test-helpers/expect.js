@@ -7,7 +7,8 @@ import initBookshelf from '../src/api/db';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
-require('../index');
+const startServer = require('../server').default;
+startServer();
 
 
 expect.installPlugin(require('unexpected-http'));
