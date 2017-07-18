@@ -32,7 +32,8 @@ import { ActionsTrigger } from '../triggers';
 import { initState } from '../store';
 import { addMessage } from '../actions/messages';
 
-bluebird.longStackTraces();
+import '../less/styles.less';
+
 window.Promise = bluebird;
 
 const store = initState(window.state);

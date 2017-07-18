@@ -27,7 +27,7 @@ import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import { break as breakGraphemes, countBreaks } from 'grapheme-breaker';
+import { break as breakGraphemes, countBreaks } from '@ov/grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
