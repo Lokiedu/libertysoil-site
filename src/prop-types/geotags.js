@@ -24,14 +24,11 @@ import { TagMore } from './tags';
 
 const continentCodes = Object.keys(CONTINENTS);
 
-export const Geotag = PropTypes.shape({
-  admin: Geotag,
+const geotagShape = {
   admin1_code: PropTypes.string,
   admin1_id: uuid4,
-  continent: Geotag,
   continent_code: PropTypes.oneOf(continentCodes),
   continent_id: uuid4,
-  country: Geotag,
   country_code: PropTypes.string,
   country_id: uuid4,
   created_at: date.isRequired,
@@ -49,8 +46,12 @@ export const Geotag = PropTypes.shape({
   type: PropTypes.string, // oneOf("Country", ...)
   updated_at: date.isRequired,
   url_name: url.isRequired
-});
+};
 
+geotagShape.admin = PropTypes.shape(geotagShape);
+geotagShape.continent = PropTypes.shape(geotagShape);
+geotagShape.country = PropTypes.shape(geotagShape);
+
+export const Geotag = PropTypes.shape(geotagShape);
 export const ArrayOfGeotags = PropTypes.arrayOf(Geotag);
-
 export const MapOfGeotags = mapOfValues(Geotag);
