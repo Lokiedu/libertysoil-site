@@ -19,7 +19,9 @@ import React, { PropTypes } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { form as inform, from } from 'react-inform';
 import { omit, transform } from 'lodash';
+import t from 't8on';
 
+import { DEFAULT_LOCALE } from '../../../consts/localization';
 import MESSAGE_TYPES from '../../../consts/messageTypeConstants';
 import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
 
@@ -31,36 +33,58 @@ const hiddenStyle = { display: 'none' };
 
 const staticFields = {
   registerFirstName: {
-    label: 'First name',
-    placeholder: 'Firstname'
+    label: 'signup.labels.firstname',
+    placeholder: {
+      needTranslate: true,
+      value: 'signup.labels.firstname'
+    }
   },
   registerLastName: {
-    label: 'Last name',
-    placeholder: 'Lastname'
+    label: 'signup.labels.lastname',
+    placeholder: {
+      needTranslate: true,
+      value: 'signup.labels.lastname'
+    }
   },
   registerUsername: {
-    label: 'Username',
+    label: 'signup.labels.username',
     placeholder: 'username',
     refName: 'username'
   },
   registerPassword: {
-    label: 'Password',
+    label: 'login.labels.password',
     placeholder: '********',
     type: 'password'
   },
   registerPasswordRepeat: {
-    label: 'Repeat password',
+    label: 'signup.labels.password_repeat',
     placeholder: '********',
     type: 'password'
   },
   registerEmail: {
-    label: 'Email',
+    label: 'signup.labels.email',
     placeholder: 'email.address@example.com',
     type: 'email'
   }
 };
 
-const KNOWN_PREDEF_PROPS = ['label', 'refName'];
+const KNOWN_PREDEF_PROPS = ['label', 'placeholder', 'refName'];
+
+const FORM_ERROR_MESSAGE_MAPPING = {
+  first_name_invalid: 'signup.errors.first_name_invalid',
+  last_name_invalid: 'signup.errors.last_name_invalid',
+  username_req: 'signup.errors.username_req',
+  username_invalid: 'signup.errors.username_invalid.long',
+  username_taken: 'signup.errors.username_taken.long',
+  password_req: 'signup.errors.password_req',
+  password_min: 'signup.errors.password_min.long',
+  password_repeat_req: 'signup.errors.password_repeat_req.long',
+  password_match: 'signup.errors.password_match.long',
+  email_req: 'signup.errors.email_req',
+  email_invalid: 'signup.errors.email_invalid.long',
+  email_taken: 'signup.errors.email_taken.long',
+  agree_req: 'signup.errors.agree_req.long'
+};
 
 const FormFieldType = PropTypes.shape({
   error: PropTypes.string
@@ -84,6 +108,14 @@ class WrappedRegisterFormV1 extends React.Component {
     }).isRequired,
     isVisible: PropTypes.bool,
     onSubmit: PropTypes.func.isRequired
+  };
+
+  static defaultProps = {
+    translation: ImmutableMap({
+      format: t.translateTo(DEFAULT_LOCALE),
+      locale: DEFAULT_LOCALE,
+      translate: t.translateTo(DEFAULT_LOCALE)
+    })
   };
 
   constructor(...args) {
@@ -160,7 +192,7 @@ class WrappedRegisterFormV1 extends React.Component {
       if (value) {
         if (Utils.isPasswordWeak(value)) {
           this.setState(state => ({
-            warn: state.warn.set('registerPassword', 'Password is weak. Consider adding more words or symbols')
+            warn: state.warn.set('registerPassword', 'signup.warns.password_weak.long')
           }));
           return;
         }
@@ -246,7 +278,10 @@ class WrappedRegisterFormV1 extends React.Component {
       return false;
     }
 
-    const { fields, form } = this.props;
+    const {
+      fields, form,
+      translation: { translate: t }
+    } = this.props;
 
     return (
       <form
@@ -272,16 +307,34 @@ class WrappedRegisterFormV1 extends React.Component {
                 refFn = c => { this[predefProps.refName] = c; };
               }
 
+              const error = FORM_ERROR_MESSAGE_MAPPING[fieldValue.error];
+              const label = t(predefProps.label).replace(/:$/, '');
+              const warn = this.state.warn.get(fieldName);
+
+              let placeholder;
+              const { placeholder: p = '' } = predefProps;
+              if (p && typeof p === 'object') {
+                if (p.needTranslate) {
+                  placeholder = t(p.value);
+                } else {
+                  placeholder = p.value;
+                }
+              } else {
+                placeholder = p;
+              }
+
               acc.push(
                 <FormField
                   autoComplete={'new-'.concat(fieldName)}
                   key={fieldName}
                   name={fieldName}
+                  placeholder={placeholder.replace(/:$/, '')}
                   refFn={refFn}
-                  title={predefProps.label}
-                  warn={this.state.warn.get(fieldName)}
+                  title={label}
+                  warn={warn && t(warn)}
                   {...fieldValue}
                   {...omit(predefProps, KNOWN_PREDEF_PROPS)}
+                  error={error && (t(error) || t(error.replace(/\.long$/, '')))}
                 />
               );
 
@@ -292,7 +345,10 @@ class WrappedRegisterFormV1 extends React.Component {
         </div>
         <div className="layout__row layout__row-double">
           {fields.registerAgree.error &&
-            <Message message={fields.registerAgree.error} type={MESSAGE_TYPES.ERROR} />
+            <Message
+              message={FORM_ERROR_MESSAGE_MAPPING[fields.registerAgree.error]}
+              type={MESSAGE_TYPES.ERROR}
+            />
           }
           {/* TODO: Get rid of layout__grid. This is a temporary solution. */}
           <div className="layout__grid layout__grid-big layout__grid-responsive layout__grid-row_reverse layout-align_vertical layout-align_right">
@@ -315,31 +371,31 @@ class WrappedRegisterFormV1 extends React.Component {
 
 const FORM_RULES_MAP = {
   registerFirstName: {
-    'First name must not contain digits': Utils.checkNoDigits
+    first_name_invalid: Utils.checkNoDigits
   },
   registerLastName: {
-    'Last name must not contain digits': Utils.checkNoDigits
+    last_name_invalid: Utils.checkNoDigits
   },
   registerUsername: {
-    'You must enter username to continue': Utils.checkTrimmed,
-    "Username must contain only letters a-z, digits 0-9, dashes (-), underscores (_), apostrophes (') and periods (.)": Utils.checkUsernameValid,
-    'Username is taken': Utils.checkUsernameNotTaken
-  },
-  registerEmail: {
-    'You must enter email to continue': Utils.checkTrimmed,
-    'Email is invalid': Utils.checkEmailValid,
-    'Email is taken': Utils.checkEmailNotTaken
+    username_req: Utils.checkTrimmed,
+    username_invalid: Utils.checkUsernameValid,
+    username_taken: Utils.checkUsernameNotTaken
   },
   registerPassword: {
-    'You must enter password to continue': Utils.checkTrimmed,
-    'Password must contain at least 8 symbols': Utils.validatePasswordLength
+    password_req: Utils.checkTrimmed,
+    password_min: Utils.validatePasswordLength
   },
   registerPasswordRepeat: {
-    'You must enter your password again to continue': Utils.checkTrimmed,
-    "Passwords don't match": Utils.validatePasswordRepeat
+    password_repeat_req: Utils.checkTrimmed,
+    password_match: Utils.validatePasswordRepeat
+  },
+  registerEmail: {
+    email_req: Utils.checkTrimmed,
+    email_invalid: Utils.checkEmailValid,
+    email_taken: Utils.checkEmailNotTaken
   },
   registerAgree: {
-    'You have to agree to Terms before registering': a => a
+    agree_req: a => a
   }
 };
 

@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import noop from 'lodash/noop';
+import t from 't8on';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
@@ -54,6 +55,10 @@ export class UnwrappedAuth extends React.Component {
     location: PropTypes.shape(),
     messages: ArrayOfMessagesPropType.isRequired,
     routes: PropTypes.arrayOf(PropTypes.shape()),
+    translation: PropTypes.shape({
+      format: PropTypes.func,
+      translate: PropTypes.func
+    }),
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
@@ -149,6 +154,7 @@ export class UnwrappedAuth extends React.Component {
                 <div className="layout__row">
                   <Register
                     registration_success={registration_success}
+                    translation={this.props.translation}
                     onShowRegisterForm={this.triggers.showRegisterForm}
                     onRegisterUser={this.triggers.registerUser}
                   />
@@ -174,11 +180,18 @@ const selector = createSelector(
   currentUserSelector,
   state => state.get('messages').filter(m => m.get('message') !== 'welcome-guest'),
   state => state.get('ui'),
-  (current_user, messages, ui) => ({
-    messages,
-    ui,
-    ...current_user
-  })
+  (current_user, messages, ui) => {
+    const locale = ui.get('locale');
+    return {
+      messages,
+      translation: {
+        format: t.formatTo(locale),
+        translate: t.translateTo(locale)
+      },
+      ui,
+      ...current_user
+    };
+  }
 );
 
 const Auth = connect(selector)(UnwrappedAuth);

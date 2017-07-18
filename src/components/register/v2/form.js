@@ -185,7 +185,7 @@ export class SignupFormV2 extends React.Component {
       if (value) {
         if (Utils.isPasswordWeak(value)) {
           this.setState(state => ({
-            warn: state.warn.set('password', 'signup.warn.password_weak')
+            warn: state.warn.set('password', 'signup.warns.password_weak')
           }));
           return;
         }
