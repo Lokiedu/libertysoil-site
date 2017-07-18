@@ -1,0 +1,179 @@
+@color_grey: #ebebeb;
+@text-medium-dark: #7a7a7a;
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list {
+  flex: 1;
+  min-width: 100px;
+  max-width: 200px;
+  margin: 10px;
+  -ms-flex: 1;
+  background-color: #eee;
+  padding: 10px;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.preview {
+  position: relative;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background-color: #eee;
+  min-width: 980px;
+  min-height: 500px;
+}
+
+.preview > iframe {
+  flex: 1;
+  background: #f1f6fe;
+  border-width: 0;
+}
+
+.editor {
+  flex: 2;
+  position: relative;
+  background-color: #eee;
+  min-width: 400px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.title {
+  font-weight: bold;
+  line-height: 35px;
+}
+
+.radioButtonsGroup {
+  display: inline-block;
+  margin-left: 30px;
+  &__item {
+    display: inline-block;
+    margin-right: 30px;
+  }
+}
+
+.resolutions_selector_wrap {
+  float: right;
+
+  .select {
+    display: inline-block;
+    height: 28px;
+    position: relative;
+    vertical-align: top;
+    text-transform: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .select:after {
+    border: 1px solid @color_grey;
+    border-right: 0;
+    border-top: 0;
+    content: " ";
+    display: block;
+    height: 0.5em;
+    pointer-events: none;
+    position: absolute;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    width: 0.5em;
+    margin-top: -0.375em;
+    right: 10px;
+    top: 50%;
+    z-index: 4;
+  }
+
+  .select select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 3px;
+    box-shadow: none;
+    font-size: 14px;
+    height: 28px;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    line-height: 1.5;
+    padding-left: 0.75em;
+    position: relative;
+    vertical-align: top;
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    color: @text-medium-dark;
+    cursor: pointer;
+    display: block;
+    outline: none;
+    padding-right: 2.5em;
+  }
+
+  .select select:focus, .select select.is-focused, .select select:active, .select select.is-active {
+    outline: none;
+  }
+
+  .select select[disabled], .select select.is-disabled {
+    pointer-events: none;
+  }
+
+  .select select:hover, .select select.is-hovered {
+    border-color: #b5b5b5;
+  }
+
+  .select select:focus, .select select.is-focused, .select select:active, .select select.is-active {
+    border-color: @color_grey;
+  }
+
+  .select select[disabled], .select select.is-disabled {
+    background-color: whitesmoke;
+    border-color: whitesmoke;
+    box-shadow: none;
+    color: #7a7a7a;
+  }
+
+  .select select[disabled]::-moz-placeholder, .select select.is-disabled::-moz-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .select select[disabled]::-webkit-input-placeholder, .select select.is-disabled::-webkit-input-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .select select[disabled]:-moz-placeholder, .select select.is-disabled:-moz-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .select select[disabled]:-ms-input-placeholder, .select select.is-disabled:-ms-input-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .select select:hover {
+    border-color: #b5b5b5;
+  }
+
+  .select select::-ms-expand {
+    display: none;
+  }
+
+  .select:hover:after {
+    border-color: #363636;
+  }
+}

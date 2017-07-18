@@ -41,6 +41,7 @@ import initBookshelf from './src/api/db';
 import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
 import { getRoutes } from './src/routing';
+import { getRoutes as getUikitRoutes } from './src/uikit/routes';
 
 import { DEFAULT_LOCALE } from './src/consts/localization';
 import { initState } from './src/store';
@@ -230,6 +231,15 @@ function startServer(/*params*/) {
 
   app.use(mount('/api/v1', api));
   app.use(staticsApp);
+  app.use(mount('/uikit', getReactMiddleware(
+    'uikit',
+    '/uikit/',
+    getUikitRoutes,
+    () => {
+      return { locale_data: {}, store: initState() };
+    },
+    logger
+  )));
   app.use(getReactMiddleware('app', '/', getRoutes, initReduxForMainApp, logger));
 
   const PORT = 8000;
