@@ -27,7 +27,7 @@ import ApiClient from '../../../api/client';
 import { API_HOST } from '../../../config';
 import { ActionsTrigger } from '../../../triggers';
 import createSelector from '../../../selectors/createSelector';
-import { addError, removeAllMessages } from '../../../actions/messages';
+import { removeAllMessages } from '../../../actions/messages';
 
 import Modal from '../../sidebar-modal';
 import MinifiedTag from '../../tag/theme/minified';
@@ -42,17 +42,7 @@ const ERROR_MESSAGES = [
   'signup.errors'
 ];
 
-const FORM_ERROR_MESSAGE_MAPPING = {
-  'username_req': 'login.errors.username_req',
-  'password_req': 'login.errors.password_req'
-};
-
-const ERROR_TAG_MAPPING = {
-  // 'login.errors.invalid': {
-  //   icon: { color: 'orange', icon: 'question-circle' },
-  //   name: { name: (translate) => translate('login.qs.forget_pass') }
-  // }
-};
+const ERROR_TAG_MAPPING = {};
 
 function Message({ className, children, long, translate, ...props }) {
   let message;
@@ -115,17 +105,6 @@ class RegisterComponentV2 extends React.Component {
     }
 
     await this.triggers.registerUser(...args);
-  };
-
-  handleErrors = (formErrors) => {
-    const { dispatch } = this.props;
-    dispatch(removeAllMessages());
-
-    for (const errorMessage of formErrors) {
-      dispatch(addError(
-        FORM_ERROR_MESSAGE_MAPPING[errorMessage]
-      ));
-    }
   };
 
   render() {
@@ -205,7 +184,6 @@ class RegisterComponentV2 extends React.Component {
               rtl={rtl}
               succeed={this.props.signupSucceed}
               translate={translate}
-              onErrors={this.handleErrors}
               onSubmit={this.handleSubmit}
             />
           </Modal.Body>

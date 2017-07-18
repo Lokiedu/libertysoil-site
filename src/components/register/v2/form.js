@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
-import { noop, omit, reduce, transform } from 'lodash';
+import { noop, omit, reduce } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 
 import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
@@ -250,13 +250,7 @@ export class SignupFormV2 extends React.Component {
     form.touch(Object.keys(FORM_RULES_MAP));
 
     if (!form.isValid()) {
-      return this.props.onErrors(
-        transform(
-          this.props.fields,
-          (acc, field) => { field.error && acc.push(field.error); },
-          []
-        )
-      );
+      return;
     }
 
     const values = form.values();
@@ -270,7 +264,7 @@ export class SignupFormV2 extends React.Component {
       normalizeWhitespace(values.lastName)
     );
 
-    return Utils.resetValidatorsCache();
+    Utils.resetValidatorsCache();
   };
 
   render() {
