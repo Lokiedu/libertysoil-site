@@ -17,7 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
-import { keys, omit, reduce } from 'lodash';
+import { omit } from 'lodash';
 import debounce from 'debounce-promise';
 import zxcvbn from 'zxcvbn';
 
@@ -26,6 +26,7 @@ import { API_HOST } from '../../../config';
 import ApiClient from '../../../api/client';
 
 import Message from '../../message';
+import FormField from './form-field';
 
 const client = new ApiClient(API_HOST);
 
@@ -75,12 +76,13 @@ class WrappedRegisterFormV1 extends React.Component {
   constructor(...args) {
     super(...args);
 
+    this.usernameRefFn = c => this.username = c;
     this.usernameFocused = false;
     this.usernameManuallyChanged = false;
     this.listenersRemoved = false;
     this.state = {
-      firstName: '',
-      lastName: '',
+      registerFirstName: '',
+      registerLastName: '',
       passwordWarning: ''
     };
   }
@@ -129,7 +131,7 @@ class WrappedRegisterFormV1 extends React.Component {
   handleNameChange = async (event) => {
     const field = event.target;
     const attr = field.getAttribute('name');
-    if (!keys(this.state).find(v => v === attr)) {
+    if (!Object.keys(this.state).includes(attr)) {
       return;
     }
     const input = field.value.replace(/[\f\n\r\t\v0-9]/g, '');
@@ -139,9 +141,9 @@ class WrappedRegisterFormV1 extends React.Component {
       return;
     }
 
-    let result = input + this.state.lastName;
-    if (attr === 'lastName') {
-      result = this.state.firstName + input;
+    let result = input + this.state.registerLastName;
+    if (attr === 'registerLastName') {
+      result = this.state.registerFirstName + input;
     }
 
     result = result.trim();
@@ -165,8 +167,8 @@ class WrappedRegisterFormV1 extends React.Component {
       fields.username.value,
       fields.password.value,
       fields.email.value,
-      htmlForm.querySelector('input[name=firstName]').value,
-      htmlForm.querySelector('input[name=lastName]').value
+      htmlForm.querySelector('input[name=registerFirstName]').value,
+      htmlForm.querySelector('input[name=registerLastName]').value
     );
   };
 
@@ -204,101 +206,52 @@ class WrappedRegisterFormV1 extends React.Component {
 
     const { fields, form } = this.props;
 
-    const htmlFields = reduce(
-      fields,
-      (acc, value, key) => ({ ...acc, [key]: omit(value, ['error']) }),
-      {}
-    );
-
     return (
       <form action="" className="layout__row" id="registerForm" onChange={this.handleFormChange} onSubmit={this.handleSubmit}>
         <div className="layout__row">
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerFirstName">First name</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerFirstName"
-              name="firstName"
-              placeholder="Firstname"
-              type="text"
-              value={this.state.firstName}
-              onChange={this.handleNameChange}
-            />
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerLastName">Last name</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerLastName"
-              name="lastName"
-              placeholder="Lastname"
-              type="text"
-              value={this.state.lastName}
-              onChange={this.handleNameChange}
-            />
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerUsername">Username</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerUsername"
-              name="username"
-              placeholder="Username"
-              ref={c => this.username = c}
-              required="required"
-              type="text"
-              {...htmlFields.username}
-            />
-            {fields.username.error &&
-              <Message message={fields.username.error} type={MESSAGE_TYPES.ERROR} />
-            }
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerPassword">Password</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerPassword"
-              name="password"
-              required="required"
-              type="password"
-              {...htmlFields.password}
-            />
-            {fields.password.error &&
-              <Message message={fields.password.error} type={MESSAGE_TYPES.ERROR} />
-            }
-            {this.state.passwordWarning &&
-              <Message message={this.state.passwordWarning} />
-            }
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input" htmlFor="registerPasswordRepeat">Repeat password</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerPasswordRepeat"
-              name="password_repeat"
-              required="required"
-              type="password"
-              {...htmlFields.passwordRepeat}
-            />
-            {fields.passwordRepeat.error &&
-              <Message message={fields.passwordRepeat.error} type={MESSAGE_TYPES.ERROR} />
-            }
-          </div>
-          <div className="layout__row layout__row-double">
-            <label className="label label-before_input label-space" htmlFor="registerEmail">Email</label>
-            <input
-              className="input input-gray input-big input-block"
-              id="registerEmail"
-              name="email"
-              placeholder="email.address@example.com"
-              required="required"
-              type="email"
-              {...htmlFields.email}
-            />
-            {fields.email.error &&
-              <Message message={fields.email.error} type={MESSAGE_TYPES.ERROR} />
-            }
-          </div>
+          <FormField
+            name="registerFirstName"
+            placeholder="Firstname"
+            title="First name"
+            value={this.state.firstName}
+            onChange={this.handleNameChange}
+          />
+          <FormField
+            name="registerLastName"
+            placeholder="Lastname"
+            title="Last name"
+            value={this.state.lastName}
+            onChange={this.handleNameChange}
+          />
+          <FormField
+            name="registerUsername"
+            placeholder="Username"
+            title="Username"
+            refFn={this.usernameRefFn}
+            {...fields.username}
+          />
+          <FormField
+            name="registerPassword"
+            placeholder="********"
+            title="Password"
+            type="password"
+            warn={this.state.passwordWarning}
+            {...fields.password}
+          />
+          <FormField
+            name="registerPasswordRepeat"
+            placeholder="********"
+            title="Repeat password"
+            type="password"
+            {...fields.passwordRepeat}
+          />
+          <FormField
+            name="registerEmail"
+            placeholder="email.address@example.com"
+            title="Email"
+            type="email"
+            {...fields.email}
+          />
         </div>
         <div className="layout__row layout__row-double">
           {fields.agree.error &&
@@ -312,7 +265,7 @@ class WrappedRegisterFormV1 extends React.Component {
                 name="agree"
                 required="required"
                 type="checkbox"
-                {...htmlFields.agree}
+                {...omit(fields.agree, ['error'])}
               />
               <span className="checkbox__label-right">I agree to Terms &amp; Conditions</span>
             </label>
