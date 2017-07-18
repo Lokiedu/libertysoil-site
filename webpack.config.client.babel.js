@@ -11,6 +11,7 @@ const clientConfiguration = client_configuration(
     ...baseClientConfiguration,
     entry: {
       "app": ['babel-polyfill', `${__dirname}/src/scripts/app.js`],
+      "uikit": ['babel-polyfill', `${__dirname}/src/uikit/scripts.js`],
     },
     plugins: [
       ...baseClientConfiguration.plugins,
