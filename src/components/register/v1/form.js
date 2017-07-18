@@ -90,7 +90,7 @@ const FormFieldType = PropTypes.shape({
   error: PropTypes.string
 });
 
-class WrappedRegisterFormV1 extends React.Component {
+export class UnwrappedRegisterFormV1 extends React.Component {
   static propTypes = {
     fields: PropTypes.shape({
       registerFirstName: FormFieldType.isRequired,
@@ -132,13 +132,18 @@ class WrappedRegisterFormV1 extends React.Component {
   }
 
   componentWillMount() {
-    this.props.form.onValues({ agree: false, password: '' });
+    this.props.form.onValues({
+      registerAgree: false,
+      registerPassword: ''
+    });
   }
 
   componentDidMount() {
-    this.username.addEventListener('focus', this.handleUsernameFocus);
-    this.username.addEventListener('blur', this.handleUsernameBlur);
-    this.username.addEventListener('input', this.handleUsernameInput);
+    if (this.username) {
+      this.username.addEventListener('focus', this.handleUsernameFocus);
+      this.username.addEventListener('blur', this.handleUsernameBlur);
+      this.username.addEventListener('input', this.handleUsernameInput);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -397,6 +402,6 @@ const FORM_RULES_MAP = {
   }
 };
 
-const RegisterFormV1 = inform(from(FORM_RULES_MAP))(WrappedRegisterFormV1);
+const RegisterFormV1 = inform(from(FORM_RULES_MAP))(UnwrappedRegisterFormV1);
 
 export default RegisterFormV1;
