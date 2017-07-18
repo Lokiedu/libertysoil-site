@@ -1293,7 +1293,7 @@ export default class ApiController {
       const check = await User.where({ username }).fetch({ require: false });
       if (check) {
         ctx.status = 409;
-        ctx.body = { error: 'User with this username is already registered' };
+        ctx.body = { error: 'signup.errors.username_taken' };
         return;
       }
     }
@@ -1302,7 +1302,7 @@ export default class ApiController {
       const check = await User.where({ email: ctx.request.body.email }).fetch({ require: false });
       if (check) {
         ctx.status = 409;
-        ctx.body = { error: 'User with this email is already registered' };
+        ctx.body = { error: 'signup.errors.email_taken' };
         return;
       }
     }
@@ -1323,7 +1323,7 @@ export default class ApiController {
     } catch (e) {
       if (e.code == 23505) {
         ctx.status = 401;
-        ctx.body = { error: 'User already exists' };
+        ctx.body = { error: 'signup.errors.username_taken' };
         return;
       }
 

@@ -414,7 +414,7 @@ export class ActionsTrigger {
 
         this.dispatch(a.messages.addError(message));
       } else {
-        this.dispatch(a.messages.addError('Server seems to have problems. Retry later, please'));
+        this.dispatch(a.messages.addError('api.errors.internal'));
       }
     }
   };
