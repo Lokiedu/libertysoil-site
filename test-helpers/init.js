@@ -19,3 +19,8 @@ const exec_env = process.env.DB_ENV || 'test';
 global.$dbConfig = db_config[exec_env];
 
 process.env.NODE_ENV = 'test';
+
+const noop = () => null;
+
+['.css', '.jpg', '.png', '.svg', '.ejs']
+  .forEach(ext => require.extensions[ext] = noop);

@@ -18,7 +18,14 @@ import { AuthHandler, FetchHandler } from './loader';
 const matchPromisified = promisify(match, { multiArgs: true });
 const readFile = promisify(fs.readFile);
 
-const template = ejs.compile(templateData, { filename: 'index.ejs' });
+let template;
+if (process.env.DB_ENV === 'test') {
+  const path = require('path');
+  template = ejs.compile(fs.readFileSync(path.resolve(__dirname, '../views/index.ejs'), 'utf8'));
+} else {
+  template = ejs.compile(templateData, { filename: 'index.ejs' });
+}
+
 let webpackChunks = null;
 
 export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer, logger) {
