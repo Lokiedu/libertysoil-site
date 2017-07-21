@@ -41,6 +41,9 @@ export default function reducer(state = initialState, action) {
     case a.river.SET_POSTS_TO_RIVER:
     case a.river.SET_POSTS_TO_LIKES_RIVER:
     case a.river.SET_POSTS_TO_FAVOURITES_RIVER:
+    case a.river.LOAD_HASHTAG_SUBSCRIPTONS_RIVER:
+    case a.river.LOAD_SCHOOL_SUBSCRIPTONS_RIVER:
+    case a.river.LOAD_GEOTAG_SUBSCRIPTONS_RIVER:
     case a.posts.SET_USER_POSTS:
     case a.hashtags.SET_HASHTAG_POSTS:
     case a.schools.SET_SCHOOL_POSTS:

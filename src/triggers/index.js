@@ -632,6 +632,60 @@ export class ActionsTrigger {
     }
   };
 
+  loadHashtagSubscriptions = async (query = { offset: 0 }) => {
+    this.dispatch(a.ui.setProgress('loadHashtagSubscriptionsRiver'), true);
+
+    let result;
+
+    try {
+      result = await this.client.hashtagSubscriptions(query);
+      this.dispatch(a.river.loadHashtagSubscriptionsRiver(result));
+    } catch (e) {
+      this.dispatch(a.messages.reportError(a.river.LOAD_HASHTAG_SUBSCRIPTONS_RIVER, e));
+      result = false;
+    }
+
+    this.dispatch(a.ui.setProgress('loadHashtagSubscriptionsRiver'), false);
+
+    return result;
+  }
+
+  loadSchoolSubscriptions = async (query = { offset: 0 }) => {
+    this.dispatch(a.ui.setProgress('loadSchoolSubscriptionsRiver'), true);
+
+    let result;
+
+    try {
+      result = await this.client.schoolSubscriptions(query);
+      this.dispatch(a.river.loadSchoolSubscriptionsRiver(result));
+    } catch (e) {
+      this.dispatch(a.messages.reportError(a.river.LOAD_SCHOOL_SUBSCRIPTONS_RIVER, e));
+      result = false;
+    }
+
+    this.dispatch(a.ui.setProgress('loadSchoolSubscriptionsRiver'), false);
+
+    return result;
+  }
+
+  loadGeotagSubscriptions = async (query = { offset: 0 }) => {
+    this.dispatch(a.ui.setProgress('loadGeotagSubscriptionsRiver'), true);
+
+    let result;
+
+    try {
+      result = await this.client.geotagSubscriptions(query);
+      this.dispatch(a.river.loadGeotagSubscriptionsRiver(result));
+    } catch (e) {
+      this.dispatch(a.messages.reportError(a.river.LOAD_GEOTAG_SUBSCRIPTONS_RIVER, e));
+      result = false;
+    }
+
+    this.dispatch(a.ui.setProgress('loadGeotagSubscriptionsRiver'), false);
+
+    return result;
+  }
+
   loadTagCloud = async () => {
     try {
       const result = await this.client.tagCloud();

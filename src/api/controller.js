@@ -1105,6 +1105,119 @@ export default class ApiController {
     ctx.body = posts;
   };
 
+  hashtagSubscriptions = async (ctx) => {
+    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    // TODO: replace ctx.session.user with ctx.state.user after #686
+    const hashtags = await this.bookshelf.knex('followed_hashtags_users')
+      .where('user_id', ctx.session.user);
+    const hashtagIds = hashtags.map(t => t.hashtag_id);
+
+    const q = Post.collection()
+      .query(qb => {
+        qb
+          .join('hashtags_posts', 'hashtags_posts.post_id', 'posts.id')
+          .whereNot('user_id', ctx.session.user)
+          .whereIn('hashtags_posts.hashtag_id', hashtagIds)
+          .orderBy('posts.updated_at', 'desc')
+          .groupBy('posts.id');
+
+        this.applyLimitQuery(qb, ctx.query, 5);
+        this.applyOffsetQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, '-updated_at');
+      });
+
+    let posts = await q.fetch({ withRelated: POST_RELATIONS });
+    posts = await this.cleanUpPosts(posts);
+
+    ctx.body = posts;
+  };
+
+  schoolSubscriptions = async (ctx) => {
+    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    // TODO: replace ctx.session.user with ctx.state.user after #686
+    const schools = await this.bookshelf.knex('followed_schools_users')
+      .where('user_id', ctx.session.user);
+    const schoolIds = schools.map(t => t.school_id);
+
+    const q = Post.collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'posts_schools.post_id', 'posts.id')
+          .whereNot('user_id', ctx.session.user)
+          .whereIn('posts_schools.school_id', schoolIds)
+          .orderBy('posts.updated_at', 'desc')
+          .groupBy('posts.id');
+
+        this.applyLimitQuery(qb, ctx.query, 5);
+        this.applyOffsetQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, '-updated_at');
+      });
+
+    let posts = await q.fetch({ withRelated: POST_RELATIONS });
+    posts = await this.cleanUpPosts(posts);
+
+    ctx.body = posts;
+  };
+
+  geotagSubscriptions = async (ctx) => {
+    // TODO: Replace with `auth` middleware in routes.js after https://github.com/Lokiedu/libertysoil-site/pull/868 is merged.
+    if (!ctx.session || !ctx.session.user) {
+      ctx.status = 403;
+      ctx.body = { error: 'You are not authorized' };
+      return;
+    }
+
+    const Post = this.bookshelf.model('Post');
+
+    // TODO: replace ctx.session.user with ctx.state.user after #686
+    const geotags = await this.bookshelf.knex('followed_geotags_users')
+      .where('user_id', ctx.session.user);
+    const geotagIds = geotags.map(t => t.geotag_id);
+
+    // When it gets to slow we might try to add parent ids to geotags_posts instead of joining geotags.
+    const q = Post.collection()
+      .query(qb => {
+        qb
+          .join('geotags_posts', 'geotags_posts.post_id', 'posts.id')
+          .join('geotags', 'geotags.id', 'geotags_posts.geotag_id')
+          .whereNot('user_id', ctx.session.user)
+          .where((qb) => {
+            qb
+              .whereIn('geotags.id', geotagIds)
+              .orWhereIn('geotags.continent_id', geotagIds)
+              .orWhereIn('geotags.country_id', geotagIds)
+              .orWhereIn('geotags.admin1_id', geotagIds);
+          })
+          .orderBy('posts.updated_at', 'desc')
+          .groupBy('posts.id');
+
+        this.applyLimitQuery(qb, ctx.query, 5);
+        this.applyOffsetQuery(qb, ctx.query);
+        this.applySortQuery(qb, ctx.query, '-updated_at');
+      });
+
+    let posts = await q.fetch({ withRelated: POST_RELATIONS });
+    posts = await this.cleanUpPosts(posts);
+
+    ctx.body = posts;
+  };
+
   checkUserExists = async (ctx) => {
     const User = this.bookshelf.model('User');
 
@@ -3716,5 +3829,15 @@ export default class ApiController {
     if ('offset' in query || defaultValue) {
       qb.offset(query.offset || defaultValue);
     }
+  }
+
+  async cleanUpPosts(posts) {
+    const commentCounts = await this.countComments(posts);
+    // Copied from `subscriptions`. There must be a better way to filter out properties.
+    return posts.map(post => {
+      post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
+      post.attributes.comments = commentCounts[post.get('id')];
+      return post;
+    });
   }
 }

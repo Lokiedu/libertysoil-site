@@ -236,6 +236,21 @@ export default class ApiClient {
     return await response.json();
   }
 
+  async hashtagSubscriptions(query: Object = {}): Promise<Array<Post>> {
+    const response = await this.get(`/api/v1/posts/subscriptions/hashtag`, query);
+    return await response.json();
+  }
+
+  async schoolSubscriptions(query: Object = {}): Promise<Array<Post>> {
+    const response = await this.get(`/api/v1/posts/subscriptions/school`, query);
+    return await response.json();
+  }
+
+  async geotagSubscriptions(query: Object = {}): Promise<Array<Post>> {
+    const response = await this.get(`/api/v1/posts/subscriptions/geotag`, query);
+    return await response.json();
+  }
+
   async allPosts(query: Object = {}): Promise<Array<Post>> {
     const response = await this.get('/api/v1/posts/all', query);
     return await response.json();

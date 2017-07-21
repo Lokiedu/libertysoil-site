@@ -37,6 +37,9 @@ export function initApi(bookshelf, sphinx) {
   api.post('/session', controller.login);
 
   api.get('/posts', controller.subscriptions);
+  api.get('/posts/subscriptions/hashtag', controller.hashtagSubscriptions);
+  api.get('/posts/subscriptions/school', controller.schoolSubscriptions);
+  api.get('/posts/subscriptions/geotag', controller.geotagSubscriptions);
   api.post('/posts', controller.createPost);
   api.get('/post/:id', controller.getPost);
   api.post('/post/:id', controller.updatePost);

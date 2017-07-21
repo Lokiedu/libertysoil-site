@@ -21,6 +21,10 @@ export const SET_POSTS_TO_RIVER = 'SET_POSTS_TO_RIVER';
 export const SET_POSTS_TO_LIKES_RIVER = 'SET_POSTS_TO_LIKES_RIVER';
 export const SET_POSTS_TO_FAVOURITES_RIVER = 'SET_POSTS_TO_FAVOURITES_RIVER';
 
+export const LOAD_HASHTAG_SUBSCRIPTONS_RIVER = 'LOAD_HASHTAG_SUBSCRIPTONS_RIVER';
+export const LOAD_SCHOOL_SUBSCRIPTONS_RIVER = 'LOAD_SCHOOL_SUBSCRIPTONS_RIVER';
+export const LOAD_GEOTAG_SUBSCRIPTONS_RIVER = 'LOAD_GEOTAG_SUBSCRIPTONS_RIVER';
+
 export function clearRiver() {
   return {
     type: CLEAR_RIVER
@@ -53,5 +57,35 @@ export function setPostsToFavouritesRiver(user_id, posts) {
       user_id,
       posts
     }
+  };
+}
+
+export function loadHashtagSubscriptionsRiver(posts, meta = { offset: 0 }) {
+  return {
+    type: LOAD_HASHTAG_SUBSCRIPTONS_RIVER,
+    payload: {
+      posts
+    },
+    meta
+  };
+}
+
+export function loadSchoolSubscriptionsRiver(posts, meta = { offset: 0 }) {
+  return {
+    type: LOAD_SCHOOL_SUBSCRIPTONS_RIVER,
+    payload: {
+      posts
+    },
+    meta
+  };
+}
+
+export function loadGeotagSubscriptionsRiver(posts, meta = { offset: 0 }) {
+  return {
+    type: LOAD_GEOTAG_SUBSCRIPTONS_RIVER,
+    payload: {
+      posts
+    },
+    meta
   };
 }
