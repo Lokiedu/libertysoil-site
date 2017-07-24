@@ -162,7 +162,9 @@ export class FetchHandler {
             this.status = status;
             this.redirectTo = redirectTo;
 
-            browserHistory.push(redirectTo);
+            if (browserHistory) {
+              browserHistory.push(redirectTo);
+            }
           } else if (isNumber(response)) {
             debug(`#${i}: setting status to ${response}`);
             this.status = response;
