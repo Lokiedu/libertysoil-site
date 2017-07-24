@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 // @flow
+import createDebug from 'debug';
 import { isPlainObject, isNumber } from 'lodash';
 import { browserHistory } from 'react-router';
 
@@ -25,6 +26,9 @@ import type {
   AsyncHandler, handler
 } from '../definitions/fetch-data';
 import type ApiClient from '../api/client';
+
+
+let debugCounter = 0;
 
 /**
  * Combines onEnter handlers into one function.
@@ -125,7 +129,15 @@ export class FetchHandler {
   }
 
   handle = async (nextState: Object): Promise<void> => {
+    const theDebugCounter = debugCounter++;
+    if (theDebugCounter === 999) {
+      debugCounter = 0;
+    }
+
+    const debug = createDebug(`newfront-ui:FetchHandler:[${theDebugCounter}]`);
+
     const len = nextState.routes.length;
+    debug(`will load data for ${len} components`);
 
     for (let i = len; i--; i >= 0) {
       const route = nextState.routes[i];
@@ -138,24 +150,32 @@ export class FetchHandler {
       }
 
       if (component && 'fetchData' in component) {
+        debug(`#${i}: there's something to load`);
         try {
           const response = await component.fetchData(nextState, this.store, this.apiClient);
 
+          debug(`#${i}: finished loading data`);
+
           if (isPlainObject(response)) {
             const { status, redirectTo } = response;
+            debug(`#${i}: will redirect to ${redirectTo} with status ${status}`);
             this.status = status;
             this.redirectTo = redirectTo;
 
             browserHistory.push(redirectTo);
           } else if (isNumber(response)) {
+            debug(`#${i}: setting status to ${response}`);
             this.status = response;
           }
         } catch (e) {
           // FIXME: handle error in a useful fashion (show "Network error" to user, ask to reload page, etc.)
+          debug(`#${i}: ERROR loading data: ${e}`);
           console.error(e);  // eslint-disable-line no-console
         }
       }
     }
+
+    debug(`DONE`);
   };
 
   handleSynchronously = (
