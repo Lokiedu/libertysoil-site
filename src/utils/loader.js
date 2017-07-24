@@ -130,9 +130,16 @@ export class FetchHandler {
     for (let i = len; i--; i >= 0) {
       const route = nextState.routes[i];
 
-      if ('component' in route && 'fetchData' in route.component) {
+      let component = null;
+      if ('getComponent' in route) {
+        component = route.getComponent(nextState, () => false);
+      } else if ('component' in route) {
+        component = route.component;
+      }
+
+      if (component && 'fetchData' in component) {
         try {
-          const response = await route.component.fetchData(nextState, this.store, this.apiClient);
+          const response = await component.fetchData(nextState, this.store, this.apiClient);
 
           if (isPlainObject(response)) {
             const { status, redirectTo } = response;
