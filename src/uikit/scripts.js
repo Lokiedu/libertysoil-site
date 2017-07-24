@@ -48,7 +48,7 @@ const fetchHandler = new FetchHandler(store, client);
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      {getRoutes(authHandler.handle, fetchHandler.handle, fetchHandler.handle)}
+      {getRoutes(authHandler.handle, fetchHandler.handle, fetchHandler.handleChange)}
     </Router>
   </Provider>,
   document.getElementById('content')

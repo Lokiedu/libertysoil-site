@@ -180,6 +180,10 @@ export class FetchHandler {
     debug(`DONE`);
   };
 
+  handleChange = async (oldState: Object, nextState: Object) => {
+    return this.handle(nextState);
+  };
+
   handleSynchronously = (
     nextState: Object,
     replace: replaceCallback,
