@@ -120,3 +120,21 @@ export const SearchQueryValidator = Joi.object({
   sort: Joi.string().only(SEARCH_SORTING_TYPES),
   q: Joi.string().required()
 }).options({ stripUnknown: true });
+
+export const PostValidator = Joi.object({
+  type: Joi.string().only('short_text', 'long_text', 'story').required(),
+  text_source: Joi.string().required(),
+  text_type: Joi.string().when('type', {
+    is: 'story',
+    then: Joi.only('html', 'markdown').required(),
+    otherwise: Joi.forbidden()
+  }),
+  title: Joi.alternatives().when('type', {
+    is: ['story', 'long_post'],
+    then: Joi.string().min(1),
+    otherwise: Joi.forbidden()
+  }),
+  hashtags: Joi.array().items(Joi.string().min(3)),
+  schools: Joi.array().items(Joi.string()),
+  geotags: Joi.array().items(Joi.string())
+}).options({ abortEarly: false, stripUnknown: true });

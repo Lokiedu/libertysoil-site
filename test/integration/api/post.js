@@ -164,7 +164,7 @@ describe('Post', () => {
     });
 
     describe('POST /api/v1/posts', () => {
-      it('creates a post and copies text_source into text without processing', async () => {
+      it("doesn't allow text_type to be present for non-story posts", async () => {
         await expect(
           {
             session: sessionId,
@@ -177,11 +177,7 @@ describe('Post', () => {
               title: 'Title'
             }
           },
-          'body to satisfy',
-          {
-            text_source: '# header',
-            text: '# header'
-          }
+          'not to open'
         );
       });
 

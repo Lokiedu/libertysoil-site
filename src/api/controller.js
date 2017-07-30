@@ -40,7 +40,8 @@ import {
   GeotagValidator,
   UserMessageValidator,
   SearchQueryValidator,
-  ProfilePostValidator
+  ProfilePostValidator,
+  PostValidator
 } from './validators';
 
 const SUPPORTED_LOCALES = Object.keys(
@@ -1630,8 +1631,15 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
 
     try {
+      const validationResult = PostValidator.validate(ctx.request.body);
+      if (validationResult.error) {
+        this.processError(ctx, validationResult.error);
+        return;
+      }
+
+      const attributes = validationResult.value;
       const post = await Post.create({
-        ...ctx.request.body,
+        ...attributes,
         user_id: ctx.session.user
       });
       await post.refresh({ require: true, withRelated: POST_RELATIONS });
