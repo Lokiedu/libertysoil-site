@@ -31,9 +31,12 @@ let webpackChunks = null;
 export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer, logger) {
   const reactMiddleware = async (ctx) => {
     if (!webpackChunks) {
-      const chunksFilename = `${__dirname}/../webpack-chunks.json`;
-
       try {
+        let chunksFilename = `${__dirname}/../webpack-chunks.json`;
+        if (process.env.DB_ENV === 'test') {
+          chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
+        }
+
         const data = await readFile(chunksFilename);
         webpackChunks = JSON.parse(data);
       } catch (e) {
