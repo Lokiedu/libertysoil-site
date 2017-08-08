@@ -31,7 +31,7 @@ const FooterComponent = () => (
       <a href="mailto:info@libertysoil.org">info@libertysoil.org</a>
     </p>
     <p>
-      <a href="https://github.com/Lokiedu/libertysoil-site/milestones">Version 1.12.0-alpha (28 June 2017)</a>
+      <a href="https://github.com/Lokiedu/libertysoil-site/milestones">Version 1.12.0-alpha (8 August 2017)</a>
     </p>
   </footer>
 );
