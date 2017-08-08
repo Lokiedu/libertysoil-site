@@ -103,7 +103,7 @@ export default class SideSuggestedUsers extends React.Component {
                     <Link to={url}>{name}</Link>
                   </h4>
                   <p className="suggested-user__about">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil aut animi enim porro pariatur, maxime officia. Animi fuga, dolores sunt, accusamus quis laudantium ea, tempora sed consequatur veniam quae blanditiis?
+                    {more.get('summary')}
                   </p>
                   <SocialToolbar
                     defaultClassName="suggested-user__social"
