@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import t from 't8on';
 
+import { SUPPORTED_LOCALES } from '../consts/localization';
 import messageType from '../consts/messageTypeConstants';
 import createSelector from '../selectors/createSelector';
 
@@ -58,6 +59,7 @@ export class UnwrappedMessage extends React.Component {
   render() {
     const {
       children,
+      locale,
       removeMessage,
       type,
       message,
@@ -69,7 +71,8 @@ export class UnwrappedMessage extends React.Component {
 
     const cn = classNames('message', {
       'message-error': type === messageType.ERROR,
-      'message-internal': internal
+      'message-internal': internal,
+      'message--rtl': SUPPORTED_LOCALES[locale].rtl
     });
 
     if (type == messageType.ERROR) {
@@ -80,7 +83,7 @@ export class UnwrappedMessage extends React.Component {
       close = <span className="message__close action micon" onClick={this.closeHandler}>close</span>;
     }
 
-    const translate = t.translateTo(this.props.locale);
+    const translate = t.translateTo(locale);
 
     return (
       <div className={cn} key={i}>

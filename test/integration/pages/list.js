@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 // import sinon from 'sinon';
 
 import expect from '../../../test-helpers/expect';
@@ -72,7 +72,7 @@ describe('ListPage', () => {
     it('user can open / and see posting form', async () => {
       const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
 
       const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
       await expect(pageContent, 'to have child', '.box-post');  // posting form
@@ -87,7 +87,7 @@ describe('ListPage', () => {
         posts.push(await createPost({ user_id: user.id }));
         const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
-        const document = jsdom(context.httpResponse.body);
+        const { document } = (new JSDOM(context.httpResponse.body)).window;
 
         const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
         await expect(pageContent, 'to contain elements matching', '.box-post');  // posting form
@@ -102,7 +102,7 @@ describe('ListPage', () => {
         }
         const context = await expect({ url: '/feed', session: sessionId }, 'to open successfully');
 
-        const document = jsdom(context.httpResponse.body);
+        const { document } = (new JSDOM(context.httpResponse.body)).window;
 
         const pageContent = await expect(document.body, 'queried for first', '#content>.page .page__content');
         await expect(pageContent, 'to contain elements matching', 'button[title="Load more..."]');  // no load more button

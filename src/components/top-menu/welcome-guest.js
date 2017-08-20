@@ -18,7 +18,8 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
+import { ICON_SIZE } from './index';
 
 export default class WelcomeGuestTopMessage extends React.Component {
   static displayName = 'WelcomeGuestTopMessage';
@@ -42,7 +43,7 @@ export default class WelcomeGuestTopMessage extends React.Component {
                 className="action top-menu__icon"
                 icon="home"
                 pack="fa"
-                size="common"
+                size={ICON_SIZE}
                 onClick={this.props.onHomeClick}
               />
             </div>
@@ -61,7 +62,7 @@ export default class WelcomeGuestTopMessage extends React.Component {
               className="action"
               icon="close"
               pack="fa"
-              size="common"
+              size={ICON_SIZE}
               onClick={this.props.onMessageClose}
             />
           </div>

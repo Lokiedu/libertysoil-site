@@ -19,7 +19,7 @@ import React  from 'react';
 import Link from 'react-router/lib/Link';
 import { List } from 'immutable';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 
 export default class SocialToolbar extends React.Component {
   static displayName = 'SocialToolbar';

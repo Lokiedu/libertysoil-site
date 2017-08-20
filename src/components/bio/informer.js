@@ -18,8 +18,10 @@
 import React from 'react';
 import Link from 'react-router/lib/Link';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import BasicRiverItem from '../river/theme/basic';
+
+const ICON_SIZE = { inner: 'xl', outer: 'l' };
 
 export default function YourBioInformer({ username }) {
   return (
@@ -30,6 +32,7 @@ export default function YourBioInformer({ username }) {
           className="bio__icon bio__icon--bordered bio__informer-icon"
           icon="exclamation-circle"
           pack="fa"
+          size={ICON_SIZE}
         />
       }
     >

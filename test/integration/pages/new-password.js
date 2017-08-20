@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 
 import expect from '../../../test-helpers/expect';
 import initBookshelf from '../../../src/api/db';
@@ -45,7 +45,7 @@ describe('NewPassword page', () => {
     it('user can open new password page and see form', async () => {
       const context = await expect({ url: '/newpassword/foo' }, 'to open successfully');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(document.body, 'queried for first', '#content>.page .page__body form.password-form');
     });
   });

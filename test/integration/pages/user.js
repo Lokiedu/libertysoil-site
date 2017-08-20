@@ -17,7 +17,7 @@
 */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';
@@ -31,7 +31,7 @@ describe('User page', () => {
     it('renders NotFound page', async () => {
       const context = await expect({ url: '/user/fake-user' }, 'to open not found');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',
@@ -53,7 +53,7 @@ describe('User page', () => {
       const username = user.get('username');
       const context = await expect({ url: `/user/${username}` }, 'to open successfully');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',

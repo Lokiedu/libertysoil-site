@@ -19,11 +19,12 @@ import React, { PropTypes } from 'react';
 
 import { getName } from '../../utils/user';
 import Avatar from '../user/avatar';
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import {
   PageCaption
 } from '../page';
 
+const ICON_SIZE = { inner: 'ml', outer: 'm' };
 
 export const UserCaption = ({ user, title, subtitle }) => {
   if (!user) {
@@ -35,7 +36,7 @@ export const UserCaption = ({ user, title, subtitle }) => {
   return (
     <PageCaption
       iconLeft={<Avatar user={user} isRound={false} size={60} />}
-      iconRight={<Icon className="icon-outline--khaki color-white" icon="at" outline size="big" />}
+      iconRight={<Icon color="white" icon="at" outline="khaki" size={ICON_SIZE} />}
     >
       <h2 className="page-head__title">{title || user.get('username')}</h2>
       <h1 className="page-head__subtitle">{subtitle || getName(user)}</h1>

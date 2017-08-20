@@ -16,19 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { PropTypes } from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import noop from 'lodash/noop';
+import t from 't8on';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 import ApiClient from '../api/client';
 import { API_HOST } from '../config';
+import { DEFAULT_LOCALE } from '../consts/localization';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
-import { attachContextualRoutes, detachContextualRoutes } from '../actions/ui';
-import { getRoutesNames } from '../utils/router';
 
 import {
   Page,
@@ -45,6 +46,8 @@ import HeaderLogo from '../components/header-logo';
 import Messages from '../components/messages';
 
 export class UnwrappedAuth extends React.Component {
+  static contextualRoutes = ['login', 'signup'];
+
   static displayName = 'UnwrappedAuth';
 
   static propTypes = {
@@ -53,6 +56,11 @@ export class UnwrappedAuth extends React.Component {
     is_logged_in: PropTypes.bool,
     location: PropTypes.shape(),
     messages: ArrayOfMessagesPropType.isRequired,
+    routes: PropTypes.arrayOf(PropTypes.shape()),
+    translation: PropTypes.shape({
+      format: PropTypes.func,
+      translate: PropTypes.func
+    }),
     ui: PropTypes.shape({
       registrationSuccess: PropTypes.bool
     }).isRequired
@@ -60,7 +68,12 @@ export class UnwrappedAuth extends React.Component {
 
   static defaultProps = {
     dispatch: noop,
-    location: { hash: '', pathname: '', search: '' }
+    location: { hash: '', pathname: '', search: '' },
+    translation: ImmutableMap({
+      locale: DEFAULT_LOCALE,
+      format: t.formatTo(DEFAULT_LOCALE),
+      translate: t.translateTo(DEFAULT_LOCALE)
+    })
   };
 
   static async fetchData(router, store) {
@@ -90,24 +103,10 @@ export class UnwrappedAuth extends React.Component {
       new ApiClient(API_HOST), props.dispatch
     );
 
+    this.handleLogin = this.triggers.login.bind(null, true);
     this.routesProps = {
-      '#login': { onSubmit: this.triggers.login.bind(null, true) }
+      'login': { onSubmit: this.handleLogin }
     };
-  }
-
-  componentWillMount() {
-    this.props.dispatch(attachContextualRoutes(
-      UnwrappedAuth.displayName,
-      getRoutesNames(this.props.routes),
-      ['#login']
-    ));
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(detachContextualRoutes(
-      UnwrappedAuth.displayName,
-      getRoutesNames(this.props.routes)
-    ));
   }
 
   render() {
@@ -162,6 +161,7 @@ export class UnwrappedAuth extends React.Component {
                 <div className="layout__row">
                   <Register
                     registration_success={registration_success}
+                    translation={this.props.translation}
                     onShowRegisterForm={this.triggers.showRegisterForm}
                     onRegisterUser={this.triggers.registerUser}
                   />
@@ -173,8 +173,9 @@ export class UnwrappedAuth extends React.Component {
 
         <Footer />
         <ContextualRoutes
-          hash={this.props.location.hash}
+          location={this.props.location}
           predefProps={this.routesProps}
+          routes={this.props.routes}
           scope={UnwrappedAuth.displayName}
         />
       </div>
@@ -186,11 +187,19 @@ const selector = createSelector(
   currentUserSelector,
   state => state.get('messages').filter(m => m.get('message') !== 'welcome-guest'),
   state => state.get('ui'),
-  (current_user, messages, ui) => ({
-    messages,
-    ui,
-    ...current_user
-  })
+  (current_user, messages, ui) => {
+    const locale = ui.get('locale');
+    return {
+      messages,
+      translation: ImmutableMap({
+        locale,
+        format: t.formatTo(locale),
+        translate: t.translateTo(locale)
+      }),
+      ui,
+      ...current_user
+    };
+  }
 );
 
 const Auth = connect(selector)(UnwrappedAuth);

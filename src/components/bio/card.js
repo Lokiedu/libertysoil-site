@@ -18,13 +18,15 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
+
+const ICON_SIZE = { inner: 'xxl', outer: 'l' };
 
 export default function BioCard({ className, icon, onClick, title, children }) {
   return (
     <div className={classNames('bio__card bio-card', className)}>
       <div className="bio-card__container" onClick={onClick}>
-        <Icon {...icon} className={classNames('bio-card__icon', icon.className)} />
+        <Icon size={ICON_SIZE} {...icon} className={classNames('bio-card__icon', icon.className)} />
         <div className="bio-card__title">{title}</div>
       </div>
       <div>{children}</div>

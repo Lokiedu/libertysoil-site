@@ -19,7 +19,7 @@
 /* global $dbConfig */
 import qs from 'querystring';
 
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 
 import initBookshelf from '../../../src/api/db';
 import { login } from '../../../test-helpers/api';
@@ -52,7 +52,7 @@ describe('HashtagEditPage', () => {
         'to open not found'
       );
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',
@@ -78,7 +78,7 @@ describe('HashtagEditPage', () => {
         'to open successfully'
       );
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',

@@ -21,6 +21,11 @@ import classNames from 'classnames';
 import Dropdown from '../../dropdown';
 import RiverItem from '../item';
 
+const CLOSED_DROPDOWN_ICON = {
+  color: 'grey',
+  icon: 'fiber-manual-record'
+};
+
 export default class BasicRiverItem extends React.Component {
   shouldComponentUpdate(nextProps) {
     return nextProps !== this.props;
@@ -38,7 +43,7 @@ export default class BasicRiverItem extends React.Component {
         }
         menu={menuItems &&
           <div className="river-item__menu">
-            <Dropdown iconClosed="fiber-manual-record" theme="new">
+            <Dropdown iconClosed={CLOSED_DROPDOWN_ICON} theme="new">
               {menuItems}
             </Dropdown>
           </div>

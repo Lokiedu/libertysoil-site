@@ -24,6 +24,8 @@ import User from '../user';
 import EditPost from './tools/edit-post';
 import Subscribe from './tools/subscribe';
 
+const DROPDOWN_ICON = { icon: 'more_vert', size: 'block' };
+
 export default class PostBrief extends React.Component {
   static propTypes = {};
 
@@ -51,7 +53,7 @@ export default class PostBrief extends React.Component {
         </div>
 
         {current_user.get('id') &&
-          <Dropdown className="card__toolbar_item" icon="more_vert">
+          <Dropdown className="card__toolbar_item" icon={DROPDOWN_ICON}>
             <MenuItem>
               <Subscribe
                 is_logged_in={!!userId}

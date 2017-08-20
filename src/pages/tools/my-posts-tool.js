@@ -31,7 +31,7 @@ import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import Button from '../../components/button';
 import VisibilitySensor from '../../components/visibility-sensor';
-import Icon from '../../components/icon';
+import { OldIcon as Icon } from '../../components/icon';
 
 
 const LIMIT = 25;

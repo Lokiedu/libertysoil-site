@@ -25,9 +25,11 @@ import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools'
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 import Tag from './tag';
 import AddTagModal from './add-tag-modal';
+
+const MORE_ICON_SIZE = { inner: 'l', outer: 'm' };
 
 class CreatePost extends React.Component {
   static displayName = 'CreatePost';
@@ -230,6 +232,7 @@ class CreatePost extends React.Component {
                 <Icon
                   className="more_button"
                   icon={expanded ? 'more_vert' : 'more_horiz'}
+                  size={MORE_ICON_SIZE}
                   onClick={this._handleClickOnMore}
                 />
                 {expanded &&

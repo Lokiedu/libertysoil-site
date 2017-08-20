@@ -20,7 +20,7 @@ import classNames from 'classnames';
 import omit from 'lodash/omit';
 
 import ClickOutsideComponentDecorator from '../../decorators/ClickOutsideComponentDecorator';
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 
 class OpenedDropdownV2Content extends React.Component {
   static propTypes = {
@@ -54,7 +54,12 @@ class OpenedDropdownV2Content extends React.Component {
 }
 
 const Body = ClickOutsideComponentDecorator(OpenedDropdownV2Content);
-export const defaultIcon = <Icon className="micon micon-small" icon="arrow_drop_down" />;
+
+const ICON_SIZE = { inner: 'lm', outer: 's' };
+
+export const defaultIcon = (
+  <Icon icon="arrow_drop_down" size={ICON_SIZE} />
+);
 
 export default class DropdownV2 extends React.Component {
   static displayName = 'DropdownV2';

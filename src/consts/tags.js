@@ -14,17 +14,17 @@ export const SIZE = {
 export const TAG_TYPES = {
   TAG_HASHTAG: {
     className: 'tag--hashtag',
-    icon: { className: 'icon--type_hashtag', icon: 'hashtag' },
+    icon: { className: 'tag__icon--type_hashtag', icon: 'hashtag' },
     url: '/tag/'
   },
   TAG_LOCATION: {
     className: 'tag--geotag',
-    icon: { className: 'icon--type_geotag', icon: 'place' },
+    icon: { className: 'tag__icon--type_geotag', icon: 'place' },
     url: '/geo/'
   },
   TAG_SCHOOL: {
     className: 'tag--school',
-    icon: { className: 'icon--type_school', icon: 'school' },
+    icon: { className: 'tag__icon--type_school', icon: 'school' },
     url: '/s/'
   },
   TAG_EVENT: {

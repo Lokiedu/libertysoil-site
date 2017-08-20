@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import omit from 'lodash/omit';
 
-import Icon from '../../icon';
+import { OldIcon as Icon } from '../../icon';
 import RawTagName from './name';
 
 const RawTag = ({ aside, icon, name, ...props }) => (

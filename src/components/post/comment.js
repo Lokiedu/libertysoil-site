@@ -27,6 +27,11 @@ import Dropdown from '../dropdown';
 import MenuItem from '../menu-item';
 import paragraphify from '../../utils/paragraphify';
 
+const CLOSED_DROPDOWN_ICON = {
+  color: 'grey',
+  icon: 'fiber-manual-record'
+};
+
 class Comment extends Component {
   constructor(props) {
     super(props);
@@ -129,7 +134,7 @@ class Comment extends Component {
       // TODO: use 'brightness1' as Dropdown.props.iconClosed
       // look at .comment__dropdown definition
       toolbar = (
-        <Dropdown className="comment__dropdown" iconClosed="fiber-manual-record" theme="new">
+        <Dropdown className="comment__dropdown" iconClosed={CLOSED_DROPDOWN_ICON} theme="new">
           <MenuItem className="menu__item--theme_new" onClick={this.editComment}>
             Edit comment
           </MenuItem>

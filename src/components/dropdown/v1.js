@@ -20,12 +20,32 @@ import classNames from 'classnames';
 import omit from 'lodash/omit';
 
 import ClickOutsideComponentDecorator from '../../decorators/ClickOutsideComponentDecorator';
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
+
+const getIcon = (icon) => {
+  let props;
+  if (icon && typeof icon === 'object') {
+    props = icon;
+  } else {
+    props = { icon };
+  }
+
+  return (
+    <Icon
+      className="micon micon-small"
+      key="icon"
+      {...props}
+    />
+  );
+};
 
 class OpenedDropdownContent extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    icon: PropTypes.string,
+    icon: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape(Icon.propTypes)
+    ]),
     onClose: PropTypes.func
   };
 
@@ -41,7 +61,7 @@ class OpenedDropdownContent extends React.Component {
     return (
       <div>
         <div className="dropdown__trigger action" onClick={this.props.onClose}>
-          <Icon className="micon micon-small" icon={this.props.icon} />
+          {this.props.icon}
         </div>
         {this.props.children &&
           <div className="dropdown__body">
@@ -53,7 +73,10 @@ class OpenedDropdownContent extends React.Component {
   }
 }
 
-const defaultIcon = 'arrow_drop_down';
+const defaultIcon = {
+  icon: 'arrow_drop_down', size: { inner: 'lm', outer: 's' }
+};
+
 const Body = ClickOutsideComponentDecorator(OpenedDropdownContent);
 
 export default class Dropdown extends React.Component {
@@ -104,6 +127,8 @@ export default class Dropdown extends React.Component {
       i = defaultIcon;
     }
 
+    i = getIcon(i);
+
     let body;
     let dropdownClassName = classNames(
       'dropdown',
@@ -119,9 +144,10 @@ export default class Dropdown extends React.Component {
       );
     } else {
       dropdownClassName += ' dropdown-closed';
+
       body = (
         <div className="dropdown__trigger action" onClick={this.toggleVisibility}>
-          <Icon className="micon micon-small" icon={i} />
+          {i}
         </div>
       );
     }

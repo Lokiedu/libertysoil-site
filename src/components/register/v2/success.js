@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-import { showRegisterForm } from '../../actions/ui';
+import { showRegisterForm } from '../../../actions/ui';
 
 export default class SignupSuccessMessage extends React.Component {
   static contextTypes = {

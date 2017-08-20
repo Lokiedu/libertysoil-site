@@ -22,12 +22,14 @@ import isUndefined from 'lodash/isUndefined';
 import { getName } from '../../utils/user';
 import { PROFILE_POST_TYPES as t } from '../../consts/postTypeConstants';
 import BasicRiverItem from '../river/theme/basic';
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import Logo from '../logo';
 import Time from '../time';
 import User from '../user';
 import ProfilePost from './post';
 import PictureChangePost from './picture-change-post';
+
+const SIGNUP_ICON_SIZE = { inner: 'lm', outer: 's' };
 
 const SignUpIcon = ({ user }) => (
   <div className="bio__icon--type_signup layout layout-align_center layout-align_vertical">
@@ -40,6 +42,7 @@ const SignUpIcon = ({ user }) => (
       color="gray"
       icon="arrow-right"
       pack="fa"
+      size={SIGNUP_ICON_SIZE}
     />
     <Logo isLink={false} />
   </div>

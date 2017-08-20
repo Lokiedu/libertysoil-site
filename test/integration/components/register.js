@@ -22,7 +22,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import Register, { UnwrappedRegister } from '../../../src/components/register/v1';
+import RegisterFormV1, { UnwrappedRegisterFormV1 } from '../../../src/components/register/v1/form';
 import { initState } from '../../../src/store';
 import initBookshelf from '../../../src/api/db';
 import expect from '../../../test-helpers/expect';
@@ -69,9 +69,9 @@ describe('UnwpappedAuth page', () => {
 
     it('availableUsername should work', async () => {
       const testComponent = (
-        <Register
-          onRegisterUser={noop}
-          onShowRegisterForm={noop}
+        <RegisterFormV1
+          isVisible
+          onSubmit={noop}
         />
       );
       const wrapper = mount(testComponent);
@@ -89,16 +89,16 @@ describe('UnwpappedAuth page', () => {
     it('should check on email currently taken', async () => {
       const testComponent = (
         <Provider store={store}>
-          <Register
-            onRegisterUser={noop}
-            onShowRegisterForm={noop}
+          <RegisterFormV1
+            isVisible
+            onSubmit={noop}
           />
         </Provider>
       );
       const wrapper = mount(testComponent);
 
       const newEmailError = waitForTrue(() =>
-        wrapper.find(UnwrappedRegister).props().fields.email.error === 'Email is taken'
+        wrapper.find(UnwrappedRegisterFormV1).props().fields.registerEmail.error === 'email_taken'
       );
 
       wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
@@ -112,15 +112,15 @@ describe('UnwpappedAuth page', () => {
       const onRegisterUser = sinon.spy();
       const testComponent = (
         <Provider store={store}>
-          <Register
-            onRegisterUser={onRegisterUser}
-            onShowRegisterForm={noop}
+          <RegisterFormV1
+            isVisible
+            onSubmit={onRegisterUser}
           />
         </Provider>
       );
 
       const wrapper = mount(testComponent);
-      const register = wrapper.find(UnwrappedRegister);
+      const register = wrapper.find(UnwrappedRegisterFormV1);
 
       const changeTextInput = async (id, value, name) => {
         wrapper.find(id).node.value = value;
@@ -128,20 +128,44 @@ describe('UnwpappedAuth page', () => {
         await waitForTrue(() => !register.props().fields[name].error);
       };
 
-      await changeTextInput('#registerUsername', userAttrs.username, 'username');
-      await changeTextInput('#registerPassword', userAttrs.password, 'password');
-      await changeTextInput('#registerPasswordRepeat', userAttrs.password, 'passwordRepeat');
-      await changeTextInput('#registerEmail', userAttrs.email, 'email');
+      await changeTextInput(
+        '#registerUsername',
+        userAttrs.username,
+        'registerUsername'
+      );
+      await changeTextInput(
+        '#registerPassword',
+        userAttrs.password,
+        'registerPassword'
+      );
+      await changeTextInput(
+        '#registerPasswordRepeat',
+        userAttrs.password,
+        'registerPasswordRepeat'
+      );
+      await changeTextInput(
+        '#registerEmail',
+        userAttrs.email,
+        'registerEmail'
+      );
 
       wrapper.find('#registerAgree').node.checked = true;
       wrapper.find('#registerAgree').simulate('change');
-      await waitForTrue(() => !register.props().fields.agree.error);
+      await waitForTrue(() => !register.props().fields.registerAgree.error);
       await waitForTrue(() => register.props().form.isValid());
 
       wrapper.find('#registerForm').simulate('submit');
       await waitForTrue(() => register.props().form.isValid());
 
-      return expect(onRegisterUser.calledWith(userAttrs.username, userAttrs.password, userAttrs.email, '', ''), 'to be true');
+      return expect(
+        onRegisterUser.calledWith(
+          userAttrs.username,
+          userAttrs.password,
+          userAttrs.email,
+          '', ''
+        ),
+        'to be true'
+      );
     });
   });
 });

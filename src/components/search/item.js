@@ -26,8 +26,8 @@ import TagIcon from '../tag-icon';
 import User from '../user';
 
 const iconProps = (type) => ({
-  big: true,
-  className: classNames('tag_icon-wide', 'search__result-icon--type_'.concat(type)),
+  size: { inner: 'ml', outer: 'm' },
+  className: classNames('search__result-icon', 'tag_icon-wide', 'search__result-icon--type_'.concat(type)),
   round: false
 });
 

@@ -16,37 +16,44 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import omit from 'lodash/omit';
 import { browserHistory, createMemoryHistory } from 'react-router';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
-import createSelector from '../../selectors/createSelector';
+import getRouteFor from '../../selectors/contextual-routes';
 import Login from './wrappers/login';
 import Register from './wrappers/register';
 
 const onClose = (() => {
   if (browserHistory) {
-    return () => browserHistory.push({
-      ...browserHistory.getCurrentLocation(),
-      hash: ''
-    });
+    return () => {
+      const location = browserHistory.getCurrentLocation();
+
+      browserHistory.push({
+        ...location,
+        query: omit(location.query, ['route'])
+      });
+    };
   }
 
   return () => {
     const history = createMemoryHistory();
-    history.push({ ...history.getCurrentLocation(), hash: '' });
+    const location = history.getCurrentLocation();
+    history.push({
+      ...location,
+      query: omit(location.query, ['route'])
+    });
   };
 })();
 
 const pobj = {};
 
-class ContextualRoutes extends React.Component {
+export default class ContextualRoutes extends React.Component {
   static propTypes = {
-    hash: PropTypes.string,
+    location: PropTypes.shape(),
     only: PropTypes.arrayOf(PropTypes.string),
     predefProps: PropTypes.shape(),
-    routes: PropTypes.shape(),
+    routes: PropTypes.arrayOf(PropTypes.shape()),
     scope: PropTypes.string
   };
 
@@ -59,28 +66,27 @@ class ContextualRoutes extends React.Component {
   }
 
   render() {
-    const { hash, only, predefProps } = this.props;
+    const routeName = getRouteFor(this.props)(this.props.scope);
 
     let restProps = pobj;
-    if (hash) {
-      const routeHandler = this.props.routes.get(hash);
-      if (routeHandler !== this.props.scope) {
+
+    if (routeName) {
+      const { only } = this.props;
+      if (only && !only.includes(routeName)) {
         return false;
       }
 
-      if (only && !only.includes(hash)) {
-        return false;
-      }
+      const { predefProps } = this.props;
 
-      if (hash in predefProps) {
-        restProps = predefProps[hash];
+      if (routeName in predefProps) {
+        restProps = predefProps[routeName];
       }
     }
 
     let component;
 
-    switch (hash) {
-      case '#login': {
+    switch (routeName) {
+      case 'login': {
         component = (
           <Login
             key="login"
@@ -92,7 +98,7 @@ class ContextualRoutes extends React.Component {
 
         break;
       }
-      case '#signup': {
+      case 'signup': {
         component = (
           <Register
             key="signup"
@@ -122,10 +128,3 @@ class ContextualRoutes extends React.Component {
 }
 
 const KNOWN_PROPS = Object.keys(ContextualRoutes.propTypes);
-
-const mapStateToProps = createSelector(
-  state => state.getIn(['ui', 'contextual', 'routes']),
-  routes => ({ routes: routes.map((scope) => scope.last()) })
-);
-
-export default connect(mapStateToProps)(ContextualRoutes);

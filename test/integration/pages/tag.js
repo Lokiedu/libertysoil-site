@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
 
 import expect from '../../../test-helpers/expect';
@@ -55,7 +55,7 @@ describe('Tag Cloud page', () => {
   it('can open tag page and see cloud', async () => {
     const context = await expect({ url: '/tag' }, 'to open successfully');
 
-    const document = jsdom(context.httpResponse.body);
+    const { document } = (new JSDOM(context.httpResponse.body)).window;
     const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
     await expect(tagsContent, 'to have child', '.tag__name');  // posting form
 
@@ -67,7 +67,7 @@ describe('Tag Cloud page', () => {
     it('works for existing hashtag', async () => {
       const context = await expect({ url: '/tag/foo-hashtag-name' }, 'to open successfully');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',
@@ -78,7 +78,7 @@ describe('Tag Cloud page', () => {
     it('renders NotFound page for non-existent hashtag', async () => {
       const context = await expect({ url: '/tag/ghbvth' }, 'to open not found');
 
-      const document = jsdom(context.httpResponse.body);
+      const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',

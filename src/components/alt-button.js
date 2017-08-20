@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
 
 export default class AltButton extends React.Component {
   static defaultClassName = [
@@ -56,7 +56,7 @@ export default class AltButton extends React.Component {
       };
     } else {
       finalIcon = {
-        size: 'small',
+        size: 'big',
         color: 'gray',
         icon
       };

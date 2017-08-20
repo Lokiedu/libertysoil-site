@@ -21,7 +21,9 @@ import { Link } from 'react-router';
 import omit from 'lodash/omit';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
-import Icon from './icon';
+import { OldIcon as Icon } from './icon';
+
+export const ICON_SIZE = { inner: 'ms', outer: 'm' };
 
 const NavigationItem = (props) => {
   if (props.to) {
@@ -68,6 +70,7 @@ const NavigationItemPlain = ({
     const { icon, badge, ...htmlProps } = props;
 
     const finalIcon = {
+      size: ICON_SIZE,
       ...icon,
       className: classNames('navigation-item__icon', {
         [icon && icon.className]: icon && icon.className
@@ -144,10 +147,10 @@ const NavigationItemAsLink = ({
     const { icon, badge, ...htmlProps } = props;
 
     const finalIcon = {
+      round: false,
+      size: ICON_SIZE,
       ...icon,
-      className: classNames('navigation-item__icon', {
-        [icon && icon.className]: icon && icon.className
-      })
+      className: classNames('navigation-item__icon', icon && icon.className)
     };
 
     const content = (

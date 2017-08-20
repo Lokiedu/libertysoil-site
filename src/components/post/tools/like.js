@@ -17,7 +17,8 @@
 */
 import React, { PropTypes } from 'react';
 
-import Icon from '../../icon';
+import { OldIcon as Icon } from '../../icon';
+import { ICON_SIZE } from './config';
 
 export default class PostLike extends React.Component {
   static propTypes = {
@@ -75,7 +76,7 @@ export default class PostLike extends React.Component {
 
     return (
       <span className="card__toolbar_item card__toolbar_item--right action" onClick={action}>
-        <Icon icon="favorite" className={className} outline size="small" />
+        <Icon icon="favorite" className={className} outline size={ICON_SIZE} />
       </span>
     );
   }

@@ -19,7 +19,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 
-import Icon from '../../icon';
+import { OldIcon as Icon } from '../../icon';
 
 const STATUS_ICONS = {
   invalid: {
@@ -32,6 +32,8 @@ const STATUS_ICONS = {
   },
   unfilled: {}
 };
+
+const DOT_ICON_SIZE = { outer: 'l', inner: 's' };
 
 export default class FormField extends React.Component {
   static propTypes = {
@@ -46,7 +48,8 @@ export default class FormField extends React.Component {
     value: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.string
-    ])
+    ]),
+    warn: PropTypes.string
   };
 
   static defaultProps = {
@@ -59,7 +62,7 @@ export default class FormField extends React.Component {
   }
 
   render() {
-    const { error, name, type, value } = this.props;
+    const { error, name, type, value, warn } = this.props;
 
     let dotColor = 'gray', icon;
     if (error) {
@@ -94,7 +97,7 @@ export default class FormField extends React.Component {
         className="form__dot"
         color={dotColor}
         icon="fiber-manual-record"
-        size="common"
+        size={DOT_ICON_SIZE}
       />
     );
 
@@ -150,6 +153,11 @@ export default class FormField extends React.Component {
         {error &&
           <div className="form__field-message">
             {error}
+          </div>
+        }
+        {warn &&
+          <div className="form__field-message form__field-message--type_info">
+            {warn}
           </div>
         }
       </div>

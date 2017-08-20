@@ -26,8 +26,9 @@ import createSelector from '../../selectors/createSelector';
 import currentUserSelector from '../../selectors/currentUser';
 
 import Button from '../button';
-import Icon from '../icon';
+import { OldIcon as Icon } from '../icon';
 import UserGrid from '../user-grid';
+import { ICON_SIZE } from './index';
 
 class WelcomeFirstLoginMessage extends React.Component {
   static displayName = 'WelcomeFirstLoginMessage';
@@ -105,7 +106,7 @@ class WelcomeFirstLoginMessage extends React.Component {
                 className="action top-menu__icon"
                 icon="home"
                 pack="fa"
-                size="common"
+                size={ICON_SIZE}
                 onClick={this.props.onHomeClick}
               />
             </div>
@@ -116,7 +117,7 @@ class WelcomeFirstLoginMessage extends React.Component {
               className="action"
               icon="close"
               pack="fa"
-              size="common"
+              size={ICON_SIZE}
               onClick={this.props.onMessageClose}
             />
           </div>
