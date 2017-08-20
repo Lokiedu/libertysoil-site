@@ -17,7 +17,7 @@
 */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
 
 import expect from '../../../test-helpers/expect';
@@ -43,7 +43,7 @@ describe('School page', () => {
   it('renders NotFound page for non-existent school', async () => {
     const context = await expect({ url: '/s/non-existent-school' }, 'to open not found');
 
-    const document = jsdom(context.httpResponse.body);
+    const { document } = (new JSDOM(context.httpResponse.body)).window;
     await expect(
       document.head,
       'queried for first', 'title',
@@ -108,7 +108,7 @@ describe('School page', () => {
             session: sessionId
           }, 'to open successfully');
 
-          const document = jsdom(context.httpResponse.body);
+          const { document } = (new JSDOM(context.httpResponse.body)).window;
 
           const content = await expect(
             document.body,
@@ -125,7 +125,7 @@ describe('School page', () => {
             session: sessionId
           }, 'to open successfully');
 
-          const document = jsdom(context.httpResponse.body);
+          const { document } = (new JSDOM(context.httpResponse.body)).window;
 
           const content = await expect(
             document.body,

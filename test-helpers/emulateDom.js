@@ -1,18 +1,19 @@
+import { JSDOM, VirtualConsole } from 'jsdom';
 
-if (typeof document === 'undefined') {
-  const virtualConsole = require('jsdom').createVirtualConsole();
-  virtualConsole.on("log", function (message) {
-    console.log("console.log called ->", message);  // eslint-disable-line no-console
-  });
+const virtualConsole = new VirtualConsole();
+virtualConsole.on("log", function (message) {
+  console.log("console.log called ->", message);  // eslint-disable-line no-console
+});
+const { window } = new JSDOM('<!doctype html><html><body></body></html>', { virtualConsole });
 
-  const jsdom = require('jsdom').jsdom;
+global.window = window;
+global.document = window.document;
 
-  global.document = jsdom(undefined, { virtualConsole });
-  global.window = global.document.defaultView;
-
-  for (const key in global.window) {
-    if (!global[key]) {
-      global[key] = global.window[key];
-    }
+for (const key in global.window) {
+  if (!global[key]) {
+    global[key] = global.window[key];
   }
 }
+
+// To fix leaflet
+global.HTMLVideoElement = window.HTMLVideoElement;

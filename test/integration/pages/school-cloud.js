@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 /* global $dbConfig */
-import { jsdom } from 'jsdom';
+import { JSDOM } from 'jsdom';
 import { v4 as uuid4 } from 'uuid';
 
 import expect from '../../../test-helpers/expect';
@@ -60,7 +60,7 @@ describe('School Cloud page', () => {
   it('can open school page and see cloud', async () => {
     const context = await expect({ url: '/s' }, 'to open successfully');
 
-    const document = jsdom(context.httpResponse.body);
+    const { document } = (new JSDOM(context.httpResponse.body)).window;
     const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
     await expect(tagsContent, 'to have child', '.tag__name');
 
