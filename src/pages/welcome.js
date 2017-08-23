@@ -76,7 +76,7 @@ class Welcome extends React.Component {
     return (
       <div>
         <Helmet title="Welcome to " />
-        <div className="page__container-bg font-open_sans font-light">
+        <div className="page__container-bg font-light">
           <section className="landing landing-big landing-bg">
             <Header
               is_logged_in={false}
