@@ -154,7 +154,7 @@ export default class CreateComment extends Component {
             <div className="layout__row">
               <Textarea
                 autoFocus
-                className="input input-block create_comment__input font--family_san-francisco"
+                className="input input-block create_comment__input"
                 placeholder="Add comment"
                 value={comment}
                 onChange={this.updateComment}
