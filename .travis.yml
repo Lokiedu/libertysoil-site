@@ -4,7 +4,7 @@ sudo: required  # requirement for postgres 9.5
 dist: trusty
 
 node_js:
-  - "8.1"
+  - "8.4"
 
 services:
   - postgresql
