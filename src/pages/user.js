@@ -44,6 +44,7 @@ import { addUser } from '../actions/users';
 import { setUserPosts } from '../actions/posts';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+import { getName } from '../utils/user';
 
 import NotFound from './not-found';
 import BaseUserPage from './base/user';
@@ -135,7 +136,7 @@ class UserPage extends React.Component {
         triggers={triggers}
         user={user}
       >
-        <Helmet title={`Posts of ${user.get('fullName')} on `} />
+        <Helmet title={`Posts of ${getName(user)} on `} />
         <River
           comments={comments}
           current_user={current_user}

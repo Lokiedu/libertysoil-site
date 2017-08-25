@@ -44,6 +44,7 @@ import { addUser } from '../actions/users';
 import { setPostsToLikesRiver } from '../actions/river';
 import { ActionsTrigger } from '../triggers';
 import { createSelector, currentUserSelector } from '../selectors';
+import { getName } from '../utils/user';
 
 import NotFound from './not-found';
 import BaseUserPageWithoutHeader from './base/user-without_header';
@@ -116,7 +117,7 @@ class UserLikesPage extends Component {
         triggers={triggers}
         user={user}
       >
-        <Helmet title={`Likes of ${user.get('fullName')} on `} />
+        <Helmet title={`Likes of ${getName(user)} on `} />
         <River
           comments={comments}
           current_user={current_user}
