@@ -237,7 +237,7 @@ class Comment extends Component {
     } = this.props;
 
     return (
-      <article className="comment font--family_san-francisco">
+      <article className="comment">
         <div className="comment__container">
           <header className="comment__header">
             <div className="comment__author">

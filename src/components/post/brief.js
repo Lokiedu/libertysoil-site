@@ -48,7 +48,7 @@ export default class PostBrief extends React.Component {
             user={author}
           />
         </div>
-        <div className="card__slug font--family_san-francisco">
+        <div className="card__slug">
           {post.getIn(['more', 'pageTitle'])}
         </div>
 

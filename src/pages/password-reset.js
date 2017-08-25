@@ -114,7 +114,7 @@ export class PasswordResetPage extends React.Component {
     }
 
     return (
-      <div className="font-open_sans font-light">
+      <div className="font-light">
         <Helmet title="Reset Password for " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header

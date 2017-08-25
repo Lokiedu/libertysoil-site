@@ -132,7 +132,7 @@ export class UnwrappedAuth extends React.Component {
     const registration_success = ui.get('registrationSuccess');
 
     return (
-      <div className="font-open_sans font-light">
+      <div className="font-light">
         <Helmet title="Login to " />
         <section className="landing landing-big landing-bg landing-bg_house">
           <Header
