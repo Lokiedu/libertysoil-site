@@ -90,7 +90,11 @@ export class UnwrappedApp extends React.Component {
         </Helmet>
         {children}
         {gaContent}
-        <WrappedIntercom app_id={INTERCOM_APP_ID} url={url} />
+        <WrappedIntercom
+          app_id={INTERCOM_APP_ID}
+          hide_default_launcher
+          url={url}
+        />
         <ContextualRoutes
           location={this.props.location}
           routes={this.props.routes}
