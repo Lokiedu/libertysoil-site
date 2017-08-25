@@ -78,8 +78,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/tag/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -100,8 +100,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/school/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -122,8 +122,8 @@ describe('Post', () => {
 
         await expect(
           { url: `/api/v1/posts/geotag/${name}`, method: 'GET' },
-          'to have body array length',
-          1
+          'body to satisfy',
+          [{ id: post.id }]
         );
       });
     });
@@ -142,8 +142,8 @@ describe('Post', () => {
       it('should not return hashtag_like posts from other authors', async () => {
         await expect(
           { url: `/api/v1/posts/liked/${user.get('username')}` },
-          'to have body array length',
-          0
+          'body to satisfy',
+          []
         );
       });
     });
@@ -161,6 +161,158 @@ describe('Post', () => {
     after(async () => {
       await user.destroy();
       await otherUser.destroy();
+    });
+
+    describe('POST /api/v1/posts', () => {
+      it('creates a post and copies text_source into text without processing', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/posts`,
+            method: 'POST',
+            body: {
+              type: 'short_text',
+              text_source: '# header',
+              text_type: 'markdown',
+              title: 'Title'
+            }
+          },
+          'body to satisfy',
+          {
+            text_source: '# header',
+            text: '# header'
+          }
+        );
+      });
+
+      describe('story posts', () => {
+        after(async () => {
+          await knex('posts').where({ type: 'story' }).delete();
+        });
+
+        it('creates story post and processes text', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts`,
+              method: 'POST',
+              body: {
+                type: 'story',
+                text_source: '# header',
+                text_type: 'markdown',
+                title: 'Title'
+              }
+            },
+            'body to satisfy',
+            {
+              text_source: '# header',
+              text: expect.it('to contain', '<h1>header</h1>')
+            }
+          );
+        });
+
+        it('extracts first image url into more.image.url', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts`,
+              method: 'POST',
+              body: {
+                type: 'story',
+                text_source: '<div>Test</div><img src="http://test.com/test.png" />',
+                text_type: 'html',
+                title: 'Title'
+              }
+            },
+            'body to satisfy',
+            {
+              text: expect.it('to contain', '<div>Test</div><img src="http://test.com/test.png" />'),
+              more: { image: { url: 'http://test.com/test.png' } }
+            }
+          );
+        });
+
+        describe('when text_type is not supported or not specified', () => {
+          it('returns error', async () => {
+            await expect(
+              {
+                session: sessionId,
+                url: `/api/v1/posts`,
+                method: 'POST',
+                body: {
+                  type: 'story',
+                  text_source: '# header',
+                  text_type: 'invalid type',
+                  title: 'Title'
+                }
+              },
+              'not to open',
+            );
+          });
+        });
+      });
+    });
+
+
+    describe('POST /api/v1/post/:id', () => {
+      describe('story posts', () => {
+        let post;
+        before(async () => {
+          post = await createPost({
+            user_id: user.id,
+            type: 'story',
+            text_type: 'markdown',
+            text_source: '# initial header',
+            text: '<h1>initial header</h1>'
+          });
+        });
+
+        after(async () => {
+          await post.destroy();
+        });
+
+        it('updates post and re-renders text', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/post/${post.id}`,
+              method: 'POST',
+              body: {
+                type: 'story',
+                text_source: '# new header 1',
+                text_type: 'markdown',
+                title: 'Title'
+              }
+            },
+            'body to satisfy',
+            {
+              text_source: '# new header 1',
+              text: expect.it('to contain', '<h1>new header 1</h1>')
+            }
+          );
+        });
+
+        it('extracts first image url into more.image.url', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/post/${post.id}`,
+              method: 'POST',
+              body: {
+                type: 'story',
+                text_source: '<div>Test</div><img src="http://test.com/test.png" />',
+                text_type: 'html',
+                title: 'Title'
+              }
+            },
+            'body to satisfy',
+            {
+              text: expect.it('to contain', '<div>Test</div><img src="http://test.com/test.png" />'),
+              more: { image: { url: 'http://test.com/test.png' } }
+            }
+          );
+        });
+      });
     });
 
     describe('subscriptions', () => {

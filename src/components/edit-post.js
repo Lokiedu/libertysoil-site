@@ -136,7 +136,7 @@ export default class EditPost extends React.Component {
 
     const form = this.form;
     const data = {
-      text: form.text.value,
+      text_source: form.text.value,
       hashtags: this.props.hashtags.map(hashtag => hashtag.get('name')).toJS(),
       schools: this.props.schools.map(school => school.get('name')).toJS(),
       geotags: this.props.geotags.map(geotag => geotag.get('id')).toJS(),

@@ -27,10 +27,13 @@ import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import { break as breakGraphemes } from 'grapheme-breaker';
+import { break as breakGraphemes, countBreaks } from 'grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
 import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
+import sanitizeHtml from 'sanitize-html';
+import slug from 'slug';
+import htmlparser2 from 'htmlparser2';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
 import { ProfilePost as ProfilePostValidations } from './validators';
@@ -181,6 +184,143 @@ export function initBookshelfFromKnex(knex) {
 
   const Post = bookshelf.Model.extend({
     tableName: 'posts',
+    initialize() {
+      this.on('saving', this.updateAttributes.bind(this));
+    },
+    updateAttributes() {
+      const source = this.get('text_source');
+      if (!_.isString(source) || _.isEmpty(source)) {
+        return;
+      }
+
+      let text, stripped;
+      if (this.get('type') === 'story') {
+        switch (this.get('text_type')) {
+          case 'markdown': {
+            text = postMarkdown.render(source);
+            break;
+          }
+          case 'html': {
+            text = sanitizeHtml(source, {
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+            });
+            break;
+          }
+          default: return;
+        }
+
+        stripped = sanitizeHtml(text, { allowedTags: [], allowedAttributes: [] });
+      } else {
+        text = source;
+        stripped = source;
+      }
+
+      const more = this.get('more') || {};
+      // shortText
+      const firstParagraphs = stripped.split(/\n{2,}/)[0];
+      more.shortText = firstParagraphs;
+
+      // Try to take the first image
+      let firstImgUrl;
+      // htmlparser2 is already used in sanitizeHtml
+      const parser = new htmlparser2.Parser({
+        onopentag: function (name, attribs) {
+          if (name === 'img' && attribs.src) {
+            firstImgUrl = attribs.src;
+          }
+        }
+      });
+      parser.write(text);
+      parser.end();
+
+      if (firstImgUrl) {
+        more.image = { url: firstImgUrl };
+      }
+
+      this.set('text', text);
+      this.set('more', more);
+    },
+    /**
+     * Common logic for creating and updating. Must only be used for posts with text.
+     */
+    setPublicAttributes(data) {
+      const type = this.get('type');
+
+      // text_source
+      if (_.isString(data.text_source)) {
+        this.set('text_source', data.text_source);
+      } else {
+        throw new Error('"text_source" must be present');
+      }
+
+      // text_type
+      if (type === 'story') {
+        if (_.isString(data.text_type) && _.includes(['markdown', 'html'], data.text_type)) {
+          this.set('text_type', data.text_type);
+        } else {
+          throw new Error('"text_type" must be equeal to either "markdown" or "html"');
+        }
+      }
+
+      // title
+      if (type === 'long_text') {
+        if (_.isString(data.title)) {
+          const more = this.get('more') || {};
+          more.title = data.title;
+          this.set('more', more);
+        } else {
+          throw new Error('"title" must be present');
+        }
+      } else if (type === 'story' && _.isString(data.title)) { // title is optional for story posts
+        const more = this.get('more') || {};
+        more.title = data.title;
+        this.set('more', more);
+      }
+
+      // fully_published_at. Show post in the news feed if set.
+      if (!data.minor_update && !this.get('fully_published_at')) {
+        // toJSON is important because it translates the date to UTC and we don't use timestamtz yet.
+        this.set('fully_published_at', new Date().toJSON());
+      }
+    },
+    async update(data) {
+      return await bookshelf.transaction(async (t) => {
+        this.setPublicAttributes(data);
+        this.set('updated_at', new Date().toJSON());
+        await this.save(null, { require: true, transacting: t });
+
+        // Relations
+        if (data.hashtags) {
+          if (_.isArray(data.hashtags)) {
+            if (data.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+              throw new Error('each of tags should be at least 3 characters wide');
+            }
+
+            await this.updateHashtags(_.uniq(data.hashtags), { transacting: t });
+          } else {
+            throw new Error('"hashtags" parameter is expected to be an array');
+          }
+        }
+
+        if (data.schools) {
+          if (_.isArray(data.schools)) {
+            await this.updateSchools(_.uniq(data.schools), { transacting: t });
+          } else {
+            throw new Error('"schools" parameter is expected to be an array');
+          }
+        }
+
+        if (data.geotags) {
+          if (_.isArray(data.geotags)) {
+            await this.updateGeotags(_.uniq(data.geotags), { transacting: t });
+          } else {
+            throw new Error('"geotags" parameter is expected to be an array');
+          }
+        }
+
+        return this;
+      });
+    },
     user() {
       return this.belongsTo(User, 'user_id');
     },
@@ -216,86 +356,91 @@ export function initBookshelfFromKnex(knex) {
     },
 
     // Hashtag methods
-    async attachHashtags(names) {
+    async attachHashtags(names, options = {}) {
       const hashtags = await Promise.all(names.map(name => Hashtag.createOrSelect(name)));
       const hashtagIds = hashtags.map(hashtag => hashtag.id);
 
-      await this.hashtags().attach(hashtagIds);
+      await this.hashtags().attach(hashtagIds, options);
 
       await knex('hashtags')
+        .transacting(options.transacting)
         .whereIn('id', hashtagIds)
         .increment('post_count', 1);
 
-      await Hashtag.updateUpdatedAt(hashtagIds);
+      await Hashtag.updateUpdatedAt(hashtagIds, options);
     },
-    async detachHashtags(names) {
+    async detachHashtags(names, options = {}) {
       const hashtagIds = (await Hashtag.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch()).pluck('id');
 
-      await this.hashtags().detach(hashtagIds);
+      await this.hashtags().detach(hashtagIds, options);
 
       await knex('hashtags')
+        .transacting(options.transacting)
         .whereIn('id', hashtagIds)
         .decrement('post_count', 1);
 
-      await Hashtag.updateUpdatedAt(hashtagIds);
+      await Hashtag.updateUpdatedAt(hashtagIds, options);
     },
-    async updateHashtags(names) {
+    async updateHashtags(names, options = {}) {
       const relatedHashtagNames = (await this.related('hashtags').fetch()).pluck('name');
       const hashtagsToAttach = _.difference(names, relatedHashtagNames);
       const hashtagsToDetach = _.difference(relatedHashtagNames, names);
 
       await Promise.all([
-        this.attachHashtags(hashtagsToAttach),
-        this.detachHashtags(hashtagsToDetach)
+        this.attachHashtags(hashtagsToAttach, options),
+        this.detachHashtags(hashtagsToDetach, options)
       ]);
     },
 
     // School methods
-    async attachSchools(names) {
+    async attachSchools(names, options = {}) {
       const schools = await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch();
       const schoolIds = schools.pluck('id');
 
-      await this.schools().attach(schoolIds);
+      await this.schools().attach(schoolIds, options);
 
       await knex('schools')
+        .transacting(options.transacting)
         .whereIn('id', schoolIds)
         .increment('post_count', 1);
 
-      await School.updateUpdatedAt(schoolIds);
+      await School.updateUpdatedAt(schoolIds, options);
     },
-    async detachSchools(names) {
+    async detachSchools(names, options = {}) {
       const schoolIds = (await School.collection().query(qb => {
         qb.whereIn('name', names);
       }).fetch()).pluck('id');
 
-      await this.schools().detach(schoolIds);
+      await this.schools().detach(schoolIds, options);
 
       await knex('schools')
+        .transacting(options.transacting)
         .whereIn('id', schoolIds)
         .decrement('post_count', 1);
 
-      await School.updateUpdatedAt(schoolIds);
+      await School.updateUpdatedAt(schoolIds, options);
     },
-    async updateSchools(names) {
+    async updateSchools(names, options = {}) {
       const relatedSchoolNames = (await this.related('schools').fetch()).pluck('name');
       const schoolsToAttach = _.difference(names, relatedSchoolNames);
       const schoolsToDetach = _.difference(relatedSchoolNames, names);
 
       await Promise.all([
-        this.attachSchools(schoolsToAttach),
-        this.detachSchools(schoolsToDetach)
+        this.attachSchools(schoolsToAttach, options),
+        this.detachSchools(schoolsToDetach, options)
       ]);
     },
 
     // Geotag methods
-    async attachGeotags(geotagIds) {
-      await this.geotags().attach(geotagIds);
+    async attachGeotags(geotagIds, options = {}) {
+      await this.geotags().attach(geotagIds, options);
 
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIds)
         .increment('post_count', 1);
 
@@ -307,15 +452,17 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds);
       const geotagIdsToIncrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIdsToIncrement)
         .increment('hierarchy_post_count', 1);
 
-      await Geotag.updateUpdatedAt(geotagIds);
+      await Geotag.updateUpdatedAt(geotagIds, options);
     },
-    async detachGeotags(geotagIds) {
-      await this.geotags().detach(geotagIds);
+    async detachGeotags(geotagIds, options = {}) {
+      await this.geotags().detach(geotagIds, options);
 
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIds)
         .decrement('post_count', 1);
 
@@ -324,19 +471,20 @@ export function initBookshelfFromKnex(knex) {
         .whereIn('id', geotagIds);
       const geotagIdsToDecrement = _.union(_.flatten(geotags.map(_.values)), geotagIds).filter(t => !!t);
       await knex('geotags')
+        .transacting(options.transacting)
         .whereIn('id', geotagIdsToDecrement)
         .decrement('hierarchy_post_count', 1);
 
-      await Geotag.updateUpdatedAt(geotagIds);
+      await Geotag.updateUpdatedAt(geotagIds, options);
     },
-    async updateGeotags(geotagIds) {
+    async updateGeotags(geotagIds, options = {}) {
       const relatedGeotagsIds = (await this.related('geotags').fetch()).pluck('id');
       const geotagsToAttach = _.difference(geotagIds, relatedGeotagsIds);
       const geotagsToDetach = _.difference(relatedGeotagsIds, geotagIds);
 
       await Promise.all([
-        this.attachGeotags(geotagsToAttach),
-        this.detachGeotags(geotagsToDetach)
+        this.attachGeotags(geotagsToAttach, options),
+        this.detachGeotags(geotagsToDetach, options)
       ]);
     },
 
@@ -353,6 +501,7 @@ export function initBookshelfFromKnex(knex) {
     }
   });
 
+  Post.typesWithPages = ['short_text', 'long_text', 'story'];
   Post.typesWithoutPages = ['geotag_like', 'school_like', 'hashtag_like'];
   Post.titleFromText = async (text, authorName) => {
     const get50 = async (text) => {
@@ -385,6 +534,77 @@ export function initBookshelfFromKnex(knex) {
     return `${authorName}: ${first50GraphemesOfText}`;
   };
 
+  /**
+   * Creates a user.
+   * Can only be used to create posts with text (Post.typesWithPages).
+   */
+  Post.create = async (data) => {
+    return bookshelf.transaction(async (t) => {
+      if (!_.includes(Post.typesWithPages, data.type)) {
+        throw new Error(`${data.type}" type is not supported`);
+      }
+
+      const post = new Post({
+        id: uuid.v4(),
+        user_id: data.user_id,
+        type: data.type,
+        more: {}
+      });
+
+      post.setPublicAttributes(data);
+
+      const author = await post.related('user').fetch();
+      if (data.type === 'story') {
+        const stripped = sanitizeHtml(data.text_source, {
+          allowedTags: [],
+          allowedAttributes: []
+        });
+        post.attributes.more.pageTitle = await Post.titleFromText(stripped, author.get('fullName'));
+      } else {
+        post.attributes.more.pageTitle = await Post.titleFromText(data.text_source, author.get('fullName'));
+      }
+
+      const urlName = `${slug(post.attributes.more.pageTitle)}-${post.id}`;
+      post.set('url_name', urlName);
+
+      await post.save(null, { method: 'insert', require: true, transacting: t });
+
+      // Add the author to the list of subscribers by default.
+      await post.subscribers().attach(post.get('user_id'), { transacting: t });
+
+      // Relations
+      if (data.hashtags) {
+        if (_.isArray(data.hashtags)) {
+          if (data.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
+            throw new Error('each of tags should be at least 3 characters wide');
+          }
+
+          await post.attachHashtags(_.uniq(data.hashtags), { transacting: t });
+        } else {
+          throw new Error('"hashtags" parameter is expected to be an array');
+        }
+      }
+
+      if (data.schools) {
+        if (_.isArray(data.schools)) {
+          await post.attachSchools(_.uniq(data.schools), { transacting: t });
+        } else {
+          throw new Error('"schools" parameter is expected to be an array');
+        }
+      }
+
+      if (data.geotags) {
+        if (_.isArray(data.geotags)) {
+          await post.attachGeotags(_.uniq(data.geotags), { transacting: t });
+        } else {
+          throw new Error('"geotags" parameter is expected to be an array');
+        }
+      }
+
+      return post;
+    });
+  };
+
   const Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
     posts() {
@@ -415,8 +635,9 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  Hashtag.updateUpdatedAt = async function (ids) {
+  Hashtag.updateUpdatedAt = async function (ids, options = {}) {
     await knex('hashtags')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('hashtags_posts')
@@ -468,8 +689,9 @@ export function initBookshelfFromKnex(knex) {
       });
   };
 
-  School.updateUpdatedAt = async function (ids) {
+  School.updateUpdatedAt = async function (ids, options = {}) {
     await knex('schools')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('posts_schools')
@@ -575,8 +797,9 @@ export function initBookshelfFromKnex(knex) {
     ]);
   };
 
-  Geotag.updateUpdatedAt = async function (ids) {
+  Geotag.updateUpdatedAt = async function (ids, options = {}) {
     await knex('geotags')
+      .transacting(options.transacting)
       .whereIn('id', ids)
       .update({
         updated_at: knex('geotags_posts')
