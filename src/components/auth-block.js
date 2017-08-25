@@ -76,8 +76,12 @@ export default class AuthBlock extends React.Component {
         <Dropdown
           className="header__auth header__toolbar"
           icon={
-            <div className="header__corner header__corner--colored header__toolbar_item">
-              <Avatar user={current_user.get('user')} />
+            <div className="header__corner header__toolbar_item">
+              <Avatar
+                isRound={false}
+                size={60}
+                user={current_user.get('user')}
+              />
             </div>
           }
           theme="new"
