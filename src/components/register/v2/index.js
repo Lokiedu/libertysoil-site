@@ -34,7 +34,7 @@ import BasicTag from '../../tag/theme/basic';
 import RegisterForm from './form';
 
 const MAIN_ICON = {
-  icon: 'sign-in'
+  icon: 'key'
 };
 
 const ERROR_MESSAGES = [
