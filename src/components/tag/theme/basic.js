@@ -54,8 +54,14 @@ export default class BasicTag extends React.Component {
   getClassName = () => {
     const { className, round, type } = this.props;
 
+    let typeClassName;
+    const typeConfig = TAG_TYPES[type];
+    if (typeConfig) {
+      typeClassName = typeConfig.className;
+    }
+
     return classNames(
-      className, TAG_TYPES[type].className, 'tag',
+      className, typeClassName, 'tag',
       {
         'tag--round': round,
         'tag--collapsed': this.props.name.collapsed && !this.props.showPostCount
@@ -83,7 +89,14 @@ export default class BasicTag extends React.Component {
 
   renderIcon = () => {
     const { icon, type, round } = this.props;
-    const typeIcon = TAG_TYPES[type].icon || {};
+
+    let typeIcon;
+    const typeConfig = TAG_TYPES[type];
+    if (typeConfig && typeConfig.icon) {
+      typeIcon = typeConfig.icon;
+    } else {
+      typeIcon = {};
+    }
 
     const iconConf = {
       ...omit(icon, ['collapsed']),
