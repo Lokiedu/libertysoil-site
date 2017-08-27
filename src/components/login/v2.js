@@ -31,7 +31,7 @@ import createSelector from '../../selectors/createSelector';
 import { removeAllMessages } from '../../actions/messages';
 
 import Modal from '../sidebar-modal';
-import MinifiedTag from '../tag/theme/minified';
+import BasicTag from '../tag/theme/basic';
 import LoginForm from './form';
 
 const MAIN_ICON = {
@@ -45,7 +45,7 @@ const ERROR_MESSAGES = [
 
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
-    icon: { color: 'orange', icon: 'question-circle', size: { outer: undefined, inner: 'l' } },
+    icon: { bg: 'orange', name: 'question', size: { inner: 'ms' } },
     name: { name: (translate) => translate('login.qs.forget_pass') },
     url: '/resetpassword'
   }
@@ -74,8 +74,8 @@ function Message({ className, children, long, translate, ...props }) {
 
 function ActionTag({ url, translate, ...props }) {
   const content = (
-    <MinifiedTag
-      className="form__tag"
+    <BasicTag
+      className="form__tag tag--size_small"
       {...props}
       name={{
         ...props.name,

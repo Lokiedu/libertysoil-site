@@ -231,18 +231,17 @@
     margin-left: -3px;
     display: inline-flex;
     max-width: 140px;
+    border: none;
+    background-color: #fff;
     color: #404040;
+
+    > .tag__icon {
+      width: 26px;
+      border-color: @color__orange;
+    }
 
     @media (min-width: 480px) {
       max-width: 200px;
-    }
-
-    > .tag__icon {
-      position: relative;
-      padding: 0;
-      left: -2px;
-      width: 28px;
-      height: 28px;
     }
   }
 

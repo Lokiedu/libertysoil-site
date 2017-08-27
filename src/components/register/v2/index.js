@@ -30,7 +30,7 @@ import createSelector from '../../../selectors/createSelector';
 import { removeAllMessages } from '../../../actions/messages';
 
 import Modal from '../../sidebar-modal';
-import MinifiedTag from '../../tag/theme/minified';
+import BasicTag from '../../tag/theme/basic';
 import RegisterForm from './form';
 
 const MAIN_ICON = {
@@ -120,8 +120,8 @@ class RegisterComponentV2 extends React.Component {
       const props = ERROR_TAG_MAPPING[firstMessage];
       if (props) {
         headerContent = (
-          <MinifiedTag
-            className="form__tag"
+          <BasicTag
+            className="form__tag tag--size_small"
             {...props}
             name={{
               ...props.name,
