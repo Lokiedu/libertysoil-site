@@ -186,9 +186,10 @@ class LoginComponentV2 extends React.Component {
           onHide={onClose}
         >
           <Modal.Header
-            className="form__background--bright form__title sidebar-modal__title--big"
-            mainIcon={MAIN_ICON}
+            className="form__title sidebar-modal__title--big"
             closeIcon={false}
+            mainIcon={MAIN_ICON}
+            theme="colored"
             onClose={onClose}
           >
             <div className="form__title">

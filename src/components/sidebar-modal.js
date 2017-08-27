@@ -171,6 +171,20 @@ class SidebarModalBody extends React.Component {
 class SidebarModalHeader extends React.Component {
   static displayName = 'SidebarModalHeader';
 
+  static propTypes = (() => {
+    const iconOrNone = PropTypes.oneOfType([
+      PropTypes.shape(Icon.propTypes),
+      PropTypes.oneOf([false])
+    ]);
+
+    return {
+      className: PropTypes.string,
+      closeIcon: iconOrNone,
+      mainIcon: iconOrNone,
+      theme: PropTypes.string
+    };
+  })();
+
   static defaultProps = {
     closeIcon: {},
     mainIcon: {}
@@ -213,8 +227,15 @@ class SidebarModalHeader extends React.Component {
       );
     }
 
+    const className = classNames(
+      'sidebar-modal__header',
+      this.props.className,
+      this.props.theme &&
+        `sidebar-modal__header--theme_${this.props.theme}`
+    );
+
     return (
-      <div className={classNames('sidebar-modal__header', this.props.className)}>
+      <div className={className}>
         {mainIcon}
         <div className="sidebar-modal__title">{this.props.children}</div>
         {closeIcon}
