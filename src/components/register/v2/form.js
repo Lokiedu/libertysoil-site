@@ -321,7 +321,7 @@ export class SignupFormV2 extends React.Component {
         )}
 
         <div className="form__actions-container form__background--bright">
-          <div className="form__actions">
+          <div className="form__actions form__actions--align_r">
             <Button
               className="sidebar-modal__button form__submit"
               title={t('signup.action')}

@@ -41,14 +41,24 @@
   font-weight: 300;
 
   &__actions {
+    margin: 0 60px;
     padding-top: 40px;
-    width: 200px;
-    display: flex;
-    flex-direction: row-reverse;
 
     @media (min-width: 480px) {
       margin-left: 120px;
-      width: 240px;
+    }
+
+    @media (min-width: 768px) {
+      margin-right: 180px;
+    }
+
+    &--align {
+      &_l {
+        text-align: left;
+      }
+      &_r {
+        text-align: right;
+      }
     }
   }
 
@@ -264,8 +274,21 @@
 
     .form__actions {
       @media (min-width: 480px) {
-        margin-left: 0;
+        margin-left: 60px;
         margin-right: 120px;
+      }
+
+      @media (min-width: 768px) {
+        margin-left: 180px;
+      }
+
+      &--align {
+        &_l {
+          text-align: right;
+        }
+        &_r {
+          text-align: left;
+        }
       }
     }
 
