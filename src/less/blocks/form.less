@@ -112,6 +112,7 @@
     }
     
     &--theme {
+      // use with 'm' icon size
       &_paper {
         border-radius: 2px;
         background: #fff;
@@ -119,6 +120,23 @@
 
         .icon {
           color: #d3d2d1;
+        }
+      }
+
+      // use with { inner: 'ms', outer: 'xl' } icon size
+      &_list {
+        margin-top: 3px;
+        justify-content: flex-start;
+        font-size: 12px;
+
+        .icon {
+          color: #8e8e8e;
+
+          &--type_outer {
+            margin-right: 10px;
+            border-radius: 2px;
+            background: #fff;
+          }
         }
       }
     }
@@ -300,6 +318,13 @@
 
       @media (min-width: 480px) {
         padding-right: 120px;
+      }
+    }
+
+    .form__alt-item--theme_list {
+      .icon--type_outer {
+        margin-left: 10px;
+        margin-right: 0;
       }
     }
 

@@ -23,6 +23,7 @@ import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
 import { Link } from 'react-router';
 
+import { memoize1 } from '../register/utils';
 import AltButton from '../alt-button';
 import Button from '../button';
 import FormField from '../form/field';
@@ -49,6 +50,13 @@ const pushSignup = location => ({
   ...location,
   query: { ...location.query, route: 'signup' }
 });
+
+const getIconProps = memoize1(
+  (name) => ({
+    name,
+    size: 'big'
+  })
+);
 
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';
@@ -139,14 +147,14 @@ export class LoginFormV2 extends React.Component {
         </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon="github"
+            icon={getIconProps('github')}
             onClick={undefined}
           >
             {f('login.with', 'Github')}
           </AltButton>
           <AltButton
             className="margin--all_top"
-            icon="facebook-official"
+            icon={getIconProps('facebook-official')}
             onClick={undefined}
           >
             {f('login.with', 'Facebook')}

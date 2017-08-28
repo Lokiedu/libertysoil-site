@@ -86,6 +86,13 @@ const pushLogin = location => ({
   query: { ...location.query, route: 'login' }
 });
 
+const getIconProps = Utils.memoize1(
+  (name) => ({
+    name,
+    size: 'big'
+  })
+);
+
 export class SignupFormV2 extends React.Component {
   static displayName = 'SignupFormV2';
 
@@ -332,14 +339,14 @@ export class SignupFormV2 extends React.Component {
         </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon="github"
+            icon={getIconProps('github')}
             onClick={undefined}
           >
             {f('signup.with', 'Github')}
           </AltButton>
           <AltButton
             className="margin--all_top"
-            icon="facebook-official"
+            icon={getIconProps('facebook-official')}
             onClick={undefined}
           >
             {f('signup.with', 'Facebook')}
