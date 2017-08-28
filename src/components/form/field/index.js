@@ -54,6 +54,7 @@ export default class FormField extends React.Component {
 
   static defaultProps = {
     statusIcon: {},
+    theme: 'paper',
     type: 'text'
   };
 
@@ -101,9 +102,14 @@ export default class FormField extends React.Component {
       />
     );
 
+    let inputClassName = 'form__input river-item input-transparent';
+    if (this.props.theme) {
+      inputClassName += ` form__input--theme_${this.props.theme}`;
+    }
+
     const input = (
       <input
-        className="form__input river-item bio__post--type_text input-transparent"
+        className={inputClassName}
         id={name}
         name={name}
         ref={this.props.refFn}

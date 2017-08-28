@@ -152,7 +152,7 @@ export class LoginFormV2 extends React.Component {
             {f('login.with', 'Facebook')}
           </AltButton>
           <Link
-            className={AltButton.defaultClassName.concat(" margin--all_top")}
+            className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}
             to={pushSignup}
           >
             {t('login.create_new')}

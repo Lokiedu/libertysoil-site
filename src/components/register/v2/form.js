@@ -345,7 +345,7 @@ export class SignupFormV2 extends React.Component {
             {f('signup.with', 'Facebook')}
           </AltButton>
           <Link
-            className={AltButton.defaultClassName.concat(" margin--all_top")}
+            className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}
             to={pushLogin}
           >
             {t('signup.login')}

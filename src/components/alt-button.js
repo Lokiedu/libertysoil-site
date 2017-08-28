@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import omit from 'lodash/omit';
 
 import { OldIcon as Icon } from './icon';
 
@@ -26,7 +27,6 @@ export default class AltButton extends React.Component {
     'layout-align_vertical',
     'layout-align_center',
     'form__input',
-    'bio__post--type_text',
     'form__alt-item'
   ].join(' ');
 
@@ -36,9 +36,14 @@ export default class AltButton extends React.Component {
     children: PropTypes.node,
     className: PropTypes.string,
     icon: PropTypes.oneOfType([
-      PropTypes.shape(),
+      PropTypes.shape(Icon.propTypes),
       PropTypes.string
-    ])
+    ]),
+    theme: PropTypes.string
+  };
+
+  static defaultProps = {
+    theme: 'paper'
   };
 
   shouldComponentUpdate(nextProps) {
@@ -46,14 +51,18 @@ export default class AltButton extends React.Component {
   }
 
   render() {
-    const { children, className, icon, ...props } = this.props;
-    const cn = classNames(className, AltButton.defaultClassName);
+    const cn = classNames(
+      this.props.className,
+      AltButton.defaultClassName,
+      this.props.theme &&
+        `form__alt-item--theme_${this.props.theme}`
+    );
 
     let finalIcon;
+
+    const { icon } = this.props;
     if (typeof icon === 'object') {
-      finalIcon = {
-        ...icon
-      };
+      finalIcon = icon;
     } else {
       finalIcon = {
         size: 'big',
@@ -62,11 +71,15 @@ export default class AltButton extends React.Component {
       };
     }
 
+    const restProps = omit(this.props, KNOWN_PROPS);
+
     return (
-      <button className={cn} type="button" {...props}>
+      <button className={cn} type="button" {...restProps}>
         <Icon {...finalIcon} />
-        {children}
+        {this.props.children}
       </button>
     );
   }
 }
+
+const KNOWN_PROPS = Object.keys(AltButton.propTypes);
