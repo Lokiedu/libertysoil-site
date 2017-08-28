@@ -41,20 +41,27 @@ export const isPasswordWeak = (val) => (
   zxcvbn(val).score <= 1
 );
 
-export function debounceCached(f, timeout = 100) {
-  // eslint-disable-next-line no-var
+export function memoize1(f) {
   let cache = {};
 
   return Object.assign(
-    debounce(function (s) {
-      if (cache[s] === undefined) {
-        cache[s] = f(s);
+    function (x) {
+      if (cache[x] === undefined) {
+        cache[x] = f(x);
       }
-      return cache[s];
-    }, timeout),
+      return cache[x];
+    },
     { resetCache: () => cache = {} }
   );
 }
+
+export const debounceCached = (f, timeout = 100) => {
+  const memoized = memoize1(f);
+  return Object.assign(
+    debounce(memoized, timeout),
+    { resetCache: memoized.resetCache }
+  );
+};
 
 const client = new ApiClient(API_HOST);
 
