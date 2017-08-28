@@ -24,11 +24,13 @@ import { OldIcon as Icon } from '../../icon';
 const STATUS_ICONS = {
   invalid: {
     className: 'color-red form__check',
-    icon: 'minus'
+    icon: 'close',
+    pack: 'fa'
   },
   valid: {
     className: 'color-green form__check',
-    icon: 'check'
+    icon: 'check',
+    pack: 'fa'
   },
   unfilled: {}
 };
