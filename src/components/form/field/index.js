@@ -87,12 +87,6 @@ export default class FormField extends React.Component {
       }
     );
 
-    const label = (
-      <label className="form__label" htmlFor={name}>
-        {this.props.title}
-      </label>
-    );
-
     const dot = (
       <Icon
         className="form__dot"
@@ -122,7 +116,7 @@ export default class FormField extends React.Component {
     const status = (
       <Icon
         className="form__check"
-        size="common"
+        size="big"
         {...STATUS_ICONS[icon]}
         {...this.props.statusIcon}
       />
@@ -132,17 +126,31 @@ export default class FormField extends React.Component {
 
     switch (type) {
       case 'checkbox': {
+        const label = (
+          <label htmlFor={name}>
+            {input}
+            <span aria-hidden="true" className="fa fa-check" />
+            <div className="form__label">{this.props.title}</div>
+          </label>
+        );
+
         body = (
           <div>
             <div className="layout layout-align_vertical">
-              {dot}{input}{label}{status}
+              {dot}{label}{status}
             </div>
           </div>
         );
 
         break;
       }
-      default:
+      default: {
+        const label = (
+          <label className="form__label" htmlFor={name}>
+            {this.props.title}
+          </label>
+        );
+
         body = (
           <div>
             {label}
@@ -151,6 +159,7 @@ export default class FormField extends React.Component {
             </div>
           </div>
         );
+      }
     }
 
     return (
