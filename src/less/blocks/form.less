@@ -138,9 +138,14 @@
 
   &__check {
     flex-basis: 60px;
+    min-width: 60px;
 
     &.color-green {
       color: #7ca992;
+    }
+
+    &:empty {
+      display: block;
     }
   }
 
@@ -158,6 +163,7 @@
 
   &__dot {
     flex-basis: 60px;
+    min-width: 60px;
 
     svg {
       width: 14px;
@@ -171,6 +177,7 @@
 
       label[for] {
         display: flex;
+        flex-grow: 1;
         align-items: center;
       }
 
@@ -315,7 +322,27 @@
 
   &--stretch {
     &_y {
-      
+      &.form__container {
+        @media (max-width: 479px) {
+          width: calc(~"100% - 60px");
+          transition: width 0s;
+        }
+      }
+
+      .form__input {
+        flex-grow: 1;
+        min-width: 140px;
+      }
+
+      .form__subheader {
+        padding-left: 40px;
+      }
+
+      &.form--rtl {
+        .form__subheader {
+          padding-right: 40px;
+        }
+      }
     }
 
     &_n {

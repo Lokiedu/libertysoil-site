@@ -141,7 +141,7 @@ class RegisterComponentV2 extends React.Component {
       headerContent = translate('signup.action');
     }
 
-    let cn = 'form form--stretch_n form__container sidebar-form__container';
+    let cn = 'form form--stretch_y form__container sidebar-form__container';
     if (rtl) {
       cn += ' form--rtl';
     }
