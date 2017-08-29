@@ -98,7 +98,7 @@ export class UnwrappedMessage extends React.PureComponent {
     this.translate = getTranslate(props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillUpdate(nextProps) {
     this.isRTL = isRTL(nextProps);
     this.translate = getTranslate(nextProps);
   }
