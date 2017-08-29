@@ -273,7 +273,7 @@ export class SignupFormV2 extends React.Component {
   };
 
   render() {
-    const { fields, translate: t, format: f } = this.props;
+    const { fields, translate: t } = this.props;
 
     if (this.props.succeed) {
       return (
@@ -324,7 +324,7 @@ export class SignupFormV2 extends React.Component {
         )}
 
         <div className="form__actions-container form__background--bright">
-          <div className="form__actions form__actions--align_r">
+          <div className="form__actions form__actions--align_l">
             <Button
               className="sidebar-modal__button form__submit"
               title={t('signup.action')}
@@ -333,19 +333,24 @@ export class SignupFormV2 extends React.Component {
             />
           </div>
         </div>
+        <div className="form__subheader form__subheader--section form__background--bright">
+          {t('signup.quick')}
+        </div>
         <div className="form__background--bright form__alt">
           <AltButton
             icon={getIconProps('github')}
+            theme="list"
             onClick={undefined}
           >
-            {f('signup.with', 'Github')}
+            GitHub
           </AltButton>
           <AltButton
             className="margin--all_top"
             icon={getIconProps('facebook-official')}
+            theme="list"
             onClick={undefined}
           >
-            {f('signup.with', 'Facebook')}
+            Facebook
           </AltButton>
           <Link
             className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}

@@ -111,7 +111,6 @@ class RegisterComponentV2 extends React.Component {
     const { locale, messages, onClose } = this.props;
 
     const translate = t.translateTo(locale);
-    const format = t.formatTo(locale);
     const rtl = SUPPORTED_LOCALES[locale].rtl;
 
     let headerContent, subheader;
@@ -186,7 +185,6 @@ class RegisterComponentV2 extends React.Component {
             {subheader}
             <RegisterForm
               dispatch={this.props.dispatch}
-              format={format}
               succeed={this.props.signupSucceed}
               translate={translate}
               onSubmit={this.handleSubmit}
