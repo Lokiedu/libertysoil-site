@@ -18,7 +18,6 @@
 import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
 
@@ -29,6 +28,7 @@ import { ActionsTrigger } from '../../../triggers';
 import createSelector from '../../../selectors/createSelector';
 import { removeAllMessages } from '../../../actions/messages';
 
+import Messages from '../../messages';
 import Modal from '../../sidebar-modal';
 import BasicTag from '../../tag/theme/basic';
 import RegisterForm from './form';
@@ -43,27 +43,6 @@ const ERROR_MESSAGES = [
 ];
 
 const ERROR_TAG_MAPPING = {};
-
-function Message({ className, children, long, translate, ...props }) {
-  let message;
-  if (long) {
-    message = translate(children.concat('.long'));
-    if (!message) {
-      message = translate(children);
-    }
-  } else {
-    message = translate(children.concat('.short'));
-    if (!message) {
-      message = translate(children);
-    }
-  }
-
-  return (
-    <div className={classNames('form__message', className)} {...props}>
-      {message}
-    </div>
-  );
-}
 
 class RegisterComponentV2 extends React.Component {
   static displayName = 'RegisterComponentV2';
@@ -105,6 +84,11 @@ class RegisterComponentV2 extends React.Component {
     }
 
     await this.triggers.registerUser(...args);
+  };
+
+  handleMessageClick = e => {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
   };
 
   render() {
@@ -173,14 +157,16 @@ class RegisterComponentV2 extends React.Component {
               transitionLeave
               transitionLeaveTimeout={250}
               transitionName="form__message--transition"
+              onClick={this.handleMessageClick}
             >
-              {messages.size &&
-                this.props.messages.map(msg =>
-                  <Message key={msg.get('message')} long translate={translate}>
-                    {msg.get('message')}
-                  </Message>
-                )
-              }
+              <Messages
+                className="form__message"
+                messages={messages}
+                mode="long"
+                rtl={rtl}
+                removeMessage={this.triggers.removeMessage}
+                translate={translate}
+              />
             </CSSTransitionGroup>
             {subheader}
             <RegisterForm
@@ -203,7 +189,7 @@ const mapStateToProps = createSelector(
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
   (locale, signupSucceed, messages) =>
-    ({ locale, signupSucceed, messages })
+    ({ locale, signupSucceed, messages: messages.toList() })
 );
 
 export default connect(mapStateToProps)(RegisterComponentV2);

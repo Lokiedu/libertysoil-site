@@ -19,7 +19,6 @@ import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
 import t from 't8on';
 
@@ -30,6 +29,7 @@ import { ActionsTrigger } from '../../triggers';
 import createSelector from '../../selectors/createSelector';
 import { removeAllMessages } from '../../actions/messages';
 
+import Messages from '../messages';
 import Modal from '../sidebar-modal';
 import BasicTag from '../tag/theme/basic';
 import LoginForm from './form';
@@ -50,27 +50,6 @@ const ERROR_TAG_MAPPING = {
     url: '/resetpassword'
   }
 };
-
-function Message({ className, children, long, translate, ...props }) {
-  let message;
-  if (long) {
-    message = translate(children.concat('.long'));
-    if (!message) {
-      message = translate(children);
-    }
-  } else {
-    message = translate(children.concat('.short'));
-    if (!message) {
-      message = translate(children);
-    }
-  }
-
-  return (
-    <div className={classNames('form__message', className)} {...props}>
-      {message}
-    </div>
-  );
-}
 
 function ActionTag({ url, translate, ...props }) {
   const content = (
@@ -147,6 +126,11 @@ class LoginComponentV2 extends React.Component {
     }
   };
 
+  handleMessageClick = e => {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  }
+
   render() {
     const { locale, messages, onClose } = this.props;
 
@@ -209,14 +193,16 @@ class LoginComponentV2 extends React.Component {
               transitionLeave
               transitionLeaveTimeout={250}
               transitionName="form__message--transition"
+              onClick={this.handleMessageClick}
             >
-              {messages.size &&
-                this.props.messages.map(msg =>
-                  <Message key={msg.get('message')} long translate={translate}>
-                    {msg.get('message')}
-                  </Message>
-                )
-              }
+              <Messages
+                className="form__message"
+                messages={messages}
+                mode="long"
+                rtl={rtl}
+                removeMessage={this.triggers.removeMessage}
+                translate={translate}
+              />
             </CSSTransitionGroup>
             {subheader}
             <LoginForm
@@ -235,7 +221,8 @@ const mapStateToProps = createSelector(
   state => state.get('messages').filter(msg =>
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
-  (locale, messages) => ({ locale, messages })
+  (locale, messages) =>
+    ({ locale, messages: messages.toList() })
 );
 
 export default connect(mapStateToProps)(LoginComponentV2);

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import omit from 'lodash/omit';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
@@ -34,6 +35,12 @@ export default class Messages extends React.PureComponent {
     innerProps: {}
   };
 
+  componentWillUpdate(nextProps) {
+    this.restProps = omit(nextProps, KNOWN_PROPS);
+  }
+
+  restProps = {};
+
   render() {
     const { messages } = this.props;
     if (messages.isEmpty()) {
@@ -43,7 +50,7 @@ export default class Messages extends React.PureComponent {
     const { innerProps, removeMessage } = this.props;
 
     return (
-      <div className="message__group">
+      <div className="message__group" {...this.restProps}>
         {messages.map(msg =>
           <Message
             i={msg.get('id')}
@@ -58,3 +65,5 @@ export default class Messages extends React.PureComponent {
     );
   }
 }
+
+const KNOWN_PROPS = Object.keys(Messages.propTypes);
