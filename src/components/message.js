@@ -37,14 +37,53 @@ function translateWith(getter, phrase, mode) {
   return res || phrase;
 }
 
-export class UnwrappedMessage extends React.Component {
+const id1 = x => x;
+
+const isRTL = (props) => {
+  if (props.rtl !== undefined) {
+    return props.rtl;
+  }
+
+  if (props.locale) {
+    const options = SUPPORTED_LOCALES[props.locale];
+    return options && options.rtl;
+  }
+
+  return false;
+};
+
+const getTranslate = (props) => {
+  const { translate } = props;
+  if (translate === false) {
+    return id1;
+  }
+
+  if (translate instanceof Function) {
+    return translate;
+  }
+
+  if (props.locale) {
+    return t.translateTo(props.locale);
+  }
+
+  return id1;
+};
+
+export class UnwrappedMessage extends React.PureComponent {
   static displayName = 'UnwrappedMessage';
 
   static propTypes = {
+    children: PropTypes.string,
     i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     internal: PropTypes.bool,
+    locale: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     message: PropTypes.string,
     removeMessage: PropTypes.func,
+    rtl: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
+    translate: PropTypes.oneOfType([ // eslint-disable-line react/no-unused-prop-types
+      PropTypes.func,
+      PropTypes.bool
+    ]),
     type: PropTypes.string
   };
 
@@ -52,45 +91,64 @@ export class UnwrappedMessage extends React.Component {
     internal: false
   };
 
-  closeHandler = () => {
+  constructor(props, ...args) {
+    super(props, ...args);
+
+    this.isRTL = isRTL(props);
+    this.translate = getTranslate(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.isRTL = isRTL(nextProps);
+    this.translate = getTranslate(nextProps);
+  }
+
+  handleClose = () => {
     this.props.removeMessage(this.props.i);
   };
 
   render() {
-    const {
-      children,
-      locale,
-      removeMessage,
-      type,
-      message,
-      i,
-      internal
-    } = this.props;
-    let icon = null;
-    let close = null;
+    const { type } = this.props;
 
-    const cn = classNames('message', {
-      'message-error': type === messageType.ERROR,
-      'message-internal': internal,
-      'message--rtl': SUPPORTED_LOCALES[locale].rtl
-    });
+    const cn = classNames(
+      'message', this.props.className,
+      {
+        'message-error': type === messageType.ERROR,
+        'message-internal': this.props.internal,
+        'message--rtl': this.isRTL
+      }
+    );
 
-    if (type == messageType.ERROR) {
-      icon = <span className="micon message__icon">error</span>;
+    let icon;
+    if (type === messageType.ERROR) {
+      icon = (
+        <span className="micon message__icon">
+          error
+        </span>
+      );
     }
 
-    if (removeMessage) {
-      close = <span className="message__close action micon" onClick={this.closeHandler}>close</span>;
+    let close;
+    if (this.props.removeMessage) {
+      close = (
+        <span
+          className="message__close action micon"
+          onClick={this.handleClose}
+        >
+          close
+        </span>
+      );
     }
-
-    const translate = t.translateTo(locale);
 
     return (
-      <div className={cn} key={i}>
+      <div className={cn}>
         {close}
         {icon}
         <div className="message__body">
-          {translateWith(translate, message || children)}
+          {translateWith(
+            this.translate,
+            this.props.message || this.props.children
+          )}
         </div>
       </div>
     );
