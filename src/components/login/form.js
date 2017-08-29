@@ -17,7 +17,6 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
-import classNames from 'classnames';
 import noop from 'lodash/noop';
 import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
@@ -74,8 +73,7 @@ export class LoginFormV2 extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired,
-    rtl: PropTypes.bool
+    }).isRequired
   };
 
   static defaultProps = {
@@ -109,7 +107,6 @@ export class LoginFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className={classNames('form', { 'form--rtl': this.props.rtl })}
         method="post"
         onSubmit={this.handleSubmit}
       >

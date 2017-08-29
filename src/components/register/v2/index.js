@@ -141,10 +141,15 @@ class RegisterComponentV2 extends React.Component {
       headerContent = translate('signup.action');
     }
 
+    let cn = 'form form--stretch_n form__container sidebar-form__container';
+    if (rtl) {
+      cn += ' form--rtl';
+    }
+
     return (
       <Modal.Overlay isVisible={this.props.isVisible}>
         <Modal
-          className="form form__container sidebar-form__container"
+          className={cn}
           isVisible={this.props.isVisible}
           rtl={rtl}
           onHide={onClose}
@@ -182,7 +187,6 @@ class RegisterComponentV2 extends React.Component {
             <RegisterForm
               dispatch={this.props.dispatch}
               format={format}
-              rtl={rtl}
               succeed={this.props.signupSucceed}
               translate={translate}
               onSubmit={this.handleSubmit}

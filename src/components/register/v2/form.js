@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
 import { noop, omit, reduce } from 'lodash';
@@ -109,8 +108,7 @@ export class SignupFormV2 extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired,
-    rtl: PropTypes.bool
+    }).isRequired
   };
 
   static defaultProps = {
@@ -275,13 +273,12 @@ export class SignupFormV2 extends React.Component {
   };
 
   render() {
-    const { fields, translate: t, format: f, rtl } = this.props;
+    const { fields, translate: t, format: f } = this.props;
 
     if (this.props.succeed) {
       return (
         <SignupSuccessMessage
           dispatch={this.props.dispatch}
-          rtl={rtl}
           translate={t}
         />
       );
@@ -291,7 +288,6 @@ export class SignupFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className={classNames('form sidebar-form', { 'form--rtl': rtl })}
         method="post"
         onChange={this.handleChange}
         onSubmit={this.handleSubmit}

@@ -177,10 +177,15 @@ class LoginComponentV2 extends React.Component {
       headerContent = translate('login.action');
     }
 
+    let cn = 'form form--stretch_n form__container sidebar-form__container';
+    if (rtl) {
+      cn += ' form--rtl';
+    }
+
     return (
       <Modal.Overlay isVisible={this.props.isVisible}>
         <Modal
-          className="form form__container sidebar-form__container"
+          className={cn}
           isVisible={this.props.isVisible}
           rtl={rtl}
           onHide={onClose}
@@ -217,7 +222,6 @@ class LoginComponentV2 extends React.Component {
             {subheader}
             <LoginForm
               format={format}
-              rtl={rtl}
               translate={translate}
               onSubmit={this.handleSubmit}
             />

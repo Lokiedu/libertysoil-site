@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 
 import { showRegisterForm } from '../../../actions/ui';
 
@@ -42,7 +41,7 @@ export default class SignupSuccessMessage extends React.Component {
     const { translate: t } = this.props;
 
     return (
-      <div className={classNames('form', { 'form--rtl': this.props.rtl })}>
+      <div>
         <header className="form__subheader form__background--bright">
           {t('signup.success.title')}
         </header>
