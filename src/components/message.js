@@ -24,6 +24,8 @@ import { SUPPORTED_LOCALES } from '../consts/localization';
 import messageType from '../consts/messageTypeConstants';
 import createSelector from '../selectors/createSelector';
 
+import { OldIcon as Icon } from './icon';
+
 function translateWith(getter, phrase, mode) {
   const res = getter(phrase);
   if (!res && !res.match(/\.+(long|short)$/)) {
@@ -69,17 +71,33 @@ const getTranslate = (props) => {
   return id1;
 };
 
+const STATUS_ICON_SIZE = {
+  inner: 'xl', outer: 'm'
+};
+
+const CLOSE_ICON_SIZE = {
+  inner: 'lm', outer: 'm'
+};
+
 export class UnwrappedMessage extends React.PureComponent {
   static displayName = 'UnwrappedMessage';
 
   static propTypes = {
     children: PropTypes.string,
+    closeIcon: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.shape(Icon.propTypes)
+    ]),
     i: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     internal: PropTypes.bool,
     locale: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     message: PropTypes.string,
     removeMessage: PropTypes.func,
     rtl: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
+    statusIcon: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.shape(Icon.propTypes)
+    ]),
     translate: PropTypes.oneOfType([ // eslint-disable-line react/no-unused-prop-types
       PropTypes.func,
       PropTypes.bool
@@ -88,7 +106,9 @@ export class UnwrappedMessage extends React.PureComponent {
   };
 
   static defaultProps = {
-    internal: false
+    closeIcon: {},
+    internal: false,
+    statusIcon: {}
   };
 
   constructor(props, ...args) {
@@ -108,7 +128,7 @@ export class UnwrappedMessage extends React.PureComponent {
   };
 
   render() {
-    const { type } = this.props;
+    const { closeIcon, statusIcon, type } = this.props;
 
     const cn = classNames(
       'message', this.props.className,
@@ -120,29 +140,34 @@ export class UnwrappedMessage extends React.PureComponent {
     );
 
     let icon;
-    if (type === messageType.ERROR) {
+    if (type === messageType.ERROR && statusIcon !== false) {
       icon = (
-        <span className="micon message__icon">
-          error
-        </span>
+        <Icon
+          className="message__icon"
+          icon="error"
+          relative
+          size={STATUS_ICON_SIZE}
+          {...statusIcon}
+        />
       );
     }
 
     let close;
-    if (this.props.removeMessage) {
+    if (this.props.removeMessage && this.props.closeIcon !== false) {
       close = (
-        <span
-          className="message__close action micon"
+        <Icon
+          className="message__close action"
+          icon="close"
+          relative
+          size={CLOSE_ICON_SIZE}
           onClick={this.handleClose}
-        >
-          close
-        </span>
+          {...closeIcon}
+        />
       );
     }
 
     return (
       <div className={cn}>
-        {close}
         {icon}
         <div className="message__body">
           {translateWith(
@@ -150,6 +175,7 @@ export class UnwrappedMessage extends React.PureComponent {
             this.props.message || this.props.children
           )}
         </div>
+        {close}
       </div>
     );
   }

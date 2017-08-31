@@ -20,28 +20,18 @@
   border-radius: @radius;
   position: relative;
   display: flex;
+  align-items: center;
   z-index: 10000;
 
   &__body {
-    padding: 16px 35px 16px 20px;
+    padding: 16px 35px 16px 0;
     font-size: 16px;
     line-height: 22px;
     flex: 1;
-
-    .message__close + & {
-      margin-right: @doubleSpace;
-    }
-  }
-
-  &__icon {
-    margin: 9px -5px 9px 15px;
-    font-size: 36px;
   }
 
   &__close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+    margin-right: 8px;
   }
 
   &__group {
@@ -50,6 +40,10 @@
     .message + .message {
       margin-top: @space;
     }
+  }
+
+  &__icon {
+    margin-left: 6px;
   }
 
   &-error {
@@ -66,11 +60,17 @@
     direction: rtl;
 
     .message__body {
-      padding: 16px 20px 16px 35px;
+      padding: 16px 0 16px 35px;
+    }
+
+    .message__close {
+      margin-right: 0;
+      margin-left: 8px;
     }
 
     .message__icon {
-      margin: 9px 15px 9px -5px;
+      margin-left: 0;
+      margin-right: 6px;
     }
   }
 }
