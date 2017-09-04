@@ -30,7 +30,7 @@ import following from './following';
 import geo from './geo';
 import likes from './likes';
 import likes_river from './likes_river';
-import messages from './messages';
+import * as messages from './messages';
 import posts from './posts';
 import river from './river';
 import all_posts from './all_posts';
@@ -71,7 +71,7 @@ export const theReducer = combineReducers(i.Map({
   geo,
   likes,
   likes_river,
-  messages,
+  messages: messages.reducer,
   posts,
   river,
   all_posts,
@@ -127,7 +127,7 @@ const initialState = i.Map({
   geotag_posts: i.Map({}),
   likes: i.Map({}),
   likes_river: i.Map({}),
-  messages: i.List([]),
+  messages: messages.initialState,
   posts: i.Map({}),
   related_posts: i.Map({}),
   river: i.List([]),

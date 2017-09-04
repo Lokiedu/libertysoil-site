@@ -16,46 +16,45 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import { isPlainObject, isError } from 'lodash';
+import { isPlainObject, isError, uniqueId } from 'lodash';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { messages } from '../actions';
 import messageType from '../consts/messageTypeConstants';
 
-const initialState = i.List([]);
+export const initialState = i.OrderedMap();
 
-function removeDuplicate(state, action) {
-  const index = state.findIndex(item => item.message === action.payload.message);
-
-  if (index >= 0) {
-    return state.delete(index);
-  }
-  return state;
-}
-
-export default function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case messages.ADD_ERROR: {
-      state = removeDuplicate(state, action);
-
+      const id = uniqueId();
       const message = action.payload;
-      state = state.push(i.fromJS({
-        type: messageType.ERROR,
-        message: message.message,
-        payload: message.payload
-      }));
+
+      state = state.set(
+        id,
+        i.fromJS({
+          id,
+          type: messageType.ERROR,
+          message: message.message,
+          payload: message.payload
+        })
+      );
       break;
     }
 
     case messages.ADD_MESSAGE: {
-      state = removeDuplicate(state, action);
-
+      const id = uniqueId();
       const message = action.payload;
-      state = state.push(i.fromJS({
-        type: messageType.MESSAGE,
-        message: message.message,
-        payload: message.payload
-      }));
+
+      state = state.set(
+        id,
+        i.fromJS({
+          id,
+          type: messageType.MESSAGE,
+          message: message.message,
+          payload: message.payload
+        })
+      );
       break;
     }
 
@@ -73,6 +72,8 @@ export default function reducer(state = initialState, action) {
     // Process FSA error objects
     default: {
       if (action.error) {
+        const id = uniqueId();
+
         if (action.meta && action.meta.display) {
           let message = action.payload, payload;
           if (isError(message) || isPlainObject(message)) {
@@ -80,16 +81,24 @@ export default function reducer(state = initialState, action) {
             message = message.message;
           }
 
-          state = state.push(i.fromJS({
-            type: messageType.ERROR,
-            message,
-            payload
-          }));
+          state = state.set(
+            id,
+            i.fromJS({
+              id,
+              type: messageType.ERROR,
+              message,
+              payload
+            })
+          );
         } else {
-          state = state.push(i.fromJS({
-            type: messageType.ERROR,
-            message: 'Something went wrong'
-          }));
+          state = state.set(
+            id,
+            i.fromJS({
+              id,
+              type: messageType.ERROR,
+              message: 'Something went wrong'
+            })
+          );
         }
 
         if (isPlainObject(action.payload)) {

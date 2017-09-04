@@ -100,7 +100,7 @@ describe('ActionsTrigger', () => {
 
         await triggers.registerUser(undefined, undefined, undefined, userAttrs.firstName, userAttrs.lastName);
         expect(
-          store.getState().getIn(['messages', 0, 'message']),
+          store.getState().get('messages').first().get('message'),
           'to contain',
           'ValidationError'
         );

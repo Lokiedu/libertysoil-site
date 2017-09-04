@@ -21,27 +21,40 @@ import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messag
 
 import Message from './message';
 
-const Messages = ({ messages, removeMessage }) => {
-  if (messages.isEmpty()) {
-    return null;
+export default class Messages extends React.PureComponent {
+  static displayName = 'Messages';
+
+  static propTypes = {
+    innerProps: PropTypes.shape({}),
+    messages: ArrayOfMessagesPropType.isRequired,
+    removeMessage: PropTypes.func
+  };
+
+  static defaultProps = {
+    innerProps: {}
+  };
+
+  render() {
+    const { messages } = this.props;
+    if (messages.isEmpty()) {
+      return false;
+    }
+
+    const { innerProps, removeMessage } = this.props;
+
+    return (
+      <div className="message__group">
+        {messages.map(msg =>
+          <Message
+            i={msg.get('id')}
+            key={msg.get('id')}
+            message={msg.get('message')}
+            removeMessage={removeMessage}
+            type={msg.get('type')}
+            {...innerProps}
+          />
+        )}
+      </div>
+    );
   }
-
-  const messagesToRender = messages.map((msg, i) => {
-    return <Message i={i} key={i} message={msg.get('message')} removeMessage={removeMessage} type={msg.get('type')} />;
-  });
-
-  return (
-    <div className="message__group">
-      {messagesToRender}
-    </div>
-  );
-};
-
-Messages.displayName = 'Messages';
-
-Messages.propTypes = {
-  messages: ArrayOfMessagesPropType.isRequired,
-  removeMessage: PropTypes.func
-};
-
-export default Messages;
+}
