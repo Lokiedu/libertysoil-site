@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import omit from 'lodash/omit';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
@@ -26,6 +27,7 @@ export default class Messages extends React.PureComponent {
   static displayName = 'Messages';
 
   static propTypes = {
+    className: PropTypes.string,
     innerProps: PropTypes.shape({}),
     messages: ArrayOfMessagesPropType.isRequired,
     removeMessage: PropTypes.func
@@ -50,7 +52,7 @@ export default class Messages extends React.PureComponent {
     const { innerProps, removeMessage } = this.props;
 
     return (
-      <div className="message__group" {...this.restProps}>
+      <div className={classNames('message__group', this.props.className)} {...this.restProps}>
         {messages.map(msg =>
           <Message
             i={msg.get('id')}

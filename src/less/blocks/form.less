@@ -251,11 +251,61 @@
   }
 
   &__message {
-    margin-left: 25px;
-    margin-right: 25px;
-    padding-top: 4px;
-    font-size: 14px;
-    color: #fe9e3e;
+    &--theme {
+      &_basic {
+        margin-left: 25px;
+        margin-right: 25px;
+        padding-top: 4px;
+        font-size: 14px;
+        color: #fe9e3e;
+      }
+
+      &_popup {
+        min-height: 42px;
+        border-radius: 3px;
+        color: #000;
+        background: rgba(255, 255, 255, 0.9);
+        align-items: stretch;
+        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.2);
+
+        .message__body {
+          padding: 0 16px;
+          display: flex;
+          min-height: 42px;
+          align-items: center;
+          border-top: 2px solid rgba(255, 255, 255, 0.8);
+          font-size: 12px;
+          line-height: 12px;
+        }
+
+        .message__close {
+          position: relative;
+          margin: 0;
+          color: #8e8e8e;
+
+          &::before, &::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            content: '';
+          }
+
+          &::before {
+            height: 2px;
+            border-top-right-radius: 3px;
+            background: #fff;
+          }
+
+          &::after {
+            bottom: 0;
+            border-left: 2px solid #ff9362;
+            border-right: 4px solid #cdf0fd;
+            border-radius: 0px 3px 3px 0px;
+          }
+        }
+      }
+    }
 
     &--transition {
       &-appear {
@@ -268,6 +318,24 @@
           transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
         }
       }
+    }
+  }
+
+  .form__messages--theme_popup {
+    position: fixed;
+    top: 16px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (min-width: 480px) {
+      width: 420px;
+    }
+
+    @media (min-width: 768px) {
+      width: 520px;
     }
   }
 
@@ -343,6 +411,14 @@
 
       .form__subheader {
         padding-left: 40px;
+      }
+
+      .form__messages--theme_popup {
+        left: 60px;
+
+        @media (min-width: 480px) {
+          left: auto;
+        }
       }
 
       &.form--rtl {
@@ -423,6 +499,12 @@
         @media (min-width: 480px) {
           margin-left: calc(60px + 25px);
           width: 245px;
+        }
+      }
+
+      .form__messages {
+        @media (max-width: 479px) {
+          width: 260px;
         }
       }
 

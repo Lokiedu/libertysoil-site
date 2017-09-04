@@ -20,6 +20,7 @@ import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import isEqual from 'lodash/isEqual';
+import memoize from 'memoizee';
 import t from 't8on';
 
 import { SUPPORTED_LOCALES } from '../../consts/localization';
@@ -51,6 +52,10 @@ const ERROR_TAG_MAPPING = {
   }
 };
 
+const MESSAGE_CLOSE_ICON = {
+  pack: 'fa', relative: true, size: { outer: 'l' }
+};
+
 function ActionTag({ url, translate, ...props }) {
   const content = (
     <BasicTag
@@ -73,6 +78,8 @@ function ActionTag({ url, translate, ...props }) {
 
   return content;
 }
+
+const id1Cached = memoize(x => x, { simplified: true });
 
 class LoginComponentV2 extends React.Component {
   static displayName = 'LoginComponentV2';
@@ -196,12 +203,17 @@ class LoginComponentV2 extends React.Component {
               onClick={this.handleMessageClick}
             >
               <Messages
-                className="form__message"
+                className="form__messages form__messages--theme_popup"
                 messages={messages}
-                mode="long"
-                rtl={rtl}
+                innerProps={id1Cached({
+                  className: 'form__message form__message--theme_popup',
+                  closeIcon: MESSAGE_CLOSE_ICON,
+                  mode: 'long',
+                  rtl,
+                  statusIcon: false,
+                  translate
+                })}
                 removeMessage={this.triggers.removeMessage}
-                translate={translate}
               />
             </CSSTransitionGroup>
             {subheader}

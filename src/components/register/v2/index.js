@@ -19,6 +19,7 @@ import React, { PropTypes } from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import isEqual from 'lodash/isEqual';
+import memoize from 'memoizee';
 import t from 't8on';
 
 import { SUPPORTED_LOCALES } from '../../../consts/localization';
@@ -43,6 +44,12 @@ const ERROR_MESSAGES = [
 ];
 
 const ERROR_TAG_MAPPING = {};
+
+const MESSAGE_CLOSE_ICON = {
+  pack: 'fa', relative: true, size: { outer: 'l' }
+};
+
+const id1Cached = memoize(x => x, { simplified: true });
 
 class RegisterComponentV2 extends React.Component {
   static displayName = 'RegisterComponentV2';
@@ -160,12 +167,17 @@ class RegisterComponentV2 extends React.Component {
               onClick={this.handleMessageClick}
             >
               <Messages
-                className="form__message"
+                className="form__messages form__messages--theme_popup"
                 messages={messages}
-                mode="long"
-                rtl={rtl}
                 removeMessage={this.triggers.removeMessage}
-                translate={translate}
+                innerProps={id1Cached({
+                  className: 'form__message form__message--theme_popup',
+                  closeIcon: MESSAGE_CLOSE_ICON,
+                  mode: 'long',
+                  rtl,
+                  statusIcon: false,
+                  translate
+                })}
               />
             </CSSTransitionGroup>
             {subheader}
