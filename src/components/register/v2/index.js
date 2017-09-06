@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import memoize from 'memoizee';
@@ -156,30 +155,21 @@ class RegisterComponentV2 extends React.Component {
             </div>
           </Modal.Header>
           <Modal.Body raw className="form__background--dark">
-            <CSSTransitionGroup
-              className="form__background--bright"
-              component="div"
-              transitionEnter
-              transitionEnterTimeout={250}
-              transitionLeave
-              transitionLeaveTimeout={250}
-              transitionName="form__message--transition"
+            <Messages
+              animated
+              className="form__messages form__messages--theme_popup"
+              innerProps={id1Cached({
+                className: 'form__message form__message--theme_popup',
+                closeIcon: MESSAGE_CLOSE_ICON,
+                mode: 'long',
+                rtl,
+                statusIcon: false,
+                translate
+              })}
+              messages={messages}
+              removeMessage={this.triggers.removeMessage}
               onClick={this.handleMessageClick}
-            >
-              <Messages
-                className="form__messages form__messages--theme_popup"
-                messages={messages}
-                removeMessage={this.triggers.removeMessage}
-                innerProps={id1Cached({
-                  className: 'form__message form__message--theme_popup',
-                  closeIcon: MESSAGE_CLOSE_ICON,
-                  mode: 'long',
-                  rtl,
-                  statusIcon: false,
-                  translate
-                })}
-              />
-            </CSSTransitionGroup>
+            />
             {subheader}
             <RegisterForm
               dispatch={this.props.dispatch}

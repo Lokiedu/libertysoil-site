@@ -18,6 +18,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
@@ -27,6 +28,8 @@ export default class Messages extends React.PureComponent {
   static displayName = 'Messages';
 
   static propTypes = {
+    animated: PropTypes.bool,
+    animationProps: PropTypes.shape({}),
     className: PropTypes.string,
     innerProps: PropTypes.shape({}),
     messages: ArrayOfMessagesPropType.isRequired,
@@ -34,6 +37,7 @@ export default class Messages extends React.PureComponent {
   };
 
   static defaultProps = {
+    animationProps: {},
     innerProps: {}
   };
 
@@ -44,25 +48,52 @@ export default class Messages extends React.PureComponent {
   restProps = {};
 
   render() {
-    const { messages } = this.props;
-    if (messages.isEmpty()) {
+    const { animated, messages } = this.props;
+    if (!animated && messages.isEmpty()) {
       return false;
     }
 
     const { innerProps, removeMessage } = this.props;
+    const children = messages.map(msg =>
+      <Message
+        i={msg.get('id')}
+        key={msg.get('id')}
+        message={msg.get('message')}
+        removeMessage={removeMessage}
+        type={msg.get('type')}
+        {...innerProps}
+      />
+    );
+
+    if (animated) {
+      return (
+        <div
+          className={classNames('message__group', this.props.className)}
+          {...this.restProps}
+        >
+          <CSSTransitionGroup
+            component="div"
+            transitionAppear
+            transitionAppearTimeout={250}
+            transitionEnter
+            transitionEnterTimeout={250}
+            transitionLeave
+            transitionLeaveTimeout={250}
+            transitionName="form__message--transition"
+            {...this.props.animationProps}
+          >
+            {children}
+          </CSSTransitionGroup>
+        </div>
+      );
+    }
 
     return (
-      <div className={classNames('message__group', this.props.className)} {...this.restProps}>
-        {messages.map(msg =>
-          <Message
-            i={msg.get('id')}
-            key={msg.get('id')}
-            message={msg.get('message')}
-            removeMessage={removeMessage}
-            type={msg.get('type')}
-            {...innerProps}
-          />
-        )}
+      <div
+        className={classNames('message__group', this.props.className)}
+        {...this.restProps}
+      >
+        {children}
       </div>
     );
   }

@@ -308,14 +308,38 @@
     }
 
     &--transition {
+      @transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+
       &-appear {
         opacity: 0.01;
         transform: translateY(-100%);
 
-        &.sidebar-form__message--transition-appear-active {
+        &-active {
           opacity: 1;
           transform: translateY(0%);
-          transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+          transition: @transition;
+        }
+      }
+
+      &-enter {
+        opacity: 0.01;
+        transform: translateY(-100%);
+
+        &-active {
+          opacity: 1;
+          transform: translateY(0%);
+          transition: @transition;
+        }
+      }
+
+      &-leave {
+        opacity: 1;
+        transform: translateY(0%);
+
+        &-active {
+          opacity: 0.01;
+          transform: translateY(-100%);
+          transition: @transition;
         }
       }
     }
