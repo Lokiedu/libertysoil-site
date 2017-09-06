@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import omit from 'lodash/omit';
 
 import { OldIcon as Icon } from '../../icon';
@@ -35,10 +36,20 @@ const STATUS_ICONS = {
   unfilled: {}
 };
 
+const ANIMATION_PROPS = {
+  component: 'div',
+  transitionAppear: true,
+  transitionAppearTimeout: 250,
+  transitionLeave: true,
+  transitionLeaveTimeout: 250,
+  transitionName: 'form__message--transition'
+};
+
 const DOT_ICON_SIZE = { outer: 'l', inner: 's' };
 
 export default class FormField extends React.Component {
   static propTypes = {
+    animated: PropTypes.bool,
     className: PropTypes.string,
     dotColor: PropTypes.string,
     error: PropTypes.string,
@@ -65,7 +76,7 @@ export default class FormField extends React.Component {
   }
 
   render() {
-    const { error, name, type, value, warn } = this.props;
+    const { animated, error, name, type, value, warn } = this.props;
 
     let dotColor = 'gray', icon;
     if (error) {
@@ -82,7 +93,7 @@ export default class FormField extends React.Component {
     }
 
     const cn = classNames(
-      'form__row form__background--bright',
+      'form__row form__field form__background--bright',
       this.props.className,
       {
         'form__field--checkbox': type === 'checkbox'
@@ -164,19 +175,42 @@ export default class FormField extends React.Component {
       }
     }
 
+    const errorMessage = error && (
+      <div className="form__field-message">
+        {error}
+      </div>
+    );
+    const warnMessage = warn && (
+      <div className="form__field-message form__field-message--type_info">
+        {warn}
+      </div>
+    );
+
+    let messages;
+    if (animated) {
+      messages = (
+        <div>
+          <CSSTransitionGroup {...ANIMATION_PROPS}>
+            {errorMessage}
+          </CSSTransitionGroup>
+          <CSSTransitionGroup {...ANIMATION_PROPS}>
+            {warnMessage}
+          </CSSTransitionGroup>
+        </div>
+      );
+    } else {
+      messages = (
+        <div>
+          {errorMessage}
+          {warnMessage}
+        </div>
+      );
+    }
+
     return (
       <div className={cn} key={name}>
         {body}
-        {error &&
-          <div className="form__field-message">
-            {error}
-          </div>
-        }
-        {warn &&
-          <div className="form__field-message form__field-message--type_info">
-            {warn}
-          </div>
-        }
+        {messages}
       </div>
     );
   }

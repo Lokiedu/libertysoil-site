@@ -119,6 +119,7 @@ export class LoginFormV2 extends React.Component {
 
             acc.push(
               <FormField
+                animated
                 name={fieldName}
                 title={t(label)}
                 {...fieldValue}

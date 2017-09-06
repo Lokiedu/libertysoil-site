@@ -306,6 +306,7 @@ export class SignupFormV2 extends React.Component {
 
             acc.push(
               <FormField
+                animated
                 autoComplete={'new-'.concat(fieldName)}
                 key={fieldName}
                 name={fieldName}
