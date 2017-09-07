@@ -63,6 +63,24 @@
     }
   }
 
+  &__outside {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 100%;
+    transition: right 0.5s ease-out;
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+      right: 708px;
+    }
+
+    @media (min-width: 1024px) {
+      right: 540px;
+    }
+  }
+
   &__main {
     position: absolute; // fixed?
     top: 0;
@@ -182,14 +200,6 @@
     }
   }
 
-  &__outside {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-
   &--rtl {
     direction: rtl;
 
@@ -209,6 +219,19 @@
             transform: translateX(-100%);
           }
         }
+      }
+    }
+
+    .sidebar-modal__outside {
+      right: 0;
+      left: auto;
+
+      @media (min-width: 768px) {
+        left: 708px;
+      }
+
+      @media (min-width: 1024px) {
+        left: 540px;
       }
     }
   }

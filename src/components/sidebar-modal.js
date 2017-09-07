@@ -157,7 +157,8 @@ class SidebarModalOverlay extends React.Component {
     const cn = classNames('sidebar-modal', def, this.props.className, {
       [def.concat('--transition_appear')]: this.state.isAppearing,
       [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
-      [def.concat('--color_').concat(this.props.color)]: this.props.color
+      [def.concat('--color_').concat(this.props.color)]: this.props.color,
+      [def.concat('--rtl')]: this.props.rtl
     });
 
     const content = <div className={cn}>{this.props.children}</div>;

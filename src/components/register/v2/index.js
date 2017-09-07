@@ -131,50 +131,51 @@ class RegisterComponentV2 extends React.Component {
     }
 
     return (
-      <Modal.Overlay isVisible={this.props.isVisible}>
-        <Modal.Main
-          className={cn}
-          innerClassName="form__container sidebar-form__container"
-          isVisible={this.props.isVisible}
-          rtl={rtl}
-          onCloseTo={onClose && onClose.to}
-        >
-          <Modal.Header
-            className="form__title sidebar-modal__title--big"
-            closeIcon={false}
-            mainIcon={MAIN_ICON}
-            theme="colored"
-            onClose={onClose}
+      <div className={cn}>
+        <Modal.Overlay isVisible={this.props.isVisible}>
+          <Modal.Main
+            innerClassName="form__container sidebar-form__container"
+            isVisible={this.props.isVisible}
+            rtl={rtl}
+            onCloseTo={onClose && onClose.to}
           >
-            <div className="form__title">
-              {headerContent}
-            </div>
-          </Modal.Header>
-          <Modal.Body raw className="form__background--dark">
-            <Messages
-              animated
-              className="form__messages form__messages--theme_popup"
-              innerProps={id1Cached({
-                className: 'form__message form__message--theme_popup',
-                closeIcon: MESSAGE_CLOSE_ICON,
-                mode: 'long',
-                rtl,
-                statusIcon: false,
-                translate
-              })}
-              messages={messages}
-              removeMessage={this.triggers.removeMessage}
-            />
-            {subheader}
-            <RegisterForm
-              dispatch={this.props.dispatch}
-              succeed={this.props.signupSucceed}
-              translate={translate}
-              onSubmit={this.handleSubmit}
-            />
-          </Modal.Body>
-        </Modal.Main>
-      </Modal.Overlay>
+            <Modal.Header
+              className="form__title sidebar-modal__title--big"
+              closeIcon={false}
+              mainIcon={MAIN_ICON}
+              theme="colored"
+              onClose={onClose}
+            >
+              <div className="form__title">
+                {headerContent}
+              </div>
+            </Modal.Header>
+            <Modal.Body raw className="form__background--dark">
+              <Messages
+                animated
+                className="form__messages form__messages--theme_popup"
+                innerProps={id1Cached({
+                  className: 'form__message form__message--theme_popup',
+                  closeIcon: MESSAGE_CLOSE_ICON,
+                  mode: 'long',
+                  rtl,
+                  statusIcon: false,
+                  translate
+                })}
+                messages={messages}
+                removeMessage={this.triggers.removeMessage}
+              />
+              {subheader}
+              <RegisterForm
+                dispatch={this.props.dispatch}
+                succeed={this.props.signupSucceed}
+                translate={translate}
+                onSubmit={this.handleSubmit}
+              />
+            </Modal.Body>
+          </Modal.Main>
+        </Modal.Overlay>
+      </div>
     );
   }
 }
