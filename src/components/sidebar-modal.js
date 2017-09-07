@@ -99,8 +99,8 @@ class SidebarModalOverlay extends React.Component {
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      isAppearing: false,
-      isVisible: false
+      isAppearing: typeof window === 'undefined',
+      isVisible: typeof window === 'undefined'
     };
   }
 
