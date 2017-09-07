@@ -132,7 +132,7 @@ class RegisterComponentV2 extends React.Component {
 
     return (
       <Modal.Overlay isVisible={this.props.isVisible}>
-        <Modal
+        <Modal.Main
           className={cn}
           innerClassName="form__container sidebar-form__container"
           isVisible={this.props.isVisible}
@@ -173,7 +173,7 @@ class RegisterComponentV2 extends React.Component {
               onSubmit={this.handleSubmit}
             />
           </Modal.Body>
-        </Modal>
+        </Modal.Main>
       </Modal.Overlay>
     );
   }

@@ -91,7 +91,7 @@ export default class ImportContactsAction extends React.Component {
         onClick={this.handleCardClick}
       >
         <Modal.Overlay isVisible={this.state.isActive}>
-          <Modal isVisible={this.state.isActive} onClose={this.handleModalClose}>
+          <Modal.Main isVisible={this.state.isActive} onClose={this.handleModalClose}>
             <Modal.Header theme="colored" onClose={this.handleModalClose}>
               Import your contacts
             </Modal.Header>
@@ -125,7 +125,7 @@ export default class ImportContactsAction extends React.Component {
                 />
               </div>
             </Modal.Body>
-          </Modal>
+          </Modal.Main>
         </Modal.Overlay>
       </Card>
     );

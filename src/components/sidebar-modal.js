@@ -266,8 +266,9 @@ class SidebarModalHeader extends React.Component {
   }
 }
 
-const SidebarModal = SidebarModalMain;
-SidebarModal.Body = SidebarModalBody;
-SidebarModal.Header = SidebarModalHeader;
-SidebarModal.Overlay = SidebarModalOverlay;
-export default SidebarModal;
+export default {
+  Body: SidebarModalBody,
+  Header: SidebarModalHeader,
+  Main: SidebarModalMain,
+  Overlay: SidebarModalOverlay
+};
