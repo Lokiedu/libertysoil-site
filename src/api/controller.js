@@ -1971,8 +1971,7 @@ export default class ApiController {
 
       ctx.body = { user };
     } catch (e) {
-      ctx.status = 500;
-      ctx.body = { error: 'Update failed' };
+      this.processError(ctx, e);
       return;
     }
   };

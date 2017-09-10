@@ -4,8 +4,7 @@ sudo: required  # requirement for postgres 9.5
 dist: trusty
 
 node_js:
-  - "6.10"
-  - "7.7"
+  - "8.4"
 
 services:
   - postgresql
@@ -26,4 +25,4 @@ addons:
 
 before_script:
   - psql -c 'create database libertysoil;' -U postgres
-script: "npm run travis"
+script: "yarn run travis"

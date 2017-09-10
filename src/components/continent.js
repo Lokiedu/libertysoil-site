@@ -20,12 +20,13 @@ import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
-
 import CONTINENTS from '../consts/continents';
+
 import TagCloud from './tag-cloud';
 
+
 const Continent = ({ code, count, geotags }) => {
-  const imageUrl = `/images/geo/continents/${code}.svg`;
+  const imageUrl = CONTINENTS[code].img_url;
   const name = CONTINENTS[code].name;
   const url_name = CONTINENTS[code].url_name;
 

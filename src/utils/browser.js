@@ -34,6 +34,10 @@ export function isStorageAvailable(type: string) {
     storage.removeItem(x);
     return true;
   } catch (e) {
+    if (typeof DOMException === 'undefined') {
+      return false;
+    }
+
     return e instanceof DOMException && (
       // everything except Firefox
       e.code === 22 ||

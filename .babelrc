@@ -1,23 +1,13 @@
 {
-  "presets": [
-    "es2015",
-    "react",
-    "stage-1"
-  ],
-  "plugins": [
-    ["lodash"]
-  ],
+  "presets": ["react"],
   "retainLines": true,
   "sourceMaps": "both",
-  "env": {
-    "development": {
-      "plugins": [
-        ["flow-runtime", {
-          "annotate": false,
-          "assert": true,
-          "warn": true
-        }]
-      ]
-    }
-  }
+  "plugins": [
+    "syntax-object-rest-spread",
+    "syntax-class-properties",
+    "syntax-dynamic-import",
+    "transform-object-rest-spread",
+    "transform-es2015-modules-commonjs",
+    "transform-class-properties"
+  ]
 }

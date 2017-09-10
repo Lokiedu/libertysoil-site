@@ -67,7 +67,7 @@ import ListPage from './pages/list';
 import Induction from './pages/induction';
 import Welcome from './pages/welcome';
 
-export function getRoutes(authHandler, fetchHandler) {
+export function getRoutes(authHandler, fetchHandler/*, changeHandler*/) {
   const withoutAuth = fetchHandler;
   let withAuth;
 

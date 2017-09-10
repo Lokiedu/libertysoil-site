@@ -18,8 +18,53 @@
 import React, { Component, PropTypes } from 'react';
 import { throttle } from 'lodash';
 
+import albert_einstein from '../images/quotes/albert_einstein.jpg';
+import anne_frank from '../images/quotes/anne_frank.jpg';
+import as_neill from '../images/quotes/as_neill.jpg';
+import benazir_bhutto from '../images/quotes/benazir_bhutto.jpg';
+import eric_berne from '../images/quotes/eric_berne.jpg';
+import george_callin from '../images/quotes/george_callin.jpg';
+import jean_piaget from '../images/quotes/jean_piaget.jpg';
+import katharine_hepburn from '../images/quotes/katharine_hepburn.jpg';
+import ken_robinson from '../images/quotes/ken_robinson.jpg';
+import mahatma_gandhi from '../images/quotes/mahatma_gandhi.jpg';
+import malala_yousafzai from '../images/quotes/malala_yousafzai.jpg';
+import marie_curie from '../images/quotes/marie_curie.jpg';
+import maya_angelou from '../images/quotes/maya_angelou.jpg';
+import michelle_obama from '../images/quotes/michelle_obama.jpg';
+import nelson_mandela from '../images/quotes/nelson_mandela.jpg';
+import richard_branson from '../images/quotes/richard_branson.jpg';
+import rosa_parks from '../images/quotes/rosa_parks.jpg';
+import steve_jobs from '../images/quotes/steve_jobs.jpg';
+import sugata_mitra from '../images/quotes/sugata_mitra.jpg';
+import zoe_weil from '../images/quotes/zoe_weil.jpg';
+
 import { Tab, Tabs } from './tabs';
 import VisibilitySensor from './visibility-sensor';
+
+
+const avatars = {
+  albert_einstein,
+  anne_frank,
+  as_neill,
+  benazir_bhutto,
+  eric_berne,
+  george_callin,
+  jean_piaget,
+  katharine_hepburn,
+  ken_robinson,
+  mahatma_gandhi,
+  malala_yousafzai,
+  marie_curie,
+  maya_angelou,
+  michelle_obama,
+  nelson_mandela,
+  richard_branson,
+  rosa_parks,
+  steve_jobs,
+  sugata_mitra,
+  zoe_weil,
+};
 
 export default class Reviews extends Component {
   static propTypes = {
@@ -144,6 +189,13 @@ export default class Reviews extends Component {
     this.imageHovered = false;
   };
 
+  avatarUrlRe = /\/images\/quotes\/(.+)\.jpg/;
+
+  fixAvatarUrl = (dbUrl) => {
+    const name = dbUrl.replace(this.avatarUrlRe, '$1');
+    return avatars[name];
+  };
+
   render() {
     const { quotes } = this.props;
 
@@ -154,28 +206,32 @@ export default class Reviews extends Component {
     this.length = quotes.size;
     let preparedQuotes;
     if (this.state.mobile) {
-      preparedQuotes = quotes.map((q, i) => (
-        <blockquote className="review" key={i}>
-          <p className="review__body content">
-            {q.get('text')}
-          </p>
-          <footer className="review__author">
-            <section className="user_box">
-              <img alt="" className="user_box__avatar" height="64px" src={q.get('avatar_url')} width="64px" />
-              <div className="user_box__body user_box__body-flexless">
-                <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
-                {q.get('description') &&
+      preparedQuotes = quotes.map((q, i) => {
+        const avatarUrl = this.fixAvatarUrl(q.get('avatar_url'));
+
+        return (
+          <blockquote className="review" key={i}>
+            <p className="review__body content">
+              {q.get('text')}
+            </p>
+            <footer className="review__author">
+              <section className="user_box">
+                <img alt="" className="user_box__avatar" height="64px" src={avatarUrl} width="64px" />
+                <div className="user_box__body user_box__body-flexless">
+                  <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
+                  {q.get('description') &&
                   <p className="user_box__text">
                     <a href={q.get('link')}>
                       {q.get('description')}
                     </a>
                   </p>
-                }
-              </div>
-            </section>
-          </footer>
-        </blockquote>
-      ));
+                  }
+                </div>
+              </section>
+            </footer>
+          </blockquote>
+        );
+      });
     } else {
       let reviewClassName = 'review__body content';
       if (this.state.sliding) {
@@ -185,50 +241,56 @@ export default class Reviews extends Component {
       const tabs = (
         <Tabs ref={c => this.panel = c}>
           <div>
-            {quotes.map((q, i) => (
-              <Tab.Content index={i} key={i}>
-                <blockquote className="review">
-                  <p className={reviewClassName}>
-                    {q.get('text')}
-                  </p>
-                  <footer className="review__author">
-                    <section className="user_box">
-                      <div className="user_box__body">
-                        <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
-                        {q.get('description') &&
+            {quotes.map((q, i) => {
+              return (
+                <Tab.Content index={i} key={i}>
+                  <blockquote className="review">
+                    <p className={reviewClassName}>
+                      {q.get('text')}
+                    </p>
+                    <footer className="review__author">
+                      <section className="user_box">
+                        <div className="user_box__body">
+                          <p className="user_box__name"><b>{q.get('first_name')} {q.get('last_name')}</b></p>
+                          {q.get('description') &&
                           <p className="user_box__text">
                             <a href={q.get('link')}>
                               {q.get('description')}
                             </a>
                           </p>
-                        }
-                      </div>
-                    </section>
-                  </footer>
-                </blockquote>
-              </Tab.Content>
-            ))}
+                          }
+                        </div>
+                      </section>
+                    </footer>
+                  </blockquote>
+                </Tab.Content>
+              );
+            })}
           </div>
           <div className="review_group__navigation page__body width">
-            {quotes.map((q, i) => (
-              <Tab.Title
-                activeClassName="review_group__navigation_item-active"
-                className="review_group__navigation_item"
-                index={i}
-                key={i}
-                onClick={this.clickHandler}
-              >
-                <img
-                  alt=""
-                  className="user_box__avatar review_group__navigation_pic"
-                  height={this.state.active === i ? "80" : "64"}
-                  src={q.get('avatar_url')}
-                  width={this.state.active === i ? "80" : "64"}
-                  onMouseOut={this.onImageMouseOut}
-                  onMouseOver={this.onImageMouseOver}
-                />
-              </Tab.Title>
-            ))}
+            {quotes.map((q, i) => {
+              const avatarUrl = this.fixAvatarUrl(q.get('avatar_url'));
+
+              return (
+                <Tab.Title
+                  activeClassName="review_group__navigation_item-active"
+                  className="review_group__navigation_item"
+                  index={i}
+                  key={i}
+                  onClick={this.clickHandler}
+                >
+                  <img
+                    alt=""
+                    className="user_box__avatar review_group__navigation_pic"
+                    height={this.state.active === i ? "80" : "64"}
+                    src={avatarUrl}
+                    width={this.state.active === i ? "80" : "64"}
+                    onMouseOut={this.onImageMouseOut}
+                    onMouseOver={this.onImageMouseOver}
+                  />
+                </Tab.Title>
+              );
+            })}
           </div>
         </Tabs>
       );
