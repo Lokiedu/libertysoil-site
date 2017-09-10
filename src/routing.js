@@ -65,7 +65,7 @@ import GeotagSubscriptionsPage from './pages/geotag-subscriptions';
 
 import ListPage from './pages/list';
 import Induction from './pages/induction';
-import Welcome from './pages/welcome';
+import WelcomePage from './pages/welcome';
 
 export function getRoutes(authHandler, fetchHandler/*, changeHandler*/) {
   const withoutAuth = fetchHandler;
@@ -87,7 +87,7 @@ export function getRoutes(authHandler, fetchHandler/*, changeHandler*/) {
       <Route component={GeotagSubscriptionsPage} path="/feed/geo" onEnter={withAuth} />
       <Route component={Induction} path="/induction" onEnter={withAuth} />
       <Route component={SuggestionsPage} path="/suggestions" onEnter={withAuth} />
-      <Route component={Welcome} path="/welcome" onEnter={withoutAuth} />
+      <Route component={WelcomePage} path="/welcome" onEnter={withoutAuth} />
       <Route component={Auth} path="/auth" onEnter={withoutAuth} />
       <Route component={PostPage} path="/post/:uuid" onEnter={withoutAuth} />
       <Route component={PostEditPage} path="/post/edit/:uuid" onEnter={withAuth} />

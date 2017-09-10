@@ -18,7 +18,6 @@
 /*eslint-env node */
 import { parse as parseUrl } from 'url';
 import fs, { accessSync } from 'fs';
-import path from 'path';
 
 import Koa from 'koa';
 import { isString } from 'lodash';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { DisconnectedWelcome } from '../../../../pages/welcome';
+import { Welcome as DisconnectedWelcome } from '../../../../pages/welcome';
 import props from './defaultProps';
 
 
