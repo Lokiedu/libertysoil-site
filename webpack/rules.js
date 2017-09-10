@@ -7,19 +7,9 @@ import { skipFalsy } from './utils';
 
 class RuleGenerator {
   dev;
-  root;
 
   constructor(dev) {
     this.dev = dev;
-
-    const pieces = __dirname.split('/');
-    const { length } = pieces;
-
-    if (pieces[length - 1] === 'server' && pieces[length - 2] === 'public') {
-      this.root = path.join(__dirname, '..', '..');  // looks like we're inside of server bundle
-    } else {
-      this.root = path.join(__dirname, '..');
-    }
   }
 
   /** Embed font in CSS if dev */
@@ -63,7 +53,7 @@ class RuleGenerator {
       resource: {
         and: [
           { test: /\.less$/ },
-          { include: path.join(this.root, 'src', 'less') },
+          { include: path.resolve('src/less') },
         ]
       }
     };
@@ -103,7 +93,8 @@ class RuleGenerator {
           autoprefixer: false,
           modules: true,
           importLoaders: true,
-          localIdentName: '[folder]__[local]___[hash:base64:5]',
+          // localIdentName: '[folder]__[local]___[hash:base64:5]',
+          localIdentName: '[local]', // TODO: Create a separate loader for global styles.
           calc: false,
           mergeIdents: false
         }
@@ -114,16 +105,6 @@ class RuleGenerator {
       {
         loader: "less-loader"
       },
-      {
-        loader: "mycssmoduleloader",
-        options: {
-          files: [
-            path.join(this.root, 'src', '_assets', 'less', 'vars.less'),
-            path.join(this.root, 'src', '_assets', 'less', 'extend.less'),
-            // path.join(this.root, 'src', '_assets', 'less', 'plugins', 'ico-font.less')
-          ]
-        }
-      }
     ];
 
     return {
@@ -134,7 +115,7 @@ class RuleGenerator {
       resource: {
         and: [
           { test: /\.less$/ },
-          { exclude: path.join(this.root, 'src', 'less') },
+          { exclude: 'src/less' },
         ]
       }
     };
@@ -257,7 +238,7 @@ class RuleGenerator {
         }
       ],
       include: [
-        path.join(this.root, 'src'),
+        path.resolve('src'),
       ]
     };
   }
@@ -303,9 +284,9 @@ class RuleGenerator {
         }
       ],
       include: [
-        path.join(this.root, 'server.js'),
-        path.join(this.root, 'tasks.js'),
-        path.join(this.root, 'src'),
+        path.resolve('server.js'),
+        path.resolve('tasks.js'),
+        path.resolve('src'),
       ]
     };
   }

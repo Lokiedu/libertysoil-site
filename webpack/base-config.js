@@ -37,7 +37,7 @@ const config = {
   output: {
     devtoolModuleFilenameTemplate: '/[absolute-resource-path]',
     filename: path.join("scripts", opts.dev ? "[name].js" : "[name]-[chunkHash].js"),
-    path: path.join(rules.root, "public"),
+    path: path.resolve("public"),
     publicPath: opts.prefix,
   },
 
@@ -51,19 +51,6 @@ const config = {
       ...rules.fonts
     ],
     noParse: /\.min\.js/,
-  },
-  resolveLoader: {
-    alias: {
-      "mycssmoduleloader": path.join(rules.root, 'webpack', "/cssmoduleloader.js"),
-    }
-  },
-
-  resolve: {
-    alias: {
-      _assets: path.normalize(path.join(rules.root, "src", "_assets")),
-      _common: path.normalize(path.join(rules.root, "src", "_common")),
-      _root: path.normalize(rules.root)
-    }
   },
 
   watchOptions: {
