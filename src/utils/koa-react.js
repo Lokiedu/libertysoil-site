@@ -19,7 +19,7 @@ const matchPromisified = promisify(match, { multiArgs: true });
 const readFile = promisify(fs.readFile);
 
 let template;
-if (process.env.DB_ENV === 'test') {
+if (['test', 'travis'].includes(process.env.DB_ENV)) {
   template = ejs.compile(fs.readFileSync('src/views/index.ejs', 'utf8'));
 } else {
   template = ejs.compile(templateData, { filename: 'index.ejs' });

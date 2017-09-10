@@ -11,7 +11,7 @@
   "scripts": {
     "test": "NODE_ENV=development DB_ENV=test run-s reset-db:test mocha",
     "coverage": "NODE_ENV=development DB_ENV=test npm run coverage:run",
-    "travis": "NODE_ENV=development DB_ENV=travis run-s reset-db:travis travis:test lint travis:flow",
+    "travis": "NODE_ENV=development DB_ENV=travis run-s reset-db:travis build:client:dev travis:test lint travis:flow",
     "travis:flow": "run-s flow:install-types flow",
     "travis:test": "run-s coverage:run coverage:coveralls coverage:clean",
     "reset-db:test": "echo \"Preparing test database...\" && babel-node test-helpers/dropDatabase.js && knex --env test migrate:latest",
