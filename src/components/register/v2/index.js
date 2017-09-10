@@ -92,11 +92,6 @@ class RegisterComponentV2 extends React.Component {
     await this.triggers.registerUser(...args);
   };
 
-  handleMessageClick = e => {
-    e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation();
-  };
-
   render() {
     const { locale, messages, onClose } = this.props;
 
@@ -130,7 +125,7 @@ class RegisterComponentV2 extends React.Component {
       headerContent = translate('signup.action');
     }
 
-    let cn = 'form form--stretch_y form__container sidebar-form__container';
+    let cn = 'form form--stretch_y';
     if (rtl) {
       cn += ' form--rtl';
     }
@@ -139,9 +134,10 @@ class RegisterComponentV2 extends React.Component {
       <Modal.Overlay isVisible={this.props.isVisible}>
         <Modal
           className={cn}
+          innerClassName="form__container sidebar-form__container"
           isVisible={this.props.isVisible}
           rtl={rtl}
-          onHide={onClose}
+          onCloseTo={onClose && onClose.to}
         >
           <Modal.Header
             className="form__title sidebar-modal__title--big"
@@ -168,7 +164,6 @@ class RegisterComponentV2 extends React.Component {
               })}
               messages={messages}
               removeMessage={this.triggers.removeMessage}
-              onClick={this.handleMessageClick}
             />
             {subheader}
             <RegisterForm

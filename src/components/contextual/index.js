@@ -24,26 +24,30 @@ import getRouteFor from '../../selectors/contextual-routes';
 import Login from './wrappers/login';
 import Register from './wrappers/register';
 
+const closeRoute = (location) => ({
+  ...location,
+  query: omit(location.query, ['route'])
+});
+
 const onClose = (() => {
   if (browserHistory) {
-    return () => {
-      const location = browserHistory.getCurrentLocation();
-
-      browserHistory.push({
-        ...location,
-        query: omit(location.query, ['route'])
-      });
-    };
+    return Object.assign(
+      () => {
+        const location = browserHistory.getCurrentLocation();
+        browserHistory.push(closeRoute(location));
+      },
+      { to: closeRoute }
+    );
   }
 
-  return () => {
-    const history = createMemoryHistory();
-    const location = history.getCurrentLocation();
-    history.push({
-      ...location,
-      query: omit(location.query, ['route'])
-    });
-  };
+  return Object.assign(
+    () => {
+      const history = createMemoryHistory();
+      const location = history.getCurrentLocation();
+      history.push(closeRoute(location));
+    },
+    { to: closeRoute }
+  );
 })();
 
 const pobj = {};

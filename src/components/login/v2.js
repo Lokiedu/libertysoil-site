@@ -132,11 +132,6 @@ class LoginComponentV2 extends React.Component {
     }
   };
 
-  handleMessageClick = e => {
-    e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation();
-  }
-
   render() {
     const { locale, messages, onClose } = this.props;
 
@@ -166,7 +161,7 @@ class LoginComponentV2 extends React.Component {
       headerContent = translate('login.action');
     }
 
-    let cn = 'form form--stretch_y form__container sidebar-form__container';
+    let cn = 'form form--stretch_y';
     if (rtl) {
       cn += ' form--rtl';
     }
@@ -175,16 +170,16 @@ class LoginComponentV2 extends React.Component {
       <Modal.Overlay isVisible={this.props.isVisible}>
         <Modal
           className={cn}
+          innerClassName="form__container sidebar-form__container"
           isVisible={this.props.isVisible}
           rtl={rtl}
-          onHide={onClose}
+          onCloseTo={onClose && onClose.to}
         >
           <Modal.Header
             className="form__title sidebar-modal__title--big"
             closeIcon={false}
             mainIcon={MAIN_ICON}
             theme="colored"
-            onClose={onClose}
           >
             <div className="form__title">
               {headerContent}
@@ -204,7 +199,6 @@ class LoginComponentV2 extends React.Component {
               })}
               messages={messages}
               removeMessage={this.triggers.removeMessage}
-              onClick={this.handleMessageClick}
             />
             {subheader}
             <LoginForm
