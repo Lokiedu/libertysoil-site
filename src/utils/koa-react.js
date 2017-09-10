@@ -20,8 +20,7 @@ const readFile = promisify(fs.readFile);
 
 let template;
 if (process.env.DB_ENV === 'test') {
-  const path = require('path');
-  template = ejs.compile(fs.readFileSync(path.resolve(__dirname, '../views/index.ejs'), 'utf8'));
+  template = ejs.compile(fs.readFileSync('src/views/index.ejs', 'utf8'));
 } else {
   template = ejs.compile(templateData, { filename: 'index.ejs' });
 }
@@ -32,15 +31,10 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
   const reactMiddleware = async (ctx) => {
     if (!webpackChunks) {
       try {
-        let chunksFilename = `${__dirname}/../webpack-chunks.json`;
-        if (process.env.DB_ENV === 'test') {
-          chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
-        }
-
-        const data = await readFile(chunksFilename);
+        const data = await readFile('public/webpack-chunks.json');
         webpackChunks = JSON.parse(data);
       } catch (e) {
-
+        logger.error(e);
         ctx.status = 500;
         ctx.body = 'Internal Server Error';
         return;

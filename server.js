@@ -178,8 +178,6 @@ function startServer(/*params*/) {
   const sphinx = initSphinx();
   const api = initApi(bookshelf, sphinx);
 
-  const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
-
   const staticsAppConfig = {
     buffer: true,
     dynamic: process.env.NODE_ENV !== 'production',
@@ -192,7 +190,7 @@ function startServer(/*params*/) {
     staticsAppConfig.maxAge = 60 * 60 * 24 * 7;  // consider files fresh for a week
   }
 
-  const staticsApp = serve(staticsRoot, staticsAppConfig);
+  const staticsApp = serve('./public', staticsAppConfig);
 
   const app = new Koa();
   app.logger = logger;
