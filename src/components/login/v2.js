@@ -18,7 +18,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import isEqual from 'lodash/isEqual';
 import memoize from 'memoizee';
 import t from 't8on';
 
@@ -26,6 +25,7 @@ import { SUPPORTED_LOCALES } from '../../consts/localization';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
+import { appear, disappear } from '../../utils/transition';
 import createSelector from '../../selectors/createSelector';
 import { removeAllMessages } from '../../actions/messages';
 
@@ -80,11 +80,12 @@ function ActionTag({ url, translate, ...props }) {
 
 const id1Cached = memoize(x => x, { simplified: true });
 
-class LoginComponentV2 extends React.Component {
+class LoginComponentV2 extends React.PureComponent {
   static displayName = 'LoginComponentV2';
 
   static propTypes = {
     dispatch: PropTypes.func,
+    is_logged_in: PropTypes.bool,
     onSubmit: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     triggers: PropTypes.shape({
@@ -97,21 +98,24 @@ class LoginComponentV2 extends React.Component {
     dispatch: () => {}
   };
 
+  static TRANSITION_TIMEOUT = 250;
+
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      isChecked: false
+      isChecked: false,
+      isVisible: true
     };
 
     this.triggers = new ActionsTrigger(
       new ApiClient(API_HOST),
       props.dispatch
     );
-  }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props
-      || !isEqual(nextState, this.state);
+    const T = LoginComponentV2;
+    this.componentWillAppear = appear.bind(this, T.TRANSITION_TIMEOUT);
+    this.componentWillEnter = appear.bind(this, T.TRANSITION_TIMEOUT);
+    this.componentWillLeave = disappear.bind(this, T.TRANSITION_TIMEOUT);
   }
 
   handleSubmit = async (isValid, username, password) => {
@@ -133,6 +137,10 @@ class LoginComponentV2 extends React.Component {
   };
 
   render() {
+    if (this.props.is_logged_in) {
+      return false;
+    }
+
     const { locale, messages, onClose } = this.props;
 
     const translate = t.translateTo(locale);
@@ -168,10 +176,10 @@ class LoginComponentV2 extends React.Component {
 
     return (
       <div className={cn}>
-        <Modal.Overlay isVisible={this.props.isVisible}>
+        <Modal.Overlay isVisible={this.state.isVisible}>
           <Modal.Main
             innerClassName="form__container sidebar-form__container form__main"
-            isVisible={this.props.isVisible}
+            isVisible={this.state.isVisible}
             rtl={rtl}
             onCloseTo={onClose && onClose.to}
           >
@@ -222,4 +230,6 @@ const mapStateToProps = createSelector(
     ({ locale, messages: messages.toList() })
 );
 
-export default connect(mapStateToProps)(LoginComponentV2);
+export default connect(
+  mapStateToProps, null, null, { withRef: true }
+)(LoginComponentV2);

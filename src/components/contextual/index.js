@@ -18,7 +18,7 @@
 import React, { PropTypes } from 'react';
 import omit from 'lodash/omit';
 import { browserHistory, createMemoryHistory } from 'react-router';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import getRouteFor from '../../selectors/contextual-routes';
 import Login from './wrappers/login';
@@ -117,16 +117,9 @@ export default class ContextualRoutes extends React.Component {
     }
 
     return (
-      <CSSTransitionGroup
-        component="div"
-        transitionName="sidebar-modal__overlay--transition"
-        transitionAppear={false}
-        transitionEnter={false}
-        transitionLeave
-        transitionLeaveTimeout={250}
-      >
+      <TransitionGroup>
         {component}
-      </CSSTransitionGroup>
+      </TransitionGroup>
     );
   }
 }

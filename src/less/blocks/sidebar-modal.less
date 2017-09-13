@@ -50,14 +50,9 @@
       &-leave {
         opacity: 1;
 
-        &.sidebar-modal__overlay--transition-leave-active {
+        &-active {
           opacity: 0.01;
           transition: opacity 0.25s ease-in-out;
-        }
-
-        .sidebar-modal__main {
-          transform: translateX(100%);
-          transition: transform 0.25s ease-in-out;
         }
       }
     }
@@ -101,7 +96,7 @@
     &--transition {
       &-appear {
         transform: translateX(100%);
-        &.sidebar-modal__main--transition-appear-active {
+        &-active {
           transform: translateX(0%);
           transition: transform 0.25s ease-in-out;
         }
@@ -109,7 +104,7 @@
 
       &-leave {
         transform: translateX(0%);
-        &.sidebar-modal__main--transition-leave-active {
+        &-active {
           transform: translateX(100%);
           transition: transform 0.25s ease-in-out;
         }
