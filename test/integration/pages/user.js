@@ -51,13 +51,14 @@ describe('User page', () => {
 
     it('renders normal User page', async () => {
       const username = user.get('username');
+      const fullName = `${user.get('more').firstName} ${user.get('more').lastName}`;
       const context = await expect({ url: `/user/${username}` }, 'to open successfully');
 
       const { document } = (new JSDOM(context.httpResponse.body)).window;
       await expect(
         document.head,
         'queried for first', 'title',
-        'to have text', `Posts of ${username} on LibertySoil.org`
+        'to have text', `Posts of ${fullName} on LibertySoil.org`
       );
     });
   });
