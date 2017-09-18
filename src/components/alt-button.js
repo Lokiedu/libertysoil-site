@@ -76,7 +76,7 @@ export default class AltButton extends React.Component {
     return (
       <button className={cn} type="button" {...restProps}>
         <Icon {...finalIcon} />
-        {this.props.children}
+        <span>{this.props.children}</span>
       </button>
     );
   }
