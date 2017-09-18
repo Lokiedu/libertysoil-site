@@ -26,6 +26,16 @@ export function toSpreadArray(obj: Object): Array<Object> {
   }, []);
 }
 
+export function castArray(value: any): Array<any> {
+  if (typeof value === 'undefined') {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return [value];
+}
+
 export function castObject(value: any, fieldName: string) {
   if (isPlainObject(value)) {
     return value;

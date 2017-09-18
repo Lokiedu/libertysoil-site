@@ -15,9 +15,16 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+import memoize from 'memoizee';
+import { List } from 'immutable';
+
+import { castArray } from '../utils/lang';
 import { getRouteName } from '../utils/router';
 import createSelector from './createSelector';
 
+/**
+ * Get `contextualRoutes` served by `react-router`-powered route
+ */
 const getContextualRoutes = (route) => {
   const component = route.component;
   if (!component || !component.displayName) {
@@ -32,6 +39,10 @@ const getContextualRoutes = (route) => {
   return component.contextualRoutes;
 };
 
+/**
+ * Get current mapping between potentially served contextual routes
+ * and `react-router`-powered routes responsible to render each one
+ */
 const getRoutesMap = (wholeScope) => {
   const map = {};
 
@@ -48,16 +59,26 @@ const getRoutesMap = (wholeScope) => {
   return map;
 };
 
-export default createSelector(
-  props => props.location.query.route,
-  props => props.routes,
-  (routeName, wholeScope) =>
-    scopeName => {
-      const currentRouteScopeName = getRoutesMap(wholeScope)[routeName];
-      if (currentRouteScopeName && currentRouteScopeName === scopeName) {
-        return routeName;
-      }
+const toListCached = memoize(
+  x => List(castArray(x)),
+  { simplified: true }
+);
 
-      return undefined;
+export default createSelector(
+  // Even if `location.query` is deeply equal to previous one,
+  // `Immutable.is` will be falsy because `location` and its content
+  // are always new objects (`props.location.query.route` may be an array)
+  props => toListCached(props.location.query.route),
+  props => props.routes, // react-router's routes (scope)
+  (activeContextualRoutes, wholeScope) =>
+    /**
+     * Get the array of contextual routes given `react-router`-powered route (scope)
+     * is responsible to render
+     */
+    scopeName => {
+      const contextualRoutesMapping = getRoutesMap(wholeScope);
+      return activeContextualRoutes.filter(
+        routeName => contextualRoutesMapping[routeName] === scopeName
+      ).toArray();
     }
 );

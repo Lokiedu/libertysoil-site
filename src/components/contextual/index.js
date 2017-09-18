@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import omit from 'lodash/omit';
+import { intersection, omit } from 'lodash';
 import { browserHistory, createMemoryHistory } from 'react-router';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
-import getRouteFor from '../../selectors/contextual-routes';
+import getRoutesFor from '../../selectors/contextual-routes';
 import Login from './wrappers/login';
 import Register from './wrappers/register';
 
@@ -52,7 +52,7 @@ const onClose = (() => {
 
 const pobj = {};
 
-export default class ContextualRoutes extends React.Component {
+export default class ContextualRoutes extends React.PureComponent {
   static propTypes = {
     location: PropTypes.shape(),
     only: PropTypes.arrayOf(PropTypes.string),
@@ -65,60 +65,55 @@ export default class ContextualRoutes extends React.Component {
     predefProps: {}
   };
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
-  }
-
   render() {
-    const routeName = getRouteFor(this.props)(this.props.scope);
+    const contextualRoutes = getRoutesFor(this.props)(this.props.scope);
 
-    let restProps = pobj;
+    let allowedRoutes;
+    if (this.props.only) {
+      allowedRoutes = intersection(this.props.only, contextualRoutes);
+    } else {
+      allowedRoutes = contextualRoutes;
+    }
 
-    if (routeName) {
-      const { only } = this.props;
-      if (only && !only.includes(routeName)) {
-        return false;
-      }
-
-      const { predefProps } = this.props;
-
+    const { predefProps } = this.props;
+    const renderedRoutes = allowedRoutes.map(routeName => {
+      let restProps;
       if (routeName in predefProps) {
         restProps = predefProps[routeName];
+      } else {
+        restProps = pobj;
       }
-    }
 
-    let component;
-
-    switch (routeName) {
-      case 'login': {
-        component = (
-          <Login
-            key="login"
-            onClose={onClose}
-            {...omit(this.props, KNOWN_PROPS)}
-            {...restProps}
-          />
-        );
-
-        break;
+      switch (routeName) {
+        case 'login': {
+          return (
+            <Login
+              key="login"
+              onClose={onClose}
+              {...omit(this.props, KNOWN_PROPS)}
+              {...restProps}
+            />
+          );
+        }
+        case 'signup': {
+          return (
+            <Register
+              key="signup"
+              onClose={onClose}
+              {...omit(this.props, KNOWN_PROPS)}
+              {...restProps}
+            />
+          );
+        }
+        default: {
+          return false;
+        }
       }
-      case 'signup': {
-        component = (
-          <Register
-            key="signup"
-            onClose={onClose}
-            {...omit(this.props, KNOWN_PROPS)}
-            {...restProps}
-          />
-        );
-
-        break;
-      }
-    }
+    });
 
     return (
       <TransitionGroup>
-        {component}
+        {renderedRoutes}
       </TransitionGroup>
     );
   }
