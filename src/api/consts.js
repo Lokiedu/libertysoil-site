@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  @flow
 */
+import { without } from 'lodash';
+
 export const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
   'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
@@ -34,3 +36,33 @@ export const USER_RELATIONS = Object.freeze([
   'liked_geotags',
   'liked_schools'
 ]);
+
+export const POST_PUBLIC_COLUMNS = [
+  'id', 'user_id', 'text', 'type', 'created_at', 'updated_at',
+  'more', 'fully_published_at', 'liked_hashtag_id', 'liked_school_id', 'liked_geotag_id',
+  'url_name', '_sphinx_id', 'text_source', 'text_type',
+];
+
+export const POST_DEFAULT_COLUMNS = without(POST_PUBLIC_COLUMNS, 'text', 'text_source');
+
+export const SUPPORTED_LOCALES = Object.keys(
+  require('../consts/localization').SUPPORTED_LOCALES
+);
+
+export const SEARCH_INDEXES_TABLE = {
+  comments: 'CommentsRT',
+  hashtags: 'HashtagsRT',
+  locations: 'GeotagsRT',
+  people: 'UsersRT',
+  posts: 'PostsRT',
+  schools: 'SchoolsRT'
+};
+
+export const SEARCH_RESPONSE_TABLE = {
+  Comment: 'comments',
+  Hashtag: 'hashtags',
+  Geotag: 'locations',
+  User: 'people',
+  Post: 'posts',
+  School: 'schools'
+};

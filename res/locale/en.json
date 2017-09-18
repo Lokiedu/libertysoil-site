@@ -60,5 +60,7 @@
   "api.errors.internal.short": "Internal server error",
   "api.errors.internal.long": "Server error: please retry later",
   "api.errors.bad_request": "Bad request",
-  "api.errors.forbidden": "You are not authorized"
+  "api.errors.forbidden": "You are not authorized",
+  "api.errors.not-found": "Not Found",
+  "api.errors.validation": "Incorrect form data"
 }

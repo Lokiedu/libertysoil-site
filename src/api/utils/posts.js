@@ -16,11 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // @flow
+import { pick } from 'lodash';
 import type { Model } from 'bookshelf/lib/model';
 
-import type { UserId } from '../definitions/users';
+import type { UserId } from '../../definitions/users';
+import type { Post } from '../../definitions/posts';
+import { countComments } from './comments';
 
 export function serialize(model: Model): Object {
+  if (model.relations.schools) {
+    model.relations.schools = model.relations.schools.map((row: Model) => (
+      pick(row.attributes, 'id', 'name', 'url_name')
+    ));
+  }
+
   return model.toJSON();
 }
 
@@ -66,4 +75,12 @@ function keepOwnPostReactions(userId: UserId, post: Model): Model {
   }
 
   return post;
+}
+
+export async function countPostComments(bookshelf: Object, posts: Array<Post>): Promise<Array<Post>> {
+  const commentCounts = await countComments(bookshelf, posts);
+  return posts.map((post: Model): Post => {
+    post.attributes.comments = commentCounts[post.get('id')];
+    return post;
+  });
 }

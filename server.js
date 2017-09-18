@@ -33,6 +33,7 @@ import koaConditional from 'koa-conditional-get';
 import koaEtag from 'koa-etag';
 import Logger, { createLogger } from 'bunyan';
 import passport from 'koa-passport';
+import bb from 'bluebird';
 
 import t from 't8on';
 
@@ -52,7 +53,9 @@ import { setCurrentUser, setLikes, setFavourites } from './src/actions/users';
 import db_config from './knexfile';  // eslint-disable-line import/default
 
 import { getReactMiddleware } from './src/utils/koa-react';
-
+import QueueSingleton from './src/utils/queue';
+import { setUpPassport } from './src/api/auth';
+import { processError } from './src/api/error';
 
 const exec_env = process.env.NODE_ENV || 'development';
 const dbEnv = process.env.DB_ENV || 'development';
@@ -177,7 +180,7 @@ const serve = (...params) => staticCache(...params);
 
 function startServer(/*params*/) {
   const sphinx = initSphinx();
-  const api = initApi(bookshelf, sphinx);
+  const api = initApi(bookshelf);
 
   const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
 
@@ -199,8 +202,28 @@ function startServer(/*params*/) {
   app.logger = logger;
   app.keys = ['libertysoil'];
 
-  app.on('error', (e) => {
-    logger.warn(e);
+  app.context.bookshelf = bookshelf;
+  app.context.jobQueue = new QueueSingleton;
+  app.context.passport = setUpPassport(bookshelf);
+  app.context.sphinx = { api: bb.promisifyAll(sphinx.api), ql: sphinx.ql };
+
+  // Error handler
+  app.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      processError(ctx, err);
+
+      if (ctx.status == 500) {
+        if (['test', 'travis'].includes(process.env.DB_ENV)) {
+          console.error(err); // eslint-disable-line no-console
+        }
+
+        logger.error(err);
+      } else {
+        logger.warn(err);
+      }
+    }
   });
 
   if (exec_env === 'development') {

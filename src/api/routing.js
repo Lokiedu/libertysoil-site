@@ -18,156 +18,163 @@
 import Router from 'koa-router';
 import multer from 'koa-multer';
 
-import ApiController from './controller';
-import { getAuthController, getAuthProfileController, auth } from './auth';
+import { getAuthController, getAuthProfileController, auth, setUpPassport } from './auth';
+import * as test from './controllers/test';
+import * as users from './controllers/users';
+import * as posts from './controllers/posts';
+import * as comments from './controllers/comments';
+import * as profilePosts from './controllers/profilePosts';
+import * as misc from './controllers/misc';
+import * as search from './controllers/search';
+import * as geo from './controllers/geo';
+import * as attachments from './controllers/attachments';
+import * as hashtags from './controllers/hashtags';
+import * as schools from './controllers/schools';
+import * as geotags from './controllers/geotags';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-export function initApi(bookshelf, sphinx) {
-  const controller = new ApiController(bookshelf, sphinx);
-
+export function initApi(bookshelf) {
+  const passport = setUpPassport(bookshelf);
   const api = new Router();
 
-  api.get('/test', controller.test);
-  api.get('/test-sphinx', controller.testSphinx);
-  api.head('/test', controller.testHead);
-  api.delete('/test', controller.testDelete);
-  api.post('/test', controller.testPost);
+  api.get('/test', test.test);
+  api.get('/test-sphinx', test.testSphinx);
+  api.head('/test', test.testHead);
+  api.delete('/test', test.testDelete);
+  api.post('/test', test.testPost);
 
-  api.post('/users', controller.registerUser);
-  api.post('/session', controller.login);
+  api.post('/users', users.registerUser);
+  api.post('/session', users.login);
 
   // Universal login/register/add provider controllers. Open in a popup.
-  api.get('/auth/facebook', getAuthController('facebook', controller.passport, { resetOnlyProfile: true }));
-  api.get('/auth/facebook/callback', getAuthController('facebook', controller.passport));
-  api.get('/auth/google', getAuthController('google', controller.passport, { resetOnlyProfile: true }));
-  api.get('/auth/google/callback', getAuthController('google', controller.passport));
-  api.get('/auth/twitter', getAuthController('twitter', controller.passport, { resetOnlyProfile: true }));
-  api.get('/auth/twitter/callback', getAuthController('twitter', controller.passport));
-  api.get('/auth/github', getAuthController('github', controller.passport, { resetOnlyProfile: true }));
-  api.get('/auth/github/callback', getAuthController('github', controller.passport));
+  api.get('/auth/facebook', getAuthController('facebook', passport, { resetOnlyProfile: true }));
+  api.get('/auth/facebook/callback', getAuthController('facebook', passport));
+  api.get('/auth/google', getAuthController('google', passport, { resetOnlyProfile: true }));
+  api.get('/auth/google/callback', getAuthController('google', passport));
+  api.get('/auth/twitter', getAuthController('twitter', passport, { resetOnlyProfile: true }));
+  api.get('/auth/twitter/callback', getAuthController('twitter', passport));
+  api.get('/auth/github', getAuthController('github', passport, { resetOnlyProfile: true }));
+  api.get('/auth/github/callback', getAuthController('github', passport));
 
   // These do not login/create user, only respond with a oauth profile. Open in a popup.
-  api.get('/auth/profile/facebook', getAuthProfileController('facebook', controller.passport));
-  api.get('/auth/profile/google', getAuthProfileController('google', controller.passport));
-  api.get('/auth/profile/twitter', getAuthProfileController('twitter', controller.passport));
-  api.get('/auth/profile/github', getAuthProfileController('github', controller.passport));
+  api.get('/auth/profile/facebook', getAuthProfileController('facebook', passport));
+  api.get('/auth/profile/google', getAuthProfileController('google', passport));
+  api.get('/auth/profile/twitter', getAuthProfileController('twitter', passport));
+  api.get('/auth/profile/github', getAuthProfileController('github', passport));
 
-  api.get('/posts', auth, controller.subscriptions);
-  api.get('/posts/subscriptions/hashtag', auth, controller.hashtagSubscriptions);
-  api.get('/posts/subscriptions/school', auth, controller.schoolSubscriptions);
-  api.get('/posts/subscriptions/geotag', auth, controller.geotagSubscriptions);
-  api.post('/posts', auth, controller.createPost);
-  api.get('/post/:id', controller.getPost);
-  api.post('/post/:id', auth, controller.updatePost);
-  api.delete('/post/:id', auth, controller.removePost);
-  api.post('/post/:id/like', auth, controller.likePost);
-  api.post('/post/:id/unlike', auth, controller.unlikePost);
-  api.post('/post/:id/fav', auth, controller.favPost);
-  api.post('/post/:id/unfav', auth, controller.unfavPost);
-  api.get('/post/:id/related-posts', controller.getRelatedPosts);
-  api.post('/post/:id/subscribe', auth, controller.subscribeToPost);
-  api.post('/post/:id/unsubscribe', auth, controller.unsubscribeFromPost);
-  api.get('/post/:id/unsubscribe', controller.getUnsubscribeFromPost);
+  api.get('/posts', auth, posts.subscriptions);
+  api.get('/posts/subscriptions/hashtag', auth, posts.hashtagSubscriptions);
+  api.get('/posts/subscriptions/school', auth, posts.schoolSubscriptions);
+  api.get('/posts/subscriptions/geotag', auth, posts.geotagSubscriptions);
+  api.post('/posts', auth, posts.createPost);
+  api.get('/post/:id', posts.getPost);
+  api.post('/post/:id', auth, posts.updatePost);
+  api.delete('/post/:id', auth, posts.removePost);
+  api.post('/post/:id/like', auth, posts.likePost);
+  api.post('/post/:id/unlike', auth, posts.unlikePost);
+  api.post('/post/:id/fav', auth, posts.favPost);
+  api.post('/post/:id/unfav', auth, posts.unfavPost);
+  api.get('/post/:id/related-posts', posts.getRelatedPosts);
+  api.post('/post/:id/subscribe', auth, posts.subscribeToPost);
+  api.post('/post/:id/unsubscribe', auth, posts.unsubscribeFromPost);
+  api.get('/post/:id/unsubscribe', posts.getUnsubscribeFromPost);
 
-  api.get('/post/:id/comments', controller.getPostComments);
-  api.post('/post/:id/comments', auth, controller.postComment);
-  api.post('/post/:id/comment/:comment_id', auth, controller.editComment);
-  api.delete('/post/:id/comment/:comment_id', auth, controller.removeComment);
+  api.get('/post/:id/comments', comments.getPostComments);
+  api.post('/post/:id/comments', auth, comments.postComment);
+  api.post('/post/:id/comment/:comment_id', auth, comments.editComment);
+  api.delete('/post/:id/comment/:comment_id', auth, comments.removeComment);
 
-  api.get('/posts/all', controller.allPosts);
-  api.get('/posts/user/:user', controller.userPosts);
-  api.get('/posts/liked', auth, controller.currentUserLikedPosts);
-  api.get('/posts/liked/:user', controller.userLikedPosts);
-  api.get('/posts/favoured', auth, controller.currentUserFavouredPosts);
-  api.get('/posts/favoured/:user', controller.userFavouredPosts);
-  api.get('/posts/tag/:tag', controller.tagPosts);
-  api.get('/posts/school/:school', controller.schoolPosts);
-  api.get('/posts/geotag/:url_name', controller.geotagPosts);
-  api.get('/user/tags', auth, controller.userTags);
+  api.get('/posts/all', posts.allPosts);
+  api.get('/posts/user/:user', posts.userPosts);
+  api.get('/posts/liked', auth, posts.currentUserLikedPosts);
+  api.get('/posts/liked/:user', posts.userLikedPosts);
+  api.get('/posts/favoured', auth, posts.currentUserFavouredPosts);
+  api.get('/posts/favoured/:user', posts.userFavouredPosts);
+  api.get('/posts/tag/:tag', posts.hashtagPosts);
+  api.get('/posts/school/:school', posts.schoolPosts);
+  api.get('/posts/geotag/:url_name', posts.geotagPosts);
 
-  api.get('/school-cloud', controller.getSchoolCloud);
-  api.get('/schools', controller.getSchools);
-  api.post('/schools/new', auth, controller.createSchool);
-  api.get('/schools-alphabet', controller.getSchoolsAlphabet);
-  api.get('/schools/:query', controller.searchSchools);
-  api.head('/school/:name', controller.checkSchoolExists);
-  api.get('/school/:url_name', controller.getSchool);
-  api.post('/school/:id', auth, controller.updateSchool);
-  api.post('/school/:name/follow', auth, controller.followSchool);
-  api.post('/school/:name/unfollow', auth, controller.unfollowSchool);
-  api.post('/school/:url_name/like', auth, controller.likeSchool);
-  api.post('/school/:url_name/unlike', auth, controller.unlikeSchool);
+  api.get('/user/tags', auth, misc.userTags);
 
-  api.get('/countries/', controller.getCountries);
-  api.get('/country/:code', controller.getCountry);
+  api.get('/school-cloud', schools.getSchoolCloud);
+  api.get('/schools', schools.getSchools);
+  api.post('/schools/new', auth, schools.createSchool);
+  api.get('/schools-alphabet', schools.getSchoolsAlphabet);
+  api.get('/schools/:query', schools.searchSchools);
+  api.head('/school/:name', schools.checkSchoolExists);
+  api.get('/school/:url_name', schools.getSchool);
+  api.post('/school/:id', auth, schools.updateSchool);
+  api.post('/school/:name/follow', auth, schools.followSchool);
+  api.post('/school/:name/unfollow', auth, schools.unfollowSchool);
+  api.post('/school/:url_name/like', auth, schools.likeSchool);
+  api.post('/school/:url_name/unlike', auth, schools.unlikeSchool);
+
+  api.get('/countries/', geotags.getCountries);
+  api.get('/country/:code', geo.getCountry);
   //api.get('/cities/', controller.getCities);
-  api.get('/city/:id', controller.getCity);
+  api.get('/city/:id', geo.getCity);
+  api.get('/pickpoint', auth, geo.pickpoint);
 
-  api.get('/user/recent-hashtags', auth, controller.getUserRecentHashtags);
-  api.get('/user/recent-schools', auth, controller.getUserRecentSchools);
-  api.get('/user/recent-geotags', auth, controller.getUserRecentGeotags);
-  api.head('/user/:username', controller.checkUserExists);
-  api.get('/user/:id/following', controller.getFollowedUsers);
-  api.get('/user/:id/mutual-follows', controller.getMutualFollows);
+  api.get('/user/recent-hashtags', auth, hashtags.getUserRecentHashtags);
+  api.get('/user/recent-schools', auth, schools.getUserRecentSchools);
+  api.get('/user/recent-geotags', auth, geotags.getUserRecentGeotags);
+  api.head('/user/:username', users.checkUserExists);
+  api.get('/user/:id/following', users.getFollowedUsers);
+  api.get('/user/:id/mutual-follows', users.getMutualFollows);
   api.get('/user/:id/messages', auth, controller.getUserMessages);
   api.post('/user/:id/messages', auth, controller.sendMessage);
-  api.head('/user/email/:email', controller.checkEmailTaken);
-  api.get('/user/available-username/:username', controller.getAvailableUsername);
-  api.get('/user/:username', controller.getUser);
-  api.post('/user/:username/follow', auth, controller.followUser);
-  api.post('/user/:username/unfollow', auth, controller.unfollowUser);
-  api.post('/user/:username/ignore', auth, controller.ignoreUser);
-  api.get('/user/:username/profile-posts', controller.getProfilePosts);
+  api.head('/user/email/:email', users.checkEmailTaken);
+  api.get('/user/available-username/:username', users.getAvailableUsername);
+  api.get('/user/:username', users.getUser);
+  api.post('/user/:username/follow', auth, users.followUser);
+  api.post('/user/:username/unfollow', auth, users.unfollowUser);
+  api.post('/user/:username/ignore', auth, users.ignoreUser);
+  api.get('/user/:username/profile-posts', profilePosts.getProfilePosts);
 
-  api.get('/profile-post/:id', controller.getProfilePost);
-  api.post('/profile-posts', auth, controller.createProfilePost);
-  api.post('/profile-post/:id', auth, controller.updateProfilePost);
-  api.delete('/profile-post/:id', auth, controller.deleteProfilePost);
+  api.get('/profile-post/:id', profilePosts.getProfilePost);
+  api.post('/profile-posts', auth, profilePosts.createProfilePost);
+  api.post('/profile-post/:id', auth, profilePosts.updateProfilePost);
+  api.delete('/profile-post/:id', auth, profilePosts.deleteProfilePost);
 
-  api.get('/user/verify/:hash', controller.verifyEmail);
-  api.post('/user/', auth, controller.updateUser);
-  api.post('/user/password', auth, controller.changePassword);
+  api.get('/user/verify/:hash', users.verifyEmail);
+  api.post('/user/', auth, users.updateUser);
+  api.post('/user/password', auth, users.changePassword);
+  api.post('/resetpassword', users.resetPassword);
+  api.post('/newpassword/:hash', users.newPassword);
+  api.post('/logout', users.logout);
+  api.get('/suggestions/personalized', auth, users.userSuggestions);
+  api.get('/suggestions/initial', auth, users.initialSuggestions);
 
-  api.post('/resetpassword', controller.resetPassword);
-  api.post('/newpassword/:hash', controller.newPassword);
+  api.post('/upload', auth, upload.array('files', 8), attachments.uploadFiles);
+  api.post('/image', auth, attachments.processImage);
 
-  api.post('/logout', controller.logout);
+  api.get('/tag-cloud', hashtags.getHashtagCloud);
+  api.get('/tags/search/:query', hashtags.searchHashtags);
+  api.get('/tag/:name', hashtags.getHashtag);
+  api.post('/tag/:id', auth, hashtags.updateHashtag);
+  api.post('/tag/:name/follow', auth, hashtags.followHashtag);
+  api.post('/tag/:name/unfollow', auth, hashtags.unfollowHashtag);
+  api.post('/tag/:name/like', auth, hashtags.likeHashtag);
+  api.post('/tag/:name/unlike', auth, hashtags.unlikeHashtag);
 
-  api.get('/suggestions/personalized', auth, controller.userSuggestions);
-  api.get('/suggestions/initial', auth, controller.initialSuggestions);
+  api.get('/geotag-cloud', geotags.getGeotagCloud);
+  api.head('/geotag/:name', geotags.checkGeotagExists);
+  api.get('/geotag/:url_name', geotags.getGeotag);
+  api.post('/geotag/:id', auth, geotags.updateGeotag);
+  api.get('/geotags', geotags.getGeotags);
+  api.get('/geotags/search/:query', geotags.searchGeotags);
+  api.post('/geotag/:url_name/follow', auth, geotags.followGeotag);
+  api.post('/geotag/:url_name/unfollow', auth, geotags.unfollowGeotag);
+  api.post('/geotag/:url_name/like', auth, geotags.likeGeotag);
+  api.post('/geotag/:url_name/unlike', auth, geotags.unlikeGeotag);
 
-  api.post('/upload', auth, upload.array('files', 8), controller.uploadFiles);
-  api.post('/image', auth, controller.processImage);
+  api.get('/quotes', misc.getQuotes);
 
-  api.get('/pickpoint', auth, controller.pickpoint);
+  api.get('/search', search.search);
+  api.get('/search-quick/:query', search.searchStats);
 
-  api.get('/tag-cloud', controller.getTagCloud);
-  api.get('/tags/search/:query', controller.searchHashtags);
-  api.get('/tag/:name', controller.getHashtag);
-  api.post('/tag/:id', auth, controller.updateHashtag);
-  api.post('/tag/:name/follow', auth, controller.followTag);
-  api.post('/tag/:name/unfollow', auth, controller.unfollowTag);
-  api.post('/tag/:name/like', auth, controller.likeHashtag);
-  api.post('/tag/:name/unlike', auth, controller.unlikeHashtag);
-
-  api.get('/geotag-cloud', controller.getGeotagCloud);
-  api.head('/geotag/:name', controller.checkGeotagExists);
-  api.get('/geotag/:url_name', controller.getGeotag);
-  api.post('/geotag/:id', auth, controller.updateGeotag);
-  api.get('/geotags', controller.getGeotags);
-  api.get('/geotags/search/:query', controller.searchGeotags);
-  api.post('/geotag/:url_name/follow', auth, controller.followGeotag);
-  api.post('/geotag/:url_name/unfollow', auth, controller.unfollowGeotag);
-  api.post('/geotag/:url_name/like', auth, controller.likeGeotag);
-  api.post('/geotag/:url_name/unlike', auth, controller.unlikeGeotag);
-
-  api.get('/quotes', controller.getQuotes);
-
-  api.get('/search', controller.search);
-  api.get('/search-quick/:query', controller.searchStats);
-
-  api.get('/locale/:lang_code', controller.getLocale);
+  api.get('/locale/:lang_code', misc.getLocale);
 
   return api.routes();
 }
