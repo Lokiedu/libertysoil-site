@@ -80,8 +80,8 @@
     "form-data": "~2.1.1",
     "gm": "^1.23.0",
     "grapheme-utils": "^0.1.0",
-    "htmlparser2": "^3.9.2",
     "history": "^3.2.0",
+    "htmlparser2": "^3.9.2",
     "immutable": "^3.7.5",
     "isomorphic-fetch": "^2.2.1",
     "joi": "^10.6.0",
@@ -173,7 +173,6 @@
     "babel-preset-stage-1": "~6.24.1",
     "brfs": "^1.4.3",
     "clarify": "^2.0.0",
-    "compression-webpack-plugin": "^1.0.0",
     "cookie": "~0.3.1",
     "coveralls": "^2.11.9",
     "css-loader": "~0.28.0",
@@ -231,7 +230,8 @@
     "universal-webpack": "^0.3.11",
     "url-loader": "^0.5.7",
     "webpack": "^2.5.1",
-    "wikidata-sdk": "~3.0.1"
+    "wikidata-sdk": "~3.0.1",
+    "zopfli-webpack-plugin": "^0.1.0"
   },
   "browserslist": [
     "last 2 versions",

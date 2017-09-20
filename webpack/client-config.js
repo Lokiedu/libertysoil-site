@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-import CompressionPlugin from "compression-webpack-plugin";
+import ZopfliPlugin from "zopfli-webpack-plugin";
 
 import configuration, { opts } from './base-config';
 import RuleGenerator from './rules';
@@ -44,7 +44,7 @@ if (opts.dev === false) {
       exclude: [/\.min\.js$/gi] // skip pre-minified libs
     }),
     new webpack.optimize.AggressiveMergingPlugin({ minSizeReduce: true }),
-    new CompressionPlugin({
+    new ZopfliPlugin({
       asset: "[path].gz[query]",
       algorithm: "zopfli",
       minRatio: 0.8
