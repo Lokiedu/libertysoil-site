@@ -264,7 +264,7 @@ class RuleGenerator {
           options: {
             ignore: /(node_modules)/,
             presets: ["react"],
-            plugins: [
+            plugins: skipFalsy([
               "syntax-class-properties",
               "syntax-do-expressions",
               "syntax-dynamic-import",
@@ -278,7 +278,7 @@ class RuleGenerator {
                 "assert": true,
                 "warn": true
               }],
-            ],
+            ]),
           },
         }
       ],
