@@ -45,9 +45,9 @@
   var state = <%- state %>;
 </script>
 <div id="content"><%- html %></div>
-<script src="/scripts/manifest.js"></script>
-<script src="/scripts/vendor.js"></script>
-<script src="/scripts/<%- appName %>.js"></script>
+<script src="<%- paths.webpackChunks.javascript.manifest %>"></script>
+<script src="<%- paths.webpackChunks.javascript.vendor %>"></script>
+<script src="<%- paths.webpackChunks.javascript.app %>"></script>
 <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
 </body>
 </html>
