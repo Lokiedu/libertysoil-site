@@ -1,5 +1,8 @@
+import path from 'path';
+
 import webpack from 'webpack';
 import { client_configuration } from 'universal-webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 import { opts } from './webpack/base-config';
 import baseClientConfiguration from './webpack/client-config';
@@ -23,6 +26,10 @@ const clientConfiguration = client_configuration(
       new webpack.optimize.CommonsChunkPlugin({
         name: "manifest",
         minChunks: Infinity
+      }),
+      new ExtractTextPlugin({
+        filename: path.join('assets', 'styles', '[name]-[contentHash].css'),
+        allChunks: true
       }),
     ],
   },

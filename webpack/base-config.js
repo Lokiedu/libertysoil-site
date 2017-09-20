@@ -1,7 +1,6 @@
 import path from 'path';
 
 import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 import RuleGenerator from './rules';
 import { skipFalsy, strToBool } from './utils';
@@ -25,7 +24,6 @@ const config = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': opts.dev ? '"development"' : '"production"',
     }),
-    new ExtractTextPlugin({ filename: path.join('assets', 'styles', '[name]-[contentHash].css'), allChunks: true }),
     opts.dev && new webpack.HotModuleReplacementPlugin(),
     opts.dev && new webpack.NoEmitOnErrorsPlugin(),
     new webpack.LoaderOptionsPlugin({
