@@ -224,7 +224,14 @@ class RuleGenerator {
               ["transform-do-expressions"],
               ["lodash"],
               this.dev && ['transform-runtime'],
-              !this.dev && ['transform-react-remove-prop-types'],
+              /**
+               * Get rid of active usage of PropTypes indicating the props
+               * which components exactly know and handle in a special way
+               * (i.e. not only for type-checking purpose) before
+               * activation of the plugin:
+               *
+               * `!this.dev && ['transform-react-remove-prop-types'],`
+               */
               !this.dev && ["transform-react-constant-elements"],
               !this.dev && ["transform-react-inline-elements"],
               this.dev && ["flow-runtime", {
