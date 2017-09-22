@@ -17,12 +17,12 @@
 */
 import React, { PropTypes } from 'react';
 import { form as inform, from } from 'react-inform';
-import classNames from 'classnames';
 import noop from 'lodash/noop';
 import reduce from 'lodash/reduce';
 import transform from 'lodash/transform';
 import { Link } from 'react-router';
 
+import { memoize1 } from '../register/utils';
 import AltButton from '../alt-button';
 import Button from '../button';
 import FormField from '../form/field';
@@ -50,6 +50,13 @@ const pushSignup = location => ({
   query: { ...location.query, route: 'signup' }
 });
 
+const getIconProps = memoize1(
+  (name) => ({
+    name,
+    size: 'big'
+  })
+);
+
 export class LoginFormV2 extends React.Component {
   static displayName = 'LoginFormV2';
 
@@ -66,8 +73,7 @@ export class LoginFormV2 extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired,
-    rtl: PropTypes.bool
+    }).isRequired
   };
 
   static defaultProps = {
@@ -95,13 +101,12 @@ export class LoginFormV2 extends React.Component {
   };
 
   render() {
-    const { fields, translate: t, format: f } = this.props;
+    const { fields, translate: t } = this.props;
 
     return (
       <form
         action=""
         autoComplete="off"
-        className={classNames('form', { 'form--rtl': this.props.rtl })}
         method="post"
         onSubmit={this.handleSubmit}
       >
@@ -114,6 +119,7 @@ export class LoginFormV2 extends React.Component {
 
             acc.push(
               <FormField
+                animated
                 name={fieldName}
                 title={t(label)}
                 {...fieldValue}
@@ -128,7 +134,7 @@ export class LoginFormV2 extends React.Component {
         )}
 
         <div className="form__actions-container form__background--bright">
-          <div className="form__actions">
+          <div className="form__actions form__actions--align_l">
             <Button
               className="sidebar-modal__button form__submit"
               title={t('login.action')}
@@ -137,22 +143,27 @@ export class LoginFormV2 extends React.Component {
             />
           </div>
         </div>
+        <div className="form__subheader form__background--bright form__subheader--section">
+          {t('login.quick')}
+        </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon="github"
+            icon={getIconProps('github')}
+            theme="list"
             onClick={undefined}
           >
-            {f('login.with', 'Github')}
+            GitHub
           </AltButton>
           <AltButton
             className="margin--all_top"
-            icon="facebook-official"
+            icon={getIconProps('facebook-official')}
+            theme="list"
             onClick={undefined}
           >
-            {f('login.with', 'Facebook')}
+            Facebook
           </AltButton>
           <Link
-            className={AltButton.defaultClassName.concat(" margin--all_top")}
+            className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}
             to={pushSignup}
           >
             {t('login.create_new')}

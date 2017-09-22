@@ -18,11 +18,14 @@
 import { connect } from 'react-redux';
 
 import createSelector from '../../../selectors/createSelector';
+import wrapWithTransition from '../../../utils/transition';
 import { v2 as Register } from '../../register';
 
 const mapStateToProps = createSelector(
   state => state.getIn(['current_user', 'id']),
-  is_logged_in => ({ isVisible: !is_logged_in })
+  is_logged_in => ({ is_logged_in })
 );
 
-export default connect(mapStateToProps)(Register);
+export default wrapWithTransition(
+  connect(mapStateToProps, null, null, { withRef: true })(Register)
+);

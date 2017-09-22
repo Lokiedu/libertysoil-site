@@ -1,3 +1,6 @@
+/**
+ * Get `react-router`-powered route's meaningful name
+ */
 export function getRouteName(route) {
   const component = route.component;
 

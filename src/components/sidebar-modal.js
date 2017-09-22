@@ -18,68 +18,90 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import isEqual from 'lodash/isEqual';
+import Link from 'react-router/lib/Link';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
-import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 import { OldIcon as Icon } from './icon';
 
-class SidebarModalMain extends React.Component {
+class SidebarModalMain extends React.PureComponent {
   static displayName = 'SidebarModalMain';
 
   static propTypes = {
+    animate: PropTypes.bool,
+    children: PropTypes.node,
+    className: PropTypes.string,
+    innerClassName: PropTypes.string,
+    isVisible: PropTypes.bool,
+    onClose: PropTypes.func,
+    onCloseTo: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.string
+    ]),
     rtl: PropTypes.bool
   };
 
   static defaultProps = {
     animate: true,
-    isVisible: false,
-    onHide: () => {}
-  };
-
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
-  }
-
-  onClickOutside = () => {
-    this.props.onHide();
-  };
-
-  handleClickInside = (e) => {
-    e.stopPropagation();
+    isVisible: false
   };
 
   render() {
+    let innerClassName = 'sidebar-modal__main';
+    if (this.props.innerClassName) {
+      innerClassName += ` ${this.props.innerClassName}`;
+    }
+
     const content = (
-      <div
-        className={
-          classNames(
-            this.props.className,
-            'sidebar-modal sidebar-modal__main',
-            { 'sidebar-modal--rtl': this.props.rtl }
-          )
-        }
-        key="main"
-        onClick={this.handleClickInside}
-      >
+      <div className={innerClassName} key="main">
         {this.props.children}
       </div>
     );
 
-    if (this.props.animate) {
-      return (
-        <CSSTransitionGroup
-          transitionName="sidebar-modal__main--transition"
-          transitionAppear
-          transitionAppearTimeout={250}
-          transitionEnterTimeout={250}
-          transitionLeaveTimeout={250}
-        >
-          {this.props.isVisible ? content : null}
-        </CSSTransitionGroup>
+    let outside;
+
+    const { onClose, onCloseTo } = this.props;
+    if (onClose || onCloseTo) {
+      outside = (
+        <Link
+          className="sidebar-modal__outside"
+          onClick={onClose}
+          to={onCloseTo}
+        />
       );
     }
 
-    return this.props.isVisible ? content : null;
+    const cn = classNames(
+      'sidebar-modal',
+      this.props.className,
+      { 'sidebar-modal--rtl': this.props.rtl }
+    );
+
+    if (this.props.animate) {
+      return (
+        <div className={cn}>
+          {outside}
+          <CSSTransitionGroup
+            transitionName="sidebar-modal__main--transition"
+            transitionAppear
+            transitionAppearTimeout={250}
+            transitionEnterTimeout={250}
+            transitionLeaveTimeout={250}
+          >
+            {this.props.isVisible ? content : null}
+          </CSSTransitionGroup>
+        </div>
+      );
+    }
+
+    if (!this.props.isVisible) {
+      return null;
+    }
+
+    return (
+      <div className={cn}>
+        {outside}{content}
+      </div>
+    );
   }
 }
 
@@ -99,8 +121,8 @@ class SidebarModalOverlay extends React.Component {
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      isAppearing: false,
-      isVisible: false
+      isAppearing: typeof window === 'undefined',
+      isVisible: typeof window === 'undefined'
     };
   }
 
@@ -135,7 +157,8 @@ class SidebarModalOverlay extends React.Component {
     const cn = classNames('sidebar-modal', def, this.props.className, {
       [def.concat('--transition_appear')]: this.state.isAppearing,
       [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
-      [def.concat('--color_').concat(this.props.color)]: this.props.color
+      [def.concat('--color_').concat(this.props.color)]: this.props.color,
+      [def.concat('--rtl')]: this.props.rtl
     });
 
     const content = <div className={cn}>{this.props.children}</div>;
@@ -170,6 +193,20 @@ class SidebarModalBody extends React.Component {
 
 class SidebarModalHeader extends React.Component {
   static displayName = 'SidebarModalHeader';
+
+  static propTypes = (() => {
+    const iconOrNone = PropTypes.oneOfType([
+      PropTypes.shape(Icon.propTypes),
+      PropTypes.oneOf([false])
+    ]);
+
+    return {
+      className: PropTypes.string,
+      closeIcon: iconOrNone,
+      mainIcon: iconOrNone,
+      theme: PropTypes.string
+    };
+  })();
 
   static defaultProps = {
     closeIcon: {},
@@ -213,8 +250,15 @@ class SidebarModalHeader extends React.Component {
       );
     }
 
+    const className = classNames(
+      'sidebar-modal__header',
+      this.props.className,
+      this.props.theme &&
+        `sidebar-modal__header--theme_${this.props.theme}`
+    );
+
     return (
-      <div className={classNames('sidebar-modal__header', this.props.className)}>
+      <div className={className}>
         {mainIcon}
         <div className="sidebar-modal__title">{this.props.children}</div>
         {closeIcon}
@@ -223,8 +267,9 @@ class SidebarModalHeader extends React.Component {
   }
 }
 
-const SidebarModal = ClickOutsideComponentDecorator(SidebarModalMain);
-SidebarModal.Body = SidebarModalBody;
-SidebarModal.Header = SidebarModalHeader;
-SidebarModal.Overlay = SidebarModalOverlay;
-export default SidebarModal;
+export default {
+  Body: SidebarModalBody,
+  Header: SidebarModalHeader,
+  Main: SidebarModalMain,
+  Overlay: SidebarModalOverlay
+};

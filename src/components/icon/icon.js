@@ -67,6 +67,7 @@ export default class Icon extends React.PureComponent {
   static displayName = 'Icon';
 
   static propTypes = {
+    bg: PropTypes.string,
     className: PropTypes.string,
     color: PropTypes.string,
     disabled: PropTypes.bool,

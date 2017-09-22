@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+@easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+
 .sidebar-modal {
   color: @color__text;
 
@@ -27,7 +29,7 @@
     z-index: 101;
     
     opacity: 0.01;
-    transition: opacity 0.25s ease-in-out;
+    transition: opacity 0.25s @easeOutCubic;
 
     &--color {
       &_black {
@@ -50,16 +52,29 @@
       &-leave {
         opacity: 1;
 
-        &.sidebar-modal__overlay--transition-leave-active {
+        &-active {
           opacity: 0.01;
-          transition: opacity 0.25s ease-in-out;
-        }
-
-        .sidebar-modal__main {
-          transform: translateX(100%);
-          transition: transform 0.25s ease-in-out;
+          transition: opacity 0.25s @easeOutCubic;
         }
       }
+    }
+  }
+
+  &__outside {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 100%;
+    transition: right 0.5s ease-out;
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+      right: 708px;
+    }
+
+    @media (min-width: 1024px) {
+      right: 540px;
     }
   }
 
@@ -83,17 +98,17 @@
     &--transition {
       &-appear {
         transform: translateX(100%);
-        &.sidebar-modal__main--transition-appear-active {
+        &-active {
           transform: translateX(0%);
-          transition: transform 0.25s ease-in-out;
+          transition: transform 0.25s @easeOutCubic;
         }
       }
 
       &-leave {
         transform: translateX(0%);
-        &.sidebar-modal__main--transition-leave-active {
+        &-active {
           transform: translateX(100%);
-          transition: transform 0.25s ease-in-out;
+          transition: transform 0.25s @easeOutCubic;
         }
       }
     }
@@ -103,12 +118,13 @@
     display: flex;
     align-items: center;
     height: 60px;
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
 
-    &--transparent {
-      box-shadow: none;
-      background: transparent;
+    &--theme {
+      &_colored {
+        position: relative;
+        background: #fff;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+      }
     }
   }
 
@@ -184,7 +200,7 @@
   &--rtl {
     direction: rtl;
 
-    &.sidebar-modal__main {
+    .sidebar-modal__main {
       right: auto;
       left: 0;
 
@@ -200,6 +216,19 @@
             transform: translateX(-100%);
           }
         }
+      }
+    }
+
+    .sidebar-modal__outside {
+      right: 0;
+      left: auto;
+
+      @media (min-width: 768px) {
+        left: 708px;
+      }
+
+      @media (min-width: 1024px) {
+        left: 540px;
       }
     }
   }

@@ -16,32 +16,87 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import omit from 'lodash/omit';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import { ArrayOfMessages as ArrayOfMessagesPropType } from '../prop-types/messages';
 
 import Message from './message';
 
-const Messages = ({ messages, removeMessage }) => {
-  if (messages.isEmpty()) {
-    return null;
+export default class Messages extends React.PureComponent {
+  static displayName = 'Messages';
+
+  static propTypes = {
+    animated: PropTypes.bool,
+    animationProps: PropTypes.shape({}),
+    className: PropTypes.string,
+    innerProps: PropTypes.shape({}),
+    messages: ArrayOfMessagesPropType.isRequired,
+    removeMessage: PropTypes.func
+  };
+
+  static defaultProps = {
+    animationProps: {},
+    innerProps: {}
+  };
+
+  componentWillUpdate(nextProps) {
+    this.restProps = omit(nextProps, KNOWN_PROPS);
   }
 
-  const messagesToRender = messages.map((msg, i) => {
-    return <Message i={i} key={i} message={msg.get('message')} removeMessage={removeMessage} type={msg.get('type')} />;
-  });
+  restProps = {};
 
-  return (
-    <div className="message__group">
-      {messagesToRender}
-    </div>
-  );
-};
+  render() {
+    const { animated, messages } = this.props;
+    if (!animated && messages.isEmpty()) {
+      return false;
+    }
 
-Messages.displayName = 'Messages';
+    const { innerProps, removeMessage } = this.props;
+    const children = messages.map(msg =>
+      <Message
+        i={msg.get('id')}
+        key={msg.get('id')}
+        message={msg.get('message')}
+        removeMessage={removeMessage}
+        type={msg.get('type')}
+        {...innerProps}
+      />
+    );
 
-Messages.propTypes = {
-  messages: ArrayOfMessagesPropType.isRequired,
-  removeMessage: PropTypes.func
-};
+    if (animated) {
+      return (
+        <div
+          className={classNames('message__group', this.props.className)}
+          {...this.restProps}
+        >
+          <CSSTransitionGroup
+            component="div"
+            transitionAppear
+            transitionAppearTimeout={250}
+            transitionEnter
+            transitionEnterTimeout={250}
+            transitionLeave
+            transitionLeaveTimeout={250}
+            transitionName="form__message--transition"
+            {...this.props.animationProps}
+          >
+            {children}
+          </CSSTransitionGroup>
+        </div>
+      );
+    }
 
-export default Messages;
+    return (
+      <div
+        className={classNames('message__group', this.props.className)}
+        {...this.restProps}
+      >
+        {children}
+      </div>
+    );
+  }
+}
+
+const KNOWN_PROPS = Object.keys(Messages.propTypes);

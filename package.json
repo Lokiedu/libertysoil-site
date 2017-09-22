@@ -104,6 +104,7 @@
     "lodash": "~4.17.4",
     "markdown-it": "~8.3.0",
     "md5": "~2.2.1",
+    "memoizee": "^0.4.9",
     "messageformat": "^0.3.1",
     "mime": "~2.0.2",
     "moment": "^2.10.6",

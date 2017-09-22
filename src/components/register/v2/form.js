@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
 import { noop, omit, reduce } from 'lodash';
@@ -86,6 +85,13 @@ const pushLogin = location => ({
   query: { ...location.query, route: 'login' }
 });
 
+const getIconProps = Utils.memoize1(
+  (name) => ({
+    name,
+    size: 'big'
+  })
+);
+
 export class SignupFormV2 extends React.Component {
   static displayName = 'SignupFormV2';
 
@@ -102,8 +108,7 @@ export class SignupFormV2 extends React.Component {
       forceValidate: PropTypes.func.isRequired,
       isValid: PropTypes.func.isRequired,
       onValues: PropTypes.func.isRequired
-    }).isRequired,
-    rtl: PropTypes.bool
+    }).isRequired
   };
 
   static defaultProps = {
@@ -268,13 +273,12 @@ export class SignupFormV2 extends React.Component {
   };
 
   render() {
-    const { fields, translate: t, format: f, rtl } = this.props;
+    const { fields, translate: t } = this.props;
 
     if (this.props.succeed) {
       return (
         <SignupSuccessMessage
           dispatch={this.props.dispatch}
-          rtl={rtl}
           translate={t}
         />
       );
@@ -284,7 +288,6 @@ export class SignupFormV2 extends React.Component {
       <form
         action=""
         autoComplete="off"
-        className={classNames('form sidebar-form', { 'form--rtl': rtl })}
         method="post"
         onChange={this.handleChange}
         onSubmit={this.handleSubmit}
@@ -303,6 +306,7 @@ export class SignupFormV2 extends React.Component {
 
             acc.push(
               <FormField
+                animated
                 autoComplete={'new-'.concat(fieldName)}
                 key={fieldName}
                 name={fieldName}
@@ -321,7 +325,7 @@ export class SignupFormV2 extends React.Component {
         )}
 
         <div className="form__actions-container form__background--bright">
-          <div className="form__actions">
+          <div className="form__actions form__actions--align_l">
             <Button
               className="sidebar-modal__button form__submit"
               title={t('signup.action')}
@@ -330,22 +334,27 @@ export class SignupFormV2 extends React.Component {
             />
           </div>
         </div>
+        <div className="form__subheader form__subheader--section form__background--bright">
+          {t('signup.quick')}
+        </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon="github"
+            icon={getIconProps('github')}
+            theme="list"
             onClick={undefined}
           >
-            {f('signup.with', 'Github')}
+            GitHub
           </AltButton>
           <AltButton
             className="margin--all_top"
-            icon="facebook-official"
+            icon={getIconProps('facebook-official')}
+            theme="list"
             onClick={undefined}
           >
-            {f('signup.with', 'Facebook')}
+            Facebook
           </AltButton>
           <Link
-            className={AltButton.defaultClassName.concat(" margin--all_top")}
+            className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}
             to={pushLogin}
           >
             {t('signup.login')}

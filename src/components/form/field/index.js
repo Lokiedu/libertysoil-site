@@ -17,6 +17,7 @@
 */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import omit from 'lodash/omit';
 
 import { OldIcon as Icon } from '../../icon';
@@ -24,19 +25,31 @@ import { OldIcon as Icon } from '../../icon';
 const STATUS_ICONS = {
   invalid: {
     className: 'color-red form__check',
-    icon: 'minus'
+    icon: 'close',
+    pack: 'fa'
   },
   valid: {
     className: 'color-green form__check',
-    icon: 'check'
+    icon: 'check',
+    pack: 'fa'
   },
   unfilled: {}
+};
+
+const ANIMATION_PROPS = {
+  component: 'div',
+  transitionAppear: true,
+  transitionAppearTimeout: 250,
+  transitionLeave: true,
+  transitionLeaveTimeout: 250,
+  transitionName: 'form__message--transition'
 };
 
 const DOT_ICON_SIZE = { outer: 'l', inner: 's' };
 
 export default class FormField extends React.Component {
   static propTypes = {
+    animated: PropTypes.bool,
     className: PropTypes.string,
     dotColor: PropTypes.string,
     error: PropTypes.string,
@@ -54,6 +67,7 @@ export default class FormField extends React.Component {
 
   static defaultProps = {
     statusIcon: {},
+    theme: 'paper',
     type: 'text'
   };
 
@@ -62,7 +76,7 @@ export default class FormField extends React.Component {
   }
 
   render() {
-    const { error, name, type, value, warn } = this.props;
+    const { animated, error, name, type, value, warn } = this.props;
 
     let dotColor = 'gray', icon;
     if (error) {
@@ -79,17 +93,11 @@ export default class FormField extends React.Component {
     }
 
     const cn = classNames(
-      'form__row form__background--bright',
+      'form__row form__field form__background--bright',
       this.props.className,
       {
         'form__field--checkbox': type === 'checkbox'
       }
-    );
-
-    const label = (
-      <label className="form__label" htmlFor={name}>
-        {this.props.title}
-      </label>
     );
 
     const dot = (
@@ -101,9 +109,14 @@ export default class FormField extends React.Component {
       />
     );
 
+    let inputClassName = 'form__input river-item input-transparent';
+    if (this.props.theme) {
+      inputClassName += ` form__input--theme_${this.props.theme}`;
+    }
+
     const input = (
       <input
-        className="form__input river-item bio__post--type_text input-transparent"
+        className={inputClassName}
         id={name}
         name={name}
         ref={this.props.refFn}
@@ -116,7 +129,7 @@ export default class FormField extends React.Component {
     const status = (
       <Icon
         className="form__check"
-        size="common"
+        size="big"
         {...STATUS_ICONS[icon]}
         {...this.props.statusIcon}
       />
@@ -126,17 +139,31 @@ export default class FormField extends React.Component {
 
     switch (type) {
       case 'checkbox': {
+        const label = (
+          <label htmlFor={name}>
+            {input}
+            <span aria-hidden="true" className="fa fa-check" />
+            <div className="form__label">{this.props.title}</div>
+          </label>
+        );
+
         body = (
           <div>
             <div className="layout layout-align_vertical">
-              {dot}{input}{label}{status}
+              {dot}{label}{status}
             </div>
           </div>
         );
 
         break;
       }
-      default:
+      default: {
+        const label = (
+          <label className="form__label" htmlFor={name}>
+            {this.props.title}
+          </label>
+        );
+
         body = (
           <div>
             {label}
@@ -145,21 +172,45 @@ export default class FormField extends React.Component {
             </div>
           </div>
         );
+      }
+    }
+
+    const errorMessage = error && (
+      <div className="form__field-message">
+        {error}
+      </div>
+    );
+    const warnMessage = warn && (
+      <div className="form__field-message form__field-message--type_info">
+        {warn}
+      </div>
+    );
+
+    let messages;
+    if (animated) {
+      messages = (
+        <div>
+          <CSSTransitionGroup {...ANIMATION_PROPS}>
+            {errorMessage}
+          </CSSTransitionGroup>
+          <CSSTransitionGroup {...ANIMATION_PROPS}>
+            {warnMessage}
+          </CSSTransitionGroup>
+        </div>
+      );
+    } else {
+      messages = (
+        <div>
+          {errorMessage}
+          {warnMessage}
+        </div>
+      );
     }
 
     return (
       <div className={cn} key={name}>
         {body}
-        {error &&
-          <div className="form__field-message">
-            {error}
-          </div>
-        }
-        {warn &&
-          <div className="form__field-message form__field-message--type_info">
-            {warn}
-          </div>
-        }
+        {messages}
       </div>
     );
   }

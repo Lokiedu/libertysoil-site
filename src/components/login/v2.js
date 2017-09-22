@@ -16,22 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import React, { PropTypes } from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import classNames from 'classnames';
-import isEqual from 'lodash/isEqual';
+import memoize from 'memoizee';
 import t from 't8on';
 
 import { SUPPORTED_LOCALES } from '../../consts/localization';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import { ActionsTrigger } from '../../triggers';
+import { appear, disappear } from '../../utils/transition';
 import createSelector from '../../selectors/createSelector';
 import { removeAllMessages } from '../../actions/messages';
 
+import Messages from '../messages';
 import Modal from '../sidebar-modal';
-import MinifiedTag from '../tag/theme/minified';
+import BasicTag from '../tag/theme/basic';
 import LoginForm from './form';
 
 const MAIN_ICON = {
@@ -45,37 +45,20 @@ const ERROR_MESSAGES = [
 
 const ERROR_TAG_MAPPING = {
   'login.errors.invalid': {
-    icon: { color: 'orange', icon: 'question-circle', size: { outer: undefined, inner: 'l' } },
+    icon: { bg: 'orange', name: 'question', size: { inner: 'ms' } },
     name: { name: (translate) => translate('login.qs.forget_pass') },
     url: '/resetpassword'
   }
 };
 
-function Message({ className, children, long, translate, ...props }) {
-  let message;
-  if (long) {
-    message = translate(children.concat('.long'));
-    if (!message) {
-      message = translate(children);
-    }
-  } else {
-    message = translate(children.concat('.short'));
-    if (!message) {
-      message = translate(children);
-    }
-  }
-
-  return (
-    <div className={classNames('form__message', className)} {...props}>
-      {message}
-    </div>
-  );
-}
+const MESSAGE_CLOSE_ICON = {
+  pack: 'fa', relative: true, size: { outer: 'l' }
+};
 
 function ActionTag({ url, translate, ...props }) {
   const content = (
-    <MinifiedTag
-      className="form__tag"
+    <BasicTag
+      className="form__tag tag--size_small"
       {...props}
       name={{
         ...props.name,
@@ -95,11 +78,14 @@ function ActionTag({ url, translate, ...props }) {
   return content;
 }
 
-class LoginComponentV2 extends React.Component {
+const id1Cached = memoize(x => x, { simplified: true });
+
+class LoginComponentV2 extends React.PureComponent {
   static displayName = 'LoginComponentV2';
 
   static propTypes = {
     dispatch: PropTypes.func,
+    is_logged_in: PropTypes.bool,
     onSubmit: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     triggers: PropTypes.shape({
@@ -112,21 +98,24 @@ class LoginComponentV2 extends React.Component {
     dispatch: () => {}
   };
 
+  static TRANSITION_TIMEOUT = 250;
+
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      isChecked: false
+      isChecked: false,
+      isVisible: true
     };
 
     this.triggers = new ActionsTrigger(
       new ApiClient(API_HOST),
       props.dispatch
     );
-  }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props
-      || !isEqual(nextState, this.state);
+    const T = LoginComponentV2;
+    this.componentWillAppear = appear.bind(this, T.TRANSITION_TIMEOUT);
+    this.componentWillEnter = appear.bind(this, T.TRANSITION_TIMEOUT);
+    this.componentWillLeave = disappear.bind(this, T.TRANSITION_TIMEOUT);
   }
 
   handleSubmit = async (isValid, username, password) => {
@@ -148,10 +137,13 @@ class LoginComponentV2 extends React.Component {
   };
 
   render() {
+    if (this.props.is_logged_in) {
+      return false;
+    }
+
     const { locale, messages, onClose } = this.props;
 
     const translate = t.translateTo(locale);
-    const format = t.formatTo(locale);
     const rtl = SUPPORTED_LOCALES[locale].rtl;
 
     let headerContent, subheader;
@@ -177,52 +169,54 @@ class LoginComponentV2 extends React.Component {
       headerContent = translate('login.action');
     }
 
+    let cn = 'form form--stretch_y';
+    if (rtl) {
+      cn += ' form--rtl';
+    }
+
     return (
-      <Modal.Overlay isVisible={this.props.isVisible}>
-        <Modal
-          className="form form__container sidebar-form__container"
-          isVisible={this.props.isVisible}
-          rtl={rtl}
-          onHide={onClose}
-        >
-          <Modal.Header
-            className="form__background--bright form__title sidebar-modal__title--big"
-            mainIcon={MAIN_ICON}
-            closeIcon={false}
-            onClose={onClose}
+      <div className={cn}>
+        <Modal.Overlay isVisible={this.state.isVisible}>
+          <Modal.Main
+            innerClassName="form__container sidebar-form__container form__main"
+            isVisible={this.state.isVisible}
+            rtl={rtl}
+            onCloseTo={onClose && onClose.to}
           >
-            <div className="form__title">
-              {headerContent}
-            </div>
-          </Modal.Header>
-          <Modal.Body raw className="form__background--dark">
-            <CSSTransitionGroup
-              className="form__background--bright"
-              component="div"
-              transitionEnter
-              transitionEnterTimeout={250}
-              transitionLeave
-              transitionLeaveTimeout={250}
-              transitionName="form__message--transition"
+            <Modal.Header
+              className="form__title sidebar-modal__title--big"
+              closeIcon={false}
+              mainIcon={MAIN_ICON}
+              theme="colored"
             >
-              {messages.size &&
-                this.props.messages.map(msg =>
-                  <Message key={msg.get('message')} long translate={translate}>
-                    {msg.get('message')}
-                  </Message>
-                )
-              }
-            </CSSTransitionGroup>
-            {subheader}
-            <LoginForm
-              format={format}
-              rtl={rtl}
-              translate={translate}
-              onSubmit={this.handleSubmit}
-            />
-          </Modal.Body>
-        </Modal>
-      </Modal.Overlay>
+              <div className="form__title">
+                {headerContent}
+              </div>
+            </Modal.Header>
+            <Modal.Body raw className="form__background--dark">
+              <Messages
+                animated
+                className="form__messages form__messages--theme_popup"
+                innerProps={id1Cached({
+                  className: 'form__message form__message--theme_popup',
+                  closeIcon: MESSAGE_CLOSE_ICON,
+                  mode: 'long',
+                  rtl,
+                  statusIcon: false,
+                  translate
+                })}
+                messages={messages}
+                removeMessage={this.triggers.removeMessage}
+              />
+              {subheader}
+              <LoginForm
+                translate={translate}
+                onSubmit={this.handleSubmit}
+              />
+            </Modal.Body>
+          </Modal.Main>
+        </Modal.Overlay>
+      </div>
     );
   }
 }
@@ -232,7 +226,10 @@ const mapStateToProps = createSelector(
   state => state.get('messages').filter(msg =>
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
-  (locale, messages) => ({ locale, messages })
+  (locale, messages) =>
+    ({ locale, messages: messages.toList() })
 );
 
-export default connect(mapStateToProps)(LoginComponentV2);
+export default connect(
+  mapStateToProps, null, null, { withRef: true }
+)(LoginComponentV2);
