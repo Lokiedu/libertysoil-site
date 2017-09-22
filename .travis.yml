@@ -1,10 +1,10 @@
 language: node_js
 
-sudo: required  # requirement for postgres 9.5
+sudo: required  # requirement for postgres
 dist: trusty
 
 node_js:
-  - "8.4"
+  - "8.5"
 
 services:
   - postgresql
@@ -21,7 +21,7 @@ addons:
     - g++-4.8
     - unicode-data
     - graphicsmagick
-  postgresql: "9.5"
+  postgresql: "9.6"
 
 before_script:
   - psql -c 'create database libertysoil;' -U postgres

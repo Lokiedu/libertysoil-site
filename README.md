@@ -3,10 +3,9 @@
 ## Requirements
 
 * Redis 3.0
-* Postgres 9.5
-* NodeJS (8.4 is actively used by developers now)
-* [Zopfli](https://github.com/google/zopfli)
-* `npm install`
+* Postgres 9.6
+* NodeJS (8.5 is actively used by developers now)
+* `yarn install`
 
 ## Setting Up Development Environment
 
