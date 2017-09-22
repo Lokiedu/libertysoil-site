@@ -23,7 +23,6 @@ import config from '../../config';
 let instance = null;
 
 export default class Queue {
-
   constructor() {
     if (!instance) {
       instance = this;
@@ -49,5 +48,4 @@ export default class Queue {
 
     return await promise;
   };
-
 }
