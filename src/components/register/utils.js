@@ -34,7 +34,7 @@ export function checkTrimmed(val = '') {
 }
 
 export const checkUsernameValid = (val) => (
-  !/[^0-9a-zA-Z-_'\.]/.test(val)
+  !/[^0-9a-zA-Z-_'.]/.test(val)
 );
 
 export const isPasswordWeak = (val) => (

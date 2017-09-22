@@ -55,7 +55,7 @@ const DateStringType = (reify: Type<DateString>);
 DateStringType.addConstraint(isDate);
 
 export const isUrl = (x: string): ?string => {  // eslint-disable-line consistent-return
-  if (!x.match(RegExp(/^[a-z0-9_\.'/:-]+$/i))) {
+  if (!x.match(RegExp(/^[a-z0-9_.'/:-]+$/i))) {
     return 'must be a valid URL';
   }
 };

@@ -39,7 +39,7 @@ const PasswordType = (reify: Type<Password>);
 PasswordType.addConstraint(isPassword);
 
 export const isUsername = (x: string): ?string => {  // eslint-disable-line consistent-return
-  if (!x.match(/^(?!.*\.{2})[a-z0-9\-\_\'\.]+$/i)) {
+  if (!x.match(/^(?!.*.{2})[a-z0-9\-_'.]+$/i)) {
     return 'must be a valid username';
   }
 };
