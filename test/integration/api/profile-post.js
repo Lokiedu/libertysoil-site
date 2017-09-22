@@ -144,7 +144,8 @@ describe('ProfilePost', () => {
           session: sessionId,
           body: {
             user_id: 'Must be ignored',
-            text: attrs.text
+            text: attrs.text,
+            type: 'text'
           }
         },
         'body to satisfy',

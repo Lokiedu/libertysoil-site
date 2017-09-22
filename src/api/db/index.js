@@ -27,16 +27,14 @@ import fileType from 'file-type';
 import mime from 'mime';
 import { promisify, promisifyAll } from 'bluebird';
 import { hash as bcryptHash } from 'bcrypt';
-import { break as breakGraphemes, countBreaks } from 'grapheme-breaker';
+import { break as breakGraphemes, countBreaks } from '@ov/grapheme-breaker';
 import { OnigRegExp } from 'oniguruma';
-import Checkit from 'checkit';
 import MarkdownIt from 'markdown-it';
 import sanitizeHtml from 'sanitize-html';
 import slug from 'slug';
 import htmlparser2 from 'htmlparser2';
 
 import { uploadAttachment, downloadAttachment, generateName } from '../../utils/attachments';
-import { ProfilePost as ProfilePostValidations } from './validators';
 
 
 const bcryptHashAsync = promisify(bcryptHash);
@@ -247,30 +245,18 @@ export function initBookshelfFromKnex(knex) {
       const type = this.get('type');
 
       // text_source
-      if (_.isString(data.text_source)) {
-        this.set('text_source', data.text_source);
-      } else {
-        throw new Error('"text_source" must be present');
-      }
+      this.set('text_source', data.text_source);
 
       // text_type
       if (type === 'story') {
-        if (_.isString(data.text_type) && _.includes(['markdown', 'html'], data.text_type)) {
-          this.set('text_type', data.text_type);
-        } else {
-          throw new Error('"text_type" must be equeal to either "markdown" or "html"');
-        }
+        this.set('text_type', data.text_type);
       }
 
       // title
       if (type === 'long_text') {
-        if (_.isString(data.title)) {
-          const more = this.get('more') || {};
-          more.title = data.title;
-          this.set('more', more);
-        } else {
-          throw new Error('"title" must be present');
-        }
+        const more = this.get('more') || {};
+        more.title = data.title;
+        this.set('more', more);
       } else if (type === 'story' && _.isString(data.title)) { // title is optional for story posts
         const more = this.get('more') || {};
         more.title = data.title;
@@ -540,10 +526,6 @@ export function initBookshelfFromKnex(knex) {
    */
   Post.create = async (data) => {
     return bookshelf.transaction(async (t) => {
-      if (!_.includes(Post.typesWithPages, data.type)) {
-        throw new Error(`${data.type}" type is not supported`);
-      }
-
       const post = new Post({
         id: uuid.v4(),
         user_id: data.user_id,
@@ -574,31 +556,15 @@ export function initBookshelfFromKnex(knex) {
 
       // Relations
       if (data.hashtags) {
-        if (_.isArray(data.hashtags)) {
-          if (data.hashtags.filter(tag => (countBreaks(tag) < 3)).length > 0) {
-            throw new Error('each of tags should be at least 3 characters wide');
-          }
-
-          await post.attachHashtags(_.uniq(data.hashtags), { transacting: t });
-        } else {
-          throw new Error('"hashtags" parameter is expected to be an array');
-        }
+        await post.attachHashtags(_.uniq(data.hashtags), { transacting: t });
       }
 
       if (data.schools) {
-        if (_.isArray(data.schools)) {
-          await post.attachSchools(_.uniq(data.schools), { transacting: t });
-        } else {
-          throw new Error('"schools" parameter is expected to be an array');
-        }
+        await post.attachSchools(_.uniq(data.schools), { transacting: t });
       }
 
       if (data.geotags) {
-        if (_.isArray(data.geotags)) {
-          await post.attachGeotags(_.uniq(data.geotags), { transacting: t });
-        } else {
-          throw new Error('"geotags" parameter is expected to be an array');
-        }
+        await post.attachGeotags(_.uniq(data.geotags), { transacting: t });
       }
 
       return post;
@@ -903,7 +869,6 @@ export function initBookshelfFromKnex(knex) {
   const ProfilePost = bookshelf.Model.extend({
     tableName: 'profile_posts',
     initialize() {
-      this.on('saving', this.validate.bind(this));
       this.on('saving', this.renderMarkdown.bind(this));
     },
     renderMarkdown(model = this) {
@@ -911,9 +876,6 @@ export function initBookshelfFromKnex(knex) {
         const html = postMarkdown.render(model.get('text'));
         model.set('html', html);
       }
-    },
-    validate() {
-      return new Checkit(ProfilePostValidations).run(this.toJSON());
     },
     user() {
       return this.belongsTo(User, 'user_id');

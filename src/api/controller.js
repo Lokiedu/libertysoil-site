@@ -24,7 +24,7 @@ import bb from 'bluebird';
 import uuid from 'uuid';
 import slug from 'slug';
 import fetch from 'node-fetch';
-import Checkit from 'checkit';
+import { ValidationError } from 'joi';
 
 import QueueSingleton from '../utils/queue';
 import { hidePostsData } from '../utils/posts';
@@ -33,13 +33,16 @@ import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import { SEARCH_INDEXES_TABLE, SEARCH_RESPONSE_TABLE } from '../consts/search';
 import {
-  User as UserValidators,
-  School as SchoolValidators,
-  Hashtag as HashtagValidators,
-  Geotag as GeotagValidators,
-  UserMessage as UserMessageValidators,
-  SearchQuery as SearchQueryValidators
-} from './db/validators';
+  UserRegistrationValidator,
+  UserSettingsValidator,
+  SchoolValidator,
+  HashtagValidator,
+  GeotagValidator,
+  UserMessageValidator,
+  SearchQueryValidator,
+  ProfilePostValidator,
+  PostValidator
+} from './validators';
 
 const SUPPORTED_LOCALES = Object.keys(
   require('../consts/localization').SUPPORTED_LOCALES
@@ -601,13 +604,9 @@ export default class ApiController {
       return;
     }
 
-    const checkit = new Checkit(GeotagValidators.more);
-
-    try {
-      await checkit.run(ctx.request.body.more);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
+    const validationResult = GeotagValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
       return;
     }
 
@@ -616,7 +615,7 @@ export default class ApiController {
       const geotag = await Geotag.where({ id: ctx.params.id }).fetch({ require: true });
 
       let properties = {};
-      for (const fieldName in GeotagValidators.more) {
+      for (const fieldName in GeotagValidator.validations.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -649,13 +648,9 @@ export default class ApiController {
       return;
     }
 
-    const checkit = new Checkit(HashtagValidators.more);
-
-    try {
-      await checkit.run(ctx.request.body.more);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
+    const validationResult = HashtagValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
       return;
     }
 
@@ -664,7 +659,7 @@ export default class ApiController {
       const hashtag = await Hashtag.where({ id: ctx.params.id }).fetch({ require: true });
 
       let properties = {};
-      for (const fieldName in HashtagValidators.more) {
+      for (const fieldName in HashtagValidator.validations.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -778,7 +773,7 @@ export default class ApiController {
 
       const properties = {};
       if (ctx.request.body.more) {
-        for (const fieldName in SchoolValidators.more) {
+        for (const fieldName in SchoolValidator.validations.more) {
           if (fieldName in ctx.request.body.more) {
             properties[fieldName] = ctx.request.body.more[fieldName];
           }
@@ -880,7 +875,7 @@ export default class ApiController {
       const attributesWithValues = processData(_.pick(ctx.request.body, allowedAttributes));
 
       const properties = {};
-      for (const fieldName in SchoolValidators.more) {
+      for (const fieldName in SchoolValidator.validations.more) {
         if (fieldName in ctx.request.body.more) {
           properties[fieldName] = ctx.request.body.more[fieldName];
         }
@@ -1298,12 +1293,9 @@ export default class ApiController {
   registerUser = async (ctx) => {
     const optionalFields = ['firstName', 'lastName'];
 
-    const checkit = new Checkit(UserValidators.registration);
-    try {
-      await checkit.run(ctx.request.body);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
+    const validationResult = UserRegistrationValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
       return;
     }
 
@@ -1639,8 +1631,15 @@ export default class ApiController {
     const Post = this.bookshelf.model('Post');
 
     try {
+      const validationResult = PostValidator.validate(ctx.request.body);
+      if (validationResult.error) {
+        this.processError(ctx, validationResult.error);
+        return;
+      }
+
+      const attributes = validationResult.value;
       const post = await Post.create({
-        ...ctx.request.body,
+        ...attributes,
         user_id: ctx.session.user
       });
       await post.refresh({ require: true, withRelated: POST_RELATIONS });
@@ -1920,32 +1919,22 @@ export default class ApiController {
       return;
     }
 
-    const checkit = new Checkit(UserValidators.settings.more);
-    try {
-      await checkit.run(ctx.request.body.more);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
-      return;
-    }
-
     const User = this.bookshelf.model('User');
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
+    const validationResult = UserSettingsValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
+      return;
+    }
+
     try {
       const user = await User.where({ id: ctx.session.user }).fetch({ require: true });
-
-      let properties = {};
-
-      for (const fieldName in UserValidators.settings.more) {
-        if (fieldName in ctx.request.body.more) {
-          properties[fieldName] = ctx.request.body.more[fieldName];
-        }
-      }
+      const more = validationResult.value.more;
 
       const newPictures = {};
       ['avatar', 'head_pic'].forEach(fieldName => {
-        const updated = properties[fieldName];
+        const updated = more[fieldName];
         if (updated) {
           const old = user.get('more')[fieldName];
           if (!old) {
@@ -1956,8 +1945,7 @@ export default class ApiController {
         }
       });
 
-      properties = _.extend(user.get('more'), properties);
-      user.set('more', properties);
+      user.set('more', _.extend(user.get('more'), more));
 
       await user.save(null, { method: 'update' });
 
@@ -1971,8 +1959,7 @@ export default class ApiController {
 
       ctx.body = { user };
     } catch (e) {
-      ctx.status = 500;
-      ctx.body = { error: 'Update failed' };
+      this.processError(ctx, e);
       return;
     }
   };
@@ -2659,11 +2646,9 @@ export default class ApiController {
   };
 
   search = async (ctx) => {
-    try {
-      await new Checkit(SearchQueryValidators).run(ctx.query);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
+    const validationResult = SearchQueryValidator.validate(ctx.query);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
       return;
     }
 
@@ -3344,11 +3329,9 @@ export default class ApiController {
       return;
     }
 
-    try {
-      await new Checkit(UserMessageValidators).run(ctx.request.body);
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = { error: e.toJSON() };
+    const validationResult = UserMessageValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
       return;
     }
 
@@ -3440,11 +3423,17 @@ export default class ApiController {
 
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
-    const postAttrs = _.pick(ctx.request.body, ['text', 'type', 'more']);
-    postAttrs.user_id = ctx.session.user;
+    const validationResult = ProfilePostValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
+      return;
+    }
 
-    const post = new ProfilePost(postAttrs);
-    if (postAttrs.type === 'text' && !postAttrs.text.trim()) {
+    const attributes = validationResult.value;
+    attributes.user_id = ctx.session.user;
+
+    const post = new ProfilePost(attributes);
+    if (attributes.type === 'text' && !attributes.text.trim()) {
       ctx.status = 400;
       ctx.body = { error: 'Profile post\'s text is missing' };
       return;
@@ -3467,12 +3456,20 @@ export default class ApiController {
 
     const ProfilePost = this.bookshelf.model('ProfilePost');
 
+    const validationResult = ProfilePostValidator.validate(ctx.request.body);
+    if (validationResult.error) {
+      this.processError(ctx, validationResult.error);
+      return;
+    }
+
+    const attributes = validationResult.value;
+
     try {
       const post = await new ProfilePost()
         .where({ id: ctx.params.id, user_id: ctx.session.user })
         .fetch({ require: true });
 
-      post.set(_.pick(ctx.request.body, ['text', 'type', 'more']));
+      post.set(attributes);
       post.renderMarkdown();
       post.set('updated_at', new Date().toJSON());
 
@@ -3525,7 +3522,7 @@ export default class ApiController {
    * Sets the response body in case of error
    * ```
    * {
-   *   errors: { fieldName: ['Some message']] }, // Only if e is a Checkit.Error
+   *   fields: [{ message, path, type, context }], // Only for validation errors. See https://github.com/hapijs/joi/blob/v10.6.0/API.md#errors
    *   error: 'Human readable message'
    * }
    * ```
@@ -3533,10 +3530,10 @@ export default class ApiController {
    * @param {Error} e
    */
   processError(ctx, e) {
-    if (e instanceof Checkit.Error) {
+    if (e.isJoi || e instanceof ValidationError) {
       ctx.status = 400;
       ctx.body = {
-        errors: e.toJSON(),
+        fields: e.details,
         error: e.toString()
       };
     } else if (
@@ -3552,7 +3549,7 @@ export default class ApiController {
       ctx.app.logger.error(e);
       ctx.status = 500;
       ctx.body = {
-        error: e.message
+        error: 'Internal Server Error'
       };
     }
   }

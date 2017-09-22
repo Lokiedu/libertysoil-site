@@ -32,7 +32,8 @@ import { ActionsTrigger } from '../triggers';
 import { initState } from '../store';
 import { addMessage } from '../actions/messages';
 
-bluebird.longStackTraces();
+import '../less/styles.less';
+
 window.Promise = bluebird;
 
 const store = initState(window.state);
@@ -67,7 +68,7 @@ const fetchHandler = new FetchHandler(store, client);
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      {getRoutes(authHandler.handle, fetchHandler.handle)}
+      {getRoutes(authHandler.handle, fetchHandler.handle, fetchHandler.handleChange)}
     </Router>
   </Provider>,
   document.getElementById('content')

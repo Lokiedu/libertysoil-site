@@ -3,11 +3,9 @@
 /node_modules
 /npm-debug.log
 build
-public/scripts
-public/styles
-public/assets
 /.idea
 /deploy/production/secrets.env
 /deploy/staging/secrets.env
 dump.rdb
 /opendata
+/public

@@ -32,7 +32,7 @@ import WhatIsLibertySoil from '../components/WhatIsLibertySoil';
 import Reviews from '../components/Reviews';
 import Footer from '../components/footer';
 
-class Welcome extends React.Component {
+export class Welcome extends React.Component {
   static contextualRoutes = ['login', 'signup'];
 
   static displayName = 'Welcome';

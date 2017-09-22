@@ -1,0 +1,92 @@
+.hp-sidebar {
+  width: 240px;
+  background: #f7f9fa;
+  min-height: 100%;
+
+  .uikit-nav__container {
+    box-sizing: border-box;
+    width: 240px;
+    min-width: 240px;
+    min-height: 100vh;
+
+    .uikit-nav__panel {
+      width: 240px;
+      padding: 40px 0 0 40px;
+      font-family: "Open Sans", "Helvetica Neue", sans-serif;
+
+      .uikit-nav__features-header {
+        margin-top: 0;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        a {
+          font-size: 16px;
+        }
+      }
+
+      .uikit-nav__title {
+        border: none;
+        background: transparent;
+        display: inline-block;
+        position: relative;
+        margin: -15px 0 15px -15px;
+        transform: scale(0.6);
+        cursor: pointer;
+      }
+
+      .uikit-nav__contents {
+        width: 200px;
+      }
+
+      .components__link {
+        color: #637282;
+        font-size: 14px;
+        text-decoration: none;
+        display: block;
+
+        &.active {
+          color: #0070e0;
+          font-weight: 500;
+          &:hover {
+            color: #0070e0;
+            opacity: 0.8;
+          }
+        }
+
+        &:hover {
+          color: #637282;
+          opacity: 0.8;
+        }
+      }
+
+      .uikit-nav__components {
+        list-style: none;
+        overflow: hidden;
+        padding: 0;
+        margin: 0 40px 30px 0;
+
+        .uikit-nav__item-wrap {
+          line-height: 32px;
+          font-size: 14px;
+
+          .disabled {
+            pointer-events: none;
+            color: #a9aeb3;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .uikit-wrap {
+    .hp-sidebar {
+      display: none;
+    }
+    .uikit-app {
+      padding: 0;
+    }
+  }
+}

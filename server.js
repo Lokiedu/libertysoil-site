@@ -17,8 +17,7 @@
  */
 /*eslint-env node */
 import { parse as parseUrl } from 'url';
-import path from 'path';
-import fs, { accessSync, readFileSync } from 'fs';
+import fs, { accessSync } from 'fs';
 
 import Koa from 'koa';
 import { isString } from 'lodash';
@@ -26,31 +25,22 @@ import session from 'koa-generic-session';
 import redisStore from 'koa-redis';
 import convert from 'koa-convert';
 import cors from 'kcors';
-import serve from 'koa-static';
+import staticCache from 'koa-static-cache';
 import bodyParser from 'koa-bodyparser';
 import mount from 'koa-mount';
 import koaConditional from 'koa-conditional-get';
 import koaEtag from 'koa-etag';
-import ejs from 'ejs';
-import { promisify } from 'bluebird';
 import Logger, { createLogger } from 'bunyan';
 
-import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { Provider } from 'react-redux';
-import { Router, RouterContext, match, createMemoryHistory } from 'react-router';
-import { syncHistoryWithStore } from 'react-router-redux';
-import Helmet from 'react-helmet';
 import t from 't8on';
 
 import createRequestLogger from './src/utils/bunyan-koa-request';
-import { getRoutes } from './src/routing';
-import { AuthHandler, FetchHandler } from './src/utils/loader';
 import { initApi } from './src/api/routing';
 import initBookshelf from './src/api/db';
 import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
-import ApiClient from './src/api/client';
+import { getRoutes } from './src/routing';
+import { getRoutes as getUikitRoutes } from './src/uikit/routes';
 
 import { DEFAULT_LOCALE } from './src/consts/localization';
 import { initState } from './src/store';
@@ -58,6 +48,8 @@ import { setLocale } from './src/actions/ui';
 import { setCurrentUser, setLikes, setFavourites } from './src/actions/users';
 
 import db_config from './knexfile';  // eslint-disable-line import/default
+
+import { getReactMiddleware } from './src/utils/koa-react';
 
 
 const exec_env = process.env.NODE_ENV || 'development';
@@ -94,50 +86,17 @@ try {
   // do nothing
 }
 
-export const logger = createLogger({
+const logger = createLogger({
   name: "libertysoil",
   serializers: Logger.stdSerializers,
   src: true,
   streams
 });
 
-
-const app = new Koa();
-app.logger = logger;
-
 const knexConfig = db_config[dbEnv];
 const bookshelf = global.$bookshelf || initBookshelf(knexConfig);
-const sphinx = initSphinx();
-const api = initApi(bookshelf, sphinx);
-const matchPromisified = promisify(match, { multiArgs: true });
-const templatePath = path.join(__dirname, '/src/views/index.ejs');
-const template = ejs.compile(readFileSync(templatePath, 'utf8'), { filename: templatePath });
 
-app.on('error', (e) => {
-  logger.warn(e);
-});
-
-if (exec_env === 'development') {
-  logger.level('debug');
-
-  const webpackMiddleware = require('koa-webpack');
-  const webpack = require('webpack');
-  const webpackConfig = require('./webpack.dev.config');
-  const compiler = webpack(webpackConfig);
-
-  app.use(webpackMiddleware({
-    compiler,
-    dev: {
-      log: logger.debug.bind(logger),
-      publicPath: webpackConfig.output.publicPath,
-      stats: {
-        colors: true
-      }
-    }
-  }));
-}
-
-app.use(async (ctx, next) => {
+const enforceProperHostMiddleware = async (ctx, next) => {
   const { hostname } = parseUrl(API_HOST);
 
   if (isString(ctx.request.hostname) && ctx.request.hostname !== hostname) {
@@ -147,37 +106,9 @@ app.use(async (ctx, next) => {
     return;
   }
   await next();
-});
+};
 
-app.keys = ['libertysoil'];
-
-app.use(cors({
-  allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-}));
-
-app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
-
-app.use(convert(session({
-  store: redisStore(
-    {
-      host: '127.0.0.1',
-      port: 6379
-    }
-  ),
-  key: 'connect.sid',
-  cookie: { signed: false }
-})));
-
-app.use(createRequestLogger({ level: 'info', logger }));
-
-app.use(koaConditional());
-app.use(koaEtag());
-
-app.use(mount('/api/v1', api));
-
-app.use(serve(`${__dirname}/public/`, { index: false, defer: false }));
-
-app.use(async function reactMiddleware(ctx) {
+const initReduxForMainApp = async (ctx) => {
   const store = initState();
 
   let locale_code;
@@ -234,73 +165,90 @@ app.use(async function reactMiddleware(ctx) {
     store.dispatch(setLocale(DEFAULT_LOCALE));
   }
 
-  const authHandler = new AuthHandler(store);
-  const fetchHandler = new FetchHandler(store, new ApiClient(API_HOST, ctx));
-  const Routes = getRoutes(authHandler.handle, fetchHandler.handleSynchronously);
+  const locale_data = { [locale_code]: t.dictionary()[locale_code] };
 
-  const makeRoutes = (history) => (
-    <Router history={history}>
-      {Routes}
-    </Router>
-  );
+  return { locale_data, store };
+};
 
-  const history = syncHistoryWithStore(createMemoryHistory(), store, { selectLocationState: state => state.get('routing') });
-  const routes = makeRoutes(history);
+const serve = (...params) => staticCache(...params);
 
-  try {
-    const [redirectLocation, renderProps] = await matchPromisified({ routes, location: ctx.url });
 
-    if (redirectLocation) {
-      ctx.status = 307;
-      ctx.redirect(redirectLocation.pathname + redirectLocation.search);
-      return;
-    }
+function startServer(/*params*/) {
+  const sphinx = initSphinx();
+  const api = initApi(bookshelf, sphinx);
 
-    if (renderProps == null) {
-      ctx.status = 404;
-      ctx.body = 'Not found';
-      return;
-    }
+  const staticsAppConfig = {
+    buffer: true,
+    dynamic: process.env.NODE_ENV !== 'production',
+    gzip: true,
+    preload: process.env.NODE_ENV === 'production',
+    usePrecompiledGzip: true
+  };
 
-    if (fetchHandler.redirectTo !== null) {
-      ctx.status = fetchHandler.status;
-      ctx.redirect(fetchHandler.redirectTo);
-      return;
-    }
-
-    try {
-      // Helmet.canUseDOM must be assigned before renderToString.
-      // Otherwise Helmet.rewind returns original object on the first run which may break some tests.
-      Helmet.canUseDOM = false;
-
-      const html = renderToString(
-        <Provider store={store}>
-          <RouterContext {...renderProps} />
-        </Provider>
-      );
-      const state = JSON.stringify(store.getState().toJS());
-
-      if (fetchHandler.status !== null) {
-        ctx.status = fetchHandler.status;
-      }
-
-      // we always render Helmet's metadata as tags like <title></title>
-      const metadata = Helmet.rewind();
-      const gtm = process.env.GOOGLE_TAG_MANAGER_ID || null;
-      const localization = JSON.stringify({ [locale_code]: t.dictionary()[locale_code] });
-
-      ctx.staus = 200;
-      ctx.body = template({ state, html, metadata, gtm, localization });
-    } catch (e) {
-      logger.error(e);
-      ctx.status = 500;
-      ctx.body = e.message;
-    }
-  } catch (e) {
-    logger.error(e);
-    ctx.status = 500;
-    ctx.body = e.message;
+  if (process.env.NODE_ENV === 'production') {
+    staticsAppConfig.maxAge = 60 * 60 * 24 * 7;  // consider files fresh for a week
   }
-});
 
-export default app;
+  const staticsApp = serve('./public', staticsAppConfig);
+
+  const app = new Koa();
+  app.logger = logger;
+  app.keys = ['libertysoil'];
+
+  app.on('error', (e) => {
+    logger.warn(e);
+  });
+
+  if (exec_env === 'development') {
+    logger.level('debug');
+  }
+
+  app.use(createRequestLogger({ level: 'info', logger }));
+  app.use(enforceProperHostMiddleware);
+
+  app.use(cors({
+    allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+  }));
+
+  app.use(bodyParser());  // for parsing application/x-www-form-urlencoded
+
+  app.use(convert(session({
+    store: redisStore(
+      {
+        host: '127.0.0.1',
+        port: 6379
+      }
+    ),
+    key: 'connect.sid',
+    cookie: { signed: false }
+  })));
+
+  app.use(koaConditional());
+  app.use(koaEtag());
+
+  app.use(mount('/api/v1', api));
+  app.use(staticsApp);
+  app.use(mount('/uikit', getReactMiddleware(
+    'uikit',
+    '/uikit/',
+    getUikitRoutes,
+    () => {
+      return { locale_data: {}, store: initState() };
+    },
+    logger
+  )));
+  app.use(getReactMiddleware('app', '/', getRoutes, initReduxForMainApp, logger));
+
+  const PORT = 8000;
+
+  app.listen(PORT, function (err) {
+    if (err) {
+      logger.error(err);  // eslint-disable-line no-console
+      process.exit(1);
+    }
+
+    logger.info(`Listening at http://0.0.0.0:${PORT}\n`);
+  });
+}
+
+export default startServer;

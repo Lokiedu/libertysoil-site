@@ -7,7 +7,8 @@ import initBookshelf from '../src/api/db';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
-require('../index');
+const startServer = require('../server').default;
+startServer();
 
 
 expect.installPlugin(require('unexpected-http'));
@@ -82,7 +83,7 @@ expect.addAssertion('body to contain', function (expect, subject, value) {
   });
 });
 
-expect.addAssertion('body to satisfy', function (expect, subject, value) {
+expect.addAssertion('body to [exhaustively] satisfy', function (expect, subject, value) {
   expect.errorMode = 'bubble';
   return expect(subjectToRequest(subject), 'to yield response', {})
     .then(function (context) {

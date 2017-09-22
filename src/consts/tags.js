@@ -1,3 +1,5 @@
+export { default as DEFAULT_HEADER_PICTURE } from '../images/hero/welcome.jpg';
+
 export const TAG_HASHTAG = 'TAG_HASHTAG';
 export const TAG_SCHOOL = 'TAG_SCHOOL';
 export const TAG_MENTION = 'TAG_MENTION';
@@ -57,5 +59,3 @@ export const TAG_HEADER_SIZE = {
     height: 400
   }
 };
-
-export const DEFAULT_HEADER_PICTURE = '/images/hero/welcome.jpg';

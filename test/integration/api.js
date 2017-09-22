@@ -50,35 +50,44 @@ describe('api v.1', () => {
   describe('Validation', () => {
     describe('Registration Rules', () => {
       it('FAILS for some base rules', async () => {
-        await expect({ url: `/api/v1/users`, method: 'POST', body: {
-          username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
-          password: "test",
-          email: 'test'
-        } }, 'to fail validation with', {
-          username: ['The username must not exceed 31 characters long',
-            'Username can contain letters a-z, numbers 0-9, dashes (-), underscores (_), apostrophes (\'), and periods (.)'
-          ],
-          password: ['Password is min. 8 characters. Password can only have ascii characters.'],
-          email: ['The email must be a valid email address']
+        await expect({
+          url: `/api/v1/users`, method: 'POST',
+          body: {
+            username: '#abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz', // 49
+            password: "test",
+            email: 'test'
+          }
+        }, 'body to satisfy', {
+          fields: [
+            { path: 'username', type: 'string.max' },
+            { path: 'password', type: 'string.min' },
+            { path: 'email', type: 'string.email' }
+          ]
         });
       });
 
       it('FAILS when password contain special(non visible ascii) characters', async () => {
-        await expect({ url: `/api/v1/users`, method: 'POST', body: {
-          username: 'user',
-          password: "testtest\x00",
-          email: 'test@example.com'
-        } }, 'to fail validation with', {
-          password: ['Password is min. 8 characters. Password can only have ascii characters.']
+        await expect({
+          url: `/api/v1/users`,
+          method: 'POST', body: {
+            username: 'user',
+            password: "testtest\x00",
+            email: 'test@example.com'
+          }
+        }, 'body to satisfy', {
+          fields: [
+            { path: 'password' },
+          ]
         });
       });
 
       it('FAILS when no required attributes passed', async () => {
-        await expect({ url: `/api/v1/users`, method: 'POST', body: {
-        } }, 'to fail validation with', {
-          username: ['The username is required'],
-          password: ['The password is required'],
-          email: ['The email is required']
+        await expect({ url: `/api/v1/users`, method: 'POST', body: {} }, 'body to satisfy', {
+          fields: [
+            { path: 'username' },
+            { path: 'password' },
+            { path: 'email' }
+          ]
         });
       });
 
@@ -89,7 +98,6 @@ describe('api v.1', () => {
           'email@subdomain.domain.com',
           'firstname+lastname@domain.com',
           'email@123.123.123.123',
-          '""email""@domain.com',
           '1234567890@domain.com',
           'email@domain-one.co',
           '_______@domain.com',
@@ -110,7 +118,7 @@ describe('api v.1', () => {
           'email..email@domain.com',
           'あいうえお@domain.com',
           'email@domain.com (Joe Smith)',
-          'email@domain',
+          //'email@domain',
           'email@-domain.com',
           // 'email@domain.web',
           // 'email@111.222.333.44444',
@@ -119,25 +127,35 @@ describe('api v.1', () => {
 
         validEmails.map((email) => {
           it(`PASS email validation with email: ${email}`, async function () {
-            // prove that there is no email validation errors
-            await expect({ url: `/api/v1/users`, method: 'POST', body: {
-              email
-            } }, 'to fail validation with', {
-              username: ['The username is required'],
-              password: ['The password is required']
+            await expect({
+              url: `/api/v1/users`,
+              method: 'POST',
+              body: {
+                email
+              }
+            }, 'body to exhaustively satisfy', {
+              fields: [
+                { path: 'username' },
+                { path: 'password' },
+              ]
             });
           });
         });
 
         invalidEmails.map((email) => {
           it(`FAIL email validation with email: ${email}`, async function () {
-            // prove that there is no email validation errors
-            await expect({ url: `/api/v1/users`, method: 'POST', body: {
-              email
-            } }, 'to fail validation with', {
-              username: ['The username is required'],
-              password: ['The password is required'],
-              email: ['The email must be a valid email address']
+            await expect({
+              url: `/api/v1/users`,
+              method: 'POST',
+              body: {
+                email
+              }
+            }, 'body to exhaustively satisfy', {
+              fields: [
+                { path: 'username' },
+                { path: 'password' },
+                { path: 'email' },
+              ]
             });
           });
         });
@@ -233,7 +251,7 @@ describe('api v.1', () => {
 
           const localUser = await User.where({ id: user.id }).fetch({ require: true });
 
-          expect(localUser.get('more').bio, 'to equal', 'foo');
+          expect(localUser.attributes, 'to satisfy', { more: { bio: 'foo' } });
         });
       });
 
@@ -845,15 +863,6 @@ describe('api v.1', () => {
       });
 
       describe('Localization', () => {
-        describe('When locale\'s code is not present', () => {
-          it('returns "Not found" error', () => (
-            expect(
-              { url: '/api/v1/locale' },
-              'to open not found'
-            )
-          ));
-        });
-
         describe('When locale isn\'t supported', () => {
           it('returns "Not found" error with ...', async () => {
             const ctx = await expect(
