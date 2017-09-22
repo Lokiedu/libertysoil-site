@@ -21,7 +21,7 @@ import React from 'react';
 export default class IndexPage extends React.Component {
   static fetchData(router, store) {
     if (!store.getState().getIn(['current_user', 'id'])) {
-      return { status: 307, redirectTo: '/welcome' };
+      return { status: 307, redirectTo: '/all' };
     }
 
     return { status: 307, redirectTo: '/feed' };
