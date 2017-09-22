@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { OldIcon as Icon } from './icon';
 
@@ -24,9 +26,9 @@ export default class IgnoreButton extends React.Component {
   static displayName = 'IgnoreButton';
 
   static propTypes = {
-    onClick: React.PropTypes.func.isRequired,
-    user: React.PropTypes.shape({
-      id: React.PropTypes.string.isRequired
+    onClick: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string.isRequired
     })
   };
 

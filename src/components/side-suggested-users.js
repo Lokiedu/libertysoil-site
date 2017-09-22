@@ -15,7 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import Link from 'react-router/lib/Link';
 
 import {
@@ -39,7 +41,7 @@ export default class SideSuggestedUsers extends React.Component {
     triggers: PropTypes.shape({
       followUser: PropTypes.func.isRequired,
       unfollowUser: PropTypes.func.isRequired,
-      ignoreUser: React.PropTypes.func.isRequired
+      ignoreUser: PropTypes.func.isRequired
     }),
     users: ArrayOfUsersPropType
   };

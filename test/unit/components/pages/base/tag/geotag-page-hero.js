@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 import { Map } from 'immutable';
-import { createRenderer } from 'react-addons-test-utils';
+import { createRenderer } from 'react-dom/test-utils';
 
 import { expect, React } from '../../../../../../test-helpers/expect-unit';
 import { GeotagPageHero } from '../../../../../../src/pages/base/tag';

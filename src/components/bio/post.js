@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* eslint react/no-danger: 0 */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import classNames from 'classnames';
 
 import BasicRiverItem from '../river/theme/basic';

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /*eslint-disable */
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -70,20 +71,20 @@ var drawRoundedRect = function(context, x, y, width, height, borderRadius) {
 
 var AvatarEditor = React.createClass({
     propTypes: {
-        scale: React.PropTypes.number,
-        image: React.PropTypes.string,
-        border: React.PropTypes.number,
-        borderRadius: React.PropTypes.number,
-        width: React.PropTypes.number,
-        height: React.PropTypes.number,
-        color: React.PropTypes.arrayOf(React.PropTypes.number),
-        style: React.PropTypes.object,
+        scale: PropTypes.number,
+        image: PropTypes.string,
+        border: PropTypes.number,
+        borderRadius: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        color: PropTypes.arrayOf(PropTypes.number),
+        style: PropTypes.object,
 
-        onDropFile: React.PropTypes.func,
-        onLoadFailure: React.PropTypes.func,
-        onLoadSuccess: React.PropTypes.func,
-        onImageReady: React.PropTypes.func,
-        onMouseUp: React.PropTypes.func
+        onDropFile: PropTypes.func,
+        onLoadFailure: PropTypes.func,
+        onLoadSuccess: PropTypes.func,
+        onImageReady: PropTypes.func,
+        onMouseUp: PropTypes.func
     },
 
     getDefaultProps() {

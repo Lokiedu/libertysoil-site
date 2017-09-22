@@ -15,6 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
@@ -27,7 +29,7 @@ import River from './river_of_posts';
 
 export default class LoadableRiver extends React.Component {
   static contextTypes = {
-    router: React.PropTypes.func.isRequired
+    router: PropTypes.func.isRequired
   };
 
   static defaultProps = {

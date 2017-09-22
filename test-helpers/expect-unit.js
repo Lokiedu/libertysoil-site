@@ -1,7 +1,7 @@
 /*eslint-env node, mocha */
 import unexpected from 'unexpected';
 import unexpectedReact from 'unexpected-react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import React from 'react';
 
 const expect = unexpected.clone()

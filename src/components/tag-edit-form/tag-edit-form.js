@@ -15,7 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 import { TAG_LOCATION, TAG_SCHOOL, TAG_HASHTAG } from '../../consts/tags';
 import GeotagEditForm from './geotag-edit-form';
