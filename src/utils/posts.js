@@ -33,7 +33,7 @@ function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
   return filtered;
 }
 
-export async function hidePostsData(target: Object|Array<Object>, ctx: string|Object, qb: Knex, convertToJSON?: boolean = true) {
+export async function hidePostsData(target: Object | Array<Object>, ctx: string | Object, qb: Knex, convertToJSON?: boolean = true) {
   let userId = '';
   let userPosts = [];
 

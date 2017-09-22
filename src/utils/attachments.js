@@ -33,7 +33,7 @@ const s3 = new AWS.S3(config.attachments.s3);
  * @param {String} mimeType
  * @returns {Promise} {Location: String, ETag: String}
  */
-export async function uploadAttachment(fileName: string, fileData: Buffer|Uint8Array|Blob|string, mimeType: string) {
+export async function uploadAttachment(fileName: string, fileData: Buffer | Uint8Array | Blob | string, mimeType: string) {
   const params = {
     Key: fileName,
     Body: fileData,
