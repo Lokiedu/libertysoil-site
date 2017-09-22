@@ -27,7 +27,7 @@ import NotFound from '../../../src/pages/not-found';
 
 describe('School page', () => {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {
@@ -96,7 +96,7 @@ describe('School page', () => {
 
 describe('test', () => {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => null );
+  //   sinon.stub(console, 'error').callsFake((warning) => null );
   // });
 
   // after(() => {

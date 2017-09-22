@@ -27,7 +27,7 @@ import Register from '../../../src/components/register';
 
 describe('UnwrappedAuth page with redux', function () {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {

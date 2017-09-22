@@ -32,7 +32,7 @@ const User = bookshelf.model('User');
 
 describe('ListPage', () => {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {

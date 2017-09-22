@@ -26,7 +26,7 @@ import { UnwrappedGeotagPage } from '../../../src/pages/geotag';
 
 describe('UnwrappedGeotagPage', () => {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {

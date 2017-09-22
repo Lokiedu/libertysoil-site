@@ -25,7 +25,7 @@ import { PasswordResetPage, ResetForm, SuccessMessage } from '../../../src/pages
 
 describe('PasswordResetPage', function () {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {

@@ -27,7 +27,7 @@ import TagEditForm from '../../../src/components/tag-edit-form/tag-edit-form';
 
 describe('TagEditForm', () => {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {

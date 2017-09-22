@@ -167,10 +167,10 @@ describe('Client test', () => {
     before(() => {
       // stub bookshelf model to simulate exception
       userModel = $bookshelf.model('User');
-      sinon.stub(userModel, 'forge', () => {
+      sinon.stub(userModel, 'forge').callsFake(() => {
         throw new Error('test');
       });
-      sinon.stub($bookshelf, 'model', () => {
+      sinon.stub($bookshelf, 'model').callsFake(() => {
         return userModel;
       });
     });

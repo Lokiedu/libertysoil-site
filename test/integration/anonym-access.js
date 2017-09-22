@@ -6,7 +6,7 @@ import { createUser } from '../../test-helpers/factories/user';
 
 describe('pages that are available for anonym', function () {
   // before(() => {
-  //   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  //   sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
   // });
 
   // after(() => {
