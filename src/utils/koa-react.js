@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -20,7 +21,7 @@ const readFile = promisify(fs.readFile);
 
 let template;
 if (['test', 'travis'].includes(process.env.DB_ENV)) {
-  template = ejs.compile(fs.readFileSync('src/views/index.ejs', 'utf8'));
+  template = ejs.compile(fs.readFileSync(path.resolve(__dirname, '../views/index.ejs'), 'utf8'));
 } else {
   template = ejs.compile(templateData, { filename: 'index.ejs' });
 }
@@ -31,7 +32,12 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
   const reactMiddleware = async (ctx) => {
     if (!webpackChunks) {
       try {
-        const data = await readFile('public/webpack-chunks.json');
+        let chunksFilename = `${__dirname}/../webpack-chunks.json`;
+        if (process.env.DB_ENV === 'test') {
+          chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
+        }
+
+        const data = await readFile(chunksFilename);
         webpackChunks = JSON.parse(data);
       } catch (e) {
         logger.error(e);

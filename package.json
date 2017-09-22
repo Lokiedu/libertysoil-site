@@ -9,9 +9,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all cleanup prepare-server-build dev:all",
+    "start": "npm-run-all cleanup prepare-server-build build:server:dummy-chunks dev:all",
     "docker-start": "npm-run-all cleanup prepare-server-build prod:all",
-    "build:all:prod": "npm-run-all cleanup prepare-server-build build:client:prod build:server:prod build:tasks:prod",
+    "build:all:prod": "npm-run-all cleanup prepare-server-build build:server:dummy-chunks build:client:prod build:server:prod build:tasks:prod",
     "test": "NODE_ENV=development DB_ENV=test run-s reset-db:test mocha",
     "coverage": "NODE_ENV=development DB_ENV=test npm run coverage:run",
     "travis": "NODE_ENV=development DB_ENV=travis run-s reset-db:travis build:client:dev travis:test lint travis:flow",
@@ -42,8 +42,8 @@
     "prod:all": "run-p build:client:prod build:server:prod build:tasks:prod start:server:prod start:tasks:prod",
     "start:server:prod": "DEV=0 NODE_ENV=production node bin/start-server.js 2>&1 | bunyan",
     "start:tasks:prod": "DEV=0 NODE_ENV=production node bin/start-tasks.js",
-    "start:server:dev": "DEV=1 NODE_ENV=development nodemon ./bin/start-server.js --watch ./build 2>&1 | bunyan",
-    "start:tasks:dev": "DEV=1 NODE_ENV=development nodemon ./bin/start-tasks.js --watch ./build",
+    "start:server:dev": "DEV=1 NODE_ENV=development nodemon ./bin/start-server.js --watch ./public/server 2>&1 | bunyan",
+    "start:tasks:dev": "DEV=1 NODE_ENV=development nodemon ./bin/start-tasks.js --watch ./public/server",
     "prepare-server-build": "universal-webpack --settings ./server-uwsettings.js prepare",
     "build:client:dev": "DEV=1 NODE_ENV=development webpack --config './webpack.config.client.babel.js' --colors --hide-modules --display-error-details",
     "build:client:dev:watch": "DEV=1 NODE_ENV=development webpack --config './webpack.config.client.babel.js' --colors --hide-modules --watch",
@@ -53,7 +53,8 @@
     "build:server:prod": "DEV=0 NODE_ENV=production  webpack --config './webpack.config.server.babel.js' --colors --display-error-details",
     "build:tasks:dev": "DEV=1 NODE_ENV=development webpack --config './webpack.config.tasks.babel.js' --colors --hide-modules --display-error-details",
     "build:tasks:dev:watch": "DEV=1 NODE_ENV=development webpack --config './webpack.config.tasks.babel.js' --colors --hide-modules --display-error-details --watch",
-    "build:tasks:prod": "DEV=0 NODE_ENV=production  webpack --config './webpack.config.tasks.babel.js' --colors --display-error-details"
+    "build:tasks:prod": "DEV=0 NODE_ENV=production  webpack --config './webpack.config.tasks.babel.js' --colors --display-error-details",
+    "build:server:dummy-chunks": "ln -s ../webpack-chunks.json public/server/webpack-chunks.json"
   },
   "author": {
     "name": "Loki Education (Social Enterprise)",
