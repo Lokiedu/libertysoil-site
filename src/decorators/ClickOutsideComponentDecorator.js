@@ -26,6 +26,14 @@ import ReactDOM from 'react-dom';
 */
 const ClickOutsideComponentDecorator = (ComposedComponent) => {
   return class ClickOutsideComponentWrapper extends Component {
+    componentDidMount = () => {
+      document.addEventListener('click', this.handleClickOutside);
+    };
+
+    componentWillUnmount = () => {
+      document.removeEventListener('click', this.handleClickOutside);
+    };
+
     handleClickOutside = (e) => {
       const component = this.root;
       const el = ReactDOM.findDOMNode(component);
@@ -33,14 +41,6 @@ const ClickOutsideComponentDecorator = (ComposedComponent) => {
       if (!el.contains(e.target)) {
         component.onClickOutside && component.onClickOutside(e);
       }
-    };
-
-    componentDidMount = () => {
-      document.addEventListener('click', this.handleClickOutside);
-    };
-
-    componentWillUnmount = () => {
-      document.removeEventListener('click', this.handleClickOutside);
     };
 
     render() {
