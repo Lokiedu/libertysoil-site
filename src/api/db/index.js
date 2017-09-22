@@ -792,7 +792,7 @@ export function initBookshelfFromKnex(knex) {
         return '';
       }
 
-      return mime.extension(this.attributes.mime_type);
+      return mime.getExtension(this.attributes.mime_type);
     },
     async reupload(fileName, fileData) {
       const generatedName = generateName(fileName);
