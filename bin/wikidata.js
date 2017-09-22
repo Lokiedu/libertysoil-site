@@ -1,9 +1,12 @@
 #!/usr/bin/env babel-node
 import wdk from 'wikidata-sdk';
 import fetch from 'node-fetch';
+import pgFormat from 'pg-format';
 
-import knex from './utils/knex';
+import { singleConnection } from './utils/knex';
 
+
+const knex = singleConnection();
 
 function getSparqlQuery(options = {}) {
   return `
@@ -18,7 +21,7 @@ function getSparqlQuery(options = {}) {
 
 async function bulkUpdate(items) {
   const queries = items
-    .map(item => knex.raw(`EXECUTE updateGeotag(?, ?);`, [item.geonames_id, item.more]).toString())
+    .map(item => pgFormat(`EXECUTE updateGeotag(%s, %L);`, item.geonames_id, item.more))
     .join('\n');
 
   return knex.raw(queries);
