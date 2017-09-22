@@ -131,7 +131,7 @@ class MyPostsToolPage extends React.Component {
             <option value="-updated_at">Last modified</option>
           </select>
         </div>
-        {postsToDisplay.map((post, index) =>
+        {postsToDisplay.map((post, index) => (
           <Link
             className="tools_item tools_item-clickable layout layout-align_justify"
             key={index}
@@ -157,7 +157,7 @@ class MyPostsToolPage extends React.Component {
               </span>
             </div>
           </Link>
-        )}
+        ))}
         <div className="layout layout-align_center layout__space layout__space-double">
           {this.state.displayLoadMore && user_posts_river.size >= LIMIT &&
             <VisibilitySensor onChange={this.handleLoadOnSensor}>

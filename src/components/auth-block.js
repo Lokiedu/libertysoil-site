@@ -86,11 +86,11 @@ export default class AuthBlock extends React.Component {
           }
           theme="new"
         >
-          {menuItems(current_user.getIn(['user', 'username'])).map(menuItem =>
+          {menuItems(current_user.getIn(['user', 'username'])).map(menuItem => (
             <MenuItem className="menu__item--theme_new" key={menuItem.key}>
               {menuItem.node}
             </MenuItem>
-          )}
+          ))}
         </Dropdown>
       );
     }

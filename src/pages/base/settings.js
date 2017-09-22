@@ -198,14 +198,14 @@ class BaseSettingsPage extends React.Component {
                 </div>
                 {isBio &&
                   <div className="layout layout-align_center layout-wrap bio__actions">
-                    {values(BioActions).map(Action =>
+                    {values(BioActions).map(Action => (
                       <Action
                         dispatch={this.props.dispatch}
                         key={Action.displayName}
                         triggers={this.triggers}
                         user={user}
                       />
-                    )}
+                    ))}
                   </div>
                 }
               </SidebarAlt>

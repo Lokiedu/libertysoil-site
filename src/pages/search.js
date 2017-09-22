@@ -166,7 +166,7 @@ class SearchPage extends Component {
                       ImmutableMap({ type, payload })
                     )
                     .toList()
-                    .map(section =>
+                    .map(section => (
                       <SearchSection
                         count={section.getIn(['payload', 'count'])}
                         current_user={current_user}
@@ -178,7 +178,7 @@ class SearchPage extends Component {
                         type={section.get('type')}
                         onSectionPageOpen={this.handleSectionPageOpen}
                       />
-                    )
+                    ))
                   }
                 </PageContent>
               </div>

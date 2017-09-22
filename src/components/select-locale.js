@@ -92,7 +92,7 @@ class SelectLocale extends React.Component {
           value={this.state.code}
           onChange={this.handleChange}
         >
-          {SUPPORTED_LOCALES.map(locale =>
+          {SUPPORTED_LOCALES.map(locale => (
             <MenuItem
               className="menu__item--theme_new color-text"
               isOption
@@ -101,7 +101,7 @@ class SelectLocale extends React.Component {
             >
               {locale.title}
             </MenuItem>
-          )}
+          ))}
         </Select>
         {/*<select
           className="input input-block input-select layout__row layout__row-small"

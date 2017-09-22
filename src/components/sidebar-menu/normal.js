@@ -39,7 +39,7 @@ const SidebarMenuNormal = ({ current_user, ...props }) => {
 
   return (
     <Navigation>
-      {menuItemsArray.map(item =>
+      {menuItemsArray.map(item => (
         <NavigationItem
           {...props}
           {...(item.html || {})}
@@ -50,7 +50,7 @@ const SidebarMenuNormal = ({ current_user, ...props }) => {
           theme="2.0"
           to={item.url(username)}
         />
-      )}
+      ))}
     </Navigation>
   );
 };

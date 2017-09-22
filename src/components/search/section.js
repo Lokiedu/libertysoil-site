@@ -42,7 +42,7 @@ export default class SearchSection extends React.Component {
   renderItems = (type, items, props = {}) => {
     switch (type) {
       case 'posts': {
-        return items.map(post =>
+        return items.map(post => (
           <PostBrief
             author={post.get('user')}
             className="search__result--type_post"
@@ -50,7 +50,7 @@ export default class SearchSection extends React.Component {
             post={post}
             {...props}
           />
-        );
+        ));
       }
       case 'locations':
       case 'hashtags':

@@ -100,7 +100,7 @@ class SettingsLocalePage extends React.Component {
                   value={this.state.code}
                   onChange={this.handleSelect}
                 >
-                  {SUPPORTED_LOCALES.map(locale =>
+                  {SUPPORTED_LOCALES.map(locale => (
                     <option
                       className="menu__item--theme_new"
                       key={locale.code}
@@ -108,7 +108,7 @@ class SettingsLocalePage extends React.Component {
                     >
                       {locale.title}
                     </option>
-                  )}
+                  ))}
                 </select>
               </label>
             </form>

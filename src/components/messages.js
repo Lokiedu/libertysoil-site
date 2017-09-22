@@ -54,7 +54,7 @@ export default class Messages extends React.PureComponent {
     }
 
     const { innerProps, removeMessage } = this.props;
-    const children = messages.map(msg =>
+    const children = messages.map(msg => (
       <Message
         i={msg.get('id')}
         key={msg.get('id')}
@@ -63,7 +63,7 @@ export default class Messages extends React.PureComponent {
         type={msg.get('type')}
         {...innerProps}
       />
-    );
+    ));
 
     if (animated) {
       return (

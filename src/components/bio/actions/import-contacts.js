@@ -98,12 +98,12 @@ export default class ImportContactsAction extends React.Component {
             <Modal.Body>
               Importing your contacts does not send out any invitations.
               <div className="sidebar-modal__actions layout layout-align_vertical">
-                {SERVICES.map(s =>
+                {SERVICES.map(s => (
                   <div className="service-card" key={s.name}>
                     <img alt={s.title} className="service-card__icon" src={s.img} />
                     <div className="service-card__title">{s.title}</div>
                   </div>
-                )}
+                ))}
               </div>
               <div className="sidebar-modal__actions layout layout-align_vertical">
                 <Switch on={this.state.isChecked} onClick={this.handleSwitch} />
