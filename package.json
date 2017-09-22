@@ -229,7 +229,7 @@
     "universal-webpack": "~0.4.0",
     "url-loader": "^0.5.7",
     "webpack": "~3.6.0",
-    "wikidata-sdk": "~3.0.1",
+    "wikidata-sdk": "~5.2.7",
     "zopfli-webpack-plugin": "^0.1.0"
   },
   "browserslist": [

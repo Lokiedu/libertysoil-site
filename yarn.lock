@@ -9451,9 +9451,9 @@ widest-line@^1.0.0:
   dependencies:
     string-width "^1.0.1"
 
-wikidata-sdk@~3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/wikidata-sdk/-/wikidata-sdk-3.0.1.tgz#3d7276a13f35cc0d66c9637c2a9a5108580df8a5"
+wikidata-sdk@~5.2.7:
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/wikidata-sdk/-/wikidata-sdk-5.2.7.tgz#c9a94d6b7ec9ccdd40f995077496974a5a267ab5"
 
 window-size@0.1.0:
   version "0.1.0"
