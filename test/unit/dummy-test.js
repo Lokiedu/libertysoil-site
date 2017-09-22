@@ -13,8 +13,8 @@ describe('First test', function () {
 
     return expect(renderer, 'to have rendered',
       <div id={125}>
-          Some simple content
-       </div>
+        Some simple content
+      </div>
     );
   });
 });

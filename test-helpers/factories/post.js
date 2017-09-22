@@ -25,9 +25,9 @@ import { bookshelf } from '../db';
 const Post = bookshelf.model('Post');
 
 const PostFactory = new Factory()
-      .attr('id', () => uuid.v4())
-      .attr('text', () => faker.lorem.paragraph())
-      .attr('type', 'short_text');
+  .attr('id', () => uuid.v4())
+  .attr('text', () => faker.lorem.paragraph())
+  .attr('type', 'short_text');
 
 export default PostFactory;
 

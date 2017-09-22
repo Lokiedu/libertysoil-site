@@ -212,7 +212,7 @@ export class UnwrappedRegisterFormV1 extends React.Component {
   handleNameChange = async (firstName, lastName) => {
     const fullName =
       firstName.replace(/[^0-9a-zA-Z-_'\.]/g, '')
-      .concat(lastName.replace(/[^0-9a-zA-Z-_'\.]/g, ''));
+        .concat(lastName.replace(/[^0-9a-zA-Z-_'\.]/g, ''));
     if (fullName === this.fullName) {
       return;
     }

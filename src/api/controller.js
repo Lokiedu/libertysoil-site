@@ -251,7 +251,7 @@ export default class ApiController {
 
           switch (geotag.attributes.type) {
             case 'Planet':
-             // There are no planets besides Earth yet.
+              // There are no planets besides Earth yet.
               break;
             case 'Continent':
               qb.where('geotags.continent_code', geotag.attributes.continent_code);
@@ -1800,11 +1800,11 @@ export default class ApiController {
 
     try {
       const u = await User
-              .where({ username: ctx.params.username })
-              .fetch({
-                require: true,
-                withRelated: USER_RELATIONS
-              });
+        .where({ username: ctx.params.username })
+        .fetch({
+          require: true,
+          withRelated: USER_RELATIONS
+        });
       ctx.body = u.toJSON();
     } catch (e) {
       ctx.status = 404;

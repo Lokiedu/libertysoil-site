@@ -33,8 +33,8 @@ function getApiUrl(id, params = {}) {
 }
 
 export {
-    API_URL_NAMES,
-    URL_NAMES,
-    getUrl,
-    getApiUrl
+  API_URL_NAMES,
+  URL_NAMES,
+  getUrl,
+  getApiUrl
 };
