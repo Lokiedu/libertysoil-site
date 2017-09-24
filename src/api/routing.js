@@ -122,8 +122,9 @@ export function initApi(bookshelf) {
   api.head('/user/:username', users.checkUserExists);
   api.get('/user/:id/following', users.getFollowedUsers);
   api.get('/user/:id/mutual-follows', users.getMutualFollows);
-  api.get('/user/:id/messages', auth, controller.getUserMessages);
-  api.post('/user/:id/messages', auth, controller.sendMessage);
+  // User messages are being redesigned. Temporarily (?) disabled.
+  // api.get('/user/:id/messages', auth, controller.getUserMessages);
+  // api.post('/user/:id/messages', auth, controller.sendMessage);
   api.head('/user/email/:email', users.checkEmailTaken);
   api.get('/user/available-username/:username', users.getAvailableUsername);
   api.get('/user/:username', users.getUser);
