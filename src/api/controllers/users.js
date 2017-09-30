@@ -110,11 +110,13 @@ export async function login(ctx, next) {
   }
 
   const authenticator = ctx.passport.authenticate('local', async (err, user) => {
-    if (err) {
-      if (err instanceof ctx.bookshelf.NotFoundError) {
-        ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but there's no such user`);
-      } else if (err instanceof WrongPasswordError) {
-        ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but used wrong pasword`);
+    if (err || !user) {
+      if (err) {
+        if (err instanceof ctx.bookshelf.NotFoundError) {
+          ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but there's no such user`);
+        } else if (err instanceof WrongPasswordError) {
+          ctx.app.logger.warn(`Someone tried to log in as '${ctx.request.body.username}', but used wrong pasword`);
+        }
       }
 
       ctx.body = { success: false, error: 'login.errors.invalid' };
