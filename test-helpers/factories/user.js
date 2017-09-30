@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { Factory } from 'rosie';
 import faker from 'faker';
 
-import { bookshelf } from '../db';
+import { bookshelf, knex } from '../db';
 
 
 const User = bookshelf.model('User');
@@ -33,4 +33,25 @@ export async function createUser(attrs = {}) {
   user.attributes.password = userAttrs.password;
 
   return user;
+}
+
+/**
+ * number of elements in `attr` = number of created users.
+ */
+export async function createUsers(attrs = []) {
+  if (typeof attrs === 'number') {
+    attrs = Array.apply(null, Array(attrs));
+  }
+
+  const fullAttrs = attrs.map(attrs => UserFactory.build(attrs));
+  const filteredAttrs = fullAttrs.map(attrs => omit(attrs, 'password'));
+  const ids = await knex.batchInsert('users', filteredAttrs).returning('id');
+  let users = await User.collection().query(qb => qb.whereIn('id', ids)).fetch({ require: true });
+  users = users.toArray();
+
+  for (const user of users) {
+    user.attributes.password = fullAttrs.find(attrs => attrs.id === user.id).password;
+  }
+
+  return users;
 }
