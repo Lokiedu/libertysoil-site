@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import uuid from 'uuid';
 import bcrypt from 'bcrypt';
 import { Factory } from 'rosie';
@@ -16,7 +17,7 @@ const UserFactory = new Factory()
   .attr('email', () => faker.internet.email())
   .attr('password', () => faker.internet.password())
   .attr('hashed_password', ['password'], password => bcrypt.hashSync(password, 10))
-  .attr('email_check_hash', '')
+  .attr('email_check_hash', () => Math.random().toString())
   .attr('more', {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
@@ -27,8 +28,8 @@ export default UserFactory;
 
 export async function createUser(attrs = {}) {
   const userAttrs = UserFactory.build(attrs);
-  const user = await User.create(userAttrs);
-  await user.save({ email_check_hash: null }, { method: 'update' });
+  const user = await new User(omit(userAttrs, 'password')).save(null, { method: 'insert' });
+  await user.save({ email_check_hash: attrs.email_check_hash || null }, { method: 'update' });
   user.attributes.password = userAttrs.password;
 
   return user;
