@@ -56,7 +56,7 @@ export const UserSettingsValidator = Joi.object({
     firstName: Joi.string(),
     lastName: Joi.string(),
     lang: Joi.string().only(SUPPORTED_LOCALES)
-  })
+  }).required()
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const SchoolValidator = Joi.object({
