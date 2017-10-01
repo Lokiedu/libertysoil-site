@@ -44,7 +44,7 @@ describe('User', () => {
         url: `/api/v1/suggestions/initial`,
         method: 'GET'
       },
-      'to have body an array'
+      'to respond with array'
     );
   });
 
