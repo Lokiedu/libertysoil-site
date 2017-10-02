@@ -16,11 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // @flow
-import { fromJS, List } from 'immutable';
-import type { Map } from 'immutable';
+import { List } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
 import { isEmpty, isString } from 'lodash';
 
-export function getName(user: Map<string, string>) {
+import type { Props as OldIconProps } from '../components/icon/templates/old';
+
+export function getName(user: ImmutableMap<string, string>): string {
   const fullName = user.get('fullName');
   if (isString(fullName) && !isEmpty(fullName.trim())) {
     return fullName;
@@ -29,34 +31,35 @@ export function getName(user: Map<string, string>) {
   return user.get('username');
 }
 
-const SERVICES_SEQ = [
-  ['facebook', { icon: 'facebook-official' }],
-  ['twitter', { icon: 'twitter-square' }],
-  ['youtube', { icon: 'youtube-square' }],
-  ['googlePlus', { icon: 'google-plus-square' }],
-  ['linkedin', { icon: 'linkedin-square' }],
-  ['website', { icon: 'chain', className: 'suggested-user__social suggested-user__social--smaller' }]
-];
+const SUPPORTED_SERVICES: { [key: string]: OldIconProps } = {
+  facebook: { icon: 'facebook-official' },
+  googlePlus: { icon: 'google-plus-square' },
+  linkedin: { icon: 'linkedin-square' },
+  twitter: { icon: 'twitter-square' },
+  youtube: { icon: 'youtube-square' },
+  website: {
+    icon: 'chain',
+    className: 'suggested-user__social suggested-user__social--smaller'
+  }
+};
 
-export function parseSocial(social: ?Map<string, string>) {
+type LinkedIconProps = OldIconProps & { to: string };
+
+export function parseSocial(
+  social: ?ImmutableMap<string, string>
+): List<LinkedIconProps> {
   if (!social) {
     return List();
   }
 
-  const presentSocial = social; // hack for flow to make it recognize the early return.
-  const entries = SERVICES_SEQ.map((s) => {
-    const [name, props] = s;
-    const url = presentSocial.get(name);
-
-    if (!url) {
-      return null;
+  return social.reduce((acc, url, serviceName): List<LinkedIconProps> => {
+    if (!url || !(serviceName in SUPPORTED_SERVICES)) {
+      return acc;
     }
 
-    return {
+    return acc.push({
       to: url,
-      ...props
-    };
-  });
-
-  return fromJS(entries.filter(Boolean));
+      ...SUPPORTED_SERVICES[serviceName]
+    });
+  }, List());
 }

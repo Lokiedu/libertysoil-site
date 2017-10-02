@@ -20,7 +20,7 @@ import reduce from 'lodash/reduce';
 import isPlainObject from 'lodash/isPlainObject';
 
 export function toSpreadArray(obj: Object): Array<Object> {
-  return reduce(obj, (arr, value, key) => {
+  return reduce(obj, (arr, value, key): Array<Object> => {
     arr.push({ [key]: value });
     return arr;
   }, []);
@@ -36,7 +36,7 @@ export function castArray(value: any): Array<any> {
   return [value];
 }
 
-export function castObject(value: any, fieldName: string) {
+export function castObject(value: any, fieldName: string): Object {
   if (isPlainObject(value)) {
     return value;
   }
@@ -44,7 +44,7 @@ export function castObject(value: any, fieldName: string) {
   return { [fieldName]: value };
 }
 
-export function removeWhitespace(str: string = '') {
+export function removeWhitespace(str: string = ''): string {
   return str
     .trim()               // whitespace from ends
     .split(' ')

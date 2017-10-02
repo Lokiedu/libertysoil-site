@@ -59,7 +59,7 @@ export async function processImage(buffer: Buffer, transforms: Array<Object>): P
   return await image.toBufferAsync();
 }
 
-async function crop(image, params) {
+async function crop(image, params): Promise<void> {
   const size = await image.sizeAsync();
   const w = size.width;
   const h = size.height;

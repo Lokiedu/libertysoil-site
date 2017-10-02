@@ -19,7 +19,12 @@
 import { filter, find } from 'lodash';
 import type Knex from 'knex';
 
-function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
+import type { Post } from '../definitions/posts';
+import type { RawUser } from '../definitions/users';
+
+function hide(
+  postId, userId, arrayOfUserPosts, arrayToFilter = []
+): Array<RawUser> {
   let filtered = arrayToFilter;
 
   if (userId) {
@@ -33,7 +38,12 @@ function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
   return filtered;
 }
 
-export async function hidePostsData(target: Object | Array<Object>, ctx: string | Object, qb: Knex, convertToJSON?: boolean = true) {
+export async function hidePostsData(
+  target: Object | Array<Object>,
+  ctx: string | Object,
+  qb: Knex,
+  convertToJSON?: boolean = true
+): Promise<Array<Post>> {
   let userId = '';
   let userPosts = [];
 
@@ -53,7 +63,7 @@ export async function hidePostsData(target: Object | Array<Object>, ctx: string 
 
   let filtered;
   if (Array.isArray(target)) {
-    filtered = target.map(post => {
+    filtered = target.map((post): Post => {
       let plainPost = post;
       if (convertToJSON && post.toJSON instanceof Function) {
         plainPost = post.toJSON();

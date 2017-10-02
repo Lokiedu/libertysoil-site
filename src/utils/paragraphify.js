@@ -23,12 +23,14 @@ import React from 'react';
  * @param {string} text - Text with multiline symbols.
  * @return {Array} Array of React <p> components.
  */
-const paragraphify = (text: ?string) => {
+const paragraphify = (text: ?string): Array<React.Element<*>> | boolean => {
   if (!text || typeof text != 'string') {
     return false;
   }
 
-  return text.split('\n').map((line, i) => <p key={`text-${i}`}>{line}</p>);
+  return text
+    .split('\n')
+    .map((line, i) => <p key={`text-${i}`}>{line}</p>);
 };
 
 export default paragraphify;
