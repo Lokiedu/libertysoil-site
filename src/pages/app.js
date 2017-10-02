@@ -24,11 +24,9 @@ import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 
 import { ActionsTrigger } from '../triggers';
-import { INTERCOM_APP_ID } from '../config';
 import createSelector from '../selectors/createSelector';
 
 import ContextualRoutes from '../components/contextual';
-import WrappedIntercom from '../components/intercom';
 
 const GAInitializer = ga.Initializer;
 
@@ -79,12 +77,6 @@ export class UnwrappedApp extends React.Component {
       gaContent = <GAInitializer />;
     }
 
-    let url = '';
-    if (this.props.location) {
-      url = this.props.location.pathname
-        .concat(this.props.location.search);
-    }
-
     return (
       <div className="page">
         <Helmet title="" titleTemplate="%sLibertySoil.org">
@@ -92,11 +84,6 @@ export class UnwrappedApp extends React.Component {
         </Helmet>
         {children}
         {gaContent}
-        <WrappedIntercom
-          app_id={INTERCOM_APP_ID}
-          hide_default_launcher
-          url={url}
-        />
         <ContextualRoutes
           location={this.props.location}
           routes={this.props.routes}
