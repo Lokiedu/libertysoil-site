@@ -40,8 +40,8 @@ export const UserRegistrationValidator = Joi.object({
   username: Joi.string().max(31).regex(/^(?!.*\.{2})[a-z0-9\-_'.]+$/i).required().options(ONLY_ONE_ERROR),
   password: Joi.string().min(8).regex(/^[\x20-\x7E]{8,}$/).required().options(ONLY_ONE_ERROR),
   email: Joi.string().email().required(),
-  firstName: Joi.string(),
-  lastName: Joi.string()
+  firstName: Joi.string().trim().empty(''),
+  lastName: Joi.string().trim().empty(''),
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const UserSettingsValidator = Joi.object({
