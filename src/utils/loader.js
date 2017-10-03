@@ -104,10 +104,10 @@ export class AuthHandler {
     const state = this.store.getState();
 
     if (state.getIn(['current_user', 'id']) === null
-      && nextState.location.pathname !== '/welcome'
+      && nextState.location.pathname !== '/all'
     ) {
       if (replace) {
-        replace('/welcome');
+        replace('/all');
       }
       return true;  // interrupt
     }
