@@ -13,7 +13,7 @@
 .*/node_modules/babel-plugin-flow-runtime/*
 
 [libs]
-./flow-typed/npm
+./flow-typed
 
 [options]
 module.ignore_non_literal_requires=true

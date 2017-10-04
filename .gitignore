@@ -1,5 +1,5 @@
 /coverage
-/flow-typed/npm
+/flow-typed/npm/**
 /node_modules
 /npm-debug.log
 build
@@ -8,3 +8,5 @@ build
 /deploy/staging/secrets.env
 dump.rdb
 /opendata
+
+!/flow-typed/npm/bluebird_v3.x.x.js
