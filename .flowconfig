@@ -12,6 +12,9 @@
 .*/node_modules/react-render-hook/src/react-devtools/backend/getData.js
 .*/node_modules/babel-plugin-flow-runtime/*
 
+# wait for v4 release since there's a bunch of typedefs changes
+.*/node_modules/immutable/dist/immutable.js.flow
+
 [libs]
 ./flow-typed
 

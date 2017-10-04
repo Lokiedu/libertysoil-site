@@ -87,7 +87,7 @@
     "grapheme-utils": "^0.1.0",
     "history": "^3.2.0",
     "htmlparser2": "^3.9.2",
-    "immutable": "^3.7.5",
+    "immutable": "^3.8.2",
     "isomorphic-fetch": "^2.2.1",
     "joi": "^10.6.0",
     "kcors": "~2.2.0",
