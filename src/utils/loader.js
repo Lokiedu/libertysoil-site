@@ -38,7 +38,7 @@ let debugCounter = 0;
  * @returns {Function}
  */
 export function combineHandlers(...handlers: Array<handler>): AsyncHandler {
-  return async (nextState, replace): Promise<void> => {
+  return async (nextState: Object, replace: replaceCallback): Promise<void> => {
     for (const handler of handlers) {
       if (handler) {
         const shouldInterrupt = await handler(nextState, replace);
@@ -51,7 +51,11 @@ export function combineHandlers(...handlers: Array<handler>): AsyncHandler {
 }
 
 export function combineHandlersAsync(...handlers: Array<handler>): AsyncHandler {
-  return async (nextState, replace, callback): Promise<void> => {
+  return async (
+    nextState: Object,
+    replace: replaceCallback,
+    callback: nodeCallback
+  ): Promise<void> => {
     let callbacksTodo = 0;
 
     const callbackDecreaser = () => {
@@ -195,7 +199,7 @@ export class FetchHandler {
           callback();
         }
       })
-      .catch((e) => {
+      .catch((e: Error) => {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.error(e);  // eslint-disable-line no-console
         if (callback) {

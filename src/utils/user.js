@@ -21,6 +21,7 @@ import type { Map as ImmutableMap } from 'immutable';
 import { isEmpty, isString } from 'lodash';
 
 import type { Props as OldIconProps } from '../components/icon/templates/old';
+import type { Url } from '../definitions/common';
 
 export function getName(user: ImmutableMap<string, string>): string {
   const fullName = user.get('fullName');
@@ -52,7 +53,11 @@ export function parseSocial(
     return List();
   }
 
-  return social.reduce((acc, url, serviceName): List<LinkedIconProps> => {
+  return social.reduce((
+    acc: List<LinkedIconProps>,
+    url: Url,
+    serviceName: string
+  ): List<LinkedIconProps> => {
     if (!url || !(serviceName in SUPPORTED_SERVICES)) {
       return acc;
     }

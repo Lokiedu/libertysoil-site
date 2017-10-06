@@ -30,7 +30,7 @@ const paragraphify = (text: ?string): Array<React.Element<*>> | boolean => {
 
   return text
     .split('\n')
-    .map((line, i) => <p key={`text-${i}`}>{line}</p>);
+    .map((line: string, i: number) => <p key={`text-${i}`}>{line}</p>);
 };
 
 export default paragraphify;

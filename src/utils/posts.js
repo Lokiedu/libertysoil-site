@@ -19,16 +19,19 @@
 import { filter, find } from 'lodash';
 import type Knex from 'knex';
 
-import type { Post } from '../definitions/posts';
-import type { RawUser } from '../definitions/users';
+import type { Post, PostId } from '../definitions/posts';
+import type { RawUser, UserId } from '../definitions/users';
 
 function hide(
-  postId, userId, arrayOfUserPosts, arrayToFilter = []
+  postId: PostId,
+  userId: UserId,
+  arrayOfUserPosts: Array<Post>,
+  arrayToFilter: Array<RawUser> = []
 ): Array<RawUser> {
   let filtered = arrayToFilter;
 
   if (userId) {
-    if (!find(arrayOfUserPosts, p => p === postId)) {
+    if (!find(arrayOfUserPosts, (p: PostId) => p === postId)) {
       filtered = filter(arrayToFilter, { id: userId });
     }
   } else {
@@ -39,7 +42,7 @@ function hide(
 }
 
 export async function hidePostsData(
-  target: Object | Array<Object>,
+  target: Post | Array<Post>,
   ctx: string | Object,
   qb: Knex,
   convertToJSON?: boolean = true
@@ -58,12 +61,13 @@ export async function hidePostsData(
       .select('id')
       .from('posts')
       .where({ user_id: userId });
-    userPosts = userPosts.map(post => post.id);
+    userPosts = userPosts.map((post: Post) => post.id);
   }
 
   let filtered;
+
   if (Array.isArray(target)) {
-    filtered = target.map((post): Post => {
+    filtered = target.map((post: Post): Post => {
       let plainPost = post;
       if (convertToJSON && post.toJSON instanceof Function) {
         plainPost = post.toJSON();

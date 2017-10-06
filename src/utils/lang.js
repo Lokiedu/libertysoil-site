@@ -20,7 +20,7 @@ import reduce from 'lodash/reduce';
 import isPlainObject from 'lodash/isPlainObject';
 
 export function toSpreadArray(obj: Object): Array<Object> {
-  return reduce(obj, (arr, value, key): Array<Object> => {
+  return reduce(obj, (arr: Array<Object>, value: any, key: string): Array<Object> => {
     arr.push({ [key]: value });
     return arr;
   }, []);
@@ -48,6 +48,6 @@ export function removeWhitespace(str: string = ''): string {
   return str
     .trim()               // whitespace from ends
     .split(' ')
-    .filter(word => word) // extra whitespace between words
+    .filter((word: ?string) => word) // extra whitespace between words
     .join(' ');
 }

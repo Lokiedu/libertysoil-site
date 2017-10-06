@@ -22,6 +22,33 @@ import gm from 'gm';
 
 bb.promisifyAll(gm.prototype);
 
+type CropLwipOptions = {
+  bottom: number,
+  left: number,
+  right: number,
+  top: number
+};
+
+type CropGMOptions = {
+  height: number,
+  width: number,
+  x: number,
+  y: number
+};
+
+type ResizeOptions =
+  | { height: number, proportional: boolean }
+  | { proportional: boolean, width: number }
+  | {
+    height: number,
+    proportional?: boolean,
+    width: number
+  };
+
+  type Transform = {
+    crop?: CropLwipOptions | CropGMOptions,
+    resize?: ResizeOptions
+  };
 
 /**
  * Applies transforms to the image.
@@ -37,7 +64,10 @@ bb.promisifyAll(gm.prototype);
  * @param {Array} transforms An array of transforms
  * @returns {Promise<Buffer>}
  */
-export async function processImage(buffer: Buffer, transforms: Array<Object>): Promise<Buffer> {
+
+export async function processImage(
+  buffer: Buffer, transforms: Array<Transform>
+): Promise<Buffer> {
   const image = new gm(buffer);
 
   for (const transform of transforms) {
@@ -59,7 +89,9 @@ export async function processImage(buffer: Buffer, transforms: Array<Object>): P
   return await image.toBufferAsync();
 }
 
-async function crop(image, params): Promise<void> {
+async function crop(
+  image: gm, params: CropLwipOptions | CropGMOptions
+): Promise<void> {
   const size = await image.sizeAsync();
   const w = size.width;
   const h = size.height;
@@ -101,7 +133,7 @@ async function crop(image, params): Promise<void> {
   }
 }
 
-function resize(image, params) {
+function resize(image: gm, params: ResizeOptions) {
   if (params.width && params.height) {
     const overrideProportions = params.hasOwnProperty('proportional') && params.proportional !== true;
     image.resize(params.width, params.height, overrideProportions && '!');
