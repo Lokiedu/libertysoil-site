@@ -16,11 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
+import uuid from 'uuid';
+
 import expect from '../../../test-helpers/expect';
 import HashtagFactory, { createHashtag } from '../../../test-helpers/factories/hashtag';
 import SchoolFactory, { createSchool } from '../../../test-helpers/factories/school';
 import GeotagFactory, { createGeotag } from '../../../test-helpers/factories/geotag';
-import { createPost } from '../../../test-helpers/factories/post';
+import { createPost, createPosts } from '../../../test-helpers/factories/post';
 import { createUser } from '../../../test-helpers/factories/user';
 import { login } from '../../../test-helpers/api';
 import { knex } from '../../../test-helpers/db';
@@ -41,7 +43,7 @@ describe('Post', () => {
       await user.destroy();
     });
 
-    describe('/api/v1/post/:id', () => {
+    describe('GET /api/v1/post/:id', () => {
       describe('when post exists', () => {
         it('responds with post', async () => {
           await expect(
@@ -55,14 +57,27 @@ describe('Post', () => {
       describe("when post doesn't exist", () => {
         it('responds with post', async () => {
           await expect(
-            { url: `/api/v1/post/123`, method: 'GET' },
+            { url: `/api/v1/post/${uuid.v4()}`, method: 'GET' },
             'to open not found'
           );
         });
       });
     });
 
-    describe('/api/v1/posts/tag/:name', async () => {
+    describe('GET /api/v1/posts/user/:user', () => {
+      it('responds with user posts', async () => {
+        await expect(
+          {
+            url: `/api/v1/posts/user/${user.get('username')}`,
+            method: 'GET',
+          },
+          'body to satisfy',
+          [{ id: post.id }]
+        );
+      });
+    });
+
+    describe('GET /api/v1/posts/tag/:name', async () => {
       let hashtag;
 
       before(async () => {
@@ -84,7 +99,7 @@ describe('Post', () => {
       });
     });
 
-    describe('/api/v1/posts/school/:url_name', () => {
+    describe('GET /api/v1/posts/school/:url_name', () => {
       let school;
 
       before(async () => {
@@ -106,7 +121,7 @@ describe('Post', () => {
       });
     });
 
-    describe('/api/v1/posts/geotag/:url_name', () => {
+    describe('GET /api/v1/posts/geotag/:url_name', () => {
       let geotag;
 
       before(async () => {
@@ -128,39 +143,141 @@ describe('Post', () => {
       });
     });
 
-    describe('/api/v1/posts/liked/:name', () => {
-      let postHashtagLike;
+    describe('GET /api/v1/posts/liked/:username', () => {
+      let postHashtagLike, post;
+
+      beforeEach(async () => {
+        postHashtagLike = await createPost({ type: 'hashtag_like' });
+        post = await createPost();
+        await post.likers().attach(user.id);
+      });
+
+      afterEach(async () => {
+        await postHashtagLike.destroy();
+        await post.destroy();
+      });
+
+      it("responds with user's liked posts and ignores hashtag_like posts", async () => {
+        await expect(
+          {
+            url: `/api/v1/posts/liked/${user.get('username')}`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: post.id }]
+        );
+      });
+    });
+
+    describe('GET /api/v1/posts/favoured/:username', () => {
+      const posts = [];
+
+      beforeEach(async () => {
+        posts.push(await createPost(), await createPost());
+        posts[0].favourers().attach(user.id);
+      });
+
+      afterEach(async () => {
+        await knex('posts').whereIn('id', posts.map(post => post.id)).del();
+      });
+
+      it("responds with user's favoured posts", async () => {
+        await expect(
+          {
+            url: `/api/v1/posts/favoured/${user.get('username')}`,
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: posts[0].id }]
+        );
+      });
+    });
+
+    describe('GET /api/v1/post/:id/related-posts', () => {
+      let posts, hashtag, school, geotag;
 
       before(async () => {
-        postHashtagLike = await createPost({ type: 'hashtag_like' });
+        posts = await createPosts(4);
+        hashtag = await createHashtag();
+        school = await createSchool();
+        geotag = await createGeotag();
+
+        for (let i = 0; i < 2; ++i) {
+          posts[i].hashtags().attach(hashtag.id);
+          posts[i].schools().attach(school.id);
+          posts[i].geotags().attach(geotag.id);
+        }
+
+        posts[2].hashtags().attach(hashtag.id);
+        posts[2].schools().attach(school.id);
+
+        posts[3].hashtags().attach(hashtag.id);
       });
 
       after(async () => {
-        await postHashtagLike.destroy();
+        await knex('posts').whereIn('id', posts.map(post => post.id)).del();
+        await hashtag.destroy();
+        await school.destroy();
+        await geotag.destroy();
       });
 
-      it('should not return hashtag_like posts from other authors', async () => {
+      it('responds with 3 posts with common tags ordered by number of matching tags', async () => {
         await expect(
-          { url: `/api/v1/posts/liked/${user.get('username')}` },
+          {
+            url: `/api/v1/post/${posts[0].id}/related-posts`,
+            method: 'GET'
+          },
           'body to satisfy',
-          []
+          [{ id: posts[1].id }, { id: posts[2].id }, { id: posts[3].id }]
         );
       });
     });
   });
 
   describe('Authenticated user', () => {
-    let user, otherUser, sessionId;
+    let user, otherUser, sessionId, otherPost;
 
     before(async () => {
       user = await createUser();
       sessionId = await login(user.get('username'), user.get('password'));
       otherUser = await createUser();
+      otherPost = await createPost({ user_id: otherUser.id });
     });
 
     after(async () => {
       await user.destroy();
       await otherUser.destroy();
+    });
+
+    describe('GET /api/v1/posts', () => {
+      let posts;
+
+      beforeEach(async () => {
+        await user.following().attach(otherUser.id);
+        const postAttrs = [
+          { user_id: otherUser.id, fully_published_at: new Date(), updated_at: new Date('2017-10-08') },
+          { user_id: otherUser.id, fully_published_at: null },
+        ];
+
+        posts = await createPosts(postAttrs);
+      });
+
+      afterEach(async () => {
+        await knex('posts').whereIn('id', posts.map(post => post.id)).del();
+        await user.following().detach(otherUser.id);
+      });
+
+      it('responds with fully published posts of followed users', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/posts`,
+            method: 'GET',
+          },
+          'body to satisfy',
+          [{ id: posts[0].id }]
+        );
+      });
     });
 
     describe('POST /api/v1/posts', () => {
@@ -249,7 +366,6 @@ describe('Post', () => {
       });
     });
 
-
     describe('POST /api/v1/post/:id', () => {
       describe('story posts', () => {
         let post;
@@ -311,6 +427,162 @@ describe('Post', () => {
       });
     });
 
+    describe('DELETE /api/v1/post/:id', () => {
+      let post;
+
+      beforeEach(async () => {
+        post = await createPost({ user_id: user.id });
+      });
+
+      it('deletes post', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${post.id}`,
+            method: 'DELETE',
+          },
+          'body to satisfy',
+          {
+            success: true
+          }
+        );
+
+        await expect(post.fetch({ require: true }), 'to be rejected');
+      });
+    });
+
+    describe('GET /api/v1/posts/liked', () => {
+      beforeEach(async () => {
+        await otherPost.likers().attach(user.id);
+      });
+
+      afterEach(async () => {
+        await otherPost.likers().detach(user.id);
+      });
+
+      it('responds with liked posts', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: '/api/v1/posts/liked',
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: otherPost.id }]
+        );
+      });
+    });
+
+    describe('GET /api/v1/posts/favoured', () => {
+      beforeEach(async () => {
+        await otherPost.favourers().attach(user.id);
+      });
+
+      afterEach(async () => {
+        await otherPost.favourers().detach(user.id);
+      });
+
+      it('responds with favoured posts', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: '/api/v1/posts/favoured',
+            method: 'GET'
+          },
+          'body to satisfy',
+          [{ id: otherPost.id }]
+        );
+      });
+    });
+
+    describe('POST /api/v1/post/:id/like', () => {
+      afterEach(async () => {
+        await otherPost.likers().detach(user.id);
+      });
+
+      it('responds with current user likes and post likers', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${otherPost.id}/like`,
+            method: 'POST',
+          },
+          'body to satisfy',
+          {
+            success: true,
+            likes: [otherPost.id],
+            likers: [{ id: user.id }],
+          }
+        );
+      });
+    });
+
+    describe('POST /api/v1/post/:id/unlike', () => {
+      beforeEach(async () => {
+        await otherPost.likers().attach(user.id);
+      });
+
+      it('responds with current user likes and post likers', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${otherPost.id}/unlike`,
+            method: 'POST',
+          },
+          'body to satisfy',
+          {
+            success: true,
+            likes: [],
+            likers: [],
+          }
+        );
+      });
+    });
+
+    describe('POST /api/v1/post/:id/fav', () => {
+      afterEach(async () => {
+        await otherPost.favourers().detach(user.id);
+      });
+
+      it('responds with current user favourites and post favourers', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${otherPost.id}/fav`,
+            method: 'POST',
+          },
+          'body to satisfy',
+          {
+            success: true,
+            favourites: [otherPost.id],
+            favourers: [{ id: user.id }],
+          }
+        );
+      });
+    });
+
+    describe('POST /api/v1/post/:id/unfav', () => {
+      beforeEach(async () => {
+        await otherPost.favourers().attach(user.id);
+      });
+
+      it('responds with current user favourites and post favourers', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${otherPost.id}/unfav`,
+            method: 'POST',
+          },
+          'body to satisfy',
+          {
+            success: true,
+            favourites: [],
+            favourers: [],
+          }
+        );
+      });
+    });
+
     describe('subscriptions', () => {
       let post;
 
@@ -332,7 +604,7 @@ describe('Post', () => {
         await knex('post_subscriptions').del();
       });
 
-      describe('/api/v1/post/:id/subscribe', () => {
+      describe('POST /api/v1/post/:id/subscribe', () => {
         it('subscribes the current user', async () => {
           await expect(
             {
@@ -350,7 +622,7 @@ describe('Post', () => {
         });
       });
 
-      describe('/api/v1/post/:id/unsubscribe', () => {
+      describe('POST /api/v1/post/:id/unsubscribe', () => {
         it('unsubscribes the current user', async () => {
           await post.subscribers().attach(user.id);
 
@@ -370,114 +642,132 @@ describe('Post', () => {
         });
       });
 
-      describe('tag subscriptions', () => {
-        const posts = [];
+      describe('GET /api/v1/post/:id/unsubscribe', () => {
+        it('unsubscribes the current user', async () => {
+          await post.subscribers().attach(user.id);
+
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/post/${post.id}/unsubscribe`,
+              method: 'GET'
+            },
+            'to redirect to',
+            `/post/${post.id}`
+          );
+
+          expect(await countPostSubscriptions(user.id, post.id), 'to be', 0);
+        });
+      });
+    });
+
+    describe('tag subscriptions', () => {
+      const posts = [];
+
+      before(async () => {
+        for (let i = 0; i < 2; ++i) {
+          posts.push(await createPost({ user_id: otherUser.id }));
+        }
+
+        posts.push(await createPost({ user_id: user.id }));
+      });
+
+      after(async () => {
+        await Promise.all(posts.map(p => p.destroy()));
+      });
+
+      describe('GET /api/v1/posts/subscriptions/hashtag', () => {
+        const hashtags = [];
 
         before(async () => {
-          for (let i = 0; i < 2; ++i) {
-            posts.push(await createPost({ user_id: otherUser.id }));
-          }
+          hashtags.push(await user.followed_hashtags().create({ name: 'Subscription Test 1' }));
+          hashtags.push(await createHashtag({ name: 'Subscription Test 2' }));
 
-          posts.push(await createPost({ user_id: user.id }));
+          await posts[0].hashtags().attach(hashtags[0].id);
+          await posts[1].hashtags().attach(hashtags[1].id);
+          // current user's own post
+          await posts[2].hashtags().attach(hashtags[0].id);
         });
 
         after(async () => {
-          await Promise.all(posts.map(p => p.destroy()));
+          await Promise.all(hashtags.map(t => t.destroy()));
         });
 
-        describe('GET /api/v1/posts/subscriptions/hashtag', () => {
-          const hashtags = [];
+        it('responds with relevant posts', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts/subscriptions/hashtag`,
+              method: 'GET'
+            },
+            'body to satisfy',
+            [{ id: posts[0].id }]
+          );
+        });
+      });
 
-          before(async () => {
-            hashtags.push(await user.followed_hashtags().create({ name: 'Subscription Test 1' }));
-            hashtags.push(await createHashtag({ name: 'Subscription Test 2' }));
+      describe('GET /api/v1/posts/subscriptions/school', () => {
+        const schools = [];
 
-            await posts[0].hashtags().attach(hashtags[0].id);
-            await posts[1].hashtags().attach(hashtags[1].id);
-            // current user's own post
-            await posts[2].hashtags().attach(hashtags[0].id);
-          });
+        before(async () => {
+          schools.push(await user.followed_schools().create({ name: 'Subscription Test 1' }));
+          schools.push(await createSchool({ name: 'Subscription Test 2' }));
 
-          after(async () => {
-            await Promise.all(hashtags.map(t => t.destroy()));
-          });
-
-          it('responds with relevant posts', async () => {
-            await expect(
-              {
-                session: sessionId,
-                url: `/api/v1/posts/subscriptions/hashtag`,
-                method: 'GET'
-              },
-              'body to satisfy',
-              [{ id: posts[0].id }]
-            );
-          });
+          await posts[0].schools().attach(schools[0].id);
+          await posts[1].schools().attach(schools[1].id);
+          // current user's own post
+          await posts[2].schools().attach(schools[0].id);
         });
 
-        describe('GET /api/v1/posts/subscriptions/school', () => {
-          const schools = [];
-
-          before(async () => {
-            schools.push(await user.followed_schools().create({ name: 'Subscription Test 1' }));
-            schools.push(await createSchool({ name: 'Subscription Test 2' }));
-
-            await posts[0].schools().attach(schools[0].id);
-            await posts[1].schools().attach(schools[1].id);
-            // current user's own post
-            await posts[2].schools().attach(schools[0].id);
-          });
-
-          after(async () => {
-            await Promise.all(schools.map(t => t.destroy()));
-          });
-
-          it('responds with relevant posts', async () => {
-            await expect(
-              {
-                session: sessionId,
-                url: `/api/v1/posts/subscriptions/school`,
-                method: 'GET'
-              },
-              'body to satisfy',
-              [{ id: posts[0].id }]
-            );
-          });
+        after(async () => {
+          await Promise.all(schools.map(t => t.destroy()));
         });
 
-        describe('GET /api/v1/posts/subscriptions/geotag', () => {
-          let followedGeotag, childGeotag, irrelevantGeotag;
+        it('responds with relevant posts', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts/subscriptions/school`,
+              method: 'GET'
+            },
+            'body to satisfy',
+            [{ id: posts[0].id }]
+          );
+        });
+      });
 
-          before(async () => {
-            followedGeotag = await createGeotag({ type: 'Country' });
-            childGeotag = await createGeotag({ type: 'City', country_id: followedGeotag.id });
-            irrelevantGeotag = await createGeotag();
+      describe('GET /api/v1/posts/subscriptions/geotag', () => {
+        let followedGeotag, childGeotag, irrelevantGeotag;
 
-            await posts[0].geotags().attach(childGeotag.id);
-            await posts[1].geotags().attach(irrelevantGeotag.id);
-            // current user's own post
-            await posts[2].geotags().attach(childGeotag.id);
+        before(async () => {
+          followedGeotag = await createGeotag({ type: 'Country' });
+          childGeotag = await createGeotag({ type: 'City', country_id: followedGeotag.id });
+          irrelevantGeotag = await createGeotag();
 
-            await user.followed_geotags().attach(followedGeotag.id);
-          });
+          await posts[0].geotags().attach(childGeotag.id);
+          await posts[1].geotags().attach(irrelevantGeotag.id);
+          // current user's own post
+          await posts[2].geotags().attach(childGeotag.id);
 
-          after(async () => {
-            await Promise.all(
-              [childGeotag, followedGeotag, irrelevantGeotag].map(m => m.destroy())
-            );
-          });
+          await user.followed_geotags().attach(followedGeotag.id);
+        });
 
-          it('responds with relevant posts', async () => {
-            await expect(
-              {
-                session: sessionId,
-                url: `/api/v1/posts/subscriptions/geotag`,
-                method: 'GET'
-              },
-              'body to satisfy',
-              [{ id: posts[0].id }]
-            );
-          });
+        after(async () => {
+          await Promise.all(
+            [childGeotag, followedGeotag, irrelevantGeotag].map(m => m.destroy())
+          );
+        });
+
+        it('responds with relevant posts', async () => {
+          await expect(
+            {
+              session: sessionId,
+              url: `/api/v1/posts/subscriptions/geotag`,
+              method: 'GET'
+            },
+            'body to satisfy',
+            [{ id: posts[0].id }]
+          );
         });
       });
     });
