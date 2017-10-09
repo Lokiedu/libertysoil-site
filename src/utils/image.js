@@ -17,7 +17,6 @@
  */
 // @flow
 import bb from 'bluebird';
-import { pick, isEqual } from 'lodash';
 import gm from 'gm';
 
 bb.promisifyAll(gm.prototype);
@@ -29,12 +28,28 @@ type CropLwipOptions = {
   top: number
 };
 
+function isCropLwipOptions(params: mixed): boolean %checks {
+  return typeof params === 'object' && params !== null
+    && 'bottom' in params && typeof params.bottom === 'number'
+    && 'left' in params && typeof params.left === 'number'
+    && 'right' in params && typeof params.right === 'number'
+    && 'top' in params && typeof params.top === 'number';
+}
+
 type CropGMOptions = {
   height: number,
   width: number,
   x: number,
   y: number
 };
+
+function isCropGMOptions(params: mixed): boolean %checks {
+  return typeof params === 'object' && params !== null
+    && 'height' in params && typeof params.height === 'number'
+    && 'width' in params && typeof params.width === 'number'
+    && 'x' in params && typeof params.x === 'number'
+    && 'y' in params && typeof params.y === 'number';
+}
 
 type ResizeOptions =
   | { height: number, proportional: boolean }
@@ -45,10 +60,9 @@ type ResizeOptions =
     width: number
   };
 
-  type Transform = {
-    crop?: CropLwipOptions | CropGMOptions,
-    resize?: ResizeOptions
-  };
+type Transform =
+  | {| crop: CropLwipOptions | CropGMOptions |}
+  | {| resize: ResizeOptions |};
 
 /**
  * Applies transforms to the image.
@@ -71,61 +85,102 @@ export async function processImage(
   const image = new gm(buffer);
 
   for (const transform of transforms) {
-    const type = Object.keys(transform)[0];
-    const params = transform[type];
-
-    switch (type) {
-      case 'crop': {
-        await crop(image, params);
-        break;
-      }
-      case 'resize': {
-        resize(image, params);
-        break;
-      }
+    /**
+     * Flow v0.56 supports neither
+     * ```
+     * const type = Object.keys(transform)[0];
+     * const params = transform[type];
+     *
+     * switch (type) {
+     *   case 'crop': {
+     *     await crop(image, params);
+     *     break;
+     *   }
+     *   case 'resize': {
+     *     resize(image, params);
+     *     break;
+     *   }
+     * }
+     * ```
+     * nor
+     * ```
+     * switch (Object.keys(transform)[0]) {
+     *   case 'crop': {
+     *     await crop(image, transform.crop);
+     *     break;
+     *   }
+     *   case 'resize': {
+     *     resize(image, transform.resize);
+     *     break;
+     *   }
+     * }
+     * ```
+     * and even nor
+     * ```
+     * if ('crop' in transform) {
+     *   await crop(image, transform.crop);
+     * } else if ('resize' in transform) {
+     *   resize(image, transform.resize);
+     * }
+     * ```
+     */
+    if (transform.crop) {
+      await crop(image, transform.crop);
+    } else if (transform.resize) {
+      resize(image, transform.resize);
     }
   }
 
   return await image.toBufferAsync();
 }
 
+type Size = {
+  height: number,
+  width: number
+};
+
+function lwipCrop(image: gm, params: CropLwipOptions, size: Size) {
+  if (params.left < 0 || params.top < 0 || params.right < 0 || params.bottom < 0) {
+    throw new RangeError('crop parameters should be positive');
+  }
+
+  if (
+    params.left > size.width || params.right > size.width || params.left > params.right ||
+    params.top > size.height || params.bottom > size.height || params.top > params.bottom
+  ) {
+    throw new RangeError('crop parameters should fit within borders of image');
+  }
+
+  const nextWidth = params.right - params.left + 1;
+  const nextHeight = params.bottom - params.top + 1;
+  const x = params.left;
+  const y = params.top;
+
+  image.crop(nextWidth, nextHeight, x, y);
+}
+
+function gmCrop(image: gm, params: CropGMOptions, size: Size) {
+  if (
+    params.x + params.width > size.width ||
+    params.y + params.height > size.height
+  ) {
+    throw new RangeError('crop parameters should fit within borders of image');
+  }
+
+  image.crop(params.width, params.height, params.x, params.y);
+}
+
 async function crop(
   image: gm, params: CropLwipOptions | CropGMOptions
 ): Promise<void> {
-  const size = await image.sizeAsync();
-  const w = size.width;
-  const h = size.height;
-  const cropKeys = ['left', 'top', 'right', 'bottom'];
-  const cropKeysAlt = ['width', 'height', 'x', 'y'];
-  const cropParams = pick(params, cropKeys, cropKeysAlt);
+  const size: Size = await image.sizeAsync();
 
-  if (isEqual(Object.keys(cropParams), cropKeys)) {
-    if (cropParams.left < 0 || cropParams.top < 0 || cropParams.right < 0 || cropParams.bottom < 0) {
-      throw new RangeError('crop parameters should be positive');
-    }
-
-    if (
-      cropParams.left > w || cropParams.right > w || cropParams.left > cropParams.right ||
-      cropParams.top > h || cropParams.bottom > h || cropParams.top > cropParams.bottom
-    ) {
-      throw new RangeError('crop parameters should fit within borders of image');
-    }
-
-    const width = cropParams.right - cropParams.left + 1;
-    const height = cropParams.bottom - cropParams.top + 1;
-    const x = cropParams.left;
-    const y = cropParams.top;
-
-    image.crop(width, height, x, y);
-  } else if (isEqual(Object.keys(cropParams), cropKeysAlt)) {
-    if (
-      cropParams.x + cropParams.width > w ||
-      cropParams.y + cropParams.height > h
-    ) {
-      throw new RangeError('crop parameters should fit within borders of image');
-    }
-
-    image.crop(cropParams.width, cropParams.height, cropParams.x, cropParams.y);
+  if (isCropLwipOptions(params)) {
+    // $FlowIssue: flow v0.56 doesn't support refinements with structural types
+    lwipCrop(image, params, size);
+  } else if (isCropGMOptions(params)) {
+    // $FlowIssue: the same as above
+    gmCrop(image, params, size);
   } else {
     throw new RangeError(
       '"crop" accepts either "left", "top", "right", and "bottom" or "width", "height", "x", and "y" options.'
@@ -136,6 +191,7 @@ async function crop(
 function resize(image: gm, params: ResizeOptions) {
   if (params.width && params.height) {
     const overrideProportions = params.hasOwnProperty('proportional') && params.proportional !== true;
+    // $FlowIssue: this refinement doesn't work too
     image.resize(params.width, params.height, overrideProportions && '!');
   } else if (params.width) {
     image.resize(params.width);

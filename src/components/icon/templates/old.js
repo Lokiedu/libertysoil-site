@@ -55,7 +55,7 @@ export type Props = {
   size?: string
 };
 
-export default class IconOldTemplate extends React.PureComponent {
+export default class IconOldTemplate extends React.PureComponent<Props> {
   static displayName = 'IconOldTemplate';
 
   static propTypes = {

@@ -17,13 +17,14 @@
  */
 // @flow
 import React from 'react';
+import type { Element } from 'react';
 
 /**
  * Split multiline text to <p> components.
  * @param {string} text - Text with multiline symbols.
  * @return {Array} Array of React <p> components.
  */
-const paragraphify = (text: ?string): Array<React.Element<*>> | boolean => {
+const paragraphify = (text: ?string): Array<Element<*>> | boolean => {
   if (!text || typeof text != 'string') {
     return false;
   }
