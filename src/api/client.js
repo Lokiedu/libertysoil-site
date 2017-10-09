@@ -52,6 +52,7 @@ export default class ApiClient {
   }
 
   apiUrlForFetch(relativeUrl: string, query: ?Object = {}): string {
+    // $FlowIssue flow incorrectly loads declaration of `url.parse`
     const urlObj: { query: ?Object } = parse_url(this.apiUrl(relativeUrl), true);
     urlObj.query = mergeObj(urlObj.query, query);
 
