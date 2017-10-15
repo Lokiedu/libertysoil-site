@@ -65,7 +65,7 @@ if (!is_logged_in) {
 const authHandler = new AuthHandler(store);
 const fetchHandler = new FetchHandler(store, client);
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <Provider store={store}>
     <Router history={history}>
       {getRoutes(authHandler.handle, fetchHandler.handle, fetchHandler.handleChange)}
