@@ -18,7 +18,6 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import ga from 'react-google-analytics';
 import { form as inform, DisabledFormSubmit } from 'react-inform';
 
 import { ArrayOfGeotags as ArrayOfGeotagsPropType } from '../prop-types/geotags';
@@ -27,6 +26,7 @@ import { ArrayOfSchools as ArrayOfSchoolsPropType } from '../prop-types/schools'
 import { TAG_HASHTAG, TAG_LOCATION, TAG_SCHOOL } from '../consts/tags';
 import ClickOutsideComponentDecorator from '../decorators/ClickOutsideComponentDecorator';
 
+import ga from '../external/react-google-analytics';
 import { OldIcon as Icon } from './icon';
 import Tag from './tag';
 import AddTagModal from './add-tag-modal';

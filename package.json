@@ -130,7 +130,6 @@
     "react-autosuggest": "^3.3.4",
     "react-codemirror": "^1.0.0",
     "react-dom": "^16.2.0",
-    "react-google-analytics": "^0.2.0",
     "react-gravatar": "^2.2.2",
     "react-helmet": "~5.2.0",
     "react-icons": "^2.1.0",

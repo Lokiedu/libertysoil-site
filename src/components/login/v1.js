@@ -19,7 +19,8 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { Link } from 'react-router';
-import ga from 'react-google-analytics';
+
+import ga from '../../external/react-google-analytics';
 
 export default class LoginComponent extends React.Component {
   static displayName = 'LoginComponent';

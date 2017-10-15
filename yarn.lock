@@ -7483,10 +7483,6 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-google-analytics@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/react-google-analytics/-/react-google-analytics-0.2.0.tgz#1a0b090a633051c9ad3ae05ccb4768174c2a0380"
-
 react-gravatar@^2.2.2:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/react-gravatar/-/react-gravatar-2.6.3.tgz#5407eb6ac87e830e2a34deb760d2a4c404eb1dac"

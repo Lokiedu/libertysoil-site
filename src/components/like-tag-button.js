@@ -18,9 +18,9 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import ga from 'react-google-analytics';
 import { omit } from 'lodash';
 
+import ga from '../external/react-google-analytics';
 import { OldIcon as Icon } from './icon';
 
 const ICON_SIZE = { inner: 'lm', outer: 'm' };

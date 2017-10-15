@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import ga from 'react-google-analytics';
 import i from 'immutable';
 
 import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import ga from '../../../src/external/react-google-analytics';
 import { UnwrappedApp } from '../../../src/pages/app';
 
 
