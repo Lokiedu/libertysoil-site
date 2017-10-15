@@ -89,16 +89,14 @@ export const SchoolValidator = Joi.object({
 
 export const GeotagValidator = Joi.object({
   more: Joi.object({
-    description: Joi.string(),
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
+    description: Joi.string()
   })
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const HashtagValidator = Joi.object({
   more: Joi.object({
     description: Joi.string(),
-    head_pic: PictureAttachment,
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
+    head_pic: PictureAttachment
   })
 }).options({ abortEarly: false, stripUnknown: true });
 

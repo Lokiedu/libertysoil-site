@@ -56,22 +56,15 @@ export async function getGeotags(ctx) {
 }
 
 export async function updateGeotag(ctx) {
-  Joi.attempt(ctx.request.body, GeotagValidator);
-
   const Geotag = ctx.bookshelf.model('Geotag');
+
+  let more = Joi.attempt(ctx.request.body, GeotagValidator).more;
   const geotag = await Geotag.where({ id: ctx.params.id }).fetch({ require: true });
 
-  let properties = {};
-  for (const fieldName in GeotagValidator.validations.more) {
-    if (fieldName in ctx.request.body.more) {
-      properties[fieldName] = ctx.request.body.more[fieldName];
-    }
-  }
+  more.last_editor = ctx.state.user;
+  more = _.extend(geotag.get('more'), more);
 
-  properties.last_editor = ctx.state.user;
-  properties = _.extend(geotag.get('more'), properties);
-
-  geotag.set('more', properties);
+  geotag.set('more', more);
   await geotag.save(null, { method: 'update' });
 
   ctx.body = geotag;

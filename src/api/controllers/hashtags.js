@@ -35,21 +35,13 @@ export async function getHashtag(ctx) {
 export async function updateHashtag(ctx) {
   const Hashtag = ctx.bookshelf.model('Hashtag');
 
-  Joi.attempt(ctx.request.body, HashtagValidator);
-
+  let more = Joi.attempt(ctx.request.body, HashtagValidator).more;
   const hashtag = await Hashtag.where({ id: ctx.params.id }).fetch({ require: true });
 
-  let properties = {};
-  for (const fieldName in HashtagValidator.validations.more) {
-    if (fieldName in ctx.request.body.more) {
-      properties[fieldName] = ctx.request.body.more[fieldName];
-    }
-  }
+  more.last_editor = ctx.state.user;
+  more = _.extend(hashtag.get('more'), more);
 
-  properties.last_editor = ctx.state.user;
-  properties = _.extend(hashtag.get('more'), properties);
-
-  hashtag.set('more', properties);
+  hashtag.set('more', more);
   await hashtag.save(null, { method: 'update' });
 
   ctx.body = hashtag;
