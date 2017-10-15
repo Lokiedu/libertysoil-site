@@ -60,10 +60,31 @@ export const UserSettingsValidator = Joi.object({
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const SchoolValidator = Joi.object({
+  name: Joi.string().replace(/\s+/g, ' ').trim().required(),
+  description: Joi.string(),
+  lat: Joi.number(),
+  lon: Joi.number(),
+  is_open: Joi.bool().allow(null),
+  principal_name: Joi.string(),
+  principal_surname: Joi.string(),
+  foundation_date: Joi.date(),
+  number_of_students: Joi.object(),
+  org_membership: Joi.object(),
+  teaching_languages: Joi.array().items(Joi.string()),
+  required_languages: Joi.array().items(Joi.string()),
+  country_id: Joi.string().uuid({ version: 'uuidv4' }),
+  postal_code: Joi.string(),
+  city: Joi.string(),
+  address: Joi.string(),
+  house: Joi.string(),
+  phone: Joi.string(),
+  website: Joi.string().uri({ scheme: ['http', 'https'] }),
+  facebook: Joi.string().uri({ scheme: ['http', 'https'] }),
+  twitter: Joi.string().uri({ scheme: ['http', 'https'] }),
+  wikipedia: Joi.string().uri({ scheme: ['http', 'https'] }),
   more: Joi.object({
-    head_pic: PictureAttachment,
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
-  })
+    head_pic: PictureAttachment
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const GeotagValidator = Joi.object({

@@ -18,6 +18,7 @@
 import _ from 'lodash';
 import uuid from 'uuid';
 import slug from 'slug';
+import Joi from 'joi';
 
 import { SchoolValidator } from '../validators';
 import { applySortQuery, applyLimitQuery, applyOffsetQuery } from '../utils/filters';
@@ -167,108 +168,26 @@ export async function unfollowSchool(ctx) {
 }
 
 export async function createSchool(ctx) {
-  if (!('name' in ctx.request.body)) {
-    ctx.status = 400;
-    ctx.body = { error: '"name" property is not given' };
-    return;
-  }
-
-  const name = ctx.request.body.name.replace(/\s+/g, ' ').trim();
-
-  if (!name) {
-    ctx.status = 400;
-    ctx.body = { error: '"name" mustn\'t be an empty string' };
-    return;
-  }
-
   const School = ctx.bookshelf.model('School');
 
-  try {
-    await School.where({ name }).fetch({ require: true });
+  const attributes = Joi.attempt(ctx.request.body, SchoolValidator);
 
+  const { name } = attributes;
+
+  if (await School.where({ name }).fetch()) {
     ctx.status = 409;
     ctx.body = { error: 'School with such name is already registered' };
     return;
-  } catch (e) {
-    // go next
   }
 
-  const allowedAttributes = [
-    'name', 'description',
-    'lat', 'lon',
-    'is_open', 'principal_name', 'principal_surname',
-    'foundation_date',
-    'number_of_students', 'org_membership',
-    'teaching_languages', 'required_languages',
-    'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
-    'website', 'facebook', 'twitter', 'wikipedia'
-  ];
-
-  const processData = (data) => {
-    if ('is_open' in data) {
-      if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
-        throw new Error("'is_open' has to be boolean or null");
-      }
-    }
-
-    if ('number_of_students' in data) {
-      if (!_.isPlainObject(data.number_of_students)) {
-        throw new Error("'number_of_students' should be an object");
-      }
-    }
-
-    if ('org_membership' in data) {
-      if (!_.isPlainObject(data.org_membership)) {
-        throw new Error("'org_membership' should be an object");
-      }
-    }
-
-    if ('teaching_languages' in data) {
-      if (!_.isArray(data.teaching_languages)) {
-        throw new Error("'teaching_languages' should be an array");
-      }
-      data.teaching_languages = JSON.stringify(data.teaching_languages);
-    }
-
-    if ('required_languages' in data) {
-      if (!_.isArray(data.required_languages)) {
-        throw new Error("'required_languages' should be an array");
-      }
-      data.required_languages = JSON.stringify(data.required_languages);
-    }
-
-    for (const key in data) {
-      if (data[key] === '') {
-        data[key] = null;
-      }
-    }
-
-    return data;
-  };
-
-  const attributesWithValues = processData({
-    ..._.pick(ctx.request.body, allowedAttributes),
-    name
-  });
-
-  const properties = {};
-  if (ctx.request.body.more) {
-    for (const fieldName in SchoolValidator.validations.more) {
-      if (fieldName in ctx.request.body.more) {
-        properties[fieldName] = ctx.request.body.more[fieldName];
-      }
-    }
-  }
-
-  properties.last_editor = ctx.state.user;
-  attributesWithValues.more = properties;
+  attributes.more.last_editor = ctx.state.user;
 
   const school = new School({
-    id: uuid.v4()
+    id: uuid.v4(),
+    ...attributes
   });
 
-  school.set(attributesWithValues);
-  school.set('url_name', slug(attributesWithValues.name));
+  school.set('url_name', slug(attributes.name));
 
   await school.save(null, { method: 'insert' });
 
@@ -282,72 +201,11 @@ export async function updateSchool(ctx) {
   const School = ctx.bookshelf.model('School');
 
   const school = await School.where({ id: ctx.params.id }).fetch({ require: true, withRelated: 'images' });
+  const attributes = Joi.attempt(ctx.request.body, SchoolValidator);
 
-  const allowedAttributes = [
-    'name', 'description',
-    'lat', 'lon',
-    'is_open', 'principal_name', 'principal_surname',
-    'foundation_date',
-    'number_of_students', 'org_membership',
-    'teaching_languages', 'required_languages',
-    'country_id', 'postal_code', 'city', 'address1', 'address2', 'house', 'phone',
-    'website', 'facebook', 'twitter', 'wikipedia'
-  ];
-  const processData = (data) => {
-    if ('is_open' in data) {
-      if (data.is_open !== true && data.is_open !== false && data.is_open !== null) {
-        throw new Error("'is_open' has to be boolean or null");
-      }
-    }
-
-    if ('number_of_students' in data) {
-      if (!_.isPlainObject(data.number_of_students)) {
-        throw new Error("'number_of_students' should be an object");
-      }
-    }
-
-    if ('org_membership' in data) {
-      if (!_.isPlainObject(data.org_membership)) {
-        throw new Error("'org_membership' should be an object");
-      }
-    }
-
-    if ('teaching_languages' in data) {
-      if (!_.isArray(data.teaching_languages)) {
-        throw new Error("'teaching_languages' should be an array");
-      }
-      data.teaching_languages = JSON.stringify(data.teaching_languages);
-    }
-
-    if ('required_languages' in data) {
-      if (!_.isArray(data.required_languages)) {
-        throw new Error("'required_languages' should be an array");
-      }
-      data.required_languages = JSON.stringify(data.required_languages);
-    }
-
-    for (const key in data) {
-      if (data[key] === '') {
-        data[key] = null;
-      }
-    }
-
-    return data;
-  };
-
-  const attributesWithValues = processData(_.pick(ctx.request.body, allowedAttributes));
-
-  const properties = {};
-  for (const fieldName in SchoolValidator.validations.more) {
-    if (fieldName in ctx.request.body.more) {
-      properties[fieldName] = ctx.request.body.more[fieldName];
-    }
-  }
-
-  properties.last_editor = ctx.state.user;
-  attributesWithValues.more = _.extend(school.get('more'), properties);
-
-  school.set(attributesWithValues);
+  attributes.more.last_editor = ctx.state.user;
+  attributes.more = _.extend(school.get('more'), attributes.more);
+  school.set(attributes);
 
   if (ctx.request.body.images) {
     if (!_.isArray(ctx.request.body.images)) {
@@ -361,15 +219,6 @@ export async function updateSchool(ctx) {
     if (_.isArray(images)) {
       school.updateImages(images);
     }
-  }
-
-  let languages = school.get('teaching_languages');
-  if (_.isArray(languages)) {
-    school.set('teaching_languages', JSON.stringify(languages));
-  }
-  languages = school.get('required_languages');
-  if (_.isArray(languages)) {
-    school.set('required_languages', JSON.stringify(languages));
   }
 
   await school.save();
