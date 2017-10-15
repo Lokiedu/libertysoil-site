@@ -282,6 +282,8 @@ function startServer(/*params*/) {
 
     logger.info(`Listening at http://0.0.0.0:${PORT}\n`);
   });
+
+  return app;
 }
 
 export default startServer;

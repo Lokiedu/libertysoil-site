@@ -2,14 +2,23 @@ import expect from 'unexpected';
 import { isString, isPlainObject, merge } from 'lodash';
 import { serialize } from 'cookie';
 import 'mock-aws';
+import sinon from 'sinon';
 
 import initBookshelf from '../src/api/db';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
 const startServer = require('../server').default;
-startServer();
+const app = startServer();
 
+// A very basic stubs to make API tests pass without intalling sphinx.
+sinon.stub(app.context.sphinx.api);
+sinon.stub(app.context.sphinx.ql, 'raw').returns([[null, { Value: 1 }]]);
+sinon.stub(app.context.sphinx.ql, 'insert').returns({
+  into: sinon.stub().returns({
+    toString: sinon.stub().returns('insert into')
+  })
+});
 
 expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));
