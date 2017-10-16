@@ -55,12 +55,16 @@ describe('Auth page', () => {
 
   it('Login component should work', async () => {
     const handleLogin = triggers.login.bind(null, true);
-    const testComponent = <Login onLoginUser={handleLogin} />;
-    const wrapper = mount(testComponent);
+    const wrapper = mount(<Login onLoginUser={handleLogin} />);
 
-    const newUserId = waitForChange(() => store.getState().getIn(['current_user', 'id']));
-    wrapper.find('#loginUsername').node.value = userAttrs.username;
-    wrapper.find('#loginPassword').node.value = userAttrs.password;
+    const newUserId = waitForChange(() =>
+      store.getState().getIn(['current_user', 'id'])
+    );
+
+    wrapper.find('#loginUsername').instance()
+      .value = userAttrs.username;
+    wrapper.find('#loginPassword').instance()
+      .value = userAttrs.password;
     wrapper.find('form').simulate('submit');
 
     expect(await newUserId, 'to equal', user.get('id'));

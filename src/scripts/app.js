@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import bluebird from 'bluebird';
+import 'raf/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -35,14 +36,6 @@ import { addMessage } from '../actions/messages';
 import '../less/styles.less';
 
 window.Promise = bluebird;
-
-if (typeof window !== 'undefined') {
-  if (typeof window.requestAnimationFrame === 'undefined') {
-    window.requestAnimationFrame = (callback) => {
-      setImmediate(callback);
-    };
-  }
-}
 
 const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
