@@ -7512,9 +7512,11 @@ react-icons@^2.1.0:
   dependencies:
     react-icon-base "2.0.7"
 
-react-inform@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/react-inform/-/react-inform-0.2.2.tgz#71d5a9ca4460e34395c8334b9de55c6c408391f5"
+react-inform@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/react-inform/-/react-inform-0.2.5.tgz#82e0512fc58d59aa935bc324a460cf380f59ff8b"
+  dependencies:
+    prop-types "^15.6.0"
 
 react-leaflet@~1.6.6:
   version "1.6.6"
