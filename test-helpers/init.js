@@ -24,3 +24,7 @@ const noop = () => null;
 
 ['.css', '.jpg', '.png', '.svg', '.ejs']
   .forEach(ext => require.extensions[ext] = noop);
+
+global.requestAnimationFrame = (callback) => {
+  setImmediate(callback);
+};

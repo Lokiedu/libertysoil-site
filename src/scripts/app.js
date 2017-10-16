@@ -36,6 +36,14 @@ import '../less/styles.less';
 
 window.Promise = bluebird;
 
+if (typeof window !== 'undefined') {
+  if (typeof window.requestAnimationFrame === 'undefined') {
+    window.requestAnimationFrame = (callback) => {
+      setImmediate(callback);
+    };
+  }
+}
+
 const store = initState(window.state);
 const history = syncHistoryWithStore(browserHistory, store, { selectLocationState: state => state.get('routing') });
 
