@@ -59,7 +59,7 @@ export default class SchoolSelect extends Component {
     return find(this.state.suggestions, s => s.name === this.state.value);
   }
 
-  _getSuggestions = async ({ value }) => {
+  handleSuggestionsFetchRequested = async ({ value }) => {
     const suggestions = await this.client.schools({ startWith: value.trim(), limit: 5 });
 
     this.setState({ suggestions });
@@ -73,7 +73,7 @@ export default class SchoolSelect extends Component {
 
   _getSuggestionValue = (school) => school.name;
 
-  _handleSelect = (event, { suggestion }) => {
+  handleSuggestionSelected = (event, { suggestion }) => {
     event.preventDefault();
 
     this.props.onSelect(suggestion);
@@ -94,8 +94,8 @@ export default class SchoolSelect extends Component {
         inputProps={inputProps}
         renderSuggestion={this._getSuggestionValue}
         suggestions={this.state.suggestions}
-        onSuggestionSelected={this._handleSelect}
-        onSuggestionsUpdateRequested={this._getSuggestions}
+        onSuggestionSelected={this.handleSuggestionSelected}
+        onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
         {...this.props}
       />
     );

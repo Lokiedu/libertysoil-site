@@ -53,7 +53,7 @@ export default class HashtagSelect extends Component {
     });
   }
 
-  _getSuggestions = throttle(async ({ value }) => {
+  handleSuggestionsFetchRequested = throttle(async ({ value }) => {
     if (value.length < 2) {
       return;
     }
@@ -66,7 +66,7 @@ export default class HashtagSelect extends Component {
 
   _getSuggestionValue = (tag) => tag.name;
 
-  _handleSelect = (event, { suggestion }) => {
+  handleSuggestionSelected = (event, { suggestion }) => {
     event.preventDefault();
 
     this.props.onSelect(suggestion);
@@ -92,8 +92,8 @@ export default class HashtagSelect extends Component {
         inputProps={inputProps}
         renderSuggestion={this._getSuggestionValue}
         suggestions={this.state.suggestions}
-        onSuggestionSelected={this._handleSelect}
-        onSuggestionsUpdateRequested={this._getSuggestions}
+        onSuggestionSelected={this.handleSuggestionSelected}
+        onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
         {...this.props}
       />
     );

@@ -4151,7 +4151,7 @@ hoek@4.x.x:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.0.tgz#72d9d0754f7fe25ca2d01ad8f8f9a9449a89526d"
 
-hoist-non-react-statics@^1.0.3, hoist-non-react-statics@^1.2.0:
+hoist-non-react-statics@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
 
@@ -7444,19 +7444,20 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-autosuggest@^3.3.4:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/react-autosuggest/-/react-autosuggest-3.9.0.tgz#2a800afc69de6b5580154942e576168b2eb94fb9"
+react-autosuggest@^9.3.2:
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/react-autosuggest/-/react-autosuggest-9.3.2.tgz#dd8c0fbe9c25aa94afe296180353647f6ecc10a7"
   dependencies:
-    react-autowhatever "^4.1.0"
-    react-redux "^4.4.5"
-    redux "^3.5.1"
+    prop-types "^15.5.10"
+    react-autowhatever "^10.1.0"
+    shallow-equal "^1.0.0"
 
-react-autowhatever@^4.1.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/react-autowhatever/-/react-autowhatever-4.3.0.tgz#bf1919726d9d48c30aaebde48274eb0eea5ea6df"
+react-autowhatever@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/react-autowhatever/-/react-autowhatever-10.1.0.tgz#41f6d69382437d3447a0a3c8913bb8ca2feaabc1"
   dependencies:
-    react-themeable "^1.0.1"
+    prop-types "^15.5.8"
+    react-themeable "^1.1.0"
     section-iterator "^2.0.0"
 
 react-avatar-editor@10.3.0:
@@ -7555,17 +7556,6 @@ react-proxy@^1.1.7:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
 
-react-redux@^4.4.5:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-4.4.8.tgz#e7bc1dd100e8b64e96ac8212db113239b9e2e08f"
-  dependencies:
-    create-react-class "^15.5.1"
-    hoist-non-react-statics "^1.0.3"
-    invariant "^2.0.0"
-    lodash "^4.2.0"
-    loose-envify "^1.1.0"
-    prop-types "^15.5.4"
-
 react-redux@~5.0.6:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.6.tgz#23ed3a4f986359d68b5212eaaa681e60d6574946"
@@ -7617,7 +7607,7 @@ react-test-renderer@^15.6.1:
     fbjs "^0.8.9"
     object-assign "^4.1.0"
 
-react-themeable@^1.0.1:
+react-themeable@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-themeable/-/react-themeable-1.1.0.tgz#7d4466dd9b2b5fa75058727825e9f152ba379a0e"
   dependencies:
@@ -7816,7 +7806,7 @@ redux-immutablejs@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/redux-immutablejs/-/redux-immutablejs-0.0.8.tgz#2c173dac1aaebfb20ec86e076b7e2ce65f487a41"
 
-redux@^3.5.1, redux@~3.7.2:
+redux@~3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
   dependencies:
@@ -8264,6 +8254,10 @@ sha.js@^2.4.0, sha.js@^2.4.8:
 shallow-copy@~0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/shallow-copy/-/shallow-copy-0.0.1.tgz#415f42702d73d810330292cc5ee86eae1a11a170"
+
+shallow-equal@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/shallow-equal/-/shallow-equal-1.0.0.tgz#508d1838b3de590ab8757b011b25e430900945f7"
 
 shallowequal@^1.0.1:
   version "1.0.2"

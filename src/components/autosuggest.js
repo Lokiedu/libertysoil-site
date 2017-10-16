@@ -7,9 +7,9 @@ const theme = {
   container: 'autosuggest__container',
   containerOpen: 'autosuggest__container-open',
   input: 'autosuggest__input',
-  suggestionsContainer: 'autosuggest__suggestions_container',
+  suggestionsList: 'autosuggest__suggestions_list',
   suggestion: 'autosuggest__suggestion',
-  suggestionFocused: 'autosuggest__suggestion-focused',
+  suggestionHighlighted: 'autosuggest__suggestion-focused',
   sectionContainer: 'autosuggest__section_container',
   sectionTitle: 'autosuggest__section_title',
   sectionSuggestionsContainer: 'autosuggest__section_suggestions_container'

@@ -58,7 +58,7 @@ export default class GeotagSelect extends Component {
     });
   }
 
-  _getSuggestions = throttle(async ({ value }) => {
+  handleSuggestionsFetchRequested = throttle(async ({ value }) => {
     if (!value.length) {
       return;
     }
@@ -94,7 +94,7 @@ export default class GeotagSelect extends Component {
     return `${names.join(', ')} (${geotagType})`;
   }
 
-  _handleSelect = (event, { suggestion }) => {
+  handleSuggestionSelected = (event, { suggestion }) => {
     event.preventDefault();
 
     this.props.onSelect(suggestion);
@@ -131,8 +131,8 @@ export default class GeotagSelect extends Component {
           renderSuggestion={this._renderSuggestion}
           suggestions={this.state.suggestions}
           theme={theme}
-          onSuggestionSelected={this._handleSelect}
-          onSuggestionsUpdateRequested={this._getSuggestions}
+          onSuggestionSelected={this.handleSuggestionSelected}
+          onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
           {...this.props}
         />
       </div>
