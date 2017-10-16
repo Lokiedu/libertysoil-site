@@ -128,6 +128,7 @@
     "proxy-middleware": "^0.15.0",
     "react": "^16.2.0",
     "react-autosuggest": "^3.3.4",
+    "react-avatar-editor": "10.3.0",
     "react-codemirror": "^1.0.0",
     "react-dom": "^16.2.0",
     "react-gravatar": "^2.2.2",

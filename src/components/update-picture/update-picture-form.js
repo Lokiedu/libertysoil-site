@@ -18,7 +18,7 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import Editor from '../../external/react-avatar-editor';
+import Editor from 'react-avatar-editor';
 
 export default class UpdatePictureForm extends React.Component {
   static displayName = 'UpdatePictureForm';
