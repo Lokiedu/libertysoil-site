@@ -1,8 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import CodeMirror from 'react-codemirror';
 
-if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
+const isBrowser =
+     typeof window !== 'undefined'
+  && typeof navigator !== 'undefined';
+
+let CodeMirror;
+if (isBrowser) {
+  CodeMirror = require('react-codemirror2');
   require('codemirror/mode/sass/sass');
   require('codemirror/lib/codemirror.css');
 }
@@ -35,7 +40,9 @@ export default class LessEditor extends Component {
     return (
       <div>
         <div className="title">{this.props.file}</div>
-        <CodeMirror value={this.props.code} options={options} />
+        {isBrowser &&
+          <CodeMirror value={this.props.code} options={options} />
+        }
       </div>
     );
   }
