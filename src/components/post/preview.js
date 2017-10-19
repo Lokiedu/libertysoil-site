@@ -3,7 +3,7 @@ import twtxt from 'twitter-text';
 
 
 const Preview = ({ post }) => {
-  const text = post.get('text');
+  const text = post.get('text') || post.getIn(['more', 'shortText']);
   const urls = twtxt.extractUrlsWithIndices(text);
 
   if (urls.length === 0) {

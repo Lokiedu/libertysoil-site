@@ -165,7 +165,10 @@ export class UnwrappedPostPage extends React.Component {
                   showAllComments
                   triggers={triggers}
                 >
-                  <ShortTextPost post={current_post} />
+                  <ShortTextPost
+                    mode="full"
+                    post={current_post}
+                  />
                 </PostWrapper>
               </PageContent>
               <SidebarAlt>

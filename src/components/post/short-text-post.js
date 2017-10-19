@@ -15,21 +15,41 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import Linkify from 'react-linkify';
 
-const ShortTextPost = ({ post }) => {
-  let text = '';
+const ShortTextPost = ({ mode, post }) => {
+  let text;
 
-  if (post.get('text')) {
-    text = post.get('text').split('\n').map((line, i) => <p key={`text-${i}`}>{line}</p>);
+  switch (mode) {
+    case 'preview': {
+      text = post.getIn(['more', 'shortText']);
+      break;
+    }
+    case 'full': {
+      text = post.get('text');
+      break;
+    }
   }
 
   return (
     <Linkify properties={{ target: '_blank' }}>
-      {text}
+      {text &&
+        text.split('\n').map(
+          (line, i) => <p key={`text-${i}`}>{line}</p>
+        )
+      }
     </Linkify>
   );
+};
+
+ShortTextPost.propTypes = {
+  mode: PropTypes.oneOf(['preview', 'full'])
+};
+
+ShortTextPost.defaultProps = {
+  mode: 'preview'
 };
 
 export default ShortTextPost;
