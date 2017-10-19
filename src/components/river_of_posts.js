@@ -80,7 +80,10 @@ const RiverOfPostsComponent = (props) => {
                 ui={ui}
                 users={users}
               >
-                <ShortTextPost post={post} />
+                <ShortTextPost
+                  mode="preview"
+                  post={post}
+                />
               </PostWrapper>
             );
           default:
