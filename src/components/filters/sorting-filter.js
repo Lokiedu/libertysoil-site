@@ -14,12 +14,22 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
 import React from 'react';
+
+import type { RouterLocation } from '../../definitions/common';
+import type { SortingType } from '../../definitions/filters';
 import FilterLink from './filter-link';
 
 
-export default function SortingFilter({ location, sortingTypes }) {
+type Props = {
+  location: RouterLocation,
+  sortingTypes: SortingType[],
+};
+
+export default function SortingFilter({ location, sortingTypes }: Props) {
   const continents = sortingTypes.map((item, i) => (
     <FilterLink
       isDefault={item.isDefault}

@@ -1,5 +1,5 @@
-var PropTypes = require('prop-types');
 /*eslint-disable */
+var PropTypes = require('prop-types');
 var React = require('react');
 var ReactDOM = require('react-dom');
 

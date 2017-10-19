@@ -98,15 +98,15 @@ export type UserRecentTags = {
 
 export type User = {
   created_at: DateString,
-  followed_geotags?: Array<Geotag>,
-  followed_hashtags?: Array<Hashtag>,
-  followed_schools?: Array<School>,
-  fullName?: string,
-  gravatarHash?: string,
+  followed_geotags: ?Array<Geotag>,
+  followed_hashtags: ?Array<Hashtag>,
+  followed_schools: ?Array<School>,
+  fullName: ?string,
+  gravatarHash: ?string,
   id: UserId,
-  liked_geotags?: Array<Geotag>,
-  liked_hashtags?: Array<Hashtag>,
-  liked_schools?: Array<School>,
+  liked_geotags: ?Array<Geotag>,
+  liked_hashtags: ?Array<Hashtag>,
+  liked_schools: ?Array<School>,
   more: UserMore,
   updated_at: DateString,
   username: Username

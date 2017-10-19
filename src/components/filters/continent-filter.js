@@ -14,13 +14,15 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ @flow
 */
 import React from 'react';
 import CONTINENTS from '../../consts/continents';
+import type { RouterLocation } from '../../definitions/common';
 import FilterLink from './filter-link';
 
 
-export default function ContinentFilter({ location }) {
+export default function ContinentFilter({ location }: { location: RouterLocation }) {
   const continents = Object.keys(CONTINENTS).map(code => (
     <FilterLink
       key={code}

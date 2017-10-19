@@ -27,8 +27,8 @@ import fetch from 'node-fetch';
 import { ValidationError } from 'joi';
 
 import QueueSingleton from '../utils/queue';
-import { hidePostsData } from '../utils/posts';
-import { removeWhitespace } from '../utils/lang';
+import * as PostsUtils from '../utils/posts';
+import { removeWhitespace, seq } from '../utils/lang';
 import { processImage as processImageUtil } from '../utils/image';
 import config from '../../config';
 import { SEARCH_INDEXES_TABLE, SEARCH_RESPONSE_TABLE } from '../consts/search';
@@ -134,7 +134,13 @@ export default class ApiController {
       return post;
     });
 
-    response = await hidePostsData(response, ctx, this.bookshelf.knex);
+    response = response.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+        PostsUtils.serialize
+      ])
+    );
+
     ctx.body = response;
   };
 
@@ -168,7 +174,13 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
+    posts = posts.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+        PostsUtils.serialize
+      ])
+    );
+
     ctx.body = posts;
   };
 
@@ -196,7 +208,13 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
+    posts = posts.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+        PostsUtils.serialize
+      ])
+    );
+
     ctx.body = posts;
   };
 
@@ -224,7 +242,13 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
+    posts = posts.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+        PostsUtils.serialize
+      ])
+    );
+
     ctx.body = posts;
   };
 
@@ -277,7 +301,13 @@ export default class ApiController {
         return post;
       });
 
-      posts = await hidePostsData(posts, ctx, this.bookshelf.knex);
+      posts = posts.map(
+        seq([
+          PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+          PostsUtils.serialize
+        ])
+      );
+
       ctx.body = posts;
     } catch (e) {
       ctx.status = 404;
@@ -339,7 +369,11 @@ export default class ApiController {
       post.relations.schools = post.relations.schools.map(row => ({ id: row.id, name: row.attributes.name, url_name: row.attributes.url_name }));
       post.attributes.comments = post.relations.post_comments.length;
 
-      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      post = seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+        PostsUtils.serialize
+      ])(post);
+
       ctx.body = post;
     } catch (e) {
       ctx.status = 404;
@@ -417,7 +451,12 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
+    posts = posts.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(userId),
+        PostsUtils.serialize
+      ])
+    );
 
     return posts;
   };
@@ -483,7 +522,13 @@ export default class ApiController {
       return post;
     });
 
-    posts = await hidePostsData(posts, userId, this.bookshelf.knex);
+    posts = posts.map(
+      seq([
+        PostsUtils.filterUsersReactions.forUser(userId),
+        PostsUtils.serialize
+      ])
+    );
+
     return posts;
   };
 
@@ -946,7 +991,10 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
-      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      post = seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session.user),
+        PostsUtils.serialize
+      ])(post);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -986,7 +1034,10 @@ export default class ApiController {
       await post.save(null, { method: 'update' });
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['likers'] });
-      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      post = seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session.user),
+        PostsUtils.serialize
+      ])(post);
 
       const likes = await this.bookshelf.knex
         .select('post_id')
@@ -1029,7 +1080,10 @@ export default class ApiController {
       await user.favourited_posts().attach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
-      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      post = seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session.user),
+        PostsUtils.serialize
+      ])(post);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -1066,7 +1120,10 @@ export default class ApiController {
       await user.favourited_posts().detach(post);
 
       post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: ['favourers'] });
-      post = await hidePostsData(post, ctx, this.bookshelf.knex);
+      post = seq([
+        PostsUtils.filterUsersReactions.forUser(ctx.session.user),
+        PostsUtils.serialize
+      ])(post);
 
       const favs = await this.bookshelf.knex
         .select('post_id')
@@ -2700,23 +2757,29 @@ export default class ApiController {
                 .fetchAll({ require: false, withRelated: POST_RELATIONS })
                 .then(posts => Promise.all([posts, this.countComments(posts)]))
                 .then(([posts, postCommentsCount]) => {
-                  const next = posts.map(post => {
-                    post.relations.schools = post.relations.schools.map(row => ({
-                      id: row.id,
-                      name: row.attributes.name,
-                      url_name: row.attributes.url_name
-                    }));
-                    post.attributes.comments = postCommentsCount[post.get('id')];
-                    return post;
-                  });
-                  return hidePostsData(next, ctx, this.bookshelf.knex);
-                })
-                .then(posts => ({
-                  [SEARCH_RESPONSE_TABLE[type]]: {
-                    count: group.total_found,
-                    items: posts
-                  }
-                }));
+                  const ps = posts.map(
+                    seq([
+                      post => {
+                        post.relations.schools = post.relations.schools.map(row => ({
+                          id: row.id,
+                          name: row.attributes.name,
+                          url_name: row.attributes.url_name
+                        }));
+                        post.attributes.comments = postCommentsCount[post.get('id')];
+                        return post;
+                      },
+                      PostsUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
+                      PostsUtils.serialize
+                    ])
+                  );
+
+                  return {
+                    [SEARCH_RESPONSE_TABLE[type]]: {
+                      count: group.total_found,
+                      items: ps
+                    }
+                  };
+                });
             }
 
             return Model.forge()

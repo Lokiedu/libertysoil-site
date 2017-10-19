@@ -18,6 +18,6 @@ export const singleConnection = () => {
   };
 
   return Knex(fixedConfig);
-}
+};
 
 export default knex;

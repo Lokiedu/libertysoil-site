@@ -12,6 +12,15 @@
 .*/node_modules/react-render-hook/src/react-devtools/backend/getData.js
 .*/node_modules/babel-plugin-flow-runtime/*
 
+# wait for v4 release since there's a bunch of typedefs changes
+.*/node_modules/immutable/dist/immutable.js.flow
+
+# `editions` ignores it too: https://github.com/bevry/editions/blob/master/.flowconfig#L5
+.*/node_modules/editions/es2015/index.js
+
+[libs]
+./flow-typed
+
 [options]
 module.ignore_non_literal_requires=true
 esproposal.decorators=ignore
@@ -19,3 +28,5 @@ esproposal.class_instance_fields=enable
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
+suppress_comment= \\(.\\|\n\\)*\\$FlowIssue
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe

@@ -19,6 +19,8 @@
 import crypto from 'crypto';
 
 import AWS from 'aws-sdk';
+import type { ManagedUpload } from 'aws-sdk/lib/s3/managed_upload';
+import type S3 from 'aws-sdk/clients/s3';
 
 import config from '../../config';
 
@@ -33,7 +35,11 @@ const s3 = new AWS.S3(config.attachments.s3);
  * @param {String} mimeType
  * @returns {Promise} {Location: String, ETag: String}
  */
-export async function uploadAttachment(fileName: string, fileData: Buffer | Uint8Array | Blob | string, mimeType: string) {
+export async function uploadAttachment(
+  fileName: string,
+  fileData: Buffer | Uint8Array | Blob | string,
+  mimeType: string
+): Promise<ManagedUpload.SendData> {
   const params = {
     Key: fileName,
     Body: fileData,
@@ -43,15 +49,19 @@ export async function uploadAttachment(fileName: string, fileData: Buffer | Uint
   return s3.upload(params).promise();
 }
 
-export async function getMetadata(fileName: string) {
+export async function getMetadata(
+  fileName: string
+): Promise<S3.HeadObjectOutput> {
   return s3.headObject({ Key: fileName }).promise();
 }
 
-export async function downloadAttachment(fileName: string) {
+export async function downloadAttachment(
+  fileName: string
+): Promise<S3.GetObjectOutput> {
   return s3.getObject({ Key: fileName }).promise();
 }
 
-export function generateName(fileName: string) {
+export function generateName(fileName: string): string {
   const token = crypto.randomBytes(16).toString('hex');
 
   return `${config.attachments.prefix}${token}-${fileName}`;

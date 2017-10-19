@@ -54,19 +54,24 @@ export type UserUpdateablePostData = {
   type?: PostType
 };
 
-export type Post = UserUpdateablePostData & {
+export type Post = {
   comments: Integer,
   created_at: DateString,
   favourers: Array<User>,
-  fully_published_at?: DateString,
+  fully_published_at: ?DateString,
+  geotags: ?Array<Geotag>,
+  hashtags: ?Array<Hashtag>,
   id: PostId,
-  liked_geotag_id?: GeotagId,
-  liked_hashtag_id?: HashtagId,
-  liked_school_id?: SchoolId,
+  liked_geotag_id: ?GeotagId,
+  liked_hashtag_id: ?HashtagId,
+  liked_school_id: ?SchoolId,
   likers: Array<User>,
-  more?: PostMore,
+  minor_update: ?boolean,
+  more: ?PostMore,
+  schools: ?Array<LightSchool>,
+  text: ?string,
   type: PostType,
   updated_at: DateString,
-  url_name?: UrlNode, // likes don't have url_name
+  url_name: ?UrlNode, // likes don't have url_name
   user_id: Uuid4 // TODO: replace to UserId
 };

@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,24 +14,20 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-// @flow
-import React from 'react';
-import type { Element } from 'react';
 
-/**
- * Split multiline text to <p> components.
- * @param {string} text - Text with multiline symbols.
- * @return {Array} Array of React <p> components.
- */
-const paragraphify = (text: ?string): Array<Element<*>> | boolean => {
-  if (!text || typeof text != 'string') {
-    return false;
-  }
+ @flow
+*/
+export type Combine = false | { except: string[] };
 
-  return text
-    .split('\n')
-    .map((line: string, i: number) => <p key={`text-${i}`}>{line}</p>);
+export type SearchType = {
+  name: string,
+  value: string,
+  isDefault?: boolean,
+  combine: Combine,
 };
 
-export default paragraphify;
+export type SortingType = {
+  name: string,
+  value: string,
+  isDefault?: boolean,
+};

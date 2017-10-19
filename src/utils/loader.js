@@ -38,7 +38,10 @@ let debugCounter = 0;
  * @returns {Function}
  */
 export function combineHandlers(...handlers: Array<handler>): AsyncHandler {
-  return async (nextState, replace) => {
+  return async (
+    nextState: Object,
+    replace?: replaceCallback
+  ): Promise<void> => {
     for (const handler of handlers) {
       if (handler) {
         const shouldInterrupt = await handler(nextState, replace);
@@ -51,7 +54,11 @@ export function combineHandlers(...handlers: Array<handler>): AsyncHandler {
 }
 
 export function combineHandlersAsync(...handlers: Array<handler>): AsyncHandler {
-  return async (nextState, replace, callback) => {
+  return async (
+    nextState: Object,
+    replace?: replaceCallback,
+    callback?: nodeCallback
+  ): Promise<void> => {
     let callbacksTodo = 0;
 
     const callbackDecreaser = () => {
@@ -180,7 +187,7 @@ export class FetchHandler {
     debug(`DONE`);
   };
 
-  handleChange = async (oldState: Object, nextState: Object) => {
+  handleChange = async (oldState: Object, nextState: Object): Promise<void> => {
     return this.handle(nextState);
   };
 
@@ -188,14 +195,14 @@ export class FetchHandler {
     nextState: Object,
     replace: replaceCallback,
     callback: nodeCallback
-  ): void => {
+  ) => {
     this.handle(nextState)
       .then(() => {
         if (callback) {
           callback();
         }
       })
-      .catch((e) => {
+      .catch((e: Error) => {
         // FIXME: this should be reported to developers instead (use Sentry?)
         console.error(e);  // eslint-disable-line no-console
         if (callback) {

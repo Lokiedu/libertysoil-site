@@ -14,6 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
 import PropTypes from 'prop-types';
 
@@ -47,7 +49,13 @@ function translateOutline(outline) {
   return props;
 }
 
-export default class IconOldTemplate extends React.PureComponent {
+export type Props = {
+  icon?: string,
+  outline?: boolean | string,
+  size?: string
+};
+
+export default class IconOldTemplate extends React.PureComponent<Props> {
   static displayName = 'IconOldTemplate';
 
   static propTypes = {

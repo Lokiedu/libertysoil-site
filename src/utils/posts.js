@@ -16,67 +16,54 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // @flow
-import { filter, find } from 'lodash';
-import type Knex from 'knex';
+import type { Model } from 'bookshelf/lib/model';
 
-function hide(postId, userId, arrayOfUserPosts, arrayToFilter = []) {
-  let filtered = arrayToFilter;
+import type { UserId } from '../definitions/users';
 
-  if (userId) {
-    if (!find(arrayOfUserPosts, p => p === postId)) {
-      filtered = filter(arrayToFilter, { id: userId });
-    }
-  } else {
-    filtered = [];
-  }
-
-  return filtered;
+export function serialize(model: Model): Object {
+  return model.toJSON();
 }
 
-export async function hidePostsData(target: Object | Array<Object>, ctx: string | Object, qb: Knex, convertToJSON?: boolean = true) {
-  let userId = '';
-  let userPosts = [];
-
-  if (typeof ctx === 'string') {
-    userId = ctx;
-  } else if (ctx.session && ctx.session.user) {
-    userId = ctx.session.user;
+/**
+ * Remove other users' reactions from post's attributes
+ * @param {PostModel} post Post model to filter the reactions
+ * @param {String} userId Current user's id
+ */
+export function filterUsersReactions(post: Model, userId: UserId): Model {
+  if (!userId || post.attributes.user_id === userId) {
+    return resetPostReactions(post);
   }
 
-  if (userId) {
-    userPosts = await qb
-      .select('id')
-      .from('posts')
-      .where({ user_id: userId });
-    userPosts = userPosts.map(post => post.id);
+  return keepOwnPostReactions(userId, post);
+}
+
+filterUsersReactions.forUser = (userId: UserId) =>
+  userId
+    ? keepOwnPostReactions.bind(null, userId)
+    : resetPostReactions;
+
+function resetPostReactions(post: Model): Model {
+  const { favourers, likers } = post.relations;
+  favourers && favourers.reset();
+  likers && likers.reset();
+
+  return post;
+}
+
+function keepOwnPostReactions(userId: UserId, post: Model): Model {
+  const { favourers, likers } = post.relations;
+
+  if (favourers) {
+    const userAsFavourer = favourers.findWhere({ id: userId });
+    favourers.reset();
+    favourers.add(userAsFavourer);
   }
 
-  let filtered;
-  if (Array.isArray(target)) {
-    filtered = target.map(post => {
-      let plainPost = post;
-      if (convertToJSON && post.toJSON instanceof Function) {
-        plainPost = post.toJSON();
-      }
-
-      return {
-        ...plainPost,
-        favourers: hide(plainPost.id, userId, userPosts, plainPost.favourers),
-        likers: hide(plainPost.id, userId, userPosts, plainPost.likers)
-      };
-    });
-  } else {
-    let plainPost = target;
-    if (convertToJSON && target.toJSON instanceof Function) {
-      plainPost = target.toJSON();
-    }
-
-    filtered = {
-      ...plainPost,
-      favourers: hide(plainPost.id, userId, userPosts, plainPost.favourers),
-      likers: hide(plainPost.id, userId, userPosts, plainPost.likers)
-    };
+  if (likers) {
+    const userAsLiker = likers.findWhere({ id: userId });
+    likers.reset();
+    likers.add(userAsLiker);
   }
 
-  return filtered;
+  return post;
 }

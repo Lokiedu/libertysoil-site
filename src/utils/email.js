@@ -21,7 +21,9 @@ import { isUndefined } from 'lodash';
 import Sendgrid from 'sendgrid';
 
 
-export async function sendEmail(subject: string, html: string, to: string) {
+export async function sendEmail(
+  subject: string, html: string, to: string
+): Promise<Object> {
   if (isUndefined(process.env.SENDGRID_KEY)) {
     throw new Error('SENDGRID_KEY env is not set');
   }

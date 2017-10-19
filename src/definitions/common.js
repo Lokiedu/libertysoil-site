@@ -64,13 +64,13 @@ export type Url = string;
 const UrlType = (reify: Type<Url>);
 UrlType.addConstraint(isUrl);
 
-export const isUrlNode = (x: Url): ?string => {  // eslint-disable-line consistent-return
-  if (!x.match(RegExp(/(:|\/)/))) {
+export const isUrlNode = (x: string): ?string => {  // eslint-disable-line consistent-return
+  if (!x.match(/^[\w- ]+$/)) {
     return 'must be a valid URL node';
   }
 };
 
-export type UrlNode = Url;
+export type UrlNode = string;
 const UrlNodeType = (reify: Type<UrlNode>);
 UrlNodeType.addConstraint(isUrlNode);
 
@@ -85,3 +85,13 @@ const Uuid4Type = (reify: Type<Uuid4>);
 Uuid4Type.addConstraint(isUuid4);
 
 export type Map<K, T> = { [key: K]: T };
+
+export type RouterLocation = {
+  action: string,
+  hash: string,
+  key: string,
+  pathname: string,
+  query: Object,
+  search: string,
+  state: ?Object,
+};

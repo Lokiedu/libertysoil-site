@@ -14,8 +14,12 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ @flow
 */
-export const SEARCH_RESULTS = [
+import type { SearchType, SortingType } from '../definitions/filters';
+
+export const SEARCH_RESULTS: SearchType[] = [
   { name: 'Show everything', value: 'all',
     isDefault: true, combine: false },
   { name: 'Schools', value: 'schools',
@@ -28,7 +32,7 @@ export const SEARCH_RESULTS = [
     combine: { except: ['all'] } },
 ];
 
-export const SEARCH_SORTING_TYPES = [
+export const SEARCH_SORTING_TYPES: SortingType[] = [
   { name: 'By relevance', value: '-q', isDefault: true },
   { name: 'Newest', value: '-updated_at' }
 ];

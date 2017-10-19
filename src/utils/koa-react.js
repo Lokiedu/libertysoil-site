@@ -19,8 +19,10 @@ import { AuthHandler, FetchHandler } from './loader';
 const matchPromisified = promisify(match, { multiArgs: true });
 const readFile = promisify(fs.readFile);
 
+const isTest = ['test', 'travis'].includes(process.env.DB_ENV);
+
 let template;
-if (['test', 'travis'].includes(process.env.DB_ENV)) {
+if (isTest) {
   template = ejs.compile(fs.readFileSync(path.resolve(__dirname, '../views/index.ejs'), 'utf8'));
 } else {
   template = ejs.compile(templateData, { filename: 'index.ejs' });
@@ -33,7 +35,7 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
     if (!webpackChunks) {
       try {
         let chunksFilename = `${__dirname}/../webpack-chunks.json`;
-        if (process.env.DB_ENV === 'test') {
+        if (isTest) {
           chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
         }
 

@@ -41,7 +41,7 @@ export default class SocialToolbar extends React.Component {
     return (
       <div className="layout layout__row">
         {entries.map((service, i) => {
-          const { className = defaultClassName, to, ...rest } = service.toObject();
+          const { className = defaultClassName, to, ...rest } = service;
 
           if (to) {
             if (to.match(/^(\/\/)|(https?:\/\/)/)) {
