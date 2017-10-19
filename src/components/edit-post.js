@@ -32,7 +32,7 @@ import Button from './button';
 import Tag from './tag';
 import AddTagModal from './add-tag-modal';
 
-export default class EditPost extends React.Component {
+export default class EditPost extends React.PureComponent {
   static displayName = 'EditPost';
 
   static propTypes = {
@@ -80,9 +80,9 @@ export default class EditPost extends React.Component {
 
   componentWillMount() {
     const { post } = this.props;
-    const upToDate = this.update(post, this.props.id);
+    const isLoaded = this.updateLoadStatus(post, this.props.id);
 
-    if (!upToDate) {
+    if (!isLoaded) {
       const newFormState = {
         id: post.get('id'),
         geotags: post.get('geotags').toJS(),
@@ -96,7 +96,7 @@ export default class EditPost extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.state.upToDate) {
-      this.update(nextProps.post, nextProps.id);
+      this.updateLoadStatus(nextProps.post, nextProps.id);
     }
   }
 
@@ -104,18 +104,19 @@ export default class EditPost extends React.Component {
     this.props.actions.resetEditPostForm();
   }
 
-  update = (post, formPostId) => {
+  updateLoadStatus = (post, formPostId) => {
+    let hasText = false;
     if (post.get('id') === formPostId) {
-      let hasText = false;
-      if (post.get('text').trim()) {
+      if (post.get('text') && post.get('text').trim()) {
         hasText = true;
       }
-
-      this.setState({ upToDate: true, hasText });
-      return true;
     }
 
-    return false;
+    this.setState((state) => ({
+      ...state, upToDate: hasText, hasText
+    }));
+
+    return hasText;
   };
 
   _handleTextChange = (event) => {
@@ -248,14 +249,16 @@ export default class EditPost extends React.Component {
             <div className="layout__row layout layout-columns layout-align_start">
               <div className="layout__grid_item layout__grid_item-wide">
                 <div className="create_post__text_input_wrapper">
-                  <textarea
-                    className="input input-block create_post__text_input"
-                    defaultValue={post.get('text')}
-                    name="text"
-                    placeholder="Make a contribution to education change"
-                    rows={10}
-                    onChange={this._handleTextChange}
-                  />
+                  {this.state.upToDate &&
+                    <textarea
+                      className="input input-block create_post__text_input"
+                      defaultValue={post.get('text')}
+                      name="text"
+                      placeholder="Make a contribution to education change"
+                      rows={10}
+                      onChange={this._handleTextChange}
+                    />
+                  }
                 </div>
               </div>
               <div className="layout__grid_item layout__grid_item-small layout layout-rows layout-align_vertical">
