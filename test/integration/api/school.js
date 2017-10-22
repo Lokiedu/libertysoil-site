@@ -16,20 +16,156 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
-import { uniq } from 'lodash';
+import { uniq, sortBy, pick } from 'lodash';
 
 import expect from '../../../test-helpers/expect';
-import { bookshelf } from '../../../test-helpers/db';
+import { bookshelf, knex } from '../../../test-helpers/db';
 import { login } from '../../../test-helpers/api';
 
-import UserFactory from '../../../test-helpers/factories/user';
-import SchoolFactory from '../../../test-helpers/factories/school';
+import { createUser } from '../../../test-helpers/factories/user';
+import { createPosts } from '../../../test-helpers/factories/post';
+import SchoolFactory, { createSchool, createSchools } from '../../../test-helpers/factories/school';
 
-const User = bookshelf.model('User');
 const School = bookshelf.model('School');
 
-describe('Post', () => {
-  describe('/api/v1/schools-alphabet', () => {
+describe('School', () => {
+  let user, school, session;
+
+  before(async () => {
+    school = await createSchool({ name: 'SomeSchool' });
+    user = await createUser();
+    session = await login(user.get('username'), user.get('password'));
+  });
+
+  after(async () => {
+    await user.destroy();
+    await school.destroy();
+  });
+
+  describe('HEAD /api/v1/school/:name', () => {
+    it('responds with 200 if school exists', async () => {
+      await expect(
+        {
+          url: `/api/v1/school/${school.get('name')}`,
+          method: 'HEAD',
+        },
+        'to open successfully',
+      );
+    });
+
+    it('responds with 404 if school does not exist', async () => {
+      await expect(
+        {
+          url: `/api/v1/school/nonexistent-school`,
+          method: 'HEAD',
+        },
+        'to open not found',
+      );
+    });
+  });
+
+  describe('GET /api/v1/school/:url_name', () => {
+    it('responds with school', async () => {
+      await expect(
+        {
+          url: `/api/v1/school/${school.get('url_name')}`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        { id: school.id }
+      );
+    });
+
+    it('responds with 404 if school does not exist', async () => {
+      await expect(
+        {
+          url: `/api/v1/school/nonexistent-school`,
+          method: 'GET'
+        },
+        'to open not found',
+      );
+    });
+  });
+
+  describe('GET /api/v1/schools', function () {
+    this.retries(4);
+
+    let schools, schoolIds, allSchools;
+
+    before(async () => {
+      schools = await createSchools(10);
+      schoolIds = schools.map(school => school.id);
+      allSchools = sortBy([...schools, school].map(school => (
+        pick(school.attributes, 'id', 'name', 'url_name', 'created_at')
+      )), 'name');
+    });
+
+    after(async () => {
+      await knex('schools').whereIn('id', schoolIds).del();
+    });
+
+    it('responds with schools', async () => {
+      await expect(
+        {
+          url: `/api/v1/schools`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        allSchools.map(school => pick(school, 'id', 'name'))
+      );
+    });
+
+    it('responds with schools (offset, limit)', async () => {
+      await expect(
+        {
+          url: `/api/v1/schools?limit=1&offset=1`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        [{ id: allSchools[1].id }]
+      );
+    });
+
+    it('responds with schools (sort)', async () => {
+      await expect(
+        {
+          url: `/api/v1/schools?sort=-created_at`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        sortBy(allSchools, 'created_at').map(school => pick(school, 'id', 'name')).reverse()
+      );
+    });
+  });
+
+  describe('GET /api/v1/school-cloud', () => {
+    let schools;
+
+    before(async () => {
+      schools = await createSchools([
+        { post_count: 2 },
+        { post_count: 1 },
+        { post_count: 0 },
+      ]);
+    });
+
+    after(async () => {
+      await knex('schools').whereIn('id', schools.map(school => school.id)).del();
+    });
+
+    it('responds with schools sorted by post_count', async () => {
+      await expect(
+        {
+          url: `/api/v1/school-cloud`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        [{ id: schools[0].id }, { id: schools[1].id }]
+      );
+    });
+  });
+
+  describe('GET /api/v1/schools-alphabet', () => {
     const schools = [];
 
     before(async () => {
@@ -56,8 +192,80 @@ describe('Post', () => {
     });
   });
 
-  describe('/api/v1/schools/new', () => {
-    describe('Not authenticated user', () => {
+  describe('POST /api/v1/school/:url_name/follow', () => {
+    after(async () => {
+      await user.followed_schools().detach(school.id);
+    });
+
+    it('responds with school', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/school/${school.get('url_name')}/follow`,
+          method: 'POST'
+        },
+        'body to satisfy',
+        { success: true, school: { id: school.id } }
+      );
+    });
+  });
+
+  describe('POST /api/v1/school/:url_name/unfollow', () => {
+    before(async () => {
+      await user.followed_schools().attach(school.id);
+    });
+
+    it('responds with school', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/school/${school.get('url_name')}/unfollow`,
+          method: 'POST'
+        },
+        'body to satisfy',
+        { success: true, school: { id: school.id } }
+      );
+    });
+  });
+
+  describe('POST /api/v1/school/:url_name/like', () => {
+    after(async () => {
+      await user.liked_schools().detach(school.id);
+    });
+
+    it('responds with school', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/school/${school.get('url_name')}/like`,
+          method: 'POST'
+        },
+        'body to satisfy',
+        { success: true, school: { id: school.id } }
+      );
+    });
+  });
+
+  describe('POST /api/v1/school/:url_name/unlike', () => {
+    before(async () => {
+      await user.liked_schools().attach(school.id);
+    });
+
+    it('responds with school', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/school/${school.get('url_name')}/unlike`,
+          method: 'POST'
+        },
+        'body to satisfy',
+        { success: true, school: { id: school.id } }
+      );
+    });
+  });
+
+  describe('POST /api/v1/schools/new', () => {
+    describe('Unauthenticated user', () => {
       it('responds with error', async () => {
         await expect(
           { url: '/api/v1/schools/new', method: 'POST', body: { name: 'test' } },
@@ -67,100 +275,74 @@ describe('Post', () => {
     });
 
     describe('Authenticated user', () => {
-      let user, sessionId;
-
-      before(async () => {
-        const userAttrs = UserFactory.build();
-        user = await User.create(userAttrs);
-
-        user.set('email_check_hash', null);
-        await user.save(null, { method: 'update' });
-        sessionId = await login(userAttrs.username, userAttrs.password);
-      });
-
-      after(async () => {
-        await user.destroy();
-        sessionId = null;
-      });
-
       describe('If school doesn\'t exist', () => {
         describe('Validation errors', () => {
           it('"name" property isn\'t given', async () => {
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: {},
                 method: 'POST'
               },
               'to fail validation with',
-              '"name" property is not given'
+              [{ path: 'name' }]
             );
           });
 
           it('"name" property is an empty string or contains only whitespace', async () => {
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: '' },
                 method: 'POST'
               },
               'to fail validation with',
-              '"name" mustn\'t be an empty string'
+              [{ path: 'name' }]
             );
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: '     ' },
                 method: 'POST'
               },
               'to fail validation with',
-              '"name" mustn\'t be an empty string'
+              [{ path: 'name' }]
             );
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: ' \n\n  \r \t ' },
                 method: 'POST'
               },
               'to fail validation with',
-              '"name" mustn\'t be an empty string'
+              [{ path: 'name' }]
             );
           });
 
           it("'is_open' has to be boolean or null", async () => {
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: 'test', is_open: '' },
                 method: 'POST'
               },
-              'body to satisfy',
-              { error: "'is_open' has to be boolean or null" }
+              'to fail validation with',
+              [{ path: 'is_open' }]
             );
             await expect(
               {
-                session: sessionId,
-                url: '/api/v1/schools/new',
-                body: { name: 'test', is_open: '' },
-                method: 'POST'
-              },
-              'body to satisfy',
-              { error: "'is_open' has to be boolean or null" }
-            );
-            await expect(
-              {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: 'test', is_open: 1 },
                 method: 'POST'
               },
-              'body to satisfy',
-              { error: "'is_open' has to be boolean or null" }
+              'to fail validation with',
+              [{ path: 'is_open' }]
             );
           });
 
@@ -168,10 +350,14 @@ describe('Post', () => {
         });
 
         describe('Succeed', () => {
+          after(async () => {
+            await School.where({ name: 'test' }).destroy({ require: true });
+          });
+
           it('creates school successfully', async () => {
             await expect(
               {
-                session: sessionId,
+                session,
                 url: '/api/v1/schools/new',
                 body: { name: 'test' },
                 method: 'POST'
@@ -184,9 +370,6 @@ describe('Post', () => {
                 url_name: 'test'
               }
             );
-
-            const school = await School.where({ name: 'test' }).fetch({ require: true });
-            await school.destroy();
           });
         });
       });
@@ -195,7 +378,7 @@ describe('Post', () => {
         let school, name;
 
         before(async () => {
-          school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
+          school = await createSchool();
           name = school.get('name');
         });
 
@@ -207,7 +390,7 @@ describe('Post', () => {
         it('responds with error', async () => {
           await expect(
             {
-              session: sessionId,
+              session,
               url: '/api/v1/schools/new',
               body: { name },
               method: 'POST'
@@ -217,7 +400,7 @@ describe('Post', () => {
           );
           await expect(
             {
-              session: sessionId,
+              session,
               url: '/api/v1/schools/new',
               body: { name: `${name} ` },
               method: 'POST'
@@ -227,6 +410,86 @@ describe('Post', () => {
           );
         });
       });
+    });
+  });
+
+  describe('POST /api/v1/school/:id', () => {
+    after(async () => {
+      await school.save({ name: 'SomeSchool' }, { patch: true });
+    });
+
+    it('responds with updated school', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/school/${school.id}`,
+          method: 'POST',
+          body: {
+            name: 'NewName'
+          }
+        },
+        'body to satisfy',
+        { id: school.id, name: 'NewName' }
+      );
+    });
+  });
+
+  describe('GET /api/v1/schools/:query', () => {
+    it('responds with matching schools', async () => {
+      await expect(
+        {
+          url: `/api/v1/schools/SomeSc`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        { schools: [{ id: school.id }] }
+      );
+    });
+
+    it('responds with empty array if nothing is found', async () => {
+      await expect(
+        {
+          url: `/api/v1/schools/nonexistent`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        { schools: [] }
+      );
+    });
+  });
+
+  describe('GET /api/v1/user/recent-schools', () => {
+    const NUM_SCHOOLS = 5;
+    let posts, schools, schoolIds;
+
+    before(async () => {
+      posts = await createPosts(Array.apply(null, Array(NUM_SCHOOLS)).map((_, i) => ({
+        user_id: user.id,
+        created_at: new Date(Date.UTC(2017, 10, i)),
+      })));
+      schools = await createSchools(NUM_SCHOOLS);
+      schoolIds = schools.map(school => school.id);
+
+      await Promise.all(schoolIds.map((id, i) => (
+        posts[i].schools().attach(id)
+      )));
+    });
+
+    after(async () => {
+      await knex('posts').whereIn('id', posts.map(post => post.id)).del();
+      await knex('schools').whereIn('id', schoolIds).del();
+    });
+
+    it('responds with 5 recently used schools', async () => {
+      await expect(
+        {
+          session,
+          url: `/api/v1/user/recent-schools`,
+          method: 'GET'
+        },
+        'body to satisfy',
+        schoolIds.map(id => ({ id })).reverse()
+      );
     });
   });
 });
