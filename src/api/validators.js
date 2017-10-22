@@ -90,14 +90,14 @@ export const SchoolValidator = Joi.object({
 export const GeotagValidator = Joi.object({
   more: Joi.object({
     description: Joi.string()
-  })
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const HashtagValidator = Joi.object({
   more: Joi.object({
     description: Joi.string(),
     head_pic: PictureAttachment
-  })
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const UserMessageValidator = Joi.object({
@@ -113,7 +113,7 @@ const PROFILE_POST_TYPES = [
 export const ProfilePostValidator = Joi.object({
   text: Joi.string().max(200),
   type: Joi.string().only(PROFILE_POST_TYPES).required(),
-  more: Joi.object() // TODO: Keys
+  more: Joi.object().default({}) // TODO: Keys
 }).options({ abortEarly: false, stripUnknown: true });
 
 const SEARCH_RESULT_TYPES = [
