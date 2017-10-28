@@ -31,7 +31,7 @@ const knexConfig = dbConfig[dbEnv];
 const bookshelf = initBookshelf(knexConfig);
 const knex = bookshelf.knex;
 
-export default function startServer(/*params*/) {
+module.exports = function startServer(/*params*/) {
   const queue = kueLib.createQueue(config.kue);
 
   // Every 10 minutes, update post statistics.
@@ -155,4 +155,4 @@ export default function startServer(/*params*/) {
   });
 
   process.stdout.write(`Job service started\n`);
-}
+};
