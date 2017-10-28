@@ -92,23 +92,35 @@ module.exports.clientLibFixes = () => [{
 }];
 
 module.exports.css = (__DEV__) => [{
-  test: /\.css$/,
-  use: ExtractTextPlugin.extract({
-    fallback: 'style-loader',
-    publicPath: '../../',
-    use: [
-      { loader: 'css-loader',
-        options: {
-          autoprefixer: false,
-          calc: false,
-          mergeIdents: false,
-          mergeRules: false,
-          uniqueSelectors: false
-        } },
-      { loader: 'postcss-loader' }
-    ].map(l => addSourceMap(l, __DEV__))
-  })
-}];
+  test: /\.css$/
+}].map(rule => {
+  let use;
+  if (__DEV__) {
+    use = [
+      { loader: 'style-loader?sourceMap' },
+      { loader: 'css-loader?sourceMap' },
+      { loader: 'postcss-loader?sourceMap' }
+    ];
+  } else {
+    use = ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      publicPath: '../../',
+      use: [
+        { loader: 'css-loader',
+          options: {
+            autoprefixer: false,
+            calc: false,
+            mergeIdents: false,
+            mergeRules: false,
+            uniqueSelectors: false
+          } },
+        { loader: 'postcss-loader' }
+      ]
+    });
+  }
+
+  return Object.assign(rule, { use });
+});
 
 module.exports.ejsIndexTemplate = () => [{
   test: /\/index\.ejs$/,
@@ -173,24 +185,37 @@ module.exports.less = (__DEV__, context) => [{
       { test: /\.less$/ },
       { include: path.join(context, 'src/less') },
     ]
-  },
-  use: ExtractTextPlugin.extract({
-    fallback: 'style-loader',
-    publicPath: '../../',
-    use: [
-      { loader: 'css-loader',
-        options: {
-          autoprefixer: false,
-          calc: false,
-          mergeIdents: false,
-          mergeRules: false,
-          uniqueSelectors: false
-        } },
-      { loader: 'postcss-loader' },
-      { loader: 'less-loader' }
-    ].map(l => addSourceMap(l, __DEV__))
-  })
-}];
+  }
+}].map(rule => {
+  let use;
+  if (__DEV__) {
+    use = [
+      { loader: 'style-loader?sourceMap' },
+      { loader: 'css-loader?sourceMap' },
+      { loader: 'postcss-loader?sourceMap' },
+      { loader: 'less-loader?sourceMap' }
+    ];
+  } else {
+    use = ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      publicPath: '../../',
+      use: [
+        { loader: 'css-loader',
+          options: {
+            autoprefixer: false,
+            calc: false,
+            mergeIdents: false,
+            mergeRules: false,
+            uniqueSelectors: false
+          } },
+        { loader: 'postcss-loader' },
+        { loader: 'less-loader' }
+      ]
+    });
+  }
+
+  return Object.assign(rule, { use });
+});
 
 module.exports.serverJS = (__DEV__, context) => [{
   test: /\.js?$/,

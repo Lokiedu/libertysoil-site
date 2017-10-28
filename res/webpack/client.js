@@ -59,14 +59,6 @@ const clientConfiguration = merge({}, baseConfiguration, {
       filename: __DEV__ ? 'assets/[name].js' : 'assets/[name]-[chunkhash].js',
       name: 'manifest',
       minChunks: Infinity
-    }),
-    new ExtractTextPlugin({
-      filename: path.join('assets/styles/[name]-[contentHash].css'),
-      allChunks: true
-    }),
-    new ManifestPlugin({
-      fileName: 'webpack-chunks.json',
-      writeToFileEmit: true
     })
   ],
   target: 'web'
@@ -91,7 +83,11 @@ if (__DEV__) {
     },
     plugins: [
       new webpack.NamedChunksPlugin(),
-      new webpack.HotModuleReplacementPlugin()
+      new webpack.HotModuleReplacementPlugin(),
+      new ManifestPlugin({
+        fileName: 'webpack-chunks.json',
+        writeToFileEmit: true
+      })
     ]
   });
 } else {
@@ -118,6 +114,16 @@ if (__DEV__) {
           comments: false
         },
         sourceMap: false
+      }),
+      new ExtractTextPlugin({
+        filename: path.join('assets/styles/[name]-[contentHash].css'),
+        allChunks: true
+      }),
+      // cannot push to __DEV__-independent config
+      // since the ordering makes sense (after ExtractTextPlugin in this case)
+      new ManifestPlugin({
+        fileName: 'webpack-chunks.json',
+        writeToFileEmit: true
       }),
       new webpack.optimize.AggressiveMergingPlugin({
         minSizeReduce: true

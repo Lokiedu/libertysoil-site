@@ -20,8 +20,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
   <%- metadata.title %>
+  <% if (paths.webpackChunks['vendor.css']) { %>
   <link rel="stylesheet" href="<%- paths.webpackChunks['vendor.css'] %>">
+  <% } %>
+  <% if (paths.webpackChunks['app.css']) { %>
   <link rel="stylesheet" href="<%- paths.webpackChunks['app.css'] %>">
+  <% } %>
   <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
   <% if (gtm) { %>
   <!-- Google Tag Manager -->
