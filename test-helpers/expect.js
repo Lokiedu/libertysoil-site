@@ -9,7 +9,7 @@ import { TestCache } from '../src/api/utils/cache';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
-const startServer = require('../server').default;
+const startServer = require('../server');
 const app = startServer();
 
 // A very basic stubs to make API tests pass without intalling sphinx.

@@ -183,11 +183,16 @@ const initReduxForMainApp = async (ctx) => {
 const serve = (...params) => staticCache(...params);
 
 
-function startServer(/*params*/) {
+module.exports = function startServer(/*params*/) {
   const sphinx = initSphinx();
   const api = initApi(bookshelf);
 
-  const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
+  let staticsRoot;
+  if (process.env.NODE_ENV === 'production') {
+    staticsRoot = path.join(__dirname, '..');
+  } else {
+    staticsRoot = path.join(__dirname, 'public');
+  }
 
   const staticsAppConfig = {
     buffer: true,
@@ -236,8 +241,22 @@ function startServer(/*params*/) {
     }
   });
 
-  if (exec_env === 'development') {
+  if (process.env.NODE_ENV !== 'production' && dbEnv === 'development') {
     logger.level('debug');
+
+    const webpack = require('webpack');
+    const webpackDevMiddleware = require('koa-webpack-dev-middleware');
+    const webpackConfig = require('./res/webpack/client');
+    const compiler = webpack(webpackConfig);
+
+    app.use(convert(webpackDevMiddleware(compiler, {
+      log: logger.debug.bind(logger),
+      path: '/__webpack_hmr',
+      publicPath: webpackConfig.output.publicPath,
+      stats: {
+        colors: true
+      }
+    })));
   }
 
   app.use(createRequestLogger({ level: 'info', logger }));
@@ -270,6 +289,7 @@ function startServer(/*params*/) {
   app.use(koaEtag());
 
   app.use(mount('/api/v1', api));
+
   app.use(staticsApp);
   app.use(mount('/uikit', getReactMiddleware(
     'uikit',
@@ -294,6 +314,4 @@ function startServer(/*params*/) {
   });
 
   return app;
-}
-
-export default startServer;
+};
