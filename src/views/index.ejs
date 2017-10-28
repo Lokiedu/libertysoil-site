@@ -20,8 +20,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
   <%- metadata.title %>
-  <link rel="stylesheet" href="<%- paths.webpackChunks.styles.vendor %>">
-  <link rel="stylesheet" href="<%- paths.webpackChunks.styles.app %>">
+  <link rel="stylesheet" href="<%- paths.webpackChunks['vendor.css'] %>">
+  <link rel="stylesheet" href="<%- paths.webpackChunks['app.css'] %>">
   <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
   <% if (gtm) { %>
   <!-- Google Tag Manager -->
@@ -45,9 +45,9 @@
   var state = <%- state %>;
 </script>
 <div id="content"><%- html %></div>
-<script src="<%- paths.webpackChunks.javascript.manifest %>"></script>
-<script src="<%- paths.webpackChunks.javascript.vendor %>"></script>
-<script src="<%- paths.webpackChunks.javascript.app %>"></script>
+<script src="<%- paths.webpackChunks['manifest.js'] %>"></script>
+<script src="<%- paths.webpackChunks['vendor.js'] %>"></script>
+<script src="<%- paths.webpackChunks['app.js'] %>"></script>
 <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
 </body>
 </html>
