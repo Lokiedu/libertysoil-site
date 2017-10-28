@@ -23,4 +23,9 @@ assetRequireHook({
   publicPath: '/'
 });
 
-babelRegisterHook({ ignore: /\/(public|node_modules)\// });
+babelRegisterHook({
+  ignore: /\/(public|node_modules)\//,
+  plugins: [
+    'react-hot-loader/babel'
+  ]
+});

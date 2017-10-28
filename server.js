@@ -246,6 +246,7 @@ module.exports = function startServer(/*params*/) {
 
     const webpack = require('webpack');
     const webpackDevMiddleware = require('koa-webpack-dev-middleware');
+    const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
     const webpackConfig = require('./res/webpack/client');
     const compiler = webpack(webpackConfig);
 
@@ -257,6 +258,7 @@ module.exports = function startServer(/*params*/) {
         colors: true
       }
     })));
+    app.use(convert(webpackHotMiddleware(compiler)));
   }
 
   app.use(createRequestLogger({ level: 'info', logger }));
