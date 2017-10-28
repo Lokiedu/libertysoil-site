@@ -39,7 +39,6 @@ import redis from 'redis';
 import t from 't8on';
 
 import createRequestLogger from './src/utils/bunyan-koa-request';
-import { initApi } from './src/api/routing';
 import initBookshelf from './src/api/db';
 import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
@@ -183,9 +182,8 @@ const initReduxForMainApp = async (ctx) => {
 const serve = (...params) => staticCache(...params);
 
 
-module.exports = function startServer(/*params*/) {
+module.exports = function startServer(attachChangeCallback) {
   const sphinx = initSphinx();
-  const api = initApi(bookshelf);
 
   let staticsRoot;
   if (process.env.NODE_ENV === 'production') {
@@ -290,7 +288,15 @@ module.exports = function startServer(/*params*/) {
   app.use(koaConditional());
   app.use(koaEtag());
 
-  app.use(mount('/api/v1', api));
+  if (process.env.NODE_ENV !== 'production' && attachChangeCallback) {
+    const setupApiReload = require('./src/utils/reload-api').default;
+    const reloadApi = setupApiReload(app, bookshelf, sphinx);
+    attachChangeCallback(reloadApi);
+    reloadApi(true); // initialize the API
+  } else {
+    const { initApi } = require('./src/api/routing');
+    app.use(mount('/api/v1', initApi(bookshelf, sphinx)));
+  }
 
   app.use(staticsApp);
   app.use(mount('/uikit', getReactMiddleware(

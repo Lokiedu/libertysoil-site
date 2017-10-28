@@ -13,7 +13,7 @@ require('babel-runtime/core-js/promise').default = bb;
 global.Promise = bb;
 
 require('./utils/hook');
-require('./utils/watch');
+const attachChangeCallback = require('./utils/watch')();
 
-require('../server')(),
+require('../server')(attachChangeCallback),
 require('../tasks')();
