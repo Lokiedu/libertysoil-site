@@ -32,12 +32,8 @@ const
   __DEV__  = NODE_ENV !== 'production';
 
 const clientConfiguration = merge({}, baseConfiguration, {
-  entry: {
-    "app": ['babel-polyfill', `${context}/src/scripts/app.js`],
-    "uikit": ['babel-polyfill', `${context}/src/uikit/scripts.js`],
-  },
   output: {
-    filename: 'assets/[name]-[chunkhash].js',
+    filename: __DEV__ ? 'assets/[name].js' : 'assets/[name]-[chunkhash].js',
     path: `${context}/public`
   },
   module: {
@@ -60,7 +56,7 @@ const clientConfiguration = merge({}, baseConfiguration, {
       minChunks: (module) => /node_modules/.test(module.resource)
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      filename: 'assets/[name]-[chunkhash].js',
+      filename: __DEV__ ? 'assets/[name].js' : 'assets/[name]-[chunkhash].js',
       name: 'manifest',
       minChunks: Infinity
     }),
@@ -78,10 +74,32 @@ const clientConfiguration = merge({}, baseConfiguration, {
 
 if (__DEV__) {
   merge(clientConfiguration, {
-    devtool: 'eval'
+    devtool: 'eval',
+    entry: {
+      app: [
+        'babel-polyfill',
+        'react-hot-loader/patch',
+        'webpack-hot-middleware/client?path=/__webpack_hmr',
+        `${context}/src/scripts/app.js`
+      ],
+      uikit: [
+        'babel-polyfill',
+        'react-hot-loader/patch',
+        'webpack-hot-middleware/client?path=/__webpack_hmr',
+        `${context}/src/uikit/scripts.js`
+      ]
+    },
+    plugins: [
+      new webpack.NamedChunksPlugin(),
+      new webpack.HotModuleReplacementPlugin()
+    ]
   });
 } else {
   merge(clientConfiguration, {
+    entry: {
+      app: ['babel-polyfill', `${context}/src/scripts/app.js`],
+      uikit: ['babel-polyfill', `${context}/src/uikit/scripts.js`]
+    },
     plugins: [
       new webpack.EnvironmentPlugin([
         'API_HOST', 'NODE_ENV', 'MAPBOX_ACCESS_TOKEN',
