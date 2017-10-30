@@ -101,8 +101,8 @@ describe('ActionsTrigger', () => {
         await triggers.registerUser({ firstName: userAttrs.firstName, lastName: userAttrs.lastName });
         expect(
           store.getState().get('messages').first().get('message'),
-          'to contain',
-          'ValidationError'
+          'to equal',
+          'api.errors.validation'
         );
       });
     });
@@ -167,7 +167,7 @@ describe('ActionsTrigger', () => {
       triggers = new ActionsTrigger(client, store.dispatch);
 
       await triggers.updateUserInfo({});
-      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Bad Request');
+      expect(store.getState().get('messages').first().get('message'), 'to equal', 'api.errors.validation');
 
       store = initState();
       triggers = new ActionsTrigger(client, store.dispatch);
@@ -180,8 +180,8 @@ describe('ActionsTrigger', () => {
       let store = initState();
       triggers = new ActionsTrigger(client, store.dispatch);
 
-      await triggers.createComment('nonexistingpost');
-      expect(store.getState().get('messages').first().get('message'), 'to equal', 'Not Found');
+      await triggers.createComment(uuid.v4());
+      expect(store.getState().getIn(['ui', 'comments', 'new', 'error']), 'to equal', 'api.errors.not-found');
 
       const post = new Post(PostFactory.build());
       await post.save(null, { method: 'insert' });
@@ -194,18 +194,20 @@ describe('ActionsTrigger', () => {
 
     it('#deleteComment should work', async () => {
       const store = initState();
+      const commentId = uuid.v4();
       triggers = new ActionsTrigger(client, store.dispatch);
 
-      await triggers.deleteComment('nonexistingpostid', 'nonexistingcommentid');
-      expect(store.getState().getIn(['ui', 'comments', 'nonexistingcommentid', 'error']), 'to equal', 'Not Found');
+      await triggers.deleteComment(uuid.v4(), commentId);
+      expect(store.getState().getIn(['ui', 'comments', commentId, 'error']), 'to equal', 'api.errors.not-found');
     });
 
     it('#saveComment should work', async () => {
       let store = initState();
+      const commentId = uuid.v4();
       triggers = new ActionsTrigger(client, store.dispatch);
 
-      await triggers.saveComment('nonexistingpostid', 'nonexistingcommentid', 'text');
-      expect(store.getState().getIn(['ui', 'comments', 'nonexistingcommentid', 'error']), 'to equal', 'Not Found');
+      await triggers.saveComment(uuid.v4(), commentId, 'text');
+      expect(store.getState().getIn(['ui', 'comments', commentId, 'error']), 'to equal', 'api.errors.not-found');
 
       const post = new Post(PostFactory.build());
       await post.save(null, { method: 'insert' });

@@ -113,20 +113,20 @@ describe('Client test', () => {
     });
 
     it('#search works', async () => {
-      return expect(client.search({ q: 'test' }), 'to be rejected with', 'Not Found');
+      return expect(client.search({ q: 'test' }), 'to be rejected with', 'api.errors.not-found');
     });
   });
 
   it('#userInfo works', async () => {
-    return expect(client.userInfo('nonexisting'), 'to be rejected with', 'Not Found');
+    return expect(client.userInfo('nonexisting'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#getSchool correctly handle non existing school call', async () => {
-    return expect(client.getSchool('nonexisting'), 'to be rejected with', 'Not Found');
+    return expect(client.getSchool('nonexisting'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#relatedPosts correctly handle non existing post id ', async () => {
-    return expect(client.relatedPosts(v4()), 'to be rejected with', 'Internal Server Error');
+    return expect(client.relatedPosts(v4()), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#userTags correctly handle non authenticated request', async () => {
@@ -142,15 +142,15 @@ describe('Client test', () => {
   });
 
   it('#geotagPosts correctly handle non existing geotag', async () => {
-    return expect(client.geotagPosts('nonexistinggeotag'), 'to be rejected with', 'Not Found');
+    return expect(client.geotagPosts('nonexistinggeotag'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#city correctly handle non existing entity', async () => {
-    return expect(client.city('nonexistingcity'), 'to be rejected with', 'Not Found');
+    return expect(client.city(123), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#country correctly handle non existing entity', async () => {
-    return expect(client.country('nonexistingcountry'), 'to be rejected with', 'Not Found');
+    return expect(client.country(123), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#like correctly handle non authenticated request', async () => {
@@ -181,7 +181,7 @@ describe('Client test', () => {
     });
 
     it('should work', async () => {
-      return expect(client.getAvailableUsername('test'), 'to be rejected with', 'test');
+      return expect(client.getAvailableUsername('test'), 'to be rejected');
     });
   });
 });

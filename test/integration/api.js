@@ -273,8 +273,14 @@ describe('api v.1', () => {
 
         it('validation works', async () => {
           await expect(
-            { url: `/api/v1/upload`, session: sessionId, method: 'POST' }
-            , 'to fail validation with', '"files" parameter is not provided');
+            {
+              url: `/api/v1/upload`,
+              session: sessionId,
+              method: 'POST'
+            },
+            'to fail validation with',
+            [{ path: 'files' }]
+          );
         });
 
         it('works', async () => {

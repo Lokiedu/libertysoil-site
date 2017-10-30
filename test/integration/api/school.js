@@ -32,6 +32,7 @@ describe('School', () => {
   let user, school, session;
 
   before(async () => {
+    await knex('schools').del(); // schools are leaking somewhere
     school = await createSchool({ name: 'SomeSchool' });
     user = await createUser();
     session = await login(user.get('username'), user.get('password'));

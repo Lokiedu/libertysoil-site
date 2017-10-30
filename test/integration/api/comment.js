@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* eslint-env node, mocha */
+import uuid from 'uuid';
+
 import expect from '../../../test-helpers/expect';
 import { createPost } from '../../../test-helpers/factories/post';
 import { createUser } from '../../../test-helpers/factories/user';
@@ -98,6 +100,34 @@ describe('Comment', () => {
           }
         },
         'not to open authorized'
+      );
+    });
+
+    it('responds with 404 if comment does not exist', async () => {
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/post/${post.id}/comment/${uuid.v4()}`,
+          method: 'POST',
+          body: {
+            text: 'some text'
+          }
+        },
+        'to open not found'
+      );
+    });
+
+    it('responds with 404 if post does not exist', async () => {
+      await expect(
+        {
+          session: sessionId,
+          url: `/api/v1/post/${uuid.v4()}/comment/${uuid.v4()}`,
+          method: 'POST',
+          body: {
+            text: 'some text'
+          }
+        },
+        'to open not found'
       );
     });
 
