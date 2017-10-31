@@ -44,6 +44,7 @@
     flex-grow: 1;
     align-self: stretch;
     margin-right: auto;
+    overflow: hidden;
   }
 
   &__content-box {
@@ -150,10 +151,10 @@
 
   &--transition {
     &-appear {
-      transform: translateX(240px);
+      transform: translateX(100%);
 
       &.navigation-item--transition-appear-active {
-      transform: translateX(0px);
+        transform: translateX(0px);
         transition: transform 0.25s ease-in-out;  
       }
     }
@@ -162,13 +163,13 @@
       transform: translateX(0px);
 
       &.navigation-item--transition-leave-active {
-        transform: translateX(240px);
+        transform: translateX(100%);
         transition: transform 0.25s ease-in-out;
       }
     }
 
     &-enter {
-      transform: translateX(240px);
+      transform: translateX(100%);
 
       &.navigation-item--transition-enter-active {
         transform: translateX(0px);
