@@ -75,6 +75,7 @@ const baseConfiguration = {
 
 if (__DEV__) {
   merge(baseConfiguration, {
+    cache: true,
     performance: {
       hints: 'warning'
     },

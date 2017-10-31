@@ -51,11 +51,6 @@ const clientConfiguration = merge({}, baseConfiguration, {
     new webpack.IgnorePlugin(/^ioredis$/),
     new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /en/),
     new webpack.optimize.CommonsChunkPlugin({
-      filename: 'assets/[name]-[chunkhash].js',
-      name: 'vendor',
-      minChunks: (module) => /node_modules/.test(module.resource)
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
       filename: __DEV__ ? 'assets/[name].js' : 'assets/[name]-[chunkhash].js',
       name: 'manifest',
       minChunks: Infinity
@@ -82,13 +77,22 @@ if (__DEV__) {
       ]
     },
     plugins: [
+      new webpack.DllReferencePlugin({
+        context,
+        name: 'vendor',
+        manifest: require(`${context}/public/vendor-manifest.json`), // eslint-disable-line
+        extensions: ['.js', '.jsx']
+      }),
       new webpack.NamedChunksPlugin(),
       new webpack.HotModuleReplacementPlugin(),
       new ManifestPlugin({
         fileName: 'webpack-chunks.json',
         writeToFileEmit: true
       })
-    ]
+    ],
+    resolve: {
+      unsafeCache: true
+    }
   });
 } else {
   merge(clientConfiguration, {
