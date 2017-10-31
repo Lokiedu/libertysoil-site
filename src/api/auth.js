@@ -139,8 +139,7 @@ export function setUpPassport(bookshelf) {
  * Returns HTML with a script that calls window.oauthCallback of the parent window and closes the popup.
  */
 function renderCallbackResponse({ profile, user, error }) {
-  return (
-`<!DOCTYPE html>
+  return (`<!DOCTYPE html>
 <html>
   <head>
     <script>
