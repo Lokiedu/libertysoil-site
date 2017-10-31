@@ -105,6 +105,10 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
           webpackChunks,
         };
 
+        if (process.env.NODE_ENV !== 'production') {
+          paths.webpackChunks['vendor.js'] = 'assets/vendor.js';
+        }
+
         ctx.staus = 200;
         ctx.body = template({ appName, state, html, metadata, gtm, localization, paths });
       } catch (e) {

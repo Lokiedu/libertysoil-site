@@ -32,28 +32,15 @@ function fontLoader(options, __DEV__) {
   return loaderObject;
 }
 
-function addSourceMap(loader, __DEV__) {
-  if (__DEV__) {
-    return {
-      ...loader,
-      options: {
-        ...loader.options,
-        sourceMap: true
-      }
-    };
-  }
-
-  return loader;
-}
-
 module.exports = {};
 
 module.exports.clientJS = (__DEV__, context) => [{
   test: /\.js?$/,
-  include: path.join(context, 'src'),
+  include: [path.join(context, 'src'), path.join(context, 'public/assets')],
   exclude: /(node_modules)/,
   loader: 'babel-loader',
   options: {
+    cacheDirectory: true,
     ignore: /(node_modules)/,
     presets: [
       'react',
@@ -227,6 +214,7 @@ module.exports.serverJS = (__DEV__, context) => [{
   exclude: /(node_modules)/,
   loader: 'babel-loader',
   options: {
+    cacheDirectory: true,
     ignore: /(node_modules)/,
     presets: ["react"],
     plugins: (() => {
