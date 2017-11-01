@@ -21,7 +21,7 @@ import { without } from 'lodash';
 export const POST_RELATIONS = Object.freeze([
   'user', 'likers', 'favourers', 'hashtags', 'schools',
   'geotags', 'liked_hashtag', 'liked_school', 'liked_geotag',
-  { post_comments: qb => qb.orderBy('created_at') }, 'post_comments.user'
+  { post_comments: (qb: Object) => qb.orderBy('created_at') }, 'post_comments.user'
 ]);
 
 export const USER_RELATIONS = Object.freeze([
