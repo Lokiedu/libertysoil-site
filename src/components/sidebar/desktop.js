@@ -21,8 +21,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import ApiClient from '../../api/client';
+import { API_HOST } from '../../config';
 import createSelector from '../../selectors/createSelector';
 import currentUserSelector from '../../selectors/currentUser';
+import { ActionsTrigger } from '../../triggers';
 
 import SidebarMenu from '../sidebar-menu';
 import TagsInform from '../tags-inform';
@@ -142,7 +145,16 @@ class SidebarDesktop extends React.PureComponent {
 
   handleSwitchClick = () => {
     this.setState(
-      state => ({ ...state, collapsed: !state.collapsed })
+      state => ({ ...state, collapsed: !state.collapsed }),
+      () => {
+        const client = new ApiClient(API_HOST);
+        const triggers = new ActionsTrigger(client, this.props.dispatch);
+        triggers.updateUserInfo({
+          more: {
+            sidebar: { collapsed: this.state.collapsed }
+          }
+        });
+      }
     );
   };
 
