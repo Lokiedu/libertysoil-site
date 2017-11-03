@@ -500,7 +500,7 @@ export default class ApiClient {
   }
 
   async registerUser(userData: Object): Promise<Success & { user: User }> {
-    const response = await this.post(`/api/v1/users`, userData);
+    const response = await this.postJSON(`/api/v1/users`, userData);
     return (await response.json(): Success & { user: User });
   }
 

@@ -38,7 +38,7 @@ describe('"login" trigger', () => {
     const triggers = new ActionsTrigger(client, store.dispatch);
 
     const userAttrs = UserFactory.build();
-    const user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+    const user = await User.create(userAttrs);
 
     user.set('email_check_hash', null);
     await user.save(null, { method: 'update' });

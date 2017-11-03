@@ -33,7 +33,7 @@ describe('NewPassword page', () => {
     before(async () => {
       // sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
       await bookshelf.knex('users').del();
-      user = await User.create('test', 'test', 'test@example.com');
+      user = await User.create({ username: 'test', password: 'test', email: 'test@example.com' });
       await user.save({ email_check_hash: '', reset_password_hash: 'foo' }, { require: true });
     });
 

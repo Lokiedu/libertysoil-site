@@ -89,13 +89,13 @@ class RegisterComponentV2 extends React.PureComponent {
     this.componentWillLeave = disappear.bind(this, T.TRANSITION_TIMEOUT);
   }
 
-  handleSubmit = async (isValid, ...args) => {
+  handleSubmit = async (isValid, attrs) => {
     this.props.dispatch(removeAllMessages());
     if (!isValid) {
       return;
     }
 
-    await this.triggers.registerUser(...args);
+    await this.triggers.registerUser(attrs);
   };
 
   render() {

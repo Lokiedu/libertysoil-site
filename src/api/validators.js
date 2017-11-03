@@ -56,29 +56,48 @@ export const UserSettingsValidator = Joi.object({
     firstName: Joi.string(),
     lastName: Joi.string(),
     lang: Joi.string().only(SUPPORTED_LOCALES)
-  })
+  }).required()
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const SchoolValidator = Joi.object({
+  name: Joi.string().replace(/\s+/g, ' ').trim().required(),
+  description: Joi.string(),
+  lat: Joi.number(),
+  lon: Joi.number(),
+  is_open: Joi.bool().allow(null),
+  principal_name: Joi.string(),
+  principal_surname: Joi.string(),
+  foundation_date: Joi.date(),
+  number_of_students: Joi.object(),
+  org_membership: Joi.object(),
+  teaching_languages: Joi.array().items(Joi.string()),
+  required_languages: Joi.array().items(Joi.string()),
+  country_id: Joi.string().uuid({ version: 'uuidv4' }),
+  postal_code: Joi.string(),
+  city: Joi.string(),
+  address: Joi.string(),
+  house: Joi.string(),
+  phone: Joi.string(),
+  website: Joi.string().uri({ scheme: ['http', 'https'] }),
+  facebook: Joi.string().uri({ scheme: ['http', 'https'] }),
+  twitter: Joi.string().uri({ scheme: ['http', 'https'] }),
+  wikipedia: Joi.string().uri({ scheme: ['http', 'https'] }),
   more: Joi.object({
-    head_pic: PictureAttachment,
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
-  })
+    head_pic: PictureAttachment
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const GeotagValidator = Joi.object({
   more: Joi.object({
-    description: Joi.string(),
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
-  })
+    description: Joi.string()
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const HashtagValidator = Joi.object({
   more: Joi.object({
     description: Joi.string(),
-    head_pic: PictureAttachment,
-    last_editor: Joi.string().uuid({ version: 'uuidv4' })
-  })
+    head_pic: PictureAttachment
+  }).default({})
 }).options({ abortEarly: false, stripUnknown: true });
 
 export const UserMessageValidator = Joi.object({
@@ -94,7 +113,7 @@ const PROFILE_POST_TYPES = [
 export const ProfilePostValidator = Joi.object({
   text: Joi.string().max(200),
   type: Joi.string().only(PROFILE_POST_TYPES).required(),
-  more: Joi.object() // TODO: Keys
+  more: Joi.object().default({}) // TODO: Keys
 }).options({ abortEarly: false, stripUnknown: true });
 
 const SEARCH_RESULT_TYPES = [

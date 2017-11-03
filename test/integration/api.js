@@ -205,7 +205,7 @@ describe('api v.1', () => {
         beforeEach(async () => {
           await bookshelf.knex('users').del();
 
-          user = await User.create('test2', 'testPassword', 'test2@example.com');
+          user = await User.create({ username: 'test2', password: 'testPassword', email: 'test2@example.com' });
           await user.save({ 'email_check_hash': '' }, { require: true });
         });
 
@@ -233,7 +233,7 @@ describe('api v.1', () => {
       before(async () => {
         await bookshelf.knex('users').del();
         await bookshelf.knex('attachments').del();
-        user = await User.create('mary', 'secret', 'mary@example.com');
+        user = await User.create({ username: 'mary', password: 'secret', email: 'mary@example.com' });
         await user.save({ email_check_hash: '' }, { require: true });
 
         sessionId = await login('mary', 'secret');
@@ -273,8 +273,14 @@ describe('api v.1', () => {
 
         it('validation works', async () => {
           await expect(
-            { url: `/api/v1/upload`, session: sessionId, method: 'POST' }
-            , 'to fail validation with', '"files" parameter is not provided');
+            {
+              url: `/api/v1/upload`,
+              session: sessionId,
+              method: 'POST'
+            },
+            'to fail validation with',
+            [{ path: 'files' }]
+          );
         });
 
         it('works', async () => {
@@ -489,7 +495,11 @@ describe('api v.1', () => {
 
             beforeEach(async () => {
               for (let i = 0; i < 2; ++i) {
-                users[i] = await User.create(`likes_test${i}`, 'testPassword', `likes_test${i}@example.com`);
+                users[i] = await User.create({
+                  username: `likes_test${i}`,
+                  password: 'testPassword',
+                  email: `likes_test${i}@example.com`
+                });
                 await users[i].save({ email_check_hash: '' }, { require: true });
 
                 userSessions[i] = await login(`likes_test${i}`, 'testPassword');
@@ -718,7 +728,7 @@ describe('api v.1', () => {
         before(async () => {
           await bookshelf.knex('users').del();
 
-          resetPasswordUser = await User.create('reset', 'testPassword', 'reset@example.com');
+          resetPasswordUser = await User.create({ username: 'reset', password: 'testPassword', email: 'reset@example.com' });
           await resetPasswordUser.save({ email_check_hash: '', reset_password_hash: 'foo' }, { require: true });
         });
 
@@ -771,7 +781,7 @@ describe('api v.1', () => {
 
           beforeEach(async () => {
             await bookshelf.knex('users').del();
-            user = await User.create('mary', 'secret', 'mary@example.com');
+            user = await User.create({ username: 'mary', password: 'secret', email: 'mary@example.com' });
           });
 
           afterEach(async () => {
@@ -800,7 +810,7 @@ describe('api v.1', () => {
 
           beforeEach(async () => {
             await bookshelf.knex('users').del();
-            user = await User.create('mary', 'secret', 'mary@example.com');
+            user = await User.create({ username: 'mary', password: 'secret', email: 'mary@example.com' });
           });
 
           afterEach(async () => {

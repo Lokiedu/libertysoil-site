@@ -230,7 +230,7 @@ export class ActionsTrigger {
         status = true;
       }
     } catch (e) {
-      if (e.response && ('error' in e.response)) {
+      if (e.response && e.response.error) {
         this.dispatch(a.messages.addError(e.response.error));
       } else {
         this.dispatch(a.messages.addError(e.message));
@@ -333,6 +333,10 @@ export class ActionsTrigger {
       return;
     }
 
+    this.loginUser(needRedirect, user);
+  };
+
+  loginUser = async (needRedirect, user) => {
     try {
       this.dispatch(a.users.setCurrentUser(user));
       this.dispatch(a.users.setLikes(user.id, user.liked_posts.map(like => like.id)));
@@ -385,12 +389,12 @@ export class ActionsTrigger {
     }
   };
 
-  registerUser = async (username, password, email, firstName, lastName) => {
+  registerUser = async (attrs) => {
     this.dispatch(a.messages.removeAllMessages());
 
     // FIXME: disable form
     try {
-      const result = await this.client.registerUser({ username, password, email, firstName, lastName });
+      const result = await this.client.registerUser(attrs);
 
       if (result.success) {
         this.dispatch(a.users.registrationSuccess());

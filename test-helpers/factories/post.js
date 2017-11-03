@@ -19,7 +19,7 @@ import uuid from 'uuid';
 import { Factory } from 'rosie';
 import faker from 'faker';
 
-import { bookshelf } from '../db';
+import { bookshelf, knex } from '../db';
 
 
 const Post = bookshelf.model('Post');
@@ -34,4 +34,16 @@ export default PostFactory;
 export async function createPost(attrs = {}) {
   return await new Post(PostFactory.build(attrs))
     .save(null, { method: 'insert', require: true });
+}
+
+export async function createPosts(attrs) {
+  if (typeof attrs === 'number') {
+    attrs = Array.apply(null, Array(attrs));
+  }
+
+  const fullAttrs = attrs.map(attrs => PostFactory.build(attrs));
+  const ids = await knex.batchInsert('posts', fullAttrs).returning('id');
+  const posts = await Post.collection().query(qb => qb.whereIn('id', ids)).fetch({ require: true });
+
+  return posts.toArray();
 }

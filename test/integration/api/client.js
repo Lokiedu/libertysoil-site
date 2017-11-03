@@ -98,7 +98,7 @@ describe('Client test', () => {
   });
 
   it('#deleteComment works', async () => {
-    return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'You are not authorized');
+    return expect(client.deleteComment('nonexistingpost', 'nonexistingid'), 'to be rejected with', 'api.errors.forbidden');
   });
 
   describe('#search', () => {
@@ -113,52 +113,52 @@ describe('Client test', () => {
     });
 
     it('#search works', async () => {
-      return expect(client.search({ q: 'test' }), 'to be rejected with', 'Not Found');
+      return expect(client.search({ q: 'test' }), 'to be rejected with', 'api.errors.not-found');
     });
   });
 
   it('#userInfo works', async () => {
-    return expect(client.userInfo('nonexisting'), 'to be rejected with', 'Not Found');
+    return expect(client.userInfo('nonexisting'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#getSchool correctly handle non existing school call', async () => {
-    return expect(client.getSchool('nonexisting'), 'to be rejected with', 'Not Found');
+    return expect(client.getSchool('nonexisting'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#relatedPosts correctly handle non existing post id ', async () => {
-    return expect(client.relatedPosts(v4()), 'to be rejected with', 'Internal Server Error');
+    return expect(client.relatedPosts(v4()), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#userTags correctly handle non authenticated request', async () => {
-    return expect(client.userTags(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userTags(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#userLikedPosts correctly handle errors', async () => {
-    return expect(client.userLikedPosts(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userLikedPosts(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#userFavouredPosts correctly handle errors', async () => {
-    return expect(client.userFavouredPosts(), 'to be rejected with', 'You are not authorized');
+    return expect(client.userFavouredPosts(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#geotagPosts correctly handle non existing geotag', async () => {
-    return expect(client.geotagPosts('nonexistinggeotag'), 'to be rejected with', 'Not Found');
+    return expect(client.geotagPosts('nonexistinggeotag'), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#city correctly handle non existing entity', async () => {
-    return expect(client.city('nonexistingcity'), 'to be rejected with', 'Not Found');
+    return expect(client.city(123), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#country correctly handle non existing entity', async () => {
-    return expect(client.country('nonexistingcountry'), 'to be rejected with', 'Not Found');
+    return expect(client.country(123), 'to be rejected with', 'api.errors.not-found');
   });
 
   it('#like correctly handle non authenticated request', async () => {
-    return expect(client.like(), 'to be rejected with', 'You are not authorized');
+    return expect(client.like(), 'to be rejected with', 'api.errors.forbidden');
   });
 
   it('#unlike correctly handle non authenticated request', async () => {
-    return expect(client.unlike('dummyid'), 'to be rejected with', 'You are not authorized');
+    return expect(client.unlike('dummyid'), 'to be rejected with', 'api.errors.forbidden');
   });
 
   describe('Exception tests', () => {
@@ -181,7 +181,7 @@ describe('Client test', () => {
     });
 
     it('should work', async () => {
-      return expect(client.getAvailableUsername('test'), 'to be rejected with', 'test');
+      return expect(client.getAvailableUsername('test'), 'to be rejected');
     });
   });
 });
@@ -192,7 +192,7 @@ describe('Authenticated client test', () => {
 
   before(async () => {
     const userAttrs = UserFactory.build();
-    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+    user = await User.create(userAttrs);
 
     user.set('email_check_hash', null);
     await user.save(null, { method: 'update' });

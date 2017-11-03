@@ -39,7 +39,7 @@ describe('UnwpappedAuth page', () => {
 
   before(async () => {
     userAttrs = UserFactory.build();
-    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+    user = await User.create(userAttrs);
 
     user.set('email_check_hash', null);
     await user.save(null, { method: 'update' });
@@ -56,7 +56,7 @@ describe('UnwpappedAuth page', () => {
 
     before(async () => {
       userAttrs = UserFactory.build();
-      user = await User.create(userAttrs.username, userAttrs.password, email);
+      user = await User.create({ ...userAttrs, email });
     });
 
     beforeEach(() => {
@@ -157,15 +157,13 @@ describe('UnwpappedAuth page', () => {
       wrapper.find('#registerForm').simulate('submit');
       await waitForTrue(() => register.props().form.isValid());
 
-      return expect(
-        onRegisterUser.calledWith(
-          userAttrs.username,
-          userAttrs.password,
-          userAttrs.email,
-          '', ''
-        ),
-        'to be true'
-      );
+      return expect(onRegisterUser.calledWith({
+        username: userAttrs.username,
+        password: userAttrs.password,
+        email: userAttrs.email,
+        firstName: '',
+        lastName: ''
+      }), 'to be true');
     });
   });
 });

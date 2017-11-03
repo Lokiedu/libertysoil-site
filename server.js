@@ -32,6 +32,8 @@ import mount from 'koa-mount';
 import koaConditional from 'koa-conditional-get';
 import koaEtag from 'koa-etag';
 import Logger, { createLogger } from 'bunyan';
+import passport from 'koa-passport';
+import bb from 'bluebird';
 
 import t from 't8on';
 
@@ -51,7 +53,9 @@ import { setCurrentUser, setLikes, setFavourites } from './src/actions/users';
 import db_config from './knexfile';  // eslint-disable-line import/default
 
 import { getReactMiddleware } from './src/utils/koa-react';
-
+import QueueSingleton from './src/utils/queue';
+import { setUpPassport } from './src/api/auth';
+import { processError } from './src/api/error';
 
 const exec_env = process.env.NODE_ENV || 'development';
 const dbEnv = process.env.DB_ENV || 'development';
@@ -113,11 +117,11 @@ const initReduxForMainApp = async (ctx) => {
   const store = initState();
 
   let locale_code;
-  if (ctx.session && ctx.session.user && isString(ctx.session.user)) {
+  if (ctx.isAuthenticated()) {
     try {
       const user = await bookshelf
         .model('User')
-        .where({ id: ctx.session.user })
+        .where({ id: ctx.state.user })
         .fetch({
           require: true,
           withRelated: [
@@ -137,12 +141,12 @@ const initReduxForMainApp = async (ctx) => {
       const likes = await bookshelf.knex
         .select('post_id')
         .from('likes')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       const favourites = await bookshelf.knex
         .select('post_id')
         .from('favourites')
-        .where({ user_id: ctx.session.user });
+        .where({ user_id: ctx.state.user });
 
       store.dispatch(setCurrentUser(data));
       store.dispatch(setLikes(data.id, likes.map(like => like.post_id)));
@@ -176,7 +180,7 @@ const serve = (...params) => staticCache(...params);
 
 function startServer(/*params*/) {
   const sphinx = initSphinx();
-  const api = initApi(bookshelf, sphinx);
+  const api = initApi(bookshelf);
 
   const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
 
@@ -198,8 +202,28 @@ function startServer(/*params*/) {
   app.logger = logger;
   app.keys = ['libertysoil'];
 
-  app.on('error', (e) => {
-    logger.warn(e);
+  app.context.bookshelf = bookshelf;
+  app.context.jobQueue = new QueueSingleton;
+  app.context.passport = setUpPassport(bookshelf);
+  app.context.sphinx = { api: bb.promisifyAll(sphinx.api), ql: sphinx.ql };
+
+  // Error handler
+  app.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      processError(ctx, err);
+
+      if (ctx.status == 500) {
+        if (['test', 'travis'].includes(process.env.DB_ENV)) {
+          console.error(err); // eslint-disable-line no-console
+        }
+
+        logger.error(err);
+      } else {
+        logger.warn(err);
+      }
+    }
   });
 
   if (exec_env === 'development') {
@@ -225,6 +249,12 @@ function startServer(/*params*/) {
     key: 'connect.sid',
     cookie: { signed: false }
   })));
+
+  // Workaround for passport strategy callbacks: they only have an access to ctx.req
+  app.use((ctx, next) => { ctx.req.ctx = ctx; return next(); });
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.use(koaConditional());
   app.use(koaEtag());
@@ -252,6 +282,8 @@ function startServer(/*params*/) {
 
     logger.info(`Listening at http://0.0.0.0:${PORT}\n`);
   });
+
+  return app;
 }
 
 export default startServer;

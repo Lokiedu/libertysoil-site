@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import memoize from 'memoizee';
 import t from 't8on';
 
@@ -138,6 +138,22 @@ class LoginComponentV2 extends React.PureComponent {
     }
   };
 
+  handleSignInWith = async ({ user, profile, error }) => { // eslint-disable-line no-unused-vars
+    if (user) {
+      await this.triggers.loginUser(true, user);
+    } else {
+      console.error(error); // eslint-disable-line no-console
+      if (profile) {
+        // Is there a better way? Is it worth using redux here?
+        window.localStorage.setItem('selectedOauthProfile', JSON.stringify(profile));
+        browserHistory.push({
+          ...browserHistory.getCurrentLocation(),
+          hash: '#signup'
+        });
+      }
+    }
+  }
+
   render() {
     if (this.props.is_logged_in) {
       return false;
@@ -214,6 +230,7 @@ class LoginComponentV2 extends React.PureComponent {
               <LoginForm
                 translate={translate}
                 onSubmit={this.handleSubmit}
+                onSignInWith={this.handleSignInWith}
               />
             </Modal.Body>
           </Modal.Main>

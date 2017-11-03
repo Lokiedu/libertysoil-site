@@ -70,10 +70,14 @@ describe('api v1', async () => {
       await bookshelf.knex('posts').del();
       await bookshelf.knex('schools').del();
 
-      user = await User.create('test', 'test', 'test@example.com');
+      user = await User.create({ username: 'test', password: 'test', email: 'test@example.com' });
       await user.save({ 'email_check_hash': '' }, { require: true });
 
-      unverifiedUser = await User.create('unverif', 'unverif', 'test-unverif@example.com');
+      unverifiedUser = await User.create({
+        username: 'unverif',
+        password: 'unverif',
+        email: 'test-unverif@example.com'
+      });
       await unverifiedUser.save(null, { require: true });
 
       post = new Post({

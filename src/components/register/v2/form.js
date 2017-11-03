@@ -20,14 +20,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { form as inform, from } from 'react-inform';
 import { Link } from 'react-router';
-import { noop, omit, reduce } from 'lodash';
+import { noop, omit, reduce, get } from 'lodash';
+import slug from 'slug';
 import { Map as ImmutableMap } from 'immutable';
 
+import { API_HOST } from '../../../config';
+import ApiClient from '../../../api/client';
 import { removeWhitespace as normalizeWhitespace } from '../../../utils/lang';
-
 import AltButton from '../../alt-button';
 import Button from '../../button';
 import FormField from '../../form/field';
+import { openOauthPopup } from '../../../utils/auth';
 import * as Utils from '../utils';
 import SignupSuccessMessage from './success';
 
@@ -94,6 +97,8 @@ const getIconProps = Utils.memoize1(
   })
 );
 
+const client = new ApiClient(API_HOST);
+
 export class SignupFormV2 extends React.Component {
   static displayName = 'SignupFormV2';
 
@@ -139,6 +144,12 @@ export class SignupFormV2 extends React.Component {
     this.username.addEventListener('focus', this.handleUsernameFocus);
     this.username.addEventListener('blur', this.handleUsernameBlur);
     this.username.addEventListener('input', this.handleUsernameInput);
+
+    const profile = JSON.parse(window.localStorage.getItem('selectedOauthProfile'));
+    if (profile) {
+      this.fillInFormWithProfile(profile);
+      window.localStorage.removeItem('selectedOauthProfile');
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -264,15 +275,60 @@ export class SignupFormV2 extends React.Component {
 
     await this.props.onSubmit(
       true,
-      values.username,
-      values.password,
-      values.email,
-      normalizeWhitespace(values.firstName),
-      normalizeWhitespace(values.lastName)
+      {
+        username: values.username,
+        password: values.password,
+        email: values.email,
+        firstName: normalizeWhitespace(values.firstName),
+        lastName: normalizeWhitespace(values.lastName),
+        providers: values.providers
+      }
     );
 
     Utils.resetValidatorsCache();
   };
+
+  signUpWith = async (provider) => {
+    const { profile } = await openOauthPopup(provider, { onlyProfile: true });
+    this.fillInFormWithProfile(profile);
+  }
+
+  fillInFormWithProfile = async (profile) => {
+    const email = get(profile, 'emails[0].value');
+    let firstName = get(profile, 'name.givenName');
+    let lastName = get(profile, 'name.familyName');
+    if (!firstName && !lastName && profile.displayName) {
+      [firstName, lastName] = profile.displayName.split(' ');
+    }
+
+    let username = profile.username;
+
+    if (!username && email) {
+      username = email.split('@')[0];
+    }
+
+    if (!username && profile.displayName) {
+      username = profile.displayName;
+    }
+
+    username = await client.getAvailableUsername(slug(username.toLowerCase()));
+
+    this.usernameManuallyChanged = true;
+    this.props.form.onValues({
+      username,
+      email,
+      firstName,
+      lastName,
+      providers: {
+        [profile.provider]: profile
+      }
+    });
+  }
+
+  handleFacebook = this.signUpWith.bind(this, 'facebook');
+  handleGoogle = this.signUpWith.bind(this, 'google');
+  handleTwitter = this.signUpWith.bind(this, 'twitter');
+  handleGithub = this.signUpWith.bind(this, 'github');
 
   render() {
     const { fields, translate: t } = this.props;
@@ -341,19 +397,35 @@ export class SignupFormV2 extends React.Component {
         </div>
         <div className="form__background--bright form__alt">
           <AltButton
-            icon={getIconProps('github')}
+            icon={getIconProps('facebook-official')}
             theme="list"
-            onClick={undefined}
+            onClick={this.handleFacebook}
           >
-            GitHub
+            Facebook
           </AltButton>
           <AltButton
             className="margin--all_top"
-            icon={getIconProps('facebook-official')}
+            icon={getIconProps('google')}
             theme="list"
-            onClick={undefined}
+            onClick={this.handleGoogle}
           >
-            Facebook
+            Google
+          </AltButton>
+          <AltButton
+            className="margin--all_top"
+            icon={getIconProps('twitter')}
+            theme="list"
+            onClick={this.handleTwitter}
+          >
+            Twitter
+          </AltButton>
+          <AltButton
+            className="margin--all_top"
+            icon={getIconProps('github')}
+            theme="list"
+            onClick={this.handleGithub}
+          >
+            Github
           </AltButton>
           <Link
             className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}

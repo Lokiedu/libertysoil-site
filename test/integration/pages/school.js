@@ -57,7 +57,11 @@ describe('School page', () => {
 
     before(async () => {
       await bookshelf.knex('users').del();
-      user = await User.create('test', 'test', 'test@example.com', { first_login: false });
+      user = await User.create({
+        username: 'test',
+        password: 'test',
+        email: 'test@example.com', more: { first_login: false }
+      });
       await user.save({ 'email_check_hash': '' }, { require: true });
 
       sessionId = await login('test', 'test');
@@ -77,7 +81,7 @@ describe('School page', () => {
 
         const userAttrs = UserFactory.build();
 
-        author = await User.create(userAttrs.username, userAttrs.password, userAttrs.email, { first_login: false });
+        author = await User.create({ ...userAttrs, more: { first_login: false } });
         school = await new School(SchoolFactory.build()).save(null, { method: 'insert' });
 
         for (let i = 0; i < posts.length; ++i) {

@@ -37,7 +37,7 @@ describe('HashtagEditPage', () => {
 
   before(async () => {
     const userAttrs = UserFactory.build();
-    user = await User.create(userAttrs.username, userAttrs.password, userAttrs.email);
+    user = await User.create(userAttrs);
     await user.save({ email_check_hash: null }, { method: 'update' });
 
     sessionId = await login(userAttrs.username, userAttrs.password);

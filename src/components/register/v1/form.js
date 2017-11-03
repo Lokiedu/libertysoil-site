@@ -269,13 +269,13 @@ export class UnwrappedRegisterFormV1 extends React.Component {
 
     const values = form.values();
 
-    await this.props.onSubmit(
-      values.registerUsername,
-      values.registerPassword,
-      values.registerEmail,
-      normalizeWhitespace(values.registerFirstName),
-      normalizeWhitespace(values.registerLastName)
-    );
+    await this.props.onSubmit({
+      username: values.registerUsername,
+      password: values.registerPassword,
+      email: values.registerEmail,
+      firstName: normalizeWhitespace(values.registerFirstName),
+      lastName: normalizeWhitespace(values.registerLastName)
+    });
 
     Utils.resetValidatorsCache();
   };
