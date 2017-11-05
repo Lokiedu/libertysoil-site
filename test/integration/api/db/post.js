@@ -22,6 +22,7 @@ import { createGeotag } from '../../../../test-helpers/factories/geotag';
 import { createPost } from '../../../../test-helpers/factories/post';
 import { createSchool } from '../../../../test-helpers/factories/school';
 import { createHashtag } from '../../../../test-helpers/factories/hashtag';
+import { createComment } from '../../../../test-helpers/factories/comment';
 
 
 describe('Post', () => {
@@ -46,6 +47,47 @@ describe('Post', () => {
 
     await school.refresh();
     expect(school.get('updated_at'), 'not to be null');
+  });
+
+  describe('cached counters', () => {
+    describe('like_count', () => {
+      it('updates when a post is liked/unliked', async () => {
+        await post.likers().attach(user.id);
+        await post.refresh();
+        expect(post.attributes.like_count, 'to equal', 1);
+        await post.likers().detach(user.id);
+        await post.refresh();
+        expect(post.attributes.like_count, 'to equal', 0);
+      });
+    });
+
+    describe('fav_count', () => {
+      it('updates when a post is favorited/unfavorited', async () => {
+        await post.favourers().attach(user.id);
+        await post.refresh();
+        expect(post.attributes.fav_count, 'to equal', 1);
+        await post.favourers().detach(user.id);
+        await post.refresh();
+        expect(post.attributes.fav_count, 'to equal', 0);
+      });
+    });
+
+    describe('comment_count', () => {
+      it('updates when a comment is created/destroyed', async () => {
+        const comment = await createComment({ user_id: user.id, post_id: post.id });
+        await post.refresh();
+        expect(post.attributes.comment_count, 'to equal', 1);
+        await comment.destroy();
+        await post.refresh();
+        expect(post.attributes.comment_count, 'to equal', 0);
+      });
+    });
+
+    describe('score', () => {
+      it('updates on like/fav/comment', () => {
+
+      });
+    });
   });
 
   describe('geotags', () => {
