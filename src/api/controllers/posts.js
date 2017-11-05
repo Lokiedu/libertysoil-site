@@ -31,8 +31,6 @@ export async function getPost(ctx) {
 
   let post = await Post.where({ id: ctx.params.id }).fetch({ require: true, withRelated: POST_RELATIONS });
 
-  post.attributes.comments = post.relations.post_comments.length;
-
   post = seq([
     PostUtils.filterUsersReactions.forUser(ctx.state.user),
     PostUtils.serialize
@@ -632,8 +630,6 @@ export async function userFavouredPosts(ctx) {
 
 // Helpers
 export async function preparePosts(ctx, posts) {
-  posts = await PostUtils.countPostComments(ctx.bookshelf, posts);
-
   posts = posts.map(
     seq([
       PostUtils.filterUsersReactions.forUser(ctx.state.user),

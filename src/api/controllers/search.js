@@ -20,7 +20,6 @@ import _ from 'lodash';
 
 import * as PostUtils from '../utils/posts';
 import { seq } from '../../utils/lang';
-import { countComments } from '../utils/comments';
 import { SearchQueryValidator } from '../validators';
 import { SEARCH_INDEXES_TABLE, SEARCH_RESPONSE_TABLE, POST_RELATIONS } from '../consts';
 
@@ -93,19 +92,9 @@ export async function search(ctx) {
         if (type === 'Post') {
           return Model.forge().query(qb => qb.whereIn('id', ids))
             .fetchAll({ require: false, withRelated: POST_RELATIONS })
-            .then(posts => Promise.all([posts, countComments(ctx.bookshelf, posts)]))
-            .then(([posts, postCommentsCount]) => {
+            .then(posts => {
               const ps = posts.map(
                 seq([
-                  post => {
-                    post.relations.schools = post.relations.schools.map(row => ({
-                      id: row.id,
-                      name: row.attributes.name,
-                      url_name: row.attributes.url_name
-                    }));
-                    post.attributes.comments = postCommentsCount[post.get('id')];
-                    return post;
-                  },
                   PostUtils.filterUsersReactions.forUser(ctx.session && ctx.session.user),
                   PostUtils.serialize
                 ])

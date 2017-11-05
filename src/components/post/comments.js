@@ -90,7 +90,7 @@ class Comments extends Component {
     } = this.state;
 
     const commentsData = comments.get(post.get('id'));
-    const hasComments = post.get('comments') && commentsData && commentsData.size;
+    const hasComments = post.get('comment_count') && commentsData && commentsData.size;
     let postComments = [];
 
     if (hasComments) {
