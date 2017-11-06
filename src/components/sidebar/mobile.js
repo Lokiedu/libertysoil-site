@@ -36,7 +36,7 @@ function SidebarMobile(props) {
       onClick={props.onClose}
     >
       <div className="mobile-menu__section" onClick={handleClickInside}>
-        <SidebarMenu current_user={props.current_user} />
+        <SidebarMenu media="xl" />
         <TagsInform current_user={props.current_user} />
       </div>
     </div>

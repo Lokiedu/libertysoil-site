@@ -106,3 +106,7 @@ export default function NavigationItemLink({
     </Link>
   );
 }
+
+NavigationItemLink.defaultProps = {
+  theme: '2.0'
+};

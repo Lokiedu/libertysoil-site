@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,45 +14,30 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.sidebar {
-  .small();
+*/
+import { connect } from 'react-redux';
 
-  @media @tablet, @narrow-desktop, @standard-desktop, @widescreen-desktop {
-    .large();
-  }
+import createSelector from '../../../selectors/createSelector';
+import MenuItem from './base';
 
-  .small() {
-    width: 42px;
-    min-width: 42px;
-  }
+class FriendsMenuItem extends MenuItem {
+  static displayName = 'FriendsMenuItem';
 
-  .medium() {
-    width: 120px;
-    min-width: 120px;
-  }
-
-  .large() {
-    width: 240px;
-    min-width: 240px;
-  }
-
-  .extra-large {
-    width: 340px;
-    min-width: 340px;
-  }
-
-  &--fixed {
-    display: none;
-
-    @media (min-width: 768px) {
-      position: relative;
-      display: flex;
-
-      .sidebar__inner {
-        position: fixed;
-        width: inherit;
-      }
-    }
-  }
+  static defaultProps = {
+    ...MenuItem.defaultProps,
+    className: 'navigation-item--color_blue',
+    icon: { icon: 'public' },
+    titles: {
+      xs: 'Friends',
+      rest: 'My Friends'
+    },
+    to: '/feed'
+  };
 }
+
+const mapStateToProps = createSelector(
+  state => state.getIn(['current_user', 'id']),
+  id => ({ visible: !!id })
+);
+
+export default connect(mapStateToProps)(FriendsMenuItem);

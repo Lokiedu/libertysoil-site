@@ -15,24 +15,105 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { omit, values } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
-import SidebarMenuNormal from './normal';
+import { MediaTargets as ts, MediaQueries as qs } from '../../consts/media';
+import Navigation from '../navigation';
+import * as MenuItemsObject from './items';
 
-const SidebarMenu = ({ theme, ...props }) => {
-  switch (theme) {
-    default: return <SidebarMenuNormal {...props} />;
+const MenuItems = values(MenuItemsObject);
+
+function getMatchedMedia(ignore) {
+  if (ignore !== ts.xs && window.matchMedia(qs.xs).matches) {
+    return ts.xs;
   }
-};
+  if (ignore !== ts.s && window.matchMedia(qs.s).matches) {
+    return ts.s;
+  }
+  if (ignore !== ts.m && window.matchMedia(qs.m).matches) {
+    return ts.m;
+  }
+  if (ignore !== ts.l && window.matchMedia(qs.l).matches) {
+    return ts.l;
+  }
+  return ts.xl;
+}
 
-SidebarMenu.propTypes = {
-  theme: PropTypes.string
-};
+export default class SidebarMenu extends React.PureComponent {
+  static propTypes = {
+    adaptive: PropTypes.bool
+  };
 
-SidebarMenu.defaultProps = {
-  theme: 'normal'
-};
+  static propKeys = Object.keys(SidebarMenu.propTypes);
 
-export default SidebarMenu;
+  constructor(props, context) {
+    super(props, context);
+    const state = { media: undefined };
+
+    if (
+      props.adaptive &&
+      typeof window !== 'undefined' &&
+      window !== null &&
+      window.matchMedia
+    ) {
+      state.media = getMatchedMedia();
+      this.attachListener(state.media);
+    } else {
+      state.media = ts.xs;
+    }
+
+    this.state = state;
+    this.restProps = omit(props, SidebarMenu.propKeys);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.restProps = omit(nextProps, SidebarMenu.propKeys);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.media !== this.state.media) {
+      this.detachListener();
+      this.attachListener(nextState.media);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.query) {
+      this.detachListener();
+    }
+  }
+
+  attachListener = (media) => {
+    this.query = window.matchMedia(qs[media]);
+    this.query.addListener(this.handleViewChange);
+  };
+
+  detachListener = () => {
+    this.query.removeListener(this.handleViewChange);
+  };
+
+  handleViewChange = () => {
+    const next = getMatchedMedia(this.state.media);
+    this.setState(state => ({ ...state, media: next }));
+  };
+
+  query = null;
+
+  render() {
+    const { media } = this.state;
+
+    return (
+      <Navigation>
+        {MenuItems.map(Item => (
+          <Item
+            key={Item.displayName}
+            media={media}
+            {...this.restProps}
+          />
+        ))}
+      </Navigation>
+    );
+  }
+}

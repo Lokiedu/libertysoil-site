@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2015  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -14,45 +14,8 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-.sidebar {
-  .small();
-
-  @media @tablet, @narrow-desktop, @standard-desktop, @widescreen-desktop {
-    .large();
-  }
-
-  .small() {
-    width: 42px;
-    min-width: 42px;
-  }
-
-  .medium() {
-    width: 120px;
-    min-width: 120px;
-  }
-
-  .large() {
-    width: 240px;
-    min-width: 240px;
-  }
-
-  .extra-large {
-    width: 340px;
-    min-width: 340px;
-  }
-
-  &--fixed {
-    display: none;
-
-    @media (min-width: 768px) {
-      position: relative;
-      display: flex;
-
-      .sidebar__inner {
-        position: fixed;
-        width: inherit;
-      }
-    }
-  }
-}
+*/
+export { default as AllPostsMenuItem } from './all-posts';
+export { default as FriendsMenuItem } from './friends';
+export { default as LikedMenuItem } from './liked';
+export { default as FavouritedMenuItem } from './favourited';
