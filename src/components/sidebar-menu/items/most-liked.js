@@ -15,10 +15,15 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export { default as AllPostsMenuItem } from './all-posts';
-export { default as FriendsMenuItem } from './friends';
-export { default as LikedMenuItem } from './liked';
-export { default as FavouritedMenuItem } from './favourited';
-export { default as MostLikedMenuItem } from './most-liked';
-export { default as MostFavouritedMenuItem } from './most-favourited';
-export { default as BestPostsMenuItem } from './best';
+import MenuItem from './base';
+
+export default class MostLikedMenuItem extends MenuItem {
+  static displayName = 'MostLikedMenuItem';
+
+  static defaultProps = {
+    ...MenuItem.defaultProps,
+    className: 'navigation-item--color_blue',
+    title: 'Most Liked',
+    to: '/most-liked'
+  };
+}
