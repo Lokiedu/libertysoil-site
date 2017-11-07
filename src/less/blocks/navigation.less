@@ -144,6 +144,7 @@
   // modifiers
   &--active {
     position: relative;
+    pointer-events: none;
 
     .navigation-item__content-box {
       background-color: #fafafa;
@@ -155,6 +156,7 @@
 
     .navigation-item__switch {
       display: block;
+      pointer-events: all;
     }
   }
 
@@ -198,7 +200,7 @@
     }
   }
 
-  &:hover {
+  &:hover:not(.navigation-item--active) {
     .navigation-item__content-box {
       color: #000;
     }
