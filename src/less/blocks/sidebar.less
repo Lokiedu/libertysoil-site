@@ -18,11 +18,7 @@
 .sidebar {
   .small();
 
-  @media @tablet {
-    .medium();
-  }
-
-  @media @narrow-desktop, @standard-desktop, @widescreen-desktop {
+  @media @tablet, @narrow-desktop, @standard-desktop, @widescreen-desktop {
     .large();
 
     .menu__item(~"all", ~"All");
@@ -33,8 +29,8 @@
   }
 
   .small() {
-    /* width: 60px; */
-    // flex-basis: auto;
+    width: 42px;
+    min-width: 42px;
 
     .menu__item(~"all", ~"All");
     .menu__item(~"news", ~"Feed");
@@ -44,8 +40,8 @@
   }
 
   .medium() {
-    /* width: 140px; */
-    // flex-basis: auto;
+    width: 120px;
+    min-width: 120px;
 
     .menu__item(~"all", ~"All");
     .menu__item(~"news", ~"Feed");
@@ -55,7 +51,8 @@
   }
 
   .large() {
-    /* width: 260px; */
+    width: 240px;
+    min-width: 240px;
 
     .menu__item(~"all", ~"All Posts");
     .menu__item(~"news", ~"News Feed");
@@ -65,7 +62,8 @@
   }
 
   .extra-large {
-    /* width: 360px; */
+    width: 340px;
+    min-width: 340px;
 
     .menu__item(~"all", ~"All Posts");
     .menu__item(~"news", ~"News Feed");
@@ -78,7 +76,6 @@
     display: none;
 
     @media (min-width: 768px) {
-      width: 240px;
       position: relative;
       display: flex;
 
