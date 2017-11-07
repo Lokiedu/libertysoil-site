@@ -44,7 +44,8 @@ class SidebarDesktop extends React.PureComponent {
   static propTypes = {
     autocollapsible: PropTypes.bool,
     collapsed: PropTypes.bool,
-    current_user: PropTypes.shape()
+    current_user: PropTypes.shape(),
+    is_logged_in: PropTypes.bool
   };
 
   static defaultProps = {
@@ -149,11 +150,10 @@ class SidebarDesktop extends React.PureComponent {
       () => {
         const client = new ApiClient(API_HOST);
         const triggers = new ActionsTrigger(client, this.props.dispatch);
-        triggers.updateUserInfo({
-          more: {
-            sidebar: { collapsed: this.state.collapsed }
-          }
-        });
+        triggers.updateUserInfo(
+          { more: { sidebar: { collapsed: this.state.collapsed } } },
+          this.props.is_logged_in
+        );
       }
     );
   };

@@ -25,9 +25,10 @@ function selectCurrentUser(state) {
   const currentUser = state.get('current_user');
 
   return currentUser.withMutations(function (currentUser) {
-    currentUser.set('user', state.getIn(['users', currentUser.get('id')]));
-    currentUser.set('likes', state.getIn(['likes', currentUser.get('id')]) || i.List());
-    currentUser.set('favourites', state.getIn(['favourites', currentUser.get('id')]) || i.List());
+    const id = currentUser.get('id') || 'null';
+    currentUser.set('user', state.getIn(['users', id]));
+    currentUser.set('likes', state.getIn(['likes', id]) || i.List());
+    currentUser.set('favourites', state.getIn(['favourites', id]) || i.List());
   });
 }
 

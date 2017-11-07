@@ -219,7 +219,13 @@ export class ActionsTrigger {
     return status;
   };
 
-  updateUserInfo = async (user) => {
+  updateUserInfo = async (user, isLoggedIn = true) => {
+    if (!isLoggedIn) {
+      this.dispatch(a.messages.addMessage('Saved successfully'));
+      this.dispatch(a.users.addUser({ id: null, ...user }));
+      return true;
+    }
+
     let status = false;
     try {
       const res = await this.client.updateUser(user);
