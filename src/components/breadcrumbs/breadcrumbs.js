@@ -28,6 +28,7 @@ import { OldIcon as Icon } from '../icon';
 
 const defaultShortView = (
   <Icon
+    className="breadcrumbs__short-view"
     icon="keyboard-control"
     pack="md"
     size="common"
@@ -174,7 +175,7 @@ export default class Breadcrumbs extends Component {
       const props = {};
       const { type: typeDef } = crumb;
 
-      let className = 'breadcrumbs__item';
+      let className = 'breadcrumbs__item header__block';
       if ((typeDef instanceof Function) && checkType(typeDef)) {
         props.collapsed = isCollapsed[i];
 

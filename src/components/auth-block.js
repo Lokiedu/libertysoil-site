@@ -68,7 +68,7 @@ export default class AuthBlock extends React.PureComponent {
     if (is_logged_in) {
       return (
         <Dropdown
-          className="header__auth header__toolbar"
+          className="header__block header__auth header__toolbar"
           icon={
             <div className="header__corner header__toolbar_item">
               <Avatar
