@@ -211,7 +211,7 @@ export default class Breadcrumbs extends Component {
       ...props
     } = this.props;
 
-    let cn = 'breadcrumbs header__breadcrumbs';
+    let cn = 'breadcrumbs header__block header__breadcrumbs';
     if (this.state.shouldDisplay) {
       cn += ' breadcrumbs--opened';
     }

@@ -90,7 +90,7 @@ export default class AuthBlock extends React.PureComponent {
     }
 
     return (
-      <div className="auth header__toolbar">
+      <div className="auth header__block header__toolbar">
         <div className="header__toolbar_item">
           <Link
             aria-label="Log in"
