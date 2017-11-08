@@ -316,7 +316,7 @@ export default class BaseTagPage extends React.Component {
 
         <Page>
           <PageMain className={!tagsAttached && 'page__main--without-right'}>
-            <PageBody className="page__body-up">
+            <PageBody>
               <Sidebar current_user={current_user} />
               <PageContent>
                 {createPostForm}
