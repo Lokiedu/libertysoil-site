@@ -55,7 +55,10 @@ export const UserSettingsValidator = Joi.object({
     mute_all_posts: Joi.bool(),
     firstName: Joi.string(),
     lastName: Joi.string(),
-    lang: Joi.string().only(SUPPORTED_LOCALES)
+    lang: Joi.string().only(SUPPORTED_LOCALES),
+    sidebar: Joi.object({
+      collapsed: Joi.bool()
+    })
   }).required()
 }).options({ abortEarly: false, stripUnknown: true });
 

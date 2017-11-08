@@ -44,6 +44,7 @@
     flex-grow: 1;
     align-self: stretch;
     margin-right: auto;
+    overflow: hidden;
   }
 
   &__content-box {
@@ -109,6 +110,25 @@
     }
   }
 
+  &__switch {
+    position: absolute;
+    top: calc(~"50% - 7px");
+    bottom: calc(~"50% - 7px");
+    right: -13px;
+
+    display: none;
+    width: 4px;
+    border-radius: 2px;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-in-out;
+    transition-property: top, bottom;
+
+    &--truncated {
+      top: calc(~"50% - 2px");
+      bottom: calc(~"50% - 2px");
+    }
+  }
+
   // modifiers
   &--active {
     position: relative;
@@ -123,17 +143,8 @@
       color: #fff;
     }
 
-    &::after {
-      position: absolute;
-      top: calc(50% - 14px);
-      right: -13px;
-
+    .navigation-item__switch {
       display: block;
-      width: 4px;
-      height: 14px;
-      border-radius: 2px;
-
-      content: '';
     }
   }
 
@@ -150,11 +161,11 @@
 
   &--transition {
     &-appear {
-      transform: translateX(240px);
+      transform: translateX(100%);
 
       &.navigation-item--transition-appear-active {
-      transform: translateX(0px);
-        transition: transform 0.25s ease-in-out;  
+        transform: translateX(0px);
+        transition: transform 0.25s ease-in-out;
       }
     }
 
@@ -162,13 +173,13 @@
       transform: translateX(0px);
 
       &.navigation-item--transition-leave-active {
-        transform: translateX(240px);
+        transform: translateX(100%);
         transition: transform 0.25s ease-in-out;
       }
     }
 
     &-enter {
-      transform: translateX(240px);
+      transform: translateX(100%);
 
       &.navigation-item--transition-enter-active {
         transform: translateX(0px);
@@ -196,7 +207,7 @@
           background-color: @color;
         }
 
-        &::after {
+        .navigation-item__switch {
           background-color: @color;
         }
       }

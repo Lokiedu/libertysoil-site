@@ -205,7 +205,6 @@
 }
 
 .page__sidebar {
-  overflow: hidden;
   width: 100%;
 
   &--side {
@@ -224,6 +223,8 @@
 
   &--type {
     &_main {
+      position: relative;
+
       // @media @fluidTablet, @fluidDesktopNarrow, @fluidDesktopStandard {
       //   width: 180px;
       // }
@@ -242,6 +243,8 @@
     }
 
     &_alt {
+      overflow: hidden;
+
       @media @fluidDesktopNarrow {
         width: 165px;
       }
