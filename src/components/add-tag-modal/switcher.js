@@ -33,8 +33,8 @@ const ModalSwitcher = ({ activeType, onClose, onTypeChange }) => {
     <div className="modal_switcher">
       {inactiveTags.map(type => (
         <Tag
-          collapsed
           className="modal_switcher__item"
+          collapsed
           key={type}
           icon={inactiveIconProps}
           isLink={false}
