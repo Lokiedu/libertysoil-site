@@ -94,7 +94,7 @@ export default class AuthBlock extends React.Component {
 
     return (
       <div className="header__toolbar">
-        <div className="header__toolbar_item header__toolbar_item-right_space">
+        <div className="header__toolbar_item">
           <Link
             className="header__toolbar_item"
             to={this.pushLogin}

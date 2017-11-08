@@ -24,7 +24,6 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import AuthBlock from './auth-block';
 import HeaderLogo from './header-logo';
 import Search from './search';
-import SelectLocale from './select-locale';
 import TopMenu from './top-menu';
 
 const HeaderComponent = ({
@@ -60,9 +59,6 @@ const HeaderComponent = ({
               is_logged_in={is_logged_in}
               onLogin={onLogin}
             />
-          }
-          {!is_logged_in &&
-            <SelectLocale />
           }
         </div>
       </div>
