@@ -43,6 +43,8 @@
 @after-base: ~"(min-width: 1024px)";
 @after-wide: ~"(min-width: 1200px)";
 
+@easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+
 @import '../../node_modules/font-awesome/css/font-awesome.css';
 
 @import 'blocks/normalize';
@@ -145,6 +147,7 @@
 @import 'blocks/modal_switcher';
 @import 'blocks/top-message';
 @import 'blocks/form';
+@import 'blocks/auth';
 
 @import 'blocks/uikit/styles.less';
 @import 'blocks/uikit/main_page.less';
