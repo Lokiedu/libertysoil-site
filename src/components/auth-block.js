@@ -73,7 +73,7 @@ export default class AuthBlock extends React.PureComponent {
             <div className="header__corner header__toolbar_item">
               <Avatar
                 isRound={false}
-                size={60}
+                size={24}
                 user={current_user.get('user')}
               />
             </div>
