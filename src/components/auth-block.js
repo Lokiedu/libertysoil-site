@@ -68,7 +68,7 @@ export default class AuthBlock extends React.PureComponent {
     if (is_logged_in) {
       return (
         <Dropdown
-          className="header__block header__auth header__toolbar"
+          className="header__dropdown header__block header__auth header__toolbar"
           icon={
             <div className="header__corner header__toolbar_item">
               <Avatar
@@ -81,7 +81,7 @@ export default class AuthBlock extends React.PureComponent {
           theme="new"
         >
           {menuItems(current_user.getIn(['user', 'username'])).map(menuItem => (
-            <MenuItem className="menu__item--theme_new" key={menuItem.key}>
+            <MenuItem className="menu__item--theme_v3" key={menuItem.key}>
               {menuItem.node}
             </MenuItem>
           ))}

@@ -17,17 +17,34 @@
     display: none;
   }
 
-  &--theme_new {
-    padding: 12px 14px 14px 14px;
-    min-width: 135px;
-    font-size: 14px;
+  &--theme {
+    &_new {
+      padding: 12px 14px 14px 14px;
+      min-width: 135px;
+      font-size: 14px;
 
-    &:hover {
-      color: #6b78f9;
+      &:hover {
+        color: #6b78f9;
+      }
+
+      & + & {
+        margin-top: 1px;
+      }
     }
 
-    & + & {
+    &_v3 {
       margin-top: 1px;
+      padding: 0 20px;
+      display: flex;
+      width: 170px;
+      height: 42px;
+      align-items: center;
+      background-color: #fafafa;
+      color: #000;
+      
+      &:hover {
+        color: #66b6ec;
+      }
     }
   }
 }
