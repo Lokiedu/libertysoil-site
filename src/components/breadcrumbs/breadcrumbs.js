@@ -17,12 +17,11 @@
 */
 import PropTypes from 'prop-types';
 
-import React, { cloneElement, Component } from 'react';
+import React, { cloneElement } from 'react';
 import throttle from 'lodash/throttle';
 import isArray from 'lodash/isArray';
 import compact from 'lodash/compact';
 import keys from 'lodash/keys';
-import isEqual from 'lodash/isEqual';
 
 import { OldIcon as Icon } from '../icon';
 
@@ -35,7 +34,16 @@ const defaultShortView = (
   />
 );
 
-export default class Breadcrumbs extends Component {
+const MAX_VISIBLE_CRUMBS = 1;
+
+function limit(crumbs) {
+  if (crumbs > MAX_VISIBLE_CRUMBS) {
+    return MAX_VISIBLE_CRUMBS;
+  }
+  return crumbs;
+}
+
+export default class Breadcrumbs extends React.PureComponent {
   static displayName = 'Breadcrumbs';
 
   static propTypes = {
@@ -69,10 +77,6 @@ export default class Breadcrumbs extends Component {
     this.resetVisibleCrumbs();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props || !isEqual(nextState, this.state);
-  }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.resetVisibleCrumbs);
     document.removeEventListener('updateBreadcrumbs', this.handleForceUpdate);
@@ -96,21 +100,23 @@ export default class Breadcrumbs extends Component {
         nextState.displayShortView = displayShortView;
       }
 
-      this.setState(nextState, callback);
+      this.setState((state) => ({ ...state, ...nextState }), callback);
     } else {
-      this.setState({
+      this.setState((state) => ({
+        ...state,
         displayShortView: true,
         shouldDisplay: true,
-        visibleCrumbs: this.childrenCount
-      }, this.updateVisibleCrumbs);
+        visibleCrumbs: limit(this.childrenCount)
+      }), this.updateVisibleCrumbs);
     }
   }, 100);
 
   resetVisibleCrumbs = throttle(() => {
-    this.setState({
+    this.setState((state) => ({
+      ...state,
       shouldDisplay: true,
-      visibleCrumbs: this.childrenCount
-    }, this.updateVisibleCrumbs);
+      visibleCrumbs: limit(this.childrenCount)
+    }), this.updateVisibleCrumbs);
   }, 250);
 
   updateVisibleCrumbs = () => {
@@ -120,10 +126,11 @@ export default class Breadcrumbs extends Component {
     if (bodyWidth >= breadcrumbsWidth) {
       if (this.state.visibleCrumbs > 0) {
         this.setState((state) => ({
+          ...state,
           visibleCrumbs: state.visibleCrumbs - 1
         }), this.updateVisibleCrumbs);
       } else {
-        this.setState({ shouldDisplay: false });
+        this.setState(state => ({ ...state, shouldDisplay: false }));
       }
     }
   };
