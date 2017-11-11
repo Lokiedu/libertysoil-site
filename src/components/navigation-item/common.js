@@ -1,4 +1,4 @@
-export const ICON_SIZE = { inner: 'ms', outer: 'm' };
+export const ICON_SIZE = { inner: undefined, outer: 'm' };
 
 export const ANIMATION_PROPERTIES = {
   className: 'navigation-item__content-wrapper',

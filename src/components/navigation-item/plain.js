@@ -92,3 +92,7 @@ export default function NavigationItemPlain({
     </div>
   );
 }
+
+NavigationItemPlain.defaultProps = {
+  theme: '2.0'
+};

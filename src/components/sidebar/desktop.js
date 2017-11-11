@@ -175,8 +175,8 @@ class SidebarDesktop extends React.PureComponent {
       <div className={className}>
         <div className="sidebar__inner">
           <SidebarMenu
+            adaptive
             animated
-            current_user={current_user}
             truncated={collapsed}
             onSwitchClick={this.handleSwitchClick}
           />
