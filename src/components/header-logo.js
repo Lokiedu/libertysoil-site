@@ -40,14 +40,9 @@ class HeaderLogo extends React.Component {
   }
 
   render() {
-    let className = 'header__block header__logo header__corner action';
-    if (this.props.is_logged_in) {
-      className += ' header__corner--colored';
-    }
-
     return (
       <Logo
-        className={className}
+        className="header__block header__logo header__corner action"
         isLink={this.props.isLink}
       />
     );

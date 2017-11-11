@@ -20,14 +20,20 @@
   align-items: center;
   flex-wrap: nowrap;
   max-width: 100%;
+  height: 100%;
 }
 
 .breadcrumbs__item {
   padding: 0 17px;
+  display: flex;
+  align-items: center;
 
   &--narrow {
-    padding-left: 17px;
-    padding-right: 0;
+    padding: 0;
+
+    .tag {
+      max-width: none;
+    }
   }
 }
 
@@ -35,13 +41,17 @@
   &:extend(.font-light);
   padding: 0;
   overflow: hidden;
+  height: 100%;
   text-overflow: ellipsis;
-
-  &:only-child {
-    padding-left: 17px;
-  }
+  background-color: #fff;
+  color: #000;
 }
 
 .breadcrumbs__avatar {
+  align-self: center;
   box-shadow: 1px 3px 2px rgba(0, 0, 0, 0.08);
+}
+
+.breadcrumbs__short-view {
+  background-color: #fff;
 }
