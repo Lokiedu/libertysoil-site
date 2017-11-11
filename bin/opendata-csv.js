@@ -7,12 +7,16 @@ import { types as pgTypes } from 'pg';
 import isEmpty from 'lodash/isEmpty';
 import mkdirp from 'mkdirp';
 import moment from 'moment';
-import Git from 'nodegit';
+// import Git from 'nodegit';  // FIXME
 import ora from 'ora';
 
 import knex from './utils/knex';
 
 global.Promise = require('bluebird');
+
+const Git = null;
+process.stderr.write("FIXME: part about nodegit has to be reimplemented\n");
+process.exit(0);  // FIXME
 
 
 const throbber = ora('preparing…').start();
