@@ -27,8 +27,18 @@
   justify-content: center;
   align-items: center;
 
-  background: @color__block_background;
+  background: rgba(255, 255, 255, 0.45);
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+
+  &__block {
+    min-height: 60px;
+    background: rgba(255, 255, 255, 1);
+    transition: background 0.25s @easeOutCubic;
+  
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
 
   &-transparent {
     background: none;
@@ -38,10 +48,15 @@
       color: @color__gray !important;
     }
 
-    .header__search {
-      &.search-opened {
-        background: transparent;
+    .header__block {
+      background: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
       }
+    }
+
+    .header__search {
 
       .list_item {
         color: @color__text;

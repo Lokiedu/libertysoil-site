@@ -25,9 +25,10 @@ import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 import { API_HOST } from '../config';
 import { URL_NAMES, getUrl } from '../utils/urlGenerator';
 
-import Avatar from './user/avatar';
 import { v2 as Dropdown } from './dropdown';
+import { OldIcon as Icon } from './icon';
 import MenuItem from './menu-item';
+import Avatar from './user/avatar';
 
 const menuItems = username => ([
   { key: 'profile',
@@ -45,17 +46,13 @@ const menuItems = username => ([
     ) }
 ]);
 
-export default class AuthBlock extends React.Component {
+export default class AuthBlock extends React.PureComponent {
   static displayName = 'AuthBlock';
 
   static propTypes = {
     current_user: CurrentUserPropType,
     is_logged_in: PropTypes.bool.isRequired
   };
-
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
-  }
 
   pushLogin = throttle(
     location => ({
@@ -93,13 +90,20 @@ export default class AuthBlock extends React.Component {
     }
 
     return (
-      <div className="header__toolbar">
+      <div className="auth header__block header__toolbar">
         <div className="header__toolbar_item">
           <Link
+            aria-label="Log in"
             className="header__toolbar_item"
             to={this.pushLogin}
           >
-            Login
+            <Icon
+              className="auth__icon"
+              icon="sign-in"
+              round={false}
+              pack="fa"
+              size="block"
+            />
           </Link>
         </div>
       </div>

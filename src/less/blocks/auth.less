@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2015  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,25 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-html {
-  font-family: 'Noto Sans UI', 'Noto Sans', 'Noto Sans Hebrew', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
-  color: @color__text;
-  font-size: @font__size;
-  font-weight: 400;
-  background: #f0f0f0;
-  text-rendering: optimizeLegibility;
-  padding: 0;
-  margin: 0;
-}
+.auth {
+  &__icon {
+    color: #7f7f7f;
+    transition: color 0.25s @easeOutCubic;
 
-html, body, #content {
-  height: 100%;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  font-size: inherit;
-  font-weight: inherit;
+    &:hover {
+      color: #949494;
+    }
+  }
 }

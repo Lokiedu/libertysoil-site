@@ -88,6 +88,7 @@ class SelectLocale extends React.Component {
     return (
       <form>
         <Select
+          className={this.props.className}
           disabled={this.state.isSubmitting}
           renderSelected={renderSelected}
           theme="new"
