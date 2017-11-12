@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import kueLib from 'kue';
+import schedule from 'node-schedule';
 
 import config from './config';
 import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate, renderNewCommentTemplate } from './src/email-templates/index';
@@ -28,9 +29,43 @@ import initBookshelf from './src/api/db';
 const dbEnv = process.env.DB_ENV || 'development';
 const knexConfig = dbConfig[dbEnv];
 const bookshelf = initBookshelf(knexConfig);
+const knex = bookshelf.knex;
 
 export default function startServer(/*params*/) {
   const queue = kueLib.createQueue(config.kue);
+
+  // Every 10 minutes, update post statistics.
+  schedule.scheduleJob('*/10 * * * *', async function () {
+    try {
+      await knex.raw(`
+        UPDATE posts SET
+          new_like_count = (
+            SELECT count(*) FROM likes WHERE
+              post_id = posts.id AND
+              created_at > (current_timestamp at time zone 'UTC')::date - 30
+          ),
+          new_fav_count = (
+            SELECT count(*) FROM favourites WHERE
+              post_id = posts.id AND
+              created_at > (current_timestamp at time zone 'UTC')::date - 30
+          ),
+          new_comment_count = (
+            SELECT count(*) FROM comments WHERE
+              post_id = posts.id AND
+              created_at > (current_timestamp at time zone 'UTC')::date - 30
+          )
+      `);
+      await knex.raw(`
+        UPDATE posts SET
+          score = new_like_count + new_fav_count + new_comment_count;
+      `);
+
+      // TODO: Use proper logger
+      console.log('Post stats updated'); // eslint-disable-line no-console
+    } catch (e) {
+      console.error('Failed to update post stats: ', e); // eslint-disable-line no-console
+    }
+  });
 
   queue.on('error', (err) => {
     process.stderr.write(`${err.message}\n`);
