@@ -35,6 +35,7 @@ import posts from './posts';
 import river from './river';
 import all_posts from './all_posts';
 import most_liked_posts from './most_liked_posts';
+import most_favourited_posts from './most_favourited_posts';
 import schools from './schools';
 import school_posts from './school_posts';
 import hashtags from './hashtags';
@@ -77,6 +78,7 @@ export const theReducer = combineReducers(i.Map({
   river,
   all_posts,
   most_liked_posts,
+  most_favourited_posts,
   schools,
   school_posts,
   hashtags,
@@ -135,6 +137,7 @@ const initialState = i.Map({
   river: i.List([]),
   all_posts: i.List([]),
   most_liked_posts: i.List([]),
+  most_favourited_posts: i.List([]),
   schools: i.Map({}),
   school_posts: i.Map({}),
   suggested_users: i.List([]),
