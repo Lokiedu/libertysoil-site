@@ -38,3 +38,4 @@ export const tools = require('./tools');
 
 export const userMessages = require('./user-messages');
 export const allPosts = require('./all-posts');
+export const mostLikedPosts = require('./most-liked-posts');

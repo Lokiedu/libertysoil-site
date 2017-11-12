@@ -627,6 +627,31 @@ export class ActionsTrigger {
     return result;
   };
 
+  loadMostLikedPosts = async (query) => {
+    let result = false;
+
+    this.dispatch(a.ui.setProgress('loadMostLikedPostsInProgress', true));
+
+    try {
+      result = await this.client.allPosts({
+        ...query,
+        sort: '-new_like_count'
+      });
+
+      if (query.offset && query.offset > 0) {
+        this.dispatch(a.mostLikedPosts.addPosts(result));
+      } else {
+        this.dispatch(a.mostLikedPosts.setPosts(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadMostLikedPostsInProgress', false));
+
+    return result;
+  }
+
   loadPostRiver = async (offset) => {
     this.dispatch(a.ui.setProgress('loadRiverInProgress', true));
 

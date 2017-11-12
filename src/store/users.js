@@ -94,6 +94,8 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.mostLikedPosts.ADD_POSTS_TO_MOST_LIKED_POSTS:
+    case a.mostLikedPosts.SET_MOST_LIKED_POSTS:
     case a.allPosts.ADD_POSTS_TO_ALL_POSTS:
     case a.allPosts.SET_ALL_POSTS:
     case a.river.SET_POSTS_TO_RIVER:
