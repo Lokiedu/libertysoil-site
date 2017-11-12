@@ -33,7 +33,7 @@ describe('School', () => {
 
   before(async () => {
     await knex('schools').del(); // schools are leaking somewhere
-    school = await createSchool({ name: 'SomeSchool' });
+    school = await createSchool({ name: 'some school' });
     user = await createUser();
     session = await login(user.get('username'), user.get('password'));
   });
@@ -183,7 +183,7 @@ describe('School', () => {
     });
 
     it('responds with letters', async () => {
-      const letters = uniq(schools.map(s => s.get('name')[0])).sort();
+      const letters = uniq(schools.map(s => s.get('name')[0].toUpperCase())).sort();
 
       await expect(
         { url: `/api/v1/schools-alphabet`, method: 'GET' },
@@ -416,7 +416,7 @@ describe('School', () => {
 
   describe('POST /api/v1/school/:id', () => {
     after(async () => {
-      await school.save({ name: 'SomeSchool' }, { patch: true });
+      await school.save({ name: 'some school' }, { patch: true });
     });
 
     it('responds with updated school', async () => {
@@ -426,11 +426,11 @@ describe('School', () => {
           url: `/api/v1/school/${school.id}`,
           method: 'POST',
           body: {
-            name: 'NewName'
+            name: 'new name'
           }
         },
         'body to satisfy',
-        { id: school.id, name: 'NewName' }
+        { id: school.id, name: 'new name' }
       );
     });
   });
@@ -439,7 +439,7 @@ describe('School', () => {
     it('responds with matching schools', async () => {
       await expect(
         {
-          url: `/api/v1/schools/SomeSc`,
+          url: `/api/v1/schools/some`,
           method: 'GET'
         },
         'body to satisfy',
