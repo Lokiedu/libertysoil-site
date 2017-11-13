@@ -23,6 +23,10 @@ const config = {
   plugins: skipFalsy([
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': opts.dev ? '"development"' : '"production"',
+      'process.env.FACEBOOK_AUTH_ENABLED': !!process.env.FACEBOOK_CLIENT_ID,
+      'process.env.GOOGLE_AUTH_ENABLED': !!process.env.GOOGLE_CLIENT_ID,
+      'process.env.TWITTER_AUTH_ENABLED': !!process.env.TWITTER_CONSUMER_KEY,
+      'process.env.GITHUB_AUTH_ENABLED': !!process.env.GITHUB_CLIENT_ID,
     }),
     opts.dev && new webpack.HotModuleReplacementPlugin(),
     opts.dev && new webpack.NoEmitOnErrorsPlugin(),
