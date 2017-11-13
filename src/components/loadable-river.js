@@ -45,7 +45,7 @@ export default class LoadableRiver extends React.Component {
     super(props, context, ...args);
 
     this.state = {
-      displayLoadMore: props.river.size > props.loadMoreLimit
+      displayLoadMore: props.river.size >= props.loadMoreLimit
     };
 
     this.query = clone(context.router.location.query);
