@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
-const none = (isDev && 'none');
+export const none = (isDev && 'none');
 
 export const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID || none;
 export const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET || none;

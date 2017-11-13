@@ -19,6 +19,7 @@ import path from 'path';
 import { get, isString } from 'lodash';
 import bb from 'bluebird';
 import bcrypt from 'bcrypt';
+import createDebug from 'debug';
 import uuid from 'uuid';
 import slug from 'slug';
 import passport from 'koa-passport';
@@ -35,6 +36,7 @@ import { API_URL_PREFIX } from '../config';
 import { USER_RELATIONS } from './consts';
 
 import {
+  none,
   FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET,
   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
   TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
@@ -53,6 +55,7 @@ export class WrongPasswordError extends Error {}
  *   3. Auth strategies.
  */
 export function setUpPassport(bookshelf) {
+  const debug = createDebug('libertysoil:setUpPassport');
   const User = bookshelf.model('User');
 
   passport.serializeUser(function (user, done) {
@@ -64,6 +67,7 @@ export function setUpPassport(bookshelf) {
     // deserializeUser is invoked on each request, so to keep our server fast,
     // we only store an id and fetch the current user on demand manually. Though a proper caching
     // system could make an automatic user acquisition fast.
+    debug(`ctx.state.user is set to '${id}'`);
     done(null, id);
   });
 
@@ -85,52 +89,72 @@ export function setUpPassport(bookshelf) {
   }));
 
   // Facebook
-  passport.use(new FacebookStrategy(
-    {
-      clientID: FACEBOOK_CLIENT_ID,
-      clientSecret: FACEBOOK_CLIENT_SECRET,
-      callbackURL: `${API_URL_PREFIX}/auth/facebook/callback`,
-      passReqToCallback: true,
-      profileFields: ['id', 'displayName', 'name', 'profileUrl', 'emails', 'photos']
-    },
-    getStrategyCallback(bookshelf, 'facebook')
-  ));
+  if (FACEBOOK_CLIENT_ID !== none) {
+    passport.use(new FacebookStrategy(
+      {
+        clientID: FACEBOOK_CLIENT_ID,
+        clientSecret: FACEBOOK_CLIENT_SECRET,
+        callbackURL: `${API_URL_PREFIX}/auth/facebook/callback`,
+        passReqToCallback: true,
+        profileFields: ['id', 'displayName', 'name', 'profileUrl', 'emails', 'photos']
+      },
+      getStrategyCallback(bookshelf, 'facebook')
+    ));
+    debug(`enabled FacebookStrategy`);
+  } else {
+    debug(`FACEBOOK_CLIENT_ID is not set. skipping FacebookStrategy`);
+  }
 
   // Google
   // Enable Google+ api in app settings.
-  passport.use(new GoogleStrategy(
-    {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `${API_URL_PREFIX}/auth/google/callback`,
-      passReqToCallback: true
-    },
-    getStrategyCallback(bookshelf, 'google')
-  ));
+  if (GOOGLE_CLIENT_ID !== none) {
+    passport.use(new GoogleStrategy(
+      {
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: `${API_URL_PREFIX}/auth/google/callback`,
+        passReqToCallback: true
+      },
+      getStrategyCallback(bookshelf, 'google')
+    ));
+    debug(`enabled GoogleStrategy`);
+  } else {
+    debug(`GOOGLE_CLIENT_ID is not set. skipping GoogleStrategy`);
+  }
 
   // Twitter
   // Enable "Request email addresses from users" in app settings.
-  passport.use(new TwitterStrategy(
-    {
-      consumerKey: TWITTER_CONSUMER_KEY,
-      consumerSecret: TWITTER_CONSUMER_SECRET,
-      callbackURL: `${API_URL_PREFIX}/auth/twitter/callback`,
-      passReqToCallback: true,
-      includeEmail: true
-    },
-    getStrategyCallback(bookshelf, 'twitter')
-  ));
+  if (TWITTER_CONSUMER_KEY !== none) {
+    passport.use(new TwitterStrategy(
+      {
+        consumerKey: TWITTER_CONSUMER_KEY,
+        consumerSecret: TWITTER_CONSUMER_SECRET,
+        callbackURL: `${API_URL_PREFIX}/auth/twitter/callback`,
+        passReqToCallback: true,
+        includeEmail: true
+      },
+      getStrategyCallback(bookshelf, 'twitter')
+    ));
+    debug(`enabled TwitterStrategy`);
+  } else {
+    debug(`TWITTER_CONSUMER_KEY is not set. skipping TwitterStrategy`);
+  }
 
   // Github
-  passport.use(new GithubStrategy(
-    {
-      clientID: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: `${API_URL_PREFIX}/auth/github/callback`,
-      passReqToCallback: true
-    },
-    getStrategyCallback(bookshelf, 'github')
-  ));
+  if (GOOGLE_CLIENT_ID !== none) {
+    passport.use(new GithubStrategy(
+      {
+        clientID: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_CLIENT_SECRET,
+        callbackURL: `${API_URL_PREFIX}/auth/github/callback`,
+        passReqToCallback: true
+      },
+      getStrategyCallback(bookshelf, 'github')
+    ));
+    debug(`enabled GithubStrategy`);
+  } else {
+    debug(`GITHUB_CLIENT_ID is not set. skipping GithubStrategy`);
+  }
 
   return passport;
 }
