@@ -36,7 +36,6 @@ import { API_URL_PREFIX } from '../config';
 import { USER_RELATIONS } from './consts';
 
 import {
-  none,
   FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET,
   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
   TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
@@ -89,7 +88,7 @@ export function setUpPassport(bookshelf) {
   }));
 
   // Facebook
-  if (FACEBOOK_CLIENT_ID !== none) {
+  if (FACEBOOK_CLIENT_ID) {
     passport.use(new FacebookStrategy(
       {
         clientID: FACEBOOK_CLIENT_ID,
@@ -107,7 +106,7 @@ export function setUpPassport(bookshelf) {
 
   // Google
   // Enable Google+ api in app settings.
-  if (GOOGLE_CLIENT_ID !== none) {
+  if (GOOGLE_CLIENT_ID) {
     passport.use(new GoogleStrategy(
       {
         clientID: GOOGLE_CLIENT_ID,
@@ -124,7 +123,7 @@ export function setUpPassport(bookshelf) {
 
   // Twitter
   // Enable "Request email addresses from users" in app settings.
-  if (TWITTER_CONSUMER_KEY !== none) {
+  if (TWITTER_CONSUMER_KEY) {
     passport.use(new TwitterStrategy(
       {
         consumerKey: TWITTER_CONSUMER_KEY,
@@ -141,7 +140,7 @@ export function setUpPassport(bookshelf) {
   }
 
   // Github
-  if (GOOGLE_CLIENT_ID !== none) {
+  if (GOOGLE_CLIENT_ID) {
     passport.use(new GithubStrategy(
       {
         clientID: GITHUB_CLIENT_ID,
