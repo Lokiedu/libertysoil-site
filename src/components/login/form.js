@@ -29,6 +29,13 @@ import AltButton from '../alt-button';
 import Button from '../button';
 import FormField from '../form/field';
 import { openOauthPopup } from '../../utils/auth';
+import {
+  FACEBOOK_AUTH_ENABLED,
+  GOOGLE_AUTH_ENABLED,
+  TWITTER_AUTH_ENABLED,
+  GITHUB_AUTH_ENABLED,
+  ANY_OAUTH_ENABLED,
+} from '../../consts/auth';
 
 const hiddenStyle = { display: 'none' };
 
@@ -157,44 +164,56 @@ export class LoginFormV2 extends React.Component {
             />
           </div>
         </div>
-        <div className="form__subheader form__background--bright form__subheader--section">
-          {t('login.quick')}
-        </div>
+
+        {ANY_OAUTH_ENABLED &&
+          <div className="form__subheader form__background--bright form__subheader--section">
+            {t('login.quick')}
+          </div>
+        }
+
         <div className="form__background--bright form__alt">
-          <AltButton
-            icon={getIconProps('facebook-official')}
-            theme="list"
-            onClick={this.handleFacebook}
-          >
-            Facebook
-          </AltButton>
+          {FACEBOOK_AUTH_ENABLED &&
+            <AltButton
+              icon={getIconProps('facebook-official')}
+              theme="list"
+              onClick={this.handleFacebook}
+            >
+              Facebook
+            </AltButton>
+          }
 
-          <AltButton
-            className="margin--all_top"
-            icon={getIconProps('google')}
-            theme="list"
-            onClick={this.handleGoogle}
-          >
-            Google
-          </AltButton>
+          {GOOGLE_AUTH_ENABLED &&
+            <AltButton
+              className="margin--all_top"
+              icon={getIconProps('google')}
+              theme="list"
+              onClick={this.handleGoogle}
+            >
+              Google
+            </AltButton>
+          }
 
-          <AltButton
-            className="margin--all_top"
-            icon={getIconProps('twitter')}
-            theme="list"
-            onClick={this.handleTwitter}
-          >
-            Twitter
-          </AltButton>
+          {TWITTER_AUTH_ENABLED &&
+            <AltButton
+              className="margin--all_top"
+              icon={getIconProps('twitter')}
+              theme="list"
+              onClick={this.handleTwitter}
+            >
+              Twitter
+            </AltButton>
+          }
 
-          <AltButton
-            className="margin--all_top"
-            icon={getIconProps('github')}
-            theme="list"
-            onClick={this.handleGithub}
-          >
-            Github
-          </AltButton>
+          {GITHUB_AUTH_ENABLED &&
+            <AltButton
+              className="margin--all_top"
+              icon={getIconProps('github')}
+              theme="list"
+              onClick={this.handleGithub}
+            >
+              Github
+            </AltButton>
+          }
 
           <Link
             className={AltButton.defaultClassName.concat(' margin--all_top form__alt-item--theme_paper')}

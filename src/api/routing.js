@@ -18,6 +18,7 @@
 import Router from 'koa-router';
 import multer from 'koa-multer';
 
+import { FACEBOOK_CLIENT_ID, GOOGLE_CLIENT_ID, TWITTER_CONSUMER_KEY, GITHUB_CLIENT_ID } from './env';
 import { getAuthController, getAuthProfileController, auth, setUpPassport } from './auth';
 import * as test from './controllers/test';
 import * as users from './controllers/users';
@@ -48,20 +49,29 @@ export function initApi(bookshelf) {
   api.post('/session', users.login);
 
   // Universal login/register/add provider controllers. Open in a popup.
-  api.get('/auth/facebook', getAuthController('facebook', passport, { resetOnlyProfile: true }));
-  api.get('/auth/facebook/callback', getAuthController('facebook', passport));
-  api.get('/auth/google', getAuthController('google', passport, { resetOnlyProfile: true }));
-  api.get('/auth/google/callback', getAuthController('google', passport));
-  api.get('/auth/twitter', getAuthController('twitter', passport, { resetOnlyProfile: true }));
-  api.get('/auth/twitter/callback', getAuthController('twitter', passport));
-  api.get('/auth/github', getAuthController('github', passport, { resetOnlyProfile: true }));
-  api.get('/auth/github/callback', getAuthController('github', passport));
+  // /auth/profile controllers may be used to get a user profile without authentication.
+  if (FACEBOOK_CLIENT_ID) {
+    api.get('/auth/facebook', getAuthController('facebook', passport, { resetOnlyProfile: true }));
+    api.get('/auth/facebook/callback', getAuthController('facebook', passport));
+    api.get('/auth/profile/facebook', getAuthProfileController('facebook', passport));
+  }
+  if (GOOGLE_CLIENT_ID) {
+    api.get('/auth/google', getAuthController('google', passport, { resetOnlyProfile: true }));
+    api.get('/auth/google/callback', getAuthController('google', passport));
+    api.get('/auth/profile/google', getAuthProfileController('google', passport));
+  }
 
-  // These do not login/create user, only respond with a oauth profile. Open in a popup.
-  api.get('/auth/profile/facebook', getAuthProfileController('facebook', passport));
-  api.get('/auth/profile/google', getAuthProfileController('google', passport));
-  api.get('/auth/profile/twitter', getAuthProfileController('twitter', passport));
-  api.get('/auth/profile/github', getAuthProfileController('github', passport));
+  if (TWITTER_CONSUMER_KEY) {
+    api.get('/auth/twitter', getAuthController('twitter', passport, { resetOnlyProfile: true }));
+    api.get('/auth/twitter/callback', getAuthController('twitter', passport));
+    api.get('/auth/profile/twitter', getAuthProfileController('twitter', passport));
+  }
+
+  if (GITHUB_CLIENT_ID) {
+    api.get('/auth/github', getAuthController('github', passport, { resetOnlyProfile: true }));
+    api.get('/auth/github/callback', getAuthController('github', passport));
+    api.get('/auth/profile/github', getAuthProfileController('github', passport));
+  }
 
   api.get('/posts', auth, posts.subscriptions);
   api.get('/posts/subscriptions/hashtag', auth, posts.hashtagSubscriptions);

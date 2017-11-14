@@ -15,8 +15,9 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
-export const none = (isDev && 'none');
+const isTest = ['test', 'travis'].includes(process.env.DB_ENV);
+// Using any string as a key doesn't throw an error in passport strategies which may be useful for tests.
+export const none = (isTest && 'none');
 
 export const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID || none;
 export const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET || none;
