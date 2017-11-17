@@ -33,6 +33,7 @@ export default class LoadableRiver extends React.Component {
   };
 
   static defaultProps = {
+    autoload: true,
     loadMoreLimit: 4,
     onAutoLoad: noop,
     onForceLoad: noop,
@@ -44,7 +45,7 @@ export default class LoadableRiver extends React.Component {
     super(props, context, ...args);
 
     this.state = {
-      displayLoadMore: props.river.size > props.loadMoreLimit
+      displayLoadMore: props.river.size >= props.loadMoreLimit
     };
 
     this.query = clone(context.router.location.query);
@@ -64,6 +65,10 @@ export default class LoadableRiver extends React.Component {
   }
 
   handleAutoLoad = async (...args) => {
+    if (!this.props.autoload) {
+      return;
+    }
+
     const displayLoadMore = await this.props.onAutoLoad(...args);
 
     if (displayLoadMore !== undefined) {

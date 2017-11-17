@@ -145,17 +145,17 @@ class MyPostsToolPage extends React.Component {
             <div className="layout">
               <span className="card__toolbar_item">
                 <Icon icon="favorite_border" outline size="small" />
-                <span className="card__toolbar_item_value">{post.get('likers').size}</span>
+                <span className="card__toolbar_item_value">{post.get('like_count')}</span>
               </span>
 
               <span className="card__toolbar_item">
                 <Icon icon="star_border" outline size="small" />
-                <span className="card__toolbar_item_value">{post.get('favourers').size}</span>
+                <span className="card__toolbar_item_value">{post.get('fav_count')}</span>
               </span>
 
               <span className="card__toolbar_item" >
                 <Icon icon="chat_bubble_outline" outline size="small" />
-                <span className="card__toolbar_item_value">{post.get('comments')}</span>
+                <span className="card__toolbar_item_value">{post.get('comment_count')}</span>
               </span>
             </div>
           </Link>

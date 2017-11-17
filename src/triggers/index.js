@@ -627,6 +627,81 @@ export class ActionsTrigger {
     return result;
   };
 
+  loadMostLikedPosts = async (query) => {
+    let result = false;
+
+    this.dispatch(a.ui.setProgress('loadMostLikedPostsInProgress', true));
+
+    try {
+      result = await this.client.allPosts({
+        ...query,
+        sort: '-new_like_count'
+      });
+
+      if (query.offset && query.offset > 0) {
+        this.dispatch(a.mostLikedPosts.addPosts(result));
+      } else {
+        this.dispatch(a.mostLikedPosts.setPosts(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadMostLikedPostsInProgress', false));
+
+    return result;
+  }
+
+  loadMostFavouritedPosts = async (query) => {
+    let result = false;
+
+    this.dispatch(a.ui.setProgress('loadMostFavouritedPostsInProgress', true));
+
+    try {
+      result = await this.client.allPosts({
+        ...query,
+        sort: '-new_fav_count'
+      });
+
+      if (query.offset && query.offset > 0) {
+        this.dispatch(a.mostFavouritedPosts.addPosts(result));
+      } else {
+        this.dispatch(a.mostFavouritedPosts.setPosts(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadMostFavouritedPostsInProgress', false));
+
+    return result;
+  }
+
+  loadBestPosts = async (query) => {
+    let result = false;
+
+    this.dispatch(a.ui.setProgress('loadBestPostsInProgress', true));
+
+    try {
+      result = await this.client.allPosts({
+        ...query,
+        sort: '-score'
+      });
+
+      if (query.offset && query.offset > 0) {
+        this.dispatch(a.bestPosts.addPosts(result));
+      } else {
+        this.dispatch(a.bestPosts.setPosts(result));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+
+    this.dispatch(a.ui.setProgress('loadBestPostsInProgress', false));
+
+    return result;
+  }
+
   loadPostRiver = async (offset) => {
     this.dispatch(a.ui.setProgress('loadRiverInProgress', true));
 

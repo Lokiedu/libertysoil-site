@@ -59,6 +59,9 @@ import NewSchoolToolPage from './pages/tools/new-school-tool';
 import ConversationsToolPage from './pages/tools/conversations-tool';
 import SearchPage from './pages/search';
 import AllPostsPage from './pages/all-posts';
+import MostLikedPostsPage from './pages/most-liked-posts';
+import MostFavouritedPostsPage from './pages/most-favourited-posts';
+import BestPosts from './pages/best-posts';
 import HashtagSubscriptionsPage from './pages/hashtag-subscriptions';
 import SchoolSubscriptionsPage from './pages/school-subscriptions';
 import GeotagSubscriptionsPage from './pages/geotag-subscriptions';
@@ -80,6 +83,9 @@ export function getRoutes(authHandler, fetchHandler/*, changeHandler*/) {
     <Route component={App}>
       <Route path="/" component={IndexPage} onEnter={withoutAuth} />
       <Route component={AllPostsPage} path="/all" onEnter={withoutAuth} />
+      <Route component={MostLikedPostsPage} path="/most-liked" onEnter={withoutAuth} />
+      <Route component={MostFavouritedPostsPage} path="/most-favourited" onEnter={withoutAuth} />
+      <Route component={BestPosts} path="/best" onEnter={withoutAuth} />
       <Route component={ListPage} path="/feed" onEnter={withAuth} />
       <Route component={HashtagSubscriptionsPage} path="/feed/tag" onEnter={withAuth} />
       <Route component={SchoolSubscriptionsPage} path="/feed/s" onEnter={withAuth} />

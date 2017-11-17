@@ -36,6 +36,12 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case a.bestPosts.ADD_POSTS_TO_BEST_POSTS:
+    case a.bestPosts.SET_BEST_POSTS:
+    case a.mostFavouritedPosts.ADD_POSTS_TO_MOST_FAVOURITED_POSTS:
+    case a.mostFavouritedPosts.SET_MOST_FAVOURITED_POSTS:
+    case a.mostLikedPosts.ADD_POSTS_TO_MOST_LIKED_POSTS:
+    case a.mostLikedPosts.SET_MOST_LIKED_POSTS:
     case a.allPosts.ADD_POSTS_TO_ALL_POSTS:
     case a.allPosts.SET_ALL_POSTS:
     case a.river.SET_POSTS_TO_RIVER:
@@ -87,12 +93,6 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case a.comments.SET_POST_COMMENTS: {
-      if (action.payload.postId && action.payload.comments) {
-        state = state.setIn([action.payload.postId, 'comments'], action.payload.comments.length);
-      }
-      break;
-    }
     case a.posts.SET_PROFILE_POSTS: {
       const posts = _.keyBy(action.payload.posts, 'id');
       state = state.merge(i.fromJS(posts));

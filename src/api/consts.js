@@ -41,6 +41,7 @@ export const POST_PUBLIC_COLUMNS = [
   'id', 'user_id', 'text', 'type', 'created_at', 'updated_at',
   'more', 'fully_published_at', 'liked_hashtag_id', 'liked_school_id', 'liked_geotag_id',
   'url_name', '_sphinx_id', 'text_source', 'text_type',
+  'like_count', 'fav_count', 'comment_count', 'score'
 ];
 
 export const POST_DEFAULT_COLUMNS = without(POST_PUBLIC_COLUMNS, 'text', 'text_source');
