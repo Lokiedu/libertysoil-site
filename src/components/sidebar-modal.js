@@ -39,12 +39,14 @@ class SidebarModalMain extends React.PureComponent {
       PropTypes.func,
       PropTypes.string
     ]),
-    rtl: PropTypes.bool
+    rtl: PropTypes.bool,
+    version: PropTypes.number
   };
 
   static defaultProps = {
     animate: true,
-    isVisible: false
+    isVisible: false,
+    version: 1
   };
 
   render() {
@@ -74,6 +76,7 @@ class SidebarModalMain extends React.PureComponent {
 
     const cn = classNames(
       'sidebar-modal',
+      'sidebar-modal--version_'.concat(this.props.version),
       this.props.className,
       { 'sidebar-modal--rtl': this.props.rtl }
     );
@@ -112,12 +115,14 @@ class SidebarModalOverlay extends React.Component {
 
   static propTypes = {
     color: PropTypes.string,
-    isVisible: PropTypes.bool
+    isVisible: PropTypes.bool,
+    version: PropTypes.number
   };
 
   static defaultProps = {
     color: "white",
-    isVisible: false
+    isVisible: false,
+    version: 1
   };
 
   constructor(props, ...args) {
@@ -156,12 +161,16 @@ class SidebarModalOverlay extends React.Component {
 
   render() {
     const def = 'sidebar-modal__overlay';
-    const cn = classNames('sidebar-modal', def, this.props.className, {
-      [def.concat('--transition_appear')]: this.state.isAppearing,
-      [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
-      [def.concat('--color_').concat(this.props.color)]: this.props.color,
-      [def.concat('--rtl')]: this.props.rtl
-    });
+    const cn = classNames(
+      'sidebar-modal', 'sidebar-modal--version_'.concat(this.props.version),
+      def, this.props.className,
+      {
+        [def.concat('--transition_appear')]: this.state.isAppearing,
+        [def.concat('--transition_disappear')]: !this.props.isVisible && this.state.isVisible,
+        [def.concat('--color_').concat(this.props.color)]: this.props.color,
+        [def.concat('--rtl')]: this.props.rtl
+      }
+    );
 
     const content = <div className={cn}>{this.props.children}</div>;
 

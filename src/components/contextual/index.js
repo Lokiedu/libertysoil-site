@@ -23,8 +23,7 @@ import { browserHistory, createMemoryHistory } from 'react-router';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import getRoutesFor from '../../selectors/contextual-routes';
-import Login from './wrappers/login';
-import Register from './wrappers/register';
+import * as Routes from './routes';
 
 const closeRoute = (location) => ({
   ...location,
@@ -54,6 +53,18 @@ const onClose = (() => {
 
 const pobj = {};
 
+function getAncestorsPropTypes(component) {
+  const result = Object.assign({}, component.propTypes);
+
+  let c = component;
+  while (typeof c.WrappedComponent !== 'undefined') {
+    Object.assign(result, c.WrappedComponent.propTypes);
+    c = c.WrappedComponent;
+  }
+
+  return result;
+}
+
 export default class ContextualRoutes extends React.PureComponent {
   static propTypes = {
     location: PropTypes.shape(),
@@ -79,38 +90,32 @@ export default class ContextualRoutes extends React.PureComponent {
 
     const { predefProps } = this.props;
     const renderedRoutes = allowedRoutes.map(routeName => {
-      let restProps;
-      if (routeName in predefProps) {
-        restProps = predefProps[routeName];
-      } else {
-        restProps = pobj;
+      if (!(routeName in Routes)) {
+        return false;
       }
 
-      switch (routeName) {
-        case 'login': {
-          return (
-            <Login
-              key="login"
-              onClose={onClose}
-              {...omit(this.props, KNOWN_PROPS)}
-              {...restProps}
-            />
-          );
-        }
-        case 'signup': {
-          return (
-            <Register
-              key="signup"
-              onClose={onClose}
-              {...omit(this.props, KNOWN_PROPS)}
-              {...restProps}
-            />
-          );
-        }
-        default: {
-          return false;
-        }
+      // eslint-disable-next-line import/namespace
+      const Route = Routes[routeName];
+
+      const restProps = {};
+
+      const ancestorsPropTypes = getAncestorsPropTypes(Route);
+      if ('location' in ancestorsPropTypes) {
+        restProps.location = this.props.location;
       }
+      if (routeName in predefProps) {
+        Object.assign(restProps, predefProps[routeName]);
+      }
+
+      return React.createElement(
+        Route,
+        // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+        Object.assign(
+          { key: routeName, onClose },
+          omit(this.props, KNOWN_PROPS),
+          restProps
+        )
+      );
     });
 
     return (

@@ -31,7 +31,7 @@ import ContextualRoutes from '../components/contextual';
 const GAInitializer = ga.Initializer;
 
 export class UnwrappedApp extends React.Component {
-  static contextualRoutes = ['login', 'signup'];
+  static contextualRoutes = ['comments', 'login', 'signup'];
 
   static displayName = 'UnwrappedApp';
 

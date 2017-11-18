@@ -18,4 +18,4 @@
 export { default as UpdateProfilePictureAction } from './update-profile-picture';
 export { default as UpdateUserPicture } from './update-userpic';
 export { default as UpdateNameAction } from './update-name';
-// export { default as ImportContactsAction } from './import-contacts';
+export { default as ImportContactsAction } from './import-contacts';

@@ -59,15 +59,24 @@ export default function wrapWithTransition(WrappedComponent) {
     || WrappedComponent.name
     || 'Component';
 
-  return class Transition extends WrappedComponent {
+  const TransitionedComponent = class Transition extends WrappedComponent {
     static displayName = `Transition(${componentName})`;
 
     // Refs are first available now
     componentDidMount() {
-      const ancestorTransitionHooks = getAncestorTransitionLifecycleHooks(this);
-      if (ancestorTransitionHooks) {
-        Object.assign(this, ancestorTransitionHooks);
+      const ancestor = getAncestorTransitionLifecycleHooks(this);
+      if (ancestor) {
+        Object.assign(this, ancestor);
+      }
+      // to make sure the hooks run sequentially
+      // without possible `Promise.then` usage
+      // running order does not matter
+      if (typeof super.componentDidMount === 'function') {
+        super.componentDidMount();
       }
     }
   };
+
+  TransitionedComponent['WrappedComponent'] = WrappedComponent;
+  return TransitionedComponent;
 }

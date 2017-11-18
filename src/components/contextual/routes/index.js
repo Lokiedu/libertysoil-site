@@ -15,17 +15,11 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { connect } from 'react-redux';
-
-import createSelector from '../../../selectors/createSelector';
 import wrapWithTransition from '../../../utils/transition';
-import { v2 as Login } from '../../login';
+import Login from '../../login/v2';
+import Register from '../../register/v2';
+import SidebarComments from '../../comments/sidebar';
 
-const mapStateToProps = createSelector(
-  state => state.getIn(['current_user', 'id']),
-  is_logged_in => ({ is_logged_in })
-);
-
-export default wrapWithTransition(
-  connect(mapStateToProps, null, null, { withRef: true })(Login)
-);
+export const comments = wrapWithTransition(SidebarComments);
+export const login = wrapWithTransition(Login);
+export const signup = wrapWithTransition(Register);
