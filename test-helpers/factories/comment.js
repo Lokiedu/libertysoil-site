@@ -35,13 +35,13 @@ export async function createComment(attrs = {}) {
     .save(null, { method: 'insert' });
 }
 
-export async function createHashtags(attrs) {
+export async function createComments(attrs) {
   if (typeof attrs === 'number') {
     attrs = Array.apply(null, Array(attrs));
   }
 
   const fullAttrs = attrs.map(attrs => CommentFactory.build(attrs));
-  const ids = await knex.batchInsert('posts', fullAttrs).returning('id');
+  const ids = await knex.batchInsert('comments', fullAttrs).returning('id');
   const comments = await Comment.collection().query(qb => qb.whereIn('id', ids)).fetch({ require: true });
 
   return comments.toArray();
