@@ -236,15 +236,10 @@ export async function searchSchools(ctx) {
 export async function getUserRecentSchools(ctx) {
   const School = ctx.bookshelf.model('School');
 
-  const schools = await School
-    .collection()
+  const schools = await School.getRecentlyUsed()
     .query(qb => {
       qb
-        .join('posts_schools', 'schools.id', 'posts_schools.school_id')
-        .join('posts', 'posts_schools.post_id', 'posts.id')
         .where('posts.user_id', ctx.state.user)
-        .groupBy('schools.id')
-        .orderByRaw('MAX(posts.created_at) DESC')
         .limit(5);
     })
     .fetch();
