@@ -529,6 +529,11 @@ export default class ApiClient {
     return (await response.json(): Array<Geotag>);
   }
 
+  async recentlyUsedTags(): Promise<UserRecentTags> {
+    const response = await this.get('/api/v1/recent-tags');
+    return (await response.json(): UserRecentTags);
+  }
+
   async initialSuggestions(): Promise<Array<User>> {
     const response = await this.get(`/api/v1/suggestions/initial`);
     return (await response.json(): Array<User>);

@@ -86,3 +86,37 @@ export async function userTags(ctx) {
 
   ctx.body = { hashtags, schools, geotags };
 }
+
+export async function getRecentlyUsedTags(ctx) {
+  const Hashtag = ctx.bookshelf.model('Hashtag');
+  const School = ctx.bookshelf.model('School');
+  const Geotag = ctx.bookshelf.model('Geotag');
+  const Post = ctx.bookshelf.model('Post');
+
+  const tags = await ctx.cache.getCachedJson(
+    'recentlyUsedTags',
+    async () => {
+      const yesterday = new Date();
+      yesterday.setHours(yesterday.getHours() - 24);
+
+      // Count fails prob because of the tag models that are used for couting posts (or not)
+
+      return {
+        hashtags: {
+          entries: await Hashtag.getRecentlyUsed({ limit: 5 }).fetch(),
+          post_count: await Post.countWithTags({ tagType: 'hashtag', since: yesterday }),
+        },
+        schools: {
+          entries: await School.getRecentlyUsed({ limit: 5 }).fetch(),
+          post_count: await Post.countWithTags({ tagType: 'school', since: yesterday }),
+        },
+        geotags: {
+          entries: await Geotag.getRecentlyUsed({ limit: 5 }).fetch(),
+          post_count: await Post.countWithTags({ tagType: 'geotag', since: yesterday }),
+        },
+      };
+    }
+  );
+
+  ctx.body = tags;
+}
