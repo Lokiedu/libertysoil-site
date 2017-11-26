@@ -8,8 +8,7 @@ import { bookshelf, knex } from '../db';
 const School = bookshelf.model('School');
 
 const SchoolFactory = new Factory()
-  // toLowerCase is important to eliminate the difference between pg and js string sorting.
-  .attr('name', () => faker.company.companyName(0).toLowerCase())
+  .attr('name', () => faker.lorem.words(3))
   .attr('url_name', ['name'], (name) => slug(name))
   .attr('created_at', () => faker.date.past())
   .attr('updated_at', ['created_at'], (date) => date);
