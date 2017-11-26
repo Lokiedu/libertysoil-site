@@ -23,6 +23,7 @@ export const tags = require('./tags');
 export const hashtags = require('./hashtags');
 export const geotags = require('./geotags');
 export const schools = require('./schools');
+export const recentTags = require('./recent-tags');
 
 export const geo = require('./geo');
 

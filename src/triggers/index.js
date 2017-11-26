@@ -468,6 +468,15 @@ export class ActionsTrigger {
     }
   };
 
+  loadRecentlyUsedTags = async () => {
+    try {
+      const result = await this.client.recentlyUsedTags();
+      this.dispatch(a.tags.setUserRecentTags(result));
+    } catch (e) {
+      this.dispatch(a.messages.reportError(a.tags.SET_USER_RECENT_TAGS, e.message, { display: true }));
+    }
+  }
+
   updatePost = async (post_uuid, post_fields) => {
     try {
       const result = await this.client.updatePost(post_uuid, post_fields);

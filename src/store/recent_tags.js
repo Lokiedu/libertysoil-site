@@ -16,41 +16,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import i from 'immutable';
-import { keyBy } from 'lodash';
+import { map } from 'lodash';
+import { recentTags } from '../actions';
 
-import { schools as s, recentTags } from '../actions';
+export const initialState = i.fromJS({
+  hashtags: [],
+  schools: [],
+  geotags: [],
+});
 
-function cleanupSchoolObject(school) {
-  if (school.description === null) {
-    school.description = '';
-  }
-
-  if (school.lat === null) {
-    school.lat = 0.0;
-  }
-
-  if (school.lon === null) {
-    school.lon = 0.0;
-  }
-
-  return school;
-}
-
-const initialState = i.Map({});
-
-export default function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
-    case s.ADD_SCHOOL: {
-      const school = cleanupSchoolObject(action.payload.school);
-      state = state.set(school.id, i.fromJS(school));
+    case recentTags.SET_RECENT_TAGS: {
+      const tags = {};
 
-      break;
-    }
+      if (action.payload.hashtags) {
+        tags.hashtags = map(action.payload.hashtags, 'name');
+      }
 
-    case recentTags.SET_RECENT_TAGS:
-    case s.SET_SCHOOLS: {
-      const schools = keyBy(action.payload.schools.map(school => cleanupSchoolObject(school)), 'id');
-      state = state.merge(i.fromJS(schools));
+      if (action.payload.schools) {
+        tags.schools = map(action.payload.schools, 'id');
+      }
+
+      if (action.payload.geotags) {
+        tags.geotags = map(action.payload.geotags, 'url_name');
+      }
+
+      state = state.merge(i.fromJS(tags));
 
       break;
     }
