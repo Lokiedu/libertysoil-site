@@ -41,7 +41,10 @@ describe('Comment', () => {
   });
 
   after(async () => {
-    await Promise.all([user.destroy(), otherUser.destroy(), post.destroy(), comment.destroy()]);
+    await comment.destroy();
+    await post.destroy();
+    await user.destroy();
+    await otherUser.destroy();
   });
 
   describe('GET /api/v1/post/:id/comments', () => {
