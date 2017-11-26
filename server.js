@@ -34,6 +34,7 @@ import koaEtag from 'koa-etag';
 import Logger, { createLogger } from 'bunyan';
 import passport from 'koa-passport';
 import bb from 'bluebird';
+import redis from 'redis';
 
 import t from 't8on';
 
@@ -56,6 +57,10 @@ import { getReactMiddleware } from './src/utils/koa-react';
 import QueueSingleton from './src/utils/queue';
 import { setUpPassport } from './src/api/auth';
 import { processError } from './src/api/error';
+import { RedisCache } from './src/api/utils/cache';
+
+bb.promisifyAll(redis.RedisClient.prototype);
+bb.promisifyAll(redis.Multi.prototype);
 
 const exec_env = process.env.NODE_ENV || 'development';
 const dbEnv = process.env.DB_ENV || 'development';
@@ -206,6 +211,11 @@ function startServer(/*params*/) {
   app.context.jobQueue = new QueueSingleton;
   app.context.passport = setUpPassport(bookshelf);
   app.context.sphinx = { api: bb.promisifyAll(sphinx.api), ql: sphinx.ql };
+  app.context.cache = new RedisCache(redis.createClient({
+    host: '127.0.0.1',
+    port: 6379,
+    prefix: 'cache:',
+  }));
 
   // Error handler
   app.use(async (ctx, next) => {
