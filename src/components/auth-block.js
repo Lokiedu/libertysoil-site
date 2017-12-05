@@ -32,16 +32,16 @@ import Avatar from './user/avatar';
 
 const menuItems = username => ([
   { key: 'profile',
-    node: <Link to={getUrl(URL_NAMES.USER, { username })}>My profile</Link> },
+    node: <Link to={getUrl(URL_NAMES.USER, { username })}>My Profile</Link> },
   { key: 'settings',
-    node: <Link to={getUrl(URL_NAMES.SETTINGS)}>Profile settings</Link> },
+    node: <Link to={getUrl(URL_NAMES.SETTINGS)}>Profile Settings</Link> },
   { key: 'logout',
     node: (
       <form action={`${API_HOST}/api/v1/logout`} method="post">
         <button
           className="button button-transparent button-wide button-caption_left"
           type="submit"
-        >Log out</button>
+        >Log Out</button>
       </form>
     ) }
 ]);
