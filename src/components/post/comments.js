@@ -15,10 +15,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import React, {
-  Component
-} from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 import message from '../../utils/message';
 
@@ -36,10 +34,20 @@ const CommentsPlaceholder = ({ count, ...props }) => (
   </article>
 );
 
-class Comments extends Component {
+export default class Comments extends React.Component {
   static displayName = 'Comments';
 
-  defaultProps = {
+  static propTypes = {
+    comments: PropTypes.shape().isRequired,
+    current_user: PropTypes.shape(),
+    post: PropTypes.shape().isRequired,
+    showAllComments: PropTypes.bool,
+    triggers: PropTypes.shape(),
+    ui: PropTypes.shape(),
+    users: PropTypes.shape().isRequired
+  };
+
+  static defaultProps = {
     showAllComments: false
   };
 
@@ -80,33 +88,36 @@ class Comments extends Component {
   };
 
   renderComments = () => {
-    const {
-      comments,
-      post
-    } = this.props;
+    const { comments } = this.props;
+    const { showAllComments } = this.state;
 
-    const {
-      showAllComments
-    } = this.state;
+    const hasComments =
+      this.props.post.get('comment_count') &&
+      comments &&
+      comments.size;
 
-    const commentsData = comments.get(post.get('id'));
-    const hasComments = post.get('comment_count') && commentsData && commentsData.size;
     let postComments = [];
 
     if (hasComments) {
       if (showAllComments) {
-        postComments = commentsData.map(this.renderComment);
+        postComments = comments.map(this.renderComment);
       } else {
-        commentsData.take(2).map(this.renderComment).forEach(c => postComments.push(c));
+        comments.take(2)
+          .map(this.renderComment)
+          .forEach(c => postComments.push(c));
 
-        if (commentsData.size > 3) {
+        if (comments.size > 3) {
           postComments.push(
-            <CommentsPlaceholder count={commentsData.size - 3} key="placeholder" onClick={this.showAllComments} />
+            <CommentsPlaceholder
+              count={comments.size - 3}
+              key="placeholder"
+              onClick={this.showAllComments}
+            />
           );
         }
 
-        if (commentsData.size > 2) {
-          postComments.push(this.renderComment(commentsData.last(), 'last'));
+        if (comments.size > 2) {
+          postComments.push(this.renderComment(comments.last(), 'last'));
         }
       }
 
@@ -143,5 +154,3 @@ class Comments extends Component {
     );
   }
 }
-
-export default Comments;

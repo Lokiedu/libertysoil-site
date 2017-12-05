@@ -278,9 +278,31 @@ class SidebarModalHeader extends React.Component {
   }
 }
 
+class SidebarModalNavigation extends React.PureComponent {
+  static displayName = 'SidebarModalAnimation';
+
+  static propTypes = {
+    className: PropTypes.string
+  };
+
+  render() {
+    const className = classNames(
+      'sidebar-modal__navigation',
+      this.props.className
+    );
+
+    return (
+      <div className={className}>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
 export default {
   Body: SidebarModalBody,
   Header: SidebarModalHeader,
   Main: SidebarModalMain,
+  Navigation: SidebarModalNavigation,
   Overlay: SidebarModalOverlay
 };

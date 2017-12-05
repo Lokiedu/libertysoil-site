@@ -761,4 +761,9 @@ export default class ApiClient {
     const response = await this.get(`/api/v1/locale/${code}`);
     return await response.json();
   }
+
+  async getHashtags(query: Object = {}): Promise<Object> {
+    const response = await this.get('/api/v1/hashtags/all', query);
+    return await response.json();
+  }
 }

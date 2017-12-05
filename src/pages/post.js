@@ -33,7 +33,7 @@ import {
   ArrayOfPostsId as ArrayOfPostsIdPropType,
   MapOfPosts as MapOfPostsPropType
 } from '../prop-types/posts';
-import { CommentsByCategory as CommentsByCategoryPropType } from '../prop-types/comments';
+import { Comment as CommentPropType } from '../prop-types/comments';
 import {
   CurrentUser as CurrentUserPropType,
   MapOfUsers as MapOfUsersPropType
@@ -65,7 +65,7 @@ import NotFound from './not-found';
 
 export class UnwrappedPostPage extends React.Component {
   static propTypes = {
-    comments: CommentsByCategoryPropType.isRequired,
+    comments: PropTypes.arrayOf(CommentPropType),
     current_user: CurrentUserPropType,
     is_logged_in: PropTypes.bool.isRequired,
     params: PropTypes.shape({
@@ -97,7 +97,6 @@ export class UnwrappedPostPage extends React.Component {
 
   render() {
     const {
-      comments,
       current_user,
       is_logged_in,
       params,
@@ -160,7 +159,7 @@ export class UnwrappedPostPage extends React.Component {
                   current_user={current_user}
                   users={users}
                   post={current_post}
-                  comments={comments}
+                  comments={this.props.comments}
                   ui={ui}
                   showAllComments
                   triggers={triggers}
@@ -189,7 +188,7 @@ export class UnwrappedPostPage extends React.Component {
 
 const selector = createSelector(
   currentUserSelector,
-  state => state.get('comments'),
+  (state, props) => state.getIn(['comments', props.params.uuid]),
   state => state.get('posts'),
   state => state.get('related_posts'),
   state => state.get('ui'),

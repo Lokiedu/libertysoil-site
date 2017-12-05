@@ -23,20 +23,28 @@ import { connect } from 'react-redux';
 import ApiClient from '../../../api/client';
 import { API_HOST } from '../../../config';
 import { SUPPORTED_LOCALES } from '../../../consts/localization';
+import { Comment as CommentPropType } from '../../../prop-types/comments';
 import createSelector from '../../../selectors/createSelector';
 import currentUserSelector from '../../../selectors/currentUser';
 import { ActionsTrigger } from '../../../triggers';
 import { appear, disappear } from '../../../utils/transition';
 
-import Modal from '../../../components/sidebar-modal';
+import Modal from '../../sidebar-modal';
+import Comments from '../../post/comments';
 
 class SidebarComments extends React.PureComponent {
   static displayName = 'SidebarComments';
 
   static propTypes = {
+    comments: PropTypes.arrayOf(CommentPropType),
+    current_user: PropTypes.shape(),
     dispatch: PropTypes.func.isRequired,
     is_logged_in: PropTypes.bool,
-    location: PropTypes.shape()
+    location: PropTypes.shape(),
+    onClose: PropTypes.func,
+    post: PropTypes.shape(),
+    ui: PropTypes.shape(),
+    users: PropTypes.shape()
   };
 
   static TRANSITION_TIMEOUT = 250;
@@ -59,13 +67,19 @@ class SidebarComments extends React.PureComponent {
     this.componentWillLeave = disappear.bind(this, T.TRANSITION_TIMEOUT);
   }
 
+  componentWillMount() {
+  }
+
   render() {
     if (!this.props.is_logged_in) {
       return false;
     }
+    if (!this.props.comments) {
+      return false;
+    }
 
-    const { onClose } = this.props;
-    const rtl = SUPPORTED_LOCALES[this.props.locale].rtl;
+    const { ui, onClose } = this.props;
+    const rtl = SUPPORTED_LOCALES[ui.get('locale')].rtl;
 
     return (
       <div>
@@ -74,11 +88,18 @@ class SidebarComments extends React.PureComponent {
             innerClassName="form__container sidebar-form__container form__main"
             isVisible={this.state.isVisible}
             rtl={rtl}
-            version={2}
+            version={4}
             onCloseTo={onClose && onClose.to}
           >
             <Modal.Body raw>
-              {this.props.comments.map(() => {})}
+              <Comments
+                comments={this.props.comments}
+                current_user={this.props.current_user}
+                post={this.props.post}
+                triggers={this.triggers}
+                ui={this.props.ui}
+                users={this.props.users}
+              />
             </Modal.Body>
           </Modal.Main>
         </Modal.Overlay>
@@ -88,25 +109,30 @@ class SidebarComments extends React.PureComponent {
 }
 
 const mapStateToProps = createSelector(
-  currentUserSelector,
-  state => state.getIn(['ui', 'locale']),
   (state, props) => state.getIn([
     'comments', props.postId || props.location.query.post_id
   ]),
+  currentUserSelector,
   (state, props) => {
+    const postId = props.postId || props.location.query.post_id;
+
     if (!props.location.query.include_post) {
-      return ImmutableMap();
+      return ImmutableMap({
+        comment_count: state.getIn(['posts', postId, 'comment_count']),
+        id: postId
+      });
     }
 
-    return state.get([
-      'posts', props.postId || props.location.query.post_id
-    ]);
+    return state.getIn(['posts', postId]);
   },
-  (current_user, locale, comments, post) => ({
-    ...current_user,
-    locale,
+  state => state.get('ui'),
+  state => state.get('users'),
+  (comments, current_user, post, ui, users) => ({
     comments,
-    post
+    ...current_user,
+    post,
+    ui,
+    users
   })
 );
 

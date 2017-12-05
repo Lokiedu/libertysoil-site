@@ -51,10 +51,8 @@ const onClose = (() => {
   );
 })();
 
-const pobj = {};
-
 function getAncestorsPropTypes(component) {
-  const result = Object.assign({}, component.propTypes);
+  const result = { ...component.propTypes };
 
   let c = component;
   while (typeof c.WrappedComponent !== 'undefined') {

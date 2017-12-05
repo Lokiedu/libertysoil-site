@@ -1174,4 +1174,18 @@ export class ActionsTrigger {
       this.dispatch(a.messages.addError(e.message));
     }
   };
+
+  loadAllHashtags = async (query = {}) => {
+    try {
+      const response = await this.client.getHashtags(query);
+
+      if (query.group_by) {
+        this.dispatch(a.river.loadGroupedTagRiver(response, query));
+      } else {
+        this.dispatch(a.river.loadFlatTagRiver(response, query));
+      }
+    } catch (e) {
+      this.dispatch(a.messages.addError(e.message));
+    }
+  };
 }

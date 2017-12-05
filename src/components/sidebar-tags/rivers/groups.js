@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,26 +15,32 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const SET_USER_TAGS = 'SET_USER_TAGS';
-export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
+import React from 'react';
 
-export function setUserTags(tags) {
-  return {
-    type: SET_USER_TAGS,
-    payload: {
-      hashtags: tags.hashtags,
-      schools: tags.schools,
-      geotags: tags.geotags
-    }
+export default class TagGroupRiver extends React.PureComponent {
+  static propTypes = {
+    component: PropTypes.func
   };
-}
 
-export function setUserRecentTags(recent_tags) {
-  return {
-    type: SET_USER_RECENT_TAGS,
-    payload: {
-      recent_tags
+  render() {
+    const { river } = this.props;
+    if (typeof river === 'undefined') {
+      return false;
     }
-  };
-}
 
+    // const { entries } = this.props;
+    // const riverItems = river.map(
+    //   url_name => group.get('url_name') || tags.get('name')
+    // );
+
+    // return (
+    //   <div>
+    //     {riverItems.map(item =>
+    //       <TagGroup />
+    //     )}
+    //   </div>
+    // );
+
+    return false;
+  }
+}

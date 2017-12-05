@@ -62,6 +62,8 @@ export default function wrapWithTransition(WrappedComponent) {
   const TransitionedComponent = class Transition extends WrappedComponent {
     static displayName = `Transition(${componentName})`;
 
+    static WrappedComponent = WrappedComponent;
+
     // Refs are first available now
     componentDidMount() {
       const ancestor = getAncestorTransitionLifecycleHooks(this);
@@ -77,6 +79,6 @@ export default function wrapWithTransition(WrappedComponent) {
     }
   };
 
-  TransitionedComponent['WrappedComponent'] = WrappedComponent;
+  // TransitionedComponent['WrappedComponent'] = WrappedComponent;
   return TransitionedComponent;
 }
