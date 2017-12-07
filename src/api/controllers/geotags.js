@@ -45,9 +45,9 @@ export async function getGeotags(ctx) {
 
   const geotags = await Geotag.collection()
     .query(qb => {
-      applyLimitQuery(qb, ctx.query, 10);
-      applyOffsetQuery(qb, ctx.query, 0);
-      applySortQuery(qb, ctx.query, 'url_name');
+      applyLimitQuery(qb, ctx.query, { defaultValue: 10 });
+      applyOffsetQuery(qb, ctx.query, { defaultValue: 0 });
+      applySortQuery(qb, ctx.query, { defaultValue: 'url_name' });
       qb.where(_.pick(ctx.query, ALLOWED_ATTRIBUTE_QUERIES));
     })
     .fetch();

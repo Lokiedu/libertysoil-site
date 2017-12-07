@@ -62,7 +62,7 @@ export async function getSchools(ctx) {
   const schools = await School.collection().query(qb => {
     applyLimitQuery(qb, ctx.query);
     applyOffsetQuery(qb, ctx.query);
-    applySortQuery(qb, ctx.query, 'name');
+    applySortQuery(qb, ctx.query, { defaultValue: 'name' });
 
     if (ctx.query.havePosts) {
       qb.where('post_count', '>', 0);
