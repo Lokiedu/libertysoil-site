@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { isEmpty, uniq, intersection } from 'lodash';
+import { isEmpty, isString, uniq, intersection } from 'lodash';
 
 
 /*
@@ -89,5 +89,28 @@ export function applyFieldsQuery(qb, query, { allowedFields, defaultFields, tabl
 
   if (fields) {
     qb.select(fields);
+  }
+}
+
+export function applyDateRangeQuery(qb, query, options) {
+  const { field, paramName } = {
+    paramName: 'dateRange',
+    ...options,
+  };
+
+  if (!isString(query[paramName])) {
+    return;
+  }
+
+  const [lhs, rhs] = query[paramName]
+    .split('..')
+    .map(date => new Date(date));
+
+  if (!isNaN(lhs.getTime())) {
+    qb.where(field, '<=', lhs);
+  }
+
+  if (!isNaN(rhs.getTime())) {
+    qb.where(field, '>=', rhs);
   }
 }
