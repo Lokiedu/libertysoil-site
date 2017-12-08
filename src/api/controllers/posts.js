@@ -459,32 +459,43 @@ export async function unfavPost(ctx) {
 
 export async function allPosts(ctx) {
   const Post = ctx.bookshelf.model('Post');
-  let posts = Post.collection().query(qb => {
-    applySortQuery(qb, ctx.query, { defaultValue: '-created_at' });
-    applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
-    applyOffsetQuery(qb, ctx.query);
-    applyFieldsQuery(qb, ctx.query, {
-      allowedFields: POST_PUBLIC_COLUMNS,
-      defaultFileds: POST_DEFAULT_COLUMNS
-    });
-    applyDateRangeQuery(qb, ctx.query, { field: 'created_at' });
 
-    if ('continent' in ctx.query) {
-      qb
-        .distinct('posts.*')
-        .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-        .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-        .where('geotags.continent_code', ctx.query.continent);
-    } else if ('geotags' in ctx.query) {
-      qb
-        .distinct('posts.*')
-        .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
-    }
+  let posts = Post.collection();
+  const qb = posts.query();
+
+  applyFieldsQuery(qb, ctx.query, {
+    allowedFields: POST_PUBLIC_COLUMNS,
+    defaultFileds: POST_DEFAULT_COLUMNS
   });
+  applyDateRangeQuery(qb, ctx.query, { field: 'created_at' });
+
+  if ('continent' in ctx.query) {
+    qb
+      .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
+      .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+      .where('geotags.continent_code', ctx.query.continent);
+  } else if ('geotags' in ctx.query) {
+    qb
+      .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+  }
+
+  const result = {};
+
+  if ('totalCount' in ctx.query) {
+    result.total_count = (await qb.clone().countDistinct('posts.id'))[0].count;
+  }
+
+  qb.distinct('posts.*');
+
+  applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
+  applyOffsetQuery(qb, ctx.query);
+  applySortQuery(qb, ctx.query, { defaultValue: '-created_at', table: 'posts' });
+
   posts = await posts.fetch({ require: false, withRelated: POST_RELATIONS });
   posts = await preparePosts(ctx, posts);
+  result.posts = posts;
 
-  ctx.body = posts;
+  ctx.body = result;
 }
 
 export async function userPosts(ctx) {

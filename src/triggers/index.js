@@ -623,9 +623,9 @@ export class ActionsTrigger {
       result = await this.client.allPosts(query);
 
       if (query.offset && query.offset > 0) {
-        this.dispatch(a.allPosts.addPosts(result));
+        this.dispatch(a.allPosts.addPosts(result.posts));
       } else {
-        this.dispatch(a.allPosts.setPosts(result));
+        this.dispatch(a.allPosts.setPosts(result.posts));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -648,9 +648,9 @@ export class ActionsTrigger {
       });
 
       if (query.offset && query.offset > 0) {
-        this.dispatch(a.mostLikedPosts.addPosts(result));
+        this.dispatch(a.mostLikedPosts.addPosts(result.posts));
       } else {
-        this.dispatch(a.mostLikedPosts.setPosts(result));
+        this.dispatch(a.mostLikedPosts.setPosts(result.posts));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -673,9 +673,9 @@ export class ActionsTrigger {
       });
 
       if (query.offset && query.offset > 0) {
-        this.dispatch(a.mostFavouritedPosts.addPosts(result));
+        this.dispatch(a.mostFavouritedPosts.addPosts(result.posts));
       } else {
-        this.dispatch(a.mostFavouritedPosts.setPosts(result));
+        this.dispatch(a.mostFavouritedPosts.setPosts(result.posts));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
@@ -698,9 +698,9 @@ export class ActionsTrigger {
       });
 
       if (query.offset && query.offset > 0) {
-        this.dispatch(a.bestPosts.addPosts(result));
+        this.dispatch(a.bestPosts.addPosts(result.posts));
       } else {
-        this.dispatch(a.bestPosts.setPosts(result));
+        this.dispatch(a.bestPosts.setPosts(result.posts));
       }
     } catch (e) {
       this.dispatch(a.messages.addError(e.message));
