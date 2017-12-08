@@ -21,7 +21,7 @@ import Joi from 'joi';
 import * as PostUtils from '../utils/posts';
 import { seq } from '../../utils/lang';
 import {
-  applyFieldsQuery, applyLimitQuery, applyOffsetQuery, applySortQuery
+  applyFieldsQuery, applyLimitQuery, applyOffsetQuery, applySortQuery, applyDateRangeQuery
 } from '../utils/filters';
 import { POST_RELATIONS, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS } from '../consts';
 import { PostValidator } from '../validators';
@@ -467,6 +467,7 @@ export async function allPosts(ctx) {
       allowedFields: POST_PUBLIC_COLUMNS,
       defaultFileds: POST_DEFAULT_COLUMNS
     });
+    applyDateRangeQuery(qb, ctx.query, { field: 'created_at' });
 
     if ('continent' in ctx.query) {
       qb

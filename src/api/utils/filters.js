@@ -92,6 +92,15 @@ export function applyFieldsQuery(qb, query, { allowedFields, defaultFields, tabl
   }
 }
 
+/**
+ * Format:
+ *   [upper bound]..[lower bound]
+ * Examples:
+ *  ?dateRange=2017-09-30T22:00:00.000Z..2017-09-29T22:00:00.000Z
+ *  ?dateRange=..2017-09-29T22:00:00.000Z
+ *  ?dateRange=2017-09-30T22:00:00.000Z..
+ * The format of dates may be anything accepted by the Date controller. Both bounds are inclusive.
+ */
 export function applyDateRangeQuery(qb, query, options) {
   const { field, paramName } = {
     paramName: 'dateRange',
