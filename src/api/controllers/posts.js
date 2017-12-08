@@ -469,14 +469,37 @@ export async function allPosts(ctx) {
   });
   applyDateRangeQuery(qb, ctx.query, { field: 'created_at' });
 
+  // TODO: Cache tags inside posts
+  switch (ctx.query.tagType) {
+    case 'hashtag': {
+      qb.join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id');
+      break;
+    }
+    case 'school': {
+      qb.join('posts_schools', 'posts.id', 'schools_posts.post_id');
+      break;
+    }
+    case 'geotag': {
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+      break;
+    }
+    case 'all': {
+      qb.join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id');
+      qb.join('posts_schools', 'posts.id', 'schools_posts.post_id');
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+      break;
+    }
+  }
+
   if ('continent' in ctx.query) {
+    // No need to join junction table twice, if ?tagType=geotag.
+    if (ctx.query.tagType !== 'geotag') {
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+    }
+
     qb
-      .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
       .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
       .where('geotags.continent_code', ctx.query.continent);
-  } else if ('geotags' in ctx.query) {
-    qb
-      .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
   }
 
   const result = {};

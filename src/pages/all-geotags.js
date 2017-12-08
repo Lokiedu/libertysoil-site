@@ -60,7 +60,7 @@ class GeotagCloudPage extends Component {
 
     await Promise.all([
       triggers.loadGeotags({ type: 'Continent', sort: 'url_name' }),
-      triggers.loadAllPosts({ ...router.location.query, geotags: true }),
+      triggers.loadAllPosts({ ...router.location.query, tagType: 'geotag' }),
       triggers.loadGeotagCloud()
     ]);
   }
@@ -76,7 +76,7 @@ class GeotagCloudPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!isEqual(this.props.location.query, nextProps.location.query)) {
-      this.triggers.loadAllPosts({ ...nextProps.location.query, geotags: true });
+      this.triggers.loadAllPosts({ ...nextProps.location.query, tagType: 'geotag' });
     }
   }
 
@@ -86,7 +86,7 @@ class GeotagCloudPage extends Component {
 
   handleForceLoadPosts = async () => {
     const { river, location } = this.props;
-    const query = { ...location.query, geotags: true, offset: river.size };
+    const query = { ...location.query, tagType: 'geotag', offset: river.size };
     const res = await this.triggers.loadAllPosts(query);
     return Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
   };
@@ -99,7 +99,7 @@ class GeotagCloudPage extends Component {
     const { river, location, ui } = this.props;
     let displayLoadMore = true;
     if (!ui.getIn(['progress', 'loadAllPostsInProgress'])) {
-      const query = { ...location.query, geotags: true, offset: river.size };
+      const query = { ...location.query, tagType: 'geotag', offset: river.size };
       const res = await this.triggers.loadAllPosts(query);
       displayLoadMore = Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
     }
