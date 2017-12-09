@@ -20,8 +20,6 @@ export const SET_RECENT_TAGS = 'SET_RECENT_TAGS';
 export function setRecentTags(tags) {
   return {
     type: SET_RECENT_TAGS,
-    payload: {
-      ...tags
-    }
+    payload: tags
   };
 }

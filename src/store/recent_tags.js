@@ -20,9 +20,18 @@ import { map } from 'lodash';
 import { recentTags } from '../actions';
 
 export const initialState = i.fromJS({
-  hashtags: [],
-  schools: [],
-  geotags: [],
+  hashtags: {
+    entries: [],
+    post_count: null
+  },
+  schools: {
+    entries: [],
+    post_count: null
+  },
+  geotags: {
+    entries: [],
+    post_count: null
+  }
 });
 
 export function reducer(state = initialState, action) {
@@ -31,15 +40,24 @@ export function reducer(state = initialState, action) {
       const tags = {};
 
       if (action.payload.hashtags) {
-        tags.hashtags = map(action.payload.hashtags, 'name');
+        tags.hashtags = {
+          entries: map(action.payload.hashtags.entries, 'name'),
+          post_count: action.payload.hashtags.post_count
+        };
       }
 
       if (action.payload.schools) {
-        tags.schools = map(action.payload.schools, 'id');
+        tags.schools = {
+          entries: map(action.payload.schools.entries, 'id'),
+          post_count: action.payload.schools.post_count
+        };
       }
 
       if (action.payload.geotags) {
-        tags.geotags = map(action.payload.geotags, 'url_name');
+        tags.geotags = {
+          entries: map(action.payload.geotags.entries, 'url_name'),
+          post_count: action.payload.geotags.post_count
+        };
       }
 
       state = state.merge(i.fromJS(tags));
