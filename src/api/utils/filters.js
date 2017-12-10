@@ -33,18 +33,21 @@ export function applySortQuery(qb, query, options = {}) {
   if ('sort' in query || options.defaultValue) {
     const columns = (query.sort || options.defaultValue).split(',');
 
-    const queryString = columns.map(column => {
+    for (let column of columns) {
       let order = 'ASC';
 
       if (column[0] == '-') {
         column = column.substring(1);
+
+        if (options.table) {
+          column = `${options.table}.${column}`;
+        }
+
         order = 'DESC';
       }
 
-      return `${column} ${order}`;
-    }).join(', ');
-
-    qb.orderByRaw(queryString);
+      qb.orderBy(column, order);
+    }
   }
 }
 
