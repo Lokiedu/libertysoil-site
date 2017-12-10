@@ -91,6 +91,7 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
             <RouterContext {...renderProps} />
           </Provider>
         );
+
         const state = JSON.stringify(store.getState().toJS());
 
         if (fetchHandler.status !== null) {
@@ -107,7 +108,7 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
         };
 
         if (process.env.NODE_ENV !== 'production') {
-          paths.webpackChunks['vendor.js'] = 'assets/vendor.js';
+          paths.webpackChunks['vendor.js'] = '/assets/vendor.js';
         }
 
         ctx.staus = 200;
