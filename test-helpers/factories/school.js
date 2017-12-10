@@ -8,7 +8,7 @@ import { bookshelf, knex } from '../db';
 const School = bookshelf.model('School');
 
 const SchoolFactory = new Factory()
-  .attr('name', () => faker.lorem.words(3))
+  .attr('name', () => `${faker.random.number()} ${faker.lorem.words(3)}`)
   .attr('url_name', ['name'], (name) => slug(name))
   .attr('created_at', () => faker.date.past())
   .attr('updated_at', ['created_at'], (date) => date);
