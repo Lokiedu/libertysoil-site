@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { isEmpty, isString, uniq, intersection } from 'lodash';
+import { isEmpty, isString, uniq, intersection, clamp } from 'lodash';
 
 
 /*
@@ -58,8 +58,13 @@ export function applyStartsWithQuery(qb, query) {
 }
 
 export function applyLimitQuery(qb, query, options = {}) {
-  if ('limit' in query || options.defaultValue) {
-    qb.limit(query.limit || options.defaultValue);
+  let value = query.limit || options.defaultValue;
+  if (value) {
+    if (options.max) {
+      value = clamp(value, options.min || 0, options.max);
+    }
+
+    qb.limit(value);
   }
 }
 
