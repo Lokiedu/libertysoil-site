@@ -87,6 +87,7 @@ if (__DEV__) {
       new webpack.HotModuleReplacementPlugin(),
       new ManifestPlugin({
         fileName: 'webpack-chunks.json',
+        publicPath: '/',
         writeToFileEmit: true
       })
     ],
@@ -127,6 +128,7 @@ if (__DEV__) {
       // since the ordering makes sense (after ExtractTextPlugin in this case)
       new ManifestPlugin({
         fileName: 'webpack-chunks.json',
+        publicPath: '/',
         writeToFileEmit: true
       }),
       new webpack.optimize.AggressiveMergingPlugin({
