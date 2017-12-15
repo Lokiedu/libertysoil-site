@@ -64,7 +64,8 @@ const config = {
     alias: {
       _assets: path.normalize(path.join(rules.root, "src", "_assets")),
       _common: path.normalize(path.join(rules.root, "src", "_common")),
-      _root: path.normalize(rules.root)
+      _root: path.normalize(rules.root),
+      'prop-types$': path.join(__dirname, '../src/external/prop-types.js')
     }
   },
 

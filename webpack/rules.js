@@ -254,11 +254,13 @@ class RuleGenerator {
                */
               !this.dev && ["transform-react-constant-elements"],
               !this.dev && ["transform-react-inline-elements"],
-              this.dev && ["flow-runtime", {
-                "annotate": false,
-                "assert": true,
-                "warn": true
-              }],
+              /*
+                this.dev && ["flow-runtime", {
+                  "annotate": false,
+                  "assert": true,
+                  "warn": true
+                }],
+              */
             ])
           },
         }
@@ -300,11 +302,13 @@ class RuleGenerator {
               "transform-object-rest-spread",
               "transform-class-properties",
               "lodash",
-              this.dev && ["flow-runtime", {
-                "annotate": false,
-                "assert": true,
-                "warn": true
-              }],
+              /*
+                this.dev && ["flow-runtime", {
+                  "annotate": false,
+                  "assert": true,
+                  "warn": true
+                }],
+              */
             ]),
           },
         }

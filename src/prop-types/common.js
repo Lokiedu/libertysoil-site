@@ -20,72 +20,10 @@ import i from 'immutable';
 import {
   getTypeError,
   createRequirableTypeChecker,
-  createSimplifiedRequirableTypeChecker
+  createSimplifiedRequirableTypeChecker,
+  checkValues,
+  checkKeys
 } from './utils';
-
-function checkKeys(keyCheckType, propValue, propFullName, componentName, location, ...rest) {
-  const fields = Object.keys(propValue);
-
-  try {
-    for (let i = 0; i < fields.length; ++i) {
-      const fieldName = fields[i];
-      let fieldFullName = `${propFullName}['${fieldName}']`;
-      if (typeof fieldName === 'number') {
-        fieldFullName = `${propFullName}[${fieldName}]`;
-      }
-
-      const error = keyCheckType(
-        fields,
-        i,
-        componentName,
-        location,
-        fieldFullName,
-        ...rest
-      );
-
-      if (error instanceof Error) {
-        const finalError = error;
-        finalError.message = `[Invalid key] ${error.message}`;
-
-        throw finalError;
-      }
-    }
-  } catch (e) {
-    return e;
-  }
-
-  return null;
-}
-
-function checkValues(valueCheckType, propValue, propFullName, componentName, location, ...rest) {
-  const fields = Object.keys(propValue);
-
-  try {
-    fields.forEach(fieldName => {
-      let fieldFullName = `${propFullName}['${fieldName}']`;
-      if (typeof fieldName === 'number') {
-        fieldFullName = `${propFullName}[${fieldName}]`;
-      }
-
-      const error = valueCheckType(
-        propValue,
-        fieldName,
-        componentName,
-        location,
-        fieldFullName,
-        ...rest
-      );
-
-      if (error instanceof Error) {
-        throw error;
-      }
-    });
-  } catch (e) {
-    return e;
-  }
-
-  return null;
-}
 
 export const mapOfKeys = (keyCheckType) => (
   createSimplifiedRequirableTypeChecker(
