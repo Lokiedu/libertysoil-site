@@ -51,7 +51,7 @@ export default class VisibilitySensor extends Component {
 
   static defaultProps = {
     active: true,
-    delay: 1000,
+    delay: 250,
     onChange: () => {},
     onMount: () => {}
   };
