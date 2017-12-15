@@ -21,7 +21,7 @@ import Joi from 'joi';
 import * as PostUtils from '../utils/posts';
 import { seq } from '../../utils/lang';
 import {
-  applyFieldsQuery, applyLimitQuery, applyOffsetQuery, applySortQuery
+  applyFieldsQuery, applyLimitQuery, applyOffsetQuery, applySortQuery, applyDateRangeQuery
 } from '../utils/filters';
 import { POST_RELATIONS, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS } from '../consts';
 import { PostValidator } from '../validators';
@@ -55,7 +55,11 @@ export async function subscriptions(ctx) {
         .limit(5)
         .offset(offset);
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFileds: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
     });
 
   let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -80,9 +84,9 @@ export async function hashtagSubscriptions(ctx) {
         .orderBy('posts.updated_at', 'desc')
         .groupBy('posts.id');
 
-      applyLimitQuery(qb, ctx.query, 5);
+      applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
       applyOffsetQuery(qb, ctx.query);
-      applySortQuery(qb, ctx.query, '-updated_at');
+      applySortQuery(qb, ctx.query, { defaultValue: '-updated_at' });
     });
 
   let posts = await q.fetch({ withRelated: POST_RELATIONS });
@@ -107,9 +111,9 @@ export async function schoolSubscriptions(ctx) {
         .orderBy('posts.updated_at', 'desc')
         .groupBy('posts.id');
 
-      applyLimitQuery(qb, ctx.query, 5);
+      applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
       applyOffsetQuery(qb, ctx.query);
-      applySortQuery(qb, ctx.query, '-updated_at');
+      applySortQuery(qb, ctx.query, { defaultValue: '-updated_at' });
     });
 
   let posts = await q.fetch({ withRelated: POST_RELATIONS });
@@ -142,9 +146,9 @@ export async function geotagSubscriptions(ctx) {
         .orderBy('posts.updated_at', 'desc')
         .groupBy('posts.id');
 
-      applyLimitQuery(qb, ctx.query, 5);
+      applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
       applyOffsetQuery(qb, ctx.query);
-      applySortQuery(qb, ctx.query, '-updated_at');
+      applySortQuery(qb, ctx.query, { defaultValue: '-updated_at' });
     });
 
   let posts = await q.fetch({ withRelated: POST_RELATIONS });
@@ -259,7 +263,10 @@ export async function getRelatedPosts(ctx) {
   let posts = await Post.collection().query(qb => {
     const countQueries = [];
 
-    applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
+    applyFieldsQuery(qb, ctx.query, {
+      allowedFields: POST_PUBLIC_COLUMNS,
+      defaultFileds: POST_DEFAULT_COLUMNS
+    });
 
     if (!_.isEmpty(hashtagIds)) {
       qb
@@ -452,28 +459,66 @@ export async function unfavPost(ctx) {
 
 export async function allPosts(ctx) {
   const Post = ctx.bookshelf.model('Post');
-  let posts = Post.collection().query(qb => {
-    applySortQuery(qb, ctx.query, '-created_at');
-    applyLimitQuery(qb, ctx.query, 5);
-    applyOffsetQuery(qb, ctx.query);
-    applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
 
-    if ('continent' in ctx.query) {
-      qb
-        .distinct('posts.*')
-        .join('geotags_posts', 'posts.id', 'geotags_posts.post_id')
-        .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
-        .where('geotags.continent_code', ctx.query.continent);
-    } else if ('geotags' in ctx.query) {
-      qb
-        .distinct('posts.*')
-        .join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
-    }
+  let posts = Post.collection();
+  const qb = posts.query();
+
+  applyFieldsQuery(qb, ctx.query, {
+    allowedFields: POST_PUBLIC_COLUMNS,
+    defaultFileds: POST_DEFAULT_COLUMNS
   });
+  applyDateRangeQuery(qb, ctx.query, { field: 'created_at' });
+
+  // TODO: Cache tags inside posts
+  switch (ctx.query.tagType) {
+    case 'hashtag': {
+      qb.join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id');
+      break;
+    }
+    case 'school': {
+      qb.join('posts_schools', 'posts.id', 'schools_posts.post_id');
+      break;
+    }
+    case 'geotag': {
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+      break;
+    }
+    case 'all': {
+      qb.join('hashtags_posts', 'posts.id', 'hashtags_posts.post_id');
+      qb.join('posts_schools', 'posts.id', 'schools_posts.post_id');
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+      break;
+    }
+  }
+
+  if ('continent' in ctx.query) {
+    // No need to join junction table twice, if ?tagType=geotag.
+    if (ctx.query.tagType !== 'geotag') {
+      qb.join('geotags_posts', 'posts.id', 'geotags_posts.post_id');
+    }
+
+    qb
+      .join('geotags', 'geotags_posts.geotag_id', 'geotags.id')
+      .where('geotags.continent_code', ctx.query.continent);
+  }
+
+  const result = {};
+
+  if ('totalCount' in ctx.query) {
+    result.total_count = (await qb.clone().countDistinct('posts.id'))[0].count;
+  }
+
+  qb.distinct('posts.*');
+
+  applyLimitQuery(qb, ctx.query, { defaultValue: 5 });
+  applyOffsetQuery(qb, ctx.query);
+  applySortQuery(qb, ctx.query, { defaultValue: '-created_at', table: 'posts' });
+
   posts = await posts.fetch({ require: false, withRelated: POST_RELATIONS });
   posts = await preparePosts(ctx, posts);
+  result.posts = posts;
 
-  ctx.body = posts;
+  ctx.body = result;
 }
 
 export async function userPosts(ctx) {
@@ -491,8 +536,12 @@ export async function userPosts(ctx) {
         qb.limit(ctx.query.limit);
       }
 
-      applySortQuery(qb, ctx.query, '-updated_at');
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applySortQuery(qb, ctx.query, { defaultValue: '-updated_at' });
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
     });
 
 
@@ -513,7 +562,11 @@ export async function hashtagPosts(ctx) {
         .where('hashtags.name', '=', ctx.params.tag)
         .orderBy('posts.created_at', 'desc');
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
     });
 
   let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -534,7 +587,11 @@ export async function schoolPosts(ctx) {
         .andWhere('posts_schools.visible', true)
         .orderBy('posts.created_at', 'desc');
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
     });
 
   let posts = await q.fetch({ withRelated: POST_RELATIONS });
@@ -561,7 +618,11 @@ export async function geotagPosts(ctx) {
         .orderBy('posts.created_at', 'desc')
         .distinct();
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
 
       switch (geotag.attributes.type) {
         case 'Planet':
@@ -657,14 +718,22 @@ async function getLikedPosts(userId, ctx) {
         .whereIn('id', likes)
         .union(function () {
           this
-            .select(POST_DEFAULT_COLUMNS)
             .from('posts')
             .whereIn('type', ['hashtag_like', 'school_like', 'geotag_like'])
             .andWhere('user_id', userId);
+
+          applyFieldsQuery(this, ctx.query, {
+            allowedFields: POST_PUBLIC_COLUMNS,
+            defaultFileds: POST_DEFAULT_COLUMNS,
+          });
         })
         .orderBy('updated_at', 'desc');
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS, 'posts');
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS,
+        table: 'posts'
+      });
     });
 
   let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });
@@ -688,7 +757,10 @@ async function getFavouredPosts(userId, ctx) {
         .whereIn('id', favourites)
         .orderBy('posts.updated_at', 'desc');
 
-      applyFieldsQuery(qb, ctx.query, POST_PUBLIC_COLUMNS, POST_DEFAULT_COLUMNS);
+      applyFieldsQuery(qb, ctx.query, {
+        allowedFields: POST_PUBLIC_COLUMNS,
+        defaultFileds: POST_DEFAULT_COLUMNS
+      });
     });
 
   let posts = await q.fetchAll({ require: false, withRelated: POST_RELATIONS });

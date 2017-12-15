@@ -18,7 +18,7 @@
 import i from 'immutable';
 import { concat, keyBy } from 'lodash';
 
-import { geotags as g } from '../actions';
+import { geotags as g, recentTags } from '../actions';
 
 const initialState = i.Map({});
 
@@ -47,6 +47,7 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
+    case recentTags.SET_RECENT_TAGS:
     case g.SET_GEOTAGS: {
       const geotags = keyBy(action.payload.geotags, 'url_name');
       state = i.fromJS(geotags);

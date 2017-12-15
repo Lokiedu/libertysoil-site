@@ -180,6 +180,8 @@ export function initApi(bookshelf) {
   api.post('/geotag/:url_name/like', auth, geotags.likeGeotag);
   api.post('/geotag/:url_name/unlike', auth, geotags.unlikeGeotag);
 
+  api.get('/recent-tags', misc.getRecentlyUsedTags);
+
   api.get('/quotes', misc.getQuotes);
 
   api.get('/search', search.search);

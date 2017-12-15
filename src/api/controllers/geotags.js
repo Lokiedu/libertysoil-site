@@ -45,9 +45,9 @@ export async function getGeotags(ctx) {
 
   const geotags = await Geotag.collection()
     .query(qb => {
-      applyLimitQuery(qb, ctx.query, 10);
-      applyOffsetQuery(qb, ctx.query, 0);
-      applySortQuery(qb, ctx.query, 'url_name');
+      applyLimitQuery(qb, ctx.query, { defaultValue: 10 });
+      applyOffsetQuery(qb, ctx.query, { defaultValue: 0 });
+      applySortQuery(qb, ctx.query, { defaultValue: 'url_name' });
       qb.where(_.pick(ctx.query, ALLOWED_ATTRIBUTE_QUERIES));
     })
     .fetch();
@@ -78,15 +78,10 @@ export async function searchGeotags(ctx) {
 export async function getUserRecentGeotags(ctx) {
   const Geotag = ctx.bookshelf.model('Geotag');
 
-  const geotags = await Geotag
-    .collection()
+  const geotags = await Geotag.getRecentlyUsed()
     .query(qb => {
       qb
-        .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
-        .join('posts', 'geotags_posts.post_id', 'posts.id')
         .where('posts.user_id', ctx.state.user)
-        .groupBy('geotags.id')
-        .orderByRaw('MAX(posts.created_at) DESC')
         .limit(5);
     })
     .fetch();

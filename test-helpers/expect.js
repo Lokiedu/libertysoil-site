@@ -5,6 +5,7 @@ import 'mock-aws';
 import sinon from 'sinon';
 
 import initBookshelf from '../src/api/db';
+import { TestCache } from '../src/api/utils/cache';
 
 global.$bookshelf = initBookshelf(global.$dbConfig);
 
@@ -19,6 +20,8 @@ sinon.stub(app.context.sphinx.ql, 'insert').returns({
     toString: sinon.stub().returns('insert into')
   })
 });
+
+app.context.cache = new TestCache;
 
 expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));

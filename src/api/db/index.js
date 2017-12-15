@@ -576,6 +576,32 @@ export function initBookshelfFromKnex(knex) {
     });
   };
 
+  Post.countWithTags = async function ({ tagType, since }) {
+    const qb = knex('posts')
+      .countDistinct('posts.id');
+
+    switch (tagType) {
+      case 'hashtag': {
+        qb.join('hashtags_posts', 'hashtags_posts.post_id', 'posts.id');
+        break;
+      }
+      case 'school': {
+        qb.join('posts_schools', 'posts_schools.post_id', 'posts.id');
+        break;
+      }
+      case 'geotag': {
+        qb.join('geotags_posts', 'geotags_posts.post_id', 'posts.id');
+        break;
+      }
+    }
+
+    if (_.isDate(since)) {
+      qb.where('posts.created_at', '>=', since.toJSON());
+    }
+
+    return parseInt((await qb)[0].count, 10);
+  };
+
   const Hashtag = bookshelf.Model.extend({
     tableName: 'hashtags',
     posts() {
@@ -616,6 +642,26 @@ export function initBookshelfFromKnex(knex) {
           .where('hashtags_posts.hashtag_id', knex.raw('hashtags.id'))
           .orderBy('created_at', 'DESC')
           .limit(1)
+      });
+  };
+
+  Hashtag.getRecentlyUsed = function (opts = { limit: 5, since: null }) {
+    return Hashtag
+      .collection()
+      .query(qb => {
+        qb
+          .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
+          .join('posts', 'hashtags_posts.post_id', 'posts.id')
+          .groupBy('hashtags.id')
+          .orderByRaw('MAX(posts.created_at) DESC');
+
+        if (_.isNumber(opts.limit)) {
+          qb.limit(opts.limit);
+        }
+
+        if (_.isDate(opts.since)) {
+          qb.where('posts.created_at', '>=', opts.since.toJSON());
+        }
       });
   };
 
@@ -670,6 +716,26 @@ export function initBookshelfFromKnex(knex) {
           .where('posts_schools.school_id', knex.raw('schools.id'))
           .orderBy('created_at', 'DESC')
           .limit(1)
+      });
+  };
+
+  School.getRecentlyUsed = function (opts = { limit: 5, since: null }) {
+    return School
+      .collection()
+      .query(qb => {
+        qb
+          .join('posts_schools', 'schools.id', 'posts_schools.school_id')
+          .join('posts', 'posts_schools.post_id', 'posts.id')
+          .groupBy('schools.id')
+          .orderByRaw('MAX(posts.created_at) DESC');
+
+        if (_.isNumber(opts.limit)) {
+          qb.limit(opts.limit);
+        }
+
+        if (_.isDate(opts.since)) {
+          qb.where('posts.created_at', '>=', opts.since.toJSON());
+        }
       });
   };
 
@@ -778,6 +844,26 @@ export function initBookshelfFromKnex(knex) {
           .where('geotags_posts.geotag_id', knex.raw('geotags.id'))
           .orderBy('created_at', 'DESC')
           .limit(1)
+      });
+  };
+
+  Geotag.getRecentlyUsed = function (opts = { limit: 5, since: null }) {
+    return Geotag
+      .collection()
+      .query(qb => {
+        qb
+          .join('geotags_posts', 'geotags.id', 'geotags_posts.geotag_id')
+          .join('posts', 'geotags_posts.post_id', 'posts.id')
+          .groupBy('geotags.id')
+          .orderByRaw('MAX(posts.created_at) DESC');
+
+        if (_.isNumber(opts.limit)) {
+          qb.limit(opts.limit);
+        }
+
+        if (_.isDate(opts.since)) {
+          qb.where('posts.created_at', '>=', opts.since.toJSON());
+        }
       });
   };
 

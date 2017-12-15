@@ -425,7 +425,7 @@ export async function getMutualFollows(ctx) {
             .whereRaw('f2.user_id = users.id');
         });
 
-      applySortQuery(qb, ctx.query, 'username');
+      applySortQuery(qb, ctx.query, { defaultValue: 'username' });
     })
     .fetch({
       withRelated: USER_RELATIONS

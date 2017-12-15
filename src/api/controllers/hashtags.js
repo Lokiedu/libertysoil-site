@@ -116,15 +116,10 @@ export async function unlikeHashtag(ctx) {
 export async function getUserRecentHashtags(ctx) {
   const Hashtag = ctx.bookshelf.model('Hashtag');
 
-  const hashtags = await Hashtag
-    .collection()
+  const hashtags = await Hashtag.getRecentlyUsed()
     .query(qb => {
       qb
-        .join('hashtags_posts', 'hashtags.id', 'hashtags_posts.hashtag_id')
-        .join('posts', 'hashtags_posts.post_id', 'posts.id')
         .where('posts.user_id', ctx.state.user)
-        .groupBy('hashtags.id')
-        .orderByRaw('MAX(posts.created_at) DESC')
         .limit(5);
     })
     .fetch();

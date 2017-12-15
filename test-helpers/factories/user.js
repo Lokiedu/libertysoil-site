@@ -18,11 +18,11 @@ const UserFactory = new Factory()
   .attr('password', () => faker.internet.password())
   .attr('hashed_password', ['password'], password => bcrypt.hashSync(password, 10))
   .attr('email_check_hash', () => Math.random().toString())
-  .attr('more', {
+  .attr('more', () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     first_login: false
-  });
+  }));
 
 export default UserFactory;
 

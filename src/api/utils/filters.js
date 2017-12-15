@@ -15,7 +15,13 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import _ from 'lodash';
+import { isEmpty, isString, uniq, intersection, clamp } from 'lodash';
+
+
+/*
+  Function signature convention:
+  applySomeQuery(qb, query, options)
+*/
 
 /**
  * Sets 'order by' for the {@link qb} depending on the 'sort' query parameter.
@@ -23,40 +29,48 @@ import _ from 'lodash';
  * @param qb Knex query builder.
  * @param {Object} query An object containing query parameters.
  */
-export async function applySortQuery(qb, query, defaultValue = null) {
-  if ('sort' in query || defaultValue) {
-    const columns = (query.sort || defaultValue).split(',');
+export function applySortQuery(qb, query, options = {}) {
+  if ('sort' in query || options.defaultValue) {
+    const columns = (query.sort || options.defaultValue).split(',');
 
-    const queryString = columns.map(column => {
+    for (let column of columns) {
       let order = 'ASC';
 
       if (column[0] == '-') {
         column = column.substring(1);
+
+        if (options.table) {
+          column = `${options.table}.${column}`;
+        }
+
         order = 'DESC';
       }
 
-      return `${column} ${order}`;
-    }).join(', ');
-
-    qb.orderByRaw(queryString);
+      qb.orderBy(column, order);
+    }
   }
 }
 
-export async function applyStartsWithQuery(qb, query) {
+export function applyStartsWithQuery(qb, query) {
   if ('startsWith' in query) {
     qb.where('name', 'ILIKE', `${query.startsWith}%`);
   }
 }
 
-export async function applyLimitQuery(qb, query, defaultValue = null) {
-  if ('limit' in query || defaultValue) {
-    qb.limit(query.limit || defaultValue);
+export function applyLimitQuery(qb, query, options = {}) {
+  let value = query.limit || options.defaultValue;
+  if (value) {
+    if (options.max) {
+      value = clamp(value, options.min || 0, options.max);
+    }
+
+    qb.limit(value);
   }
 }
 
-export async function applyOffsetQuery(qb, query, defaultValue = null) {
-  if ('offset' in query || defaultValue) {
-    qb.offset(query.offset || defaultValue);
+export function applyOffsetQuery(qb, query, options = {}) {
+  if ('offset' in query || options.defaultValue) {
+    qb.offset(query.offset || options.defaultValue);
   }
 }
 
@@ -65,23 +79,55 @@ export async function applyOffsetQuery(qb, query, defaultValue = null) {
  *   ?fields=id,name
  *   ?fields=+id,name - to extend default
  */
-export async function applyFieldsQuery(qb, query, allowedFields, defaultFields = null, table = null) {
+export function applyFieldsQuery(qb, query, { allowedFields, defaultFields, table = null }) {
   let fields = defaultFields;
-  if (!_.isEmpty(query.fields)) {
+  if (!isEmpty(query.fields)) {
     fields = query.fields.split(',');
 
     if (query.fields[0] == '+' && defaultFields) {
-      fields = _.uniq(fields.concat(defaultFields));
+      fields = uniq(fields.concat(defaultFields));
     }
 
-    fields = _.intersection(fields, allowedFields);
+    fields = intersection(fields, allowedFields);
   }
 
-  if (table) {
+  if (fields && table) {
     fields = fields.map(col => `${table}.${col}`);
   }
 
   if (fields) {
     qb.select(fields);
+  }
+}
+
+/**
+ * Format:
+ *   [upper bound]..[lower bound]
+ * Examples:
+ *  ?dateRange=2017-09-30T22:00:00.000Z..2017-09-29T22:00:00.000Z
+ *  ?dateRange=..2017-09-29T22:00:00.000Z
+ *  ?dateRange=2017-09-30T22:00:00.000Z..
+ * The format of dates may be anything accepted by the Date controller. Both bounds are inclusive.
+ */
+export function applyDateRangeQuery(qb, query, options) {
+  const { field, paramName } = {
+    paramName: 'dateRange',
+    ...options,
+  };
+
+  if (!isString(query[paramName])) {
+    return;
+  }
+
+  const [lhs, rhs] = query[paramName]
+    .split('..')
+    .map(date => new Date(date));
+
+  if (!isNaN(lhs.getTime())) {
+    qb.where(field, '<=', lhs);
+  }
+
+  if (!isNaN(rhs.getTime())) {
+    qb.where(field, '>=', rhs);
   }
 }
