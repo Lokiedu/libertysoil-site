@@ -1,20 +1,67 @@
-/*
- This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+export function checkKeys(keyCheckType, propValue, propFullName, componentName, location, ...rest) {
+  const fields = Object.keys(propValue);
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+  try {
+    for (let i = 0; i < fields.length; ++i) {
+      const fieldName = fields[i];
+      let fieldFullName = `${propFullName}['${fieldName}']`;
+      if (typeof fieldName === 'number') {
+        fieldFullName = `${propFullName}[${fieldName}]`;
+      }
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
+      const error = keyCheckType(
+        fields,
+        i,
+        componentName,
+        location,
+        fieldFullName,
+        ...rest
+      );
 
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+      if (error instanceof Error) {
+        const finalError = error;
+        finalError.message = `[Invalid key] ${error.message}`;
+
+        throw finalError;
+      }
+    }
+  } catch (e) {
+    return e;
+  }
+
+  return null;
+}
+
+export function checkValues(valueCheckType, propValue, propFullName, componentName, location, ...rest) {
+  const fields = Object.keys(propValue);
+
+  try {
+    fields.forEach(fieldName => {
+      let fieldFullName = `${propFullName}['${fieldName}']`;
+      if (typeof fieldName === 'number') {
+        fieldFullName = `${propFullName}[${fieldName}]`;
+      }
+
+      const error = valueCheckType(
+        propValue,
+        fieldName,
+        componentName,
+        location,
+        fieldFullName,
+        ...rest
+      );
+
+      if (error instanceof Error) {
+        throw error;
+      }
+    });
+  } catch (e) {
+    return e;
+  }
+
+  return null;
+}
+
 export function getNotFoundError(propFullName, componentName, location) {
   return new Error(
     `Required ${location} \`${propFullName}\` was not specified in \`${componentName}\``
