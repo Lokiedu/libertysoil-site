@@ -15,7 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export { default as UpdateProfilePictureAction } from './update-profile-picture';
-export { default as UpdateUserPicture } from './update-userpic';
-export { default as UpdateNameAction } from './update-name';
-export { default as ImportContactsAction } from './import-contacts';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router';
+
+import { getRoutes } from '../routing';
+
+export default class DevContainer extends React.PureComponent {
+  static propTypes = {
+    handlers: PropTypes.arrayOf(PropTypes.any),
+    history: PropTypes.shape(),
+    store: PropTypes.shape()
+  };
+
+  render() {
+    return (
+      <Provider store={this.props.store}>
+        <Router history={this.props.history}>
+          {getRoutes(...this.props.handlers)}
+        </Router>
+      </Provider>
+    );
+  }
+}

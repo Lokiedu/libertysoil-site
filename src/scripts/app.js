@@ -18,12 +18,10 @@
 import bluebird from 'bluebird';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { Router, browserHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import t from 't8on';
 
-import { getRoutes } from '../routing';
 import { isStorageAvailable } from '../utils/browser';
 import { AuthHandler, FetchHandler } from '../utils/loader';
 import { API_HOST } from '../config';
@@ -64,12 +62,50 @@ if (!is_logged_in) {
 
 const authHandler = new AuthHandler(store);
 const fetchHandler = new FetchHandler(store, client);
+const handlers = [
+  authHandler.handle,
+  fetchHandler.handle,
+  fetchHandler.handleChange
+];
 
-ReactDOM.render(
-  <Provider store={store}>
-    <Router history={history}>
-      {getRoutes(authHandler.handle, fetchHandler.handle, fetchHandler.handleChange)}
-    </Router>
-  </Provider>,
-  document.getElementById('content')
-);
+let render;
+if (process.env.NODE_ENV !== 'production' && module.hot) {
+  const ReactHotLoader = require('react-hot-loader').AppContainer;
+  const composeWith = (DevContainer) => (
+    <ReactHotLoader>
+      <DevContainer
+        handlers={handlers}
+        history={history}
+        store={store}
+      />
+    </ReactHotLoader>
+  );
+
+  render = function () {
+    const { default: DevContainer } = require('../components/dev-container');
+
+    ReactDOM.render(
+      composeWith(DevContainer),
+      document.getElementById('content')
+    );
+  };
+
+  module.hot.accept('../components/dev-container', render);
+} else {
+  const { Provider } = require('react-redux');
+  const { Router } = require('react-router');
+  const { getRoutes } = require('../routing');
+
+  render = function () {
+    ReactDOM.render(
+      <Provider store={store}>
+        <Router history={history}>
+          {getRoutes(...handlers)}
+        </Router>
+      </Provider>,
+      document.getElementById('content')
+    );
+  };
+}
+
+render();

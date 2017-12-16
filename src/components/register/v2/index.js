@@ -191,13 +191,18 @@ class RegisterComponentV2 extends React.PureComponent {
 }
 
 const mapStateToProps = createSelector(
+  state => !!state.getIn(['current_user', 'id']),
   state => state.getIn(['ui', 'locale']),
   state => state.getIn(['ui', 'registrationSuccess']),
   state => state.get('messages').filter(msg =>
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
-  (locale, signupSucceed, messages) =>
-    ({ locale, signupSucceed, messages: messages.toList() })
+  (is_logged_in, locale, signupSucceed, messages) => ({
+    is_logged_in,
+    locale,
+    signupSucceed,
+    messages: messages.toList()
+  })
 );
 
 export default connect(

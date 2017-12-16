@@ -194,11 +194,12 @@ class LoginComponentV2 extends React.PureComponent {
 
     return (
       <div className={cn}>
-        <Modal.Overlay isVisible={this.state.isVisible}>
+        <Modal.Overlay isVisible={this.state.isVisible} version={3}>
           <Modal.Main
             innerClassName="form__container sidebar-form__container form__main"
             isVisible={this.state.isVisible}
             rtl={rtl}
+            version={3}
             onCloseTo={onClose && onClose.to}
           >
             <Modal.Header
@@ -241,12 +242,16 @@ class LoginComponentV2 extends React.PureComponent {
 }
 
 const mapStateToProps = createSelector(
+  state => !!state.getIn(['current_user', 'id']),
   state => state.getIn(['ui', 'locale']),
   state => state.get('messages').filter(msg =>
     ERROR_MESSAGES.find(m => msg.get('message').startsWith(m))
   ),
-  (locale, messages) =>
-    ({ locale, messages: messages.toList() })
+  (is_logged_in, locale, messages) => ({
+    is_logged_in,
+    locale,
+    messages: messages.toList()
+  })
 );
 
 export default connect(
