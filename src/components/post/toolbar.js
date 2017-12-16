@@ -42,6 +42,15 @@ export default class Toolbar extends React.Component {
     return nextProps !== this.props;
   }
 
+  pushComments = location => ({
+    ...location,
+    query: {
+      ...location.query,
+      post_id: this.props.post.get('id'),
+      route: 'comments'
+    }
+  });
+
   render() {
     const { current_user, post, triggers } = this.props;
 
@@ -57,6 +66,9 @@ export default class Toolbar extends React.Component {
           </div>
         </Link>
         <div className="card__toolbar--group card__toolbar_item--right">
+          <Link className="layout layout-align_vertical card__toolbar_item" to={this.pushComments}>
+            <Icon icon="comment-o" size={ICON_SIZE} />
+          </Link>
           <Link className="layout layout-align_vertical card__toolbar_item" to={postUrl}>
             <Icon icon="link" size={ICON_SIZE} />
           </Link>
