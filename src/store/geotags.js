@@ -49,10 +49,16 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case recentTags.SET_RECENT_TAGS:
     case g.SET_GEOTAGS: {
       const geotags = keyBy(action.payload.geotags, 'url_name');
       state = fromJS(geotags);
+
+      break;
+    }
+
+    case recentTags.SET_RECENT_TAGS: {
+      const geotags = keyBy(action.payload.geotags.entries, 'url_name');
+      state = state.merge(fromJS(geotags));
 
       break;
     }

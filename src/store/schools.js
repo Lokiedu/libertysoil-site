@@ -49,9 +49,15 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case recentTags.SET_RECENT_TAGS:
     case s.SET_SCHOOLS: {
       const schools = keyBy(action.payload.schools.map(school => cleanupSchoolObject(school)), 'id');
+      state = state.merge(fromJS(schools));
+
+      break;
+    }
+
+    case recentTags.SET_RECENT_TAGS: {
+      const schools = keyBy(action.payload.schools.entries.map(school => cleanupSchoolObject(school)), 'id');
       state = state.merge(fromJS(schools));
 
       break;

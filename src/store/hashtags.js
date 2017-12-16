@@ -33,9 +33,15 @@ export default function reducer(state = initialState, action) {
       break;
     }
 
-    case recentTags.SET_RECENT_TAGS:
     case h.SET_HASHTAGS: {
       const hashtags = keyBy(action.payload.hashtags, 'name');
+      state = state.merge(fromJS(hashtags));
+
+      break;
+    }
+
+    case recentTags.SET_RECENT_TAGS: {
+      const hashtags = keyBy(action.payload.hashtags.entries, 'name');
       state = state.merge(fromJS(hashtags));
 
       break;
