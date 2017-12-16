@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import ApiClient from '../../api/client';
 import { API_HOST } from '../../config';
 import createSelector from '../../selectors/createSelector';
-import currentUserSelector from '../../selectors/currentUser';
 import { ActionsTrigger } from '../../triggers';
 
 import SidebarMenu from '../sidebar-menu';
@@ -44,7 +43,6 @@ class SidebarDesktop extends React.PureComponent {
   static propTypes = {
     autocollapsible: PropTypes.bool,
     collapsed: PropTypes.bool,
-    current_user: PropTypes.shape(),
     is_logged_in: PropTypes.bool
   };
 
@@ -163,7 +161,6 @@ class SidebarDesktop extends React.PureComponent {
   collapseTimeout = null;
 
   render() {
-    const { current_user } = this.props;
     const { collapsed } = this.state;
 
     let className = SidebarDesktop.className;
@@ -205,12 +202,17 @@ function getUserSidebarCollapsing(current_user) {
   };
 }
 
+const currentUserSelector = createSelector(
+  state => state.get('current_user'),
+  state => state.get('users'),
+  (currentUser, users) => currentUser.withMutations(cu => {
+    cu.set('user', users.get(cu.get('id')));
+  })
+);
+
 const selector = createSelector(
   currentUserSelector,
-  current_user => ({
-    ...current_user,
-    ...getUserSidebarCollapsing(current_user.current_user)
-  })
+  currentUser => ({ ...getUserSidebarCollapsing(currentUser) })
 );
 
 export default connect(selector)(SidebarDesktop);
