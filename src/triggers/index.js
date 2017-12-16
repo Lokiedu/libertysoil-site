@@ -471,9 +471,9 @@ export class ActionsTrigger {
   loadRecentlyUsedTags = async () => {
     try {
       const result = await this.client.recentlyUsedTags();
-      this.dispatch(a.tags.setUserRecentTags(result));
+      this.dispatch(a.recentTags.setRecentTags(result));
     } catch (e) {
-      this.dispatch(a.messages.reportError(a.tags.SET_USER_RECENT_TAGS, e.message, { display: true }));
+      this.dispatch(a.messages.reportError(a.recentTags.SET_RECENT_TAGS, e.message, { display: true }));
     }
   }
 

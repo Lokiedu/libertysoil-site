@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,11 +15,15 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const SET_RECENT_TAGS = 'SET_RECENT_TAGS';
+import MenuItem from './base';
 
-export function setRecentTags(tags) {
-  return {
-    type: SET_RECENT_TAGS,
-    payload: tags
+export default class MostLikedMenuItem extends MenuItem {
+  static displayName = 'MostLikedMenuItem';
+
+  static defaultProps = {
+    ...MenuItem.defaultProps,
+    className: 'navigation-item--color_blue',
+    title: 'Most Liked',
+    to: '/most-liked'
   };
 }

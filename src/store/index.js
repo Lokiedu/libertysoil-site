@@ -21,6 +21,8 @@ import { combineReducers } from 'redux-immutablejs';
 import { browserHistory } from 'react-router';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 
+import { convert } from '../utils/store';
+
 import current_user, { initialState as currentUserInitialState } from './current-user';
 import create_post_form from './create_post_form';
 import favourites from './favourites';
@@ -60,6 +62,7 @@ import * as user_messages from './user_messages';
 import * as profile_posts from './profile_posts';
 import * as continent_nav from './continent_nav';
 import * as tag_subscriptions from './tag_subscriptions';
+import * as recent_tags from './recent_tags';
 
 
 export const theReducer = combineReducers(i.Map({
@@ -103,6 +106,7 @@ export const theReducer = combineReducers(i.Map({
   user_messages: user_messages.reducer,
   profile_posts: profile_posts.reducer,
   tag_subscriptions: tag_subscriptions.reducer,
+  recent_tags: recent_tags.reducer
 }));
 
 const initialState = i.Map({
@@ -159,6 +163,7 @@ const initialState = i.Map({
   profile_posts: profile_posts.initialState,
   continent_nav: continent_nav.initialState,
   tag_subscriptions: tag_subscriptions.initialState,
+  recent_tags: recent_tags.initialState
 });
 
 const browserHasDevTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined';
@@ -166,7 +171,7 @@ const browserHasDevTools = typeof window === 'object' && typeof window.devToolsE
 export function initState(state = initialState) {
   const store = createStore(
     theReducer,
-    i.fromJS(state),
+    i.fromJS(state).withMutations(convert),
     compose(
       applyMiddleware(routerMiddleware(browserHistory)),
       browserHasDevTools ? window.devToolsExtension() : f => f

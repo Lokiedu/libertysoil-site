@@ -47,14 +47,14 @@ export class UnwrappedApp extends React.Component {
   };
 
   static async fetchData(router, store, client) {
+    const triggers = new ActionsTrigger(client, store.dispatch);
     const props = store.getState();
 
-    if (!props.get('current_user').get('id')) {
-      return;
+    if (props.get('current_user').get('id')) {
+      await triggers.loadUserTags();
+    } else {
+      await triggers.loadRecentlyUsedTags();
     }
-
-    const triggers = new ActionsTrigger(client, store.dispatch);
-    await triggers.loadUserTags();
   }
 
   componentDidMount() {

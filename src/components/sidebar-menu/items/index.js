@@ -19,3 +19,6 @@ export { default as AllPostsMenuItem } from './all-posts';
 export { default as FriendsMenuItem } from './friends';
 export { default as LikedMenuItem } from './liked';
 export { default as FavouritedMenuItem } from './favourited';
+export { default as MostLikedMenuItem } from './most-liked';
+export { default as MostFavouritedMenuItem } from './most-favourited';
+export { default as BestPostsMenuItem } from './best';

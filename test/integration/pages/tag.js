@@ -61,7 +61,7 @@ describe('Tag Cloud page', () => {
     const context = await expect({ url: '/tag' }, 'to open successfully');
 
     const { document } = (new JSDOM(context.httpResponse.body)).window;
-    const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__body .tags');
+    const tagsContent = await expect(document.body, 'queried for first', '#content>.page .page__content .tags');
     await expect(tagsContent, 'to have child', '.tag__name');  // posting form
 
     const tag = await expect(tagsContent, 'queried for first', '.tag__name');

@@ -17,10 +17,6 @@
 */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-
-import createSelector from '../../selectors/createSelector';
-import currentUserSelector from '../../selectors/currentUser';
 
 import SidebarMenu from '../sidebar-menu';
 import TagsInform from '../tags-inform';
@@ -29,7 +25,7 @@ function handleClickInside(event) {
   event.stopPropagation();
 }
 
-function SidebarMobile(props) {
+export default function SidebarMobile(props) {
   return (
     <div
       className="sidebar page__sidebar page__sidebar--side_left page__sidebar--type_main mobile-menu"
@@ -37,20 +33,12 @@ function SidebarMobile(props) {
     >
       <div className="mobile-menu__section" onClick={handleClickInside}>
         <SidebarMenu media="xl" />
-        <TagsInform current_user={props.current_user} />
+        <TagsInform />
       </div>
     </div>
   );
 }
 
 SidebarMobile.propTypes = {
-  current_user: PropTypes.shape(),
   onClose: PropTypes.func.isRequired
 };
-
-const selector = createSelector(
-  currentUserSelector,
-  current_user => ({ ...current_user })
-);
-
-export default connect(selector)(SidebarMobile);

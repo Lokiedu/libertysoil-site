@@ -51,7 +51,13 @@ describe('combined reducer "theReducer"', function () {
                 id: 1,
                 username: 'new-foo'
               }
-            ]
+            ],
+            followed_geotags: [],
+            followed_hashtags: [],
+            followed_schools: [],
+            liked_geotags: [],
+            liked_hashtags: [],
+            liked_schools: []
           }
         }
       }
