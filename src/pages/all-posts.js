@@ -102,8 +102,8 @@ class AllPostsPage extends React.Component {
   handleForceLoadPosts = async () => {
     const { river, location } = this.props;
     const query = { ...location.query, offset: river.size };
-    const res = await this.triggers.loadAllPosts(query);
-    return Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
+    const { posts } = await this.triggers.loadAllPosts(query);
+    return Array.isArray(posts) && posts.length > LOAD_MORE_LIMIT;
   }
 
   handleAutoLoadPosts = async (isVisible) => {
@@ -115,8 +115,8 @@ class AllPostsPage extends React.Component {
     let displayLoadMore = true;
     if (!ui.getIn(['progress', 'loadAllPostsInProgress'])) {
       const query = { ...location.query, offset: river.size };
-      const res = await this.triggers.loadAllPosts(query);
-      displayLoadMore = Array.isArray(res) && res.length > LOAD_MORE_LIMIT;
+      const { posts } = await this.triggers.loadAllPosts(query);
+      displayLoadMore = Array.isArray(posts) && posts.length > LOAD_MORE_LIMIT;
     }
 
     return displayLoadMore;
