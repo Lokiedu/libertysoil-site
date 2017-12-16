@@ -182,7 +182,6 @@ class SidebarDesktop extends React.PureComponent {
           />
           <TagsInform
             animated
-            current_user={current_user}
             truncated={collapsed}
             onSwitchClick={this.handleSwitchClick}
           />

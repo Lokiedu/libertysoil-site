@@ -74,3 +74,13 @@ export function convertModelsToTags(params = ImmutableMap({})) {
 
   return allTags;
 }
+
+export function compareTagsByDate(lhs, rhs) {
+  const lhsDate = new Date(lhs.get('updated_at'));
+  const rhsDate = new Date(rhs.get('updated_at'));
+
+  if (lhsDate > rhsDate) { return -1; }
+  if (lhsDate < rhsDate) { return 1; }
+
+  return 0;
+}
