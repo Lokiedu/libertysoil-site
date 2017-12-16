@@ -615,7 +615,7 @@ export class ActionsTrigger {
   };
 
   loadAllPosts = async (query) => {
-    let result = false;
+    let result;
 
     this.dispatch(a.ui.setProgress('loadAllPostsInProgress', true));
 
@@ -628,6 +628,7 @@ export class ActionsTrigger {
         this.dispatch(a.allPosts.setPosts(result.posts));
       }
     } catch (e) {
+      result = e;
       this.dispatch(a.messages.addError(e.message));
     }
 
@@ -687,7 +688,7 @@ export class ActionsTrigger {
   }
 
   loadBestPosts = async (query) => {
-    let result = false;
+    let result;
 
     this.dispatch(a.ui.setProgress('loadBestPostsInProgress', true));
 
@@ -703,6 +704,7 @@ export class ActionsTrigger {
         this.dispatch(a.bestPosts.setPosts(result.posts));
       }
     } catch (e) {
+      result = e;
       this.dispatch(a.messages.addError(e.message));
     }
 
