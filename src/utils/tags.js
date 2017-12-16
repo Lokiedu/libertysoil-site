@@ -84,3 +84,7 @@ export function compareTagsByDate(lhs, rhs) {
 
   return 0;
 }
+
+export const getId = tag => tag.id;
+export const getName = tag => tag.name;
+export const getUrlName = tag => tag.url_name;

@@ -58,7 +58,7 @@ export default class LikeTagButton extends React.Component {
   };
 
   _isLiked() {
-    return !!this.props.liked_tags.get(this.props.tag);
+    return this.props.liked_tags.has(this.props.tag);
   }
 
   render() {

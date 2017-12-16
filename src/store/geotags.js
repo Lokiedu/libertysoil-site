@@ -15,25 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { concat, keyBy } from 'lodash';
 
-import { geotags as g, recentTags } from '../actions';
+import { geotags as g, recentTags, users } from '../actions';
 
-const initialState = i.Map({});
+const initialState = Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case g.ADD_GEOTAG: {
+    case g.ADD_GEOTAG:
+    case g.ADD_LIKED_GEOTAG:
+    case g.ADD_USER_FOLLOWED_GEOTAG: {
       const geotag = action.payload.geotag;
-      state = state.set(geotag.url_name, i.fromJS(geotag));
+      state = state.set(geotag.url_name, fromJS(geotag));
 
       break;
     }
 
     case g.ADD_GEOTAGS: {
       const geotags = keyBy(action.payload.geotags, 'url_name');
-      state = state.mergeDeep(i.fromJS(geotags));
+      state = state.mergeDeep(fromJS(geotags));
 
       break;
     }
@@ -42,7 +44,7 @@ export default function reducer(state = initialState, action) {
       const geotags = action.payload.continents.reduce((acc, next) => {
         return acc.concat(next.geotags);
       }, []);
-      state = state.mergeDeep(i.fromJS(keyBy(geotags, 'url_name')));
+      state = state.mergeDeep(fromJS(keyBy(geotags, 'url_name')));
 
       break;
     }
@@ -50,14 +52,29 @@ export default function reducer(state = initialState, action) {
     case recentTags.SET_RECENT_TAGS:
     case g.SET_GEOTAGS: {
       const geotags = keyBy(action.payload.geotags, 'url_name');
-      state = i.fromJS(geotags);
+      state = fromJS(geotags);
 
       break;
     }
 
     case g.CONTINENT_NAV__SET: {
       const geotags = keyBy(concat(action.payload.continents, action.payload.countries), 'url_name');
-      state = state.merge(i.fromJS(geotags));
+      state = state.merge(fromJS(geotags));
+
+      break;
+    }
+
+    case users.SET_CURRENT_USER: {
+      if (!action.payload.user) {
+        break;
+      }
+
+      const geotags = keyBy(
+        action.payload.user.followed_geotags
+          .concat(action.payload.user.liked_geotags),
+        'url_name'
+      );
+      state = state.merge(fromJS(geotags));
 
       break;
     }

@@ -15,26 +15,43 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
-import _ from 'lodash';
+import { fromJS, Map } from 'immutable';
+import { keyBy } from 'lodash';
 
-import { hashtags as h, recentTags } from '../actions';
+import { hashtags as h, recentTags, users } from '../actions';
 
-const initialState = i.Map({});
+const initialState = Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case h.ADD_HASHTAG: {
+    case h.ADD_HASHTAG:
+    case h.ADD_LIKED_HASHTAG:
+    case h.ADD_USER_FOLLOWED_HASHTAG: {
       const hashtag = action.payload.hashtag;
-      state = state.set(hashtag.name, i.fromJS(hashtag));
+      state = state.set(hashtag.name, fromJS(hashtag));
 
       break;
     }
 
     case recentTags.SET_RECENT_TAGS:
     case h.SET_HASHTAGS: {
-      const hashtags = _.keyBy(action.payload.hashtags, 'name');
-      state = state.merge(i.fromJS(hashtags));
+      const hashtags = keyBy(action.payload.hashtags, 'name');
+      state = state.merge(fromJS(hashtags));
+
+      break;
+    }
+
+    case users.SET_CURRENT_USER: {
+      if (!action.payload.user) {
+        break;
+      }
+
+      const hashtags = keyBy(
+        action.payload.user.followed_hashtags
+          .concat(action.payload.user.liked_hashtags),
+        'name'
+      );
+      state = state.merge(fromJS(hashtags));
 
       break;
     }

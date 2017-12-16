@@ -15,10 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import i from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { keyBy } from 'lodash';
 
-import { schools as s, recentTags } from '../actions';
+import { schools as s, recentTags, users } from '../actions';
 
 function cleanupSchoolObject(school) {
   if (school.description === null) {
@@ -36,13 +36,15 @@ function cleanupSchoolObject(school) {
   return school;
 }
 
-const initialState = i.Map({});
+const initialState = Map({});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case s.ADD_SCHOOL: {
+    case s.ADD_SCHOOL:
+    case s.ADD_LIKED_SCHOOL:
+    case s.ADD_USER_FOLLOWED_SCHOOL: {
       const school = cleanupSchoolObject(action.payload.school);
-      state = state.set(school.id, i.fromJS(school));
+      state = state.set(school.id, fromJS(school));
 
       break;
     }
@@ -50,7 +52,23 @@ export default function reducer(state = initialState, action) {
     case recentTags.SET_RECENT_TAGS:
     case s.SET_SCHOOLS: {
       const schools = keyBy(action.payload.schools.map(school => cleanupSchoolObject(school)), 'id');
-      state = state.merge(i.fromJS(schools));
+      state = state.merge(fromJS(schools));
+
+      break;
+    }
+
+    case users.SET_CURRENT_USER: {
+      if (!action.payload.user) {
+        break;
+      }
+
+      const schools = keyBy(
+        action.payload.user.followed_schools
+          .concat(action.payload.user.liked_schools)
+          .map(s => cleanupSchoolObject(s)),
+        'id'
+      );
+      state = state.merge(fromJS(schools));
 
       break;
     }
