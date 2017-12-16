@@ -58,8 +58,8 @@ class BestPostsPage extends React.Component {
   handleForceLoadPosts = async () => {
     const { river, location } = this.props;
     const query = { ...location.query, offset: river.size, limit: LOAD_MORE_LIMIT };
-    const res = await this.triggers.loadBestPosts(query);
-    return Array.isArray(res) && res.length >= LOAD_MORE_LIMIT;
+    const { posts } = await this.triggers.loadBestPosts(query);
+    return Array.isArray(posts) && posts.length >= LOAD_MORE_LIMIT;
   }
 
   render() {
