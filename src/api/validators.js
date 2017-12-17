@@ -160,3 +160,7 @@ export const PostValidator = Joi.object({
   schools: Joi.array().items(Joi.string()),
   geotags: Joi.array().items(Joi.string())
 }).options({ abortEarly: false, stripUnknown: true });
+
+export const CommentValidator = Joi.object({
+  text: Joi.string().trim().min(1),
+});

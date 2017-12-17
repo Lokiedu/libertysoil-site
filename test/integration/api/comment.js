@@ -79,6 +79,40 @@ describe('Comment', () => {
         [{ id: comment.id }, { text: 'some text' }]
       );
     });
+
+    context('when text is not provided', () => {
+      it('responds with validation error', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${post.id}/comments`,
+            method: 'POST',
+            body: {
+              text: ''
+            }
+          },
+          'body to satisfy',
+          { error: 'api.errors.validation', fields: [{ path: 'text', type: 'any.empty' }] }
+        );
+      });
+    });
+
+    context('when text is not a string', () => {
+      it('responds with validation error', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${post.id}/comments`,
+            method: 'POST',
+            body: {
+              text: 123
+            }
+          },
+          'body to satisfy',
+          { error: 'api.errors.validation', fields: [{ path: 'text', type: 'string.base' }] }
+        );
+      });
+    });
   });
 
   describe('POST /api/v1/post/:id/comment/:comment_id', () => {
@@ -147,6 +181,40 @@ describe('Comment', () => {
         'body to satisfy',
         [{ id: comment.id }, { id: myComment.id, text: 'new text' }]
       );
+    });
+
+    context('when text is not provided', () => {
+      it('responds with validation error', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${post.id}/comment/${comment.id}`,
+            method: 'POST',
+            body: {
+              text: ''
+            }
+          },
+          'body to satisfy',
+          { error: 'api.errors.validation', fields: [{ path: 'text', type: 'any.empty' }] }
+        );
+      });
+    });
+
+    context('when text is not a string', () => {
+      it('responds with validation error', async () => {
+        await expect(
+          {
+            session: sessionId,
+            url: `/api/v1/post/${post.id}/comment/${comment.id}`,
+            method: 'POST',
+            body: {
+              text: 123
+            }
+          },
+          'body to satisfy',
+          { error: 'api.errors.validation', fields: [{ path: 'text', type: 'string.base' }] }
+        );
+      });
     });
   });
 

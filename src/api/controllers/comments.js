@@ -16,8 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import uuid from 'uuid';
+import Joi from 'joi';
 
 import { addToSearchIndex } from '../utils/search';
+import { CommentValidator } from '../validators';
 
 export async function getPostComments(ctx) {
   const Comment = ctx.bookshelf.model('Comment');
@@ -39,20 +41,13 @@ export async function postComment(ctx) {
 
   const post = await Post.where({ id: ctx.params.id }).fetch({ require: true });
 
-  // TODO: Replace with joi validation.
-  if (!('text' in ctx.request.body) || !ctx.request.body.text) {
-    ctx.status = 400;
-    ctx.body = { error: 'Comment text cannot be empty' };
-    return;
-  }
-
-  const text = ctx.request.body.text.trim();
+  const attributes = Joi.attempt(ctx.request.body, CommentValidator);
 
   const comment = new Comment({
     id: uuid.v4(),
     post_id: ctx.params.id,
     user_id: ctx.state.user,
-    text
+    text: attributes.text
   });
 
   post.attributes.updated_at = new Date().toJSON();
@@ -82,16 +77,9 @@ export async function editComment(ctx) {
     ctx.status = 403;
   }
 
-  // TODO: Replace with joi validation.
-  if (!('text' in ctx.request.body) || ctx.request.body.text.trim().length === 0) {
-    ctx.status = 400;
-    ctx.body = { error: 'Comment text cannot be empty' };
-    return;
-  }
+  const attributes = Joi.attempt(ctx.request.body, CommentValidator);
 
-  const text = ctx.request.body.text.trim();
-
-  comment.set('text', text);
+  comment.set('text', attributes.text);
   comment.set('updated_at', new Date().toJSON());
   post.attributes.updated_at = new Date().toJSON();
 

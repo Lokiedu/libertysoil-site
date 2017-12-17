@@ -189,7 +189,7 @@ describe('ActionsTrigger', () => {
       store = initState();
       triggers = new ActionsTrigger(client, store.dispatch);
       await triggers.createComment(post.get('id'), '');
-      expect(store.getState().getIn(['ui', 'comments', 'new', 'error']), 'to equal', 'Comment text cannot be empty');
+      expect(store.getState().getIn(['ui', 'comments', 'new', 'error']), 'to equal', 'api.errors.validation');
     });
 
     it('#deleteComment should work', async () => {
@@ -223,7 +223,7 @@ describe('ActionsTrigger', () => {
       await comment.save(null, { method: 'insert' });
 
       await triggers.saveComment(post.get('id'), comment.get('id'), '');
-      expect(store.getState().getIn(['ui', 'comments', comment.get('id'), 'error']), 'to equal', 'Comment text cannot be empty');
+      expect(store.getState().getIn(['ui', 'comments', comment.get('id'), 'error']), 'to equal', 'api.errors.validation');
     });
   });
 });
