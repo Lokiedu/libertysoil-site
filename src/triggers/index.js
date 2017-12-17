@@ -336,10 +336,11 @@ export class ActionsTrigger {
         this.dispatch(a.messages.addError('api.errors.internal'));
       }
 
-      return;
+      return false;
     }
 
     this.loginUser(needRedirect, user);
+    return true;
   };
 
   loginUser = async (needRedirect, user) => {
