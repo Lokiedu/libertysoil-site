@@ -84,7 +84,7 @@ export type UserMore = {
   firstName?: string,
   head_pic?: Attachment,
   lastName?: string,
-  mute_all_posts?: boolean,
+  comment_notifications?: string,
   roles?: Array<UserRole>,
   social?: UserSocial,
   summary?: string

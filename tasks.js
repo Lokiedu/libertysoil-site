@@ -120,7 +120,7 @@ export default function startServer(/*params*/) {
         .map(subscriber => subscriber.attributes);
 
       for (const subscriber of subscribers) {
-        if (!subscriber.more.mute_all_posts && commentAuthor.id !== subscriber.id) {
+        if (subscriber.more.comment_notifications !== 'off' && commentAuthor.id !== subscriber.id) {
           queue.create('new-comment-email', {
             comment: comment.attributes,
             commentAuthor: commentAuthor.attributes,
