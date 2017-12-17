@@ -16,8 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 // @flow
-import isPlainObject from 'lodash/isPlainObject';
-import reduce from 'lodash/reduce';
+import { fromPairs, isPlainObject, reduce, sortBy } from 'lodash';
 
 export function toSpreadArray(obj: Object): Array<Object> {
   return reduce(obj, (arr: Array<Object>, value: any, key: string): Array<Object> => {
@@ -248,4 +247,13 @@ export function par(
 
     return result.then(combine);
   };
+}
+
+export function sortByKeys(object: object): object {
+  const keys = Object.keys(object);
+  const sortedKeys = sortBy(keys);
+
+  return fromPairs(
+    sortedKeys.map((key: string) => [key, object[key]])
+  );
 }

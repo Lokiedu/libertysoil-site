@@ -158,19 +158,21 @@ class AllPostsPage extends React.Component {
                     userRecentTags={current_user.get('recent_tags')}
                   />
                 }
-                <LoadableRiver
-                  comments={this.props.comments}
-                  current_user={current_user}
-                  loadMoreLimit={LOAD_MORE_LIMIT}
-                  posts={this.props.posts}
-                  river={this.props.river}
-                  triggers={this.triggers}
-                  ui={ui}
-                  users={this.props.users}
-                  waiting={ui.getIn(['progress', 'loadAllPostsInProgress'])}
-                  onAutoLoad={this.handleAutoLoadPosts}
-                  onForceLoad={this.handleForceLoadPosts}
-                />
+                {this.props.river.size > 0 &&
+                  <LoadableRiver
+                    comments={this.props.comments}
+                    current_user={current_user}
+                    loadMoreLimit={LOAD_MORE_LIMIT}
+                    posts={this.props.posts}
+                    river={this.props.river}
+                    triggers={this.triggers}
+                    ui={ui}
+                    users={this.props.users}
+                    waiting={ui.getIn(['progress', 'loadAllPostsInProgress'])}
+                    onAutoLoad={this.handleAutoLoadPosts}
+                    onForceLoad={this.handleForceLoadPosts}
+                  />
+                }
               </PageContent>
               <SidebarAlt>
                 {is_logged_in &&

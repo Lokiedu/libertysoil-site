@@ -1,6 +1,6 @@
 /*
  This file is a part of libertysoil.org website
- Copyright (C) 2016  Loki Education (Social Enterprise)
+ Copyright (C) 2017  Loki Education (Social Enterprise)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published by
@@ -15,26 +15,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-export const SET_USER_TAGS = 'SET_USER_TAGS';
-export const SET_USER_RECENT_TAGS = 'SET_USER_RECENT_TAGS';
+import wrapWithTransition from '../../../utils/transition';
 
-export function setUserTags(tags) {
-  return {
-    type: SET_USER_TAGS,
-    payload: {
-      hashtags: tags.hashtags,
-      schools: tags.schools,
-      geotags: tags.geotags
-    }
-  };
-}
+import TagList from '../../sidebar-tags';
+import Login from '../../login/v2';
+import Register from '../../register/v2';
+import SidebarComments from '../../comments/sidebar';
 
-export function setUserRecentTags(recent_tags) {
-  return {
-    type: SET_USER_RECENT_TAGS,
-    payload: {
-      recent_tags
-    }
-  };
-}
-
+export const comments = wrapWithTransition(SidebarComments);
+export const login = wrapWithTransition(Login);
+export const signup = wrapWithTransition(Register);
+export const tags = wrapWithTransition(TagList);

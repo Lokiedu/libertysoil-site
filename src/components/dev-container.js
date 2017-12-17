@@ -15,17 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router';
 
-import createSelector from '../../../selectors/createSelector';
-import wrapWithTransition from '../../../utils/transition';
-import { v2 as Register } from '../../register';
+import { getRoutes } from '../routing';
 
-const mapStateToProps = createSelector(
-  state => state.getIn(['current_user', 'id']),
-  is_logged_in => ({ is_logged_in })
-);
+export default class DevContainer extends React.PureComponent {
+  static propTypes = {
+    handlers: PropTypes.arrayOf(PropTypes.any),
+    history: PropTypes.shape(),
+    store: PropTypes.shape()
+  };
 
-export default wrapWithTransition(
-  connect(mapStateToProps, null, null, { withRef: true })(Register)
-);
+  render() {
+    return (
+      <Provider store={this.props.store}>
+        <Router history={this.props.history}>
+          {getRoutes(...this.props.handlers)}
+        </Router>
+      </Provider>
+    );
+  }
+}

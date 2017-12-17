@@ -27,13 +27,14 @@ import { List } from 'immutable';
 import LoadMore from './load-more';
 import River from './river_of_posts';
 
-export default class LoadableRiver extends React.Component {
+export default class LoadableList extends React.PureComponent {
   static contextTypes = {
     router: PropTypes.func.isRequired
   };
 
   static defaultProps = {
     autoload: true,
+    component: River,
     loadMoreLimit: 4,
     onAutoLoad: noop,
     onForceLoad: noop,
@@ -91,7 +92,7 @@ export default class LoadableRiver extends React.Component {
 
     return (
       <div className={className}>
-        <River {...omit(props, ['onAutoLoad', 'onForceLoad'])} />
+        <this.props.component {...omit(props, ['onAutoLoad', 'onForceLoad'])} />
         {this.state.displayLoadMore &&
           <LoadMore
             waiting={waiting}

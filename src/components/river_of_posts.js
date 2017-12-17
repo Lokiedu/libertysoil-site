@@ -55,6 +55,7 @@ const RiverOfPostsComponent = (props) => {
     <div>
       {postsWithData.map((post) => {
         const author = users.get(post.get('user_id'));
+        const postId = post.get('id');
 
         switch (post.get('type')) {
           case PostTypes.HASHTAG_LIKE:
@@ -63,7 +64,7 @@ const RiverOfPostsComponent = (props) => {
             return (
               <TagLikePost
                 author={author}
-                key={post.get('id')}
+                key={postId}
                 post={post}
               />
             );
@@ -72,9 +73,9 @@ const RiverOfPostsComponent = (props) => {
             return (
               <PostWrapper
                 author={author}
-                comments={comments}
+                comments={comments.get(postId)}
                 current_user={current_user}
-                key={post.get('id')}
+                key={postId}
                 post={post}
                 triggers={triggers}
                 ui={ui}

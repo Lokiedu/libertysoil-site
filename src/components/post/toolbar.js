@@ -24,6 +24,7 @@ import { URL_NAMES, getUrl } from '../../utils/urlGenerator';
 
 import { OldIcon as Icon } from '../icon';
 import Time from '../time';
+import PostComments from './tools/comments';
 import PostFav from './tools/fav';
 import PostLike from './tools/like';
 import { ICON_SIZE } from './tools/config';
@@ -42,6 +43,15 @@ export default class Toolbar extends React.Component {
     return nextProps !== this.props;
   }
 
+  pushComments = location => ({
+    ...location,
+    query: {
+      ...location.query,
+      post_id: this.props.post.get('id'),
+      route: 'comments'
+    }
+  });
+
   render() {
     const { current_user, post, triggers } = this.props;
 
@@ -57,6 +67,10 @@ export default class Toolbar extends React.Component {
           </div>
         </Link>
         <div className="card__toolbar--group card__toolbar_item--right">
+          <PostComments
+            current_user={current_user}
+            post={post}
+          />
           <Link className="layout layout-align_vertical card__toolbar_item" to={postUrl}>
             <Icon icon="link" size={ICON_SIZE} />
           </Link>
