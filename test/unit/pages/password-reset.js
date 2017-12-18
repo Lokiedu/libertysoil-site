@@ -17,8 +17,9 @@
  */
 /*eslint-env node, mocha */
 import i from 'immutable';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
 
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { expect, React } from '../../../test-helpers/expect-unit';
 
 import { PasswordResetPage, ResetForm, SuccessMessage } from '../../../src/pages/password-reset';
 
@@ -34,15 +35,19 @@ describe('PasswordResetPage', function () {
 
 
   it('MUST renders <ResetForm /> by default', function () {
-    const renderer = TestUtils.createRenderer();
-    renderer.render(<PasswordResetPage is_logged_in={false} ui={i.Map()} />);
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <PasswordResetPage is_logged_in={false} ui={i.Map()} />
+    );
 
     return expect(renderer, 'to contain', <ResetForm />);
   });
 
   it('MUST contain <SuccessMessage /> when ui.submitResetPassword is true', function () {
-    const renderer = TestUtils.createRenderer();
-    renderer.render(<PasswordResetPage ui={i.fromJS({ submitResetPassword: true })} is_logged_in={false} />);
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <PasswordResetPage ui={i.fromJS({ submitResetPassword: true })} is_logged_in={false} />
+    );
 
     return expect(renderer, 'to contain', <SuccessMessage />);
   });

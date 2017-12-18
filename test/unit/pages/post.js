@@ -18,8 +18,9 @@
 /*eslint-env node, mocha */
 import { shallow } from 'enzyme';
 import i from 'immutable';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
 
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { expect, React } from '../../../test-helpers/expect-unit';
 import { UnwrappedPostPage } from '../../../src/pages/post';
 import NotFound from '../../../src/pages/not-found';
 
@@ -42,7 +43,7 @@ describe('Post page', () => {
   });
 
   it('MUST render as <NotFound /> page when post doesn\'t exist', () => {
-    const renderer = TestUtils.createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     renderer.render(
       <UnwrappedPostPage
         comments={i.Map()}

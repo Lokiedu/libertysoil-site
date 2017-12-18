@@ -17,8 +17,9 @@
  */
 /*eslint-env node, mocha */
 import i from 'immutable';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
 
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { expect, React } from '../../../test-helpers/expect-unit';
 
 import { UnwrappedAuth } from '../../../src/pages/auth';
 import Messages from '../../../src/components/messages';
@@ -36,8 +37,14 @@ describe('UnwrappedAuth page with redux', function () {
 
 
   it('MUST render important components', () => {
-    const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwrappedAuth is_logged_in messages={i.List()} ui={i.Map()} />);
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <UnwrappedAuth
+        is_logged_in
+        messages={i.List()}
+        ui={i.Map()}
+      />
+    );
 
     return expect(
       renderer,
@@ -47,8 +54,14 @@ describe('UnwrappedAuth page with redux', function () {
   });
 
   it('MUST render passed messages', () => {
-    const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwrappedAuth is_logged_in messages={i.fromJS([{ message: 'Im foo message' }])} ui={i.Map()} />);
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <UnwrappedAuth
+        is_logged_in
+        messages={i.fromJS([{ message: 'Im foo message' }])}
+        ui={i.Map()}
+      />
+    );
 
     return expect(
       renderer,
@@ -60,8 +73,14 @@ describe('UnwrappedAuth page with redux', function () {
   });
 
   it('MUST pass ui.registrationSuccess to Register component', () => {
-    const renderer = TestUtils.createRenderer();
-    renderer.render(<UnwrappedAuth is_logged_in messages={i.List()} ui={i.fromJS({ registrationSuccess: false })} />);
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <UnwrappedAuth
+        is_logged_in
+        messages={i.List()}
+        ui={i.fromJS({ registrationSuccess: false })}
+      />
+    );
 
     return expect(
       renderer,

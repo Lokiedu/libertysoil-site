@@ -17,8 +17,9 @@
  */
 /*eslint-env node, mocha */
 import i from 'immutable';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
 
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { expect, React } from '../../../test-helpers/expect-unit';
 import ga from '../../../src/external/react-google-analytics';
 import { UnwrappedApp } from '../../../src/pages/app';
 
@@ -33,19 +34,27 @@ const GAInitializer = ga.Initializer;
 
 describe('App page', function () {
   it('SHOULD NOT render GA when process.env.GOOGLE_ANALYTICS_ID not set', function () {
-    const renderer = TestUtils.createRenderer();
-
     delete process.env.GOOGLE_ANALYTICS_ID;
-    renderer.render(<UnwrappedApp {...props}><span>foo</span></UnwrappedApp>);
+
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <UnwrappedApp {...props}>
+        <span>foo</span>
+      </UnwrappedApp>
+    );
 
     return expect(renderer, 'not to contain', <GAInitializer />);
   });
 
   it('SHOULD render GA when process.env.GOOGLE_ANALYTICS_ID is set', function () {
-    const renderer = TestUtils.createRenderer();
-
     process.env.GOOGLE_ANALYTICS_ID = 100;
-    renderer.render(<UnwrappedApp {...props}><span>foo</span></UnwrappedApp>);
+
+    const renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(
+      <UnwrappedApp {...props}>
+        <span>foo</span>
+      </UnwrappedApp>
+    );
 
     return expect(renderer, 'to contain', <GAInitializer />);
   });

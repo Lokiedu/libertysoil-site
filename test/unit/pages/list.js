@@ -16,10 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*eslint-env node, mocha */
-import uuid from 'uuid';
 import i from 'immutable';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
+import uuid from 'uuid';
 
-import { TestUtils, expect, React } from '../../../test-helpers/expect-unit';
+import { expect, React } from '../../../test-helpers/expect-unit';
 import { UnwrappedListPage } from '../../../src/pages/list';
 
 describe('UnwrappedListPage page with redux', () => {
@@ -32,7 +33,7 @@ describe('UnwrappedListPage page with redux', () => {
   // });
 
   it('MUST render important components', () => {
-    const renderer = TestUtils.createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     renderer.render(
       <UnwrappedListPage
         comments={i.Map()}
