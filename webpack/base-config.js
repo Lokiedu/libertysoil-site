@@ -52,7 +52,12 @@ const config = {
       rules.favicons,
       ...rules.fonts
     ],
-    noParse: /\.min\.js/,
+    noParse: (path) => {
+      if (/react.*\.production\.min\.js$/.test(path)) {
+        return false;
+      }
+      return /\.min\.js$/.test(path);
+    },
   },
   resolveLoader: {
     alias: {
