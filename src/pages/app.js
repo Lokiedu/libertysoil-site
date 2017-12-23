@@ -18,11 +18,11 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import ga from 'react-google-analytics';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 
+import ga from '../external/react-google-analytics';
 import { ActionsTrigger } from '../triggers';
 import createSelector from '../selectors/createSelector';
 

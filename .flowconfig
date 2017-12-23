@@ -6,10 +6,13 @@
 .*/node_modules/react-leaflet/*
 .*/node_modules/typechecker/es2015/index.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/attachRenderer.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/attachRendererFiber.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/backend.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/copyWithSet.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/getData012.js
 .*/node_modules/react-render-hook/src/react-devtools/backend/getData.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/getDataFiber.js
+.*/node_modules/react-render-hook/src/react-devtools/backend/getDisplayName.js
 .*/node_modules/babel-plugin-flow-runtime/*
 
 # wait for v4 release since there's a bunch of typedefs changes

@@ -1,5 +1,7 @@
 /*eslint-env node, mocha */
-import { TestUtils, expect, React } from '../../test-helpers/expect-unit';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
+
+import { expect, React } from '../../test-helpers/expect-unit';
 
 
 const SomeComponent = ({ id }) => {
@@ -8,7 +10,7 @@ const SomeComponent = ({ id }) => {
 
 describe('First test', function () {
   it('should have method render', function () {
-    const renderer = TestUtils.createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     renderer.render(<SomeComponent id={125} />);
 
     return expect(renderer, 'to have rendered',

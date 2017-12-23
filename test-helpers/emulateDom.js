@@ -4,16 +4,25 @@ const virtualConsole = new VirtualConsole();
 virtualConsole.on("log", function (message) {
   console.log("console.log called ->", message);  // eslint-disable-line no-console
 });
-const { window } = new JSDOM('<!doctype html><html><body></body></html>', { virtualConsole });
+
+const { window } = new JSDOM(
+  '<!doctype html><html><body></body></html>',
+  { virtualConsole }
+);
+
+function copyProps(src, target) {
+  const props = Object.getOwnPropertyNames(src)
+    .filter(prop => typeof target[prop] === 'undefined')
+    .map(prop => Object.getOwnPropertyDescriptor(src, prop));
+  Object.defineProperties(target, props);
+}
 
 global.window = window;
 global.document = window.document;
-
-for (const key in global.window) {
-  if (!global[key]) {
-    global[key] = global.window[key];
-  }
-}
-
+global.navigator = {
+  platform: '',
+  userAgent: 'node.js'
+};
 // To fix leaflet
 global.HTMLVideoElement = window.HTMLVideoElement;
+copyProps(window, global);

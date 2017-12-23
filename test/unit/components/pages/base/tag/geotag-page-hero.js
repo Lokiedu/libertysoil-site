@@ -17,7 +17,7 @@
  */
 /* eslint-env node, mocha */
 import { Map } from 'immutable';
-import { createRenderer } from 'react-dom/test-utils';
+import ReactShallowRenderer from 'react-test-renderer/shallow';
 
 import { expect, React } from '../../../../../../test-helpers/expect-unit';
 import { GeotagPageHero } from '../../../../../../src/pages/base/tag';
@@ -32,7 +32,7 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
     const adminDivision = Map({ type: 'AdminDivision1', lat: 1, lon: 1 });
     const city = Map({ type: 'City', lat: 1, lon: 1 });
 
-    const renderer = createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     expect(renderer.render(<GeotagPageHero geotag={planet} />), 'to contain', <MapboxMap zoom={3} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={country} />), 'to contain', <MapboxMap zoom={5} frozen />);
     expect(renderer.render(<GeotagPageHero geotag={adminDivision} />), 'to contain', <MapboxMap zoom={6} frozen />);
@@ -47,7 +47,7 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
     const berlinCoordinates = Map({ lat: 52.5244, lon: 13.4105 });
     const germanyCoordinates = Map({ lat: 51, lon: 9 });
 
-    const renderer = createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     // FIXME: It's not possible to check asset urls without compiling tests with webpack.
     expect(
       renderer.render(<GeotagPageHero geotag={berlin} />),
@@ -84,7 +84,7 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
   it('should render map for objects located at zero-coordinates', () => {
     const Greenwich = Map({ type: 'City', lat: 51.48, lon: 0 });
 
-    const renderer = createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     expect(renderer.render(<GeotagPageHero geotag={Greenwich} />), 'to contain', <MapboxMap zoom={12} frozen />);
   });
 
@@ -92,7 +92,7 @@ describe('Tag Cloud Page: GeotagPageHero', () => {
   xit('should render image with shape for geotags representing continents', () => {
     const continent = Map({ type: 'Continent', lat: 1, lon: 1, continent_code: 'EU' });
 
-    const renderer = createRenderer();
+    const renderer = ReactShallowRenderer.createRenderer();
     expect(
       renderer.render(<GeotagPageHero geotag={continent} />),
       'to contain',

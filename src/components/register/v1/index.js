@@ -19,11 +19,11 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-import ga from 'react-google-analytics';
 import classNames from 'classnames';
 import t from 't8on';
 
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../../consts/localization';
+import ga from '../../../external/react-google-analytics';
 
 import RegisterForm from './form';
 import SuccessContent from './success';

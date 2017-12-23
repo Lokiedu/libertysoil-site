@@ -1,8 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import CodeMirror from 'react-codemirror';
 
-if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
+const isBrowser =
+     typeof window !== 'undefined'
+  && typeof window.navigator !== 'undefined';
+
+let CodeMirror;
+if (isBrowser) {
+  CodeMirror = require('react-codemirror2');
   require('codemirror/mode/javascript/javascript');
   require('codemirror/lib/codemirror.css');
 }
@@ -39,11 +44,13 @@ export default class JavascriptEditor extends Component {
     return (
       <div>
         <div className="title">{this.props.file}</div>
-        <CodeMirror
-          value={this.props.code}
-          onChange={this.handleChange}
-          options={options}
-        />
+        {isBrowser &&
+          <CodeMirror
+            value={this.props.code}
+            onChange={this.handleChange}
+            options={options}
+          />
+        }
       </div>
     );
   }

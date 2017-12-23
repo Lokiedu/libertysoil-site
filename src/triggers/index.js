@@ -317,12 +317,10 @@ export class ActionsTrigger {
 
   login = async (needRedirect, username, password) => {
     this.dispatch(a.messages.removeAllMessages());
-
-    let user = null;
+    let user;
 
     try {
-      const result = await this.client.login({ username, password });
-      user = result.user;
+      user = (await this.client.login({ username, password })).user;
     } catch (e) {
       // this.dispatch(a.users.setCurrentUser(null));
 
@@ -335,7 +333,6 @@ export class ActionsTrigger {
         console.warn(e);  // eslint-disable-line no-console
         this.dispatch(a.messages.addError('api.errors.internal'));
       }
-
       return false;
     }
 

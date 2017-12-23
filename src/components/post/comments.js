@@ -39,7 +39,7 @@ const CommentsPlaceholder = ({ count, ...props }) => (
 class Comments extends Component {
   static displayName = 'Comments';
 
-  defaultProps = {
+  static defaultProps = {
     showAllComments: false
   };
 

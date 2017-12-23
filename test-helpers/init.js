@@ -1,3 +1,9 @@
+import 'raf/polyfill';
+import ReactAdapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
+
+Enzyme.configure({ adapter: new ReactAdapter() });
+
 global.Promise = require('bluebird');
 global.Promise.onPossiblyUnhandledRejection((e) => { throw e; });
 

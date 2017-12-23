@@ -68,26 +68,36 @@ describe('UnwpappedAuth page', () => {
     });
 
     it('availableUsername should work', async () => {
-      const testComponent = (
+      const wrapper = mount(
         <RegisterFormV1
           isVisible
           onSubmit={noop}
         />
       );
-      const wrapper = mount(testComponent);
-      expect(wrapper.find('#registerUsername').node.value, 'to be empty');
 
-      wrapper.find('#registerFirstName').node.value = 'John';
-      wrapper.find('#registerFirstName').simulate('change');
-      wrapper.find('#registerLastName').node.value = 'Smith';
-      wrapper.find('#registerLastName').simulate('change');
+      expect(
+        wrapper
+          .find('#registerUsername')
+          .getDOMNode()
+          .getAttribute('value'),
+        'to be empty'
+      );
 
-      const suggestedUsername = waitForChange(() => wrapper.find('#registerUsername').node.value);
+      wrapper.find('#registerFirstName')
+        .simulate('change', { target: { value: 'John' } });
+
+      wrapper.find('#registerLastName')
+        .simulate('change', { target: { value: 'Smith' } });
+
+      const suggestedUsername = waitForChange(() =>
+        wrapper.find('#registerUsername').getDOMNode().getAttribute('value')
+      );
+
       expect(await suggestedUsername, 'not to be empty');
     });
 
     it('should check on email currently taken', async () => {
-      const testComponent = (
+      const wrapper = mount(
         <Provider store={store}>
           <RegisterFormV1
             isVisible
@@ -95,14 +105,16 @@ describe('UnwpappedAuth page', () => {
           />
         </Provider>
       );
-      const wrapper = mount(testComponent);
+
+      wrapper.find('#registerEmail')
+        .simulate('change', { target: { value: email } });
+
+      wrapper.find('#registerForm').simulate('submit');
 
       const newEmailError = waitForTrue(() =>
-        wrapper.find(UnwrappedRegisterFormV1).props().fields.registerEmail.error === 'email_taken'
+        wrapper.find(UnwrappedRegisterFormV1).instance()
+          .props.fields.registerEmail.error === 'email_taken'
       );
-
-      wrapper.find('#registerEmail').simulate('change', { target: { value: email } });
-      wrapper.find('#registerForm').simulate('submit');
 
       expect(await newEmailError, 'to be truthy');
     });
@@ -110,7 +122,7 @@ describe('UnwpappedAuth page', () => {
     it('Register form validation', async () => {
       const userAttrs = UserFactory.build();
       const onRegisterUser = sinon.spy();
-      const testComponent = (
+      const wrapper = mount(
         <Provider store={store}>
           <RegisterFormV1
             isVisible
@@ -118,13 +130,10 @@ describe('UnwpappedAuth page', () => {
           />
         </Provider>
       );
-
-      const wrapper = mount(testComponent);
       const register = wrapper.find(UnwrappedRegisterFormV1);
 
       const changeTextInput = async (id, value, name) => {
-        wrapper.find(id).node.value = value;
-        wrapper.find(id).simulate('change');
+        wrapper.find(id).simulate('change', { target: { value } });
         await waitForTrue(() => !register.props().fields[name].error);
       };
 
@@ -149,8 +158,9 @@ describe('UnwpappedAuth page', () => {
         'registerEmail'
       );
 
-      wrapper.find('#registerAgree').node.checked = true;
-      wrapper.find('#registerAgree').simulate('change');
+      wrapper.find('#registerAgree')
+        .simulate('change', { target: { value: true } });
+
       await waitForTrue(() => !register.props().fields.registerAgree.error);
       await waitForTrue(() => register.props().form.isValid());
 

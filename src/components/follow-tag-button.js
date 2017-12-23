@@ -18,9 +18,9 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import ga from 'react-google-analytics';
 import { omit } from 'lodash';
 
+import ga from '../external/react-google-analytics';
 import { CurrentUser as CurrentUserPropType } from '../prop-types/users';
 
 // Statuses for the progress indication.
