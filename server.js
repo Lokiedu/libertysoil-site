@@ -39,7 +39,6 @@ import redis from 'redis';
 import t from 't8on';
 
 import createRequestLogger from './src/utils/bunyan-koa-request';
-import { initApi } from './src/api/routing';
 import initBookshelf from './src/api/db';
 import initSphinx from './src/api/sphinx';
 import { API_HOST } from './src/config';
@@ -183,11 +182,15 @@ const initReduxForMainApp = async (ctx) => {
 const serve = (...params) => staticCache(...params);
 
 
-function startServer(/*params*/) {
+module.exports = function startServer(attachChangeCallback) {
   const sphinx = initSphinx();
-  const api = initApi(bookshelf);
 
-  const staticsRoot = path.join(__dirname, '..');  // calculated starting from "public/server/server.js"
+  let staticsRoot;
+  if (process.env.NODE_ENV === 'production') {
+    staticsRoot = path.join(__dirname, '..');
+  } else {
+    staticsRoot = path.join(__dirname, 'public');
+  }
 
   const staticsAppConfig = {
     buffer: true,
@@ -236,8 +239,24 @@ function startServer(/*params*/) {
     }
   });
 
-  if (exec_env === 'development') {
+  if (process.env.NODE_ENV !== 'production' && dbEnv === 'development') {
     logger.level('debug');
+
+    const webpack = require('webpack');
+    const webpackDevMiddleware = require('koa-webpack-dev-middleware');
+    const webpackHotMiddleware = require('webpack-koa-hot-middleware').default;
+    const webpackConfig = require('./res/webpack/client');
+    const compiler = webpack(webpackConfig);
+
+    app.use(convert(webpackDevMiddleware(compiler, {
+      log: logger.debug.bind(logger),
+      path: '/__webpack_hmr',
+      publicPath: webpackConfig.output.publicPath,
+      stats: {
+        colors: true
+      }
+    })));
+    app.use(convert(webpackHotMiddleware(compiler)));
   }
 
   app.use(createRequestLogger({ level: 'info', logger }));
@@ -269,7 +288,16 @@ function startServer(/*params*/) {
   app.use(koaConditional());
   app.use(koaEtag());
 
-  app.use(mount('/api/v1', api));
+  if (process.env.NODE_ENV !== 'production' && attachChangeCallback) {
+    const setupApiReload = require('./src/utils/reload-api').default;
+    const reloadApi = setupApiReload(app, bookshelf, sphinx);
+    attachChangeCallback(reloadApi);
+    reloadApi(true); // initialize the API
+  } else {
+    const { initApi } = require('./src/api/routing');
+    app.use(mount('/api/v1', initApi(bookshelf, sphinx)));
+  }
+
   app.use(staticsApp);
   app.use(mount('/uikit', getReactMiddleware(
     'uikit',
@@ -294,6 +322,4 @@ function startServer(/*params*/) {
   });
 
   return app;
-}
-
-export default startServer;
+};

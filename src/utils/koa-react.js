@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path from 'path';
+// import path from 'path';
 
 
 import React from 'react';
@@ -20,11 +20,9 @@ import { AuthHandler, FetchHandler } from './loader';
 const matchPromisified = promisify(match, { multiArgs: true });
 const readFile = promisify(fs.readFile);
 
-const isTest = ['test', 'travis'].includes(process.env.DB_ENV);
-
 let template;
-if (isTest) {
-  template = ejs.compile(fs.readFileSync(path.resolve(__dirname, '../views/index.ejs'), 'utf8'));
+if (typeof templateData === 'function') {
+  template = templateData;
 } else {
   template = ejs.compile(templateData, { filename: 'index.ejs' });
 }
@@ -35,10 +33,7 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
   const reactMiddleware = async (ctx) => {
     if (!webpackChunks) {
       try {
-        let chunksFilename = `${__dirname}/../webpack-chunks.json`;
-        if (isTest) {
-          chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
-        }
+        const chunksFilename = `${__dirname}/../../public/webpack-chunks.json`;
 
         const data = await readFile(chunksFilename);
         webpackChunks = JSON.parse(data);
@@ -96,6 +91,7 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
             <RouterContext {...renderProps} />
           </Provider>
         );
+
         const state = JSON.stringify(store.getState().toJS());
 
         if (fetchHandler.status !== null) {
@@ -110,6 +106,10 @@ export function getReactMiddleware(appName, prefix, getRoutes, reduxInitializer,
         const paths = {
           webpackChunks,
         };
+
+        if (process.env.NODE_ENV !== 'production') {
+          paths.webpackChunks['vendor.js'] = '/assets/vendor.js';
+        }
 
         ctx.staus = 200;
         ctx.body = template({ appName, state, html, metadata, gtm, localization, paths });
