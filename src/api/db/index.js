@@ -110,7 +110,7 @@ export function initBookshelfFromKnex(knex) {
         if (!email) {
           return '';
         }
-        return md5(email);
+        return md5(email.toLowerCase());
       },
       fullName() {
         const more = this.get('more');
