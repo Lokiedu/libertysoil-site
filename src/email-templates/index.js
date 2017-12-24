@@ -18,6 +18,7 @@
 import { renderFile } from 'ejs';
 import { promisify } from 'bluebird';
 import moment from 'moment';
+import { get } from 'lodash';
 
 import { getUrl } from '../utils/urlGenerator';
 import { API_HOST, URL_NAMES } from '../config';
@@ -53,39 +54,77 @@ export async function renderWelcomeTemplate(dateObject, username, email) {
 }
 
 export async function renderNewCommentTemplate(comment, commentAuthor, post, postAuthor) {
-  let authorAvatarUrl;
-  if (commentAuthor.more && commentAuthor.more.avatar && commentAuthor.more.avatar.url) {
-    authorAvatarUrl = commentAuthor.more.avatar.url;
-  } else {
-    authorAvatarUrl = `http://www.gravatar.com/avatar/${commentAuthor.gravatarHash}?s=17&r=g&d=retro`;
-  }
-
-  let userAvatarUrl;
-  if (postAuthor.more && postAuthor.more.avatar && postAuthor.more.avatar.url) {
-    userAvatarUrl = postAuthor.more.avatar.url;
-  } else {
-    userAvatarUrl = `http://www.gravatar.com/avatar/${postAuthor.gravatarHash}?s=36&r=g&d=retro`;
-  }
-
   const context = {
     host: API_HOST,
-    comment: {
-      text: comment.text,
-      date: moment(comment.created_at).format('Do [of] MMMM YYYY')
-    },
-    commentAuthor: {
-      name: `${commentAuthor.more.firstName} ${commentAuthor.more.lastName}`,
-      url: API_HOST + getUrl(URL_NAMES.USER, { username: commentAuthor.username }),
-      avatarUrl: authorAvatarUrl
-    },
     post: {
-      url: API_HOST + getUrl(URL_NAMES.POST, { uuid: comment.post_id }),
-      title: post.more.pageTitle
+      url: getPostUrl(post),
+      title: post.more.pageTitle,
+      author: {
+        avatarUrl: getUserAvatarUrl(postAuthor, { size: 36 })
+      },
+      comments: [{
+        text: comment.text,
+        date: moment(comment.created_at).format('Do [of] MMMM YYYY'),
+        author: {
+          name: getUserName(commentAuthor),
+          url: getUserUrl(commentAuthor),
+          avatarUrl: getUserAvatarUrl(commentAuthor, { size: 17 })
+        }
+      }],
     },
-    postAuthor: {
-      avatarUrl: userAvatarUrl
-    }
   };
 
-  return await renderFileAsync(`${__dirname}/new_comment.ejs`, context);
+  return await renderFileAsync(`${__dirname}/new-comment.ejs`, context);
+}
+
+export async function renderNewCommentsTemplate({ posts, since }) {
+  posts = posts.map(post => ({
+    id: post.id,
+    title: post.more.pageTitle,
+    url: getPostUrl(post),
+    author: {
+      avatarUrl: getUserAvatarUrl(post.user, { size: 36 }),
+    },
+    comments: post.comments.map(comment => ({
+      text: comment.text,
+      date: moment(comment.created_at).format('Do [of] MMMM YYYY'),
+      author: {
+        name: getUserName(comment.user),
+        url: getUserUrl(comment.user),
+        avatarUrl: getUserAvatarUrl(comment.user, { size: 17 }),
+      }
+    }))
+  }));
+
+  return await renderFileAsync(`${__dirname}/new-comments.ejs`, {
+    host: API_HOST,
+    posts,
+    since,
+  });
+}
+
+function getUserAvatarUrl(user, { size }) {
+  if (get(user, 'more.avatar.url')) {
+    return user.more.avatar.url;
+  }
+
+  return `http://www.gravatar.com/avatar/${user.gravatarHash}?s=${size}&r=g&d=retro`;
+}
+
+function getUserUrl(user) {
+  return `${API_HOST}${getUrl(URL_NAMES.USER, { username: user.username })}`;
+}
+
+function getPostUrl(post) {
+  return `${API_HOST}${getUrl(URL_NAMES.POST, { uuid: post.id })}`;
+}
+
+function getUserName(user) {
+  const more = user.more;
+
+  if (more && 'firstName' in more && 'lastName' in more) {
+    return `${more.firstName} ${more.lastName}`;
+  }
+
+  return user.username;
 }
