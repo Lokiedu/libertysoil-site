@@ -15,92 +15,119 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { renderFile } from 'ejs';
+import { readFile } from 'fs';
+import path from 'path';
+import { compile } from 'ejs';
 import { promisify } from 'bluebird';
 import moment from 'moment';
 import { get } from 'lodash';
-
 import { getUrl } from '../utils/urlGenerator';
 import { API_HOST, URL_NAMES } from '../config';
 
 
-const renderFileAsync = promisify(renderFile);
+const readFileAsync = promisify(readFile);
 
-export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
+export class EmailTemplates {
+  templateCache = {};
 
-  return await renderFileAsync(
-    `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, host: API_HOST, username }
-  );
-}
+  async getTemplate(fileName) {
+    let template = this.templateCache[fileName];
+    if (!template) {
+      const filePath = path.join(__dirname, fileName);
+      const text = await readFileAsync(filePath, 'utf8');
+      template = this.templateCache[fileName] = compile(text, {
+        cache: true,
+        filename: filePath,
+      });
+    }
 
-export async function renderVerificationTemplate(dateObject, username, email, confirmationLink) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
+    return template;
+  }
 
-  return await renderFileAsync(
-    `${__dirname}/verification.ejs`,
-    { confirmationLink, date, email, host: API_HOST, username }
-  );
-}
+  async renderTemplate(filename, data) {
+    return (await this.getTemplate(filename))(data);
+  }
 
-export async function renderWelcomeTemplate(dateObject, username, email) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
+  async renderResetTemplate(dateObject, username, email, confirmationLink) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
 
-  return await renderFileAsync(
-    `${__dirname}/welcome.ejs`,
-    { date, email, host: API_HOST, username }
-  );
-}
+    return await this.renderTemplate(
+      `reset.ejs`,
+      { confirmationLink, date, email, host: API_HOST, username }
+    );
+  }
 
-export async function renderNewCommentTemplate(comment, commentAuthor, post, postAuthor) {
-  const context = {
-    host: API_HOST,
-    post: {
-      url: getPostUrl(post),
-      title: post.more.pageTitle,
-      author: {
-        avatarUrl: getUserAvatarUrl(postAuthor, { size: 36 })
+  async renderVerificationTemplate(dateObject, username, email, confirmationLink) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+    return await this.renderTemplate(
+      `verification.ejs`,
+      { confirmationLink, date, email, host: API_HOST, username }
+    );
+  }
+
+  async renderWelcomeTemplate(dateObject, username, email) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+    return await this.renderTemplate(
+      `welcome.ejs`,
+      { date, email, host: API_HOST, username }
+    );
+  }
+
+  async renderNewCommentTemplate({ post }) {
+    const commenent = post.comments[0];
+    const context = {
+      host: API_HOST,
+      post: {
+        url: getPostUrl(post),
+        title: post.more.pageTitle,
+        author: {
+          avatarUrl: getUserAvatarUrl(post.user, { size: 36 })
+        },
+        comments: [{
+          text: commenent.text,
+          date: moment(commenent.created_at).format('Do [of] MMMM YYYY'),
+          author: {
+            name: commenent.user.fullName,
+            url: getUserUrl(commenent.user),
+            avatarUrl: getUserAvatarUrl(commenent.user, { size: 17 })
+          }
+        }],
       },
-      comments: [{
+    };
+
+    return await this.renderTemplate(`new-comment.ejs`, context);
+  }
+
+  async renderNewCommentsTemplate({ posts, since }) {
+    posts = posts.map(post => ({
+      id: post.id,
+      title: post.more.pageTitle,
+      url: getPostUrl(post),
+      author: {
+        avatarUrl: getUserAvatarUrl(post.user, { size: 36 }),
+      },
+      comments: post.comments.map(comment => ({
         text: comment.text,
         date: moment(comment.created_at).format('Do [of] MMMM YYYY'),
         author: {
-          name: getUserName(commentAuthor),
-          url: getUserUrl(commentAuthor),
-          avatarUrl: getUserAvatarUrl(commentAuthor, { size: 17 })
+          name: comment.user.fullName,
+          url: getUserUrl(comment.user),
+          avatarUrl: getUserAvatarUrl(comment.user, { size: 17 }),
         }
-      }],
-    },
-  };
+      }))
+    }));
 
-  return await renderFileAsync(`${__dirname}/new-comment.ejs`, context);
-}
-
-export async function renderNewCommentsTemplate({ posts, since }) {
-  posts = posts.map(post => ({
-    id: post.id,
-    title: post.more.pageTitle,
-    url: getPostUrl(post),
-    author: {
-      avatarUrl: getUserAvatarUrl(post.user, { size: 36 }),
-    },
-    comments: post.comments.map(comment => ({
-      text: comment.text,
-      date: moment(comment.created_at).format('Do [of] MMMM YYYY'),
-      author: {
-        name: getUserName(comment.user),
-        url: getUserUrl(comment.user),
-        avatarUrl: getUserAvatarUrl(comment.user, { size: 17 }),
+    return await this.renderTemplate(
+      `new-comments.ejs`,
+      {
+        host: API_HOST,
+        since: moment(since).format('Do [of] MMMM YYYY'),
+        posts,
       }
-    }))
-  }));
-
-  return await renderFileAsync(`${__dirname}/new-comments.ejs`, {
-    host: API_HOST,
-    posts,
-    since,
-  });
+    );
+  }
 }
 
 function getUserAvatarUrl(user, { size }) {
@@ -117,14 +144,4 @@ function getUserUrl(user) {
 
 function getPostUrl(post) {
   return `${API_HOST}${getUrl(URL_NAMES.POST, { uuid: post.id })}`;
-}
-
-function getUserName(user) {
-  const more = user.more;
-
-  if (more && 'firstName' in more && 'lastName' in more) {
-    return `${more.firstName} ${more.lastName}`;
-  }
-
-  return user.username;
 }

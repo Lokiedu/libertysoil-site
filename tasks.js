@@ -20,13 +20,7 @@ import schedule from 'node-schedule';
 import { values, isEmpty } from 'lodash';
 
 import config from './config';
-import {
-  renderVerificationTemplate,
-  renderResetTemplate,
-  renderWelcomeTemplate,
-  renderNewCommentTemplate,
-  renderNewCommentsTemplate
-} from './src/email-templates/index';
+import { EmailTemplates } from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 import { API_HOST, API_URL_PREFIX } from './src/config';
 import dbConfig from './knexfile';  // eslint-disable-line import/default
@@ -48,7 +42,7 @@ export async function sendCommentNotifications(queue) {
       if (!acc[postId]) {
         acc[postId] = cur.post;
         acc[postId].comments = [];
-        acc[postId].user = cur.post_author;
+        acc[postId].user = new User(cur.post_author).toJSON();
       }
 
       const comment = cur.comment;
@@ -115,6 +109,7 @@ export async function sendCommentNotifications(queue) {
 
 export default function startServer(/*params*/) {
   const queue = kueLib.createQueue(config.kue);
+  const emailTemplates = new EmailTemplates();
 
   // Every 10 minutes, update post statistics.
   schedule.scheduleJob('*/10 * * * *', async function () {
@@ -167,7 +162,7 @@ export default function startServer(/*params*/) {
     } = job.data;
 
     try {
-      const html = await renderVerificationTemplate(new Date(), username, email, `${API_URL_PREFIX}/user/verify/${hash}`);
+      const html = await emailTemplates.renderVerificationTemplate(new Date(), username, email, `${API_URL_PREFIX}/user/verify/${hash}`);
       await sendEmail('Please confirm email Libertysoil.org', html, job.data.email);
       done();
     } catch (e) {
@@ -177,7 +172,7 @@ export default function startServer(/*params*/) {
 
   queue.process('reset-password-email', async function (job, done) {
     try {
-      const html = await renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
+      const html = await emailTemplates.renderResetTemplate(new Date(), job.data.username, job.data.email, `${API_HOST}/newpassword/${job.data.hash}`);
       await sendEmail('Reset Libertysoil.org Password', html, job.data.email);
       done();
     } catch (e) {
@@ -187,7 +182,7 @@ export default function startServer(/*params*/) {
 
   queue.process('verify-email', async function (job, done) {
     try {
-      const html = await renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
+      const html = await emailTemplates.renderWelcomeTemplate(new Date(), job.data.username, job.data.email);
       await sendEmail('Welcome to Libertysoil.org', html, job.data.email);
       done();
     } catch (e) {
@@ -206,14 +201,19 @@ export default function startServer(/*params*/) {
       const post = comment.related('post');
       const subscribers = (await post.related('subscribers').fetch())
         .map(subscriber => subscriber.attributes);
+      const serializedComment = comment.toJSON();
+      delete serializedComment.post;
 
       for (const subscriber of subscribers) {
         // Only for users with enabled per-comment notifications.
         if (subscriber.more.comment_notifications === 'on' && commentAuthor.id !== subscriber.id) {
           queue.create('new-comment-email', {
-            comment: comment.attributes,
-            commentAuthor: commentAuthor.attributes,
-            post: post.attributes,
+            post: {
+              ...post.toJSON(),
+              comments: [
+                serializedComment
+              ]
+            },
             subscriber
           }).priority('medium').save();
         }
@@ -228,13 +228,11 @@ export default function startServer(/*params*/) {
   queue.process('new-comment-email', async function (job, done) {
     try {
       const {
-        comment,
-        commentAuthor,
         post,
         subscriber
       } = job.data;
 
-      const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
+      const html = await emailTemplates.renderNewCommentTemplate({ post });
       await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
 
       done();
@@ -251,7 +249,7 @@ export default function startServer(/*params*/) {
         subscriber
       } = job.data;
 
-      const html = await renderNewCommentsTemplate({ posts, since });
+      const html = await emailTemplates.renderNewCommentsTemplate({ posts, since });
       await sendEmail('New Comments on LibertySoil.org', html, subscriber.email);
 
       done();
