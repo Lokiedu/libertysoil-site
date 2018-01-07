@@ -17,9 +17,16 @@
  */
 import kueLib from 'kue';
 import schedule from 'node-schedule';
+import { values, isEmpty } from 'lodash';
 
 import config from './config';
-import { renderVerificationTemplate, renderResetTemplate, renderWelcomeTemplate, renderNewCommentTemplate } from './src/email-templates/index';
+import {
+  renderVerificationTemplate,
+  renderResetTemplate,
+  renderWelcomeTemplate,
+  renderNewCommentTemplate,
+  renderNewCommentsTemplate
+} from './src/email-templates/index';
 import { sendEmail } from './src/utils/email';
 import { API_HOST, API_URL_PREFIX } from './src/config';
 import dbConfig from './knexfile';  // eslint-disable-line import/default
@@ -30,6 +37,81 @@ const dbEnv = process.env.DB_ENV || 'development';
 const knexConfig = dbConfig[dbEnv];
 const bookshelf = initBookshelf(knexConfig);
 const knex = bookshelf.knex;
+const User = bookshelf.model('User');
+
+
+export async function sendCommentNotifications(queue) {
+  function processQueryResult(rows) {
+    const postsObj = rows.reduce((acc, cur) => {
+      const postId = cur.post.id;
+
+      if (!acc[postId]) {
+        acc[postId] = cur.post;
+        acc[postId].comments = [];
+        acc[postId].user = cur.post_author;
+      }
+
+      const comment = cur.comment;
+      comment.user = new User(cur.comment_author).toJSON();
+      acc[postId].comments.push(comment);
+
+      return acc;
+    }, {});
+
+    return values(postsObj);
+  }
+
+  try {
+    // TODO: Optimize for large number of users.
+    const users = (await User.collection().query(qb => {
+      qb.whereRaw(`more->>'comment_notifications' in ('weekly', 'daily')`);
+    }).fetch()).toArray();
+
+    for (const user of users) {
+      const query = knex('post_subscriptions')
+        .select(knex.raw(`
+          to_json(posts.*) as post,
+          to_json(comments.*) as comment,
+          to_json(post_authors.*) as post_author,
+          to_json(comment_authors.*) as comment_author
+        `))
+        .join('comments', 'comments.post_id', 'post_subscriptions.post_id')
+        .join('posts', 'posts.id', 'post_subscriptions.post_id')
+        .joinRaw('inner join users as post_authors on post_authors.id = posts.user_id')
+        .joinRaw('inner join users as comment_authors on comment_authors.id = comments.user_id')
+        .whereNot('comment_authors.id', user.id) // ignore user's own comments
+        .where('post_subscriptions.user_id', user.id)
+        .orderBy('comments.created_at', 'asc');
+
+      let since;
+      if (user.get('more').last_comment_notification_at) {
+        since = user.get('more').last_comment_notification_at;
+      } else {
+        // A default `since` for an exceptional ocasion.
+        since = new Date();
+        since.setHours(-24);
+      }
+
+      query.where('comments.created_at', '>', since);
+
+      const posts = processQueryResult(await query);
+
+      if (!isEmpty(posts)) {
+        queue.createQueue('new-comments-email', { posts, subscriber: { email: user.get('email') }, since });
+
+        // update the date of the latest delivered notification
+        user.save({
+          more: {
+            ...user.get('more'),
+            last_comment_notification_at: new Date().toJSON()
+          }
+        }, { patch: true });
+      }
+    }
+  } catch (e) {
+    console.error('Failed sending comment notifications: ', e); // eslint-disable-line no-console
+  }
+}
 
 export default function startServer(/*params*/) {
   const queue = kueLib.createQueue(config.kue);
@@ -66,6 +148,12 @@ export default function startServer(/*params*/) {
       console.error('Failed to update post stats: ', e); // eslint-disable-line no-console
     }
   });
+
+  // Daily e-mail notification delivery
+  schedule.scheduleJob('0 0 * * *', sendCommentNotifications.bind(null, queue));
+
+  // Weekly e-mail notification delivery
+  schedule.scheduleJob('0 0 * * 0', sendCommentNotifications.bind(null, queue));
 
   queue.on('error', (err) => {
     process.stderr.write(`${err.message}\n`);
@@ -120,7 +208,8 @@ export default function startServer(/*params*/) {
         .map(subscriber => subscriber.attributes);
 
       for (const subscriber of subscribers) {
-        if (subscriber.more.comment_notifications !== 'off' && commentAuthor.id !== subscriber.id) {
+        // Only for users with enabled per-comment notifications.
+        if (subscriber.more.comment_notifications === 'on' && commentAuthor.id !== subscriber.id) {
           queue.create('new-comment-email', {
             comment: comment.attributes,
             commentAuthor: commentAuthor.attributes,
@@ -147,6 +236,23 @@ export default function startServer(/*params*/) {
 
       const html = await renderNewCommentTemplate(comment, commentAuthor, post, subscriber);
       await sendEmail('New Comment on LibertySoil.org', html, subscriber.email);
+
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  queue.process('new-comments-email', async function (job, done) {
+    try {
+      const {
+        posts,
+        since,
+        subscriber
+      } = job.data;
+
+      const html = await renderNewCommentsTemplate({ posts, since });
+      await sendEmail('New Comments on LibertySoil.org', html, subscriber.email);
 
       done();
     } catch (e) {
