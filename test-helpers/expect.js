@@ -27,6 +27,7 @@ expect.installPlugin(require('unexpected-http'));
 expect.installPlugin(require('unexpected-dom'));
 expect.installPlugin(require('unexpected-immutable'));
 expect.installPlugin(require('unexpected-sinon'));
+expect.installPlugin(require('unexpected-date'));
 
 const subjectToRequest = (subject) => {
   if (isString(subject)) {

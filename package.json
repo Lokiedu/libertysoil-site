@@ -235,6 +235,7 @@
     "trace": "~3.0.0",
     "transform-loader": "^0.2.3",
     "unexpected": "~10.35.0",
+    "unexpected-date": "^1.1.1",
     "unexpected-dom": "~4.0.0",
     "unexpected-http": "~6.0.0",
     "unexpected-immutable": "~0.2.6",
