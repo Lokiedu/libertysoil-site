@@ -15,9 +15,12 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import fs, { accessSync } from 'fs';
+
 import kueLib from 'kue';
 import schedule from 'node-schedule';
 import { values, isEmpty } from 'lodash';
+import Logger, { createLogger } from 'bunyan';
 
 import config from './config';
 import { EmailTemplates } from './src/email-templates/index';
@@ -27,12 +30,47 @@ import dbConfig from './knexfile';  // eslint-disable-line import/default
 import initBookshelf from './src/api/db';
 
 
+const execEnv = process.env.NODE_ENV || 'development';
 const dbEnv = process.env.DB_ENV || 'development';
 const knexConfig = dbConfig[dbEnv];
 const bookshelf = initBookshelf(knexConfig);
 const knex = bookshelf.knex;
 const User = bookshelf.model('User');
 
+// TODO: Logger initialization is copy-pasted from server.js. Extract into a common function.
+const streams = [];
+
+if (execEnv !== 'test') {
+  streams.push({
+    stream: process.stderr,
+    level: 'info'
+  });
+}
+
+try {
+  accessSync('/var/log', fs.W_OK);
+
+  streams.push({
+    type: 'rotating-file',
+    path: '/var/log/libertysoil-tasks.log',
+    level: 'warn',
+    period: '1d',   // daily rotation
+    count: 3        // keep 3 back copies
+  });
+} catch (e) {
+  // do nothing
+}
+
+const logger = createLogger({
+  name: 'libertysoil-tasks',
+  serializers: Logger.stdSerializers,
+  src: true,
+  streams
+});
+
+if (execEnv === 'development') {
+  logger.level('debug');
+}
 
 export async function sendCommentNotifications(queue) {
   function processQueryResult(rows) {
@@ -103,7 +141,7 @@ export async function sendCommentNotifications(queue) {
       }
     }
   } catch (e) {
-    console.error('Failed sending comment notifications: ', e); // eslint-disable-line no-console
+    logger.error(e, 'Failed to send comment notifications');
   }
 }
 
@@ -137,10 +175,9 @@ export default function startServer(/*params*/) {
           score = new_like_count + new_fav_count + new_comment_count;
       `);
 
-      // TODO: Use proper logger
-      console.log('Post stats updated'); // eslint-disable-line no-console
+      logger.info('Post stats updated');
     } catch (e) {
-      console.error('Failed to update post stats: ', e); // eslint-disable-line no-console
+      logger.error(e, 'Failed to update post stats');
     }
   });
 
@@ -151,7 +188,15 @@ export default function startServer(/*params*/) {
   schedule.scheduleJob('0 0 * * 0', sendCommentNotifications.bind(null, queue));
 
   queue.on('error', (err) => {
-    process.stderr.write(`${err.message}\n`);
+    logger.error(err);
+  });
+
+  queue.on('job enqueue', function (id, type) {
+    logger.info('Job %s (id %s) queued', type, id);
+  });
+
+  queue.on('job complete', function (id, type) {
+    logger.info('Job %s (id %s) completed', type, id);
   });
 
   queue.process('register-user-email', async function (job, done) {
@@ -258,5 +303,5 @@ export default function startServer(/*params*/) {
     }
   });
 
-  process.stdout.write(`Job service started\n`);
+  logger.info(`Job service started`);
 }
