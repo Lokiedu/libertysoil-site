@@ -189,5 +189,9 @@ export function initApi(bookshelf) {
 
   api.get('/locale/:lang_code', misc.getLocale);
 
+  if (process.env.NODE_ENV !== 'production') {
+    api.get('/email-template/:name', require('./controllers/dev/emailTemplates').renderEmailTemplate);
+  }
+
   return api.routes();
 }

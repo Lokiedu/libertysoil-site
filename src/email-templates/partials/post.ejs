@@ -1,0 +1,34 @@
+<table class="post">
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td class="header__avatar" style="border-collapse: collapse;padding: 15px;width: 36px;">
+            <div class="user_avatar" style="width: 36px;height: 36px;border-radius: 50%;overflow: hidden;">
+              <a href="<%= post.url %>">
+                <img src="<%= post.author.avatarUrl %>" width="36" height="36" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
+              </a>
+            </div>
+          </td>
+          <td>
+            <div>
+              <a id="post-link" href="<%= post.url %>" class="page__blue" style="text-decoration: underline;color: #40b7e9;"><%= post.title %></a>
+            </div>
+            <div class="text-gray" style="margin-top: 10px;">
+              <a href="<%- host %>/api/v1/post/<%= post.id %>/unsubscribe" style="text-decoration: underline;color: inherit;">Click here</a> to mute this thread (stop receiving email notifications for this post only).
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <% post.comments.forEach(function (comment) { %>
+          <%- include('comment', { comment })%>
+        <% }); %>
+      </table>
+    </td>
+  </tr>
+</table>

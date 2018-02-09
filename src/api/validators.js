@@ -46,15 +46,14 @@ export const UserRegistrationValidator = Joi.object({
 
 export const UserSettingsValidator = Joi.object({
   more: Joi.object({
-    summary: Joi.string(),
-    bio: Joi.string(),
+    summary: Joi.string().trim().empty(''),
+    bio: Joi.string().trim().empty(''),
     roles: Joi.array(), // TODO: validate role variants
-    //first_login: Joi.bool(), // private
     avatar: PictureAttachment,
     head_pic: PictureAttachment,
-    mute_all_posts: Joi.bool(),
-    firstName: Joi.string(),
-    lastName: Joi.string(),
+    comment_notifications: Joi.string().only(['on', 'off', 'weekly', 'daily']),
+    firstName: Joi.string().trim().empty(''),
+    lastName: Joi.string().trim().empty(''),
     lang: Joi.string().only(SUPPORTED_LOCALES),
     sidebar: Joi.object({
       collapsed: Joi.bool()
@@ -160,3 +159,7 @@ export const PostValidator = Joi.object({
   schools: Joi.array().items(Joi.string()),
   geotags: Joi.array().items(Joi.string())
 }).options({ abortEarly: false, stripUnknown: true });
+
+export const CommentValidator = Joi.object({
+  text: Joi.string().trim().min(1),
+});

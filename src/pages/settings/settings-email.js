@@ -38,9 +38,16 @@ class SettingsEmailPage extends React.Component {
     const client = new ApiClient(API_HOST);
     const triggers = new ActionsTrigger(client, this.props.dispatch);
 
+    let comment_notifications;
+    if (this.form.mute_all_posts.checked) {
+      comment_notifications = 'off';
+    } else {
+      comment_notifications = 'on';
+    }
+
     await triggers.updateUserInfo({
       more: {
-        mute_all_posts: this.form.mute_all_posts.checked,
+        comment_notifications
       }
     });
   };

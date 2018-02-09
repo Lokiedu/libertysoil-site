@@ -1,0 +1,18 @@
+<tr>
+  <td class="post_comment" style="border-collapse: collapse;padding: 0 30px 30px 30px;">
+    <p class="page__content_text page__content_text-comment" style="margin: 5px 0 0 0;font-size: 16px;line-height: 1.4;"><%= comment.text %></p>
+    <table class="user" style="width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 20px 0 0 0;">
+      <tr>
+        <td class="user__avatar" valign="top" style="border-collapse: collapse;padding: 0 10px 0 0;width: 17px;">
+          <div class="user__avatar_pic" style="border-radius: 50%;overflow: hidden;">
+            <img src="<%= comment.author.avatarUrl %>" width="17" height="17" alt="" style="outline: none;text-decoration: none;border: none;display: block;-ms-interpolation-mode: bicubic;">
+          </div>
+        </td>
+        <td class="user__name" style="border-collapse: collapse;padding: 0;">
+          <div><a id="comment-author-link" class="user__profile" href="<%= comment.author.url %>" style="text-decoration: none;color: inherit;"><%= comment.author.name %></a></div>
+          <div class="text-gray" style="color: #bbb;"><%= comment.date %><div>
+        </div></div></td>
+      </tr>
+    </table>
+  </td>
+</tr>

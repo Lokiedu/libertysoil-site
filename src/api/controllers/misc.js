@@ -99,8 +99,6 @@ export async function getRecentlyUsedTags(ctx) {
       const yesterday = new Date();
       yesterday.setHours(yesterday.getHours() - 24);
 
-      // Count fails prob because of the tag models that are used for couting posts (or not)
-
       return {
         hashtags: {
           entries: await Hashtag.getRecentlyUsed({ limit: 5 }).fetch(),

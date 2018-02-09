@@ -15,77 +15,133 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { renderFile } from 'ejs';
+import { readFile } from 'fs';
+import path from 'path';
+import { compile } from 'ejs';
 import { promisify } from 'bluebird';
 import moment from 'moment';
-
+import { get } from 'lodash';
 import { getUrl } from '../utils/urlGenerator';
 import { API_HOST, URL_NAMES } from '../config';
 
 
-const renderFileAsync = promisify(renderFile);
+const readFileAsync = promisify(readFile);
 
-export async function renderResetTemplate(dateObject, username, email, confirmationLink) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
+export class EmailTemplates {
+  templateCache = {};
 
-  return await renderFileAsync(
-    `${__dirname}/reset.ejs`,
-    { confirmationLink, date, email, host: API_HOST, username }
-  );
-}
-
-export async function renderVerificationTemplate(dateObject, username, email, confirmationLink) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
-
-  return await renderFileAsync(
-    `${__dirname}/verification.ejs`,
-    { confirmationLink, date, email, host: API_HOST, username }
-  );
-}
-
-export async function renderWelcomeTemplate(dateObject, username, email) {
-  const date = moment(dateObject).format('Do [of] MMMM YYYY');
-
-  return await renderFileAsync(
-    `${__dirname}/welcome.ejs`,
-    { date, email, host: API_HOST, username }
-  );
-}
-
-export async function renderNewCommentTemplate(comment, commentAuthor, post, postAuthor) {
-  let authorAvatarUrl;
-  if (commentAuthor.more && commentAuthor.more.avatar && commentAuthor.more.avatar.url) {
-    authorAvatarUrl = commentAuthor.more.avatar.url;
-  } else {
-    authorAvatarUrl = `http://www.gravatar.com/avatar/${commentAuthor.gravatarHash}?s=17&r=g&d=retro`;
-  }
-
-  let userAvatarUrl;
-  if (postAuthor.more && postAuthor.more.avatar && postAuthor.more.avatar.url) {
-    userAvatarUrl = postAuthor.more.avatar.url;
-  } else {
-    userAvatarUrl = `http://www.gravatar.com/avatar/${postAuthor.gravatarHash}?s=36&r=g&d=retro`;
-  }
-
-  const context = {
-    host: API_HOST,
-    comment: {
-      text: comment.text,
-      date: moment(comment.created_at).format('Do [of] MMMM YYYY')
-    },
-    commentAuthor: {
-      name: `${commentAuthor.more.firstName} ${commentAuthor.more.lastName}`,
-      url: API_HOST + getUrl(URL_NAMES.USER, { username: commentAuthor.username }),
-      avatarUrl: authorAvatarUrl
-    },
-    post: {
-      url: API_HOST + getUrl(URL_NAMES.POST, { uuid: comment.post_id }),
-      title: post.more.pageTitle
-    },
-    postAuthor: {
-      avatarUrl: userAvatarUrl
+  async getTemplate(fileName) {
+    let template = this.templateCache[fileName];
+    if (!template) {
+      const filePath = path.join(__dirname, fileName);
+      const text = await readFileAsync(filePath, 'utf8');
+      template = this.templateCache[fileName] = compile(text, {
+        cache: true,
+        filename: filePath,
+      });
     }
-  };
 
-  return await renderFileAsync(`${__dirname}/new_comment.ejs`, context);
+    return template;
+  }
+
+  async renderTemplate(filename, data) {
+    return (await this.getTemplate(filename))(data);
+  }
+
+  async renderResetTemplate(dateObject, username, email, confirmationLink) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+    return await this.renderTemplate(
+      `reset.ejs`,
+      { confirmationLink, date, email, host: API_HOST, username }
+    );
+  }
+
+  async renderVerificationTemplate(dateObject, username, email, confirmationLink) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+    return await this.renderTemplate(
+      `verification.ejs`,
+      { confirmationLink, date, email, host: API_HOST, username }
+    );
+  }
+
+  async renderWelcomeTemplate(dateObject, username, email) {
+    const date = moment(dateObject).format('Do [of] MMMM YYYY');
+
+    return await this.renderTemplate(
+      `welcome.ejs`,
+      { date, email, host: API_HOST, username }
+    );
+  }
+
+  async renderNewCommentTemplate({ post }) {
+    const commenent = post.comments[0];
+    const context = {
+      host: API_HOST,
+      post: {
+        url: getPostUrl(post),
+        title: post.more.pageTitle,
+        author: {
+          avatarUrl: getUserAvatarUrl(post.user, { size: 36 })
+        },
+        comments: [{
+          text: commenent.text,
+          date: moment(commenent.created_at).format('Do [of] MMMM YYYY'),
+          author: {
+            name: commenent.user.fullName,
+            url: getUserUrl(commenent.user),
+            avatarUrl: getUserAvatarUrl(commenent.user, { size: 17 })
+          }
+        }],
+      },
+    };
+
+    return await this.renderTemplate(`new-comment.ejs`, context);
+  }
+
+  async renderNewCommentsTemplate({ posts, since }) {
+    posts = posts.map(post => ({
+      id: post.id,
+      title: post.more.pageTitle,
+      url: getPostUrl(post),
+      author: {
+        avatarUrl: getUserAvatarUrl(post.user, { size: 36 }),
+      },
+      comments: post.comments.map(comment => ({
+        text: comment.text,
+        date: moment(comment.created_at).format('Do [of] MMMM YYYY'),
+        author: {
+          name: comment.user.fullName,
+          url: getUserUrl(comment.user),
+          avatarUrl: getUserAvatarUrl(comment.user, { size: 17 }),
+        }
+      }))
+    }));
+
+    return await this.renderTemplate(
+      `new-comments.ejs`,
+      {
+        host: API_HOST,
+        since: moment(since).format('Do [of] MMMM YYYY'),
+        posts,
+      }
+    );
+  }
+}
+
+function getUserAvatarUrl(user, { size }) {
+  if (get(user, 'more.avatar.url')) {
+    return user.more.avatar.url;
+  }
+
+  return `http://www.gravatar.com/avatar/${user.gravatarHash}?s=${size}&r=g&d=retro`;
+}
+
+function getUserUrl(user) {
+  return `${API_HOST}${getUrl(URL_NAMES.USER, { username: user.username })}`;
+}
+
+function getPostUrl(post) {
+  return `${API_HOST}${getUrl(URL_NAMES.POST, { uuid: post.id })}`;
 }
